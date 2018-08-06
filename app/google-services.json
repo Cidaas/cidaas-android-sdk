@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "130534985621",
+    "firebase_url": "https://cidaassdkandroidv2.firebaseio.com",
+    "project_id": "cidaassdkandroidv2",
+    "storage_bucket": "cidaassdkandroidv2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:130534985621:android:76f1418029fcbfb7",
+        "android_client_info": {
+          "package_name": "com.example.widasrnarayanan.cidaas_sdk_androidv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "130534985621-1v8hl52n058ll3pn80ff63ls1sl076ru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.widasrnarayanan.cidaas_sdk_androidv2",
+            "certificate_hash": "b8824419faa7b1b2ee491b71d0ed3e0ab990b762"
+          }
+        },
+        {
+          "client_id": "130534985621-phem99nusn2vl1esl37c73fd0ahtuv9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnwZJQQzAUIhhG1LeEkgSf3sqRHEUEmTM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "130534985621-phem99nusn2vl1esl37c73fd0ahtuv9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

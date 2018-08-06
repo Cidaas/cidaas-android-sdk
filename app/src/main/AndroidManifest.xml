@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.widasrnarayanan.cidaas_sdk_androidv2">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_38002"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="cidaas" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".FirstActivity" />
+        <activity android:name=".ForgotPassword" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SuccessfulLogin" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".ConsentUrlActivity" />
+        <activity android:name=".MFAListActivity" />
+        <activity android:name=".EmailMFAActivity" />
+        <activity android:name=".ResetPasswordCodeConfirmationActivity" />
+        <activity android:name=".ResetNewPasswordActivty" />
+        <activity android:name=".ChangeOldPasswordActivity" />
+        <activity android:name=".SMSMFAActivity" />
+        <activity android:name=".IVRMFAActivity" />
+        <activity android:name=".BackupCodeMFAActivity" />
+        <activity android:name=".Smartpush" />
+        <activity android:name=".TOTPMFA" />
+        <activity android:name=".EmailAccountVerification" />
+
+        <service
+            android:name=".FCM.MyFirebaseInstanceIDService"
+            android:enabled="true"
+            android:exported="true">
+        <intent-filter>
+        <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+    </intent-filter>
+        </service>
+        <service
+            android:name=".FCM.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <activity android:name=".EnrollMFA.EnrollPattern"></activity>
+    </application>
+
+</manifest>
