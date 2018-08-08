@@ -35,5 +35,5 @@ public class TenantInfoEntity implements Serializable{
 
     private boolean success;
     private int status;
-private TenantInfoDataEntity data;
+    private TenantInfoDataEntity data;
 }

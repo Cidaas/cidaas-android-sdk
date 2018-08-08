@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -58,7 +59,16 @@ public class Smartpush extends AppCompatActivity {
      cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
          @Override
          public void success(AuthRequestResponseEntity result) {
-             cidaas.loginWithSmartPush("",sub,"", result.getData().getRequestId(),trackid,UsageType.PASSWORDLESS,new Result<LoginCredentialsResponseEntity>() {
+
+             PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+             passwordlessEntity.setEmail("");
+             passwordlessEntity.setMobile("");
+             passwordlessEntity.setSub(sub);
+             passwordlessEntity.setRequestId(result.getData().getRequestId());
+             passwordlessEntity.setTrackId(trackid);
+             passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+
+             cidaas.loginWithSmartPush(passwordlessEntity,new Result<LoginCredentialsResponseEntity>() {
                  @Override
                  public void success(LoginCredentialsResponseEntity result) {
                      if(trackid!=null && trackid!=""){

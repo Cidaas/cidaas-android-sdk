@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.PhysicalVerificationEntity;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -66,7 +67,18 @@ public class MFAListActivity extends AppCompatActivity {
                 cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                     @Override
                     public void success(AuthRequestResponseEntity result) {
-                        cidaas.loginWithEmail(null,"",sub, UsageType.MFA,trackid,result.getData().getRequestId(), new Result<InitiateEmailMFAResponseEntity>()
+
+                        PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                        passwordlessEntity.setTrackId(trackid);
+                        passwordlessEntity.setRequestId(result.getData().getRequestId());
+                        passwordlessEntity.setSub(sub);
+                        passwordlessEntity.setMobile("");
+                        passwordlessEntity.setEmail("");
+
+
+
+                        cidaas.loginWithEmail(passwordlessEntity, new Result<InitiateEmailMFAResponseEntity>()
                         {
                             @Override
                             public void success(InitiateEmailMFAResponseEntity result) {
@@ -127,8 +139,15 @@ public class MFAListActivity extends AppCompatActivity {
                 cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                     @Override
                     public void success(AuthRequestResponseEntity result) {
-                        cidaas.loginWithSMS("","",sub, UsageType.MFA,trackid,result.getData().getRequestId(),
-                                new Result<InitiateSMSMFAResponseEntity>() {
+                        PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                        passwordlessEntity.setTrackId(trackid);
+                        passwordlessEntity.setRequestId(result.getData().getRequestId());
+                        passwordlessEntity.setSub(sub);
+                        passwordlessEntity.setMobile("");
+                        passwordlessEntity.setEmail("");
+
+                        cidaas.loginWithSMS(passwordlessEntity, new Result<InitiateSMSMFAResponseEntity>() {
                                     @Override
                                     public void success(InitiateSMSMFAResponseEntity result) {
                                         Intent intent = new Intent(MFAListActivity.this, SMSMFAActivity.class);
@@ -188,7 +207,15 @@ public class MFAListActivity extends AppCompatActivity {
 cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
     @Override
     public void success(AuthRequestResponseEntity result) {
-        cidaas.loginWithIVR("","",sub,UsageType.MFA,trackid,result.getData().getRequestId(), new Result<InitiateIVRMFAResponseEntity>() {
+        PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+        passwordlessEntity.setTrackId(trackid);
+        passwordlessEntity.setRequestId(result.getData().getRequestId());
+        passwordlessEntity.setSub(sub);
+        passwordlessEntity.setMobile("");
+        passwordlessEntity.setEmail("");
+
+        cidaas.loginWithIVR(passwordlessEntity, new Result<InitiateIVRMFAResponseEntity>() {
             @Override
             public void success(InitiateIVRMFAResponseEntity result) {
                 Intent intent=new Intent(MFAListActivity.this,IVRMFAActivity.class);
@@ -300,8 +327,16 @@ cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                     public void success(AuthRequestResponseEntity result) {
                         RequestId=result.getData().getRequestId();
 
-                        cidaas.loginWithEmail("","",sub, UsageType.PASSWORDLESS, trackid,result.getData().getRequestId(),
-                                new Result<InitiateEmailMFAResponseEntity>()
+                        PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                        passwordlessEntity.setTrackId(trackid);
+                        passwordlessEntity.setRequestId(result.getData().getRequestId());
+                        passwordlessEntity.setSub(sub);
+                        passwordlessEntity.setMobile("");
+                        passwordlessEntity.setEmail("");
+
+
+                        cidaas.loginWithEmail(passwordlessEntity, new Result<InitiateEmailMFAResponseEntity>()
                                 {
                             @Override
                             public void success(InitiateEmailMFAResponseEntity result) {
@@ -313,7 +348,7 @@ cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                                 intent.putExtra("sub",sub);
                                 String code="";
 
-                                cidaas.verifyEmail(code, new Result<LoginCredentialsResponseEntity>() {
+                                cidaas.verifyEmail(code,result.getData().getStatusId(), new Result<LoginCredentialsResponseEntity>() {
                                     @Override
                                     public void success(LoginCredentialsResponseEntity result) {
                                         Toast.makeText(MFAListActivity.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
@@ -373,72 +408,42 @@ cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
 
                 }
 
-
-
-                cidaas.loginWithSmartPush("",sub,"",RequestId,trackid,UsageType.PASSWORDLESS,new Result<LoginCredentialsResponseEntity>() {
+                cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                     @Override
-                    public void success(LoginCredentialsResponseEntity result) {
-                        Intent intent=new Intent(MFAListActivity.this,Smartpush.class);
-                      //  intent.putExtra("statusId",result.getData().getStatusId());
-                        intent.putExtra("deviceID",deviceID);
-                        intent.putExtra("trackid",trackid);
-                       // intent.putExtra("RandomNumber",result.getData().getRandomNumber());
-                        intent.putExtra("sub",sub);
-                        startActivity(intent);
-                        Toast.makeText(MFAListActivity.this, "+result.getData().getRandomNumber()", Toast.LENGTH_SHORT).show();
+                    public void success(AuthRequestResponseEntity result) {
+                        PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                        passwordlessEntity.setTrackId(trackid);
+                        passwordlessEntity.setRequestId(result.getData().getRequestId());
+                        passwordlessEntity.setSub(sub);
+                        passwordlessEntity.setMobile("");
+                        passwordlessEntity.setEmail("");
+
+
+                        cidaas.loginWithSmartPush(passwordlessEntity,new Result<LoginCredentialsResponseEntity>() {
+                            @Override
+                            public void success(LoginCredentialsResponseEntity result) {
+                                Intent intent=new Intent(MFAListActivity.this,Smartpush.class);
+                                //  intent.putExtra("statusId",result.getData().getStatusId());
+                                intent.putExtra("deviceID",deviceID);
+                                intent.putExtra("trackid",trackid);
+                                // intent.putExtra("RandomNumber",result.getData().getRandomNumber());
+                                intent.putExtra("sub",sub);
+                                startActivity(intent);
+                                Toast.makeText(MFAListActivity.this, "+result.getData().getRandomNumber()", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                Toast.makeText(MFAListActivity.this, ""+error.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(MFAListActivity.this, ""+error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
 
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MFAListActivity.this, "Falire MFA", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    public void fido(View view){
-        cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
-            @Override
-            public void success(MFAListResponseEntity result) {
-                MFAListResponseDataEntity[] data=result.getData();
-                PhysicalVerificationEntity physicalVerificationEntity=new PhysicalVerificationEntity();
-
-                for (MFAListResponseDataEntity mfaList:data
-                        ) {
-                    if (mfaList.getVerificationType().equals("IVR")) {
-                        MFAListDeviceEntity[] mfaListDeviceEntities=mfaList.getDevices();
-                        deviceID=mfaListDeviceEntities[0].getDeviceId();
-                        physicalVerificationEntity.setPhysicalVerificationId(mfaList.get_id());
-                        physicalVerificationEntity.setUsageType("PASSWORDLESS_AUTHENTICATION");
-                        physicalVerificationEntity.setSub(sub);
-                        physicalVerificationEntity.setUserDeviceId(mfaList.get_id());
-
-                    }
-
-                }
-
-
-                cidaas.loginWithIVR("","",sub, UsageType.PASSWORDLESS,trackid,RequestId, new Result<InitiateIVRMFAResponseEntity>() {
-                    @Override
-                    public void success(InitiateIVRMFAResponseEntity result) {
-                        Intent intent=new Intent(MFAListActivity.this,IVRMFAActivity.class);
-                        intent.putExtra("statusId",result.getData().getStatusId());
-                        intent.putExtra("deviceID",deviceID);
-                        intent.putExtra("trackid",trackid);
-                        intent.putExtra("consentName",consentName);
-                        intent.putExtra("sub",sub);
-                        startActivity(intent);
-                        Toast.makeText(MFAListActivity.this, ""+result.getData().getStatusId(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(MFAListActivity.this, ""+error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

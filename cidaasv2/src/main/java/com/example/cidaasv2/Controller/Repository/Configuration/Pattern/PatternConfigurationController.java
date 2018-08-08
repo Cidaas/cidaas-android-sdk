@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -109,7 +110,7 @@ public class PatternConfigurationController {
                     if (baseurl != null && !baseurl.equals("") && accessTokenresult.getAccess_token() != null && !accessTokenresult.getAccess_token().equals("") &&
                             setupPatternMFARequestEntity.getClient_id()!=null && !setupPatternMFARequestEntity.getClient_id().equals(""))
                     {
-                        //Todo Service call
+                        //Done Service call
 
                         PatternVerificationService.getShared(context).setupPattern(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupPatternMFARequestEntity,new Result<SetupPatternMFAResponseEntity>() {
                             @Override
@@ -121,7 +122,7 @@ public class PatternConfigurationController {
                                         instceID= Cidaas.instanceId;
 
                                         Timber.e("");
-                                        if(instceID!=null && instceID!="")
+                                        if(instceID!=null && !instceID.equals(""))
                                         {
                                             this.cancel();
                                             onFinish();
@@ -129,7 +130,7 @@ public class PatternConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && setupserviceresult.getData().getStatusId()!=null && setupserviceresult.getData().getStatusId()!="")
+                                        if(instceID!=null && !instceID.equals("") && setupserviceresult.getData().getStatusId()!=null && !setupserviceresult.getData().getStatusId().equals(""))
                                         {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
@@ -241,7 +242,7 @@ public class PatternConfigurationController {
                 generateChallenge();
             }
             Cidaas.instanceId="";
-            if(initiatePatternMFARequestEntity.getUserDeviceId() != null && initiatePatternMFARequestEntity.getUserDeviceId() != "" )
+            if(initiatePatternMFARequestEntity.getUserDeviceId() != null && !initiatePatternMFARequestEntity.getUserDeviceId().equals(""))
             {
                 //Do nothing
             }
@@ -249,12 +250,11 @@ public class PatternConfigurationController {
             {
                 initiatePatternMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
             }
+            initiatePatternMFARequestEntity.setClient_id(clientId);
 
 
-            if (    initiatePatternMFARequestEntity.getUsageType() != null && initiatePatternMFARequestEntity.getUsageType() != "" &&
-                    initiatePatternMFARequestEntity.getUserDeviceId() != null && initiatePatternMFARequestEntity.getUserDeviceId() != ""&&
-                    initiatePatternMFARequestEntity.getSub() != null && initiatePatternMFARequestEntity.getSub() != "" &&
-                    initiatePatternMFARequestEntity.getEmail() != null && initiatePatternMFARequestEntity.getEmail() != ""&&
+            if (    initiatePatternMFARequestEntity.getUsageType() != null && !initiatePatternMFARequestEntity.getUsageType().equals("") &&
+                    initiatePatternMFARequestEntity.getUserDeviceId() != null && !initiatePatternMFARequestEntity.getUserDeviceId().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 PatternVerificationService.getShared(context).initiatePattern(baseurl,codeChallenge, initiatePatternMFARequestEntity,
@@ -312,8 +312,8 @@ public class PatternConfigurationController {
                                                                                         //Todo Check not Null values
                                                                                         resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                                         resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                                        resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                                                                        resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
+                                                                                        resumeLoginRequestEntity.setVerificationType("PATTERN");
+                                                                                        resumeLoginRequestEntity.setUsageType(initiatePatternMFARequestEntity.getUsageType());
                                                                                         resumeLoginRequestEntity.setClient_id(clientId);
                                                                                         resumeLoginRequestEntity.setRequestId(requestId);
 
@@ -337,6 +337,11 @@ public class PatternConfigurationController {
                                                                                         loginresult.failure(error);
                                                                                     }
                                                                                 });
+                                                                            }
+                                                                            else {
+                                                                                String errorMessage="Status Id or Pattern Must not be null";
+                                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
                                                                             }
                                                                         }
 

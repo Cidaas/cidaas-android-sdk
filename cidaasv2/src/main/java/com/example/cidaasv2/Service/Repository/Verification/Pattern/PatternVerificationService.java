@@ -77,7 +77,7 @@ public class PatternVerificationService {
         return shared;
     }
 
-//Todo setup Pattern Webservice
+//Done setup Pattern Webservice
     // 1. Check For NotNull Values
     // 2.  Create header and Scanned Request entity
     // 3.  Call Webservice and return the result
@@ -102,14 +102,11 @@ public class PatternVerificationService {
             }
 
 
-
-
-
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
             DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
-            //Todo - check Construct Headers pending,Null Checking Pending
+            //Done - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
@@ -121,11 +118,11 @@ public class PatternVerificationService {
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
-                //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                //Done Change to FCM acceptence now it is in Authenticator
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_Muq" +
-                        "IvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
+              /*  deviceInfoEntity.setPushNotificationId("emwuJgX9_5g:APA91bGyW8Tgl7p68siQvJc8qtS_lkc6ffTPnk1-6Mq2PWjbzmDJMaT30uCRx9F" +
+                        "aiJnmkRc9nWUIaGXtB9khMThBfGsNaHo-N_iW-8Tt1GUn5fY9yurjq94mQNfd45P10XcvUJBF4WZwfV-N6IEmBQWRHKmyII1QLA");*/
             }
             setupPatternMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -137,12 +134,11 @@ public class PatternVerificationService {
                 @Override
                 public void onResponse(Call<SetupPatternMFAResponseEntity> call, Response<SetupPatternMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
+
                         if(response.code()==200) {
                             callback.success(response.body());
+                            }
 
-                            //Todo Listen For The Push notification to recieve
-
-                        }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,
                                     "Service failure but successful response" , response.code(),null));
@@ -202,7 +198,7 @@ public class PatternVerificationService {
         }
     }
 
-//Todo scanned Pattern Webservice
+//Done scanned Pattern Webservice
     // 1. Done Check For NotNull Values
     // 2. Done Create header and Scanned Request entity
     // 3. done Call Webservice and return the result
@@ -320,6 +316,11 @@ public class PatternVerificationService {
     }
 
 
+//Done Enroll Pattern Webservice
+    // 1. Check For NotNull Values
+    // 2.  Create header and Scanned Request entity
+    // 3.  Call Webservice and return the result
+    // 4.  Maintain logs based on flags
 
     //enrollPatternMFA
     public void enrollPattern(String baseurl, String accessToken, EnrollPatternMFARequestEntity enrollPatternMFARequestEntity,
@@ -351,11 +352,11 @@ public class PatternVerificationService {
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
-                //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                //Done Change to FCM acceptence now it is in Authenticator
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0l" +
-                        "ZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
+              /*  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0l" +
+                        "ZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");*/
             }
 
             enrollPatternMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -434,7 +435,6 @@ public class PatternVerificationService {
     }
 
 
-
     //initiatePatternMFA
     public void initiatePattern(String baseurl, String codeChallenge,InitiatePatternMFARequestEntity initiatePatternMFARequestEntity,
                                    final Result<InitiatePatternMFAResponseEntity> callback)
@@ -463,6 +463,15 @@ public class PatternVerificationService {
             headers.put("verification_api_version","2");
             headers.put("access_challenge",codeChallenge);
             headers.put("access_challenge_method","S256");
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+
+                //Done Chaange to FCM acceptence now it is in Authenticator
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+
+               /* deviceInfoEntity.setPushNotificationId("emwuJgX9_5g:APA91bGyW8Tgl7p68siQvJc8qtS_lkc6ffTPnk1-6Mq2PWjbzmDJMaT30uCRx9F" +
+                        "aiJnmkRc9nWUIaGXtB9khMThBfGsNaHo-N_iW-8Tt1GUn5fY9yurjq94mQNfd45P10XcvUJBF4WZwfV-N6IEmBQWRHKmyII1QLA");
+           */
+            }
 
             initiatePatternMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -538,110 +547,6 @@ public class PatternVerificationService {
         }
     }
 
-/*
-    //initiatePatternMFA
-    public void initiatePatternWithUsagePass(String baseurl, InitiatePatternMFARequestEntity initiatePatternMFARequestEntity,
-                                final Result<InitiatePatternMFAResponseEntity> callback)
-    {
-        String initiatePatternWithUsagePassMFAUrl="";
-        try
-        {
-            if(baseurl!=null || baseurl!=""){
-                //Construct URL For RequestId
-                initiatePatternWithUsagePassMFAUrl=baseurl+URLHelper.getShared().getInitiatePatternMFA();
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
-                return;
-            }
-
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("verification_api_version","2");
-            headers.put("access_challenge",);
-            headers.put("access_challenge_method","S256");
-
-
-            initiatePatternMFARequestEntity.setDeviceInfo(deviceInfoEntity);
-
-            //Call Service-getRequestId
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.initiatePatternMFA(initiatePatternMFAUrl,headers, initiatePatternMFARequestEntity)
-                    .enqueue(new Callback<InitiatePatternMFAResponseEntity>() {
-                        @Override
-                        public void onResponse(Call<InitiatePatternMFAResponseEntity> call, Response<InitiatePatternMFAResponseEntity> response) {
-                            if (response.isSuccessful()) {
-                                if(response.code()==200) {
-                                    callback.success(response.body());
-                                }
-                                else {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                                            "Service failure but successful response" , response.code(),null));
-                                }
-                            }
-                            else {
-                                assert response.errorBody() != null;
-                                //Todo Check The error if it is not recieved
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse=response.errorBody().source().readByteString().utf8();
-                                    final CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                                    String errorMessage="";
-                                    if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("")
-                                            && commonErrorEntity.getError() instanceof  String) {
-                                        errorMessage=commonErrorEntity.getError().toString();
-                                    }
-                                    else
-                                    {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    }
-
-
-                                    //Todo Service call For fetching the Consent details
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),
-                                            commonErrorEntity.getError()));
-
-                                } catch (Exception e) {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                                            e.getMessage(), 400,null));
-                                    Timber.e("response"+response.message()+e.getMessage());
-                                }
-                                Timber.e("response"+response.message());
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<InitiatePatternMFAResponseEntity> call, Throwable t) {
-                            Timber.e("Failure in InitiatePatternMFAResponseEntityservice call"+t.getMessage());
-                            LogFile.addRecordToLog("InitiatePatternMFAResponseEntity Service Failure"+t.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                                    t.getMessage(), 400,null));
-                        }
-                    });
-
-
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("InitiatePatternMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                    e.getMessage(), 400,null));
-            Timber.e("InitiatePatternMFAResponseEntity Service exception"+e.getMessage());
-        }
-    }*/
 
     //authenticatePatternMFA
     public void authenticatePattern(String baseurl, AuthenticatePatternRequestEntity authenticatePatternRequestEntity,
@@ -673,10 +578,10 @@ public class PatternVerificationService {
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
-                        "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
+              //  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
+                    //    "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
             }
 
             authenticatePatternRequestEntity.setDeviceInfo(deviceInfoEntity);

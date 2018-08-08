@@ -247,10 +247,14 @@ public class SmartPushConfigurationController {
                 initiateSmartPushMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
             }*/
 
+
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
             if (    initiateSmartPushMFARequestEntity.getUsageType() != null && initiateSmartPushMFARequestEntity.getUsageType() != "" &&
                  /*   initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != ""&&*/
-                    initiateSmartPushMFARequestEntity.getSub() != null && initiateSmartPushMFARequestEntity.getSub() != "" &&
-                    initiateSmartPushMFARequestEntity.getEmail() != null && initiateSmartPushMFARequestEntity.getEmail() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge,initiateSmartPushMFARequestEntity,
@@ -289,74 +293,64 @@ public class SmartPushConfigurationController {
 
                                                                         @Override
                                                                         public void success(InitiateSmartPushMFAResponseEntity result) {
+                                                                            if (serviceresult.getData().getRandomNumber() != null && !serviceresult.getData().getRandomNumber().equals("") && serviceresult.getData().getStatusId() != null &&
+                                                                                    !serviceresult.getData().getStatusId().equals("")) {
 
+
+                                                                                AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity = new AuthenticateSmartPushRequestEntity();
+                                                                                authenticateSmartPushRequestEntity.setUserDeviceId(initiateSmartPushMFARequestEntity.getUserDeviceId());
+                                                                                authenticateSmartPushRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                                authenticateSmartPushRequestEntity.setVerifierPassword(serviceresult.getData().getRandomNumber());
+
+
+                                                                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,
+                                                                                        new Result<AuthenticateSmartPushResponseEntity>() {
+
+                                                                                            @Override
+                                                                                            public void success(AuthenticateSmartPushResponseEntity result) {
+
+                                                                                                //Todo Call Resume with Login Service
+                                                                                                //  loginresult.success(result);
+                                                                                                Toast.makeText(context, "Sucess SmartPush", Toast.LENGTH_SHORT).show();
+
+                                                                                                ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
+
+                                                                                                //Todo Check not Null values
+                                                                                                resumeLoginRequestEntity.setSub(result.getData().getSub());
+                                                                                                resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
+                                                                                                resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
+                                                                                                resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
+                                                                                                resumeLoginRequestEntity.setClient_id(clientId);
+                                                                                                resumeLoginRequestEntity.setRequestId(requestId);
+
+                                                                                                if (initiateSmartPushMFARequestEntity.getUsageType().equals(UsageType.MFA)) {
+                                                                                                    resumeLoginRequestEntity.setTrack_id(trackId);
+                                                                                                    LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, loginresult);
+                                                                                                } else if (initiateSmartPushMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS)) {
+                                                                                                    resumeLoginRequestEntity.setTrack_id("");
+                                                                                                    LoginController.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, loginresult);
+
+                                                                                                }
+                                                                                            }
+
+                                                                                            @Override
+                                                                                            public void failure(WebAuthError error) {
+                                                                                                loginresult.failure(error);
+                                                                                            }
+                                                                                        });
+                                                                                // result.success(serviceresult);
+                                                                            } else {
+                                                                                String errorMessage="Status Id or random number Must not be null";
+                                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                                                            }
                                                                         }
-
-
-                                                                        // result.success(serviceresult);
-
-
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
                                                                             Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
-
-
-                                                            if (serviceresult.getData().getRandomNumber() != null && !serviceresult.getData().getRandomNumber().equals("") && serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
-
-
-                                                                AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity = new AuthenticateSmartPushRequestEntity();
-                                                                authenticateSmartPushRequestEntity.setUserDeviceId(initiateSmartPushMFARequestEntity.getUserDeviceId());
-                                                                authenticateSmartPushRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                                                authenticateSmartPushRequestEntity.setVerifierPassword(serviceresult.getData().getRandomNumber());
-
-
-                                                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,
-                                                                        new Result<AuthenticateSmartPushResponseEntity>() {
-
-                                                                            @Override
-                                                                            public void success(AuthenticateSmartPushResponseEntity result) {
-
-                                                                                //Todo Call Resume with Login Service
-                                                                                //  loginresult.success(result);
-                                                                                Toast.makeText(context, "Sucess SmartPush", Toast.LENGTH_SHORT).show();
-
-                                                                                ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
-
-                                                                                //Todo Check not Null values
-                                                                                resumeLoginRequestEntity.setSub(result.getData().getSub());
-                                                                                resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                                resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                                                                resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
-                                                                                resumeLoginRequestEntity.setClient_id(clientId);
-                                                                                resumeLoginRequestEntity.setRequestId(requestId);
-
-                                                                                if(initiateSmartPushMFARequestEntity.getUsageType().equals(UsageType.MFA))
-                                                                                {
-                                                                                    resumeLoginRequestEntity.setTrack_id(trackId);
-                                                                                    LoginController.getShared(context).continueMFA(baseurl,resumeLoginRequestEntity,loginresult);
-                                                                                }
-
-                                                                                else if(initiateSmartPushMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS))
-                                                                                {
-                                                                                    resumeLoginRequestEntity.setTrack_id("");
-                                                                                    LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,loginresult);
-
-                                                                                }
-                                                                            }
-
-                                                                            @Override
-                                                                            public void failure(WebAuthError error) {
-                                                                                loginresult.failure(error);
-                                                                            }
-                                                                        });
-                                                                // result.success(serviceresult);
-                                                            }
-
-
                                                         }
 
                                                         @Override

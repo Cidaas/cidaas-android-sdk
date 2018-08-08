@@ -4,6 +4,7 @@ package com.example.cidaasv2.Interface;
 import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
@@ -53,44 +54,37 @@ public interface IOAuthWebLogin {
 
     //Login methods
      void loginWithCredentials(String requestId, LoginEntity loginEntity, Result<LoginCredentialsResponseEntity> result);
-     void loginWithEmail(final String email, final String mobile,@NonNull final String sub, @NonNull final String usageType, @NonNull final String trackId,
-                         @NonNull final String requestId, final Result<InitiateEmailMFAResponseEntity> initiateresult);
+     void loginWithEmail(PasswordlessEntity passwordlessEntity, final Result<InitiateEmailMFAResponseEntity> initiateresult);
 
-     void loginWithSMS(final String email, final String mobile,@NonNull final String sub, @NonNull final String usageType, @NonNull final String trackId,
-                       @NonNull final String requestId, Result<InitiateSMSMFAResponseEntity> result);
+     void loginWithSMS(PasswordlessEntity passwordlessEntity,Result<InitiateSMSMFAResponseEntity> result);
 
-    void verifyEmail(String code,Result<LoginCredentialsResponseEntity> result);
+    void verifyEmail(String code,String statusId,Result<LoginCredentialsResponseEntity> result);
 
-    void verifySMS(String code,Result<LoginCredentialsResponseEntity> result);
+    void verifySMS(String code,String statusId,Result<LoginCredentialsResponseEntity> result);
 
-    void verifyIVR(String code,Result<LoginCredentialsResponseEntity> result);
+    void verifyIVR(String code,String statusId,Result<LoginCredentialsResponseEntity> result);
 
-    void verifyBackupCode(String code,Result<LoginCredentialsResponseEntity> result);
+    void verifyBackupCode(String code,String StatusId,Result<LoginCredentialsResponseEntity> result);
 
-     void loginWithIVR(final String email, final String mobile, final String sub,@NonNull final String usageType,@NonNull final String trackId,
-                       @NonNull final String requestId,final Result<InitiateIVRMFAResponseEntity> initiateresult);
+     void loginWithIVR(PasswordlessEntity passwordlessEntity,final Result<InitiateIVRMFAResponseEntity> initiateresult);
 
-     void loginWithBackupCode(final String code,final String email, final String mobile,@NonNull final String sub, @NonNull final String usageType,
-                              @NonNull final String trackId, @NonNull final String requestId, Result<LoginCredentialsResponseEntity> result);
+     void loginWithBackupCode(String code,PasswordlessEntity passwordlessEntity, Result<LoginCredentialsResponseEntity> result);
 
-     void loginWithFaceRecognition(File faceimageFile, final String email, final String mobile, final String sub,
-                        String requestId,String trackId,@NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult);
+     void loginWithFaceRecognition(File faceimageFile, PasswordlessEntity passwordlessEntity,
+                                   final Result<LoginCredentialsResponseEntity> loginresult);
 
      void loginWithFIDO(String usageType,String email, String sub,String trackId,Result<LoginCredentialsResponseEntity> result);
-     void loginWithFingerprint(final String email, final String mobile, final String sub,
-                               String requestId,String trackId,@NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult);
+     void loginWithFingerprint(PasswordlessEntity passwordlessEntity,final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithPatternRecognition(@NonNull final String patternCode, final String email, final String mobile, final String sub,
-                           String requestId,String trackId,@NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult);
+     void loginWithPatternRecognition(@NonNull final String patternCode, @NonNull final PasswordlessEntity passwordlessEntity,
+                                      final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithSmartPush(final String email, final String mobile, final String sub,
-                             String requestId,String trackId,@NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult);
+     void loginWithSmartPush(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithTOTP( final String email, final String mobile, final String sub,
-                        String requestId,String trackId,@NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult);
+     void loginWithTOTP(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithVoiceRecognition(File VoiceaudioFile,final String email, final String mobile, final String sub,
-                         String requestId,String trackId,@NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult);
+     void loginWithVoiceRecognition(File VoiceaudioFile,PasswordlessEntity passwordlessEntity,
+                                    final Result<LoginCredentialsResponseEntity> loginresult);
 
 
      //Configure methods

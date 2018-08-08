@@ -1,16 +1,21 @@
 package com.example.cidaasv2.Controller;
 
 import android.Manifest;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.ChangePassword.ChangePasswordController;
@@ -35,6 +40,7 @@ import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordCon
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -45,14 +51,12 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationList;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.LoginDeduplication.LoginDeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
@@ -90,12 +94,12 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSma
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
@@ -108,6 +112,7 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEn
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
+import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateRequestEntity;
@@ -115,13 +120,10 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupRequestEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import com.example.cidaasv2.Service.Repository.Deduplication.DeduplicationService;
 import com.example.cidaasv2.Service.Repository.OauthService;
-import com.example.cidaasv2.Service.Repository.Registration.RegistrationService;
-import com.example.cidaasv2.Service.Repository.Verification.BackupCode.BackupCodeVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 
 import java.io.File;
-import java.security.spec.ECField;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -131,6 +133,7 @@ import java.util.Objects;
 
 import timber.log.Timber;
 
+import static android.content.Context.KEYGUARD_SERVICE;
 import static android.os.Build.MODEL;
 import static android.os.Build.VERSION;
 
@@ -252,6 +255,39 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
+
+    public void deviceValidation(){
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = savedProperties.get("DomainURL");
+                    DeviceVerificationService.getShared(context).validateDevice(baseurl, Cidaas.instanceId, "","" , new Result<ValidateDeviceResponseEntity>() {
+                                @Override
+                                public void success(ValidateDeviceResponseEntity result) {
+
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+
+                                }
+                            });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
 
     public static void setremoteMessage(Map<String, String> instanceIdFromPush)
     {
@@ -502,7 +538,8 @@ public class Cidaas implements IOAuthWebLogin{
     // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
 
     public void getConsentDetails(@NonNull final String Name, @NonNull final String Version, @NonNull final String trackId,
-                                  final Result<ConsentDetailsResultEntity> consentResult){
+                                  final Result<ConsentDetailsResultEntity> consentResult)
+    {
 
         try {
             checkSavedProperties(new Result<Dictionary<String, String> >() {
@@ -663,7 +700,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
 
-    public void enrollEmail(final String code, final Result<EnrollEmailMFAResponseEntity> enrollresult)
+    public void enrollEmail(final String code, final String statusId, final Result<EnrollEmailMFAResponseEntity> enrollresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -673,13 +710,14 @@ public class Cidaas implements IOAuthWebLogin{
                     String clientId=savedProperties.get("ClientId");
 
                     //todo call enroll Email
-                   if(code!=null && code !="")
+                   if(code!=null && !code.equals("") || statusId!=null && !statusId.equals(""))
                    {
-                       EmailConfigurationController.getShared(context).enrollEmailMFA(code,baseurl,enrollresult);
+                       EmailConfigurationController.getShared(context).enrollEmailMFA(code,statusId,baseurl,enrollresult);
                    }
                    else
                    {
-
+                       String errorMessage="Code or StatusId Must not be empty";
+                       enrollresult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                    }
                 }
 
@@ -697,8 +735,7 @@ public class Cidaas implements IOAuthWebLogin{
 
 
 
-    public void loginWithEmail(final String email, final String mobile, final String sub,@NonNull final String usageType,@NonNull final String trackId,
-                               @NonNull final String requestId,final Result<InitiateEmailMFAResponseEntity> initiateresult)
+    public void loginWithEmail(final PasswordlessEntity passwordlessEntity, final Result<InitiateEmailMFAResponseEntity> initiateresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -707,11 +744,12 @@ public class Cidaas implements IOAuthWebLogin{
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
 
-                    if(sub!=null && !sub.equals("") && (usageType!=null && !usageType.equals(""))) {
+                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals(""))) {
 
-                        if(usageType.equals(UsageType.MFA))
+                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
                         {
-                            if(trackId==null || trackId=="" )
+                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
                             {
                                 String errorMessage="trackId must not be empty";
 
@@ -721,12 +759,13 @@ public class Cidaas implements IOAuthWebLogin{
                         }
 
                         InitiateEmailMFARequestEntity initiateEmailMFARequestEntity=new InitiateEmailMFARequestEntity();
-                        initiateEmailMFARequestEntity.setSub(sub);
-                        initiateEmailMFARequestEntity.setUsageType(usageType);
+                        initiateEmailMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateEmailMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateEmailMFARequestEntity.setVerificationType("email");
 
 
-                        EmailConfigurationController.getShared(context).loginWithEmail(baseurl,trackId,requestId,initiateEmailMFARequestEntity,initiateresult);
+                        EmailConfigurationController.getShared(context).loginWithEmail(baseurl,passwordlessEntity.getTrackId(),
+                                passwordlessEntity.getRequestId(),initiateEmailMFARequestEntity,initiateresult);
                     }
                     else
                     {
@@ -749,7 +788,8 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     @Override
-    public void verifyEmail(@NonNull final String code, final Result<LoginCredentialsResponseEntity> loginresult) {
+    public void verifyEmail(@NonNull final String code, @NonNull final String statusId, final Result<LoginCredentialsResponseEntity> loginresult)
+    {
         try
         {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -765,7 +805,7 @@ public class Cidaas implements IOAuthWebLogin{
                         AuthenticateEmailRequestEntity authenticateEmailRequestEntity = new AuthenticateEmailRequestEntity();
                         authenticateEmailRequestEntity.setCode(code);
 
-                        EmailConfigurationController.getShared(context).verifyEmail(baseurl,code,clientId,authenticateEmailRequestEntity,loginresult);
+                        EmailConfigurationController.getShared(context).verifyEmail(baseurl,code,statusId,clientId,authenticateEmailRequestEntity,loginresult);
 /*
                           String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -822,7 +862,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
 
-    public void enrollSMS(final String code, final Result<EnrollSMSMFAResponseEntity> result)
+    public void enrollSMS(final String code, final String statusId, final Result<EnrollSMSMFAResponseEntity> result)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -833,7 +873,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                     if(code!=null && code !="")
                     {
-                        SMSConfigurationController.getShared(context).enrollSMSMFA(code,baseurl,result);
+                        SMSConfigurationController.getShared(context).enrollSMSMFA(code,statusId,baseurl,result);
                     }
                     else
                     {
@@ -854,8 +894,7 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-    public void loginWithSMS( final String email, final String mobile, final String sub,@NonNull final String usageType,final String trackId,
-                             @NonNull final String requestId,final Result<InitiateSMSMFAResponseEntity> initiateresult)
+    public void loginWithSMS(final PasswordlessEntity passwordlessEntity, final Result<InitiateSMSMFAResponseEntity> initiateresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -863,12 +902,13 @@ public class Cidaas implements IOAuthWebLogin{
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
-                    if(sub!=null && !sub.equals("") && (usageType!=null && !usageType.equals(""))) {
+                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals(""))) {
 
 
-                        if(usageType.equals(UsageType.MFA))
+                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
                         {
-                            if(trackId==null || trackId=="" )
+                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
                             {
                                 String errorMessage="trackId must not be empty";
 
@@ -878,8 +918,8 @@ public class Cidaas implements IOAuthWebLogin{
                         }
 
                         InitiateSMSMFARequestEntity initiateSMSMFARequestEntity=new InitiateSMSMFARequestEntity();
-                        initiateSMSMFARequestEntity.setSub(sub);
-                        initiateSMSMFARequestEntity.setUsageType(usageType);
+                        initiateSMSMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateSMSMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateSMSMFARequestEntity.setVerificationType("SMS");
 
                      /*   String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
@@ -894,7 +934,8 @@ public class Cidaas implements IOAuthWebLogin{
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
                         */
-                        SMSConfigurationController.getShared(context).loginWithSMS(baseurl,trackId,clientId,requestId,initiateSMSMFARequestEntity,initiateresult);
+                        SMSConfigurationController.getShared(context).loginWithSMS(baseurl,passwordlessEntity.getTrackId(),
+                                clientId,passwordlessEntity.getRequestId(),initiateSMSMFARequestEntity,initiateresult);
                     }
                     else
                     {
@@ -917,7 +958,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     @Override
-    public void verifySMS(final String code, final Result<LoginCredentialsResponseEntity> loginresult) {
+    public void verifySMS(final String code, final String statusId, final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
 
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -932,6 +973,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                         AuthenticateSMSRequestEntity authenticateSMSRequestEntity = new AuthenticateSMSRequestEntity();
                         authenticateSMSRequestEntity.setCode(code);
+                        authenticateSMSRequestEntity.setStatusId(statusId);
 
                         SMSConfigurationController.getShared(context).verifySMS(baseurl,clientId,authenticateSMSRequestEntity,loginresult);
 /*
@@ -995,7 +1037,7 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-    public void enrollIVR(final String code, final Result<EnrollIVRMFAResponseEntity> result)
+    public void enrollIVR(final String code, final String statusId, final Result<EnrollIVRMFAResponseEntity> result)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -1006,7 +1048,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                     if(code!=null && code !="")
                     {
-                      IVRConfigurationController.getShared(context).enrollIVRMFA(code,baseurl,result);
+                      IVRConfigurationController.getShared(context).enrollIVRMFA(code,statusId,baseurl,result);
                     }
                     else
                     {
@@ -1028,8 +1070,7 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void loginWithIVR(final String email, final String mobile, final String sub,@NonNull final String usageType,@NonNull final String trackId,
-                             @NonNull final String requestId,final Result<InitiateIVRMFAResponseEntity> initiateresult)
+    public void loginWithIVR(final PasswordlessEntity passwordlessEntity, final Result<InitiateIVRMFAResponseEntity> initiateresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -1037,12 +1078,13 @@ public class Cidaas implements IOAuthWebLogin{
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
-                    if(sub!=null && !sub.equals("") && (usageType!=null && !usageType.equals(""))) {
+                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals(""))) {
 
 
-                        if(usageType.equals(UsageType.MFA))
+                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
                         {
-                            if(trackId==null || trackId=="" )
+                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
                             {
                                 String errorMessage="trackId must not be empty";
 
@@ -1052,23 +1094,14 @@ public class Cidaas implements IOAuthWebLogin{
                         }
 
                         InitiateIVRMFARequestEntity initiateIVRMFARequestEntity=new InitiateIVRMFARequestEntity();
-                        initiateIVRMFARequestEntity.setSub(sub);
-                        initiateIVRMFARequestEntity.setUsageType(usageType);
+                        initiateIVRMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateIVRMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateIVRMFARequestEntity.setVerificationType("IVR");
 
-                     /*   String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
-                        if(userDeviceId!=null && !userDeviceId.equals("") ) {
-                            initiateIVRMFARequestEntity.setUserDeviceId(userDeviceId);
-                        }
-                        else
-                        {
-                            String errorMessage="UserDeviceId must not be empty";
 
-                            initiateresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        */
-                        IVRConfigurationController.getShared(context).loginWithIVR(baseurl,trackId,clientId,requestId,initiateIVRMFARequestEntity,initiateresult);
+                        IVRConfigurationController.getShared(context).loginWithIVR(baseurl,
+                                passwordlessEntity.getTrackId(),clientId,passwordlessEntity.getRequestId(),
+                                initiateIVRMFARequestEntity,initiateresult);
                     }
                     else
                     {
@@ -1090,10 +1123,7 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-
-
-
-    public void verifyIVR(final String code, final Result<LoginCredentialsResponseEntity> loginresult) {
+    public void verifyIVR(final String code, final String statusId, final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -1105,6 +1135,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                         AuthenticateIVRRequestEntity authenticateIVRRequestEntity = new AuthenticateIVRRequestEntity();
                         authenticateIVRRequestEntity.setCode(code);
+                        authenticateIVRRequestEntity.setStatusId(statusId);
 
                         IVRConfigurationController.getShared(context).verifyIVR(baseurl,clientId,authenticateIVRRequestEntity,loginresult);
 /*
@@ -1167,8 +1198,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     @Override
-    public void loginWithBackupCode(final String code,final String email, final String mobile, final String sub,@NonNull final String usageType,
-                                    @NonNull final String trackId, @NonNull final String requestId,
+    public void loginWithBackupCode(final String code, final PasswordlessEntity passwordlessEntity,
                                     final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
@@ -1177,12 +1207,14 @@ public class Cidaas implements IOAuthWebLogin{
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
-                    if(sub!=null && !sub.equals("") && (usageType!=null && !usageType.equals(""))) {
+                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals("")
+                            && code!=null && !code.equals(""))) {
 
 
-                        if(usageType.equals(UsageType.MFA))
+                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
                         {
-                            if(trackId==null || trackId=="" )
+                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
                             {
                                 String errorMessage="trackId must not be empty";
 
@@ -1192,8 +1224,8 @@ public class Cidaas implements IOAuthWebLogin{
                         }
 
                         InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity=new InitiateBackupCodeMFARequestEntity();
-                        initiateBackupCodeMFARequestEntity.setSub(sub);
-                        initiateBackupCodeMFARequestEntity.setUsageType(usageType);
+                        initiateBackupCodeMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateBackupCodeMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateBackupCodeMFARequestEntity.setVerificationType("BACKUPCODE");
 
                      /*   String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
@@ -1208,7 +1240,9 @@ public class Cidaas implements IOAuthWebLogin{
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
                         */
-                        BackupCodeConfigurationController.getShared(context).loginWithBackupCode(code,baseurl,trackId,clientId,requestId,initiateBackupCodeMFARequestEntity,loginresult);
+                        BackupCodeConfigurationController.getShared(context).loginWithBackupCode(code,baseurl,
+                                passwordlessEntity.getTrackId(),clientId,passwordlessEntity.getRequestId(),
+                                initiateBackupCodeMFARequestEntity,loginresult);
                     }
                     else
                     {
@@ -1231,7 +1265,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     @Override
-    public void verifyBackupCode(final String code, final Result<LoginCredentialsResponseEntity> loginresult)
+    public void verifyBackupCode(final String code, final String statusId, final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -1244,8 +1278,10 @@ public class Cidaas implements IOAuthWebLogin{
 
                         AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity = new AuthenticateBackupCodeRequestEntity();
                         authenticateBackupCodeRequestEntity.setVerifierPassword(code);
+                        authenticateBackupCodeRequestEntity.setStatusId(statusId);
 
-                        BackupCodeConfigurationController.getShared(context).verifyBackupCode(baseurl,clientId,authenticateBackupCodeRequestEntity,loginresult);
+                        BackupCodeConfigurationController.getShared(context).verifyBackupCode(baseurl,clientId,
+                                authenticateBackupCodeRequestEntity,loginresult);
 /*
                           String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -1280,7 +1316,8 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void configurePatternRecognition(@NonNull final String patternString, @NonNull final String sub, final Result<EnrollPatternMFAResponseEntity> enrollresult)
+    public void configurePatternRecognition(@NonNull final String patternString, @NonNull final String sub,
+                                            final Result<EnrollPatternMFAResponseEntity> enrollresult)
     {
         try {
 
@@ -1335,8 +1372,8 @@ public class Cidaas implements IOAuthWebLogin{
     // 3. Todo Call configure Pattern From Pattern Controller and return the result
     // 4. Todo Maintain logs based on flags
     @Override
-    public void loginWithPatternRecognition(@NonNull final String patternCode, final String email, final String mobile, final String sub,
-                                 final String requestId, final String trackId, @NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult)
+    public void loginWithPatternRecognition(@NonNull final String pattern, @NonNull final PasswordlessEntity passwordlessEntity,
+                                            final Result<LoginCredentialsResponseEntity> loginresult)
     {
 
         try {
@@ -1348,7 +1385,9 @@ public class Cidaas implements IOAuthWebLogin{
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
 
-                    if ( usageType != null && usageType != "" &&  patternCode != null && !patternCode.equals("")  && requestId != null && requestId!="") {
+                    if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
+                            &&  pattern != null && !pattern.equals("")  && passwordlessEntity.getRequestId() != null &&
+                            passwordlessEntity.getRequestId()!="") {
 
                         if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
                             String errorMessage="baseurl or clientId or mobile number must not be empty";
@@ -1357,7 +1396,9 @@ public class Cidaas implements IOAuthWebLogin{
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((sub == null || sub.equals("") && email==null || email.equals("") && mobile==null || mobile.equals("")))
+                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
+                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
+                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -1365,9 +1406,9 @@ public class Cidaas implements IOAuthWebLogin{
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if(usageType.equals(UsageType.MFA))
+                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
                         {
-                            if(trackId==null || trackId=="" )
+                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
                             {
                                 String errorMessage="trackId must not be empty";
 
@@ -1377,16 +1418,17 @@ public class Cidaas implements IOAuthWebLogin{
                         }
 
                         InitiatePatternMFARequestEntity initiatePatternMFARequestEntity=new InitiatePatternMFARequestEntity();
-                        initiatePatternMFARequestEntity.setSub(sub);
-                        initiatePatternMFARequestEntity.setUsageType(usageType);
-                        initiatePatternMFARequestEntity.setEmail(email);
-                        initiatePatternMFARequestEntity.setMobile(mobile);
+                        initiatePatternMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiatePatternMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiatePatternMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiatePatternMFARequestEntity.setMobile(passwordlessEntity.getMobile());
 
                         //Todo check for email or sub or mobile
 
 
-                        PatternConfigurationController.getShared(context).LoginWithPattern(patternCode,baseurl,clientId,trackId,requestId,
-                                initiatePatternMFARequestEntity,loginresult);
+                        PatternConfigurationController.getShared(context).LoginWithPattern(pattern,baseurl,clientId,
+                                passwordlessEntity.getTrackId(),
+                                passwordlessEntity.getRequestId(),initiatePatternMFARequestEntity,loginresult);
                     }
                     else
                     {
@@ -1495,9 +1537,8 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithFaceRecognition(@NonNull final File faceImageFile, final String email, final String sub, final String mobile,
-                                         @NonNull final String requestId,
-                              final String trackId, @NonNull final String usageType, final Result<LoginCredentialsResponseEntity> loginresult)
+    public void loginWithFaceRecognition(@NonNull final File faceImageFile, @NonNull final PasswordlessEntity passwordlessEntity,
+                                         final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -1507,7 +1548,9 @@ loginresult.failure(error);
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
 
-                    if ( usageType != null && !usageType.equals("") && requestId != null && !requestId.equals("") && faceImageFile!=null) {
+                    if ( passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") &&
+                            faceImageFile!=null) {
 
                         if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
                             String errorMessage="baseurl or clientId must not be empty";
@@ -1516,7 +1559,9 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((sub == null || sub.equals("") && email==null || email.equals("") && mobile==null || mobile.equals("")))
+                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
+                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
+                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -1524,8 +1569,8 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if (usageType.equals(UsageType.MFA)) {
-                            if (trackId == null || trackId == "") {
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId()== null || passwordlessEntity.getTrackId() == "") {
                                 String errorMessage = "trackId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
@@ -1534,15 +1579,16 @@ loginresult.failure(error);
                         }
 
                         InitiateFaceMFARequestEntity initiateFaceMFARequestEntity = new InitiateFaceMFARequestEntity();
-                        initiateFaceMFARequestEntity.setSub(sub);
-                        initiateFaceMFARequestEntity.setUsageType(usageType);
-                        initiateFaceMFARequestEntity.setEmail(email);
-                        initiateFaceMFARequestEntity.setMobile(mobile);
+                        initiateFaceMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateFaceMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateFaceMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateFaceMFARequestEntity.setMobile(passwordlessEntity.getMobile());
 
                         //Todo check for email or sub or mobile
 
 
-                        FaceConfigurationController.getShared(context).LoginWithFace(faceImageFile, baseurl, clientId, trackId, requestId,
+                        FaceConfigurationController.getShared(context).LoginWithFace(faceImageFile, baseurl, clientId,
+                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateFaceMFARequestEntity, loginresult);
                     }
                     else
@@ -1599,28 +1645,160 @@ loginresult.failure(error);
 
     // ****** TODO LOGIN WITH Finger *****-------------------------------------------------------------------------------------------------------
 
+    KeyguardManager keyguardManager;
+    FingerprintManager mFingerPrintManager;
 
+    //Get Permission For FingerPrint authentication
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void getPermissionforFingerPrint()
+    {
+        try {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context, "Please enable the fingerprint permission", Toast.LENGTH_SHORT).show();
+
+
+
+            }
+            if (!mFingerPrintManager.isHardwareDetected()) {
+                Toast.makeText(context, "Fingerprint doesnot support in your mobile", Toast.LENGTH_SHORT).show();
+
+            }
+
+
+            if (!mFingerPrintManager.hasEnrolledFingerprints()) {
+                Toast.makeText(context, "Your Device has no registered Fingerprints! Please register atleast one in your Device settings", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(context,""+e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+
+        }
+        //Caught when no finger print isfound
+        catch (NoClassDefFoundError exc) {
+             Toast.makeText(context,"Atleast one fingerprint has to be registered", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+    }
 
     @Override
-    public void configureFingerprint(final String sub, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
+    public void configureFingerprint(final String sub, final Result<EnrollFingerprintMFAResponseEntity> enrollresult)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String> >() {
                 @Override
                 public void success(Dictionary<String, String>  result) {
-                    String baseurl = result.get("DomainURL");
+                    final String baseurl = result.get("DomainURL");
+                    final String clinetId = result.get("ClientId");
 
-                    //Todo Call the finger print method
 
+                 /*   //Done Call the finger print method
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        try {
+                             keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
+                             mFingerPrintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
+                            getPermissionforFingerPrint();
+                            if (!mFingerPrintManager.isHardwareDetected()) {
+                                Toast.makeText(context, "Fingerprint doesnot support", Toast.LENGTH_SHORT).show();
+                                Timber.d("error Touch ID Raja");
+                            }
+                        } catch (Exception e) {
+
+                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        }
+                        //Caught when no finger print isfound
+                        catch (NoClassDefFoundError exc) {
+                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                        }
+
+                    }
+                    else
+                    {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+
+
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+
+                    if (!mFingerPrintManager.hasEnrolledFingerprints()) {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+
+                    mFingerPrintManager.authenticate(null, null, 0, new FingerprintManager.AuthenticationCallback() {
+                        @Override
+                        public void onAuthenticationError(int errorCode, CharSequence errString) {
+                            super.onAuthenticationError(errorCode, errString);
+
+                            String ErrorMessage="Fingerprint permission not given in your mobile";
+                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                        }
+
+                        @Override
+                        public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                            super.onAuthenticationHelp(helpCode, helpString);
+                            String ErrorMessage="Fingerprint permission not given in your mobile";
+                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        @Override
+                        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
+                            super.onAuthenticationSucceeded(result);
+                            //Todo Handle Success of FingerPrint
+                            //save in LOCAL DB
+                            // Ask to set Verification Type or not
+
+
+
+
+                        }
+
+                        @Override
+                        public void onAuthenticationFailed() {
+                            super.onAuthenticationFailed();
+                            String ErrorMessage="Place your Fingerprint on the fingerprint sensor";
+                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                        }
+
+                    },null);
+
+*/
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
                         final String finalBaseurl = baseurl;
 
 
-
                         String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
                         SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity = new SetupFingerprintMFARequestEntity();
-                        setupFingerprintMFARequestEntity.setClient_id(result.get("ClientId"));
+                        setupFingerprintMFARequestEntity.setClient_id(clinetId);
                         setupFingerprintMFARequestEntity.setLogoUrl(logoUrl);
                         FingerprintConfigurationController.getShared(context).configureFingerprint(sub,finalBaseurl, setupFingerprintMFARequestEntity,
                                 enrollresult);
@@ -1649,62 +1827,155 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithFingerprint(final String email, final String sub, final String mobile, final String requestId,
-                                     final String trackId, final String usageType, final Result<LoginCredentialsResponseEntity> loginresult)
+    public void loginWithFingerprint(final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
-                    if ( usageType != null && usageType != "" && requestId != null && requestId!="") {
+                    final String baseurl = savedProperties.get("DomainURL");
+                    final String clientId=savedProperties.get("ClientId");
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
-                            String errorMessage="baseurl or clientId  must not be empty";
 
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    //Done Call the finger print method
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        try {
+                            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
+                            FingerprintManager mFingerPrintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
+                            getPermissionforFingerPrint();
+                            if (!mFingerPrintManager.isHardwareDetected()) {
+                                Toast.makeText(context, "Fingerprint doesnot support", Toast.LENGTH_SHORT).show();
+                                Timber.d("error Touch ID Raja");
+                            }
+                        } catch (Exception e) {
+
+                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        }
+                        //Caught when no finger print isfound
+                        catch (NoClassDefFoundError exc) {
+                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
                         }
 
-                        if((sub == null || sub.equals("") && email==null || email.equals("") && mobile==null || mobile.equals("")))
-                        {
-                            String errorMessage="sub or email or mobile number must not be empty";
+                    }
+                    else
+                    {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
 
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    }
+
+
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+
+                    if (!mFingerPrintManager.hasEnrolledFingerprints()) {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+
+                    mFingerPrintManager.authenticate(null, null, 0, new FingerprintManager.AuthenticationCallback() {
+                        @Override
+                        public void onAuthenticationError(int errorCode, CharSequence errString) {
+                            super.onAuthenticationError(errorCode, errString);
+
+                            String ErrorMessage="Fingerprint permission not given in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
                         }
 
-                        if(usageType.equals(UsageType.MFA))
-                        {
-                            if(trackId==null || trackId=="" )
+                        @Override
+                        public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                            super.onAuthenticationHelp(helpCode, helpString);
+                            String ErrorMessage="Fingerprint permission not given in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        @Override
+                        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
+                            super.onAuthenticationSucceeded(result);
+                            //Todo Handle Success of FingerPrint
+                            //save in LOCAL DB
+                            // Ask to set Verification Type or not
+
+
+
+                            if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                                    passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
+
+                                if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
+                                    String errorMessage="baseurl or clientId  must not be empty";
+
+                                    loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                            errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                }
+
+
+                                if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
+                                        passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
+                                        passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
+                                {
+                                    String errorMessage="sub or email or mobile number must not be empty";
+
+                                    loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                            errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                }
+
+                                if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
+                                {
+                                    if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
+                                    {
+                                        String errorMessage="trackId must not be empty For Multifactor Authentication";
+
+                                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    }
+                                }
+
+                                InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity=new InitiateFingerprintMFARequestEntity();
+                                initiateFingerprintMFARequestEntity.setSub(passwordlessEntity.getSub());
+                                initiateFingerprintMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                                initiateFingerprintMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                                initiateFingerprintMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+                                //Todo check for email or sub or mobile
+
+
+                                FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl,clientId,
+                                        passwordlessEntity.getTrackId(),passwordlessEntity.getRequestId(),
+                                        initiateFingerprintMFARequestEntity,loginresult);
+                            }
+                            else
                             {
-                                String errorMessage="trackId must not be empty";
+                                String errorMessage="UsageType or FingerprintCode or requestId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                             }
+
                         }
 
-                        InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity=new InitiateFingerprintMFARequestEntity();
-                        initiateFingerprintMFARequestEntity.setSub(sub);
-                        initiateFingerprintMFARequestEntity.setUsageType(usageType);
-                        initiateFingerprintMFARequestEntity.setEmail(email);
-                        initiateFingerprintMFARequestEntity.setMobile(mobile);
+                        @Override
+                        public void onAuthenticationFailed() {
+                            super.onAuthenticationFailed();
+                            String ErrorMessage="Place your Fingerprint on the fingerprint sensor";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
 
-                        //Todo check for email or sub or mobile
+                        }
 
+                    },null);
 
-                        FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl,clientId,trackId,requestId,
-                                initiateFingerprintMFARequestEntity,loginresult);
-                    }
-                    else
-                    {
-                        String errorMessage="UsageType or FingerprintCode or requestId must not be empty";
-
-                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                    }
                 }
 
                 @Override
@@ -1751,7 +2022,8 @@ loginresult.failure(error);
 
 
     @Override
-    public void configureSmartPush(final String sub, final Result<EnrollSmartPushMFAResponseEntity> enrollresult) {
+    public void configureSmartPush(final String sub, final Result<EnrollSmartPushMFAResponseEntity> enrollresult)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String> >() {
                 @Override
@@ -1795,8 +2067,7 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithSmartPush(final String email, final String sub, final String mobile, final String requestId,
-                                   final String trackId, final String usageType,
+    public void loginWithSmartPush(final PasswordlessEntity passwordlessEntity,
                                    final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
@@ -1805,7 +2076,8 @@ loginresult.failure(error);
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
-                    if ( usageType != null && usageType != "" && requestId != null && requestId!="") {
+                    if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
 
                         if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
                             String errorMessage="baseurl or clientId  must not be empty";
@@ -1814,7 +2086,9 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((sub == null || sub.equals("") && email==null || email.equals("") && mobile==null || mobile.equals("")))
+                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
+                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
+                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -1822,9 +2096,9 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if(usageType.equals(UsageType.MFA))
+                        if(passwordlessEntity.getMobile().equals(UsageType.MFA))
                         {
-                            if(trackId==null || trackId=="" )
+                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
                             {
                                 String errorMessage="trackId must not be empty";
 
@@ -1834,15 +2108,16 @@ loginresult.failure(error);
                         }
 
                         InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity=new InitiateSmartPushMFARequestEntity();
-                        initiateSmartPushMFARequestEntity.setSub(sub);
-                        initiateSmartPushMFARequestEntity.setUsageType(usageType);
-                        initiateSmartPushMFARequestEntity.setEmail(email);
-                        initiateSmartPushMFARequestEntity.setMobile(mobile);
+                        initiateSmartPushMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateSmartPushMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateSmartPushMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateSmartPushMFARequestEntity.setMobile(passwordlessEntity.getMobile());
 
                         //Todo check for email or sub or mobile
 
 
-                        SmartPushConfigurationController.getShared(context).LoginWithSmartPush(baseurl,clientId,trackId,requestId,
+                        SmartPushConfigurationController.getShared(context).LoginWithSmartPush(baseurl,clientId,
+                                passwordlessEntity.getTrackId(),passwordlessEntity.getRequestId(),
                                 initiateSmartPushMFARequestEntity,loginresult);
                     }
                     else
@@ -1936,8 +2211,7 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithTOTP(final String email, final String sub, final String mobile, final String requestId, final String trackId,
-                              final String usageType,
+    public void loginWithTOTP(final PasswordlessEntity passwordlessEntity,
                               final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -1945,7 +2219,8 @@ loginresult.failure(error);
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
-                    if ( usageType != null && usageType != "" && requestId != null && requestId!="") {
+                    if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
 
                         if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
                             String errorMessage="baseurl or clientId  must not be empty";
@@ -1954,7 +2229,9 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((sub == null || sub.equals("") && email==null || email.equals("") && mobile==null || mobile.equals("")))
+                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
+                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
+                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -1962,9 +2239,9 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if(usageType.equals(UsageType.MFA))
+                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
                         {
-                            if(trackId==null || trackId=="" )
+                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
                             {
                                 String errorMessage="trackId must not be empty";
 
@@ -1974,15 +2251,16 @@ loginresult.failure(error);
                         }
 
                         InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity=new InitiateTOTPMFARequestEntity();
-                        initiateTOTPMFARequestEntity.setSub(sub);
-                        initiateTOTPMFARequestEntity.setUsageType(usageType);
-                        initiateTOTPMFARequestEntity.setEmail(email);
-                        initiateTOTPMFARequestEntity.setMobile(mobile);
+                        initiateTOTPMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateTOTPMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateTOTPMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateTOTPMFARequestEntity.setMobile(passwordlessEntity.getMobile());
 
                         //Todo check for email or sub or mobile
 
 
-                        TOTPConfigurationController.getShared(context).LoginWithTOTP(baseurl,clientId,trackId,requestId,
+                        TOTPConfigurationController.getShared(context).LoginWithTOTP(baseurl,clientId,
+                                passwordlessEntity.getTrackId(),passwordlessEntity.getRequestId(),
                                 initiateTOTPMFARequestEntity,loginresult);
                     }
                     else
@@ -2012,7 +2290,8 @@ loginresult.failure(error);
 
 
     @Override
-    public void configureVoiceRecognition(final File VoiceaudioFile, final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult) {
+    public void configureVoiceRecognition(final File VoiceaudioFile, final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String> >() {
                 @Override
@@ -2051,9 +2330,8 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithVoiceRecognition(final File VoiceaudioFile, final String email, final String sub, final String mobile, final String requestId,
-                                          final String trackId, final String usageType,
-                               final Result<LoginCredentialsResponseEntity> loginresult) {
+    public void loginWithVoiceRecognition(final File VoiceaudioFile, final PasswordlessEntity passwordlessEntity,
+                                          final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2061,7 +2339,8 @@ loginresult.failure(error);
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
 
-                    if ( usageType != null && !usageType.equals("") && requestId != null && !requestId.equals("") && VoiceaudioFile!=null) {
+                    if ( passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") && VoiceaudioFile!=null) {
 
                         if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
                             String errorMessage="baseurl or clientId must not be empty";
@@ -2070,7 +2349,9 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((sub == null || sub.equals("") && email==null || email.equals("") && mobile==null || mobile.equals("")))
+                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
+                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
+                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -2078,8 +2359,8 @@ loginresult.failure(error);
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if (usageType.equals(UsageType.MFA)) {
-                            if (trackId == null || trackId == "") {
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId()== "") {
                                 String errorMessage = "trackId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
@@ -2088,15 +2369,16 @@ loginresult.failure(error);
                         }
 
                         InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity = new InitiateVoiceMFARequestEntity();
-                        initiateVoiceMFARequestEntity.setSub(sub);
-                        initiateVoiceMFARequestEntity.setUsageType(usageType);
-                        initiateVoiceMFARequestEntity.setEmail(email);
-                        initiateVoiceMFARequestEntity.setMobile(mobile);
+                        initiateVoiceMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateVoiceMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateVoiceMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateVoiceMFARequestEntity.setMobile(passwordlessEntity.getMobile());
 
                         //Todo check for email or sub or mobile
 
 
-                        VoiceConfigurationController.getShared(context).LoginWithVoice(VoiceaudioFile, baseurl, clientId, trackId, requestId,
+                        VoiceConfigurationController.getShared(context).LoginWithVoice(VoiceaudioFile, baseurl, clientId,
+                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateVoiceMFARequestEntity, loginresult);
                     }
                     else
@@ -2489,7 +2771,8 @@ loginresult.failure(error);
          }
      }
 
-    public void loginDeduplication(@NonNull final String sub,@NonNull final String password, final Result<LoginDeduplicationResponseEntity> deduplicaionResult)
+    public void loginDeduplication(@NonNull final String sub,@NonNull final String password,
+                                   final Result<LoginDeduplicationResponseEntity> deduplicaionResult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2549,7 +2832,8 @@ loginresult.failure(error);
 
     }
 
-    public void handleResetPassword(@NonNull final String verificationCode, final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult)
+    public void handleResetPassword(@NonNull final String verificationCode,
+                                    final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult)
     {
         try {
         checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2583,7 +2867,8 @@ loginresult.failure(error);
     }
 
 
-    public void resetPassword(@NonNull final String password, @NonNull final String confirmPassword, final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
+    public void resetPassword(@NonNull final String password, @NonNull final String confirmPassword,
+                              final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2747,13 +3032,6 @@ loginresult.failure(error);
     public void getAccessTokenByRefreshToken(String refershtoken, Result<AccessTokenEntity> result) {
 
     }
-
-
-
-
-
-
-
 
     // --------------------------------------------------------------------------------------------------
 
@@ -3145,49 +3423,6 @@ loginresult.failure(error);
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-
-    public void resumeLogin(@NonNull final ResumeLoginRequestEntity resumeLoginRequestEntity , @NonNull final Result<AccessTokenEntity> loginresult)
-    {
-        try{
-
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
-                @Override
-                public void success(Dictionary<String, String>  result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
-
-                    if (baseurl != null && !baseurl.equals("") && clientId != null && clientId!="" ) {
-
-                         resumeLoginRequestEntity.setClient_id(clientId);
-                        LoginController.getShared(context).resumeLogin(baseurl,resumeLoginRequestEntity,loginresult);
-                    }
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    loginresult.failure(error);
-                }
-            });
-        }
-        catch (Exception e){
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
-        }
-    }
-*/
 
 
     @Override

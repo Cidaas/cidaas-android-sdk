@@ -28,6 +28,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Cidaas cidaas=new Cidaas(this);
             if(remoteMessage.getData().get("intermediate_verifiation_id")!=null && remoteMessage.getData().get("intermediate_verifiation_id")!="") {
                 cidaas.setremoteMessage(remoteMessage.getData());
+
+
             }
             else
             {

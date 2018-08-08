@@ -29,7 +29,7 @@ import timber.log.Timber;
 public class IVRConfigurationController {
 
 
-    private String UsageTypeFromIVR,TrackId,RequestId,StatusId,Sub;
+    private String UsageTypeFromIVR,TrackId,RequestId,Sub;
     private Context context;
 
     public static IVRConfigurationController shared;
@@ -40,7 +40,6 @@ public class IVRConfigurationController {
         context=contextFromCidaas;
         TrackId="";
         RequestId="";
-        StatusId="";
         Sub="";
 
         //Todo setValue for authenticationType
@@ -91,7 +90,6 @@ public class IVRConfigurationController {
                                 {
                                     @Override
                                     public void success(SetupIVRMFAResponseEntity serviceresult) {
-                                        StatusId=serviceresult.getData().getStatusId();
                                         result.success(serviceresult);
                                     }
 
@@ -121,7 +119,7 @@ public class IVRConfigurationController {
     }
 
     //Service call To enrollIVRMFA
-    public void enrollIVRMFA(@NonNull final String code,@NonNull final String baseurl, @NonNull final Result<EnrollIVRMFAResponseEntity> result)
+    public void enrollIVRMFA(@NonNull final String code,String StatusId,@NonNull final String baseurl, @NonNull final Result<EnrollIVRMFAResponseEntity> result)
     {
         try{
 
@@ -195,7 +193,6 @@ public class IVRConfigurationController {
                 IVRVerificationService.getShared(context).initiateIVRMFA(baseurl, initiateIVRMFARequestEntity, new Result<InitiateIVRMFAResponseEntity>() {
                     @Override
                     public void success(InitiateIVRMFAResponseEntity serviceresult) {
-                        StatusId=serviceresult.getData().getStatusId();
                         result.success(serviceresult);
                     }
 
@@ -226,8 +223,47 @@ public class IVRConfigurationController {
                           final Result<LoginCredentialsResponseEntity> result){
         try{
 
-            if(StatusId!=null && StatusId!="") {
-                authenticateIVRRequestEntity.setStatusId(StatusId);
+            if(authenticateIVRRequestEntity.getStatusId()!=null && authenticateIVRRequestEntity.getStatusId()!="") {
+                if ( baseurl != null && !baseurl.equals("")) {
+                    //Todo Service call
+                    IVRVerificationService.getShared(context).authenticateIVRMFA(baseurl, authenticateIVRRequestEntity, new Result<AuthenticateIVRResponseEntity>() {
+                        @Override
+                        public void success(AuthenticateIVRResponseEntity serviceresult) {
+
+
+                            //Todo decide to move to MFA or Paswword Less Based on usageType
+                            ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
+                            resumeLoginRequestEntity.setSub(serviceresult.getData().getSub());
+                            resumeLoginRequestEntity.setTrack_id(TrackId);
+                            resumeLoginRequestEntity.setTrackingCode(serviceresult.getData().getTrackingCode());
+                            resumeLoginRequestEntity.setUsageType(UsageTypeFromIVR);
+                            resumeLoginRequestEntity.setRequestId(RequestId);
+                            resumeLoginRequestEntity.setVerificationType("IVR");
+                            resumeLoginRequestEntity.setClient_id(clientId);
+
+                            if(UsageTypeFromIVR.equals(UsageType.PASSWORDLESS)){
+
+                                LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,result);
+                            }
+
+                            else if(UsageTypeFromIVR.equals(UsageType.MFA)) {
+
+
+                                LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, result);
+                            }
+
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            result.failure(error);
+                        }
+                    });
+                }
+                else
+                {
+                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
 
             }
             else {
@@ -237,46 +273,7 @@ public class IVRConfigurationController {
                         errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }
 
-            if ( baseurl != null && !baseurl.equals("")) {
-                //Todo Service call
-                IVRVerificationService.getShared(context).authenticateIVRMFA(baseurl, authenticateIVRRequestEntity, new Result<AuthenticateIVRResponseEntity>() {
-                    @Override
-                    public void success(AuthenticateIVRResponseEntity serviceresult) {
 
-
-                        //Todo decide to move to MFA or Paswword Less Based on usageType
-                        ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
-                        resumeLoginRequestEntity.setSub(serviceresult.getData().getSub());
-                        resumeLoginRequestEntity.setTrack_id(TrackId);
-                        resumeLoginRequestEntity.setTrackingCode(serviceresult.getData().getTrackingCode());
-                        resumeLoginRequestEntity.setUsageType(UsageTypeFromIVR);
-                        resumeLoginRequestEntity.setRequestId(RequestId);
-                        resumeLoginRequestEntity.setVerificationType("IVR");
-                        resumeLoginRequestEntity.setClient_id(clientId);
-
-                        if(UsageTypeFromIVR.equals(UsageType.PASSWORDLESS)){
-
-                            LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,result);
-                        }
-
-                        else if(UsageTypeFromIVR.equals(UsageType.MFA)) {
-
-
-                            LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, result);
-                        }
-
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-            else
-            {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
-            }
         }
         catch (Exception e)
         {

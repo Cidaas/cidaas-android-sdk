@@ -26,7 +26,7 @@ import timber.log.Timber;
 public class EmailConfigurationController {
 
 
-    private String TrackId,RequestId,UsageTypefromEmail,StatusId;
+    private String TrackId,RequestId,UsageTypefromEmail;
     private String Sub;
     private Context context;
 
@@ -34,7 +34,7 @@ public class EmailConfigurationController {
 
     public EmailConfigurationController(Context contextFromCidaas) {
 
-        StatusId="";
+
         TrackId="";
         UsageTypefromEmail="";
         context=contextFromCidaas;
@@ -85,7 +85,7 @@ public class EmailConfigurationController {
                         {
                             @Override
                             public void success(SetupEmailMFAResponseEntity serviceresult) {
-                                StatusId=serviceresult.getData().getStatusId();
+                                //StatusId=serviceresult.getData().getStatusId();
                                 result.success(serviceresult);
                             }
 
@@ -115,25 +115,28 @@ public class EmailConfigurationController {
     }
 
     //Service call To enrollemailMFA
-    public void enrollEmailMFA(@NonNull final String code,@NonNull final String baseurl, @NonNull final Result<EnrollEmailMFAResponseEntity> result)
+    public void enrollEmailMFA(@NonNull final String code,@NonNull final String statusId,
+                               @NonNull final String baseurl, @NonNull final Result<EnrollEmailMFAResponseEntity> result)
     {
         try{
 
-            if(Sub!="" && StatusId!="")
+            if(Sub!="" && statusId!="")
             {
                final EnrollEmailMFARequestEntity enrollEmailMFARequestEntity=new EnrollEmailMFARequestEntity();
                enrollEmailMFARequestEntity.setCode(code);
-               enrollEmailMFARequestEntity.setStatusId(StatusId);
+               enrollEmailMFARequestEntity.setStatusId(statusId);
 
                 AccessTokenController.getShared(context).getAccessToken(Sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(AccessTokenEntity accessresult) {
 
                         if (enrollEmailMFARequestEntity.getSub() != null && enrollEmailMFARequestEntity.getStatusId()  != null &&
-                                baseurl != null && !baseurl.equals("") && accessresult.getAccess_token() != null && !accessresult.getAccess_token().equals(""))
+                                baseurl != null && !baseurl.equals("") && accessresult.getAccess_token() != null &&
+                                !accessresult.getAccess_token().equals(""))
                         {
                             //Done Service call
-                            EmailVerificationService.getShared(context).enrollEmailMFA(baseurl, accessresult.getAccess_token(), enrollEmailMFARequestEntity,
+                            EmailVerificationService.getShared(context).enrollEmailMFA(baseurl, accessresult.getAccess_token(),
+                                    enrollEmailMFARequestEntity,
                                     new Result<EnrollEmailMFAResponseEntity>() {
                                 @Override
                                 public void success(EnrollEmailMFAResponseEntity serviceresult) {
@@ -190,7 +193,7 @@ public class EmailConfigurationController {
                 EmailVerificationService.getShared(context).initiateEmailMFA(baseurl, initiateEmailMFARequestEntity, new Result<InitiateEmailMFAResponseEntity>() {
                     @Override
                     public void success(InitiateEmailMFAResponseEntity serviceresult) {
-                        StatusId=serviceresult.getData().getStatusId();
+                       // StatusId=serviceresult.getData().getStatusId();
                         result.success(serviceresult);
                     }
 
@@ -214,12 +217,13 @@ public class EmailConfigurationController {
     }
 
     public void verifyEmail(@NonNull final String baseurl, @NonNull final String code, @NonNull final String clientId,
-                            final AuthenticateEmailRequestEntity authenticateEmailRequestEntity, final Result<LoginCredentialsResponseEntity> result)
+                            @NonNull final String statusId, final AuthenticateEmailRequestEntity authenticateEmailRequestEntity,
+                            final Result<LoginCredentialsResponseEntity> result)
     {
         try{
 
 
-            authenticateEmailRequestEntity.setStatusId(StatusId);
+            authenticateEmailRequestEntity.setStatusId(statusId);
 
             if (authenticateEmailRequestEntity.getCode() != null && authenticateEmailRequestEntity.getCode() != "" &&
                     authenticateEmailRequestEntity.getStatusId() != null && authenticateEmailRequestEntity.getStatusId() != "" &&

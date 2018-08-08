@@ -209,9 +209,6 @@ public class VoiceVerificationService {
             }
 
 
-
-
-
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
             DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
@@ -229,9 +226,9 @@ public class VoiceVerificationService {
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
+               // deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
             }
             setupVoiceMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -331,6 +328,14 @@ public class VoiceVerificationService {
             headers.put("access_token",accessToken);
 
 
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+
+                //Done Change to FCM acceptence now it is in Authenticator
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+
+              /*  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0l" +
+                        "ZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");*/
+            }
             enrollVoiceMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -430,6 +435,16 @@ public class VoiceVerificationService {
             headers.put("access_challenge",codeChallenge);
             headers.put("access_challenge_method","S256");
 
+
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+
+                //Done Change to FCM acceptence now it is in Authenticator
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+
+              /*  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0l" +
+                        "ZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");*/
+            }
+
             initiateVoiceMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -523,6 +538,17 @@ public class VoiceVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
+            headers.put("verification_api_version","2");
+
+
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+
+                //Done Change to FCM acceptence now it is in Authenticator
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+
+              /*  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0l" +
+                        "ZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");*/
+            }
 
             authenticateVoiceRequestEntity.setDeviceInfo(deviceInfoEntity);
 

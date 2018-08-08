@@ -1,15 +1,16 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Helper.Enums.UsageType;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -44,7 +45,36 @@ public class TOTPMFA extends AppCompatActivity {
         cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
-                cidaas.loginWithTOTP("",sub,null,result.getData().getRequestId(),trackid, UsageType.MFA,new Result<LoginCredentialsResponseEntity>() {
+
+                PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                passwordlessEntity.setTrackId(trackid);
+                passwordlessEntity.setRequestId(result.getData().getRequestId());
+                passwordlessEntity.setSub(sub);
+                passwordlessEntity.setMobile("");
+                passwordlessEntity.setEmail("");
+
+
+                cidaas.loginWithSmartPush(passwordlessEntity,new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Intent intent=new Intent(TOTPMFA.this,Smartpush.class);
+                        //  intent.putExtra("statusId",result.getData().getStatusId());
+                        intent.putExtra("deviceID",deviceID);
+                        intent.putExtra("trackid",trackid);
+                        // intent.putExtra("RandomNumber",result.getData().getRandomNumber());
+                        intent.putExtra("sub",sub);
+                        startActivity(intent);
+                        Toast.makeText(TOTPMFA.this, "+result.getData().getRandomNumber()", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(TOTPMFA.this, ""+error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                cidaas.loginWithTOTP(passwordlessEntity,new Result<LoginCredentialsResponseEntity>() {
                     @Override
                     public void success(LoginCredentialsResponseEntity authresult) {
                         if(trackid!=null && trackid!=""){

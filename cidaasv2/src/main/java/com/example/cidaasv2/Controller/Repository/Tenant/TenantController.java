@@ -51,46 +51,7 @@ public class TenantController {
         }
         return shared;
     }
-    /*//Get Tenant Info
-    public void getTenantInfo(final Result<TenantInfoEntity> result) {
-        try {
 
-            //Todo Check notnull in db
-            String baseurl = "";
-            if(savedProperties==null){
-
-                savedProperties= DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "TenantInfo readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            } else {
-                baseurl = savedProperties.get("DomainURL");
-                getTenantInfoService(baseurl,result);
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }
-*/
     //Service call To get Tenant Info
     public void getTenantInfo(@NonNull String baseurl, final Result<TenantInfoEntity> result){
         try{

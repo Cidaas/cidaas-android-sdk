@@ -225,9 +225,9 @@ public class FingerprintVerificationService {
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
+               // deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
             }
             setupFingerprintMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -327,6 +327,11 @@ public class FingerprintVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
             headers.put("access_token",accessToken);
+            headers.put("verification_api_version","2");
+
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+            }
 
 
             enrollFingerprintMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -427,6 +432,12 @@ public class FingerprintVerificationService {
             headers.put("verification_api_version","2");
             headers.put("access_challenge",codeChallenge);
             headers.put("access_challenge_method","S256");
+
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+            }
+
+
             initiateFingerprintMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
 
@@ -523,6 +534,12 @@ public class FingerprintVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
+            headers.put("verification_api_version","2");
+
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+            }
+
 
             authenticateFingerprintRequestEntity.setDeviceInfo(deviceInfoEntity);
             authenticateFingerprintRequestEntity.setVerifierPassword(deviceInfoEntity.getDeviceId());

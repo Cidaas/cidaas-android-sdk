@@ -13,17 +13,22 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.PhysicalVerificationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -49,59 +54,39 @@ public class EnrollPattern extends AppCompatActivity {
         sub=intent.getStringExtra("sub");
         accessToken=intent.getStringExtra("accessToken");
 
+        if(sub=="" || sub==null)
+        {
+            sub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
+        }
+
 
     }
 
     public void verifyPattern(View view){
-        String userdeviceID="8d0937c3-b2a8-4651-9bdc-cfce8a5eba14";
-        PhysicalVerificationEntity physicalVerificationEntity=new PhysicalVerificationEntity();
-        physicalVerificationEntity.setSub(sub);
-        physicalVerificationEntity.setUserDeviceId(userdeviceID);
-
-        physicalVerificationEntity.setUsageType("MULTIFACTOR_AUTHENTICATION");
-
-        physicalVerificationEntity.setPhysicalVerificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
-      /*  cidaas.initiatePatternMFA(physicalVerificationEntity, new Result<InitiatePatternMFAResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
-            public void success(InitiatePatternMFAResponseEntity result) {
-
-                String verificationcode="RED[1,2,3,4]";
-               cidaas.authenticatePatternMFA(result.getData().getStatusId(), verificationcode, new Result<AuthenticatePatternResponseEntity>() {
-                   @Override
-                   public void success(AuthenticatePatternResponseEntity result) {
-                       Toast.makeText(EnrollPattern.this, "Successfully Authenticated"+result.getData().getTrackingCode(), Toast.LENGTH_SHORT).show();
-                   }
-
-                   @Override
-                   public void failure(WebAuthError error) {
-                       Toast.makeText(EnrollPattern.this, "Failed Authenitcated", Toast.LENGTH_SHORT).show();
-                   }
-               });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Failed initiate"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-   */ }
+            public void success(AuthRequestResponseEntity result) {
 
 
-    public void EnrollPattern(View view){
+                PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                passwordlessEntity.setEmail("");
+                passwordlessEntity.setMobile("");
+                passwordlessEntity.setSub("");
+                passwordlessEntity.setRequestId(result.getData().getRequestId());
+                passwordlessEntity.setTrackId(trackId);
+                passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
 
-        String userdeviceID="8d0937c3-b2a8-4651-9bdc-cfce8a5eba14";
-        EnrollPatternMFARequestEntity enrollPatternMFARequestEntity=new EnrollPatternMFARequestEntity();
-        enrollPatternMFARequestEntity.setUserDeviceId(userdeviceID);
-        enrollPatternMFARequestEntity.setStatusId("2f7dfee0-b521-4e9c-ab01-bedb00ad4f3c");
-        enrollPatternMFARequestEntity.setVerifierPassword("RED[1,2,3,4]");
-        enrollPatternMFARequestEntity.setSub(sub);
+                cidaas.loginWithPatternRecognition("RED[1,2,3,4]", passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+                            @Override
+                            public void success(LoginCredentialsResponseEntity result) {
+                                Toast.makeText(EnrollPattern.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                            }
 
-
-
-        cidaas.initiateAccountVerificationByEmail("", "", new Result<RegisterUserAccountInitiateResponseEntity>() {
-            @Override
-            public void success(RegisterUserAccountInitiateResponseEntity result) {
-
+                            @Override
+                            public void failure(WebAuthError error) {
+                                Toast.makeText(EnrollPattern.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
 
             @Override
@@ -111,78 +96,14 @@ public class EnrollPattern extends AppCompatActivity {
         });
 
 
+}
 
-        cidaas.configureEmail(sub, new Result<SetupEmailMFAResponseEntity>() {
-            @Override
-            public void success(SetupEmailMFAResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-
-        cidaas.enrollEmail(code, new Result<EnrollEmailMFAResponseEntity>() {
-            @Override
-            public void success(EnrollEmailMFAResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-
-
-
-         cidaas.loginWithTOTP("yourEmail", "", "", UsageType.MFA, "your trackId", "your requestId", new Result<LoginCredentialsResponseEntity>() {
-             @Override
-             public void success(LoginCredentialsResponseEntity result) {
-
-             }
-
-             @Override
-             public void failure(WebAuthError error) {
-
-             }
-         });
-
-
-      cidaas.configureTOTP("Your Sub", new Result<EnrollTOTPMFAResponseEntity>() {
-    @Override
-    public void success(EnrollTOTPMFAResponseEntity result) {
-
-    }
-
-    @Override
-    public void failure(WebAuthError error) {
-
-    }
-});
-
-
-
-   /*     cidaas.enrollPatternMFA(enrollPatternMFARequestEntity, new Result<EnrollPatternMFAResponseEntity>() {
-            @Override
-            public void success(EnrollPatternMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Enroll Sucessfully"+result, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Enroll Failed"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-   */ }
 
 
     public void SetupPattern(View view){
-   /*     cidaas.setupPatternMFA(sub,new Result<SetupPatternMFAResponseEntity>() {
+        cidaas.configurePatternRecognition("RED[1,2,3,4]",sub,new Result<EnrollPatternMFAResponseEntity>() {
             @Override
-            public void success(SetupPatternMFAResponseEntity result) {
+            public void success(EnrollPatternMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Success Pattern", Toast.LENGTH_SHORT).show();
             }
 
@@ -191,7 +112,7 @@ public class EnrollPattern extends AppCompatActivity {
                 Toast.makeText(EnrollPattern.this, "Failes Pattern"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-   */ }
+    }
 
     public void SetupSmartPush(View view)
     {
@@ -205,8 +126,10 @@ public class EnrollPattern extends AppCompatActivity {
             public void failure(WebAuthError error) {
                 Toast.makeText(EnrollPattern.this, "Fails push "+error.ErrorMessage, Toast.LENGTH_SHORT).show();
             }
-        });
- */
+        });*/
+
+
+
     }
 
     public void EnrollSmartPush(View view){
@@ -237,33 +160,7 @@ public class EnrollPattern extends AppCompatActivity {
 
         physicalVerificationEntity.setUsageType("MULTIFACTOR_AUTHENTICATION");
 
-        physicalVerificationEntity.setPhysicalVerificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
-
-
-    /*    cidaas.initiateSmartPushMFA(physicalVerificationEntity, new Result<InitiateSmartPushMFAResponseEntity>() {
-            @Override
-            public void success(InitiateSmartPushMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Success "+result.getData().getRandomNumber(), Toast.LENGTH_SHORT).show();
-
-                cidaas.authenticateSmartPushMFA( result.getData().getStatusId(), result.getData().getRandomNumber(), new Result<AuthenticateSmartPushResponseEntity>() {
-                    @Override
-                    public void success(AuthenticateSmartPushResponseEntity result) {
-                        Toast.makeText(EnrollPattern.this, "Sucesss Push", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(EnrollPattern.this, "Failed Push", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Error:", Toast.LENGTH_SHORT).show();
-            }
-        });
-   */ }
+       }
 
 
     public void SetupFace(View view)
@@ -343,36 +240,7 @@ catch (Exception ec){
         physicalVerificationEntity.setUserDeviceId(userdeviceID);
 
         physicalVerificationEntity.setUsageType("MULTIFACTOR_AUTHENTICATION");
-
-        physicalVerificationEntity.setPhysicalVerificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
-
-/*
-        cidaas.initiateFaceMFA(physicalVerificationEntity, new Result<InitiateFaceMFAResponseEntity>() {
-            @Override
-            public void success(InitiateFaceMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Success "+result.getData().getStatusId(), Toast.LENGTH_SHORT).show();
-
-                File imgae=new File("/home/rajanarayanan/Project/cidaas-sdk-android-v2/app/src/main/res/drawable-v24/raja.jpeg");
-
-                cidaas.authenticateFaceMFA( result.getData().getStatusId(),imgae, userdeviceID,new Result<AuthenticateFaceResponseEntity>() {
-                    @Override
-                    public void success(AuthenticateFaceResponseEntity result) {
-                        Toast.makeText(EnrollPattern.this, "Sucesss Push", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(EnrollPattern.this, "Failed Push", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Error:", Toast.LENGTH_SHORT).show();
-            }
-        });
-    */}
+}
 
     private String getFCMToken() {
         String token = FirebaseInstanceId.getInstance().getToken();

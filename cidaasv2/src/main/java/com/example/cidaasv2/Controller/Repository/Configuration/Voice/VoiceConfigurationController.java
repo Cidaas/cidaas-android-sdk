@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -104,7 +105,7 @@ public class VoiceConfigurationController {
                                     @Override
                                     public void success(final SetupVoiceMFAResponseEntity setupserviceresult) {
 
-                                        new CountDownTimer(50000, 500) {
+                                        new CountDownTimer(5000, 500) {
                                             String instceID="";
                                             public void onTick(long millisUntilFinished) {
                                                 instceID= Cidaas.instanceId;
@@ -240,8 +241,6 @@ public class VoiceConfigurationController {
             Cidaas.instanceId="";
             if (    initiateVoiceMFARequestEntity.getUsageType() != null && initiateVoiceMFARequestEntity.getUsageType() != "" &&
                     initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != ""&&
-                    initiateVoiceMFARequestEntity.getSub() != null && initiateVoiceMFARequestEntity.getSub() != "" &&
-                    initiateVoiceMFARequestEntity.getEmail() != null && initiateVoiceMFARequestEntity.getEmail() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge,initiateVoiceMFARequestEntity,
@@ -280,8 +279,60 @@ public class VoiceConfigurationController {
                                                                     new Result<InitiateVoiceMFAResponseEntity>() {
 
                                                                         @Override
-                                                                        public void success(InitiateVoiceMFAResponseEntity result) {
+                                                                        public void success(InitiateVoiceMFAResponseEntity serviceresult) {
 
+                                                                            if ( serviceresult.getData().getStatusId() != null && !serviceresult.getData().getStatusId().equals("")) {
+
+
+                                                                                AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity = new AuthenticateVoiceRequestEntity();
+                                                                                authenticateVoiceRequestEntity.setUserDeviceId(initiateVoiceMFARequestEntity.getUserDeviceId());
+                                                                                authenticateVoiceRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                                authenticateVoiceRequestEntity.setVoiceFile(VoiceImageFile);
+
+
+                                                                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity, new Result<AuthenticateVoiceResponseEntity>() {
+                                                                                    @Override
+                                                                                    public void success(AuthenticateVoiceResponseEntity result) {
+                                                                                        //Todo Call Resume with Login Service
+
+                                                                                        ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
+
+                                                                                        //Todo Check not Null values
+                                                                                        resumeLoginRequestEntity.setSub(result.getData().getSub());
+                                                                                        resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
+                                                                                        resumeLoginRequestEntity.setUsageType(initiateVoiceMFARequestEntity.getUsageType());
+                                                                                        resumeLoginRequestEntity.setVerificationType("voice");
+                                                                                        resumeLoginRequestEntity.setClient_id(clientId);
+                                                                                        resumeLoginRequestEntity.setRequestId(requestId);
+
+                                                                                        if(initiateVoiceMFARequestEntity.getUsageType().equals(UsageType.MFA))
+                                                                                        {
+                                                                                            resumeLoginRequestEntity.setTrack_id(trackId);
+                                                                                            LoginController.getShared(context).continueMFA(baseurl,resumeLoginRequestEntity,loginresult);
+                                                                                        }
+
+                                                                                        else if(initiateVoiceMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS))
+                                                                                        {
+                                                                                            resumeLoginRequestEntity.setTrack_id("");
+                                                                                            LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,loginresult);
+
+                                                                                        }
+                                                                                        //  loginresult.success(result);
+                                                                                        Toast.makeText(context, "Success Voice", Toast.LENGTH_SHORT).show();
+
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void failure(WebAuthError error) {
+                                                                                        loginresult.failure(error);
+                                                                                    }
+                                                                                });
+                                                                                // result.success(serviceresult);
+                                                                            }
+                                                                            else {
+                                                                                String errorMessage = "Status Id Must not be null";
+                                                                                loginresult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                                                            }
                                                                         }
 
 
@@ -295,56 +346,6 @@ public class VoiceConfigurationController {
                                                                         }
                                                                     });
 
-                                                            if ( serviceresult.getData().getStatusId() != null && !serviceresult.getData().getStatusId().equals("")) {
-
-
-                                    AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity = new AuthenticateVoiceRequestEntity();
-                                    authenticateVoiceRequestEntity.setUserDeviceId(initiateVoiceMFARequestEntity.getUserDeviceId());
-                                    authenticateVoiceRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                    authenticateVoiceRequestEntity.setVoiceFile(VoiceImageFile);
-
-
-                                    VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity, new Result<AuthenticateVoiceResponseEntity>() {
-                                        @Override
-                                        public void success(AuthenticateVoiceResponseEntity result) {
-                                            //Todo Call Resume with Login Service
-
-                                            ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
-
-                                            //Todo Check not Null values
-                                            resumeLoginRequestEntity.setSub(result.getData().getSub());
-                                            resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                            resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                            resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
-                                            resumeLoginRequestEntity.setClient_id(clientId);
-                                            resumeLoginRequestEntity.setRequestId(requestId);
-
-                                            if(initiateVoiceMFARequestEntity.getUsageType().equals(UsageType.MFA))
-                                            {
-                                                resumeLoginRequestEntity.setTrack_id(trackId);
-                                                LoginController.getShared(context).continueMFA(baseurl,resumeLoginRequestEntity,loginresult);
-                                            }
-
-                                            else if(initiateVoiceMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS))
-                                            {
-                                                resumeLoginRequestEntity.setTrack_id("");
-                                                LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,loginresult);
-
-                                            }
-                                            //  loginresult.success(result);
-                                            Toast.makeText(context, "Sucess Voice", Toast.LENGTH_SHORT).show();
-                               /*
-
-                                LoginController.getShared(context).resumeLogin();*/
-                                        }
-
-                                        @Override
-                                        public void failure(WebAuthError error) {
-                                            loginresult.failure(error);
-                                        }
-                                    });
-                                    // result.success(serviceresult);
-                                }
                             }
 
                             @Override
@@ -374,394 +375,4 @@ public class VoiceConfigurationController {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*//setupVoiceMFA
-    public void setupVoiceMFA(@NonNull String sub, @NonNull final Result<SetupVoiceMFAResponseEntity> result){
-        try {
-            String baseurl="";
-            if(savedProperties==null){
-
-                savedProperties= DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Setup Voice MFA readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            } if (savedProperties.get("ClientId").equals("") || savedProperties.get("ClientId") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            }
-            else {
-                baseurl = savedProperties.get("DomainURL");
-
-                if ( sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
-
-                    final String finalBaseurl = baseurl;
-                    getAccessToken(sub, new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(AccessTokenEntity accesstokenresult) {
-
-                            String logoUrl= "https://docs.cidaas.de/assets/logoss.png";
-
-
-
-                            SetupVoiceMFARequestEntity setupVoiceMFARequestEntity=new SetupVoiceMFARequestEntity();
-                            setupVoiceMFARequestEntity.setClient_id( savedProperties.get("ClientId"));
-                            setupVoiceMFARequestEntity.setLogoUrl(logoUrl);
-
-
-                            setupVoiceMFAService(accesstokenresult.getAccess_token(), finalBaseurl,setupVoiceMFARequestEntity,result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            result.failure(error);
-                        }
-                    });
-
-
-                }
-
-            }
-
-
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("acceptConsent exception"+e.getMessage());
-            Timber.e("acceptConsent exception"+e.getMessage());
-        }
-    }
-
-    //Service call To SetupVoiceMFA
-    private void setupVoiceMFAService(@NonNull final String AccessToken, @NonNull String baseurl,
-                                      @NonNull SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,
-                                      @NonNull final Result<SetupVoiceMFAResponseEntity> result)
-    {
-        try{
-
-            if (baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
-                //Todo Service call
-                OauthService.getShared(context).setupVoiceMFA(baseurl, AccessToken, codeChallenge,setupVoiceMFARequestEntity,
-                        new Result<SetupVoiceMFAResponseEntity>() {
-                            @Override
-                            public void success(final SetupVoiceMFAResponseEntity serviceresult) {
-
-                                new CountDownTimer(5000, 500) {
-                                    String instceID="";
-                                    public void onTick(long millisUntilFinished) {
-                                        instceID=getInstanceId();
-                                        if(instceID!=null && instceID!="")
-                                        {
-                                            onFinish();
-                                        }
-
-                                    }
-
-                                    public void onFinish() {
-                                        if(instceID!=null && instceID!="")
-                                        {
-                                            //Todo Call Next Service cALL TO Validate DEVICE
-                                            validateDevice(instceID, serviceresult.getData().getStatusId(), new Result<ValidateDeviceResponseEntity>() {
-                                                @Override
-                                                public void success(ValidateDeviceResponseEntity result) {
-                                                    //Todo call Next service
-                                                    scannedVoice(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,new Result<ScannedResponseEntity>() {
-                                                        @Override
-                                                        public void success(ScannedResponseEntity result) {
-                                                            Timber.i(result.getData().getUserDeviceId()+"USewr Device id");
-                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"USewr Device id", Toast.LENGTH_SHORT).show();
-                                                        }
-
-                                                        @Override
-                                                        public void failure(WebAuthError error) {
-                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-                                                }
-
-                                                @Override
-                                                public void failure(WebAuthError error) {
-                                                    Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-                                        else {
-                                            // return Error Message
-                                            webAuthError=WebAuthError.getShared(context).deviceVerificationFailureException();
-                                            result.failure(webAuthError);
-                                        }
-                                    }
-                                }.start();
-
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                result.failure(error);
-                            }
-                        });
-            }
-            else
-            {
-                webAuthError=webAuthError.propertyMissingException();
-                webAuthError.ErrorMessage="one of the Login properties missing";
-                result.failure(webAuthError);
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }
-
-
-    //Scanned Voice
-    private void scannedVoice(@NonNull String usagePass,@NonNull String statusId,@NonNull String AccessToken,
-                              @NonNull final Result<ScannedResponseEntity> result)
-    {
-        try {
-            String baseurl="";
-            if(savedProperties==null){
-
-                savedProperties=DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-
-
-
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Setup Voice MFA readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            }
-            if (savedProperties.get("ClientId").equals("") || savedProperties.get("ClientId") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            }
-            else {
-                baseurl = savedProperties.get("DomainURL");
-
-                if ( statusId != null && !statusId.equals("") && usagePass != null && !usagePass.equals("") && baseurl != null
-                        && !baseurl.equals("")) {
-
-                    scannedVoiceService(usagePass, baseurl,statusId,AccessToken,result);
-
-
-                }
-
-            }
-
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("acceptConsent exception"+e.getMessage());
-            Timber.e("acceptConsent exception"+e.getMessage());
-        }
-    }
-
-    //Service call To Scanned Voice Service
-    private void scannedVoiceService(@NonNull String usagePass,@NonNull String baseurl,
-                                     @NonNull String statusId,@NonNull String AccessToken,
-                                     @NonNull final Result<ScannedResponseEntity> scannedResponseResult)
-    {
-        try{
-
-            if ( statusId != null && !statusId.equals("") && usagePass != null && !usagePass.equals("") && baseurl != null
-                    && !baseurl.equals("")) {
-                //Todo Service call
-
-                if(codeChallenge==null){
-                    generateChallenge();
-                }
-                OauthService.getShared(context).scannedVoice(baseurl, usagePass, statusId,AccessToken,
-                        new Result<ScannedResponseEntity>() {
-                            @Override
-                            public void success(final ScannedResponseEntity serviceresult) {
-                                //Todo Call Scanned Service
-
-
-                                scannedResponseResult.success(serviceresult);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                scannedResponseResult.failure(error);
-                            }
-                        });
-            }
-            else
-            {
-                webAuthError=webAuthError.propertyMissingException();
-                webAuthError.ErrorMessage="one of the Login properties missing";
-                scannedResponseResult.failure(webAuthError);
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }
-    //enrollVoiceMFA
-    public void enrollVoiceMFA(@NonNull final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity, @NonNull final Result<EnrollVoiceMFAResponseEntity> result){
-        try {
-            String baseurl="";
-            if(savedProperties==null){
-
-                savedProperties=DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Setup Voice MFA readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            } else {
-                baseurl = savedProperties.get("DomainURL");
-
-                if ( enrollVoiceMFARequestEntity.getVerifierPassword() != null && !enrollVoiceMFARequestEntity.getVerifierPassword().equals("") &&
-                        enrollVoiceMFARequestEntity.getSub() != null && enrollVoiceMFARequestEntity.getSub()  != null &&
-                        enrollVoiceMFARequestEntity.getStatusId() != null && enrollVoiceMFARequestEntity.getStatusId()  != null &&
-                        baseurl != null && !baseurl.equals("")) {
-
-                    final String finalBaseurl = baseurl;
-                    getAccessToken(enrollVoiceMFARequestEntity.getSub(), new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(AccessTokenEntity accesstokenresult) {
-                            enrollVoiceMFAService(accesstokenresult.getAccess_token(), finalBaseurl,enrollVoiceMFARequestEntity,result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            result.failure(error);
-                        }
-                    });
-
-
-                }
-                else {
-                    webAuthError=webAuthError.propertyMissingException();
-                    webAuthError.ErrorMessage="one of the Login properties missing";
-                    result.failure(webAuthError);
-                }
-
-            }
-
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("acceptConsent exception"+e.getMessage());
-            Timber.e("acceptConsent exception"+e.getMessage());
-        }
-    }
-
-    //Service call To enrollVoiceMFA
-    private void enrollVoiceMFAService(@NonNull String AccessToken, @NonNull String baseurl,
-                                       @NonNull final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity, @NonNull final Result<EnrollVoiceMFAResponseEntity> result){
-        try{
-
-            if (enrollVoiceMFARequestEntity.getVerifierPassword() != null && !enrollVoiceMFARequestEntity.getVerifierPassword().equals("") &&
-                    enrollVoiceMFARequestEntity.getSub() != null && enrollVoiceMFARequestEntity.getSub()  != null &&
-                    enrollVoiceMFARequestEntity.getStatusId() != null && enrollVoiceMFARequestEntity.getStatusId()  != null &&
-                    baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
-                //Todo Service call
-                OauthService.getShared(context).enrollVoiceMFA(baseurl, AccessToken, enrollVoiceMFARequestEntity,new Result<EnrollVoiceMFAResponseEntity>() {
-                    @Override
-                    public void success(EnrollVoiceMFAResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-            else
-            {
-                webAuthError=webAuthError.propertyMissingException();
-                webAuthError.ErrorMessage="one of the Login properties missing";
-                result.failure(webAuthError);
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }
-*/
 }

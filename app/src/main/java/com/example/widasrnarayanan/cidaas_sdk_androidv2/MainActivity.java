@@ -9,10 +9,13 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -165,6 +168,33 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     public void redirectToEnrollMFA(View view){
         Intent intent=new Intent(MainActivity.this,EnrollPattern.class);
         //intent.putExtra("sub",sub);
+    }
+
+
+    public void passwordlessSmartpush(View view){
+        /*cidaas.loginWithSmartPush("raja.narayanan@widas.in", "", "", requestId, null, UsageType.PASSWORDLESS, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+                Toast.makeText(MainActivity.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Error Message:"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+            cidaas.configureFingerprint("sub", new Result<EnrollFingerprintMFAResponseEntity>() {
+            @Override
+            public void success(EnrollFingerprintMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Override

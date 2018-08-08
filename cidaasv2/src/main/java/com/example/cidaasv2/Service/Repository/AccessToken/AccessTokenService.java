@@ -190,12 +190,12 @@ public class AccessTokenService {
     }
 
 
-    public void getAccessTokenByRefreshToken(String refreshToken, final Result<AccessTokenEntity> callback)
+    public void getAccessTokenByRefreshToken(String refreshToken,Dictionary<String, String> loginProperties, final Result<AccessTokenEntity> callback)
     {
         try {
             //Local Variables
             String url = "";
-            String baseUrl = "";
+            String baseurl = "";
 
             Map<String, String> headers = new Hashtable<>();
             Map<String, String> querymap = new Hashtable<>();
@@ -216,20 +216,8 @@ public class AccessTokenService {
             //Get Properties From DB
 
 
-          Cidaas.getInstance(context).checkSavedProperties(new Result<Dictionary<String, String>>() {
-              @Override
-              public void success(Dictionary<String, String> result) {
-               //loginProperties=result;
 
-              }
-
-              @Override
-              public void failure(WebAuthError error) {
-
-              }
-          });
-
-            Dictionary<String, String> loginProperties= DBHelper.getShared().getLoginProperties();
+            Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
 
             //Todo read From File
 
@@ -244,13 +232,18 @@ public class AccessTokenService {
             querymap.put("grant_type", "refresh_token");
             querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
             querymap.put("client_id", loginProperties.get("ClientId"));
+            querymap.put("code_verifier", challengeProperties.get("Verifier"));
             querymap.put("refresh_token", refreshToken);
 
 
             //Assign Url
             //TOdo Perform Null Check
-            url = querymap.get("TokenURL");
-
+           // url = querymap.get("TokenURL");
+            baseurl=loginProperties.get("DomainURL");
+            if(baseurl!=null || baseurl!=""){
+                //Construct URL For RequestId
+                url=baseurl+ URLHelper.getShared().getTokenUrl();
+            }
 
             //call service
             ICidaasSDKService cidaasSDKService = service.getInstance();

@@ -37,7 +37,7 @@ public class SMSMFAActivity extends AppCompatActivity {
 
     public void smsVerifyCode(View view){
         String verificationCode=verificationCodeTextbox.getText().toString();
-        cidaas.verifySMS(verificationCode, new Result<LoginCredentialsResponseEntity>() {
+        cidaas.verifySMS(verificationCode, statusId,new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity authresult) {
 

@@ -60,6 +60,7 @@ public class AccessTokenEntity implements Serializable {
 
 
     //Properties
+
     private String access_token;
     private String userstate;
     private String refresh_token;
@@ -67,6 +68,22 @@ public class AccessTokenEntity implements Serializable {
     private String scope;
     private int expires_in;
     private String sub;
+    private String token_type;
+    private String session_state;
+    private String viewtype;
+    private String grant_type;
+
+
+    String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getSub() {
         return sub;
     }
@@ -76,8 +93,35 @@ public class AccessTokenEntity implements Serializable {
     }
 
 
+    public String getToken_type() {
+        return token_type;
+    }
 
+    public void setToken_type(String token_type) {
+        this.token_type = token_type;
+    }
 
+    public String getSession_state() {
+        return session_state;
+    }
 
+    public void setSession_state(String session_state) {
+        this.session_state = session_state;
+    }
 
+    public String getViewtype() {
+        return viewtype;
+    }
+
+    public void setViewtype(String viewtype) {
+        this.viewtype = viewtype;
+    }
+
+    public String getGrant_type() {
+        return grant_type;
+    }
+
+    public void setGrant_type(String grant_type) {
+        this.grant_type = grant_type;
+    }
 }

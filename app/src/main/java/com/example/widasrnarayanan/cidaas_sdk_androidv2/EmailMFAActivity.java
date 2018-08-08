@@ -37,7 +37,7 @@ public class EmailMFAActivity extends AppCompatActivity {
     public void verifyClick(View view){
         String verificationCode=verificationCodeTextbox.getText().toString();
 
-        cidaas.verifyEmail( verificationCode, new Result<LoginCredentialsResponseEntity>() {
+        cidaas.verifyEmail( verificationCode, "statusId",new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
                 Intent intent=new Intent(EmailMFAActivity.this,SuccessfulLogin.class);

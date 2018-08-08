@@ -104,8 +104,12 @@ public class DeviceVerificationService {
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
-                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
-            }
+                //Todo Chaange to FCM acceptence now it is in Authenticator
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+
+           /*     deviceInfoEntity.setPushNotificationId("emwuJgX9_5g:APA91bGyW8Tgl7p68siQvJc8qtS_lkc6ffTPnk1-6Mq2PWjbzmDJMaT30uCRx9F" +
+                        "aiJnmkRc9nWUIaGXtB9khMThBfGsNaHo-N_iW-8Tt1GUn5fY9yurjq94mQNfd45P10XcvUJBF4WZwfV-N6IEmBQWRHKmyII1QLA");
+           */ }
 
             ValidateDeviceRequestEntity validateDeviceRequestEntity=new ValidateDeviceRequestEntity();
             validateDeviceRequestEntity.setIntermediate_verifiation_id(intermediateId);
@@ -122,8 +126,6 @@ public class DeviceVerificationService {
                     if (response.isSuccessful()) {
                         if(response.code()==200) {
                             callback.success(response.body());
-
-
 
                         }
                         else {
@@ -181,48 +183,6 @@ public class DeviceVerificationService {
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
     }
-    //Validate Device
-
-/*
-    //Service call To validateDevice
-    public void validateDeviceService(@NonNull String intermediateId,@NonNull String baseurl,
-                                       @NonNull String statusId,
-                                       @NonNull final Result<ValidateDeviceResponseEntity> validateDeviceResponseEntityResult)
-    {
-        try{
-
-            if ( statusId != null && !statusId.equals("") && intermediateId != null && !intermediateId.equals("") && baseurl != null
-                    && !baseurl.equals("")) {
-                //Todo Service call
-                OauthService.getShared(context).validateDevice(baseurl, intermediateId, statusId,codeVerifier,
-                        new Result<ValidateDeviceResponseEntity>() {
-                            @Override
-                            public void success(final ValidateDeviceResponseEntity serviceresult) {
-                                //Todo Call Scanned Service
-
-
-                                validateDeviceResponseEntityResult.success(serviceresult);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                validateDeviceResponseEntityResult.failure(error);
-                            }
-                        });
-            }
-            else
-            {
-                webAuthError=webAuthError.propertyMissingException();
-                webAuthError.ErrorMessage="one of the Login properties missing";
-                validateDeviceResponseEntityResult.failure(webAuthError);
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }*/
-
 
 
 }

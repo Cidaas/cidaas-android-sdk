@@ -329,6 +329,7 @@ public class TOTPVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
             headers.put("access_token",accessToken);
+            headers.put("verification_api_version","2");
 
 
             enrollTOTPMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -429,6 +430,16 @@ public class TOTPVerificationService {
             headers.put("access_challenge",codeChallenge);
             headers.put("access_challenge_method","S256");
 
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+
+                //Todo Chaange to FCM acceptence now it is in Authenticator
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+
+                //  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
+               // "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
+            }
+
+
             initiateTOTPMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -522,6 +533,17 @@ public class TOTPVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
+            headers.put("verification_api_version","2");
+
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+
+                //Todo Chaange to FCM acceptence now it is in Authenticator
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+
+                //  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
+               // "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
+            }
+
 
             authenticateTOTPRequestEntity.setDeviceInfo(deviceInfoEntity);
 

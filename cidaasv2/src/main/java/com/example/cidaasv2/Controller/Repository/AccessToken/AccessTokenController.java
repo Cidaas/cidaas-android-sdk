@@ -162,32 +162,47 @@ public class AccessTokenController {
         {
 
             Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).noUserFoundException());
             //Todo Handle Exception
         }
     }
 
     //Get Access Token by Refresh Token
 
-    public void getAccessTokenByRefreshToken(String refreshToken, final Result<AccessTokenEntity> callback)
+    public void getAccessTokenByRefreshToken(final String refreshToken, final Result<AccessTokenEntity> callback)
     {
         try {
 
-            AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken, new Result<AccessTokenEntity>() {
+            Cidaas.getInstance(context).checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(AccessTokenEntity result) {
+                public void success(Dictionary<String, String> result) {
+                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
 
-                    callback.success(result);
+                            callback.success(result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+
+                            callback.failure(error);
+                        }
+                    });
+
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-
                     callback.failure(error);
                 }
             });
-        }
+
+
+         }
         catch (Exception e)
         {
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.d(e.getMessage()); //Todo Handle Exception
         }
     }

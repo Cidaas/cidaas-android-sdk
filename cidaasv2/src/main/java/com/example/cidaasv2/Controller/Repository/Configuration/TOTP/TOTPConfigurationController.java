@@ -10,6 +10,7 @@ import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenControl
 import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPGenerator.GoogleAuthenticator;
 import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPGenerator.TotpClock;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -257,8 +258,6 @@ public class TOTPConfigurationController {
 
             if (initiateTOTPMFARequestEntity.getUsageType() != null && initiateTOTPMFARequestEntity.getUsageType() != "" &&
                     initiateTOTPMFARequestEntity.getUserDeviceId() != null && initiateTOTPMFARequestEntity.getUserDeviceId() != "" &&
-                    initiateTOTPMFARequestEntity.getSub() != null && initiateTOTPMFARequestEntity.getSub() != "" &&
-                    initiateTOTPMFARequestEntity.getEmail() != null && initiateTOTPMFARequestEntity.getEmail() != "" &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 TOTPVerificationService.getShared(context).initiateTOTP(baseurl,codeChallenge ,initiateTOTPMFARequestEntity,
@@ -322,8 +321,8 @@ public class TOTPConfigurationController {
                                                                                         //Todo Check not Null values
                                                                                         resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                                         resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                                        resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                                                                        resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
+                                                                                        resumeLoginRequestEntity.setUsageType(initiateTOTPMFARequestEntity.getUsageType());
+                                                                                        resumeLoginRequestEntity.setVerificationType("TOTP");
                                                                                         resumeLoginRequestEntity.setClient_id(clientId);
                                                                                         resumeLoginRequestEntity.setRequestId(requestId);
 
@@ -343,6 +342,11 @@ public class TOTPConfigurationController {
                                                                                     }
                                                                                 });
                                                                                 // result.success(serviceresult);
+                                                                            }
+                                                                            else {
+                                                                                String errorMessage="Status Id Must not be null";
+                                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
                                                                             }
                                                                         }
 

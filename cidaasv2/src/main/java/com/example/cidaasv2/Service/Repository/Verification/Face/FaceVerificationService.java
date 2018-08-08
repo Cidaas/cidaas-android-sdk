@@ -132,10 +132,10 @@ public class FaceVerificationService {
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("fNHBkBmB-xQ:APA91bGlQArV81TyEBs_uLOw0XGZC3YgS4raU_ZPmjNBCC_cwolRdTxo" +
-                        "kXjNkpRgURIT9RzrYZQVFgQsY8QwaB_IJVp3Dh8eNUlxa6XgPfdXp3NLrB5ykEFdZDcbBuote-uphWIeqY27oJziERags0grm6dC5BqzOQ");
+              //  deviceInfoEntity.setPushNotificationId("fNHBkBmB-xQ:APA91bGlQArV81TyEBs_uLOw0XGZC3YgS4raU_ZPmjNBCC_cwolRdTxo" +
+                     //   "kXjNkpRgURIT9RzrYZQVFgQsY8QwaB_IJVp3Dh8eNUlxa6XgPfdXp3NLrB5ykEFdZDcbBuote-uphWIeqY27oJziERags0grm6dC5BqzOQ");
                 //deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58
                 // Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
             }
@@ -359,6 +359,11 @@ public class FaceVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
             headers.put("access_token", accessToken);
+            headers.put("verification_api_version","2");
+
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+            }
 
             faceSetupMap.put("statusId", StringtoRequestBody(enrollFaceMFARequestEntity.getStatusId()));
             //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
@@ -476,6 +481,10 @@ public class FaceVerificationService {
             headers.put("access_challenge",codeChallenge);
             headers.put("access_challenge_method","S256");
 
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+            }
+
             initiateFaceMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -569,7 +578,11 @@ public class FaceVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
+            headers.put("verification_api_version","2");
 
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+            }
 
             HashMap<String, String> faceSetupMap = new HashMap<>();
 

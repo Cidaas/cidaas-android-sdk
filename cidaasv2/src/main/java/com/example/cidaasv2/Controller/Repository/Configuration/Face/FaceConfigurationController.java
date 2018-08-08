@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -222,14 +223,14 @@ public class FaceConfigurationController {
     {
         try{
 
-          /*  if(initiateFaceMFARequestEntity.getUserDeviceId() != null && initiateFaceMFARequestEntity.getUserDeviceId() != "" )
+            if(initiateFaceMFARequestEntity.getUserDeviceId() != null && initiateFaceMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
             }
             else
             {
                 initiateFaceMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-            }*/
+            }
 
             if(codeChallenge=="" && codeVerifier=="") {
                 //Generate Challenge
@@ -238,8 +239,6 @@ public class FaceConfigurationController {
             Cidaas.instanceId="";
             if (    initiateFaceMFARequestEntity.getUsageType() != null && initiateFaceMFARequestEntity.getUsageType() != "" &&
                     initiateFaceMFARequestEntity.getUserDeviceId() != null && initiateFaceMFARequestEntity.getUserDeviceId() != ""&&
-                    initiateFaceMFARequestEntity.getSub() != null && initiateFaceMFARequestEntity.getSub() != "" &&
-                    initiateFaceMFARequestEntity.getEmail() != null && initiateFaceMFARequestEntity.getEmail() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 FaceVerificationService.getShared(context).initiateFace(baseurl, codeChallenge,initiateFaceMFARequestEntity,
@@ -280,7 +279,62 @@ public class FaceConfigurationController {
 
                                                                         @Override
                                                                         public void success(InitiateFaceMFAResponseEntity result) {
+                                                                            if ( serviceresult.getData().getStatusId() != null && !serviceresult.getData().getStatusId().equals("")) {
 
+
+                                                                                AuthenticateFaceRequestEntity authenticateFaceRequestEntity = new AuthenticateFaceRequestEntity();
+                                                                                authenticateFaceRequestEntity.setUserDeviceId(initiateFaceMFARequestEntity.getUserDeviceId());
+                                                                                authenticateFaceRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                                authenticateFaceRequestEntity.setImagetoSend(faceImageFile);
+
+
+                                                                                FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity, new Result<AuthenticateFaceResponseEntity>() {
+                                                                                    @Override
+                                                                                    public void success(AuthenticateFaceResponseEntity result) {
+                                                                                        //Todo Call Resume with Login Service
+
+                                                                                        ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
+
+                                                                                        //Todo Check not Null values
+                                                                                        resumeLoginRequestEntity.setSub(result.getData().getSub());
+                                                                                        resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
+                                                                                        resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
+                                                                                        resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
+                                                                                        resumeLoginRequestEntity.setClient_id(clientId);
+                                                                                        resumeLoginRequestEntity.setRequestId(requestId);
+
+                                                                                        if(initiateFaceMFARequestEntity.getUsageType().equals(UsageType.MFA))
+                                                                                        {
+                                                                                            resumeLoginRequestEntity.setTrack_id(trackId);
+                                                                                            LoginController.getShared(context).continueMFA(baseurl,resumeLoginRequestEntity,loginresult);
+                                                                                        }
+
+                                                                                        else if(initiateFaceMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS))
+                                                                                        {
+                                                                                            resumeLoginRequestEntity.setTrack_id("");
+                                                                                            LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,loginresult);
+
+                                                                                        }
+                                                                                        //  loginresult.success(result);
+                                                                                        Toast.makeText(context, "Sucess Face", Toast.LENGTH_SHORT).show();
+                               /*
+
+                                LoginController.getShared(context).resumeLogin();*/
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void failure(WebAuthError error) {
+                                                                                        loginresult.failure(error);
+                                                                                    }
+                                                                                });
+                                                                                // result.success(serviceresult);
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                String errorMessage="Status Id Must not be null";
+                                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                                                            }
                                                                         }
 
 
@@ -294,56 +348,7 @@ public class FaceConfigurationController {
                                                                         }
                                                                     });
 
-                                                            if ( serviceresult.getData().getStatusId() != null && !serviceresult.getData().getStatusId().equals("")) {
 
-
-                                    AuthenticateFaceRequestEntity authenticateFaceRequestEntity = new AuthenticateFaceRequestEntity();
-                                    authenticateFaceRequestEntity.setUserDeviceId(initiateFaceMFARequestEntity.getUserDeviceId());
-                                    authenticateFaceRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                    authenticateFaceRequestEntity.setImagetoSend(faceImageFile);
-
-
-                                    FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity, new Result<AuthenticateFaceResponseEntity>() {
-                                        @Override
-                                        public void success(AuthenticateFaceResponseEntity result) {
-                                            //Todo Call Resume with Login Service
-
-                                            ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
-
-                                            //Todo Check not Null values
-                                            resumeLoginRequestEntity.setSub(result.getData().getSub());
-                                            resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                            resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                            resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
-                                            resumeLoginRequestEntity.setClient_id(clientId);
-                                            resumeLoginRequestEntity.setRequestId(requestId);
-
-                                            if(initiateFaceMFARequestEntity.getUsageType().equals(UsageType.MFA))
-                                            {
-                                                resumeLoginRequestEntity.setTrack_id(trackId);
-                                                LoginController.getShared(context).continueMFA(baseurl,resumeLoginRequestEntity,loginresult);
-                                            }
-
-                                            else if(initiateFaceMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS))
-                                            {
-                                                resumeLoginRequestEntity.setTrack_id("");
-                                                LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,loginresult);
-
-                                            }
-                                            //  loginresult.success(result);
-                                            Toast.makeText(context, "Sucess Face", Toast.LENGTH_SHORT).show();
-                               /*
-
-                                LoginController.getShared(context).resumeLogin();*/
-                                        }
-
-                                        @Override
-                                        public void failure(WebAuthError error) {
-                                            loginresult.failure(error);
-                                        }
-                                    });
-                                    // result.success(serviceresult);
-                                }
                             }
 
                             @Override
