@@ -8,9 +8,12 @@ https://docs.cidaas.de/
 
     minSdkVersion 21
 
-## Installation
+## Add cidaas sdk to your project
 
-To install it, add the following line to your app level gradle file: Add it in your root build.gradle under all projects repositories section :
+Cidaas SDK is available through jitpack.io.  Please ensure that you are using the latest versions by [checking here](https://jitpack.io/#Cidaas/cidaas-v2-sdk-android)
+
+Add the following Gradle configuration to your Android project:
+
 ```java        
 allprojects {
     repositories {
@@ -22,35 +25,30 @@ allprojects {
  Add the dependency to app module
  ```java
 dependencies {
- implementation 'com.github.Cidaas:cidaas-v2-sdk-android:0.0.0.2'
+ implementation 'com.github.Cidaas:cidaas-v2-sdk-android:0.0.0.3'
 }
  ```
  ## Getting started
 
-The following steps are to be followed to use this Cidaas-SDK.
-
 Create a xml file named as <b>cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
 
-The xml file should become like this:
+> ##### Note:- The File name must be cidaas.xml </font>
+
+The xml file should be like this:
 
 ``` 
-
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-
 <item name="DomainURL" type="string">DomainURL</item>
-
 <item name="ClientId" type="string">ClientId</item>
-
 <item name="RedirectURL">RedirectURL</item>
-
 </resources> 
 
 ```
-### Getting App Id and urls
+### Getting client Id and urls
 
-You will get the property file for your application from the cidaas AdminUI.
+You can get the property file for your application from the cidaas AdminUI.
+
 
 ### Steps for integrate native Android SDKs:
 
@@ -312,12 +310,12 @@ public void failure(WebAuthError error) {
         "sub": "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d",
         "userStatus": "VERIFIED",
         "email_verified": false,
-        "suggested_action": "LOGIN"
+        "suggested_action": "DEDUPLICATION"
     }
 }
 ```
 
-After you get the success response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** . At that time, you have to follow the following steps
+After you get the success response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** in the data of success respone. At that time, you have to follow the following steps
 
 #### De-duplication
   Deduplication is a process that eliminates redundant copies of user and reduces storage overhead. Deduplication techniques ensure that only one unique instance of user is retained on server.
