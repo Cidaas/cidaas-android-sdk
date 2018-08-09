@@ -317,6 +317,139 @@ public void failure(WebAuthError error) {
 }
 ```
 
+After you get the success response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** . At that time, you have to follow the following steps
+
+#### De-duplication
+  Deduplication is a process that eliminates redundant copies of user and reduces storage overhead. Deduplication techniques ensure that only one unique instance of user is retained on server.
+
+#### Get Deduplication Details
+
+To get the list of similar users, call ****getDeduplicationDetails()****. After getting the deduplication details there is a possibility for two actions. One is Register as a new user for this you have to  call ****registerDeduplication()**** otherwise the user can login as a existing user for this you have to call ****loginDeduplication()****
+
+```java
+ cidaas.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
+  @Override
+  public void success(DeduplicationResponseEntity result) {
+   //Your success code here.
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+   //Your failure code here
+  }
+ });
+```
+
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "email": "xxx@gmail.com",
+        "deduplicationList": [
+        {
+            "provider": "SELF",
+            "sub": "39363935-4d04-4411-8606-6805c4e673b4",
+            "email": "xxx********n2716@g***l.com",
+            "emailName": "xxx********n2716",
+            "firstname": "xxx",
+            "lastname": "yyy",
+            "displayName": "xxx yyy",
+            "currentLocale": "IN",
+            "country": "India",
+            "region": "Delhi",
+            "city": "Delhi",
+            "zipcode": "110008"
+        },
+        {
+            "provider": "SELF",
+            "sub": "488b8128-5584-4c25-9776-6ed34c6e7017",
+            "email": "xx****n21@g***l.com",
+            "emailName": "xx****n21",
+            "firstname": "xxx",
+            "lastname": "yyy",
+            "displayName": "xxx yyy",
+            "currentLocale": "IN",
+            "country": "India",
+            "region": "Delhi",
+            "city": "Delhi",
+            "zipcode": "110008"
+        }]
+    }
+}
+```
+
+#### Register User
+
+If the user not exists in the similar users, call ****registerDeduplication()****
+
+```java
+cidaas.registerDeduplication("your track id", new Result < RegisterDeduplicationEntity > () {
+ @Override
+ public void success(RegisterDeduplicationEntity result) {
+  //Your success code here
+ }
+
+ @Override
+ public void failure(WebAuthError error) {
+  //Your failure code here
+ }
+});
+```
+
+**Response:**
+
+```java
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "sub": "51701ec8-f2d7-4361-a727-f8df476a711a",
+        "userStatus": "VERIFIED",
+        "email_verified": false,
+        "suggested_action": "LOGIN"
+    }
+} 
+```
+
+
+#### Login With Deduplication
+
+If the user exists in the similar users, call ****loginDeduplication()****
+
+```java
+cidaas.loginDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
+ @Override
+ public void success(LoginDeduplicationResponseEntity result) {
+  //Your success code here
+ }
+
+ @Override
+ public void failure(WebAuthError error) {
+  //Your failure code here
+ }
+});
+```
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "token_type": "Bearer",
+        "expires_in": 86400,
+        "access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUxNWYxMGE5LTVmNDktNGZlYS04MGNlLTZmYTkzMzk2YjI4NyJ9*****",
+        "session_state": "CNT7GGALeoKyTF6Og-cZHAuHUJBQ20M0jLL35oh3UGk.vcNxCNq4Y68",
+        "viewtype": "login",
+        "grant_type": "login"
+    }
+}
+```
 #### Account Verification
 
 Once registration completed, you need to verify your account either by Email or SMS or IVR verification call. First you need to initiate the account verification.
@@ -1553,135 +1686,5 @@ cidaas.loginAfterConsent("Your sub", true, new Result < LoginCredentialsResponse
 }
 ```
 
-#### De-duplication
-
-#### Get Deduplication Details
-
-To get the list of similar users, call ****getDeduplicationDetails()****
-
-```java
- cidaas.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
-  @Override
-  public void success(DeduplicationResponseEntity result) {
-   //Your success code here.
-  }
-
-  @Override
-  public void failure(WebAuthError error) {
-   //Your failure code here
-  }
- });
-```
-
-
-**Response:**
-
-```json
-{
-    "success": true,
-    "status": 200,
-    "data": {
-        "email": "xxx@gmail.com",
-        "deduplicationList": [
-        {
-            "provider": "SELF",
-            "sub": "39363935-4d04-4411-8606-6805c4e673b4",
-            "email": "xxx********n2716@g***l.com",
-            "emailName": "xxx********n2716",
-            "firstname": "xxx",
-            "lastname": "yyy",
-            "displayName": "xxx yyy",
-            "currentLocale": "IN",
-            "country": "India",
-            "region": "Delhi",
-            "city": "Delhi",
-            "zipcode": "110008"
-        },
-        {
-            "provider": "SELF",
-            "sub": "488b8128-5584-4c25-9776-6ed34c6e7017",
-            "email": "xx****n21@g***l.com",
-            "emailName": "xx****n21",
-            "firstname": "xxx",
-            "lastname": "yyy",
-            "displayName": "xxx yyy",
-            "currentLocale": "IN",
-            "country": "India",
-            "region": "Delhi",
-            "city": "Delhi",
-            "zipcode": "110008"
-        }]
-    }
-}
-```
-
-#### Register User
-
-If the user not exists in the similar users, call ****registerDeduplication()****
-
-```java
-cidaas.registerDeduplication("your track id", new Result < RegisterDeduplicationEntity > () {
- @Override
- public void success(RegisterDeduplicationEntity result) {
-  //Your success code here
- }
-
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});
-```
-
-**Response:**
-
-```java
-{
-    "success": true,
-    "status": 200,
-    "data": {
-        "sub": "51701ec8-f2d7-4361-a727-f8df476a711a",
-        "userStatus": "VERIFIED",
-        "email_verified": false,
-        "suggested_action": "LOGIN"
-    }
-} 
-```
-
-
-#### Login With Deduplication
-
-If the user exists in the similar users, call ****loginDeduplication()****
-
-```java
-cidaas.loginDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
- @Override
- public void success(LoginDeduplicationResponseEntity result) {
-  //Your success code here
- }
-
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});
-```
-
-**Response:**
-
-```json
-{
-    "success": true,
-    "status": 200,
-    "data": {
-        "token_type": "Bearer",
-        "expires_in": 86400,
-        "access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUxNWYxMGE5LTVmNDktNGZlYS04MGNlLTZmYTkzMzk2YjI4NyJ9*****",
-        "session_state": "CNT7GGALeoKyTF6Og-cZHAuHUJBQ20M0jLL35oh3UGk.vcNxCNq4Y68",
-        "viewtype": "login",
-        "grant_type": "login"
-    }
-}
-```
 
     
