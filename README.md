@@ -32,7 +32,7 @@ dependencies {
 
 Create a xml file named as <b>cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
 
-> ##### Note:- The File name must be cidaas.xml </font>
+> ##### Note:- The File name must be cidaas.xml 
 
 The xml file should be like this:
 
