@@ -307,6 +307,7 @@ public void failure(WebAuthError error) {
     "success": true,
     "status": 200,
     "data": {
+     	"track_id":"45a921cf-ee26-46b0-9bf4-58636dced99f",
         "sub": "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d",
         "userStatus": "VERIFIED",
         "email_verified": false,
@@ -322,7 +323,9 @@ After you get the success response from the ****registerUser()****, You may get 
 
 #### Get Deduplication Details
 
-To get the list of similar users, call ****getDeduplicationDetails()****. After getting the deduplication details there is a possibility for two actions. One is Register as a new user for this you have to  call ****registerDeduplication()**** otherwise the user can login as a existing user for this you have to call ****loginDeduplication()****
+To get the list of similar users, call ****getDeduplicationDetails()****. After getting the deduplication details there is a possibility for two actions. One is Register as a new user for this you have to  call ****registerUser()**** otherwise the user can login as a existing user for this you have to call ****loginWithDeduplication()****
+
+> #### Note :- You can get the track id from thein the data of success respone of registerUser().
 
 ```java
  cidaas.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
@@ -382,10 +385,10 @@ To get the list of similar users, call ****getDeduplicationDetails()****. After 
 
 #### Register User
 
-If the user not exists in the similar users, call ****registerDeduplication()****
+If the user not exists in the similar users, call ****registerUser()****
 
 ```java
-cidaas.registerDeduplication("your track id", new Result < RegisterDeduplicationEntity > () {
+cidaas.registerUser("your track id", new Result < RegisterDeduplicationEntity > () {
  @Override
  public void success(RegisterDeduplicationEntity result) {
   //Your success code here
@@ -416,10 +419,10 @@ cidaas.registerDeduplication("your track id", new Result < RegisterDeduplication
 
 #### Login With Deduplication
 
-If the user exists in the similar users, call ****loginDeduplication()****
+If the user exists in the similar users, call ****loginWithDeduplication()****
 
 ```java
-cidaas.loginDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
+cidaas.loginWithDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
  @Override
  public void success(LoginDeduplicationResponseEntity result) {
   //Your success code here
