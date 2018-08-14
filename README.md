@@ -106,7 +106,9 @@ public void failure(WebAuthError error) {
 
 #### Getting Tenant Info
 
-It is more important to get the tenant information such as Tenant name and what are all the login ways ('Email', 'Mobile', 'Username') available for the particular tenant. To get the tenant information, call ****getTenantInfo()****.
+It is more important to get the tenant information such as Tenant name and all login types ('Email', 'Mobile', 'Username') available for particular tenant. To get the tenant information, call ****getTenantInfo()****.
+
+
 ```java
 
 cidaas.getTenantInfo(new Result < TenantInfoEntity > () {
@@ -146,7 +148,7 @@ public void failure(WebAuthError error) {
 
 #### Get Client Info
 
-Once getting tenant information, next you need to get client information that contains client name, logo url specified for the client in the Admin's Apps section and what are all the social providers configured for the App. To get the client information, call ****getClientInfo()****.
+After getting tenant information, you need to get client information that contains client name, logo url specified for the client in the Admin's Apps section, and all the social providers configured for the App. To get client information, call ****getClientInfo()****.
 
 ```java
 cidaas.getClientInfo("your RequestId", new Result < ClientInfoEntity > () {
@@ -319,11 +321,15 @@ public void failure(WebAuthError error) {
 After you get the success response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** in the data of success respone. At that time, you have to follow the following steps
 
 #### De-duplication
-  Deduplication is a process that eliminates redundant copies of user and reduces storage overhead. Deduplication techniques ensure that only one unique instance of user is retained on server.
+ User de-duplication is a process that eliminates redundant copies of user thus reducing storage overhead as well as other inefficiencies. This process can be triggered during registion itself by following next steps.
+
+When a user is being registered system does a de-duplication check, to verify if that is already existing. System then shows the list of potential duplicate users whose data seems to match most of the information entered during this registration. System then gives an option to the user to use one of the found duplicate record or reject all of them and register this new values as a fresh user.
+
+In order to implement above functionality few of the below methods have to be called.
 
 #### Get Deduplication Details
 
-To get the list of similar users, call ****getDeduplicationDetails()****. After getting the deduplication details there is a possibility for two actions. One is Register as a new user for this you have to  call ****registerUser()**** otherwise the user can login as a existing user for this you have to call ****loginWithDeduplication()****
+To get the list of similar users, call ****getDeduplicationDetails()**** . If this method is used, system uses some heuristic algorithms and finds out any similar user exists in system and returns them.
 
 > #### Note :- You can get the track id from thein the data of success respone of registerUser().
 
@@ -385,7 +391,7 @@ To get the list of similar users, call ****getDeduplicationDetails()****. After 
 
 #### Register User
 
-If the user not exists in the similar users, call ****registerUser()****
+While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****registerUser()**** method can be called to ignore shown result and register details in registration form as a new user.
 
 ```java
 cidaas.registerUser("your track id", new Result < RegisterDeduplicationEntity > () {
@@ -419,7 +425,7 @@ cidaas.registerUser("your track id", new Result < RegisterDeduplicationEntity > 
 
 #### Login With Deduplication
 
-If the user exists in the similar users, call ****loginWithDeduplication()****
+While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****loginWithDeduplication()**** method can be called to use one of those existing logins shown by the system. Note that, System will still use the secure authentication and verifications that were setup for earlier user, before login.
 
 ```java
 cidaas.loginWithDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
@@ -612,11 +618,13 @@ public void failure(WebAuthError error) {
 
 #### Forgot Password
 
-Remembering passwords all the time is impossible, if you forget your password, you have an option to reset it.
+There is an option to reset password if password is forgotten.
 
 #### Initiate Reset Password
 
-For resetting password, you will get a verification code either via Email or SMS. For that you need to call ****initateRestPassword()****.
+For resetting password, you can get a verification code either via Email or SMS. To do that, you can call initateRestPassword().
+
+****initateRestPassword()****.
 ```java
 //object initiations
 ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
@@ -685,7 +693,7 @@ public void failure(WebAuthError error) {
 
 #### Reset Password
 
-Once verifying the code, reset your password with your new password. To reset your password, call ****restPassword()****.
+Once code is verified, reset your password with your new password. To reset your password, call ****restPassword()****.
 
 ```java
 
@@ -1614,7 +1622,7 @@ cidaas.loginWithVoiceRecognition(File: Audio, "yourEmail", "", "", UsageType.MFA
 
 #### Consent Management
 
-Once user successfully logged in, they need to accept the terms and conditions. 
+Once user is successfully logged in, they need to accept the terms and conditions.
 
 #### Getting Consent Details 
 
