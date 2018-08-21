@@ -215,8 +215,7 @@ public class EmailConfigurationController {
             Timber.e(e.getMessage());
         }
     }
-
-`    public void verifyEmail(@NonNull final String baseurl, @NonNull final String code,
+    public void verifyEmail(@NonNull final String baseurl, @NonNull final String code,
                             @NonNull final String statusId, @NonNull final String clientId, final AuthenticateEmailRequestEntity authenticateEmailRequestEntity,
                             final Result<LoginCredentialsResponseEntity> result)
     {
