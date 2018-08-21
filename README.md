@@ -8,9 +8,12 @@ https://docs.cidaas.de/
 
     minSdkVersion 21
 
-## Installation
+## Add cidaas sdk to your project
 
-To install it, add the following line to your app level gradle file: Add it in your root build.gradle under all projects repositories section :
+Cidaas SDK is available through jitpack.io.  Please ensure that you are using the latest versions by [checking here](https://jitpack.io/#Cidaas/cidaas-v2-sdk-android)
+
+Add the following Gradle configuration to your Android project:
+
 ```java        
 allprojects {
     repositories {
@@ -22,35 +25,30 @@ allprojects {
  Add the dependency to app module
  ```java
 dependencies {
- implementation 'com.github.Cidaas:cidaas-v2-sdk-android:0.0.0.2'
+ implementation 'com.github.Cidaas:cidaas-v2-sdk-android:0.0.0.3'
 }
  ```
  ## Getting started
 
-The following steps are to be followed to use this Cidaas-SDK.
-
 Create a xml file named as <b>cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
 
-The xml file should become like this:
+> ##### Note:- The File name must be cidaas.xml 
+
+The xml file should be like this:
 
 ``` 
-
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-
 <item name="DomainURL" type="string">DomainURL</item>
-
 <item name="ClientId" type="string">ClientId</item>
-
 <item name="RedirectURL">RedirectURL</item>
-
 </resources> 
 
 ```
-### Getting App Id and urls
+### Getting client Id and urls
 
-You will get the property file for your application from the cidaas AdminUI.
+You can get the property file for your application from the cidaas AdminUI.
+
 
 ### Steps for integrate native Android SDKs:
 
@@ -108,7 +106,9 @@ public void failure(WebAuthError error) {
 
 #### Getting Tenant Info
 
-It is more important to get the tenant information such as Tenant name and what are all the login ways ('Email', 'Mobile', 'Username') available for the particular tenant. To get the tenant information, call ****getTenantInfo()****.
+It is more important to get the tenant information such as Tenant name and all login types ('Email', 'Mobile', 'Username') available for particular tenant. To get the tenant information, call ****getTenantInfo()****.
+
+
 ```java
 
 cidaas.getTenantInfo(new Result < TenantInfoEntity > () {
@@ -148,7 +148,7 @@ public void failure(WebAuthError error) {
 
 #### Get Client Info
 
-Once getting tenant information, next you need to get client information that contains client name, logo url specified for the client in the Admin's Apps section and what are all the social providers configured for the App. To get the client information, call ****getClientInfo()****.
+After getting tenant information, you need to get client information that contains client name, logo url specified for the client in the Admin's Apps section, and all the social providers configured for the App. To get client information, call ****getClientInfo()****.
 
 ```java
 cidaas.getClientInfo("your RequestId", new Result < ClientInfoEntity > () {
@@ -309,14 +309,154 @@ public void failure(WebAuthError error) {
     "success": true,
     "status": 200,
     "data": {
+     	"track_id":"45a921cf-ee26-46b0-9bf4-58636dced99f",
         "sub": "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d",
         "userStatus": "VERIFIED",
         "email_verified": false,
-        "suggested_action": "LOGIN"
+        "suggested_action": "DEDUPLICATION"
     }
 }
 ```
 
+After you get the success response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** in the data of success respone. At that time, you have to follow the following steps
+
+#### De-duplication
+ User de-duplication is a process that eliminates redundant copies of user thus reducing storage overhead as well as other inefficiencies. This process can be triggered during registion itself by following next steps.
+
+When a user is being registered system does a de-duplication check, to verify if that is already existing. System then shows the list of potential duplicate users whose data seems to match most of the information entered during this registration. System then gives an option to the user to use one of the found duplicate record or reject all of them and register this new values as a fresh user.
+
+In order to implement above functionality few of the below methods have to be called.
+
+#### Get Deduplication Details
+
+To get the list of similar users, call ****getDeduplicationDetails()**** . If this method is used, system uses some heuristic algorithms and finds out any similar user exists in system and returns them.
+
+> #### Note :- You can get the track id from thein the data of success respone of registerUser().
+
+```java
+ cidaas.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
+  @Override
+  public void success(DeduplicationResponseEntity result) {
+   //Your success code here.
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+   //Your failure code here
+  }
+ });
+```
+
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "email": "xxx@gmail.com",
+        "deduplicationList": [
+        {
+            "provider": "SELF",
+            "sub": "39363935-4d04-4411-8606-6805c4e673b4",
+            "email": "xxx********n2716@g***l.com",
+            "emailName": "xxx********n2716",
+            "firstname": "xxx",
+            "lastname": "yyy",
+            "displayName": "xxx yyy",
+            "currentLocale": "IN",
+            "country": "India",
+            "region": "Delhi",
+            "city": "Delhi",
+            "zipcode": "110008"
+        },
+        {
+            "provider": "SELF",
+            "sub": "488b8128-5584-4c25-9776-6ed34c6e7017",
+            "email": "xx****n21@g***l.com",
+            "emailName": "xx****n21",
+            "firstname": "xxx",
+            "lastname": "yyy",
+            "displayName": "xxx yyy",
+            "currentLocale": "IN",
+            "country": "India",
+            "region": "Delhi",
+            "city": "Delhi",
+            "zipcode": "110008"
+        }]
+    }
+}
+```
+
+#### Register User
+
+While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****registerUser()**** method can be called to ignore shown result and register details in registration form as a new user.
+
+```java
+cidaas.registerUser("your track id", new Result < RegisterDeduplicationEntity > () {
+ @Override
+ public void success(RegisterDeduplicationEntity result) {
+  //Your success code here
+ }
+
+ @Override
+ public void failure(WebAuthError error) {
+  //Your failure code here
+ }
+});
+```
+
+**Response:**
+
+```java
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "sub": "51701ec8-f2d7-4361-a727-f8df476a711a",
+        "userStatus": "VERIFIED",
+        "email_verified": false,
+        "suggested_action": "LOGIN"
+    }
+} 
+```
+
+
+#### Login With Deduplication
+
+While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****loginWithDeduplication()**** method can be called to use one of those existing logins shown by the system. Note that, System will still use the secure authentication and verifications that were setup for earlier user, before login.
+
+```java
+cidaas.loginWithDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
+ @Override
+ public void success(LoginDeduplicationResponseEntity result) {
+  //Your success code here
+ }
+
+ @Override
+ public void failure(WebAuthError error) {
+  //Your failure code here
+ }
+});
+```
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "token_type": "Bearer",
+        "expires_in": 86400,
+        "access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUxNWYxMGE5LTVmNDktNGZlYS04MGNlLTZmYTkzMzk2YjI4NyJ9*****",
+        "session_state": "CNT7GGALeoKyTF6Og-cZHAuHUJBQ20M0jLL35oh3UGk.vcNxCNq4Y68",
+        "viewtype": "login",
+        "grant_type": "login"
+    }
+}
+```
 #### Account Verification
 
 Once registration completed, you need to verify your account either by Email or SMS or IVR verification call. First you need to initiate the account verification.
@@ -478,11 +618,13 @@ public void failure(WebAuthError error) {
 
 #### Forgot Password
 
-Remembering passwords all the time is impossible, if you forget your password, you have an option to reset it.
+There is an option to reset password if password is forgotten.
 
 #### Initiate Reset Password
 
-For resetting password, you will get a verification code either via Email or SMS. For that you need to call ****initateRestPassword()****.
+For resetting password, you can get a verification code either via Email or SMS. To do that, you can call initateRestPassword().
+
+****initateRestPassword()****.
 ```java
 //object initiations
 ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
@@ -551,7 +693,7 @@ public void failure(WebAuthError error) {
 
 #### Reset Password
 
-Once verifying the code, reset your password with your new password. To reset your password, call ****restPassword()****.
+Once code is verified, reset your password with your new password. To reset your password, call ****restPassword()****.
 
 ```java
 
@@ -1480,7 +1622,7 @@ cidaas.loginWithVoiceRecognition(File: Audio, "yourEmail", "", "", UsageType.MFA
 
 #### Consent Management
 
-Once user successfully logged in, they need to accept the terms and conditions. 
+Once user is successfully logged in, they need to accept the terms and conditions.
 
 #### Getting Consent Details 
 
@@ -1553,135 +1695,5 @@ cidaas.loginAfterConsent("Your sub", true, new Result < LoginCredentialsResponse
 }
 ```
 
-#### De-duplication
-
-#### Get Deduplication Details
-
-To get the list of similar users, call ****getDeduplicationDetails()****
-
-```java
- cidaas.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
-  @Override
-  public void success(DeduplicationResponseEntity result) {
-   //Your success code here.
-  }
-
-  @Override
-  public void failure(WebAuthError error) {
-   //Your failure code here
-  }
- });
-```
-
-
-**Response:**
-
-```json
-{
-    "success": true,
-    "status": 200,
-    "data": {
-        "email": "xxx@gmail.com",
-        "deduplicationList": [
-        {
-            "provider": "SELF",
-            "sub": "39363935-4d04-4411-8606-6805c4e673b4",
-            "email": "xxx********n2716@g***l.com",
-            "emailName": "xxx********n2716",
-            "firstname": "xxx",
-            "lastname": "yyy",
-            "displayName": "xxx yyy",
-            "currentLocale": "IN",
-            "country": "India",
-            "region": "Delhi",
-            "city": "Delhi",
-            "zipcode": "110008"
-        },
-        {
-            "provider": "SELF",
-            "sub": "488b8128-5584-4c25-9776-6ed34c6e7017",
-            "email": "xx****n21@g***l.com",
-            "emailName": "xx****n21",
-            "firstname": "xxx",
-            "lastname": "yyy",
-            "displayName": "xxx yyy",
-            "currentLocale": "IN",
-            "country": "India",
-            "region": "Delhi",
-            "city": "Delhi",
-            "zipcode": "110008"
-        }]
-    }
-}
-```
-
-#### Register User
-
-If the user not exists in the similar users, call ****registerDeduplication()****
-
-```java
-cidaas.registerDeduplication("your track id", new Result < RegisterDeduplicationEntity > () {
- @Override
- public void success(RegisterDeduplicationEntity result) {
-  //Your success code here
- }
-
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});
-```
-
-**Response:**
-
-```java
-{
-    "success": true,
-    "status": 200,
-    "data": {
-        "sub": "51701ec8-f2d7-4361-a727-f8df476a711a",
-        "userStatus": "VERIFIED",
-        "email_verified": false,
-        "suggested_action": "LOGIN"
-    }
-} 
-```
-
-
-#### Login With Deduplication
-
-If the user exists in the similar users, call ****loginDeduplication()****
-
-```java
-cidaas.loginDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
- @Override
- public void success(LoginDeduplicationResponseEntity result) {
-  //Your success code here
- }
-
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});
-```
-
-**Response:**
-
-```json
-{
-    "success": true,
-    "status": 200,
-    "data": {
-        "token_type": "Bearer",
-        "expires_in": 86400,
-        "access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUxNWYxMGE5LTVmNDktNGZlYS04MGNlLTZmYTkzMzk2YjI4NyJ9*****",
-        "session_state": "CNT7GGALeoKyTF6Og-cZHAuHUJBQ20M0jLL35oh3UGk.vcNxCNq4Y68",
-        "viewtype": "login",
-        "grant_type": "login"
-    }
-}
-```
 
     
