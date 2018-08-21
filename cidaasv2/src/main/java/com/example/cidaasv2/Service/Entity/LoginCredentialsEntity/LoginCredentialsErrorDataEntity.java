@@ -15,7 +15,7 @@ public class LoginCredentialsErrorDataEntity implements Serializable{
     private String suggested_url;
     String track_id;
     String client_id;
-    String consent_version;
+
     String consent_name;
 
     public String getTrack_id() {
@@ -34,13 +34,7 @@ public class LoginCredentialsErrorDataEntity implements Serializable{
         this.client_id = client_id;
     }
 
-    public String getConsent_version() {
-        return consent_version;
-    }
 
-    public void setConsent_version(String consent_version) {
-        this.consent_version = consent_version;
-    }
 
     public String getConsent_name() {
         return consent_name;

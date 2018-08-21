@@ -7,7 +7,6 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
@@ -44,15 +43,6 @@ public class TenantService {
 
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static TenantService getShared(Context contextFromCidaas )
     {
@@ -60,9 +50,7 @@ public class TenantService {
 
             if (shared == null) {
                 shared = new TenantService(contextFromCidaas);
-
             }
-
         }
         catch (Exception e)
         {
@@ -79,7 +67,7 @@ public class TenantService {
         String TenantUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise

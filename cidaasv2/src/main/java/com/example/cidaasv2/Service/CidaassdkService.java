@@ -30,7 +30,8 @@ public class CidaassdkService {
                 .build();
 
         Retrofit retrofit=new Retrofit.Builder()
-                .baseUrl(DBHelper.getShared().getLoginProperties().get("DomainURL")) //Todo Get Base URL
+               // .baseUrl(DBHelper.getShared().getLoginProperties().get("DomainURL"))
+                .baseUrl("https://www.google.com")//Todo Get Base URL
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(okHttpClient)

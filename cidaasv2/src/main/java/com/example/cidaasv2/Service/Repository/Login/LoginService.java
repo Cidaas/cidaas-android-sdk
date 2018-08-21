@@ -131,8 +131,7 @@ public class LoginService {
                             //If the Login Failed for Consent Management get Consent URL
                             if(loginCredentialsResponseErrorEntity.getError().getError().toString().equals("ConsentRequired")) {
                                 String Consenturl = baseurl + "/consent-management-srv/tenant/version/pageurl?consent_name=" +
-                                        loginCredentialsResponseErrorEntity.getError().getConsent_name() +
-                                        "&version=" + loginCredentialsResponseErrorEntity.getError().getConsent_version();
+                                        loginCredentialsResponseErrorEntity.getError().getConsent_name();
 
                                 //Service call for get  consent url
                                 cidaasSDKService.getConsentInfo(Consenturl).enqueue(new Callback<ConsentManagementResponseEntity>() {

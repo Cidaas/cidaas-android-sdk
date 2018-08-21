@@ -2,19 +2,23 @@ package com.example.cidaasv2.Controller;
 
 import android.Manifest;
 import android.app.KeyguardManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -38,6 +42,7 @@ import com.example.cidaasv2.Controller.Repository.Registration.RegistrationContr
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordController;
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
+import com.example.cidaasv2.Helper.Entity.ConsentAcceptRequestEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
@@ -104,6 +109,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseE
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
@@ -149,6 +155,8 @@ public class Cidaas implements IOAuthWebLogin{
     public static String fileName1;
     public  static String instanceId="";
     public static ICustomLoader loader;
+
+    CountDownTimer countDownTimer;
 
     public WebAuthError webAuthError=null;
 
@@ -241,13 +249,10 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-
-
-//Get Request Id By passing loginProperties as an Object
-    // 1. Read properties from file
-    // 2. Call request id from dictionary method
-    // 3. Maintain logs based on flags
-
+    //Get Request Id By passing loginProperties as an Object
+        // 1. Read properties from file
+        // 2. Call request id from dictionary method
+        // 3. Maintain logs based on flags
 
     public void setFCMToken(String FCMToken){
         //Store Device info for Later Purposes
@@ -255,39 +260,6 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-
-    public void deviceValidation(){
-        try
-        {
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    DeviceVerificationService.getShared(context).validateDevice(baseurl, Cidaas.instanceId, "","" , new Result<ValidateDeviceResponseEntity>() {
-                                @Override
-                                public void success(ValidateDeviceResponseEntity result) {
-
-                                }
-
-                                @Override
-                                public void failure(WebAuthError error) {
-
-                                }
-                            });
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-
-                }
-            });
-
-        }
-        catch (Exception e)
-        {
-
-        }
-    }
 
     public static void setremoteMessage(Map<String, String> instanceIdFromPush)
     {
@@ -303,7 +275,7 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-    // -----------------------------------------------------***** REQUEST ID *****-------------------------------------------------------------------------
+    // -----------------------------------------------------***** REQUEST ID *****---------------------------------------------------------------
 
     //Get Request Id By Passing loginProperties as Value in parameters
     @Override
@@ -413,7 +385,7 @@ public class Cidaas implements IOAuthWebLogin{
         }
     }
 
-    // -----------------------------------------------------***** TENANT INFO *****-------------------------------------------------------------------------
+    // -----------------------------------------------------***** TENANT INFO *****---------------------------------------------------------------
     @Override
     public void getTenantInfo(final Result<TenantInfoEntity> tenantresult) {
         try{
@@ -537,7 +509,7 @@ public class Cidaas implements IOAuthWebLogin{
 
     // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
 
-    public void getConsentDetails(@NonNull final String Name, @NonNull final String Version, @NonNull final String trackId,
+    public void getConsentDetails(@NonNull final String Name,  @NonNull final String trackId,
                                   final Result<ConsentDetailsResultEntity> consentResult)
     {
 
@@ -548,11 +520,11 @@ public class Cidaas implements IOAuthWebLogin{
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId = savedProperties.get("ClientId");
 
-                    if (Name != null && !Name.equals("") && Version != null && !Version.equals("") &&
-                            trackId != null && !trackId.equals("")  && baseurl != null && !baseurl.equals("") && clientId != null && !clientId.equals("")) {
+                    if (Name != null && !Name.equals("") && trackId != null && !trackId.equals("")  && baseurl != null && !baseurl.equals("")
+                            && clientId != null && !clientId.equals("")) {
 
 
-                        ConsentController.getShared(context).getConsentDetails(baseurl,Name,Version,trackId,consentResult);
+                        ConsentController.getShared(context).getConsentDetails(baseurl,Name,trackId,consentResult);
                     }
                     else
                     {
@@ -561,6 +533,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                         consentResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                 errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        return;
                     }
 
                     //Todo put not null
@@ -582,7 +555,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
 
-    public void loginAfterConsent(@NonNull final String sub,@NonNull final boolean accepted,
+    public void loginAfterConsent(@NonNull final ConsentAcceptRequestEntity consentAcceptRequestEntity,
                                   final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
@@ -594,12 +567,17 @@ public class Cidaas implements IOAuthWebLogin{
                     String clientId = savedProperties.get("ClientId");
 
 
-                    if (  sub != null && !sub.equals("")  && accepted != false ) {
+                    if (consentAcceptRequestEntity.getSub()!=null && !consentAcceptRequestEntity.getSub().equals("") &&
+                            consentAcceptRequestEntity.getConsentName()!=null && !consentAcceptRequestEntity.getConsentName().equals("") &&
+                            consentAcceptRequestEntity.getConsentVersion()!=null && !consentAcceptRequestEntity.getConsentVersion().equals("")
+                    && consentAcceptRequestEntity.isAccepted() != false ) {
 
                         ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
-                        consentManagementAcceptedRequestEntity.setAccepted(accepted);
-                        consentManagementAcceptedRequestEntity.setSub(sub);
+                        consentManagementAcceptedRequestEntity.setAccepted(consentAcceptRequestEntity.isAccepted());
+                        consentManagementAcceptedRequestEntity.setSub(consentAcceptRequestEntity.getSub());
                         consentManagementAcceptedRequestEntity.setClient_id(clientId);
+                        consentManagementAcceptedRequestEntity.setName(consentAcceptRequestEntity.getConsentName());
+                        consentManagementAcceptedRequestEntity.setVersion(consentAcceptRequestEntity.getConsentVersion());
 
 
                         ConsentController.getShared(context).acceptConsent(baseurl,consentManagementAcceptedRequestEntity,loginresult);
@@ -755,6 +733,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                                 initiateresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -914,6 +893,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                                 initiateresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -1090,6 +1070,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                                 initiateresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -1220,6 +1201,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -1389,16 +1371,16 @@ public class Cidaas implements IOAuthWebLogin{
                             &&  pattern != null && !pattern.equals("")  && passwordlessEntity.getRequestId() != null &&
                             passwordlessEntity.getRequestId()!="") {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
+                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId.equals("")){
                             String errorMessage="baseurl or clientId or mobile number must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
-                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
-                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
+                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -1414,6 +1396,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -1552,16 +1535,16 @@ loginresult.failure(error);
                             passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") &&
                             faceImageFile!=null) {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
+                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId.equals("")){
                             String errorMessage="baseurl or clientId must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
-                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
-                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
+                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -1575,6 +1558,7 @@ loginresult.failure(error);
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -1914,7 +1898,7 @@ loginresult.failure(error);
                             if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
                                     passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
 
-                                if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
+                                if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
                                     String errorMessage="baseurl or clientId  must not be empty";
 
                                     loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
@@ -1940,6 +1924,7 @@ loginresult.failure(error);
 
                                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                 errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        return;
                                     }
                                 }
 
@@ -2079,16 +2064,16 @@ loginresult.failure(error);
                     if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
                             passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
+                        if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
                             String errorMessage="baseurl or clientId  must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
-                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
-                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
+                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -2104,6 +2089,7 @@ loginresult.failure(error);
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -2176,6 +2162,7 @@ loginresult.failure(error);
                 @Override
                 public void success(Dictionary<String, String>  result) {
                     String baseurl = result.get("DomainURL");
+                    String clientId =result.get("ClientId");
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
@@ -2222,16 +2209,16 @@ loginresult.failure(error);
                     if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
                             passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
+                        if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
                             String errorMessage="baseurl or clientId  must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
-                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
-                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
+                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -2247,6 +2234,7 @@ loginresult.failure(error);
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -2282,6 +2270,40 @@ loginresult.failure(error);
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
+
+
+    public void listenTOTP(String sub)
+    {
+        final String secret=DBHelper.getShared().getSecret(sub);
+
+        final Intent i=new Intent("TOTPListener");
+        countDownTimer=new CountDownTimer(System.currentTimeMillis(),1000) {
+            @Override
+            public void onTick(long l) {
+                final TOTPEntity TOTPString=TOTPConfigurationController.getShared(context).generateTOTP(secret);
+
+
+                i.putExtra("TOTP", TOTPString);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(i);
+            }
+
+            @Override
+            public void onFinish() {
+
+                this.cancel();
+
+            }
+        }.start();
+
+    }
+
+
+    public void cancelListenTOTP()
+    {
+        countDownTimer.cancel();
+
+    }
+
 
 
 
@@ -2342,16 +2364,16 @@ loginresult.failure(error);
                     if ( passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
                             passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") && VoiceaudioFile!=null) {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId!=""){
+                        if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
                             String errorMessage="baseurl or clientId must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
-                                passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
-                                passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
+                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
                         {
                             String errorMessage="sub or email or mobile number must not be empty";
 
@@ -2360,11 +2382,13 @@ loginresult.failure(error);
                         }
 
                         if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
-                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId()== "") {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId().equals("")) {
                                 String errorMessage = "trackId must not be empty";
+
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                         errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                return;
                             }
                         }
 
@@ -2687,7 +2711,7 @@ loginresult.failure(error);
 
     }
 
-    public void verifyAccount(@NonNull final String code, final Result<RegisterUserAccountVerifyResponseEntity> result){
+    public void verifyAccount(@NonNull final String code, @NonNull final String accvid , final Result<RegisterUserAccountVerifyResponseEntity> result){
 
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2696,7 +2720,13 @@ loginresult.failure(error);
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
 
-                    RegistrationController.getShared(context).verifyAccountVerificationService(baseurl,code,result);
+                    if(code!=null && !code.equals("") && accvid!=null && accvid!="") {
+                        RegistrationController.getShared(context).verifyAccountVerificationService(baseurl, code, accvid, result);
+                    }
+                    else
+                    {
+
+                    }
 
                 }
 
@@ -2721,7 +2751,7 @@ loginresult.failure(error);
                  public void success(Dictionary<String, String> result) {
                      String baseurl = savedProperties.get("DomainURL");
                      String clientId=savedProperties.get("ClientId");
-                     if(trackId!=null && trackId!="")
+                     if(trackId!=null && !trackId.equals(""))
                      {
                          DeduplicationController.getShared(context).getDeduplicationList(baseurl,trackId,deduplicaionResult);
                      }
@@ -2743,7 +2773,7 @@ loginresult.failure(error);
      }
 
 
-     public void registerDeduplication(@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult){
+     public void registerUser(@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult){
          try {
              checkSavedProperties(new Result<Dictionary<String, String>>() {
                  @Override
@@ -2771,7 +2801,7 @@ loginresult.failure(error);
          }
      }
 
-    public void loginDeduplication(@NonNull final String sub,@NonNull final String password,
+    public void loginWithDeduplication(@NonNull final String sub,@NonNull final String password,
                                    final Result<LoginDeduplicationResponseEntity> deduplicaionResult)
     {
         try {
@@ -2832,7 +2862,7 @@ loginresult.failure(error);
 
     }
 
-    public void handleResetPassword(@NonNull final String verificationCode,
+    public void handleResetPassword(@NonNull final String verificationCode, final String rprq,
                                     final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult)
     {
         try {
@@ -2842,9 +2872,9 @@ loginresult.failure(error);
                 String baseurl = savedProperties.get("DomainURL");
                 String clientId=savedProperties.get("ClientId");
 
-                if(verificationCode!=null && verificationCode!="") {
+                if(verificationCode!=null && !verificationCode.equals("") && rprq!=null && !rprq.equals("")) {
 
-                    ResetPasswordController.getShared(context).resetPasswordValidateCode(baseurl,verificationCode,resetpasswordResult);
+                    ResetPasswordController.getShared(context).resetPasswordValidateCode(baseurl,verificationCode,rprq,resetpasswordResult);
 
                 }
                 else
@@ -2867,7 +2897,7 @@ loginresult.failure(error);
     }
 
 
-    public void resetPassword(@NonNull final String password, @NonNull final String confirmPassword,
+    public void resetPassword(@NonNull final String password, @NonNull final String confirmPassword,final String resetRequestId,final String ExchangeId,
                               final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
     {
         try {
@@ -2881,19 +2911,30 @@ loginresult.failure(error);
                     {
                         if(password.equals(confirmPassword))
                         {
-                            ResetPasswordController.getShared(context).resetNewPassword(baseurl,password,confirmPassword,resetpasswordResult);
+                            if(resetRequestId!=null && !resetRequestId.equals("") && ExchangeId!=null && !ExchangeId.equals(""))
+                            {
+                                ResetPasswordController.getShared(context).
+                                        resetNewPassword(baseurl,password,confirmPassword,resetRequestId,ExchangeId,resetpasswordResult);
+                            }
+                            else {
+                                String errorMessage="resetRequestId and ExchangeId must not be null";
+
+                                resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            }
                         }
                         else
                         {
-                            String errorMessage="Password and confirmpassword must  be same";
+                            String errorMessage="Password and confirmPassword must  be same";
 
                             resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
+
                     }
                     else
                     {
-                        String errorMessage="Password or confirmpassword must not be empty";
+                        String errorMessage="Password or confirmPassword must not be empty";
 
                         resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                 errorMessage,HttpStatusCode.EXPECTATION_FAILED));

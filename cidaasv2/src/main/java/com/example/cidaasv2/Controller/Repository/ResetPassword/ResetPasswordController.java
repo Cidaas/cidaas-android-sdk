@@ -27,8 +27,6 @@ import timber.log.Timber;
 public class ResetPasswordController {
 
 
-    private String rprq;
-    private String exchangeid;
     private String sub;
     private String verificationType;
     private Context context;
@@ -38,7 +36,6 @@ public class ResetPasswordController {
     public ResetPasswordController(Context contextFromCidaas) {
         sub="";
         verificationType="";
-        exchangeid="";
         context=contextFromCidaas;
         //Todo setValue for authenticationType
 
@@ -62,16 +59,18 @@ public class ResetPasswordController {
 
 
     //initiateResetResetPasswordService
-    public void initiateresetPasswordService(@NonNull String baseurl, @NonNull ResetPasswordRequestEntity resetPasswordRequestEntity, final Result<ResetPasswordResponseEntity> resetpasswordResult)
+    public void initiateresetPasswordService(@NonNull String baseurl, @NonNull ResetPasswordRequestEntity resetPasswordRequestEntity,
+                                             final Result<ResetPasswordResponseEntity> resetpasswordResult)
     {
         try {
 
-            if(resetPasswordRequestEntity.getRequestId() != null &&resetPasswordRequestEntity.getRequestId()  != "" && baseurl != null && !baseurl.equals("")){
-                ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl, new Result<ResetPasswordResponseEntity>() {
+            if(resetPasswordRequestEntity.getRequestId() != null &&resetPasswordRequestEntity.getRequestId()  != ""
+                    && baseurl != null && !baseurl.equals("")){
+                ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl,
+                        new Result<ResetPasswordResponseEntity>() {
 
                     @Override
                     public void success(ResetPasswordResponseEntity serviceresult) {
-                        rprq=serviceresult.getData().getRprq();
                         resetpasswordResult.success(serviceresult);
                     }
 
@@ -95,7 +94,7 @@ public class ResetPasswordController {
 
 
     //ResetResetPasswordValidateCodeService
-    public void resetPasswordValidateCode(@NonNull String baseurl,@NonNull String verificationCode,
+    public void resetPasswordValidateCode(@NonNull String baseurl,@NonNull String verificationCode,@NonNull String rprq,
                                                   final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult)
     {
         try {
@@ -113,9 +112,6 @@ public class ResetPasswordController {
 
                             @Override
                             public void success(ResetPasswordValidateCodeResponseEntity serviceresult) {
-                                exchangeid=serviceresult.getData().getExchangeId();
-                                rprq=serviceresult.getData().getResetRequestId();
-
                                 resetpasswordResult.success(serviceresult);
                             }
 
@@ -140,7 +136,7 @@ public class ResetPasswordController {
 
 
     //resetNewPasswordService
-    public void resetNewPassword(@NonNull String baseurl,@NonNull String password,@NonNull String confirmPassword,
+    public void resetNewPassword(@NonNull String baseurl,@NonNull String password,@NonNull String confirmPassword,String resetRequestId,String ExchangeId,
                                          final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
     {
         try {
@@ -148,8 +144,13 @@ public class ResetPasswordController {
 
             ResetNewPasswordRequestEntity resetNewPasswordRequestEntity=new ResetNewPasswordRequestEntity();
 
-            if(password != null &&password  != "" && confirmPassword!= null &&confirmPassword  != ""
-                    && exchangeid != null &&exchangeid != "" && rprq!= null &&rprq  != "" && baseurl != null && !baseurl.equals("")){
+            resetNewPasswordRequestEntity.setPassword(password);
+            resetNewPasswordRequestEntity.setConfirmPassword(confirmPassword);
+            resetNewPasswordRequestEntity.setExchangeId(ExchangeId);
+            resetNewPasswordRequestEntity.setResetRequestId(resetRequestId);
+
+            if(password != null &&password  != "" && confirmPassword!= null && !confirmPassword.equals("")
+                    && baseurl != null && !baseurl.equals("")){
 
                 ResetPasswordService.getShared(context).resetNewPassword(resetNewPasswordRequestEntity, baseurl,
                         new Result<ResetNewPasswordResponseEntity>() {

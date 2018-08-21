@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
@@ -73,7 +74,8 @@ public class TenantController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                String message="base url must not be empty";
+                result.failure(WebAuthError.getShared(context).customException(417,message, HttpStatusCode.EXPECTATION_FAILED));
             }
         }
         catch (Exception e)

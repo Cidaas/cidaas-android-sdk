@@ -9,7 +9,7 @@ public class ConsentManagementAcceptResponseEntity implements Serializable {
 
     int status;
     boolean success;
-    ConsentManagementResponseDataEntity data;
+    boolean data;
 
     public int getStatus() {
         return status;
@@ -27,11 +27,11 @@ public class ConsentManagementAcceptResponseEntity implements Serializable {
         this.success = success;
     }
 
-    public ConsentManagementResponseDataEntity getData() {
+    public boolean isData() {
         return data;
     }
 
-    public void setData(ConsentManagementResponseDataEntity data) {
+    public void setData(boolean data) {
         this.data = data;
     }
 }

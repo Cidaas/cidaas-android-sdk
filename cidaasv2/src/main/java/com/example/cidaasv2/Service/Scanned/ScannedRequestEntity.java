@@ -10,6 +10,7 @@ public class ScannedRequestEntity implements Serializable {
     DeviceInfoEntity deviceInfo;
     String statusId;
 
+
     public String getUsage_pass() {
         return usage_pass;
     }

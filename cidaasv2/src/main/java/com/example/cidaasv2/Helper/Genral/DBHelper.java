@@ -29,6 +29,7 @@ public class DBHelper {
     private static final String ChallengeProperties=" Challenge_Properties";
     private static final String DeviceInfo="Device_info";
     private static final String FCMTokenInfo="FCMTOKEN_info";
+    private static final String SecretInfo="Secret_info";
     private static final String userDeviceInfo="User_device_Info";
     private static final String pkceEnableStatus = "OAuthEnablePkce";
     private static final String logEnableStatus = "OAuthEnableLog";
@@ -134,6 +135,37 @@ public void setEnableLog(boolean enableLog)
         }
 
     }
+
+    //Add Secret Based on Sub
+    public void addSecret(String secret,String sub){
+        boolean result=false;
+        try {
+            editor.putString(SecretInfo+sub,secret);
+            editor.commit();
+        }
+        catch (Exception e)
+        {
+            result=false;
+        }
+
+    }
+
+    //get Device info
+    public String getSecret(String sub)
+    {
+        String secret;
+        try {
+            secret = preferences.getString(SecretInfo+sub, "");
+        }
+        catch (Exception e)
+        {
+            secret="";
+        }
+        return secret;
+    }
+
+
+
 
     //Get Login Object
     public Dictionary<String,String> getChallengeProperties()

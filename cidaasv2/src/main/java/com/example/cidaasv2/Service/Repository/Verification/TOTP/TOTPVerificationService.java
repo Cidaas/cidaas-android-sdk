@@ -60,15 +60,7 @@ public class TOTPVerificationService {
         }
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static TOTPVerificationService getShared(Context contextFromCidaas )
     {
@@ -86,13 +78,13 @@ public class TOTPVerificationService {
     }
 
 
-    public void scannedTOTP(String baseurl, String usagePass,String statusId,String AccessToken,
+    public void scannedTOTP(String baseurl,String usagePass,String statusId,String AccessToken,
                             final Result<ScannedResponseEntity> callback)
     {
         String scannedTOTPUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null || !baseurl.equals("")){
                 //Construct URL For RequestId
                 scannedTOTPUrl=baseurl+ URLHelper.getShared().getScannedTOTPURL();
             }
@@ -114,7 +106,6 @@ public class TOTPVerificationService {
             headers.put("access_token",AccessToken);
 
 
-
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
@@ -123,6 +114,7 @@ public class TOTPVerificationService {
             scannedRequestEntity.setUsage_pass(usagePass);
             scannedRequestEntity.setStatusId(statusId);
             scannedRequestEntity.setDeviceInfo(deviceInfoEntity);
+
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -228,9 +220,9 @@ public class TOTPVerificationService {
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
+               /// deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
             }
             setupTOTPMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 

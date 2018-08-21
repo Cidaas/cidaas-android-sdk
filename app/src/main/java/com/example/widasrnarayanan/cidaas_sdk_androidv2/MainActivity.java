@@ -1,9 +1,13 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -163,6 +167,43 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         Intent intent=new Intent(MainActivity.this,LoginActivity.class);
         startActivity(intent);
     }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            int message = intent.getIntExtra("TOTP",27);
+            Toast.makeText(context, "Message"+message, Toast.LENGTH_SHORT).show();
+            Log.d("receiver", "Got message: " + message);
+        }
+    };
+
+
+
+
+
+
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
+    }
+
+
+        public void listenTOTP(View view)
+        {
+            try
+            {
+                cidaas.listenTOTP("");
+            }
+            catch (Exception e){
+
+            }
+        }
+
+
 
     //Redirect to Enroll
     public void redirectToEnrollMFA(View view){

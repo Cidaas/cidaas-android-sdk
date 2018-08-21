@@ -52,24 +52,20 @@ public class ConsentController {
     }
 
     //Service call For ConsentManagementService
-    public void getConsentDetails(@NonNull final String baseurl, @NonNull final String consentName, @NonNull String consentVersion, @NonNull String trackid,
+    public void getConsentDetails(@NonNull final String baseurl, @NonNull final String consentName, @NonNull String trackid,
                                   @NonNull final Result<ConsentDetailsResultEntity> consentresult) {
         ConsentName = consentName;
-        ConsentVersion = consentVersion;
         TrackId = trackid;
         try {
-            if (consentName != null && !consentName.equals("") && consentVersion != null && !consentVersion.equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
+            if (consentName != null && !consentName.equals("") && baseurl != null && !baseurl.equals("")) {
 
-                ConsentService.getShared(context).getConsentUrl(baseurl, consentName, consentVersion, new Result<String>() {
-                    @Override
-                    public void success(final String urlResult) {
+
 
                         //Call getString Details
-                        ConsentService.getShared(context).getConsentStringDetails(baseurl, consentName, new Result<ConsentDetailsResultEntity>() {
+                        ConsentService.getShared(context).getConsentDetails(baseurl, consentName, new Result<ConsentDetailsResultEntity>() {
                             @Override
                             public void success(ConsentDetailsResultEntity result) {
-                                result.getData().setConsentURL(urlResult);
+                                //result.getData().setConsentURL(urlResult);
                                 consentresult.success(result);
                             }
 
@@ -78,14 +74,7 @@ public class ConsentController {
                                 consentresult.failure(error);
                             }
                         });
-                    }
 
-                    @Override
-                    public void failure(WebAuthError error) {
-
-                        consentresult.failure(error);
-                    }
-                });
             } else {
                 consentresult.failure(WebAuthError.getShared(context).propertyMissingException());
             }
@@ -106,8 +95,8 @@ public class ConsentController {
             if (consentManagementAcceptedRequestEntity.getClient_id() != null && consentManagementAcceptedRequestEntity.getClient_id() != "" &&
 
                     consentManagementAcceptedRequestEntity.getSub() != null && consentManagementAcceptedRequestEntity.getSub() != "" &&
-                    consentManagementAcceptedRequestEntity.getName() != null && consentManagementAcceptedRequestEntity.getName() != "" /*
-                    consentManagementAcceptedRequestEntity.getVersion() != null && consentManagementAcceptedRequestEntity.getVersion() != ""*/
+                    consentManagementAcceptedRequestEntity.getName() != null && consentManagementAcceptedRequestEntity.getName() != "" &&
+                    consentManagementAcceptedRequestEntity.getVersion() != null && consentManagementAcceptedRequestEntity.getVersion() != ""
                     && baseurl != null && !baseurl.equals("")) {
 
                 //Todo Service call
@@ -117,11 +106,11 @@ public class ConsentController {
                     public void success(ConsentManagementAcceptResponseEntity serviceresult) {
 
                         ResumeConsentRequestEntity resumeConsentRequestEntity = new ResumeConsentRequestEntity();
-                        resumeConsentRequestEntity.setClient_id(serviceresult.getData().getClient_id());
                         resumeConsentRequestEntity.setTrack_id(TrackId);
                         resumeConsentRequestEntity.setSub(consentManagementAcceptedRequestEntity.getSub());
-                        resumeConsentRequestEntity.setName(ConsentName);
-                        resumeConsentRequestEntity.setVersion(ConsentVersion);
+                        resumeConsentRequestEntity.setName(consentManagementAcceptedRequestEntity.getName());
+                        resumeConsentRequestEntity.setVersion(consentManagementAcceptedRequestEntity.getVersion());
+                        resumeConsentRequestEntity.setClient_id(consentManagementAcceptedRequestEntity.getClient_id());
                         ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity, new Result<ResumeConsentResponseEntity>() {
                             @Override
                             public void success(ResumeConsentResponseEntity result) {

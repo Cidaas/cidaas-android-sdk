@@ -64,7 +64,8 @@ public class RegistrationController {
                     registrationSetupRequestEntity.getRequestId() != null && registrationSetupRequestEntity.getRequestId() != ""
                     && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                RegistrationService.getShared(context).getRegistrationSetup(baseurl, registrationSetupRequestEntity, new Result<RegistrationSetupResponseEntity>() {
+                RegistrationService.getShared(context).getRegistrationSetup(baseurl, registrationSetupRequestEntity,
+                        new Result<RegistrationSetupResponseEntity>() {
                     @Override
                     public void success(RegistrationSetupResponseEntity serviceresult) {
                         validateRegistrationFilelds=serviceresult;
@@ -122,14 +123,16 @@ public class RegistrationController {
     }
 
     //Service call To Registration Setup
-    public void registerWithNewUserService(@NonNull String baseurl,@NonNull RegisterNewUserRequestEntity registerNewUserRequestEntity, final Result<RegisterNewUserResponseEntity> result){
+    public void registerWithNewUserService(@NonNull String baseurl,@NonNull RegisterNewUserRequestEntity registerNewUserRequestEntity,
+                                           final Result<RegisterNewUserResponseEntity> result){
         try{
 
             if (registerNewUserRequestEntity.getRequestId() != null && registerNewUserRequestEntity.getRequestId() != "" &&
-                    registerNewUserRequestEntity.getRegistrationEntity() != null && registerNewUserRequestEntity.getRegistrationEntity().getFamily_name() != ""
-                    && baseurl != null && !baseurl.equals("")) {
+                    registerNewUserRequestEntity.getRegistrationEntity() != null &&
+                    registerNewUserRequestEntity.getRegistrationEntity().getFamily_name() != "" && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity, new Result<RegisterNewUserResponseEntity>() {
+                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,
+                        new Result<RegisterNewUserResponseEntity>() {
                     @Override
                     public void success(RegisterNewUserResponseEntity serviceresult) {
                         result.success(serviceresult);
@@ -178,7 +181,8 @@ public class RegistrationController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 //Todo Service call
-                RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity, new Result<RegisterUserAccountInitiateResponseEntity>() {
+                RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,
+                        new Result<RegisterUserAccountInitiateResponseEntity>() {
                     @Override
                     public void success(RegisterUserAccountInitiateResponseEntity serviceresult) {
                         accvid=serviceresult.getData().getAccvid();
@@ -206,7 +210,8 @@ public class RegistrationController {
 
 
     //Service call To  register New User Account Verification via Email Setup
-    public void verifyAccountVerificationService(@NonNull String baseurl,@NonNull String code, final Result<RegisterUserAccountVerifyResponseEntity> result)
+    public void verifyAccountVerificationService(@NonNull String baseurl,@NonNull String code, String accvid,
+                                                 final Result<RegisterUserAccountVerifyResponseEntity> result)
     {
         try{
 
@@ -218,7 +223,8 @@ public class RegistrationController {
                 registrationEntity.setAccvid(accvid);
 
                 //Todo Service call
-                RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity, new Result<RegisterUserAccountVerifyResponseEntity>() {
+                RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity,
+                        new Result<RegisterUserAccountVerifyResponseEntity>() {
                     @Override
                     public void success(RegisterUserAccountVerifyResponseEntity serviceresult) {
                         result.success(serviceresult);

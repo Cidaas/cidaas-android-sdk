@@ -22,8 +22,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //super.onMessageReceived(remoteMessage);
         Timber.d("push Message rcvd");
-        if(remoteMessage.getNotification()!=null)
-        {
+
             //Toast.makeText(this, "Success"+remoteMessage.getMessageType(), Toast.LENGTH_SHORT).show();
             Cidaas cidaas=new Cidaas(this);
             if(remoteMessage.getData().get("intermediate_verifiation_id")!=null && remoteMessage.getData().get("intermediate_verifiation_id")!="") {
@@ -31,15 +30,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
             }
-            else
-            {
-               //Toast.makeText(this, "Null Intermediate Id", Toast.LENGTH_SHORT).show();
+            else {
+                //Toast.makeText(this, "Null Intermediate Id", Toast.LENGTH_SHORT).show();
             }
-        }
-        else
-        {
-           // Toast.makeText(this, "Error FCM", Toast.LENGTH_SHORT).show();
-        }
         //Toast.makeText(this, "SS"+remoteMessage.getData(), Toast.LENGTH_SHORT).show();
     }
 

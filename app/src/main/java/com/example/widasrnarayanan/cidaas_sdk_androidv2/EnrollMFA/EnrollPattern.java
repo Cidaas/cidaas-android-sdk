@@ -1,14 +1,19 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,16 +25,13 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFAResponseEntity;
-import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -59,6 +61,8 @@ public class EnrollPattern extends AppCompatActivity {
             sub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
         }
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("TOTPListener"));
+
 
     }
 
@@ -71,7 +75,7 @@ public class EnrollPattern extends AppCompatActivity {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
                 passwordlessEntity.setEmail("");
                 passwordlessEntity.setMobile("");
-                passwordlessEntity.setSub("");
+                passwordlessEntity.setSub(sub);
                 passwordlessEntity.setRequestId(result.getData().getRequestId());
                 passwordlessEntity.setTrackId(trackId);
                 passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
@@ -116,7 +120,7 @@ public class EnrollPattern extends AppCompatActivity {
 
     public void SetupSmartPush(View view)
     {
-       /*cidaas.setupSmartPushMFA(sub, new Result<SetupSmartPushMFAResponseEntity>() {
+     /*  cidaas.setupSmartPushMFA(sub, new Result<SetupSmartPushMFAResponseEntity>() {
             @Override
             public void success(SetupSmartPushMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Success push", Toast.LENGTH_SHORT).show();
@@ -126,9 +130,20 @@ public class EnrollPattern extends AppCompatActivity {
             public void failure(WebAuthError error) {
                 Toast.makeText(EnrollPattern.this, "Fails push "+error.ErrorMessage, Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
+*/
 
+     cidaas.configureSmartPush(sub, new Result<EnrollSmartPushMFAResponseEntity>() {
+         @Override
+         public void success(EnrollSmartPushMFAResponseEntity result) {
+             Toast.makeText(EnrollPattern.this, "Success push", Toast.LENGTH_SHORT).show();
+         }
 
+         @Override
+         public void failure(WebAuthError error) {
+             Toast.makeText(EnrollPattern.this, " Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+         }
+     });
 
     }
 
@@ -240,6 +255,100 @@ catch (Exception ec){
         physicalVerificationEntity.setUserDeviceId(userdeviceID);
 
         physicalVerificationEntity.setUsageType("MULTIFACTOR_AUTHENTICATION");
+}
+
+
+public void EnrollTOTP(View view){
+ try{
+     cidaas.configureTOTP(sub, new Result<EnrollTOTPMFAResponseEntity>() {
+         @Override
+         public void success(EnrollTOTPMFAResponseEntity result) {
+             Toast.makeText(EnrollPattern.this, "Result"+result.getData().getSub(), Toast.LENGTH_SHORT).show();
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+             Toast.makeText(EnrollPattern.this, "Error:"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+         }
+     });
+ }
+
+ catch (Exception e)
+ {
+
+ }
+}
+
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            TOTPEntity totpEntity = (TOTPEntity) intent.getSerializableExtra("TOTP");
+            Toast.makeText(context, "Message:"+totpEntity.getTotp_string()+"Timer:"+totpEntity.getTimer_count(), Toast.LENGTH_SHORT).show();
+
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
+    }
+
+
+    public void listenTOTP(View view)
+    {
+     try
+     {
+        cidaas.listenTOTP(sub);
+     }
+     catch (Exception e){
+
+     }
+    }
+
+
+
+    public void cancelTOTP(View view){
+        try
+        {
+            cidaas.cancelListenTOTP();
+        }
+        catch (Exception e){
+
+        }
+    }
+
+public void LoginTOTP(View view){
+try{
+
+
+    PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+    passwordlessEntity.setUsageType(UsageType.MFA);
+
+   // passwordlessEntity.setRequestId(result.getData().getRequestId());
+    passwordlessEntity.setSub(sub);
+    passwordlessEntity.setMobile("");
+    passwordlessEntity.setEmail("");
+
+    cidaas.loginWithTOTP(passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+        @Override
+        public void success(LoginCredentialsResponseEntity result) {
+
+        }
+
+        @Override
+        public void failure(WebAuthError error) {
+
+        }
+    });
+}
+catch (Exception e)
+{
+    Toast.makeText(this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+}
 }
 
     private String getFCMToken() {

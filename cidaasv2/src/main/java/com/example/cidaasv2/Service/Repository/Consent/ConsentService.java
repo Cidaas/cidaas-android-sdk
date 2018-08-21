@@ -68,7 +68,7 @@ public class ConsentService {
         return shared;
     }
 
-    //get ConsentUrl
+   /* //get ConsentUrl
     public void getConsentUrl(final String baseurl,String consentName,String consentVersion,final Result<String> callback) {
         String ConsentcallUrl;
         try {
@@ -148,15 +148,15 @@ public class ConsentService {
         }
     }
 
-
+*/
     //get Consent String Details
-    public void getConsentStringDetails(final String baseurl,String consentName,final Result<ConsentDetailsResultEntity> callback) {
+    public void getConsentDetails(final String baseurl,String consentName,final Result<ConsentDetailsResultEntity> callback) {
         String ConsentstringDetailsUrl;
         try {
 
-            if (baseurl != null || baseurl != "") {
+            if (baseurl != null && baseurl != "") {
                 //Construct URL For RequestId
-                ConsentstringDetailsUrl = baseurl +URLHelper.getShared().getConsent_string_details(consentName);
+                ConsentstringDetailsUrl = baseurl +URLHelper.getShared().getConsent_details()+consentName;
             } else {
                 callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
                         context.getString(R.string.PROPERTY_MISSING), 400, null));

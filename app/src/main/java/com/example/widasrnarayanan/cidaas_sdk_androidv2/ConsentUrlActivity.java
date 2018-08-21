@@ -50,7 +50,7 @@ public class ConsentUrlActivity extends AppCompatActivity {
 
 
 
-            cidaas.getConsentDetails(consentName, version,trackid,new Result<ConsentDetailsResultEntity>() {
+            cidaas.getConsentDetails(consentName,trackid,new Result<ConsentDetailsResultEntity>() {
 
 
                 @Override
@@ -62,7 +62,7 @@ public class ConsentUrlActivity extends AppCompatActivity {
                     user_agreement.setText(((LinkedHashMap) result).get("userAgreeText").toString());*/
 
 
-                    String titleFor=result.getData().getTitle();
+                    String titleFor=result.getData().getName();
                     title.setText(titleFor);
                     description.setText(result.getData().getDescription());
                     user_agreement.setText(result.getData().getUserAgreeText());
@@ -88,7 +88,7 @@ public class ConsentUrlActivity extends AppCompatActivity {
         consentAcceptRequestEntity.setConsentName(consentName);
         consentAcceptRequestEntity.setAccepted(true);
 
-         cidaas.loginAfterConsent(sub,true, new Result<LoginCredentialsResponseEntity>() {
+         cidaas.loginAfterConsent(consentAcceptRequestEntity, new Result<LoginCredentialsResponseEntity>() {
              @Override
              public void success(LoginCredentialsResponseEntity result) {
                  Toast.makeText(ConsentUrlActivity.this, "consent Management is accepted", Toast.LENGTH_SHORT).show();

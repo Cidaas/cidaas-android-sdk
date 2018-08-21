@@ -18,7 +18,7 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.Re
 public class EmailMFAActivity extends AppCompatActivity {
 
     Cidaas cidaas;
-    String sub;
+    String sub,statusId;
     EditText verificationCodeTextbox;
 
     @Override
@@ -31,13 +31,14 @@ public class EmailMFAActivity extends AppCompatActivity {
         Intent intent=getIntent();
 
         sub=intent.getStringExtra("sub");
+        statusId=intent.getStringExtra("statusId");
 
     }
 
     public void verifyClick(View view){
         String verificationCode=verificationCodeTextbox.getText().toString();
 
-        cidaas.verifyEmail( verificationCode, "statusId",new Result<LoginCredentialsResponseEntity>() {
+        cidaas.verifyEmail( verificationCode, statusId,new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
                 Intent intent=new Intent(EmailMFAActivity.this,SuccessfulLogin.class);

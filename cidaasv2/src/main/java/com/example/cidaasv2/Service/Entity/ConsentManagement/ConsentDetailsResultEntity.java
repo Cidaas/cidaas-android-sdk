@@ -8,14 +8,16 @@ import java.io.Serializable;
 public class ConsentDetailsResultEntity implements Serializable {
     boolean success;
     int status;
-   // Object data;
-    ConsentDetailsResultDataEntity data;
 
-    public ConsentDetailsResultDataEntity getData() {
+    // Object data;
+    ConsentSettingsReponseDataEntity data;
+
+
+    public ConsentSettingsReponseDataEntity getData() {
         return data;
     }
 
-    public void setData(ConsentDetailsResultDataEntity data) {
+    public void setData(ConsentSettingsReponseDataEntity data) {
         this.data = data;
     }
 

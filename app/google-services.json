@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "130534985621",
-    "firebase_url": "https://cidaassdkandroidv2.firebaseio.com",
-    "project_id": "cidaassdkandroidv2",
-    "storage_bucket": "cidaassdkandroidv2.appspot.com"
+    "project_number": "625266920869",
+    "firebase_url": "https://cidaas-authenticator.firebaseio.com",
+    "project_id": "cidaas-authenticator",
+    "storage_bucket": "cidaas-authenticator.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:130534985621:android:76f1418029fcbfb7",
+        "mobilesdk_app_id": "1:625266920869:android:8d78b57d4cc731ea",
         "android_client_info": {
           "package_name": "com.example.widasrnarayanan.cidaas_sdk_androidv2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "130534985621-1v8hl52n058ll3pn80ff63ls1sl076ru.apps.googleusercontent.com",
+          "client_id": "625266920869-ehsb8j6bbdoi87crr388kqo25cneb8m7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.widasrnarayanan.cidaas_sdk_androidv2",
-            "certificate_hash": "b8824419faa7b1b2ee491b71d0ed3e0ab990b762"
+            "certificate_hash": "7c9928474a4d9a2baf477d3d6a85ad841c02bb5b"
           }
         },
         {
-          "client_id": "130534985621-phem99nusn2vl1esl37c73fd0ahtuv9i.apps.googleusercontent.com",
+          "client_id": "625266920869-immt8vja7apfkdtu4vdqrdvuv3h8ajgh.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBnwZJQQzAUIhhG1LeEkgSf3sqRHEUEmTM"
+          "current_key": "AIzaSyAkiiUvU4yRIoqWrx-eXDqxJ3ztDpd5gWk"
         }
       ],
       "services": {
@@ -40,8 +40,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "130534985621-phem99nusn2vl1esl37c73fd0ahtuv9i.apps.googleusercontent.com",
+              "client_id": "625266920869-immt8vja7apfkdtu4vdqrdvuv3h8ajgh.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "625266920869-4ntss9f54u7oig9bq5atoljsjihpss3v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.widasrnarayanan.cidaas_sdk_androidv2"
+              }
             }
           ]
         },

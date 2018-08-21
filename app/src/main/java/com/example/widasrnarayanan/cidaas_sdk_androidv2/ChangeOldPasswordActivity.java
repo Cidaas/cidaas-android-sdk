@@ -39,12 +39,6 @@ public class ChangeOldPasswordActivity extends AppCompatActivity {
         sub=intent.getStringExtra("sub");
         accessToken=intent.getStringExtra("accessToken");
 
-
-
-
-
-
-
     }
 
     public void changebuttonClick(View view){

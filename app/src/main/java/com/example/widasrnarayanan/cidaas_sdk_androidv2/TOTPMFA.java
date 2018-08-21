@@ -47,7 +47,7 @@ public class TOTPMFA extends AppCompatActivity {
             public void success(AuthRequestResponseEntity result) {
 
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-                passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                passwordlessEntity.setUsageType(UsageType.MFA);
                 passwordlessEntity.setTrackId(trackid);
                 passwordlessEntity.setRequestId(result.getData().getRequestId());
                 passwordlessEntity.setSub(sub);

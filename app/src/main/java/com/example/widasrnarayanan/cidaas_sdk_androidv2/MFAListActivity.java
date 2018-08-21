@@ -69,7 +69,7 @@ public class MFAListActivity extends AppCompatActivity {
                     public void success(AuthRequestResponseEntity result) {
 
                         PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-                        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                        passwordlessEntity.setUsageType(UsageType.MFA);
                         passwordlessEntity.setTrackId(trackid);
                         passwordlessEntity.setRequestId(result.getData().getRequestId());
                         passwordlessEntity.setSub(sub);
@@ -84,6 +84,7 @@ public class MFAListActivity extends AppCompatActivity {
                             public void success(InitiateEmailMFAResponseEntity result) {
                                 Intent intent=new Intent(MFAListActivity.this,EmailMFAActivity.class);
                                 intent.putExtra("sub",sub);
+                                intent.putExtra("statusId",result.getData().getStatusId());
                                 startActivity(intent);
                                 Toast.makeText(MFAListActivity.this, ""+result.getData().getStatusId(), Toast.LENGTH_SHORT).show();
                             }
@@ -140,7 +141,7 @@ public class MFAListActivity extends AppCompatActivity {
                     @Override
                     public void success(AuthRequestResponseEntity result) {
                         PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-                        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                        passwordlessEntity.setUsageType(UsageType.MFA);
                         passwordlessEntity.setTrackId(trackid);
                         passwordlessEntity.setRequestId(result.getData().getRequestId());
                         passwordlessEntity.setSub(sub);
@@ -170,7 +171,7 @@ public class MFAListActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(MFAListActivity.this, ""+error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MFAListActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

@@ -10,12 +10,20 @@ import static junit.framework.TestCase.assertTrue;
 public class ClientInfoDataEntityTest {
     ClientInfoDataEntity clientInfoDataEntity = new ClientInfoDataEntity();
 
-   /* @Test
+    @Test
     public void testGetLogin_providers() throws Exception {
+        String string1="String1";
+        String string2="String2";
+        String[] strarray = new String[2];
+
+        strarray[0]=string1;
+        strarray[1]=string2;
+
+        clientInfoDataEntity.setLogin_providers(strarray);
+
         String[] result = clientInfoDataEntity.getLogin_providers();
-        Assert.assertArrayEquals(new String[]{"replaceMeWithExpectedResult"}, result);
+        Assert.assertArrayEquals(new String[]{"String1","String2"}, result);
     }
-*/
     private boolean passwordless_enabled;
     private String logo_uri;
     private String[] login_providers;

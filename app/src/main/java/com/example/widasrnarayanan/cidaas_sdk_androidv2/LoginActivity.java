@@ -16,6 +16,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsErrorDataEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -99,9 +100,32 @@ public class LoginActivity extends AppCompatActivity {
                         //Todo handle ConsentRequired
                         if (error.ErrorMessage.equals("ConsentRequired")) {
                             consentName = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_name();
-                              consentVersion = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_version();
+                              //consentVersion = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_version();
                               sub=((LoginCredentialsErrorDataEntity) error.getError()).getSub();
                             trackId=((LoginCredentialsErrorDataEntity) error.getError()).getTrack_id();
+
+
+                            final String finalSub = sub;
+                            cidaas.getConsentDetails(consentName, trackId, new Result<ConsentDetailsResultEntity>() {
+                                @Override
+                                public void success(ConsentDetailsResultEntity result) {
+                                    Toast.makeText(LoginActivity.this, ""+result.getData().getVersion(), Toast.LENGTH_SHORT).show();
+
+                                    String consentContentUrl = result.getData().getPolicyUrl();
+                                    Intent intent=new Intent(LoginActivity.this,ConsentUrlActivity.class);
+                                    intent.putExtra("consentName",result.getData().getName());
+                                    intent.putExtra("consentVersion",result.getData().getVersion());
+                                    intent.putExtra("sub", finalSub);
+                                    intent.putExtra("trackid",trackId);
+                                    intent.putExtra("url",consentContentUrl);
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
 
 /*
@@ -159,6 +183,9 @@ public class LoginActivity extends AppCompatActivity {
                                    Toast.makeText(LoginActivity.this, "Login fails " + error.ErrorMessage, Toast.LENGTH_SHORT).show();
                                }
                            });
+                        }
+                        else {
+                            Toast.makeText(LoginActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         }
 
                     }

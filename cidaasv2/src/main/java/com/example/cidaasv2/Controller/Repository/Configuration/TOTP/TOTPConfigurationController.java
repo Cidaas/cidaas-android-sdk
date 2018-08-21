@@ -27,6 +27,7 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFAR
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.TOTP.TOTPVerificationService;
@@ -38,7 +39,7 @@ import timber.log.Timber;
 
 public class TOTPConfigurationController {
 
-    private String authenticationType,secret;
+    private String authenticationType,secretWithValue,secret;
     private String verificationType;
     private Context context;
 
@@ -117,7 +118,19 @@ public class TOTPConfigurationController {
                                 String queryString=setupserviceresult.getData().getQueryString();
 
                                 String [] stringArray = queryString.split("&", 2);
-                                 secret=stringArray[0];
+                                 secretWithValue=stringArray[0];
+                                String [] stringArray1=secretWithValue.split("=",2);
+                                secret=stringArray1[1];
+
+                                 if(secret!=null && !secret.equals(""))
+                                 {
+                                   DBHelper.getShared().addSecret(secret,sub);
+                                 }
+                                 else
+                                 {
+                                     String errorMessage="Invalid TOTP Secret";
+                                     enrollresult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                 }
 
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
@@ -151,15 +164,15 @@ public class TOTPConfigurationController {
                                                                             if(sub != null && !sub.equals("") &&
                                                                                     result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
-                                                                                String totp="";
+                                                                                TOTPEntity totp;
                                                                                 if(secret!=null) {
-
-                                                                                  totp=  generateTOTP(secret);
+                                                                                    totp=  generateTOTP(secret);
+                                                                                    enrollTOTPMFARequestEntity.setSub(sub);
+                                                                                    enrollTOTPMFARequestEntity.setVerifierPassword(totp.getTotp_string());
+                                                                                    enrollTOTPMFARequestEntity.setStatusId(setupserviceresult.getData().getStatusId());
+                                                                                    enrollTOTPMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());
                                                                                 }
-                                                                                enrollTOTPMFARequestEntity.setSub(sub);
-                                                                                enrollTOTPMFARequestEntity.setVerifierPassword(totp);
-                                                                                enrollTOTPMFARequestEntity.setStatusId(setupserviceresult.getData().getStatusId());
-                                                                                enrollTOTPMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());
+
                                                                             }
                                                                             else {
                                                                                 enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
@@ -244,7 +257,7 @@ public class TOTPConfigurationController {
                               final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
-            if(codeChallenge=="" && codeVerifier=="") {
+            if(codeChallenge.equals("") && codeVerifier.equals("")) {
                 //Generate Challenge
                 generateChallenge();
             }
@@ -301,11 +314,14 @@ public class TOTPConfigurationController {
                                                                             if (requestId != null && !requestId.equals("") && serviceresult.getData().getStatusId() != null &&
                                                                                     !serviceresult.getData().getStatusId().equals("")) {
 
+                                                                                String sub="";
 
                                                                                 AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity = new AuthenticateTOTPRequestEntity();
                                                                                 authenticateTOTPRequestEntity.setUserDeviceId(initiateTOTPMFARequestEntity.getUserDeviceId());
                                                                                 authenticateTOTPRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                                                                String totp = generateTOTP(secret);
+
+                                                                                String secretFromDB=DBHelper.getShared().getSecret(sub);
+                                                                                String totp = generateTOTP(secretFromDB).getTotp_string();
 
                                                                                 authenticateTOTPRequestEntity.setVerifierPassword(totp);
 
@@ -391,7 +407,7 @@ public class TOTPConfigurationController {
 
 
 
-    private String generateTOTP(String secret)
+    public TOTPEntity generateTOTP(String secret)
     {
         String TOTP="";
         try
@@ -410,19 +426,23 @@ public class TOTPConfigurationController {
             // set progress state
 
             DecimalFormat format = new DecimalFormat("00");
-            String formattedResult = format.format(30 - local_totp);
+            String timercount = format.format(30 - local_totp);
+
+            TOTP = GoogleAuthenticator.getTOTPCode(secret);
+
+            TOTPEntity totpEntity=new TOTPEntity();
+            totpEntity.setTimer_count(timercount);
+            totpEntity.setTotp_string(TOTP);
 
 
+          /*  if(local_totp == 0) {
 
-            if(local_totp == 0)
-            {
-                TOTP= GoogleAuthenticator.getTOTPCode(secret);
             }
-
-            return TOTP;
+*/
+            return totpEntity;
         }
         catch (Exception e) {
-          return TOTP;
+          return null;
         }
     }
 

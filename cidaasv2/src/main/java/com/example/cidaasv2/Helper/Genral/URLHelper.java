@@ -28,9 +28,11 @@ public class URLHelper {
     }
 
     String request_id_url="/authz-srv/authrequest/authz/generate";
+
     String consent_url= "/consent-management-srv/tenant/version/pageurl?consent_name=";
-    String consent_string_details="/consent-management-srv/tenant/group/public/";
-    String  acceptConsent="/consent-management-srv/tenant/user/status";
+    String consent_details="/consent-management-srv/settings/public?name=";
+
+    String  acceptConsent="/consent-management-srv/user/status";
     String loginWithCredentials="/login-srv/login/sdk";
     String registrationSetup="/registration-setup-srv/public/list?acceptlanguage=";
     String clientUrl="/public-srv/public/";
@@ -388,9 +390,11 @@ public class URLHelper {
         return consent_url+consentName+"&version=" +consentVersion;
     }
 
-    public String getConsent_string_details(String consentName) {
-        return consent_string_details+consentName;
+    public String getConsent_details() {
+        return consent_details;
     }
+
+
 
     public String getAcceptConsent() {
         return acceptConsent;

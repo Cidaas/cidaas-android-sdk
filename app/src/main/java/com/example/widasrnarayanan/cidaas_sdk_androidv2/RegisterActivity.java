@@ -135,7 +135,6 @@ public class RegisterActivity extends AppCompatActivity {
         registrationEntity.setWebsite("http://google.com");
 
 
-
         RegistrationCustomFieldEntity registrationCustomFieldEntity=new RegistrationCustomFieldEntity();
         registrationCustomFieldEntity.setKey("Pincode");
         registrationCustomFieldEntity.setValue("123456");
@@ -143,13 +142,13 @@ public class RegisterActivity extends AppCompatActivity {
         registrationCustomFieldEntity.setId("pincode");
         registrationCustomFieldEntity.setInternal(true);
 
-      RegistrationCustomFieldEntity registrationCustomFieldEntity1=new RegistrationCustomFieldEntity();
+        RegistrationCustomFieldEntity registrationCustomFieldEntity1=new RegistrationCustomFieldEntity();
         registrationCustomFieldEntity1.setKey("Age");
         registrationCustomFieldEntity1.setValue("24");
         registrationCustomFieldEntity1.setDataType("String");
         registrationCustomFieldEntity1.setId("age");
 
-          RegistrationCustomFieldEntity registrationCustomFieldEntity2=new RegistrationCustomFieldEntity();
+        RegistrationCustomFieldEntity registrationCustomFieldEntity2=new RegistrationCustomFieldEntity();
         registrationCustomFieldEntity2.setKey("Address");
         registrationCustomFieldEntity2.setValue("28,Kuttiyananjan Street Sivakasi");
         registrationCustomFieldEntity2.setDataType("String");
@@ -164,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
         registrationEntity.setCustomFields(customFileds);
 
 
-        cidaas.verifyAccount("your code", new Result<RegisterUserAccountVerifyResponseEntity>() {
+        cidaas.verifyAccount("your code", "",new Result<RegisterUserAccountVerifyResponseEntity>() {
             @Override
             public void success(RegisterUserAccountVerifyResponseEntity result) {
 
@@ -175,19 +174,19 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
-       /* cidaas.registerNewUser(requestId, registrationEntity, new Result<RegisterNewUserResponseEntity>() {
+        cidaas.registerUser(requestId, registrationEntity, new Result<RegisterNewUserResponseEntity>() {
             @Override
             public void success(RegisterNewUserResponseEntity result) {
                 //Toast.makeText(this, "Regsiter", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterActivity.this, "Regsiter Succesfully"+result.getData().getSuggested_action()+result.getData().getNext_token(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Register Succesfully"+result.getData().getSuggested_action()+result.getData().getNext_token(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void failure(WebAuthError error) {
                 //Toast.makeText(this, "Regsiter", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterActivity.this, "Regsiter Failed"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Register Failed"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
     }
 //Fetch Details
 

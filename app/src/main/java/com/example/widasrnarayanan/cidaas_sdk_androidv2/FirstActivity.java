@@ -59,7 +59,7 @@ public class FirstActivity extends AppCompatActivity {
          }
      });
 
-     cidaas.loginDeduplication("", "", new Result<LoginDeduplicationResponseEntity>() {
+     cidaas.loginWithDeduplication("", "", new Result<LoginDeduplicationResponseEntity>() {
          @Override
          public void success(LoginDeduplicationResponseEntity result) {
 
@@ -72,7 +72,7 @@ public class FirstActivity extends AppCompatActivity {
      });
 
 
-     cidaas.registerDeduplication("", new Result<RegisterDeduplicationEntity>() {
+     cidaas.registerUser("", new Result<RegisterDeduplicationEntity>() {
          @Override
          public void success(RegisterDeduplicationEntity result) {
 
@@ -84,17 +84,7 @@ public class FirstActivity extends AppCompatActivity {
          }
      });
 
-     cidaas.loginAfterConsent("Your SUB", true, new Result<LoginCredentialsResponseEntity>() {
-         @Override
-         public void success(LoginCredentialsResponseEntity result) {
 
-         }
-
-         @Override
-         public void failure(WebAuthError error) {
-
-         }
-     });
     // resetPasswordRequestEntity.setRequestId();
 
       //  cidaas.resetPassword();
