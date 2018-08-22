@@ -30,7 +30,7 @@ dependencies {
  ```
  ## Getting started
 
-Create a xml file named as <b>cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
+Create a xml file named as <b>Cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
 
 > ##### Note:- The File name must be cidaas.xml 
 
@@ -195,7 +195,7 @@ public void failure(WebAuthError error) {
 Before registration, you need to know what are all the fields must show to the user while registration. For getting the fields, call ****getRegistrationFields()****.
 
 ```java
-cidaas.getRegistrationFields("Your_RequestId", new Result < RegistrationSetupResponseEntity > () {
+cidaas.getRegistrationFields("Your_RequestId","Your_locale" ,new Result < RegistrationSetupResponseEntity > () {
 @Override
 public void success(RegistrationSetupResponseEntity result) {
 // your success code here
