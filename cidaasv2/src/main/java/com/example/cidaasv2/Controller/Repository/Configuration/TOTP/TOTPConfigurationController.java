@@ -310,7 +310,7 @@ public class TOTPConfigurationController {
                                                                     new Result<InitiateTOTPMFAResponseEntity>() {
 
                                                                         @Override
-                                                                        public void success(InitiateTOTPMFAResponseEntity result) {
+                                                                        public void success(InitiateTOTPMFAResponseEntity serviceresult) {
                                                                             if (requestId != null && !requestId.equals("") && serviceresult.getData().getStatusId() != null &&
                                                                                     !serviceresult.getData().getStatusId().equals("")) {
 

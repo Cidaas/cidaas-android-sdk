@@ -6,12 +6,10 @@ import android.os.Bundle;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.LoginDeduplication.LoginDeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 
 public class FirstActivity extends AppCompatActivity {
@@ -58,19 +56,6 @@ public class FirstActivity extends AppCompatActivity {
 
          }
      });
-
-     cidaas.loginWithDeduplication("", "", new Result<LoginDeduplicationResponseEntity>() {
-         @Override
-         public void success(LoginDeduplicationResponseEntity result) {
-
-         }
-
-         @Override
-         public void failure(WebAuthError error) {
-
-         }
-     });
-
 
      cidaas.registerUser("", new Result<RegisterDeduplicationEntity>() {
          @Override

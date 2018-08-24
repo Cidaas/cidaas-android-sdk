@@ -38,7 +38,10 @@ public class URLHelper {
     String clientUrl="/public-srv/public/";
     String tenantUrl="/public-srv/tenantinfo/basic";
     String registerNewUserurl="/users-srv/register";
+
     String mfa_URL="/verification-srv/settings/list?sub=";
+    String mfaList="/verification-srv/settings/listbydeviceid";
+
     String setupEmailMFA="/verification-srv/email/setup";
     String enrollEmailMFA="/verification-srv/email/enroll";
     String initiateemailMFA="/verification-srv/email/initiate";
@@ -109,7 +112,12 @@ public class URLHelper {
 
     String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
     String deduplicationList="users-srv/deduplication/info/";
+
     String registerdeduplication="/users-srv/deduplication/register/";
+
+    public String getMfaList() {
+        return mfaList;
+    }
 
     public String getRegisterdeduplication() {
         return registerdeduplication;

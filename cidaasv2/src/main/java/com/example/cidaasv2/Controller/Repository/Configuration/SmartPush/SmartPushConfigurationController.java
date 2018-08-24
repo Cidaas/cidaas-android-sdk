@@ -238,14 +238,14 @@ public class SmartPushConfigurationController {
         try{
 
 
-          /*  if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != "" )
+            if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
             }
             else
             {
                 initiateSmartPushMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-            }*/
+            }
 
 
             if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
@@ -254,8 +254,11 @@ public class SmartPushConfigurationController {
             }
             Cidaas.instanceId="";
             if (    initiateSmartPushMFARequestEntity.getUsageType() != null && initiateSmartPushMFARequestEntity.getUsageType() != "" &&
-                 /*   initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != ""&&*/
+                    initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != ""&&
                     baseurl != null && !baseurl.equals("")) {
+
+                initiateSmartPushMFARequestEntity.setClient_id(clientId);
+
                 //Todo Service call
                 SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge,initiateSmartPushMFARequestEntity,
                         new Result<InitiateSmartPushMFAResponseEntity>() {
@@ -287,20 +290,22 @@ public class SmartPushConfigurationController {
                                                         public void success(ValidateDeviceResponseEntity result) {
 
                                                             //Todo call initiate
-                                                            initiateSmartPushMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
+                                                            initiateSmartPushMFARequestEntity.setUsage_pass(result.getData().getUsage_pass());
+
+
                                                             SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge, initiateSmartPushMFARequestEntity,
                                                                     new Result<InitiateSmartPushMFAResponseEntity>() {
 
                                                                         @Override
                                                                         public void success(InitiateSmartPushMFAResponseEntity result) {
-                                                                            if (serviceresult.getData().getRandomNumber() != null && !serviceresult.getData().getRandomNumber().equals("") && serviceresult.getData().getStatusId() != null &&
-                                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                                            if (result.getData().getRandomNumber() != null && !result.getData().getRandomNumber().equals("") && result.getData().getStatusId() != null &&
+                                                                                    !result.getData().getStatusId().equals("")) {
 
 
                                                                                 AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity = new AuthenticateSmartPushRequestEntity();
                                                                                 authenticateSmartPushRequestEntity.setUserDeviceId(initiateSmartPushMFARequestEntity.getUserDeviceId());
-                                                                                authenticateSmartPushRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                                                                authenticateSmartPushRequestEntity.setVerifierPassword(serviceresult.getData().getRandomNumber());
+                                                                                authenticateSmartPushRequestEntity.setStatusId(result.getData().getStatusId());
+                                                                                authenticateSmartPushRequestEntity.setVerifierPassword(result.getData().getRandomNumber());
 
 
                                                                                 SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,
@@ -318,8 +323,8 @@ public class SmartPushConfigurationController {
                                                                                                 //Todo Check not Null values
                                                                                                 resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                                                 resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                                                resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                                                                                resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
+                                                                                                resumeLoginRequestEntity.setUsageType(initiateSmartPushMFARequestEntity.getUsageType());
+                                                                                                resumeLoginRequestEntity.setVerificationType("push");
                                                                                                 resumeLoginRequestEntity.setClient_id(clientId);
                                                                                                 resumeLoginRequestEntity.setRequestId(requestId);
 
@@ -461,6 +466,7 @@ public class SmartPushConfigurationController {
                 }
 
             }
+
 
 
         }

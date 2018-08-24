@@ -4,11 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConsentAcceptRequestEntity implements Serializable{
+public class ConsentEntity implements Serializable{
      String consentName;
      String consentVersion;
      String sub;
+     String trackId;
      boolean isAccepted;
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
+    }
 
     public String getConsentName() {
         return consentName;

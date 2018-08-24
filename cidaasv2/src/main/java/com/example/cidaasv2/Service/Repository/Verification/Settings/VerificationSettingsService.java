@@ -3,9 +3,11 @@ package com.example.cidaasv2.Service.Repository.Verification.Settings;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
@@ -83,7 +85,9 @@ public class VerificationSettingsService {
                 if(sub!=null && sub!=""){
                     //Construct URL For RequestId
 
-                    mfalistUrl=baseurl+ URLHelper.getShared().getMfa_URL();
+                    //mfalistUrl=baseurl+ URLHelper.getShared().getMfa_URL();
+                   //TODO change to getMfaList();
+                     mfalistUrl=baseurl+ URLHelper.getShared().getMfaList();
                 }
                 else {
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,context.getString(R.string.MFA_LIST_FAILURE),
@@ -98,9 +102,19 @@ public class VerificationSettingsService {
             }
 
 
+            boolean common_configs = true;
+            if(userDeviceID.equals("")) {
+
+                DeviceInfoEntity deviceInfoEntity= DBHelper.getShared().getDeviceInfo();
+                userDeviceID=deviceInfoEntity.getDeviceId();
+            }
+            else {
+
+            }
+
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getmfaList(mfalistUrl,sub,userDeviceID).enqueue(new Callback<MFAListResponseEntity>() {
+            cidaasSDKService.getmfaList(mfalistUrl,sub,userDeviceID,common_configs).enqueue(new Callback<MFAListResponseEntity>() {
                 @Override
                 public void onResponse(Call<MFAListResponseEntity> call, Response<MFAListResponseEntity> response) {
                     if (response.isSuccessful()) {

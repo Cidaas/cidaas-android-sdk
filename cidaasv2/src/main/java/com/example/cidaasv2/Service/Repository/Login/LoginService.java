@@ -338,7 +338,13 @@ public class LoginService {
                             }
                             else
                             {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                if(commonErrorEntity.getError_description()!=null && !commonErrorEntity.getError_description().equals(""))
+                                {
+                                    errorMessage=commonErrorEntity.getError_description();
+                                }
+                                else {
+                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                }
                             }
 
 

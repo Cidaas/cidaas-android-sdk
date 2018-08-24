@@ -8,15 +8,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Helper.Entity.ConsentAcceptRequestEntity;
+import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultDataEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsErrorDataEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 
 public class ConsentUrlActivity extends AppCompatActivity {
@@ -50,7 +45,7 @@ public class ConsentUrlActivity extends AppCompatActivity {
 
 
 
-            cidaas.getConsentDetails(consentName,trackid,new Result<ConsentDetailsResultEntity>() {
+            cidaas.getConsentDetails(consentName,new Result<ConsentDetailsResultEntity>() {
 
 
                 @Override
@@ -82,7 +77,7 @@ public class ConsentUrlActivity extends AppCompatActivity {
 
 
     public void acceptButtononClick(View view){
-         ConsentAcceptRequestEntity consentAcceptRequestEntity=new ConsentAcceptRequestEntity();
+         ConsentEntity consentAcceptRequestEntity=new ConsentEntity();
         consentAcceptRequestEntity.setConsentVersion(version);
         consentAcceptRequestEntity.setSub(sub);
         consentAcceptRequestEntity.setConsentName(consentName);

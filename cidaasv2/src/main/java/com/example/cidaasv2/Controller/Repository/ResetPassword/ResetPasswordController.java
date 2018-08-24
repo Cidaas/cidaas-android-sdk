@@ -3,24 +3,17 @@ package com.example.cidaasv2.Controller.Repository.ResetPassword;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
-import com.example.cidaasv2.Service.Repository.OauthService;
-import com.example.cidaasv2.Service.Repository.Registration.RegistrationService;
 import com.example.cidaasv2.Service.Repository.ResetPassword.ResetPasswordService;
-
-import java.util.Dictionary;
 
 import timber.log.Timber;
 
@@ -136,23 +129,17 @@ public class ResetPasswordController {
 
 
     //resetNewPasswordService
-    public void resetNewPassword(@NonNull String baseurl,@NonNull String password,@NonNull String confirmPassword,String resetRequestId,String ExchangeId,
-                                         final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
+    public void resetNewPassword(@NonNull String baseurl, ResetPasswordEntity resetPasswordEntity
+            ,final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
     {
         try {
 
 
-            ResetNewPasswordRequestEntity resetNewPasswordRequestEntity=new ResetNewPasswordRequestEntity();
-
-            resetNewPasswordRequestEntity.setPassword(password);
-            resetNewPasswordRequestEntity.setConfirmPassword(confirmPassword);
-            resetNewPasswordRequestEntity.setExchangeId(ExchangeId);
-            resetNewPasswordRequestEntity.setResetRequestId(resetRequestId);
-
-            if(password != null &&password  != "" && confirmPassword!= null && !confirmPassword.equals("")
+            if(resetPasswordEntity.getPassword() != null &&resetPasswordEntity.getPassword()  != "" &&
+                    resetPasswordEntity.getConfirmPassword()!= null && !resetPasswordEntity.getConfirmPassword().equals("")
                     && baseurl != null && !baseurl.equals("")){
 
-                ResetPasswordService.getShared(context).resetNewPassword(resetNewPasswordRequestEntity, baseurl,
+                ResetPasswordService.getShared(context).resetNewPassword(resetPasswordEntity, baseurl,
                         new Result<ResetNewPasswordResponseEntity>() {
 
                             @Override

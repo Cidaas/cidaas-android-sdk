@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Service.Repository.Verification.SmartPush;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -18,6 +19,7 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseDataEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
@@ -31,6 +33,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -412,7 +415,7 @@ public class SmartPushVerificationService {
 
 
     //initiateSmartPushMFA
-    public void initiateSmartPush(String baseurl,String codeChallenge, InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity, final Result<InitiateSmartPushMFAResponseEntity> callback)
+    public void initiateSmartPush(String baseurl, String codeChallenge, final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity, final Result<InitiateSmartPushMFAResponseEntity> callback)
     {
         String initiateSmartPushMFAUrl="";
         try
@@ -506,6 +509,33 @@ public class SmartPushVerificationService {
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null));
                 }
             });
+
+           /* cidaasSDKService.initiateSmartPushMFARAW(initiateSmartPushMFAUrl,headers,initiateSmartPushMFARequestEntity).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.isSuccessful())
+                    {
+                        Toast.makeText(context, ""+response.body(), Toast.LENGTH_SHORT).show();
+                        InitiateSmartPushMFAResponseEntity initiateSmartPushMFAResponseEntity=new InitiateSmartPushMFAResponseEntity();
+                        initiateSmartPushMFAResponseEntity.setStatus(response.code());
+                        initiateSmartPushMFAResponseEntity.setSuccess(response.isSuccessful());
+
+
+                        InitiateSmartPushMFAResponseDataEntity dataEntity=new InitiateSmartPushMFAResponseDataEntity();
+
+                        initiateSmartPushMFAResponseEntity.setData();
+
+                        callback.success(response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+*/
+
 
 
         }

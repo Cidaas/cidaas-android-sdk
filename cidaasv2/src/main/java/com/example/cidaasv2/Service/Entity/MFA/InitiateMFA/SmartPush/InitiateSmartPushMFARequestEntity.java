@@ -12,16 +12,16 @@ public class InitiateSmartPushMFARequestEntity implements Serializable{
     String userDeviceId;
     String client_id;
     String usageType;
-    String usagePass;
+    String usage_pass;
     DeviceInfoEntity deviceInfo;
     String mobile;
 
-    public String getUsagePass() {
-        return usagePass;
+    public String getUsage_pass() {
+        return usage_pass;
     }
 
-    public void setUsagePass(String usagePass) {
-        this.usagePass = usagePass;
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
     }
 
     public String getMobile() {

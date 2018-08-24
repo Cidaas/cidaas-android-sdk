@@ -296,7 +296,7 @@ public class FingerprintConfigurationController {
                                                                     new Result<InitiateFingerprintMFAResponseEntity>() {
 
                                                                         @Override
-                                                                        public void success(InitiateFingerprintMFAResponseEntity result) {
+                                                                        public void success(InitiateFingerprintMFAResponseEntity serviceresult) {
 
                                                                             if (serviceresult.getData().getStatusId() != null &&
                                                                                     !serviceresult.getData().getStatusId().equals("")) {

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResetNewPasswordRequestEntity implements Serializable {
+public class ResetPasswordEntity implements Serializable {
 
     String exchangeId;
     String resetRequestId;

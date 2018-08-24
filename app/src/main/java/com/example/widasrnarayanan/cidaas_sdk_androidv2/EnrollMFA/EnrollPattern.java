@@ -141,19 +141,14 @@ public class EnrollPattern extends AppCompatActivity {
 
          @Override
          public void failure(WebAuthError error) {
-             Toast.makeText(EnrollPattern.this, " Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+             Toast.makeText(EnrollPattern.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
          }
      });
 
     }
 
     public void EnrollSmartPush(View view){
-        String userdeviceID="7557f73c-8ea8-4cee-979f-4609878894aa";
-        EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity=new EnrollSmartPushMFARequestEntity();
-        enrollSmartPushMFARequestEntity.setUserDeviceId(userdeviceID);
-        enrollSmartPushMFARequestEntity.setStatusId("6e32f505-f5d8-4ddb-a2d5-cb239be93eca");
-        enrollSmartPushMFARequestEntity.setVerifierPassword("72");
-        enrollSmartPushMFARequestEntity.setSub(sub);
+
 /*
         cidaas.enrollSmartPushMFA(enrollSmartPushMFARequestEntity, new Result<EnrollSmartPushMFAResponseEntity>() {
             @Override
@@ -168,12 +163,38 @@ public class EnrollPattern extends AppCompatActivity {
         });
    */ }
     public void AuthenticateSmartPush(View view){
-        String userdeviceID="7557f73c-8ea8-4cee-979f-4609878894aa";
-        PhysicalVerificationEntity physicalVerificationEntity=new PhysicalVerificationEntity();
-        physicalVerificationEntity.setSub(sub);
-        physicalVerificationEntity.setUserDeviceId(userdeviceID);
 
-        physicalVerificationEntity.setUsageType("MULTIFACTOR_AUTHENTICATION");
+
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+                PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                passwordlessEntity.setRequestId(result.getData().getRequestId());
+                passwordlessEntity.setSub(sub);
+                passwordlessEntity.setTrackId(trackId);
+                passwordlessEntity.setMobile("+919787113989");
+
+                cidaas.loginWithSmartPush(passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Toast.makeText(EnrollPattern.this, "Success Push"+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(EnrollPattern.this, "Error push "+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+
+
 
        }
 

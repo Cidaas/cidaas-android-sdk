@@ -10,10 +10,8 @@ import android.widget.Toast;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 
 public class ResetNewPasswordActivty extends AppCompatActivity {
 
@@ -44,14 +42,14 @@ public class ResetNewPasswordActivty extends AppCompatActivity {
 
         if(newPassword.equals(confirmPassword)) {
 
-            ResetNewPasswordRequestEntity resetNewPasswordRequestEntity = new ResetNewPasswordRequestEntity();
-            resetNewPasswordRequestEntity.setPassword(newPassword);
-            resetNewPasswordRequestEntity.setConfirmPassword(confirmPassword);
-            resetNewPasswordRequestEntity.setExchangeId(exchangeId);
-            resetNewPasswordRequestEntity.setResetRequestId(resetRequestId);
+            ResetPasswordEntity resetPasswordEntity = new ResetPasswordEntity();
+            resetPasswordEntity.setPassword(newPassword);
+            resetPasswordEntity.setConfirmPassword(confirmPassword);
+            resetPasswordEntity.setExchangeId(exchangeId);
+            resetPasswordEntity.setResetRequestId(resetRequestId);
 
 
-       /*     cidaas.resetNewPassword(resetNewPasswordRequestEntity, new Result<ResetNewPasswordResponseEntity>() {
+            cidaas.resetPassword(resetPasswordEntity, new Result<ResetNewPasswordResponseEntity>() {
                 @Override
                 public void success(ResetNewPasswordResponseEntity result) {
                     Toast.makeText(ResetNewPasswordActivty.this, "Password Changed SuccessFully", Toast.LENGTH_SHORT).show();
@@ -62,7 +60,7 @@ public class ResetNewPasswordActivty extends AppCompatActivity {
                     Toast.makeText(ResetNewPasswordActivty.this, "Change Password  Failed" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-       */ }
+        }
         else {
             Toast.makeText(this, "Password and Confirm Password must be same", Toast.LENGTH_SHORT).show();
         }

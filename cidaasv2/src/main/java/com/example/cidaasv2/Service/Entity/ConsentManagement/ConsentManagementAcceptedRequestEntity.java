@@ -12,7 +12,16 @@ public class ConsentManagementAcceptedRequestEntity implements Serializable{
     String client_id;
     String sub;
     String version;
+    String trackId;
     boolean accepted;
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
+    }
 
     public String getName() {
         return name;
