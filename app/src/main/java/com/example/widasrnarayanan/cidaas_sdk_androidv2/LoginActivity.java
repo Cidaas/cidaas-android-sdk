@@ -1,10 +1,9 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +17,6 @@ import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsErrorDataEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
@@ -106,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                             final String finalSub = sub;
-                            cidaas.getConsentDetails(consentName, trackId, new Result<ConsentDetailsResultEntity>() {
+                            cidaas.getConsentDetails(consentName, new Result<ConsentDetailsResultEntity>() {
                                 @Override
                                 public void success(ConsentDetailsResultEntity result) {
                                     Toast.makeText(LoginActivity.this, ""+result.getData().getVersion(), Toast.LENGTH_SHORT).show();
@@ -168,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         }
                         else if(error.ErrorMessage.equals("email_not_verified")){
-                           cidaas.initiateAccountVerificationByEmail(sub, requestIdresult.getData().getRequestId(), new Result<RegisterUserAccountInitiateResponseEntity>() {
+                           cidaas.initiateEmailVerification(sub, requestIdresult.getData().getRequestId(), new Result<RegisterUserAccountInitiateResponseEntity>() {
                                @Override
                                public void success(RegisterUserAccountInitiateResponseEntity result) {
                                    Toast.makeText(LoginActivity.this, "Email Verification Initiated", Toast.LENGTH_SHORT).show();

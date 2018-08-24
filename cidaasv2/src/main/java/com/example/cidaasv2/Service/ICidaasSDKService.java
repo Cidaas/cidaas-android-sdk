@@ -114,7 +114,7 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
@@ -131,6 +131,7 @@ import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
@@ -359,6 +360,10 @@ public interface ICidaasSDKService {
     @POST
     Call<InitiateSmartPushMFAResponseEntity> initiateSmartPushMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity);
 
+    //Inititate SmartPush MFA
+    @POST
+    Call<ResponseBody> initiateSmartPushMFARAW(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity);
+
     //Authenticate SmartPush MFA
     @POST
     Call<AuthenticateSmartPushResponseEntity> authenticateSmartPushMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity);
@@ -410,7 +415,7 @@ public interface ICidaasSDKService {
     //Reset New Password
     @POST
     Call<ResetNewPasswordResponseEntity> ResetNewPassword(@Url String url, @HeaderMap Map<String,String>headers,
-                                                        @Body ResetNewPasswordRequestEntity resetNewPasswordRequestEntity);
+                                                        @Body ResetPasswordEntity resetPasswordEntity);
 
     //Change Password
     @POST
@@ -469,7 +474,8 @@ public interface ICidaasSDKService {
 
     //Get MFA list
     @GET
-    Call<MFAListResponseEntity> getmfaList(@Url String url, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId);
+    Call<MFAListResponseEntity> getmfaList(@Url String url, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId, @Query("common_configs") boolean common_configs);
+
 
     //Get ConsentInfo
     @GET

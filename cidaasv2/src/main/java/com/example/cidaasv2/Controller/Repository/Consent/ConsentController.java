@@ -22,7 +22,6 @@ public class ConsentController {
     private Context context;
     private String ConsentName;
     private String ConsentVersion;
-    private String TrackId;
 
     public static ConsentController shared;
 
@@ -52,10 +51,10 @@ public class ConsentController {
     }
 
     //Service call For ConsentManagementService
-    public void getConsentDetails(@NonNull final String baseurl, @NonNull final String consentName, @NonNull String trackid,
+    public void getConsentDetails(@NonNull final String baseurl, @NonNull final String consentName,
                                   @NonNull final Result<ConsentDetailsResultEntity> consentresult) {
         ConsentName = consentName;
-        TrackId = trackid;
+
         try {
             if (consentName != null && !consentName.equals("") && baseurl != null && !baseurl.equals("")) {
 
@@ -106,7 +105,7 @@ public class ConsentController {
                     public void success(ConsentManagementAcceptResponseEntity serviceresult) {
 
                         ResumeConsentRequestEntity resumeConsentRequestEntity = new ResumeConsentRequestEntity();
-                        resumeConsentRequestEntity.setTrack_id(TrackId);
+                        resumeConsentRequestEntity.setTrack_id(consentManagementAcceptedRequestEntity.getTrackId());
                         resumeConsentRequestEntity.setSub(consentManagementAcceptedRequestEntity.getSub());
                         resumeConsentRequestEntity.setName(consentManagementAcceptedRequestEntity.getName());
                         resumeConsentRequestEntity.setVersion(consentManagementAcceptedRequestEntity.getVersion());

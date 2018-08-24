@@ -225,14 +225,14 @@ public class VoiceConfigurationController {
     {
         try{
 
-          /*  if(initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != "" )
+            if(initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
             }
             else
             {
                 initiateVoiceMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-            }*/
+            }
 
             if(codeChallenge=="" && codeVerifier=="") {
                 //Generate Challenge

@@ -12,7 +12,7 @@ import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
@@ -272,7 +272,7 @@ public class ResetPasswordService {
 
 
     //Reset Password Validate Code
-    public void resetNewPassword(ResetNewPasswordRequestEntity resetNewPasswordRequestEntity,
+    public void resetNewPassword(ResetPasswordEntity resetPasswordEntity,
                                  String baseurl, final Result<ResetNewPasswordResponseEntity> callback)
     {
         //Local Variables
@@ -306,7 +306,7 @@ public class ResetPasswordService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.ResetNewPassword(ResetNewPasswordUrl,headers,resetNewPasswordRequestEntity)
+            cidaasSDKService.ResetNewPassword(ResetNewPasswordUrl,headers, resetPasswordEntity)
                     .enqueue(new Callback<ResetNewPasswordResponseEntity>() {
                         @Override
                         public void onResponse(Call<ResetNewPasswordResponseEntity> call, Response<ResetNewPasswordResponseEntity> response) {

@@ -70,7 +70,7 @@ trackid=intent.getStringExtra("trackid");
                     }
                 });
 
-                cidaas.loginWithBackupCode(verificationCode,passwordlessEntity,new Result<LoginCredentialsResponseEntity>()
+                cidaas.loginWithBackupcode(verificationCode,passwordlessEntity,new Result<LoginCredentialsResponseEntity>()
                 {
                     @Override
                     public void success(LoginCredentialsResponseEntity result) {

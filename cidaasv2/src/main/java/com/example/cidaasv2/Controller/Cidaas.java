@@ -2,7 +2,6 @@ package com.example.cidaasv2.Controller;
 
 import android.Manifest;
 import android.app.KeyguardManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -42,7 +41,7 @@ import com.example.cidaasv2.Controller.Repository.Registration.RegistrationContr
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordController;
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
-import com.example.cidaasv2.Helper.Entity.ConsentAcceptRequestEntity;
+import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
@@ -63,7 +62,6 @@ import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
-import com.example.cidaasv2.Service.Entity.Deduplication.LoginDeduplication.LoginDeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -113,12 +111,12 @@ import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
-import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateRequestEntity;
@@ -127,7 +125,6 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupRequestEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
-import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -508,8 +505,8 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
-
-    public void getConsentDetails(@NonNull final String Name,  @NonNull final String trackId,
+    @Override
+    public void getConsentDetails(@NonNull final String consentName,
                                   final Result<ConsentDetailsResultEntity> consentResult)
     {
 
@@ -520,11 +517,11 @@ public class Cidaas implements IOAuthWebLogin{
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId = savedProperties.get("ClientId");
 
-                    if (Name != null && !Name.equals("") && trackId != null && !trackId.equals("")  && baseurl != null && !baseurl.equals("")
+                    if (consentName != null && !consentName.equals("") && baseurl != null && !baseurl.equals("")
                             && clientId != null && !clientId.equals("")) {
 
 
-                        ConsentController.getShared(context).getConsentDetails(baseurl,Name,trackId,consentResult);
+                        ConsentController.getShared(context).getConsentDetails(baseurl,consentName,consentResult);
                     }
                     else
                     {
@@ -554,8 +551,8 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-
-    public void loginAfterConsent(@NonNull final ConsentAcceptRequestEntity consentAcceptRequestEntity,
+    @Override
+    public void loginAfterConsent(@NonNull final ConsentEntity consentEntity,
                                   final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
@@ -567,17 +564,18 @@ public class Cidaas implements IOAuthWebLogin{
                     String clientId = savedProperties.get("ClientId");
 
 
-                    if (consentAcceptRequestEntity.getSub()!=null && !consentAcceptRequestEntity.getSub().equals("") &&
-                            consentAcceptRequestEntity.getConsentName()!=null && !consentAcceptRequestEntity.getConsentName().equals("") &&
-                            consentAcceptRequestEntity.getConsentVersion()!=null && !consentAcceptRequestEntity.getConsentVersion().equals("")
-                    && consentAcceptRequestEntity.isAccepted() != false ) {
+                    if (consentEntity.getSub()!=null && !consentEntity.getSub().equals("") &&
+                            consentEntity.getConsentName()!=null && !consentEntity.getConsentName().equals("") &&
+                            consentEntity.getConsentVersion()!=null && !consentEntity.getConsentVersion().equals("")
+                    && consentEntity.isAccepted() != false ) {
 
                         ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
-                        consentManagementAcceptedRequestEntity.setAccepted(consentAcceptRequestEntity.isAccepted());
-                        consentManagementAcceptedRequestEntity.setSub(consentAcceptRequestEntity.getSub());
+                        consentManagementAcceptedRequestEntity.setAccepted(consentEntity.isAccepted());
+                        consentManagementAcceptedRequestEntity.setSub(consentEntity.getSub());
                         consentManagementAcceptedRequestEntity.setClient_id(clientId);
-                        consentManagementAcceptedRequestEntity.setName(consentAcceptRequestEntity.getConsentName());
-                        consentManagementAcceptedRequestEntity.setVersion(consentAcceptRequestEntity.getConsentVersion());
+                        consentManagementAcceptedRequestEntity.setName(consentEntity.getConsentName());
+                        consentManagementAcceptedRequestEntity.setTrackId(consentEntity.getTrackId());
+                        consentManagementAcceptedRequestEntity.setVersion(consentEntity.getConsentVersion());
 
 
                         ConsentController.getShared(context).acceptConsent(baseurl,consentManagementAcceptedRequestEntity,loginresult);
@@ -607,8 +605,8 @@ public class Cidaas implements IOAuthWebLogin{
 
     // -----------------------------------------------------***** GET MFA LIST *****---------------------------------------------------------------
 
-
-    public void getmfaList(final String sub, final Result<MFAListResponseEntity> mfaresult)
+@Override
+    public void getMFAList(final String sub, final Result<MFAListResponseEntity> mfaresult)
     {
         try{
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -677,7 +675,7 @@ public class Cidaas implements IOAuthWebLogin{
 
     }
 
-
+    @Override
     public void enrollEmail(final String code, final String statusId, final Result<EnrollEmailMFAResponseEntity> enrollresult)
     {
         try {
@@ -712,7 +710,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
 
-
+    @Override
     public void loginWithEmail(final PasswordlessEntity passwordlessEntity, final Result<InitiateEmailMFAResponseEntity> initiateresult)
     {
         try {
@@ -1154,7 +1152,7 @@ public class Cidaas implements IOAuthWebLogin{
     //tODO CHANGE TO LOGIN AND VERIFY
 
     @Override
-    public void configureBackupCode(final String sub,final Result<SetupBackupCodeMFAResponseEntity> result) {
+    public void configureBackupcode(final String sub,final Result<SetupBackupCodeMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -1179,7 +1177,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     @Override
-    public void loginWithBackupCode(final String code, final PasswordlessEntity passwordlessEntity,
+    public void loginWithBackupcode(final String code, final PasswordlessEntity passwordlessEntity,
                                     final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
@@ -1247,7 +1245,7 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     @Override
-    public void verifyBackupCode(final String code, final String statusId, final Result<LoginCredentialsResponseEntity> loginresult)
+    public void verifyBackupcode(final String code, final String statusId, final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -1376,6 +1374,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            return;
                         }
 
                         if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
@@ -1386,6 +1385,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            return;
                         }
 
                         if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
@@ -1471,7 +1471,8 @@ loginresult.failure(error);
 
 
     @Override
-    public void configureFaceRecognition(final File faceImageFile,final String sub,  final Result<EnrollFaceMFAResponseEntity> enrollresult) {
+    public void configureFaceRecognition(final File photo,final String sub,  final Result<EnrollFaceMFAResponseEntity> enrollresult)
+    {
         try {
 
 
@@ -1491,7 +1492,7 @@ loginresult.failure(error);
 
 
 
-                        FaceConfigurationController.getShared(context).ConfigureFace(faceImageFile,sub,baseurl,setupFaceMFARequestEntity,enrollresult);
+                        FaceConfigurationController.getShared(context).ConfigureFace(photo,sub,baseurl,setupFaceMFARequestEntity,enrollresult);
 
 
                     }
@@ -1520,7 +1521,7 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithFaceRecognition(@NonNull final File faceImageFile, @NonNull final PasswordlessEntity passwordlessEntity,
+    public void loginWithFaceRecognition(@NonNull final File photo, @NonNull final PasswordlessEntity passwordlessEntity,
                                          final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
@@ -1533,7 +1534,7 @@ loginresult.failure(error);
 
                     if ( passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
                             passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") &&
-                            faceImageFile!=null) {
+                            photo!=null) {
 
                         if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId.equals("")){
                             String errorMessage="baseurl or clientId must not be empty";
@@ -1571,7 +1572,7 @@ loginresult.failure(error);
                         //Todo check for email or sub or mobile
 
 
-                        FaceConfigurationController.getShared(context).LoginWithFace(faceImageFile, baseurl, clientId,
+                        FaceConfigurationController.getShared(context).LoginWithFace(photo, baseurl, clientId,
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateFaceMFARequestEntity, loginresult);
                     }
@@ -2156,7 +2157,8 @@ loginresult.failure(error);
 
 
     @Override
-    public void configureTOTP(final String sub, final Result<EnrollTOTPMFAResponseEntity> enrollresult) {
+    public void configureTOTP(final String sub, final Result<EnrollTOTPMFAResponseEntity> enrollresult)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String> >() {
                 @Override
@@ -2199,7 +2201,8 @@ loginresult.failure(error);
 
     @Override
     public void loginWithTOTP(final PasswordlessEntity passwordlessEntity,
-                              final Result<LoginCredentialsResponseEntity> loginresult) {
+                              final Result<LoginCredentialsResponseEntity> loginresult)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2275,25 +2278,33 @@ loginresult.failure(error);
     public void listenTOTP(String sub)
     {
         final String secret=DBHelper.getShared().getSecret(sub);
+        final Intent i = new Intent("TOTPListener");
+        if(!secret.equals("") && secret!=null) {
 
-        final Intent i=new Intent("TOTPListener");
-        countDownTimer=new CountDownTimer(System.currentTimeMillis(),1000) {
-            @Override
-            public void onTick(long l) {
-                final TOTPEntity TOTPString=TOTPConfigurationController.getShared(context).generateTOTP(secret);
+            countDownTimer = new CountDownTimer(System.currentTimeMillis(), 1000) {
+                @Override
+                public void onTick(long l) {
+                    final TOTPEntity TOTPString = TOTPConfigurationController.getShared(context).generateTOTP(secret);
 
 
-                i.putExtra("TOTP", TOTPString);
-                LocalBroadcastManager.getInstance(context).sendBroadcast(i);
-            }
+                    i.putExtra("TOTP", TOTPString);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(i);
+                }
 
-            @Override
-            public void onFinish() {
+                @Override
+                public void onFinish() {
 
-                this.cancel();
+                    this.cancel();
 
-            }
-        }.start();
+                }
+            }.start();
+        }
+        else
+        {
+            //Todo Handle Error Message
+            return;
+
+        }
 
     }
 
@@ -2312,7 +2323,7 @@ loginresult.failure(error);
 
 
     @Override
-    public void configureVoiceRecognition(final File VoiceaudioFile, final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult)
+    public void configureVoiceRecognition(final File voice, final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String> >() {
@@ -2331,7 +2342,7 @@ loginresult.failure(error);
 
 
 
-                        VoiceConfigurationController.getShared(context).configureVoice(sub,baseurl,VoiceaudioFile,setupVoiceMFARequestEntity,enrollresult);
+                        VoiceConfigurationController.getShared(context).configureVoice(sub,baseurl,voice,setupVoiceMFARequestEntity,enrollresult);
 
 
                     }
@@ -2352,7 +2363,7 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithVoiceRecognition(final File VoiceaudioFile, final PasswordlessEntity passwordlessEntity,
+    public void loginWithVoiceRecognition(final File voice, final PasswordlessEntity passwordlessEntity,
                                           final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2362,7 +2373,7 @@ loginresult.failure(error);
                     String clientId=savedProperties.get("ClientId");
 
                     if ( passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
-                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") && VoiceaudioFile!=null) {
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") && voice!=null) {
 
                         if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
                             String errorMessage="baseurl or clientId must not be empty";
@@ -2401,7 +2412,7 @@ loginresult.failure(error);
                         //Todo check for email or sub or mobile
 
 
-                        VoiceConfigurationController.getShared(context).LoginWithVoice(VoiceaudioFile, baseurl, clientId,
+                        VoiceConfigurationController.getShared(context).LoginWithVoice(voice, baseurl, clientId,
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateVoiceMFARequestEntity, loginresult);
                     }
@@ -2456,7 +2467,7 @@ loginresult.failure(error);
 
 
     @Override
-    public void getRegisterationFields(@NonNull final String requestId, final String acceptLanguage,
+    public void getRegistrationFields(@NonNull final String requestId, final String locale,
                                        final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
        try{
 
@@ -2474,14 +2485,14 @@ loginresult.failure(error);
                        registrationSetupRequestEntity = new RegistrationSetupRequestEntity();
                        registrationSetupRequestEntity.setRequestId(requestId);
 
-                       if(acceptLanguage==null || acceptLanguage=="")
+                       if(locale==null || locale=="")
                        {
                          language = Locale.getDefault().getLanguage();
                          registrationSetupRequestEntity.setAcceptedLanguage(language);
 
                        }
                        else {
-                           language=acceptLanguage;
+                           language=locale;
                            registrationSetupRequestEntity.setAcceptedLanguage(language);
                        }
 
@@ -2523,7 +2534,7 @@ loginresult.failure(error);
        }
     }
 
-
+    @Override
     public void registerUser(@NonNull final String requestId, final RegistrationEntity registrationEntity,
                              final Result<RegisterNewUserResponseEntity> registerFieldsresult) {
         try{
@@ -2585,7 +2596,8 @@ loginresult.failure(error);
         }
     }
 
-    public void initiateAccountVerificationByEmail(@NonNull final String sub, @NonNull final String requestId,
+    @Override
+    public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
                                             final Result<RegisterUserAccountInitiateResponseEntity> Result){
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2626,8 +2638,8 @@ loginresult.failure(error);
 
     }
 
-
-    public void initiateAccountVerificationBySMS(@NonNull final String sub, @NonNull final String requestId,
+    @Override
+    public void initiateSMSVerification(@NonNull final String sub, @NonNull final String requestId,
                                                    final Result<RegisterUserAccountInitiateResponseEntity> Result){
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2667,8 +2679,8 @@ loginresult.failure(error);
         }
 
     }
-
-    public void initiateAccountVerificationByIVR(@NonNull final String sub, @NonNull final String requestId,
+    @Override
+    public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId,
                                                    final Result<RegisterUserAccountInitiateResponseEntity> Result)
     {
         try {
@@ -2711,6 +2723,7 @@ loginresult.failure(error);
 
     }
 
+    @Override
     public void verifyAccount(@NonNull final String code, @NonNull final String accvid , final Result<RegisterUserAccountVerifyResponseEntity> result){
 
         try {
@@ -2744,6 +2757,7 @@ loginresult.failure(error);
 
     //----------------------------------DEDEUPLICATION------------------------------------------------------------------------------------------------------
 
+    @Override
      public void getDeduplicationDetails(@NonNull final String trackId, final Result<DeduplicationResponseEntity> deduplicaionResult){
          try {
              checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2772,7 +2786,7 @@ loginresult.failure(error);
          }
      }
 
-
+    @Override
      public void registerUser(@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult){
          try {
              checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2786,6 +2800,8 @@ loginresult.failure(error);
                      }
                      else
                      {
+                         String errorMessage="TrackId Must not be null";
+                         deduplicaionResult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
 
                      }
                  }
@@ -2801,8 +2817,9 @@ loginresult.failure(error);
          }
      }
 
-    public void loginWithDeduplication(@NonNull final String sub,@NonNull final String password,
-                                   final Result<LoginDeduplicationResponseEntity> deduplicaionResult)
+    @Override
+    public void loginWithDeduplication(final String requestId,@NonNull final String sub,@NonNull final String password,
+                                   final Result<LoginCredentialsResponseEntity> deduplicaionResult)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2812,11 +2829,12 @@ loginresult.failure(error);
                     String clientId=savedProperties.get("ClientId");
                     if(sub!=null && sub!="" && password!=null && password!="")
                     {
-                        DeduplicationController.getShared(context).loginDeduplication(baseurl,sub,password,deduplicaionResult);
+                        DeduplicationController.getShared(context).loginDeduplication(baseurl,requestId,sub,password,deduplicaionResult);
                     }
                     else
                     {
-
+                         String errorMessage="Sub or requestId or Password Must not be null";
+                        deduplicaionResult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
 
@@ -2835,20 +2853,32 @@ loginresult.failure(error);
     //----------------------------------------------------------------------------------------------------------------------------------------
 
 
-    public void initiateResetPassword(final String requestId, final ResetPasswordRequestEntity resetPasswordRequestEntity,
-                                      final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult)
+    // Todo change
+    @Override
+    public void initiateResetPasswordByEmail(final String requestId, final String email,
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult)
     { try {
         checkSavedProperties(new Result<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
                 String baseurl = savedProperties.get("DomainURL");
-                String clientId=savedProperties.get("ClientId");/**/
+                String clientId = savedProperties.get("ClientId");
 
-                resetPasswordRequestEntity.setProcessingType("CODE");
-                resetPasswordRequestEntity.setRequestId(requestId);
+                if (email != null && !email.equals("") && requestId != null && !requestId.equals("")) {
+                    ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
+                    resetPasswordRequestEntity.setProcessingType("CODE");
+                    resetPasswordRequestEntity.setRequestId(requestId);
+                    resetPasswordRequestEntity.setEmail(email);
+                    resetPasswordRequestEntity.setResetMedium("email");
 
-                ResetPasswordController.getShared(context).initiateresetPasswordService(baseurl,resetPasswordRequestEntity,resetPasswordResponseEntityResult);
+                    ResetPasswordController.getShared(context).initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
+                }
+                else {
+                    String ErrorMessage="RequestID or email mustnot be null";
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                }
             }
+
 
             @Override
             public void failure(WebAuthError error) {
@@ -2862,6 +2892,45 @@ loginresult.failure(error);
 
     }
 
+    @Override
+    public void initiateResetPasswordBySMS(final String requestId, final String mobileNumber,
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult)
+    { try {
+        checkSavedProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                String baseurl = savedProperties.get("DomainURL");
+                String clientId = savedProperties.get("ClientId");
+
+                if (mobileNumber != null && !mobileNumber.equals("") && requestId != null && !requestId.equals("")) {
+                    ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
+                    resetPasswordRequestEntity.setProcessingType("CODE");
+                    resetPasswordRequestEntity.setRequestId(requestId);
+                    resetPasswordRequestEntity.setPhoneNumber(mobileNumber);
+                    resetPasswordRequestEntity.setResetMedium("sms");
+
+                    ResetPasswordController.getShared(context).initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
+                }
+                else {
+                    String ErrorMessage="RequestID or Mobile Number mustnot be null";
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                }
+            }
+
+
+            @Override
+            public void failure(WebAuthError error) {
+                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
+        });
+    }
+    catch (Exception e){
+        resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+    }
+
+    }
+
+    @Override
     public void handleResetPassword(@NonNull final String verificationCode, final String rprq,
                                     final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult)
     {
@@ -2896,8 +2965,9 @@ loginresult.failure(error);
 
     }
 
-
-    public void resetPassword(@NonNull final String password, @NonNull final String confirmPassword,final String resetRequestId,final String ExchangeId,
+//Todo Change to entity
+    @Override
+    public void resetPassword(@NonNull final ResetPasswordEntity resetPasswordEntity,
                               final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
     {
         try {
@@ -2907,14 +2977,16 @@ loginresult.failure(error);
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId=savedProperties.get("ClientId");
 
-                    if(password!=null && !password.equals("") && confirmPassword!=null && !confirmPassword.equals(""))
+                    if(resetPasswordEntity.getPassword()!=null && !resetPasswordEntity.getPassword().equals("") &&
+                            resetPasswordEntity.getConfirmPassword()!=null && !resetPasswordEntity.getConfirmPassword().equals(""))
                     {
-                        if(password.equals(confirmPassword))
+                        if(resetPasswordEntity.getPassword().equals(resetPasswordEntity.getConfirmPassword()))
                         {
-                            if(resetRequestId!=null && !resetRequestId.equals("") && ExchangeId!=null && !ExchangeId.equals(""))
+                            if(resetPasswordEntity.getResetRequestId()!=null && !resetPasswordEntity.getResetRequestId().equals("") &&
+                                    resetPasswordEntity.getExchangeId()!=null && !resetPasswordEntity.getExchangeId().equals(""))
                             {
                                 ResetPasswordController.getShared(context).
-                                        resetNewPassword(baseurl,password,confirmPassword,resetRequestId,ExchangeId,resetpasswordResult);
+                                        resetNewPassword(baseurl,resetPasswordEntity,resetpasswordResult);
                             }
                             else {
                                 String errorMessage="resetRequestId and ExchangeId must not be null";
@@ -2960,7 +3032,8 @@ loginresult.failure(error);
 
     //----------------------------------------------------------------------------------------------------------------------------------------
 
-    public void changePassword(final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> result)
+    //Todo change to Sub and Identity id
+    public void changePassword(String sub,final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> result)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2985,11 +3058,73 @@ loginresult.failure(error);
     }
 
 
+    @Override
+    public void getAccessToken(String sub, Result<AccessTokenEntity> result) {
+        try
+        {
+            AccessTokenController.getShared(context).getAccessToken(sub,result);
+        }
+        catch (Exception e)
+        {
+            String errorMessage="Access Token Exception"+e.getMessage();
+            result.failure(WebAuthError.getShared(context).customException(417,errorMessage,417));
+        }
+    }
 
-/*
+    //Get userinfo Based on Access Token
+    @Override
+    public void getUserInfo(String sub, final Result<UserinfoEntity> callback) {
+        try {
+            if(sub!=null && sub!="") {
+
+                getAccessToken(sub, new Result<AccessTokenEntity>() {
+                    @Override
+                    public void success(AccessTokenEntity result) {
+                        OauthService.getShared(context).getUserinfo(result.getAccess_token(), new Result<UserinfoEntity>() {
+                            @Override
+                            public void success(UserinfoEntity result) {
+                                hideLoader();
+                                callback.success(result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                hideLoader();
+                                callback.failure(error);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        callback.failure(error);
+                    }
+                });
+
+            }
+            else {
+                String errorMessage="Sub must not be null";
+                callback.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+            }
+        }
+        catch (Exception e)
+        {
+            Timber.d(e.getMessage()); //Todo Handle Exception
+        }
+    }
+
+    @Override
+    public void renewToken(String refershtoken, Result<AccessTokenEntity> result) {
+
+    }
+
+
+
+    /*
     public void getUserInfo(@NonNull String AccessToken,)*/
     //To Open Browser
-    @Override
+
     public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain)
     {
         try {
@@ -3027,9 +3162,11 @@ loginresult.failure(error);
 
 
 
+
+
     //Todo sConsult and Create a  new Resume if the loginCallback is null
     //Get Code By URl
-    @Override
+
     public void getLoginCode(String url,Result<AccessTokenEntity> callback) {
        try {
            showLoader();
@@ -3051,28 +3188,11 @@ loginresult.failure(error);
        }
     }
 
-    @Override
+
     public void getAccessTokenByCode(String code, Result<AccessTokenEntity> result) {
 
     }
 
-    @Override
-    public void getAccessToken(String sub, Result<AccessTokenEntity> result) {
-      try
-      {
-          AccessTokenController.getShared(context).getAccessToken(sub,result);
-      }
-      catch (Exception e)
-      {
-          String errorMessage="Access Token Exception"+e.getMessage();
-          result.failure(WebAuthError.getShared(context).customException(417,errorMessage,417));
-      }
-    }
-
-    @Override
-    public void getAccessTokenByRefreshToken(String refershtoken, Result<AccessTokenEntity> result) {
-
-    }
 
     // --------------------------------------------------------------------------------------------------
 
@@ -3123,7 +3243,6 @@ loginresult.failure(error);
 
     }
 
-    @Override
     public void loginWithFIDO(String usageType, String email, String sub, String trackId,final Result<LoginCredentialsResponseEntity> result)
     {
         try {
@@ -3241,33 +3360,9 @@ loginresult.failure(error);
 
     //Get code From URL
 
-    //Get userinfo Based on Access Token
-    @Override
-    public void getUserInfo(String access_token, final Result<UserinfoEntity> callback) {
-        try {
-            showLoader();
-            OauthService.getShared(context).getUserinfo(access_token, new Result<UserinfoEntity>() {
-                @Override
-                public void success(UserinfoEntity result) {
-                    hideLoader();
-                    callback.success(result);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    hideLoader();
-                    callback.failure(error);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            Timber.d(e.getMessage()); //Todo Handle Exception
-        }
-    }
 
     //Get Login URL without any Argument
-    @Override
+
     public void getLoginURL(final Result<String> callback) {
         try {
             getRequestId(new Result<AuthRequestResponseEntity>() {
@@ -3290,7 +3385,7 @@ loginresult.failure(error);
     }
 
     //Get Login URL Method by  passing RequestId
-    @Override
+
     public void getLoginURL(@NonNull String RequestId, final Result<String> callback) {
         try
         {
@@ -3349,7 +3444,7 @@ loginresult.failure(error);
     }
 
     //Get LoginURL by Passing Dictionary
-    @Override
+
     public void getLoginURL(@NonNull Dictionary<String, String> loginproperties, final Result<String> callback) {
         try {
             //Get Request ID
@@ -3466,7 +3561,6 @@ loginresult.failure(error);
 
 
 
-    @Override
     public void configureFIDO(String sub, final Result<EnrollFIDOMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {

@@ -278,7 +278,7 @@ public class FaceConfigurationController {
                                                                     new Result<InitiateFaceMFAResponseEntity>() {
 
                                                                         @Override
-                                                                        public void success(InitiateFaceMFAResponseEntity result) {
+                                                                        public void success(InitiateFaceMFAResponseEntity serviceresult) {
                                                                             if ( serviceresult.getData().getStatusId() != null && !serviceresult.getData().getStatusId().equals("")) {
 
 
@@ -298,8 +298,8 @@ public class FaceConfigurationController {
                                                                                         //Todo Check not Null values
                                                                                         resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                                         resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                                        resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                                                                        resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
+                                                                                        resumeLoginRequestEntity.setUsageType(initiateFaceMFARequestEntity.getUsageType());
+                                                                                        resumeLoginRequestEntity.setVerificationType("face");
                                                                                         resumeLoginRequestEntity.setClient_id(clientId);
                                                                                         resumeLoginRequestEntity.setRequestId(requestId);
 
