@@ -1852,6 +1852,3 @@ cidaas.loginAfterConsent(ConsentEntity consentEntity, new Result < LoginCredenti
     }
 }
 ```
-
-
-    
