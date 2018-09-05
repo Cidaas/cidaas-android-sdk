@@ -3,22 +3,18 @@ package com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateFIDOResponseEntityTest {
-    @Mock
+
     AuthenticateFIDOResponseDataEntity data;
-    @InjectMocks
+
     AuthenticateFIDOResponseEntity authenticateFIDOResponseEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        authenticateFIDOResponseEntity=new AuthenticateFIDOResponseEntity();
     }
 
 

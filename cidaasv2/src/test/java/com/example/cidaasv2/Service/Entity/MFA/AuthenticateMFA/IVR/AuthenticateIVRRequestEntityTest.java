@@ -4,22 +4,18 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateIVRRequestEntityTest {
-    @Mock
+
     DeviceInfoEntity deviceInfo;
-    @InjectMocks
+
     AuthenticateIVRRequestEntity authenticateIVRRequestEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+authenticateIVRRequestEntity=new AuthenticateIVRRequestEntity();
     }
     @Test
     public void getStatusID()

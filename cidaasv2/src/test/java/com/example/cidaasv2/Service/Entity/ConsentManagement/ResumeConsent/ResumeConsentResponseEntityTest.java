@@ -1,26 +1,20 @@
 package com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent;
 
-import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class ResumeConsentResponseEntityTest {
-    @Mock
+
     ResumeConsentResponseDataEntity data;
-    @InjectMocks
+
     ResumeConsentResponseEntity resumeConsentResponseEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
 

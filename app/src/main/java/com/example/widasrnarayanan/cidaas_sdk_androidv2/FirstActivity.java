@@ -10,6 +10,7 @@ import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.LoginDeduplication.LoginDeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 
 public class FirstActivity extends AppCompatActivity {
@@ -67,8 +68,20 @@ public class FirstActivity extends AppCompatActivity {
          public void failure(WebAuthError error) {
 
          }
+
      });
 
+     cidaas.getMFAList("your_sub", new Result<MFAListResponseEntity>() {
+         @Override
+         public void success(MFAListResponseEntity result) {
+
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+
+         }
+     });
 
     // resetPasswordRequestEntity.setRequestId();
 

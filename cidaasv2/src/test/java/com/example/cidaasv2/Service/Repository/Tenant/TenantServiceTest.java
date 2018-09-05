@@ -6,37 +6,26 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
 import timber.log.Timber;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
-import static org.mockito.Mockito.when;
 
 public class TenantServiceTest {
-    @Mock
     CidaassdkService service;
-
-     @Mock
     Context context;
-
-     @Mock
-    TenantService shared;
-
-    @InjectMocks
     TenantService tenantService;
 
     @Before
     public void setUp() {
 
-        MockitoAnnotations.initMocks(this);
+       tenantService=new TenantService(context);
     }
 
     @Test
@@ -68,7 +57,44 @@ public class TenantServiceTest {
 
     @Test
     public void testGetTenantInfoForEmptyBaseurl() throws Exception {
-        when(service.getInstance()).thenReturn(null);
+       TenantService sam=new TenantService(context);
+
+        tenantService.getTenantInfo("", new Result<TenantInfoEntity>() {
+            @Override
+            public void success(TenantInfoEntity result) {
+                Timber.e(result.getData().getTenant_name());
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+                Timber.e(error.ErrorMessage);
+            }
+        });
+    }
+
+    @Test
+    public void testGetTenantInfoForSuccess() throws Exception {
+
+
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://nighltybuild.cidaas.de")
+                .client(client)
+                //TODO Add your Retrofit parameters here
+                .build();
+
+        TenantInfoEntity tenantInfoEntity=new TenantInfoEntity();
+       // Call<TenantInfoEntity> call=Mockito.mockingDetails(Call<TenantInfoEntity> tenantInfoEntity);
+
+       // doReturn(call).when(sdkservice).getTenantInfo(anyString());
+
+
+
+
         TenantService sam=new TenantService(context);
 
         tenantService.getTenantInfo("", new Result<TenantInfoEntity>() {
@@ -84,11 +110,11 @@ public class TenantServiceTest {
         });
     }
 
-
     @Test
-    public void testTenantService() throws Exception{
-       service.getInstance().getTenantInfo("");
+    public void testWebClient() throws  Exception{
+        
     }
+
 }
 
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

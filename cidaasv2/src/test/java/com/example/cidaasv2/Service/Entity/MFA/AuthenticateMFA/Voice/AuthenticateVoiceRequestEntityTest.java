@@ -4,26 +4,22 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateVoiceRequestEntityTest {
-    @Mock
+
     DeviceInfoEntity deviceInfo;
-    @Mock
+
     File voiceFile;
-    @InjectMocks
+
     AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+       authenticateVoiceRequestEntity=new AuthenticateVoiceRequestEntity();
     }
 
     @Test

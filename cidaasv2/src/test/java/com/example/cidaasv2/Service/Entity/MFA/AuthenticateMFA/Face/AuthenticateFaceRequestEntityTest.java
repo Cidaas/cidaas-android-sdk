@@ -4,26 +4,23 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
+
 
 public class AuthenticateFaceRequestEntityTest {
-    @Mock
+
     File imagetoSend;
-    @Mock
+
     DeviceInfoEntity deviceInfo;
-    @InjectMocks
+
     AuthenticateFaceRequestEntity authenticateFaceRequestEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+      authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
     }
 
     @Test

@@ -48,6 +48,9 @@ public class ForgotPassword extends AppCompatActivity {
         cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
+
+
+
                 cidaas.initiateResetPasswordByEmail(result.getData().getRequestId(),email.getText().toString(), new Result<ResetPasswordResponseEntity>() {
                     @Override
                     public void success(ResetPasswordResponseEntity result) {

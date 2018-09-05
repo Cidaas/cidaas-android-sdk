@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="DomainURL" type="string">https://nightlybuild.cidaas.de</item>
+    <item name="ClientId" type="string">4d5e6e20-9347-4255-9790-5b7196843103</item>
+    <item name="RedirectURL">https://nightlybuild.cidaas.de/user-profile/editprofile</item>
+    <item name="UserInfoURL">https://nightlybuild.cidaas.de/users-srv/userinfo</item>
+</resources>

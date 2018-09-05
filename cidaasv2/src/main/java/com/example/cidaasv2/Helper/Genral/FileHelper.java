@@ -68,6 +68,8 @@ public class FileHelper {
         String fileName=fileNameFromBase;
         Dictionary<String, String> dictObject=new Hashtable<>();
 
+        //todo check the file name
+
         Activity activity;
         try {
 

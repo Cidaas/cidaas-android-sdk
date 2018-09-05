@@ -45,6 +45,7 @@ import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
+import com.example.cidaasv2.Helper.Entity.RegistrationCustomFieldEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -124,6 +125,7 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupRequestEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
+import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 
 import java.io.File;
@@ -148,10 +150,11 @@ public class Cidaas implements IOAuthWebLogin{
 
     public Context context;
 
-    public static AssetManager assetManager;
-    public static String fileName1;
+
     public  static String instanceId="";
     public static ICustomLoader loader;
+
+    public RegistrationSetupResultDataEntity[] registerFields;
 
     CountDownTimer countDownTimer;
 
@@ -201,6 +204,15 @@ public class Cidaas implements IOAuthWebLogin{
 
     public boolean ENABLE_PKCE;
     public boolean ENABLE_LOG;
+
+
+
+ /*   final String[] baseurlArray = new String[1];
+
+    String baseurl=baseurlArray[0];
+    final String[] clientId = new String[1];
+*/
+
     public DeviceInfoEntity deviceInfoEntity;
 
 
@@ -243,6 +255,20 @@ public class Cidaas implements IOAuthWebLogin{
 
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
+
+
+      /*  checkSavedProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> stringresult) {
+                 baseurlArray[0] = stringresult.get("DomainURL");
+                 clientId[0] =stringresult.get("ClientId");
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });*/
 
     }
 
@@ -385,7 +411,7 @@ public class Cidaas implements IOAuthWebLogin{
     // -----------------------------------------------------***** TENANT INFO *****---------------------------------------------------------------
     @Override
     public void getTenantInfo(final Result<TenantInfoEntity> tenantresult) {
-        try{
+        try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> stringresult) {
@@ -399,10 +425,16 @@ public class Cidaas implements IOAuthWebLogin{
                     tenantresult.failure(error);
                 }
             });
+
+            /*if ((baseurl != null) && (baseurl.equals(""))) {
+
+                TenantController.getShared(context).getTenantInfo(baseurl,tenantresult);
+            }*/
         }
         catch (Exception e)
         {
-            tenantresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            String errorMessae=e.getMessage();
+            tenantresult.failure(WebAuthError.getShared(context).customException(417,errorMessae,HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
@@ -434,6 +466,7 @@ public class Cidaas implements IOAuthWebLogin{
 
                 @Override
                 public void failure(WebAuthError error) {
+
                     clientInfoEntityResult.failure(error);
                 }
             });
@@ -1296,7 +1329,7 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void configurePatternRecognition(@NonNull final String patternString, @NonNull final String sub,
+    public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,
                                             final Result<EnrollPatternMFAResponseEntity> enrollresult)
     {
         try {
@@ -1307,7 +1340,8 @@ public class Cidaas implements IOAuthWebLogin{
                 public void success(Dictionary<String, String>  result) {
                     String baseurl = result.get("DomainURL");
 
-                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("") && patternString != null && !patternString.equals("")) {
+                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("") &&
+                            pattern!= null && !pattern.equals("")) {
 
                         final String finalBaseurl = baseurl;
 
@@ -1315,7 +1349,7 @@ public class Cidaas implements IOAuthWebLogin{
                         SetupPatternMFARequestEntity setupPatternMFARequestEntity = new SetupPatternMFARequestEntity();
                         setupPatternMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupPatternMFARequestEntity.setLogoUrl(logoUrl);
-                        PatternConfigurationController.getShared(context).configurePattern(sub,finalBaseurl,patternString, setupPatternMFARequestEntity,
+                        PatternConfigurationController.getShared(context).configurePattern(sub,finalBaseurl,pattern, setupPatternMFARequestEntity,
                                 enrollresult);
 
                     }
@@ -2500,6 +2534,7 @@ loginresult.failure(error);
                                new Result<RegistrationSetupResponseEntity>() {
                            @Override
                            public void success(RegistrationSetupResponseEntity result) {
+                               registerFields=result.getData();
                              registerFieldsresult.success(result);
                            }
 
@@ -2547,8 +2582,140 @@ loginresult.failure(error);
                     String language;
 
                     if(!requestId.equals("")){
+                        if(registerFields!=null)
+
+                        {
+                            if(registerFields.length>0){
+                                for (RegistrationSetupResultDataEntity dataEntity:registerFields) {
+
+                                   if(dataEntity.getFieldKey().equals("email")) {
+                                       if (dataEntity.isRequired() && registrationEntity.getEmail().equals(""))
+                                           {
+                                               String errorMessage="Email must not be empty";
+                                               registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                       errorMessage,HttpStatusCode.EXPECTATION_FAILED));
 
 
+                                           }
+
+                                       }
+
+                                       if(dataEntity.getFieldKey().equals("given_name")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals(""))
+                                        {
+                                            String errorMessage="given_name must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        }
+
+                                    }
+
+                                    if(dataEntity.getFieldKey().equals("family_name")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getFamily_name().equals(""))
+                                        {
+                                            String errorMessage="family_name must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if(dataEntity.getFieldKey().equals("mobile_number")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getMobile_number().equals(""))
+                                        {
+                                            String errorMessage="mobile_number must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if(dataEntity.getFieldKey().equals("password")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getPassword().equals(""))
+                                        {
+                                            String errorMessage="password must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+
+                                        }
+
+                                    }
+
+                                    if(dataEntity.getFieldKey().equals("password_echo")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals(""))
+                                        {
+                                            String errorMessage="password_echo must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+                                        if(registrationEntity.getPassword().equals(registrationEntity.getPassword_echo())) {
+
+                                           String errorMessage="Password and password_echo must be same";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if(dataEntity.getFieldKey().equals("username")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getUsername().equals(""))
+                                        {
+                                            String errorMessage="username must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if(dataEntity.getFieldKey().equals("birthdate")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getBirthdate().equals(""))
+                                        {
+                                            String errorMessage="birthdate must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if(registrationEntity.getProvider()!=null && registrationEntity.getProvider()!="")
+                                    {
+
+                                        String errorMessage="Provider must not be empty";
+                                        registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+
+                                   }
+
+                                   for(int i=0;i<registrationEntity.getCustomFields().size();i++)
+                                   {
+                                       if(registrationEntity.getCustomFields().keys().hasMoreElements())
+                                       {
+
+                                          // registrationEntity.getCustomFields().get()
+                                       }
+                                   }
+
+
+
+                                }
+                            }
+                           else
+                            {
+
+                            }
+                        }
+                        else
+                        {
+
+                        }
 
                         final RegisterNewUserRequestEntity registerNewUserRequestEntity;
 

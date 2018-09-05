@@ -291,7 +291,7 @@ public void setEnableLog(boolean enableLog)
     //Add User Device id with Domain URL
     public void setUserDeviceId(String userDeviceId,String domainURL)
     {
-        boolean result=false;
+        boolean result=true;
         try {
             editor.putString(userDeviceInfo+domainURL,userDeviceId);
             editor.commit();
@@ -321,7 +321,7 @@ public void setEnableLog(boolean enableLog)
     {
         boolean result=false;
         try {
-            String key=AccessTokenModel.getShared().getUserId();
+            String key=accessTokenModel.getUserId();
             String jsonString =shared_objectMapper.writeValueAsString(accessTokenModel);
             editor.putString(key, jsonString);
             result=editor.commit();
@@ -349,9 +349,8 @@ public void setEnableLog(boolean enableLog)
     //Todo Set UserInfo
     public void setUserInfo(UserInfoModel userInfoModel)
     {
-
         try {
-            String key=UserInfoModel.getShared().getUserid();
+            String key=userInfoModel.getUserid();
             String jsonString =shared_objectMapper.writeValueAsString(userInfoModel);
             editor.putString(key, jsonString);
             editor.commit();
@@ -365,7 +364,7 @@ public void setEnableLog(boolean enableLog)
     //Todo Get User info
     public UserInfoModel getUserInfo(String userId)
     {
-        String jsonString =preferences.getString(userId,"");
+        String jsonString =preferences.getString(userId,"DefaultUserinfo");
         UserInfoModel userInfoModel;
         try {
             userInfoModel=shared_objectMapper.readValue(jsonString,UserInfoModel.class);

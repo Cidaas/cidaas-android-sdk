@@ -9,24 +9,18 @@ import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
-import static org.mockito.Mockito.*;
 
 public class TenantControllerTest {
-    @Mock
     Context context;
-    @Mock
-    TenantController shared;
-    @InjectMocks
-    TenantController tenantController;
+
+    TenantController tenantController=new TenantController(context);
+
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
     @Test
@@ -36,8 +30,22 @@ public class TenantControllerTest {
     }
 
     @Test
-    public void testGetTenantInfoBaseurlNull() throws Exception {
+    public void testGetSharednull() throws Exception {
+        TenantController result = TenantController.getShared(null);
+        Assert.assertThat(new TenantController(null), samePropertyValuesAs(result));
+    }
 
+    @Test
+    public void testGetSharedexception() throws Exception {
+        TenantController result = TenantController.getShared(null);
+
+        Assert.assertThat(new TenantController(context), samePropertyValuesAs(result));
+       // throw new IllegalAccessException();
+    }
+
+
+    @Test
+    public void testGetTenantInfoBaseurlNull() throws Exception {
         tenantController.getTenantInfo("", new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
@@ -53,11 +61,42 @@ public class TenantControllerTest {
     }
 
     @Test
+    public void testGetTenantInfoBaseurlcallback() throws Exception {
+
+
+       Result<TenantInfoEntity> result=new Result<TenantInfoEntity>() {
+           @Override
+           public void success(TenantInfoEntity result) {
+               TenantInfoEntity tenantInfoEntity =new TenantInfoEntity();
+               Assert.assertThat(tenantInfoEntity, samePropertyValuesAs(result));
+           }
+
+           @Override
+           public void failure(WebAuthError error) {
+
+           }
+       };
+
+
+
+
+         //Result<TenantInfoEntity> result= Mockito.mock(Result.class);
+
+        final TenantInfoEntity entity=new TenantInfoEntity();
+
+
+
+        tenantController.getTenantInfo("https://nightlybuild.cidaas.de", result);
+   //     doReturn(new RuntimeException()).when(tenanetController).getTenantInfo("https://nightlybuild.cidaas.de",result);
+
+    }
+
+    @Test
     public void testGetTenantInfo() throws Exception {
          tenantController.getTenantInfo("https://nightlybuild.cidaas.de", new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
-              Assert.assertTrue(result.getStatus()==00);
+              Assert.assertTrue("Failed",result.getStatus()==200);
             }
             @Override
             public void failure(WebAuthError error) {
@@ -66,6 +105,7 @@ public class TenantControllerTest {
             }
         });
     }
+
 
 
 }

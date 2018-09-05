@@ -1,26 +1,20 @@
 package com.example.cidaasv2.Service.Entity.ClientInfo;
 
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class ClientInfoEntityTest {
-    @Mock
+
     ClientInfoDataEntity data;
-    @InjectMocks
+
     ClientInfoEntity clientInfoEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
 

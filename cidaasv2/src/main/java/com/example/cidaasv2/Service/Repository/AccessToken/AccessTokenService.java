@@ -78,7 +78,7 @@ public class AccessTokenService {
                 // callback.failure(.loginURLMissingException());
             }
 
-            baseurl=loginProperties.get("DomainURL");
+          //  baseurl=loginProperties.get("DomainURL");
             if(baseurl!=null || baseurl!=""){
                 //Construct URL For RequestId
                 getAccessTokenUrl=baseurl+ URLHelper.getShared().getTokenUrl();
@@ -92,12 +92,13 @@ public class AccessTokenService {
             Map<String, String> headers = new Hashtable<>();
             Map<String, String> querymap = new Hashtable<>();
 
+
             //get Device Information
             DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentType);
+          //  headers.put("Content-Type", URLHelper.contentType);
             headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
