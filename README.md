@@ -8,7 +8,9 @@ https://docs.cidaas.de/
 
     minSdkVersion 21
 
-## Add cidaas sdk to your project
+### Steps for integrate native Android SDKs:
+### Installation
+
 
 Cidaas SDK is available through jitpack.io.  Please ensure that you are using the latest versions by [checking here](https://jitpack.io/#Cidaas/cidaas-v2-sdk-android)
 
@@ -25,16 +27,18 @@ allprojects {
  Add the dependency to app module
  ```java
 dependencies {
- implementation 'com.github.Cidaas:cidaas-v2-sdk-android:0.0.0.3'
+ implementation 'com.github.Cidaas:cidaas-v2-sdk-android:0.0.0.6'
 }
  ```
  ## Getting started
+ 
+ Create an asset folder by right click the app module goto new->folder->asset folder and click the finish button
 
-Create a xml file named as <b>Cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
+Create an xml file named as <b>Cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
 
-> ##### Note:- The File name must be cidaas.xml 
+> ##### Note:- The File name must be Cidaas.xml 
 
-The xml file should be like this:
+A sample XML file would look like this :
 
 ``` 
 <?xml version="1.0" encoding="utf-8"?>
@@ -45,12 +49,14 @@ The xml file should be like this:
 </resources> 
 
 ```
+
+Following sections will help you to generate some of the information that is needed for XML.
+
+
 ### Getting client Id and urls
 
-You can get the property file for your application from the cidaas AdminUI.
+You can get this by creating your App in App settings section of cidaas Admin portal. Once you select the right scope and application type, and fill in all mandatory fields, you can use the generated Client ID and re-direct URLs.
 
-
-### Steps for integrate native Android SDKs:
 
 #### Initialisation
 
@@ -69,7 +75,9 @@ Cidaas cidaas =new Cidaas(getApplicationContext);
 
 #### Getting Request Id
 
-All the login and registration process done with the help of requestId. To get the requestId, call ****getRequestId()****.
+You have to first get RequestId and use this in your subsequent calls. Server provides a unique Id based on urls configured for your application. Henceforth, in all requests like login, registration, you have to pass requestId, which is utilized to identify your client between two consecutive independant calls. To get the requestId, call
+
+****getRequestId()****.
 ```java
 
 cidaas.getRequestId(new Result < AuthRequestResponseEntity > () {
@@ -106,7 +114,7 @@ public void failure(WebAuthError error) {
 
 #### Getting Tenant Info
 
-It is more important to get the tenant information such as Tenant name and all login types ('Email', 'Mobile', 'Username') available for particular tenant. To get the tenant information, call ****getTenantInfo()****.
+Sometimes you may want to lookup different types of login available ('Email', 'Mobile', 'Username') for a particular tenant. To get the tenant information, call ****getTenantInfo()****.
 
 
 ```java
@@ -148,7 +156,7 @@ public void failure(WebAuthError error) {
 
 #### Get Client Info
 
-After getting tenant information, you need to get client information that contains client name, logo url specified for the client in the Admin's Apps section, and all the social providers configured for the App. To get client information, call ****getClientInfo()****.
+Once you get tenant information, if you need to find client information you can call following method. It contains client name, logo url specified for the client in the Admin's Apps section and details of what all social providers are configured for the App. To get the client information, call ****getClientInfo()****.
 
 ```java
 cidaas.getClientInfo("your RequestId", new Result < ClientInfoEntity > () {
@@ -192,7 +200,7 @@ public void failure(WebAuthError error) {
 #### Registration
 #### Getting Registration Fields
 
-Before registration, you need to know what are all the fields must show to the user while registration. For getting the fields, call ****getRegistrationFields()****.
+Before registration, you may want to know what all are the fields that you must show to your user. For getting these fields, call  ****getRegistrationFields()****.
 
 ```java
 cidaas.getRegistrationFields("Your_RequestId","Your_locale" ,new Result < RegistrationSetupResponseEntity > () {
@@ -258,7 +266,7 @@ public void failure(WebAuthError error) {
 
 #### Register user
 
-Registration is the most important thing for all. To register a new user, call ****registerUser()****.
+ To register a new user, call ****registerUser()****.
 ```java 
 
 RegistrationEntity registrationEntity = new RegistrationEntity();
@@ -428,9 +436,9 @@ cidaas.registerUser("your track id", new Result < RegisterDeduplicationEntity > 
 While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****loginWithDeduplication()**** method can be called to use one of those existing logins shown by the system. Note that, System will still use the secure authentication and verifications that were setup for earlier user, before login.
 
 ```java
-cidaas.loginWithDeduplication("your_sub", "your_password", new Result < LoginDeduplicationResponseEntity > () {
+cidaas.loginWithDeduplication("your_requestId","your_sub", "your_password", new Result < LoginCredentialsResponseEntity > () {
  @Override
- public void success(LoginDeduplicationResponseEntity result) {
+ public void success(LoginCredentialsResponseEntity result) {
   //Your success code here
  }
 
@@ -459,11 +467,13 @@ cidaas.loginWithDeduplication("your_sub", "your_password", new Result < LoginDed
 ```
 #### Account Verification
 
-Once registration completed, you need to verify your account either by Email or SMS or IVR verification call. First you need to initiate the account verification.
+In order to avoid misuse of user registration functions, it is a good practise to include account verification along with it. Once registering is done, you can verify your account either by Email, SMS or IVR verification call. To do this, first you have to initiate the account verification. You can invoke any of the following as it suits your use case.
 
 #### Initiate Email verification
 
-To receive a verification code via Email, call **initiateEmailVerification()**.
+This method is to be used when you want to receive a verification code via Email:
+
+**initiateEmailVerification()**.
 
 ```java
 cidaas.initiateEmailVerification("your_sub", "your_requestId", new Result < RegisterUserAccountInitiateResponseEntity > () {
@@ -481,7 +491,7 @@ public void failure(WebAuthError error) {
 ```
 #### Initiate SMS verification
 
-To receive a verification code via SMS, call **initiateSMSVerification()**.
+If you would like to receive a verification code via SMS, call  **initiateSMSVerification()**.
 
 ```java
 
@@ -510,7 +520,8 @@ public void failure(WebAuthError error) {
 ```
 #### Initiate IVR verification
 
-To receive a verification code via IVR verification call, call **initiateIVRVerification()**.
+
+In order to receive a verification code via IVR verification call, call **initiateIVRVerification()**.
 
 ```java
 
@@ -587,10 +598,10 @@ loginEntity.setUsername("davidjhonson@gmail.com");
 loginEntity.setPassword("123456");
 loginEntity.setUsername_type("email");
 
-cidaas.loginWithCredentials("Your RequestId", loginEntity, new Result < LoginEntity > () {
+cidaas.loginWithCredentials("Your RequestId", loginEntity, new Result < LoginCredentialsResponseEntity > () {
 
 @Override
-public void success(LoginEntity result) {
+public void success(LoginCredentialsResponseEntity result) {
   // Your success code here
 }
 
@@ -616,23 +627,68 @@ public void failure(WebAuthError error) {
 }
 ```
 
+#### MFA List
+
+To get the List of physical verifications configured by the user, call ****getMFAList()****.
+
+
+```java
+ cidaas.getMFAList("your_sub", new Result<MFAListResponseEntity>() {
+         @Override
+         public void success(MFAListResponseEntity result) {
+             //Your Success Code here
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+ 	    //Your Failure Code here
+         }
+     });
+
+```
+**Response:**
+```json
+{
+    "success": true,
+    "status": 200,
+    "data":[  {
+      "_id": "0fd78d48-f825-487f-823b-c71f05ced944",
+      "verificationType": "PATTERN"
+    },
+     {
+      "_id": "184ec81d-5bb3-466f-b10a-351f36b31fc4",
+      "verificationType": "PUSH"
+    }]
+}
+```
+
+#### Set Remote Message
+
+For device verification , we send one push notification to you For that you need to register your FCM Token(Firebase cloud Messaging) in your app in admin UI and 
+ For that you need to call, ****setFCMToken()****.
+ ```java 
+  cidaas.setFCMToken(refreshedToken);
+  ```
+  
+  Then in the FirebaseMessagingService extented class, in the onMessageReceived() method,you need to set the remotemessage recieved here using ****setRemoteMessage()****.
+  
+   ```java 
+  cidaas.setFCMToken(refreshedToken);
+  ```
+ 
+ 
+
 #### Forgot Password
 
-There is an option to reset password if password is forgotten.
+There is an option to reset password if you forget password.
 
 #### Initiate Reset Password
 
-For resetting password, you can get a verification code either via Email or SMS. To do that, you can call initateRestPassword().
+For resetting password, you will get a verification code either via Email or SMS. For email you need to call 
 
-****initateRestPassword()****.
+****initiateResetPasswordByEmail()****.
 ```java
-//object initiations
-ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
-
-resetPasswordRequestEntity.setEmail("Your_email_id");
-resetPasswordRequestEntity.setResetMedium("email");
-
-cidaas.initiateResetPassword("Your_requestId", resetPasswordRequestEntity, new Result < ResetPasswordResponseEntity > () {
+cidaas. cidaas.initiateResetPasswordByEmail("Your_requestId", "your_email_id", new Result < ResetPasswordResponseEntity > () {
 @Override
 public void success(ResetPasswordResponseEntity result) {
    //Your success code here
@@ -659,12 +715,42 @@ public void failure(WebAuthError error) {
 
 ```
 
+For resetting password, you will get a verification code either via Email or SMS. For email you need to call 
+
+****initiateResetPasswordBySMS()****.
+```java
+cidaas. cidaas.initiateResetPasswordBySMS("Your_requestId", "your_mobile_number", new Result < ResetPasswordResponseEntity > () {
+@Override
+public void success(ResetPasswordResponseEntity result) {
+   //Your success code here
+}
+
+@Override
+public void failure(WebAuthError error) {
+    //Your failure code here.
+}
+});
+
+```
+**Response:**
+
+```json
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "rprq": "f595edfb-754e-444c-ba01-6b69b89fb42a",
+        "reset_initiated": true
+    }
+}
+
+```
 #### Handle Reset Password
 
-Once verification code received, verify that code by calling ****handleRestPassword()****.
+Once verification code received, verify that code by calling ****handleResetPassword()****.
 ```java
 
-cidaas.handleResetPassword("your verificaton code", new Result < ResetPasswordValidateCodeResponseEntity > () {
+cidaas.handleResetPassword("your verificaton code","your_rprq", new Result < ResetPasswordValidateCodeResponseEntity > () {
 
 @Override
 public void success(ResetPasswordValidateCodeResponseEntity result) {
@@ -693,11 +779,16 @@ public void failure(WebAuthError error) {
 
 #### Reset Password
 
-Once code is verified, reset your password with your new password. To reset your password, call ****restPassword()****.
+Once code is verified, reset your password with your new password. To reset your password, call ****resetPassword()****.
 
 ```java
 
-cidaas.resetPassword("your_password", "your_confirm_password", new Result < ResetNewPasswordResponseEntity > () {
+ResetPasswordEntity resetPasswordEntity = new ResetPasswordEntity();
+resetPasswordEntity.setPassword("yournewPassword");           								resetPasswordEntity.setConfirmPassword("yourconfirmPassword");
+resetPasswordEntity.setExchangeId("yourexchangeId");
+resetPasswordEntity.setResetRequestId("yourresetRequestId");
+
+cidaas.resetPassword(ResetPasswordEntity resetPasswordEntity, new Result < ResetNewPasswordResponseEntity > () {
 @Override
 public void success(ResetNewPasswordResponseEntity result) {
     //Your success code here.
@@ -724,9 +815,12 @@ public void failure(WebAuthError error) {
 
 #### Passwordless or Multifactor Authentication
 
+cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in cidaas.
+
 #### Email
 
-To use your Email as a passwordless login, you need to configure your Email first and verify your Email. If you already verify your Email through account verification, by default Email will be configured. 
+To setup a passwordless login, where user types only an Email, you need to configure your Email first and verify. By default, when you verify your Email during account verification, you are setup for passwordless login.
+
 
 #### Configure Email
 
@@ -758,11 +852,13 @@ public void failure(WebAuthError error)
 }
 ```
 
-#### Enroll Email by entering code
+#### Verify Email by entering code
 
-Once you received your verification code via Email, you need to verify the code. For that verification at the time of configuration, call **enrollEmail()**.
+Once you received your verification code via Email, you need to verify that code. For that verification, call
+ **enrollEmail()**.
+ 
 ```java
-cidaas.enrollEmail(code, new Result < EnrollEmailMFAResponseEntity > () {
+cidaas.enrollEmail("your_code","your_status_id", new Result < EnrollEmailMFAResponseEntity > () {
 
 @Override
 public void success(EnrollEmailMFAResponseEntity result) {
@@ -791,10 +887,15 @@ public void failure(WebAuthError error) {
 
 #### Login via Email
 
-Once you configured your Email, you can also login with your Email via Passwordless authentication. To receive a verification code via Email, call **loginWithEmail()**.
+Once you have configured for Email login, you can also login with your Email via Passwordless authentication. To receive a verification code via Email, call **loginWithEmail()**.
 ```java
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
 
-cidaas.loginWithEmail(code, trackId, UsageType.MFA, new Result < LoginCredentialsResponseEntity > () {
+cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
 
 @Override
 public void success(LoginCredentialsResponseEntity result) {
@@ -825,7 +926,7 @@ public void failure(WebAuthError error) {
 Once you received your verification code via Email, you need to verify the code. For that verification, call **verifyEmail()**.
 ```java
 
-cidaas.verifyEmail(code, new Result < LoginCredentialsResponseEntity > () {
+cidaas.verifyEmail("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
 @Override
 public void success(LoginCredentialsResponseEntity result) {
   // Your Success code here
@@ -855,7 +956,8 @@ public void failure(WebAuthError error) {
 
 #### SMS
 
-To use SMS as a passwordless login, you need to configure SMS physical verification first and verify your mobile number. If you already verify your mobile number through account verification via SMS, by default SMS will be configured. 
+To use SMS as a passwordless login, you need to configure SMS physical verification first, and verify your mobile number. If you already verified your mobile number using SMS during account verification, it is by default setup for passwordless login.
+
 
 #### Configure SMS
 
@@ -894,7 +996,7 @@ cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
 Once you received your verification code via SMS, you need to verify the code. For that verification, call **enrollSMS()**.
 
 ```java
-cidaas.enrollSMS(code, new Result < EnrollSMSMFAResponseEntity > () {
+cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFAResponseEntity > () {
  @Override
  public void success(EnrollSMSMFAResponseEntity result) {
   //Your success code here
@@ -925,7 +1027,14 @@ cidaas.enrollSMS(code, new Result < EnrollSMSMFAResponseEntity > () {
 
 Once you configured SMS, you can also login with SMS via Passwordless authentication. To receive a verification code via SMS, call **loginWithSMS()**.
 ```java
-cidaas.loginWithSMS(sub, trackId, UsageType.MFA, new Result < LoginCredentialsResponseEntity > () {
+
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
+
+cidaas.loginWithSMS(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
    @Override
    public void success(LoginCredentialsResponseEntity result) {
     //Your success code here
@@ -954,7 +1063,7 @@ cidaas.loginWithSMS(sub, trackId, UsageType.MFA, new Result < LoginCredentialsRe
 Once you received your verification code via SMS, you need to verify the code. For that verification, call **verifySMS()**.
 
 ```java
-cidaas.verifySMS(code, new Result < LoginCredentialsResponseEntity > () {
+cidaas.verifySMS("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   // Your Success code here
@@ -984,7 +1093,7 @@ cidaas.verifySMS(code, new Result < LoginCredentialsResponseEntity > () {
 
 #### IVR
 
-To use IVR as a passwordless login, you need to configure IVR physical verification first and verify your mobile number. If you already verify your mobile number through account verification via IVR, by default IVR will be configured. 
+To use IVR as a passwordless login, you need to configure IVR physical verification first and verify your mobile number. If you already verify your mobile number through account verification via IVR, it is already configured.
 
 #### Configure IVR
 
@@ -1021,7 +1130,7 @@ Once you received your verification code via IVR verification call, you need to 
 
 ```java
 
-cidaas.enrollIVR(code, new Result < EnrollIVRMFAResponseEntity > () {
+cidaas.enrollIVR("your_code","your_statusId", new Result < EnrollIVRMFAResponseEntity > () {
  @Override
  public void success(EnrollIVRMFAResponseEntity result) {
   //Your success code here
@@ -1053,7 +1162,14 @@ cidaas.enrollIVR(code, new Result < EnrollIVRMFAResponseEntity > () {
 Once you configured IVR, you can also login with IVR via Passwordless authentication. To receive a verification code via IVR verification call, call **loginWithIVR()**.
 
 ```java
-cidaas.loginWithIVR(sub, trackId, UsageType.MFA, new Result < LoginCredentialsResponseEntity > () {
+
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
+
+cidaas.loginWithIVR(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here
@@ -1082,7 +1198,7 @@ Once you received your verification code via IVR, you need to verify the code. F
 
 ```java
 
-cidaas.verifyIVR(code, new Result < LoginCredentialsResponseEntity > () {
+cidaas.verifyIVR("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
 @Override
 public void success(LoginCredentialsResponseEntity result) {
         // Your Success code here
@@ -1159,7 +1275,14 @@ cidaas.configureBackupcode(sub, new Result < SetupBackupcodeMFAResponseEntity > 
 Once you configured Backupcode, you can also login with Backupcode via Passwordless authentication. To login with Backupcode, call **loginWithBackupcode()**.
 
 ```java
-cidaas.loginWithBackupcode("verificationCode","yourEmail", "yourmobile", "yoursub", UsageType.MFA, "your trackId", "your requestId", new Result < LoginCredentialsResponseEntity > () {
+
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
+
+cidaas.loginWithBackupcode("yourverificationCode",PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //your success code here.
@@ -1192,7 +1315,7 @@ cidaas.loginWithBackupcode("verificationCode","yourEmail", "yourmobile", "yoursu
 
 #### TOTP
 
-To use TOTP as a passwordless login, you need to configure TOTP physical verification first.
+You can configure passwordless login with an OTP that has to be valid only for a fixed duration. To use TOTP as a passwordless login, you need to configure TOTP physical verification first.
 
 #### Configure TOTP
 
@@ -1218,7 +1341,7 @@ cidaas.configureTOTP("Your Sub", new Result < EnrollTOTPMFAResponseEntity > () {
 
 **Response:**
 
-```swift
+```json
 {
     "success": true,
     "status": 200,
@@ -1233,8 +1356,13 @@ cidaas.configureTOTP("Your Sub", new Result < EnrollTOTPMFAResponseEntity > () {
 Once you configured TOTP, you can also login with TOTP via Passwordless authentication. To login, call **loginWithTOTP()**.
 
 ```java
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
 
-cidaas.loginWithTOTP("yourEmail", "", "", UsageType.MFA, "your trackId", "your requestId", new Result < LoginCredentialsResponseEntity > () {
+cidaas.loginWithTOTP(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -1267,7 +1395,7 @@ cidaas.loginWithTOTP("yourEmail", "", "", UsageType.MFA, "your trackId", "your r
 
 #### Pattern Recognition
 
-To use Pattern Recognition as a passwordless login, you need to configure it first.
+If you want to offer a passwordless login after securing it with the secure pattern that user can define on their device, you can use this option. To use Pattern Recognition as a passwordless login, you need to configure it first.
 
 #### Configure Pattern Recognition
 
@@ -1300,10 +1428,17 @@ cidaas.configurePatternRecognition("RED[1,2,3]", "Your Sub", new Result < Enroll
 
 #### Login via Pattern Recognition
 
-Once you configured Pattern Recognition, you can also login with Pattern Recognition via Passwordless authentication. To login, call **loginWithPatternRecognition()**.
+Once you have configured Pattern Recognition, you can also login with Pattern Recognition via Passwordless authentication. To login, call **loginWithPatternRecognition()**.
 
 ```java
-cidaas.loginWithPatternRecognition("RED[1,2,3]", "yourEmail", "", "", UsageType.MFA, "your trackId", "your requestId", new Result < LoginCredentialsResponseEntity > () {
+
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
+
+cidaas.loginWithPatternRecognition("RED[1,2,3]", PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //your success code here
@@ -1335,7 +1470,7 @@ cidaas.loginWithPatternRecognition("RED[1,2,3]", "yourEmail", "", "", UsageType.
 
 #### fingerprint Verification
 
-To use fingerprint Verification as a passwordless login, you need to configure it first.
+You may want to allow users to use their Fingerprint on their mobile devices or computer peripheral to be used for passwordless login.To do this Fingerprint Verification as a passwordless login, you need to configure it first.
 
 #### Configure fingerprint Verification
 
@@ -1374,7 +1509,13 @@ cidaas.configureFingerprint("Your Sub", new Result < EnrollFingerprintMFARespons
 Once you configured fingerprint  Verification, you can also login with fingerprint Id Verification via Passwordless authentication. To login, call **loginWithFingerprint()**.
 
 ```java
-cidaas.loginWithFingerprint("yourEmail", "", "", UsageType.MFA, "your trackId", "your requestId", new Result < LoginCredentialsResponseEntity > () {
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
+
+cidaas.loginWithFingerprint(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -1406,7 +1547,7 @@ cidaas.loginWithFingerprint("yourEmail", "", "", UsageType.MFA, "your trackId", 
 
 ### SmartPush Notification
 
-To use SmartPush Notification as a passwordless login, you need to configure it first.
+SmartPush notification can be used when you would like users to recieve a number on their device and use that to authenticate instead of password. To use SmartPush Notification as a passwordless login, you need to configure it first.
 
 #### Configure SmartPush Notification
 
@@ -1445,8 +1586,13 @@ To configure SmartPush Notification, call **configureSmartPush()**.
 Once you configured SmartPush Notification, you can also login with SmartPush Notification via Passwordless authentication. To login, call **loginWithSmartPush()**.
 
 ```java
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
 
-cidaas.loginWithSmartPush("yourEmail", "", "", UsageType.MFA, "your trackId", "your requestId", new Result < LoginCredentialsResponseEntity > () {
+cidaas.loginWithSmartPush(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -1479,7 +1625,7 @@ cidaas.loginWithSmartPush("yourEmail", "", "", UsageType.MFA, "your trackId", "y
 
 #### Face Recognition
 
-Biometric plays an important role in the modern world. cidaas authenticates you by verifying your Face. To use Face Recognition as a passwordless login, you need to configure it first.
+Biometrics plays an important role in the modern world. cidaas can register a user's face, extract unique features from it, and use that to identify when they present their face for identification. To use Face Recognition as a passwordless login, you need to configure it first.
 
 #### Configure Face Recognition
 
@@ -1487,7 +1633,7 @@ To configure Face Recognition, call **configureFaceRecognition()**.
 
 ```java
 
-cidaas.configureFaceRecognition(File: image, "Your Sub", new Result < EnrollFaceRecognitionMFAResponseEntity > () {
+cidaas.configureFaceRecognition(File photo, "Your Sub", new Result < EnrollFaceRecognitionMFAResponseEntity > () {
  @Override
  public void success(EnrollFaceRecognitionPMFAResponseEntity result) {
   //your success code here
@@ -1518,7 +1664,13 @@ cidaas.configureFaceRecognition(File: image, "Your Sub", new Result < EnrollFace
 Once you configured Face Recognition, you can also login with Face Recognition via Passwordless authentication. To login, call **loginWithFaceRecognition()**.
 
 ```java
-cidaas.loginWithFaceRecognition(File: image, "yourEmail", "", "", UsageType.MFA, "your trackId", "your requestId", new Result < LoginCredentialsResponseEntity > () {
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
+
+cidaas.loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -1550,7 +1702,7 @@ cidaas.loginWithFaceRecognition(File: image, "yourEmail", "", "", UsageType.MFA,
 
 #### Voice Recognition
 
-Biometric plays an important role in the modern world. cidaas authenticates you by verifying your voice. To use Voice Recognition as a passwordless login, you need to configure it first.
+Biometric plays an important role in the modern world. cidaas can record your user's voice, extract unique features and use that to verify. To use Voice Recognition as a passwordless login, you need to configure it first.
  
 #### Configure Voice Recognition
 
@@ -1558,7 +1710,7 @@ To configure Voice Recognition, call **configureVoiceRecognition()**.
 
 ```java
 
-    cidaas.configureVoiceRecognition(File: Audio, "Your Sub", new Result < EnrollVoiceRecognitionMFAResponseEntity > () {
+    cidaas.configureVoiceRecognition(File voice, "Your Sub", new Result < EnrollVoiceRecognitionMFAResponseEntity > () {
      @Override
      public void success(EnrollFaceRecognitionPMFAResponseEntity result) {
       //your success code here
@@ -1589,7 +1741,13 @@ To configure Voice Recognition, call **configureVoiceRecognition()**.
 Once you configured Voice Recognition, you can also login with Voice Recognition via Passwordless authentication. To login, call **loginWithVoiceRecognition()**.
 
 ```java
-cidaas.loginWithVoiceRecognition(File: Audio, "yourEmail", "", "", UsageType.MFA, "your trackId", "your requestId", new Result < LoginCredentialsResponseEntity > () {
+PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+passwordlessEntity.setUsageType(UsageType.MFA);
+passwordlessEntity.setTrackId(trackid);
+passwordlessEntity.setRequestId(result.getData().getRequestId());
+passwordlessEntity.setSub(sub);
+
+cidaas.loginWithVoiceRecognition(File voice,PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -1622,7 +1780,7 @@ cidaas.loginWithVoiceRecognition(File: Audio, "yourEmail", "", "", UsageType.MFA
 
 #### Consent Management
 
-Once user is successfully logged in, they need to accept the terms and conditions.
+Once user has successfully logged in, you may want your user's to accept the terms and conditions. You can configure different consent forms during setup, and present that to the user after login.
 
 #### Getting Consent Details 
 
@@ -1631,7 +1789,7 @@ To get the consent details call **getConsentDetails()**.
 
 ```java
 
-cidaas.getConsentDetails(consentName, consentversion, trackid, new Result < ConsentDetailsResultEntity > () {
+cidaas.getConsentDetails(consentName,new Result < ConsentDetailsResultEntity > () {
  @Override
  public void success(ConsentDetailsResultEntity result) {
   //Your success code here
@@ -1661,10 +1819,10 @@ cidaas.getConsentDetails(consentName, consentversion, trackid, new Result < Cons
 
 #### Login After Consent
 
-After accepting the consent you need to continue further by calling ****loginAfterConsent()****
+For accept the consent you need to call ****loginAfterConsent()****
 
 ```java
-cidaas.loginAfterConsent("Your sub", true, new Result < LoginCredentialsResponseEntity > () {
+cidaas.loginAfterConsent(ConsentEntity consentEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here
