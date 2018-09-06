@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">cidaasv2</string>
+    <string name="DEFAULT">Error Occured.</string>
+    <string name="FILE_NOT_FOUND">Property file is missing.</string>
+    <string name="NO_CONTENT_IN_FILE">No content in property file.</string>
+    <string name="PROPERTY_MISSING">One of the property is missing.</string>
+    <string name="DEVICE_VERIFICATION_FAILURE">Device is Failed to Verify</string>
+    <string name="REQUEST_ID_MISSING">Request Id is missing.</string>
+    <string name="REQUEST_ID_SERVICE_FAILURE">Request Id service failure.</string>
+    <string name="EMPTY_REQUEST_ID_SERVICE">Request Id is empty.</string>
+    <string name="ACCESS_TOKEN_SERVICE_FAILURE">Access token service failure.</string>
+    <string name="EMPTY_LOGIN_URL">Login URL is empty.</string>
+    <string name="LOGIN_URL_SERVICE_FAILURE">Login URL is service failure.</string>
+    <string name="EMPTY_LOGIN_URL_SERVICE">Login URL is empty.</string>
+
+
+    <string name="MFA_LIST_FAILURE">MFA List Response is empty.</string>
+    <string name="EMPTY_REDIRECT_URL">Redirect URL is empty.</string>
+    <string name="USER_CANCELLED_LOGIN">User cancelled.</string>
+    <string name="CODE_NOT_FOUND">Code not found in URL.</string>
+    <string name="ERROR_JSON_PARSING">Error on JSON parsing.</string>
+    <string name="USER_INFO_SERVICE_FAILURE">User Info service failure.</string>
+    <string name="EMPTY_CALLBACK">Callback is empty.</string>
+    <string name="NO_USER_FOUND">No user found.</string>
+    <string name="REFRESH_TOKEN_SERVICE_FAILURE">Refresh token service failure.</string>
+
+</resources>

@@ -1,3 +1,4 @@
+/*
 package com.example.cidaasv2.Service.Repository.Tenant;
 
 import android.content.Context;
@@ -117,4 +118,4 @@ public class TenantServiceTest {
 
 }
 
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
+//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme*/

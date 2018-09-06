@@ -20,7 +20,7 @@ public class VerificationSettingsServiceTest {
     @Test
     public void testGetShared() throws Exception {
         VerificationSettingsService result = VerificationSettingsService.getShared(null);
-        Assert.assertEquals(new VerificationSettingsService(null), result);
+        Assert.assertTrue(result instanceof VerificationSettingsService);
     }
 
     @Test
