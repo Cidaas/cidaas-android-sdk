@@ -1,5 +1,8 @@
 # Cidaas Android SDK V2
 
+[![Build Status](https://travis-ci.com/Cidaas/cidaas-sdk-android-v2.svg?branch=master)](https://travis-ci.com/Cidaas/cidaas-sdk-android-v2) 
+[![codecov.io](https://codecov.io/gh/Cidaas/cidaas-sdk-android-v2/branch/development/graphs/badge.svg)](https://codecov.io/gh/Cidaas/cidaas-sdk-android-v2/branch/development)
+
 The steps here will guide you through setting up and managing authentication and authorization in your apps using cidaas SDK.
 
 https://docs.cidaas.de/
