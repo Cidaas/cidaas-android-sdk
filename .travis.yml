@@ -32,7 +32,7 @@ before_install:
 script: ./gradlew jacocoTestReport
 
 after_success:
- - codecov
+
   - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN
 
 
