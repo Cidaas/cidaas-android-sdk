@@ -1,5 +1,7 @@
 language: android
 env:
+  global:
+    - CODECOV_TOKEN=ee1b4460-048f-4b09-960e-e0f53ae6ef28
   matrix:
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
 android:
@@ -33,7 +35,7 @@ script: ./gradlew jacocoTestReport
 
 after_success:
  - codecov
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN
 
 
 
