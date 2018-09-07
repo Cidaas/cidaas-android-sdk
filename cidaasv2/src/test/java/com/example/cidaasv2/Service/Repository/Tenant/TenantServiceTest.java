@@ -1,4 +1,3 @@
-/*
 package com.example.cidaasv2.Service.Repository.Tenant;
 
 import android.content.Context;
@@ -11,6 +10,9 @@ import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -18,6 +20,7 @@ import timber.log.Timber;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
+@RunWith(RobolectricTestRunner.class)
 public class TenantServiceTest {
     CidaassdkService service;
     Context context;
@@ -25,7 +28,7 @@ public class TenantServiceTest {
 
     @Before
     public void setUp() {
-
+        context= RuntimeEnvironment.application;
        tenantService=new TenantService(context);
     }
 
@@ -40,7 +43,7 @@ public class TenantServiceTest {
     public void testGetTenantInfo() throws Exception {
 //        when(new TenantService(context).service).thenReturn(service);
 
-        Assert.assertTrue(service.getInstance()==null);
+//        Assert.assertTrue(service.getInstance()==null);
 
 
         tenantService.getTenantInfo("baseurl", new Result<TenantInfoEntity>() {
@@ -118,4 +121,4 @@ public class TenantServiceTest {
 
 }
 
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme*/
+//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

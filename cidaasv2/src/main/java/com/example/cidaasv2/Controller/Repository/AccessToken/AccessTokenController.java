@@ -3,17 +3,13 @@ package com.example.cidaasv2.Controller.Repository.AccessToken;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Controller.Repository.Configuration.Pattern.PatternConfigurationController;
 import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Repository.AccessToken.AccessTokenService;
-import com.example.cidaasv2.Service.Repository.OauthService;
 
 import java.util.Dictionary;
 
@@ -101,7 +97,7 @@ public class AccessTokenController {
 
                 @Override
                 public void failure(WebAuthError error) {
-
+                    callback.failure(error);
                 }
             });
 

@@ -234,7 +234,7 @@ public class Cidaas implements IOAuthWebLogin{
 
         //String token = FirebaseInstanceId.getInstance().getToken();
 
-        if (Build.VERSION.SDK_INT >= 23) {
+       /* if (Build.VERSION.SDK_INT >= 23) {
             if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED) {
 
             } else {
@@ -243,7 +243,7 @@ public class Cidaas implements IOAuthWebLogin{
             }
         } else { //permission is automatically granted on sdk<23 upon installation
 
-        }
+        }*/
 
 
         //Add Device info
@@ -294,8 +294,12 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     public String getInstanceId(){
-        return instanceId;
-
+        if(instanceId!=null){
+            return instanceId;
+        }
+        else {
+            return null;
+        }
     }
 
     // -----------------------------------------------------***** REQUEST ID *****---------------------------------------------------------------
@@ -2345,7 +2349,10 @@ loginresult.failure(error);
 
     public void cancelListenTOTP()
     {
-        countDownTimer.cancel();
+
+        if(countDownTimer!=null) {
+            countDownTimer.cancel();
+        }
 
     }
 

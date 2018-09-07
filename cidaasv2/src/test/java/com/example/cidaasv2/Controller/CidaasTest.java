@@ -3,11 +3,33 @@ package com.example.cidaasv2.Controller;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Entity.ConsentEntity;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
+import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
+import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
+import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,6 +38,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+
+import java.io.File;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
@@ -62,16 +88,28 @@ public class CidaasTest {
 
             }
         });
-
-
-
-        // when(cidaas.checkSavedProperties(result)).thenReturn("samp");
-
-        //spy(testCheckSavedProperties());
-
     }
 
     @Test
+    public void testGetFailTenantInfo() throws Exception {
+
+
+        cidaas = Cidaas.getInstance(context);
+
+        cidaas.getTenantInfo(new Result<TenantInfoEntity>() {
+            @Override
+            public void success(TenantInfoEntity result) {
+                Assert.assertEquals("Tenant Name", result.getData().getTenant_name());
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+        @Test
     public void testGetClientInfo() throws Exception {
      cidaas.getClientInfo("RequestId", new Result<ClientInfoEntity>() {
             @Override
@@ -88,21 +126,26 @@ public class CidaasTest {
 
 
 
-  /*  @Test
+    @Test
     public void testCheckSavedProperties() throws Exception {
-        final FileHelper fileHelper=Mockito.mock(FileHelper.class);
-
-        AssetManager assetManager=Mockito.mock(AssetManager.class);
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(context.getAssets()).thenReturn(assetManager);
 
 
       //  when(FileHelper.getShared(context)).thenReturn(fileHelper);
 
-        cidaas.checkSavedProperties(null);
-    }*/
+        cidaas.checkSavedProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
 
-    /*@Test
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
     public void testIsENABLE_PKCE() throws Exception {
         boolean result = cidaas.isENABLE_PKCE();
         Assert.assertEquals(true, result);
@@ -121,22 +164,29 @@ public class CidaasTest {
     @Test
     public void testSetremoteMessage() throws Exception {
         Cidaas.setremoteMessage(new HashMap<String, String>() {{
-            put("String", "String");
+            put("intermediate_verifiation_id", "intermediate_verifiation_id");
         }});
     }
 
     @Test
+    public void testGetremoteMessage() throws Exception {
+        Cidaas.setremoteMessage(new HashMap<String, String>() {{
+            put("intermediate_verifiation_id", "intermediate_verifiation_id");
+        }});
+
+        Assert.assertEquals("intermediate_verifiation_id",cidaas.getInstanceId());
+    }
+
+
+
+    @Test
     public void testGetRequestId() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.getRequestId("DomainUrl", "ClientId", "RedirectURL", "ClientSecret", null);
     }
 
     @Test
     public void testGetRequestId2() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.getRequestId(null);
     }
@@ -146,293 +196,407 @@ public class CidaasTest {
 
     @Test
     public void testLoginWithCredentials() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithCredentials("requestId", null, null);
+        cidaas.loginWithCredentials("requestId", null, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testGetConsentDetails() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.getConsentDetails("consentName", null);
     }
 
     @Test
     public void testLoginAfterConsent() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginAfterConsent(new ConsentEntity(), null);
+        cidaas.loginAfterConsent(new ConsentEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testGetMFAList() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.getMFAList("sub", null);
     }
 
     @Test
     public void testConfigureEmail() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.configureEmail("sub", null);
     }
 
     @Test
     public void testEnrollEmail() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.enrollEmail("code", "statusId", null);
     }
 
     @Test
     public void testLoginWithEmail() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithEmail(new PasswordlessEntity(), null);
+        cidaas.loginWithEmail(new PasswordlessEntity(), new Result<InitiateEmailMFAResponseEntity>() {
+            @Override
+            public void success(InitiateEmailMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testVerifyEmail() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.verifyEmail("code", "statusId", null);
     }
 
     @Test
     public void testConfigureSMS() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.configureSMS("sub", null);
     }
 
     @Test
     public void testEnrollSMS() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.enrollSMS("code", "statusId", null);
     }
 
     @Test
     public void testLoginWithSMS() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithSMS(new PasswordlessEntity(), null);
+        cidaas.loginWithSMS(new PasswordlessEntity(), new Result<InitiateSMSMFAResponseEntity>() {
+            @Override
+            public void success(InitiateSMSMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testVerifySMS() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.verifySMS("code", "statusId", null);
+        cidaas.verifySMS("code", "statusId", new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testConfigureIVR() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.configureIVR("sub", null);
+        cidaas.configureIVR("sub", new Result<SetupIVRMFAResponseEntity>() {
+            @Override
+            public void success(SetupIVRMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testEnrollIVR() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.enrollIVR("code", "statusId", null);
+        cidaas.enrollIVR("code", "statusId", new Result<EnrollIVRMFAResponseEntity>() {
+            @Override
+            public void success(EnrollIVRMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testLoginWithIVR() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
+       cidaas.loginWithIVR(new PasswordlessEntity(), new Result<InitiateIVRMFAResponseEntity>() {
+           @Override
+           public void success(InitiateIVRMFAResponseEntity result) {
 
-        cidaas.loginWithIVR(new PasswordlessEntity(), null);
+           }
+
+           @Override
+           public void failure(WebAuthError error) {
+
+           }
+       });
     }
 
     @Test
     public void testVerifyIVR() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.verifyIVR("code", "statusId", null);
+        cidaas.verifyIVR("code", "statusId", new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testConfigureBackupcode() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.configureBackupcode("sub", null);
+        cidaas.configureBackupcode("sub", new Result<SetupBackupCodeMFAResponseEntity>() {
+            @Override
+            public void success(SetupBackupCodeMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testLoginWithBackupcode() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithBackupcode("code", new PasswordlessEntity(), null);
+        cidaas.loginWithBackupcode("code", new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testVerifyBackupcode() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.verifyBackupcode("code", "statusId", null);
     }
 
     @Test
     public void testConfigurePatternRecognition() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.configurePatternRecognition("pattern", "sub", null);
     }
 
     @Test
     public void testLoginWithPatternRecognition() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithPatternRecognition("pattern", new PasswordlessEntity(), null);
+        cidaas.loginWithPatternRecognition("pattern", new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testVerifyPattern() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.verifyPattern("patternString", "statusId", null);
     }
 
     @Test
     public void testConfigureFaceRecognition() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.configureFaceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "sub", null);
+/*        cidaas.configureFaceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "sub", new Result<EnrollFaceMFAResponseEntity>() {
+            @Override
+            public void success(EnrollFaceMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });*/
     }
 
     @Test
     public void testLoginWithFaceRecognition() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithFaceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), new PasswordlessEntity(), null);
+/*        cidaas.loginWithFaceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });*/
     }
 
     @Test
     public void testVerifyFace() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.verifyFace("statusId", null);
     }
 
     @Test
     public void testConfigureFingerprint() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.configureFingerprint("sub", null);
+        cidaas.configureFingerprint("sub", new Result<EnrollFingerprintMFAResponseEntity>() {
+            @Override
+            public void success(EnrollFingerprintMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testLoginWithFingerprint() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithFingerprint(new PasswordlessEntity(), null);
+        cidaas.loginWithFingerprint(new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
-    public void testVerifyFingerprint() throws Exception {ul
-ut
-nR
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-
+    public void testVerifyFingerprint() throws Exception {
         cidaas.verifyFingerprint("statusId", null);
     }
 
     @Test
     public void testConfigureSmartPush() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.configureSmartPush("sub", null);
+        cidaas.configureSmartPush("sub", new Result<EnrollSmartPushMFAResponseEntity>() {
+            @Override
+            public void success(EnrollSmartPushMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testLoginWithSmartPush() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithSmartPush(new PasswordlessEntity(), null);
+        cidaas.loginWithSmartPush(new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
-ul
-ut
-nR
     @Test
     public void testVerifySmartPush() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.verifySmartPush("randomNumber", "statusId", null);
+        cidaas.verifySmartPush("randomNumber", "statusId", new Result<AuthenticateSmartPushRequestEntity>() {
+            @Override
+            public void success(AuthenticateSmartPushRequestEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testConfigureTOTP() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.configureTOTP("sub", null);
+        cidaas.configureTOTP("sub", new Result<EnrollTOTPMFAResponseEntity>() {
+            @Override
+            public void success(EnrollTOTPMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testLoginWithTOTP() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithTOTP(new PasswordlessEntity(), null);
+        cidaas.loginWithTOTP(new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
@@ -447,160 +611,213 @@ nR
 
     @Test
     public void testConfigureVoiceRecognition() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.configureVoiceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "sub", null);
+/*        cidaas.configureVoiceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "sub", new Result<EnrollVoiceMFAResponseEntity>() {
+            @Override
+            public void success(EnrollVoiceMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });*/
     }
 
     @Test
     public void testLoginWithVoiceRecognition() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithVoiceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), new PasswordlessEntity(), null);
+       /* cidaas.loginWithVoiceRecognition(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });*/
     }
 
     @Test
     public void testVerifyVoice() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.verifyVoice(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "statusId", null);
+      //  cidaas.verifyVoice(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "statusId", null);
     }
 
     @Test
     public void testGetRegistrationFields() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.getRegistrationFields("requestId", "locale", null);
+        cidaas.getRegistrationFields("requestId", "locale", new Result<RegistrationSetupResponseEntity>() {
+            @Override
+            public void success(RegistrationSetupResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testRegisterUser() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.registerUser("requestId", null, null);
+        cidaas.registerUser("requestId", null, new Result<RegisterNewUserResponseEntity>() {
+            @Override
+            public void success(RegisterNewUserResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testInitiateEmailVerification() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.initiateEmailVerification("sub", "requestId", null);
     }
 
     @Test
     public void testInitiateSMSVerification() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.initiateSMSVerification("sub", "requestId", null);
     }
 
     @Test
     public void testInitiateIVRVerification() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.initiateIVRVerification("sub", "requestId", null);
     }
 
     @Test
     public void testVerifyAccount() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.verifyAccount("code", "accvid", null);
+        cidaas.verifyAccount("code", "accvid", new Result<RegisterUserAccountVerifyResponseEntity>() {
+            @Override
+            public void success(RegisterUserAccountVerifyResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testGetDeduplicationDetails() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-
-        cidaas.getDeduplicationDetails("trackId", null);
+       cidaas.getDeduplicationDetails("trackId", null);
     }
 
     @Test
     public void testRegisterUser2() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.registerUser("trackId", null);
+        cidaas.registerUser("trackId", new Result<RegisterDeduplicationEntity>() {
+            @Override
+            public void success(RegisterDeduplicationEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testLoginWithDeduplication() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.loginWithDeduplication("requestId", "sub", "password", null);
+        cidaas.loginWithDeduplication("requestId", "sub", "password", new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testInitiateResetPasswordByEmail() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.initiateResetPasswordByEmail("requestId", "email", null);
     }
 
     @Test
     public void testInitiateResetPasswordBySMS() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.initiateResetPasswordBySMS("requestId", "mobileNumber", null);
     }
 
     @Test
     public void testHandleResetPassword() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
-        cidaas.handleResetPassword("verificationCode", "rprq", null);
+        cidaas.handleResetPassword("verificationCode", "rprq", new Result<ResetPasswordValidateCodeResponseEntity>() {
+            @Override
+            public void success(ResetPasswordValidateCodeResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testResetPassword() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.resetPassword(null, null);
+        cidaas.resetPassword(null, new Result<ResetNewPasswordResponseEntity>() {
+            @Override
+            public void success(ResetNewPasswordResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testChangePassword() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.changePassword("sub", null, null);
     }
 
     @Test
     public void testGetAccessToken() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
-        cidaas.getAccessToken("sub", null);
+        cidaas.getAccessToken("sub", new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testGetUserInfo() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.customException(anyInt(), any(), anyInt())).thenReturn(new WebAuthError(null));
 
         cidaas.getUserInfo("sub", null);
     }
@@ -617,7 +834,6 @@ nR
 
     @Test
     public void testGetLoginCode() throws Exception {
-        when(cidaasInstance.getCodeFromUrl(any())).thenReturn("getCodeFromUrlResponse");
 
         cidaas.getLoginCode("url", null);
     }
@@ -630,16 +846,11 @@ nR
 
     @Test
     public void testLoginWithFIDO() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
-
-        cidaas.loginWithFIDO("usageType", "email", "sub", "trackId", null);
+               cidaas.loginWithFIDO("usageType", "email", "sub", "trackId", null);
     }
 
     @Test
     public void testGetLoginURL() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.getLoginURL(null);
     }
@@ -651,31 +862,25 @@ nR
 
     @Test
     public void testGetLoginURL3() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.getLoginURL("DomainUrl", "ClientId", "RedirectURL", "ClientSecret", null);
     }
 
     @Test
     public void testGetLoginURL4() throws Exception {
-        cidaas.getLoginURL(null, null);
+        cidaas.getLoginURL("String", null);
     }
 
     @Test
     public void testResume() throws Exception {
-        when(cidaasInstance.getCodeFromUrl(any())).thenReturn("getCodeFromUrlResponse");
 
         cidaas.resume("code");
     }
 
     @Test
     public void testConfigureFIDO() throws Exception {
-        when(webAuthError.getShared(any())).thenReturn(new WebAuthError(null));
-        when(webAuthError.propertyMissingException()).thenReturn(new WebAuthError(null));
 
         cidaas.configureFIDO("sub", null);
-    }*/
+    }
 }
-
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

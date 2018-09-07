@@ -29,7 +29,7 @@ public class CustomTabPropertiesEntity implements Parcelable{
     public String secondaryColor;
 
 
-    protected CustomTabPropertiesEntity(Parcel in) {
+    public CustomTabPropertiesEntity(Parcel in) {
         secondaryColor = in.readString();
     }
 

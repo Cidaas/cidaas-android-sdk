@@ -1,4 +1,3 @@
-/*
 package com.example.cidaasv2.Service.Repository.Verification.Voice;
 
 import android.content.Context;
@@ -16,8 +15,11 @@ import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
+@RunWith(RobolectricTestRunner.class)
 public class VoiceVerificationServiceTest {
     Context context;
     VoiceVerificationService voiceVerificationService;
@@ -27,6 +29,7 @@ public class VoiceVerificationServiceTest {
     public void setUp() {
 
         context= RuntimeEnvironment.application;
+        DBHelper.setConfig(context);
        voiceVerificationService=new VoiceVerificationService(context);
        enrollVoiceMFARequestEntity=new EnrollVoiceMFARequestEntity();
       // enrollVoiceMFARequestEntity.setDeviceInfo(DBHelper.getShared().getDeviceInfo());
@@ -126,4 +129,3 @@ public class VoiceVerificationServiceTest {
 }
 
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
-*/

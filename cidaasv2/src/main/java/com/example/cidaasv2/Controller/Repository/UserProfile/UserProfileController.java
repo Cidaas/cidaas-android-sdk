@@ -1,3 +1,4 @@
+/*
 package com.example.cidaasv2.Controller.Repository.UserProfile;
 
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import java.util.Dictionary;
 import timber.log.Timber;
 
 public class UserProfileController {
+*/
 /*
 
     //Get Internal userProfile
@@ -89,7 +91,9 @@ public class UserProfileController {
             Timber.e(e.getMessage());
         }
     }
-*/
+*//*
+
 
 
 }
+*/

@@ -61,7 +61,7 @@ Context context;
 
             @Override
             public void failure(WebAuthError error) {
-
+                Assert.assertEquals("DomainURL","DomainURL");
             }
         });
 

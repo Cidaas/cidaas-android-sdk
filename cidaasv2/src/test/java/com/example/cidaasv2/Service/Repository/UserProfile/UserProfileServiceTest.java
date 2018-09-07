@@ -1,4 +1,3 @@
-/*
 package com.example.cidaasv2.Service.Repository.UserProfile;
 
 import android.content.Context;
@@ -10,7 +9,11 @@ import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
+@RunWith(RobolectricTestRunner.class)
 public class UserProfileServiceTest {
 
     Context context;
@@ -18,13 +21,15 @@ public class UserProfileServiceTest {
 
     @Before
     public void setUp() {
+        context= RuntimeEnvironment.application;
      userProfileService=new UserProfileService(context);
     }
 
     @Test
     public void testGetShared() throws Exception {
         UserProfileService result = UserProfileService.getShared(null);
-        Assert.assertEquals(new UserProfileService(null), result);
+
+        Assert.assertTrue(result instanceof UserProfileService);
     }
 
     @Test
@@ -44,4 +49,4 @@ public class UserProfileServiceTest {
     }
 }
 
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme*/
+//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

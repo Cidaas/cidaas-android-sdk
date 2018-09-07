@@ -2,10 +2,18 @@ package com.example.cidaasv2.Service.Repository.Verification.Settings;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
+@RunWith(RobolectricTestRunner.class)
 public class VerificationSettingsServiceTest {
 
     Context context;
@@ -14,6 +22,7 @@ public class VerificationSettingsServiceTest {
 
     @Before
     public void setUp() {
+        context= RuntimeEnvironment.application;
  verificationSettingsService=new VerificationSettingsService(context);
     }
 
@@ -26,7 +35,17 @@ public class VerificationSettingsServiceTest {
     @Test
     public void testGetmfaList() throws Exception {
 
-        verificationSettingsService.getmfaList("baseurl", "sub", "userDeviceID", null);
+        verificationSettingsService.getmfaList("baseurl", "sub", "userDeviceID", new Result<MFAListResponseEntity>() {
+            @Override
+            public void success(MFAListResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 }
 
