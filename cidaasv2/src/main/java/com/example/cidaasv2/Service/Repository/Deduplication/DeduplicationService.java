@@ -14,11 +14,9 @@ import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
-import com.example.cidaasv2.Service.Entity.Deduplication.LoginDeduplication.LoginDeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseErrorEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -252,7 +250,7 @@ public class DeduplicationService {
     }
 
     //Login Deduplication
-    public void loginDeduplication(final String baseurl, LoginEntity loginEntity, final Result<LoginDeduplicationResponseEntity> callback)
+    public void loginDeduplication(final String baseurl, LoginEntity loginEntity, final Result<LoginCredentialsResponseEntity> callback)
     {
 
         String loginUrl = "";
@@ -286,9 +284,9 @@ public class DeduplicationService {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.logindeDuplicatopm(loginUrl,headers, loginEntity).enqueue(new Callback<LoginDeduplicationResponseEntity>() {
+            cidaasSDKService.logindeDuplicatopm(loginUrl,headers, loginEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
                 @Override
-                public void onResponse(Call<LoginDeduplicationResponseEntity> call, Response<LoginDeduplicationResponseEntity> response) {
+                public void onResponse(Call<LoginCredentialsResponseEntity> call, Response<LoginCredentialsResponseEntity> response) {
                     if (response.isSuccessful()) {
                         if(response.code()==200) {
                             callback.success(response.body());
@@ -331,7 +329,7 @@ public class DeduplicationService {
                 }
 
                 @Override
-                public void onFailure(Call<LoginDeduplicationResponseEntity> call, Throwable t) {
+                public void onFailure(Call<LoginCredentialsResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,t.getMessage(), 400,null));
                 }

@@ -7,7 +7,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class ConsentManagementAcceptResponseEntityTest {
 
-    ConsentManagementResponseDataEntity data;
+
 
     ConsentManagementAcceptResponseEntity consentManagementAcceptResponseEntity=new ConsentManagementAcceptResponseEntity();
 
@@ -29,6 +29,15 @@ public class ConsentManagementAcceptResponseEntityTest {
 
         consentManagementAcceptResponseEntity.setStatus(417);
         assertTrue(consentManagementAcceptResponseEntity.getStatus()==417);
+
+    }
+
+
+    @Test
+    public void setData()
+    {
+        consentManagementAcceptResponseEntity.setData(true);
+        assertTrue(consentManagementAcceptResponseEntity.isData());
 
     }
 

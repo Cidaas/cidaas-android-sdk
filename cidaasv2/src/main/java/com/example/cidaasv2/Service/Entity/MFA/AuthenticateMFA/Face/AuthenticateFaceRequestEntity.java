@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class AuthenticateFaceRequestEntity implements Serializable {
 
     String statusId;
-File imagetoSend;
+    File imagetoSend;
     DeviceInfoEntity deviceInfo;
     String userDeviceId;
 

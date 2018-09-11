@@ -2,6 +2,8 @@ package com.example.cidaasv2.Service.Entity.ConsentManagement;
 
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
@@ -39,6 +41,13 @@ public class ConsentManagementAcceptedRequestEntityTest {
     {
         resumeConsentRequestEntity.setClient_id("test");
         assertTrue(resumeConsentRequestEntity.getClient_id()=="test");
+    }
+
+    @Test
+    public void setTrack_id()
+    {
+        resumeConsentRequestEntity.setTrackId("Test");
+        Assert.assertEquals("Test",resumeConsentRequestEntity.getTrackId());
     }
 }
 

@@ -43,14 +43,22 @@ public class AuthenticateSmartPushRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateSmartPushRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateSmartPushRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateSmartPushRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateSmartPushRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateSmartPushRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateSmartPushRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateSmartPushRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateSmartPushRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateSmartPushRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateSmartPushRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateSmartPushRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
+
 
 
 }

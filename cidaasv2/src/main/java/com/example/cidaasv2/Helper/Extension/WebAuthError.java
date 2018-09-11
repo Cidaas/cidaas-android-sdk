@@ -84,6 +84,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton{
 
    public WebAuthError(Context contextFromCidaas)
    {
+
        context=contextFromCidaas;
    }
 

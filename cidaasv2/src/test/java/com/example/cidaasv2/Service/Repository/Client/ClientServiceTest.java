@@ -2,10 +2,21 @@ package com.example.cidaasv2.Service.Repository.Client;
 
 import android.content.Context;
 
+import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = 21)
 public class ClientServiceTest {
 
     Context context;
@@ -13,12 +24,14 @@ public class ClientServiceTest {
 
     @Before
     public void setUp() {
-       clientService=new ClientService(context);
+
+        context= RuntimeEnvironment.application;
+        clientService=new ClientService(context);
     }
 
     @Test
     public void testGetShared() throws Exception {
-        ClientService result = ClientService.getShared(null);
+        ClientService result = ClientService.getShared(context);
         Assert.assertTrue(result instanceof ClientService);
     }
 
@@ -26,6 +39,55 @@ public class ClientServiceTest {
     public void testGetClientInfo() throws Exception {
 
         clientService.getClientInfo("requestId", "baseurl", null);
+    }
+    @Test
+    public void testGetClientInfoNUllRequestId() throws Exception {
+
+        clientService.getClientInfo("", "baseurl", new Result<ClientInfoEntity>() {
+            @Override
+            public void success(ClientInfoEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+            Assert.assertEquals("Request Id is missing.",error.getErrorMessage());
+            }
+        });
+    }
+    @Test
+    public void testGetClientInfoNUllBaseurl() throws Exception {
+
+
+        clientService.getClientInfo("requestId", null, new Result<ClientInfoEntity>() {
+            @Override
+            public void success(ClientInfoEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+              Assert.assertEquals(true,error.ErrorMessage.equals("One of the property is missing."));
+            }
+        });
+    }
+
+
+    @Test
+    public void MockTestServer() throws Exception {
+
+
+        clientService.getClientInfo("requestId", null, new Result<ClientInfoEntity>() {
+            @Override
+            public void success(ClientInfoEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertEquals(true,error.ErrorMessage.equals("One of the property is missing."));
+            }
+        });
     }
 }
 

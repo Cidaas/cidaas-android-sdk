@@ -107,7 +107,7 @@ public static EntityToModelConverter sharedinstance;
         catch (Exception e)
         {
             //TODO Handle Error
-
+          callback.failure(null);
         }
     }
 

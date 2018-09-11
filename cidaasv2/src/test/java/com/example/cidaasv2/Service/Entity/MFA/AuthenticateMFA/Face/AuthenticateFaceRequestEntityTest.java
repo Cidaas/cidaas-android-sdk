@@ -14,7 +14,7 @@ public class AuthenticateFaceRequestEntityTest {
 
     File imagetoSend;
 
-    DeviceInfoEntity deviceInfo;
+
 
     AuthenticateFaceRequestEntity authenticateFaceRequestEntity;
 
@@ -23,12 +23,7 @@ public class AuthenticateFaceRequestEntityTest {
       authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
     }
 
-    @Test
-    public void getStatusID()
-    {
-        authenticateFaceRequestEntity.setStatusId("Status_ID");
-        assertTrue(authenticateFaceRequestEntity.getStatusId().equals("Status_ID"));
-    }
+
 
     @Test
     public void getImagetoSend()
@@ -38,6 +33,12 @@ public class AuthenticateFaceRequestEntityTest {
         assertTrue(authenticateFaceRequestEntity.getImagetoSend().equals(imgFile));
     }
 
+    @Test
+    public void getStatusID()
+    {
+        authenticateFaceRequestEntity.setStatusId("Status_ID");
+        assertTrue(authenticateFaceRequestEntity.getStatusId().equals("Status_ID"));
+    }
 
     @Test
     public void getDeviceInfoEntity()
@@ -49,14 +50,23 @@ public class AuthenticateFaceRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateFaceRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateFaceRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateFaceRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateFaceRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateFaceRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateFaceRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateFaceRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateFaceRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateFaceRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateFaceRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateFaceRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
+
+
 
 }
 

@@ -9,7 +9,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateFingerprintRequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
+
 
     AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity;
 
@@ -42,13 +42,20 @@ public class AuthenticateFingerprintRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateFingerprintRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateFingerprintRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-        /*assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
+    }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateFingerprintRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateFingerprintRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
     }
 
 }

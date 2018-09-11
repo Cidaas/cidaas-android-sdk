@@ -9,7 +9,6 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateTOTPRequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
 
     AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity;
 
@@ -43,14 +42,22 @@ public class AuthenticateTOTPRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateTOTPRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateTOTPRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateTOTPRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateTOTPRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
+
 
 
 }

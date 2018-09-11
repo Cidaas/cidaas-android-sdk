@@ -77,7 +77,11 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.8'
 
 
+
     testImplementation "com.android.support.test:monitor:1.0.2"
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.18.0"
+
 
 
 }

@@ -177,6 +177,13 @@ public class CidaasTest {
         Assert.assertEquals("intermediate_verifiation_id",cidaas.getInstanceId());
     }
 
+    @Test
+    public void testGetremoteMessageNull() throws Exception {
+       // Cidaas.setremoteMessage(new HashMap<String, String>());
+
+        Assert.assertEquals(null,cidaas.getInstanceId());
+    }
+
 
 
     @Test

@@ -1,5 +1,7 @@
 package com.example.cidaasv2.Service.Entity.ConsentManagement;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,7 +9,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class ConsentDetailsResultEntityTest {
 
-    ConsentDetailsResultDataEntity data;
+    ConsentSettingsReponseDataEntity data;
 
     ConsentDetailsResultEntity consentDetailsResultEntity=new ConsentDetailsResultEntity();
 
@@ -29,6 +31,16 @@ public class ConsentDetailsResultEntityTest {
 
         consentDetailsResultEntity.setStatus(417);
         assertTrue(consentDetailsResultEntity.getStatus()==417);
+
+    }
+
+    @Test
+    public void setData(){
+        data=new ConsentSettingsReponseDataEntity();
+
+        data.setCollectionMethod("Code");
+        consentDetailsResultEntity.setData(data);
+        Assert.assertEquals("Code",consentDetailsResultEntity.getData().getCollectionMethod());
 
     }
    }

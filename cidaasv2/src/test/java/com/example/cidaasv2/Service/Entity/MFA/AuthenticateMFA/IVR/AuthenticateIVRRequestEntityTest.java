@@ -9,7 +9,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateIVRRequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
+
 
     AuthenticateIVRRequestEntity authenticateIVRRequestEntity;
 
@@ -42,13 +42,13 @@ authenticateIVRRequestEntity=new AuthenticateIVRRequestEntity();
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateIVRRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateIVRRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateIVRRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateIVRRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateIVRRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateIVRRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateIVRRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateIVRRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateIVRRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
 }

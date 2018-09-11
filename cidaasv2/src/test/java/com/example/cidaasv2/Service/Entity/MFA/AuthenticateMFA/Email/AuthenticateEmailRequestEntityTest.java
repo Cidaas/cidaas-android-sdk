@@ -9,7 +9,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateEmailRequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
+
 
     AuthenticateEmailRequestEntity authenticateEmailRequestEntity=new AuthenticateEmailRequestEntity();
 
@@ -43,13 +43,13 @@ public class AuthenticateEmailRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateEmailRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateEmailRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-        /*assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
 }

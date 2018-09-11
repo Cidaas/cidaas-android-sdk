@@ -9,7 +9,6 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticatePatternRequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
 
     AuthenticatePatternRequestEntity authenticatePatternRequestEntity;
 
@@ -43,14 +42,22 @@ authenticatePatternRequestEntity=new AuthenticatePatternRequestEntity();
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticatePatternRequestEntity.setDeviceInfo(deviceInfo);
+        authenticatePatternRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticatePatternRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticatePatternRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
+
 
 }
 

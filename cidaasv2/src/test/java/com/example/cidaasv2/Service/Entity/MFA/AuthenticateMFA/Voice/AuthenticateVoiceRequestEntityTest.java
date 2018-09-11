@@ -11,7 +11,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateVoiceRequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
+
 
     File voiceFile;
 
@@ -48,16 +48,21 @@ public class AuthenticateVoiceRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateVoiceRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateVoiceRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-        //assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));4
-        /*
+        assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateVoiceRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateVoiceRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
 
 }
 

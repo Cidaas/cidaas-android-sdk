@@ -43,13 +43,13 @@ public class AuthenticateSMSRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateSMSRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateSMSRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateSMSRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateSMSRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateSMSRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateSMSRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateSMSRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateSMSRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateSMSRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
 }

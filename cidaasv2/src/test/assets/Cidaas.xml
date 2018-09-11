@@ -5,3 +5,11 @@
     <item name="RedirectURL">https://nightlybuild.cidaas.de/user-profile/editprofile</item>
     <item name="UserInfoURL">https://nightlybuild.cidaas.de/users-srv/userinfo</item>
 </resources>
+
+
+<!--
+<resources>
+<item name="DomainURL" type="string">""</item>
+<item name="ClientId" type="string">""</item>
+<item name="RedirectURL"></item>
+</resources>-->

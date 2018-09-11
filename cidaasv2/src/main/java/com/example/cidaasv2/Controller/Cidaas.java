@@ -5,7 +5,6 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
@@ -45,7 +44,6 @@ import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
-import com.example.cidaasv2.Helper.Entity.RegistrationCustomFieldEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -294,7 +292,7 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     public String getInstanceId(){
-        if(instanceId!=null){
+        if(instanceId!=null && instanceId!=""){
             return instanceId;
         }
         else {
@@ -3257,13 +3255,13 @@ loginresult.failure(error);
                         OauthService.getShared(context).getUserinfo(result.getAccess_token(), new Result<UserinfoEntity>() {
                             @Override
                             public void success(UserinfoEntity result) {
-                                hideLoader();
+                               // hideLoader();
                                 callback.success(result);
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-                                hideLoader();
+                               // hideLoader();
                                 callback.failure(error);
                             }
                         });
@@ -3343,14 +3341,14 @@ loginresult.failure(error);
 
     public void getLoginCode(String url,Result<AccessTokenEntity> callback) {
        try {
-           showLoader();
+          // showLoader();
            String code = getCodeFromUrl(url);
            if (code != null) {
-               hideLoader();
+             //  hideLoader();
 
                getAccessTokenByCode(code, callback);
            } else {
-               hideLoader();
+              // hideLoader();
                String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - ";
                //+error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
                LogFile.addRecordToLog(loggerMessage);
@@ -3681,6 +3679,7 @@ loginresult.failure(error);
         });
     }
 
+/*
     //To Show Loader
     private void showLoader(){
        try {
@@ -3716,6 +3715,7 @@ loginresult.failure(error);
             Timber.d(ex.getMessage());  //Todo handle Exception
         }
     }
+*/
 
 
     //Resume After open App From Broswer

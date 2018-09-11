@@ -9,7 +9,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateFIDORequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
+
 
     AuthenticateFIDORequestEntity authenticateFIDORequestEntity;
 
@@ -44,13 +44,13 @@ public class AuthenticateFIDORequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateFIDORequestEntity.setDeviceInfo(deviceInfo);
+        authenticateFIDORequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateFIDORequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateFIDORequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateFIDORequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateFIDORequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateFIDORequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateFIDORequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateFIDORequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
 }

@@ -20,19 +20,13 @@ import timber.log.Timber;
 public class TenantController {
 
 
-    private String statusId;
-    private String authenticationType;
-    private String sub;
-    private String verificationType;
+
     private Context context;
 
     public static TenantController shared;
 
     public TenantController(Context contextFromCidaas) {
-        sub="";
-        statusId="";
-        verificationType="";
-        authenticationType="";
+
         context=contextFromCidaas;
         //Todo setValue for authenticationType
 

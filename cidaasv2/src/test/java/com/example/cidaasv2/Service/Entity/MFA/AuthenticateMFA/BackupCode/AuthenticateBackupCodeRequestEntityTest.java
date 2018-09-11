@@ -9,7 +9,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateBackupCodeRequestEntityTest {
 
-    DeviceInfoEntity deviceInfo;
+
 
     AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity=new AuthenticateBackupCodeRequestEntity();
 
@@ -44,13 +44,13 @@ public class AuthenticateBackupCodeRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateBackupCodeRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateBackupCodeRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
 
