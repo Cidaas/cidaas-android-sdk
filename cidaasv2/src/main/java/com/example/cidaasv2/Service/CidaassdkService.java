@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service;
 
 import android.content.SharedPreferences;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,15 @@ public class CidaassdkService {
     public ICidaasSDKService getInstance()
     {
 
+        String baseurl= Cidaas.baseurl;
+
+        if(baseurl==null || baseurl.equals(""))
+        {
+            baseurl="https://www.google.com";
+        }
+
+
+
         ICidaasSDKService iCidaasSDKService=null;
         OkHttpClient okHttpClient=null;
 
@@ -31,7 +41,7 @@ public class CidaassdkService {
 
         Retrofit retrofit=new Retrofit.Builder()
                // .baseUrl(DBHelper.getShared().getLoginProperties().get("DomainURL"))
-                .baseUrl("https://www.google.com")//Todo Get Base URL
+                .baseUrl(baseurl)//done Get Base URL
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(okHttpClient)

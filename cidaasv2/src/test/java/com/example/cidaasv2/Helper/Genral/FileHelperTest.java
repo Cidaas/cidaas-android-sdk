@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -67,16 +68,94 @@ Context context;
 
     }
 
+
+    @Test
+    public void testCidaasReadProperties() throws Exception {
+
+        fileHelper.readProperties(assetManager, "cidaas.xml", new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                Assert.assertEquals("DomainURL","DomainURL");
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertEquals("DomainURL","DomainURL");
+            }
+        });
+
+    }
+
+    @Test
+    public void testCidsReadProperties() throws Exception {
+
+        fileHelper.readProperties(assetManager, "Cidaastest.xml", new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                Assert.assertEquals("DomainURL","DomainURL");
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertEquals("DomainURL","DomainURL");
+            }
+        });
+
+    }
+
+    @Test
+    public void idsReadProperties() throws Exception {
+
+        fileHelper.readProperties(assetManager, "Cidaastesdcst.xml", new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                Assert.assertEquals("DomainURL","DomainURL");
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertEquals("DomainURL","DomainURL");
+            }
+        });
+
+    }
+
     @Test
     public void testParseXML() throws Exception {
-       /* Document result = fileHelper.parseXML(new byte[]{(byte) 0});
-        Assert.assertEquals(null, result);*/
+        Document result = fileHelper.parseXML(new byte[]{(byte) 0});
+        Assert.assertEquals(null, result);
     }
 
     @Test
     public void testParamsToDictionaryConverter() throws Exception {
 
-        fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "RedirectURL", "ClientSecret", null);
+        fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "RedirectURL", "ClientSecret", new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertEquals("Error",error.ErrorMessage);
+            }
+        });
+    }
+
+    @Test
+    public void testParamsToConverter() throws Exception {
+
+        fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "RedirectURL", "", new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+             Assert.assertEquals("One of the property is missing.",error.ErrorMessage);
+            }
+        });
     }
 }
 

@@ -22,6 +22,7 @@ public class ClientServiceTest {
     Context context;
     ClientService clientService;
 
+
     @Before
     public void setUp() {
 
@@ -77,17 +78,7 @@ public class ClientServiceTest {
     public void MockTestServer() throws Exception {
 
 
-        clientService.getClientInfo("requestId", null, new Result<ClientInfoEntity>() {
-            @Override
-            public void success(ClientInfoEntity result) {
 
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Assert.assertEquals(true,error.ErrorMessage.equals("One of the property is missing."));
-            }
-        });
     }
 }
 

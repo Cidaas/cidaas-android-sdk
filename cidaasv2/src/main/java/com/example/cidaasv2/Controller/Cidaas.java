@@ -151,6 +151,7 @@ public class Cidaas implements IOAuthWebLogin{
 
     public  static String instanceId="";
     public static ICustomLoader loader;
+    public static String baseurl="";
 
     public RegistrationSetupResultDataEntity[] registerFields;
 
@@ -3397,6 +3398,7 @@ loginresult.failure(error);
                         LogFile.addRecordToLog(loggerMessage);
                         result.failure(webAuthError);
                     }
+                    Cidaas.baseurl=savedProperties.get("DomainURL");
                     result.success(savedProperties);
 
                 }
@@ -3409,6 +3411,7 @@ loginresult.failure(error);
         }
         else
         {
+            Cidaas.baseurl=savedProperties.get("DomainURL");
             result.success(savedProperties);
         }
 

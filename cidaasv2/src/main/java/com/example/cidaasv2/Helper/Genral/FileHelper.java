@@ -212,7 +212,7 @@ public class FileHelper {
         catch (Exception e)
         {
             Timber.e(e.getMessage());
-            //Todo handle Exception
+            callback.failure(webAuthError.propertyMissingException());
         }
     }
 }

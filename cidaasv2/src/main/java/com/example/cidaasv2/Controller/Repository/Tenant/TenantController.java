@@ -62,6 +62,7 @@ public class TenantController {
 
                     @Override
                     public void failure(WebAuthError error) {
+
                         result.failure(error);
                     }
                 });
