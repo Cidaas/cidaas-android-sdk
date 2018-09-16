@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
+import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -204,7 +205,12 @@ public class CidaasTest {
     @Test
     public void testLoginWithCredentials() throws Exception {
 
-        cidaas.loginWithCredentials("requestId", null, new Result<LoginCredentialsResponseEntity>() {
+        LoginEntity loginEntity=new LoginEntity();
+        loginEntity.setPassword("Password");
+        loginEntity.setUsername("Username");
+        loginEntity.setUsername_type("UsernameType");
+
+        cidaas.loginWithCredentials("requestId", loginEntity, new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 

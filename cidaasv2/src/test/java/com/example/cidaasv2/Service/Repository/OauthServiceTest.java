@@ -17,7 +17,9 @@ public class OauthServiceTest {
 
     @Before
     public void setUp() {
-      oauthService=new OauthService(context);
+
+        oauthService=new OauthService(context);
+
     }
 
     @Test
