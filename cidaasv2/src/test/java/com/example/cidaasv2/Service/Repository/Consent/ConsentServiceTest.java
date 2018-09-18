@@ -3,6 +3,14 @@ package com.example.cidaasv2.Service.Repository.Consent;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.R;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntityTest;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,17 +45,77 @@ public class ConsentServiceTest {
 
         consentService.getConsentDetails("baseurl", "consentName", null);
     }
+    @Test
+    public void testGetConsentDetailsNUl() throws Exception {
+
+        consentService.getConsentDetails("", "consentName", null);
+    }
 
     @Test
     public void testAcceptConsent() throws Exception {
+        ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
+        consentManagementAcceptedRequestEntity.setTrackId("TrackId");
+        consentManagementAcceptedRequestEntity.setVersion("Version");
+        consentManagementAcceptedRequestEntity.setName("Name");
+        consentManagementAcceptedRequestEntity.setAccepted(true);
+        consentManagementAcceptedRequestEntity.setClient_id("ClientId");
+        consentManagementAcceptedRequestEntity.setSub("Sub");
+        consentService.acceptConsent("baseurl", consentManagementAcceptedRequestEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+            @Override
+            public void success(ConsentManagementAcceptResponseEntity result) {
 
-       // consentService.acceptConsent("baseurl", null, null);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+
+    @Test
+    public void testAcceptConsentnull() throws Exception {
+        ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
+        consentManagementAcceptedRequestEntity.setTrackId("TrackId");
+        consentManagementAcceptedRequestEntity.setVersion("Version");
+        consentManagementAcceptedRequestEntity.setName("Name");
+        consentManagementAcceptedRequestEntity.setAccepted(true);
+        consentManagementAcceptedRequestEntity.setClient_id("ClientId");
+        consentManagementAcceptedRequestEntity.setSub("Sub");
+        consentService.acceptConsent("", consentManagementAcceptedRequestEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+            @Override
+            public void success(ConsentManagementAcceptResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testResumeConsent() throws Exception {
 
-//        consentService.resumeConsent("baseurl", null, null);
+        ResumeConsentRequestEntity resumeConsentRequestEntity =new ResumeConsentRequestEntity();
+        resumeConsentRequestEntity.setTrack_id("TrackId");
+        resumeConsentRequestEntity.setVersion("Version");
+        resumeConsentRequestEntity.setName("Name");
+        resumeConsentRequestEntity.setClient_id("ClientId");
+        resumeConsentRequestEntity.setSub("Sub");
+        consentService.resumeConsent("baseurl", resumeConsentRequestEntity, new Result<ResumeConsentResponseEntity>() {
+            @Override
+            public void success(ResumeConsentResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 }
 

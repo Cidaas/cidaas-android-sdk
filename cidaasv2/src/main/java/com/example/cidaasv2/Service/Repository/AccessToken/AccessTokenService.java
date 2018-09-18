@@ -225,6 +225,7 @@ public class AccessTokenService {
 
             if (loginProperties == null) {
                 callback.failure(WebAuthError.getShared(context).loginURLMissingException());
+                return;
             }
 
 

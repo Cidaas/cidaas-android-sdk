@@ -3,6 +3,7 @@ package com.example.cidaasv2.Controller.Repository.AccessToken;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
@@ -34,6 +35,13 @@ public class AccessTokenControllerTest {
         accessTokenController=new AccessTokenController(context);
         context= RuntimeEnvironment.application;
         DBHelper.setConfig(context);
+        DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+        deviceInfoEntity.setPushNotificationId("PushNotificationId");
+        deviceInfoEntity.setDeviceMake("DeviceMake");
+        deviceInfoEntity.setDeviceModel("DeviceModel");
+        deviceInfoEntity.setDeviceVersion("DeviceVersion");
+        deviceInfoEntity.setDeviceId("DeviceId");
+        DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
         WebAuthError webAuthError=new WebAuthError(context);
 
     }

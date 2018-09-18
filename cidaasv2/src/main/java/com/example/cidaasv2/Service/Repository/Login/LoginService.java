@@ -78,7 +78,7 @@ public class LoginService {
         String loginUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 loginUrl=baseurl+ URLHelper.getShared().getLoginWithCredentials();
             }

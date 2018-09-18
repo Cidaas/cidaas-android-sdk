@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Helper.Genral;
 
 import android.content.Context;
+import android.media.midi.MidiOutputPort;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -11,12 +12,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.Callable;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
@@ -105,11 +108,15 @@ public class DBHelperRunnnerTest {
 
     @Test
     public void testAddLoginProperties() throws Exception {
+        //context= RuntimeEnvironment.application;
+         DBHelper.preferences=null;
+
         dBHelper.addLoginProperties(null);
     }
 
     @Test
     public void testGetLoginProperties() throws Exception {
+        dBHelper.addLoginProperties(null);
         Dictionary<String, String> result = dBHelper.getLoginProperties();
         Assert.assertEquals(null, result);
     }
@@ -128,6 +135,27 @@ public class DBHelperRunnnerTest {
         deviceInfoEntity.setDeviceModel("DeviceModel");
         deviceInfoEntity.setDeviceMake("DeviceMake");
         deviceInfoEntity.setPushNotificationId("PushNotificationId");
+
+        dBHelper.addDeviceInfo(deviceInfoEntity);
+
+        DeviceInfoEntity result = dBHelper.getDeviceInfo();
+        Assert.assertEquals("DeviceID", result.getDeviceId());
+        Assert.assertEquals("DeviceVersion", result.getDeviceVersion());
+        Assert.assertEquals("DeviceModel", result.getDeviceModel());
+        Assert.assertEquals("DeviceMake", result.getDeviceMake());
+        Assert.assertEquals("PushNotificationId", result.getPushNotificationId());
+    }
+
+    @Test
+    public void testGetDeviceInfoNUll() throws Exception {
+        DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+
+        deviceInfoEntity.setDeviceId("DeviceID");
+        deviceInfoEntity.setDeviceVersion("DeviceVersion");
+        deviceInfoEntity.setDeviceModel("DeviceModel");
+        deviceInfoEntity.setDeviceMake("DeviceMake");
+        deviceInfoEntity.setPushNotificationId("PushNotificationId");
+      //  DBHelper.preferences=null;
 
         dBHelper.addDeviceInfo(deviceInfoEntity);
 
@@ -190,6 +218,18 @@ public class DBHelperRunnnerTest {
     @Test
     public void testSetUserInfo() throws Exception {
         dBHelper.setUserInfo(new UserInfoModel());
+    }
+
+
+    @Test
+    public void testSetUserInfoeex() throws Exception {
+
+        dBHelper.getAccessToken("");
+        UserInfoModel userInfoModel=new UserInfoModel();
+        userInfoModel.setDisplayname("");
+        userInfoModel.setEmail("");
+
+        dBHelper.setUserInfo(userInfoModel);
     }
 
     @Test

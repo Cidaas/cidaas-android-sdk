@@ -26,8 +26,10 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARes
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
@@ -793,8 +795,13 @@ public class CidaasTest {
 
     @Test
     public void testResetPassword() throws Exception {
+        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        resetPasswordEntity.setConfirmPassword("Password");
+        resetPasswordEntity.setPassword("Password");
+        resetPasswordEntity.setExchangeId("ExchangeID");
+        resetPasswordEntity.setResetRequestId("ResetRequestId");
 
-        cidaas.resetPassword(null, new Result<ResetNewPasswordResponseEntity>() {
+        cidaas.resetPassword(resetPasswordEntity, new Result<ResetNewPasswordResponseEntity>() {
             @Override
             public void success(ResetNewPasswordResponseEntity result) {
 
@@ -806,6 +813,73 @@ public class CidaasTest {
             }
         });
     }
+
+    @Test
+    public void testResetPasswordNull() throws Exception {
+        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        resetPasswordEntity.setConfirmPassword("ConfirmPassword");
+        resetPasswordEntity.setPassword("Password");
+        resetPasswordEntity.setExchangeId("ExchangeID");
+        resetPasswordEntity.setResetRequestId("ResetRequestId");
+
+        cidaas.resetPassword(resetPasswordEntity, new Result<ResetNewPasswordResponseEntity>() {
+            @Override
+            public void success(ResetNewPasswordResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
+    public void testResetPasswordCase2() throws Exception {
+        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        resetPasswordEntity.setConfirmPassword("");
+        resetPasswordEntity.setPassword("");
+        resetPasswordEntity.setExchangeId("");
+        resetPasswordEntity.setResetRequestId("");
+
+        cidaas.resetPassword(resetPasswordEntity, new Result<ResetNewPasswordResponseEntity>() {
+            @Override
+            public void success(ResetNewPasswordResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+
+    @Test
+    public void testResetPasswordCase3() throws Exception {
+        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        resetPasswordEntity.setConfirmPassword("Pass");
+        resetPasswordEntity.setPassword("Pass");
+        resetPasswordEntity.setExchangeId("");
+        resetPasswordEntity.setResetRequestId("");
+
+        cidaas.resetPassword(resetPasswordEntity, new Result<ResetNewPasswordResponseEntity>() {
+            @Override
+            public void success(ResetNewPasswordResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+
+
 
     @Test
     public void testChangePassword() throws Exception {
@@ -832,7 +906,17 @@ public class CidaasTest {
     @Test
     public void testGetUserInfo() throws Exception {
 
-        cidaas.getUserInfo("sub", null);
+        cidaas.getUserInfo("userId", new Result<UserinfoEntity>() {
+            @Override
+            public void success(UserinfoEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
@@ -842,7 +926,8 @@ public class CidaasTest {
 
     @Test
     public void testLoginWithBrowser() throws Exception {
-        cidaas.loginWithBrowser("color", null);
+        cidaas.loginURL= "https://loginurl";
+                cidaas.loginWithBrowser("color", null);
     }
 
     @Test
@@ -887,6 +972,18 @@ public class CidaasTest {
     @Test
     public void testResume() throws Exception {
 
+
+        cidaas.logincallback=new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        };
         cidaas.resume("code");
     }
 

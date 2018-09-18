@@ -3,7 +3,11 @@ package com.example.cidaasv2.Service.Repository.Login;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,18 +40,48 @@ public class LoginServiceTest {
     @Test
     public void testLoginWithCredentials() throws Exception {
 
-  //      loginService.loginWithCredentials("baseurl", new LoginCredentialsRequestEntity(), null);
+        loginService.loginWithCredentials("baseurl", new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testContinueMFA() throws Exception {
 
-     //   loginService.continueMFA("baseurl", null, null);
+       loginService.continueMFA("baseurl", null, new Result<ResumeLoginResponseEntity>() {
+           @Override
+           public void success(ResumeLoginResponseEntity result) {
+
+           }
+
+           @Override
+           public void failure(WebAuthError error) {
+
+           }
+       });
     }
 
     @Test
     public void testContinuePasswordless() throws Exception {
-     //   loginService.continuePasswordless("baseurl", null, null);
+        loginService.continuePasswordless("baseurl", null, new Result<ResumeLoginResponseEntity>() {
+            @Override
+            public void success(ResumeLoginResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 }
 

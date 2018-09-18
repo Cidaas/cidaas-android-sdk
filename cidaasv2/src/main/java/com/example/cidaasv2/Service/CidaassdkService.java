@@ -1,9 +1,6 @@
 package com.example.cidaasv2.Service;
 
-import android.content.SharedPreferences;
-
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
 
 import java.util.concurrent.TimeUnit;
 

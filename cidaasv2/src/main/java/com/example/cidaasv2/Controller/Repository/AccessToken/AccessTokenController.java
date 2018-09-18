@@ -189,7 +189,8 @@ public class AccessTokenController {
                 }
 
                 @Override
-                public void failure(WebAuthError error) {
+                public void failure(WebAuthError error)
+                {
                     callback.failure(error);
                 }
             });

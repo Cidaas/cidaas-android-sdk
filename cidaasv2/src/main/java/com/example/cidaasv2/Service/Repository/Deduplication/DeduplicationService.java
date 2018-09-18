@@ -54,14 +54,7 @@ public class DeduplicationService {
     }
 
     String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static DeduplicationService getShared(Context contextFromCidaas )
     {
@@ -88,7 +81,7 @@ public class DeduplicationService {
         String DeduplicationUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
@@ -168,7 +161,7 @@ public class DeduplicationService {
         String registerDeduplicationUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
@@ -249,7 +242,7 @@ public class DeduplicationService {
         }
     }
 
-    //Login Deduplication
+   /* //Login Deduplication
     public void loginDeduplication(final String baseurl, LoginEntity loginEntity, final Result<LoginCredentialsResponseEntity> callback)
     {
 
@@ -341,7 +334,7 @@ public class DeduplicationService {
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
-    }
+    }*/
 
 
 

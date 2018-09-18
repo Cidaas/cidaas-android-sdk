@@ -33,9 +33,9 @@ public class AuthenticationAPI {
         this.server.shutdown();
     }
 
-    public RecordedRequest takeRequest() throws InterruptedException {
+   /* public RecordedRequest takeRequest() throws InterruptedException {
         return server.takeRequest();
-    }
+    }*/
 
     public AuthenticationAPI willReturnValidApplicationResponse() {
         return willReturnApplicationResponseWithBody("Auth0.setClient({\"id\":\"CLIENTID\",\"tenant\":\"overmind\",\"subscription\":\"free\",\"authorize\":\"https://samples.auth0.com/authorize\",\"callback\":\"http://localhost:3000/\",\"hasAllowedOrigins\":true,\"strategies\":[{\"name\":\"twitter\",\"connections\":[{\"name\":\"twitter\"}]}]});", 200);
@@ -150,6 +150,24 @@ public class AuthenticationAPI {
 
 
     public AuthenticationAPI willReturnTenant() {
+        String json = "{" +
+                "    success: true," +
+                "    status: 200," +
+                "    data: {" +
+                "        tenant_name: Raja Developers," +
+                "        allowLoginWith: [" +
+                "            EMAIL," +
+                "            MOBILE," +
+                "            USER_NAME" +
+                "        ]" +
+                "    }" +
+                "}";
+        server.enqueue(responseWithJSON(json, 202));
+        return this;
+    }
+
+
+    public AuthenticationAPI willReturnAccessToken() {
         String json = "\"{\n" +
                 "    \"success\": true,\n" +
                 "    \"status\": 200,\n" +
@@ -165,6 +183,9 @@ public class AuthenticationAPI {
         server.enqueue(responseWithJSON(json, 200));
         return this;
     }
+
+
+
     public AuthenticationAPI willReturnApplicationResponseWithBody(String body, int statusCode) {
         MockResponse response = new MockResponse()
                 .setResponseCode(statusCode)

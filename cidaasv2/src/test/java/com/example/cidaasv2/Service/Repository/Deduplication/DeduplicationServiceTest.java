@@ -3,6 +3,10 @@ package com.example.cidaasv2.Service.Repository.Deduplication;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
+import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,9 +44,51 @@ public class DeduplicationServiceTest {
     }
 
     @Test
+    public void testGetDeduplicationListnul() throws Exception {
+
+        deduplicationService.getDeduplicationList("", "trackId", new Result<DeduplicationResponseEntity>() {
+            @Override
+            public void success(DeduplicationResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
     public void testRegisterDeduplication() throws Exception {
 
-        deduplicationService.registerDeduplication("baseurl", "trackId", null);
+        deduplicationService.registerDeduplication("baseurl", "trackId", new Result<RegisterDeduplicationEntity>() {
+            @Override
+            public void success(RegisterDeduplicationEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
+    public void testRegisterDeduplicationNull() throws Exception {
+
+        deduplicationService.registerDeduplication("", "trackId", new Result<RegisterDeduplicationEntity>() {
+            @Override
+            public void success(RegisterDeduplicationEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
