@@ -6,6 +6,7 @@ import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.R;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
@@ -43,12 +44,32 @@ public class ConsentServiceTest {
     @Test
     public void testGetConsentDetails() throws Exception {
 
-        consentService.getConsentDetails("baseurl", "consentName", null);
+        consentService.getConsentDetails("baseurl", "consentName", new Result<ConsentDetailsResultEntity>() {
+            @Override
+            public void success(ConsentDetailsResultEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
     @Test
     public void testGetConsentDetailsNUl() throws Exception {
 
-        consentService.getConsentDetails("", "consentName", null);
+        consentService.getConsentDetails("", "consentName", new Result<ConsentDetailsResultEntity>() {
+            @Override
+            public void success(ConsentDetailsResultEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
