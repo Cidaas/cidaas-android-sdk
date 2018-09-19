@@ -115,7 +115,7 @@ public class RequestIdController {
             }
             //TODO Service call
 
-            RequestIdService.getShared(context).getRequestID(loginproperties, new Result<AuthRequestResponseEntity>() {
+            RequestIdService.getShared(context).getRequestID(loginproperties, null,null,new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity authRequestResponseEntity) {
                     Primaryresult.success(authRequestResponseEntity);

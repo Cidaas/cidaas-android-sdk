@@ -42,9 +42,9 @@ public class ChangePasswordServiceTest {
     @Before
     public void setUp() {
         context= RuntimeEnvironment.application;
-        DBHelper.setConfig(context);
-        changePasswordService= ChangePasswordService.getShared(context);
 
+        changePasswordService= ChangePasswordService.getShared(context);
+        DBHelper.setConfig(context);
         DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
 
         deviceInfoEntity.setDeviceId("DeviceID");

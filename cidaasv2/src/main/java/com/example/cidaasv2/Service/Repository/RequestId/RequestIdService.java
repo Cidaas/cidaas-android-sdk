@@ -64,7 +64,7 @@ public class RequestIdService {
 
 
     //Get Request ID From Service
-    public void getRequestID(Dictionary<String,String> loginProperties, final Result<AuthRequestResponseEntity> callback)
+    public void getRequestID(Dictionary<String,String> loginProperties,DeviceInfoEntity deviceInfoEntityFromparam,Dictionary<String,String> challengePropertiesfromparam, final Result<AuthRequestResponseEntity> callback)
     {
         try {
             //Local Variables
@@ -76,7 +76,36 @@ public class RequestIdService {
             URLHelper urlComponents;
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+               deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
+            else
+            {
+               // deviceInfoEntity=new DeviceInfoEntity();
+            }
+
+
+            //////////////////This is for testing purpose
+            Dictionary<String,String> challengeProperties=new Hashtable<>();
+
+            if(challengePropertiesfromparam==null) {
+                challengeProperties=DBHelper.getShared().getChallengeProperties();
+            }
+            else if(challengePropertiesfromparam!=null)
+            {
+                challengeProperties=challengePropertiesfromparam;
+            }
+            else
+            {
+               // challengeProperties=new Hashtable<>();
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -114,7 +143,6 @@ public class RequestIdService {
             }
 
 
-            Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
 
             //Create Auth Request entity to get Request Id
             authRequestEntity=new AuthRequestEntity();
