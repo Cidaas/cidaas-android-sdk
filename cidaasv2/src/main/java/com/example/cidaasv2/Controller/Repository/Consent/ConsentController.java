@@ -89,7 +89,7 @@ public class ConsentController {
                               final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
 
-            consentManagementAcceptedRequestEntity.setName(ConsentName);
+        //    consentManagementAcceptedRequestEntity.setName(ConsentName);
 
             if (consentManagementAcceptedRequestEntity.getClient_id() != null && consentManagementAcceptedRequestEntity.getClient_id() != "" &&
 

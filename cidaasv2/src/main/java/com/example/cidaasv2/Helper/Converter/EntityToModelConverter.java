@@ -100,7 +100,7 @@ public static EntityToModelConverter sharedinstance;
             }
             else
             {
-                accessTokenEntity.setAccess_token(accessTokenModel.getShared().getPlainToken());
+                accessTokenEntity.setAccess_token(accessTokenModel.getPlainToken());
             }
             callback.success(accessTokenEntity);
         }

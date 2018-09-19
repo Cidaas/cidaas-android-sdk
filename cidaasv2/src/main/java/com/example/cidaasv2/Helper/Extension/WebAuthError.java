@@ -15,7 +15,7 @@ import timber.log.Timber;
  * Created by widasrnarayanan on 16/1/18.
  */
 
-public class WebAuthError extends Error implements IOAuthExcepiton{
+public class  WebAuthError extends Error implements IOAuthExcepiton{
    public int errorCode=WebAuthErrorCode.DEFAULT;
    public int statusCode=400;
    private Context context;

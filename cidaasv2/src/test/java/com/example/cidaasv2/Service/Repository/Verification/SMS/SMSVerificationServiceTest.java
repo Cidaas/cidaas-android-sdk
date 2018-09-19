@@ -5,8 +5,11 @@ import android.content.Context;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.CidaassdkService;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
 
@@ -57,7 +60,7 @@ public class SMSVerificationServiceTest {
     @Test
     public void testEnrollSMSMFA() throws Exception {
 
-        sMSVerificationService.enrollSMSMFA("baseurl", "accessToken", null, new Result<EnrollSMSMFAResponseEntity>() {
+        sMSVerificationService.enrollSMSMFA("baseurl", "accessToken", new EnrollSMSMFARequestEntity(), new Result<EnrollSMSMFAResponseEntity>() {
             @Override
             public void success(EnrollSMSMFAResponseEntity result) {
 
@@ -73,7 +76,7 @@ public class SMSVerificationServiceTest {
     @Test
     public void testInitiateSMSMFA() throws Exception {
 
-        sMSVerificationService.initiateSMSMFA("baseurl", null, new Result<InitiateSMSMFAResponseEntity>() {
+        sMSVerificationService.initiateSMSMFA("baseurl", new InitiateSMSMFARequestEntity(), new Result<InitiateSMSMFAResponseEntity>() {
             @Override
             public void success(InitiateSMSMFAResponseEntity result) {
 
@@ -89,7 +92,7 @@ public class SMSVerificationServiceTest {
     @Test
     public void testAuthenticateSMSMFA() throws Exception {
 
-        sMSVerificationService.authenticateSMSMFA("baseurl", null, new Result<AuthenticateSMSResponseEntity>() {
+        sMSVerificationService.authenticateSMSMFA("baseurl", new AuthenticateSMSRequestEntity(), new Result<AuthenticateSMSResponseEntity>() {
             @Override
             public void success(AuthenticateSMSResponseEntity result) {
 

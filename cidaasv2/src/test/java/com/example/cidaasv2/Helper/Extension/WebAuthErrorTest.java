@@ -1,0 +1,137 @@
+package com.example.cidaasv2.Helper.Extension;
+
+import android.content.Context;
+
+import com.example.cidaasv2.BuildConfig;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+
+import static org.mockito.Mockito.*;
+
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = 21)
+public class WebAuthErrorTest {
+
+    Context context;
+    @Mock
+    Object error;
+   
+    WebAuthError shared;
+
+    WebAuthError webAuthError;
+
+    @Before
+    public void setUp() {
+
+        context = RuntimeEnvironment.application;
+        webAuthError=WebAuthError.getShared(context);
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testGetShared() throws Exception {
+        WebAuthError result = WebAuthError.getShared(context);
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testFileNotFoundException() throws Exception {
+        WebAuthError result = webAuthError.fileNotFoundException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testNoContentInFileException() throws Exception {
+        WebAuthError result = webAuthError.noContentInFileException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testPropertyMissingException() throws Exception {
+        WebAuthError result = webAuthError.propertyMissingException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testServiceFailureException() throws Exception {
+        WebAuthError result = webAuthError.serviceFailureException(0, "errorMessage", 0, "error");
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testLoginURLMissingException() throws Exception {
+        WebAuthError result = webAuthError.loginURLMissingException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testRedirectURLMissingException() throws Exception {
+        WebAuthError result = webAuthError.redirectURLMissingException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testUserCancelledException() throws Exception {
+        WebAuthError result = webAuthError.userCancelledException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testCodeNotFoundException() throws Exception {
+        WebAuthError result = webAuthError.codeNotFoundException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testEmptyCallbackException() throws Exception {
+        WebAuthError result = webAuthError.emptyCallbackException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testNoUserFoundException() throws Exception {
+        WebAuthError result = webAuthError.noUserFoundException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testDeviceVerificationFailureException() throws Exception {
+        WebAuthError result = webAuthError.deviceVerificationFailureException();
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+    @Test
+    public void testCustomException() throws Exception {
+        WebAuthError result = webAuthError.customException(0, "errorMessage", 0);
+        Assert.assertTrue( result instanceof WebAuthError);
+    }
+
+
+    @Test
+    public void testErrorCode() throws Exception {
+      WebAuthError.getShared(context).setConsentUrl("ConsentURL");
+        WebAuthError.getShared(context).setError(error);
+        WebAuthError.getShared(context).setErrorCode(27);
+        WebAuthError.getShared(context).setErrorMessage("Message");
+        WebAuthError.getShared(context).setStatusCode(17);
+
+
+        Assert.assertEquals("ConsentURL",WebAuthError.getShared(context).getConsentUrl());
+        Assert.assertEquals("Message",WebAuthError.getShared(context).getErrorMessage());
+        Assert.assertEquals(27,WebAuthError.getShared(context).getErrorCode());
+        Assert.assertEquals(17,WebAuthError.getShared(context).getStatusCode());
+        Assert.assertEquals(error,WebAuthError.getShared(context).getError());
+
+    }
+}
+
+//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

@@ -933,6 +933,13 @@ public class CidaasTest {
     @Test
     public void testGetLoginCode() throws Exception {
 
+        cidaas.getLoginCode("urlCode=dfjvndfvjnndffv", null);
+    }
+
+
+    @Test
+    public void testGetLoginCodenull() throws Exception {
+
         cidaas.getLoginCode("url", null);
     }
 

@@ -2,6 +2,7 @@ package com.example.cidaasv2.Controller.Repository.Tenant;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoDataEntity;
@@ -16,6 +17,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 
+import java.util.concurrent.CountDownLatch;
+
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import timber.log.Timber;
+
+import static com.example.cidaasv2.Controller.HelperClass.removeLastChar;
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.eq;
 
@@ -23,10 +31,8 @@ public class TenantControllerTest {
     Context context;
 
     TenantController tenantController=new TenantController(context);
+    final CountDownLatch latch = new CountDownLatch(1);
 
-
-    @Captor
-    private ArgumentCaptor<Result<TenantInfoEntity>> cb;
 
     @Before
     public void setUp() {
@@ -75,7 +81,7 @@ public class TenantControllerTest {
 
     @Test
     public void testGetTenantInfo() throws Exception {
-         tenantController.getTenantInfo("https://nightlybuild.cidaas.de", new Result<TenantInfoEntity>() {
+         tenantController.getTenantInfo("base", new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
               Assert.assertTrue("Failed",result.getStatus()==200);
@@ -88,73 +94,38 @@ public class TenantControllerTest {
         });
     }
 
+
+
     @Test
-    public void testGetTenantInfoServiceFaliure() throws Exception {
-        TenantController tenantService123= Mockito.mock(TenantController.class);
+    public void testGetClientInfoFail() throws Exception {
 
-        TenantInfoEntity tenantInfoEntity=new TenantInfoEntity();
-        TenantInfoDataEntity tenantInfoDataEntity=new TenantInfoDataEntity();
-        tenantInfoDataEntity.setTenant_name("TenantName");
-        tenantInfoEntity.setData(tenantInfoDataEntity);
-        tenantInfoEntity.setStatus(204);
-        tenantInfoEntity.setSuccess(true);
+        Context context= Mockito.mock(Context.class);
 
 
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
 
 
+        Cidaas.baseurl=domainURL;
 
-        tenantService123.getTenantInfo("https://nightlybuild.cidaas.de", new Result<TenantInfoEntity>() {
+
+        tenantController.getTenantInfo("localhost:234235",  new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
-                Assert.assertEquals("TenantName",result.getData().getTenant_name());
+
             }
 
             @Override
             public void failure(WebAuthError error) {
-
+                Timber.e("Success");
             }
         });
-        Mockito.verify(tenantService123).getTenantInfo(eq("https://nightlybuild.cidaas.de"),cb.capture());
 
-
-        cb.getValue().success(tenantInfoEntity);
 
     }
 
-
-    @Test
-    public void testGetTenantInfoService() throws Exception {
-
-
-        TenantController tenantService123= Mockito.mock(TenantController.class);
-
-        TenantInfoEntity tenantInfoEntity=new TenantInfoEntity();
-        TenantInfoDataEntity tenantInfoDataEntity=new TenantInfoDataEntity();
-        tenantInfoDataEntity.setTenant_name("TenantName");
-        tenantInfoEntity.setData(tenantInfoDataEntity);
-        tenantInfoEntity.setStatus(204);
-        tenantInfoEntity.setSuccess(true);
-
-
-        tenantService123.getTenantInfo("https://nightlybuild.cidaas.de", new Result<TenantInfoEntity>() {
-            @Override
-            public void success(TenantInfoEntity result) {
-                Assert.assertEquals("TenantName",result.getData().getTenant_name());
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-               Assert.assertEquals(500,error.getErrorCode());
-            }
-        });
-        Mockito.verify(tenantService123).getTenantInfo(eq("https://nightlybuild.cidaas.de"),cb.capture());
-
-
-        WebAuthError error=WebAuthError.getShared(context).customException(500,"InternalError",406);
-        cb.getValue().failure(error);
-       // cb.getValue().success(tenantInfoEntity);
-
-    }
 
 
 

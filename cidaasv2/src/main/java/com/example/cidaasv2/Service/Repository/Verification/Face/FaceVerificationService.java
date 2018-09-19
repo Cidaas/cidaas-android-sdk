@@ -67,15 +67,6 @@ public class FaceVerificationService {
         }
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static FaceVerificationService getShared(Context contextFromCidaas )
     {
@@ -101,7 +92,7 @@ public class FaceVerificationService {
         String setupFaceMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupFaceMFAUrl=baseurl+ URLHelper.getShared().getSetupFaceMFA();
             }

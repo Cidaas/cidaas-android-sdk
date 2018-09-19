@@ -47,6 +47,22 @@ public class VerificationSettingsServiceTest {
             }
         });
     }
+
+    @Test
+    public void testGetmfaListnull() throws Exception {
+
+        verificationSettingsService.getmfaList("", "", "userDeviceID", new Result<MFAListResponseEntity>() {
+            @Override
+            public void success(MFAListResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
 }
 
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

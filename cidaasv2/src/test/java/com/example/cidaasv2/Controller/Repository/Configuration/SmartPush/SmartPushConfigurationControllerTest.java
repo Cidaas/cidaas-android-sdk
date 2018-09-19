@@ -3,8 +3,11 @@ package com.example.cidaasv2.Controller.Repository.Configuration.SmartPush;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 
@@ -28,6 +31,19 @@ public class SmartPushConfigurationControllerTest {
     @Before
     public void setUp() {
         context= RuntimeEnvironment.application;
+
+        DBHelper.setConfig(context);
+
+        AccessTokenModel accessTokenModel=new AccessTokenModel();
+        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setUserId("userId");
+        accessTokenModel.setEncrypted(false);
+        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setPlainToken("PlainToken");
+        accessTokenModel.setSeconds(System.currentTimeMillis()+1000000);
+
+        DBHelper.getShared().setAccessToken(accessTokenModel);
+
         smartPushConfigurationController=new SmartPushConfigurationController(context);
     }
 
@@ -44,7 +60,12 @@ public class SmartPushConfigurationControllerTest {
 
     @Test
     public void testConfigureSmartPush() throws Exception {
-        smartPushConfigurationController.configureSmartPush("sub", "baseurl", new SetupSmartPushMFARequestEntity(), new Result<EnrollSmartPushMFAResponseEntity>() {
+
+        SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity=new SetupSmartPushMFARequestEntity();
+        setupSmartPushMFARequestEntity.setClient_id("ClientId");
+        setupSmartPushMFARequestEntity.setLogoUrl("Logourl");
+        setupSmartPushMFARequestEntity.setDeviceInfo(new DeviceInfoEntity());
+        smartPushConfigurationController.configureSmartPush("userId", "baseurl",setupSmartPushMFARequestEntity, new Result<EnrollSmartPushMFAResponseEntity>() {
             @Override
             public void success(EnrollSmartPushMFAResponseEntity result) {
 
@@ -59,6 +80,25 @@ public class SmartPushConfigurationControllerTest {
 
     @Test
     public void testLoginWithSmartPush() throws Exception {
+        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", "trackId", "requestId", null, null);
+    }
+
+
+    @Test
+    public void testLoginWithSmart() throws Exception {
+        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", "trackId", "requestId", null, null);
+    }
+
+    @Test
+    public void testLoginWithSmartPushnull() throws Exception {
+        AccessTokenModel accessTokenModel=new AccessTokenModel();
+        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setUserId("userId");
+        accessTokenModel.setEncrypted(true);
+        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setPlainToken("PlainToken");
+        accessTokenModel.setSeconds(System.currentTimeMillis()+1000000);
+
         smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", "trackId", "requestId", null, null);
     }
 }

@@ -7,6 +7,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
@@ -53,8 +54,7 @@ public class TenantService {
             }
         }
         catch (Exception e)
-        {
-            Timber.i(e.getMessage());
+        { Timber.i("Exception"+e.getMessage());
         }
         return shared;
     }
@@ -115,7 +115,8 @@ public class TenantService {
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.TENANT_INFO_FAILURE,errorMessage, commonErrorEntity.getStatus(),
                                     commonErrorEntity.getError()));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
+                            Timber.e(e);
                             e.printStackTrace();
                         }
                         Timber.e("response"+response.message());
@@ -131,9 +132,7 @@ public class TenantService {
             });
         }
         catch (Exception e)
-        {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        { String loggerMessage = "TenantService-getTenantInfoException: Error Message - " + e.getMessage();LogFile.addRecordToLog(loggerMessage); Timber.d(e.getMessage());callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
 

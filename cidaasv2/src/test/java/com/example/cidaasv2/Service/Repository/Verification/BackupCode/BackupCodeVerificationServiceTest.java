@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 
@@ -53,7 +55,7 @@ public class BackupCodeVerificationServiceTest {
     @Test
     public void testInitiateBackupCodeMFA() throws Exception {
 
-        backupCodeVerificationService.initiateBackupCodeMFA("baseurl", null, new Result<InitiateBackupCodeMFAResponseEntity>() {
+        backupCodeVerificationService.initiateBackupCodeMFA("baseurl", new InitiateBackupCodeMFARequestEntity(), new Result<InitiateBackupCodeMFAResponseEntity>() {
             @Override
             public void success(InitiateBackupCodeMFAResponseEntity result) {
 
@@ -69,7 +71,7 @@ public class BackupCodeVerificationServiceTest {
     @Test
     public void testAuthenticateBackupCodeMFA() throws Exception {
 
-        backupCodeVerificationService.authenticateBackupCodeMFA("baseurl", null, new Result<AuthenticateBackupCodeResponseEntity>() {
+        backupCodeVerificationService.authenticateBackupCodeMFA("baseurl", new AuthenticateBackupCodeRequestEntity(), new Result<AuthenticateBackupCodeResponseEntity>() {
             @Override
             public void success(AuthenticateBackupCodeResponseEntity result) {
 

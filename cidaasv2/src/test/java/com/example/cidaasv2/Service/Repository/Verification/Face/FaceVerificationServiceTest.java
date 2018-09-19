@@ -8,6 +8,7 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.Authenticate
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFAResponseEntity;
@@ -56,6 +57,21 @@ public class FaceVerificationServiceTest {
     }
 
     @Test
+    public void testSetupFaceMFAdd() throws Exception {
+
+        faceVerificationService.setupFaceMFA("", "accessToken", "codeChallenge", new SetupFaceMFARequestEntity(), new Result<SetupFaceMFAResponseEntity>() {
+            @Override
+            public void success(SetupFaceMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+    @Test
     public void testScannedFace() throws Exception {
 
         faceVerificationService.scannedFace("baseurl", "usagePass", "statusId", "AccessToken", new Result<ScannedResponseEntity>() {
@@ -96,7 +112,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testInitiateFace() throws Exception {
 
-        faceVerificationService.initiateFace("baseurl", "codeChallenge", null, new Result<InitiateFaceMFAResponseEntity>() {
+        faceVerificationService.initiateFace("baseurl", "codeChallenge", new InitiateFaceMFARequestEntity(), new Result<InitiateFaceMFAResponseEntity>() {
             @Override
             public void success(InitiateFaceMFAResponseEntity result) {
 

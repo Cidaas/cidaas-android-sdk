@@ -4,9 +4,13 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
@@ -55,7 +59,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testSetupFingerprint() throws Exception {
 
-        fingerprintVerificationService.setupFingerprint("baseurl", "accessToken", "codeChallenge", null, new Result<SetupFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.setupFingerprint("baseurl", "accessToken", "codeChallenge", new SetupFingerprintMFARequestEntity(), new Result<SetupFingerprintMFAResponseEntity>() {
             @Override
             public void success(SetupFingerprintMFAResponseEntity result) {
 
@@ -71,7 +75,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testEnrollFingerprint() throws Exception {
 
-        fingerprintVerificationService.enrollFingerprint("baseurl", "accessToken", null, new Result<EnrollFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.enrollFingerprint("baseurl", "accessToken", new EnrollFingerprintMFARequestEntity(), new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -87,7 +91,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testInitiateFingerprint() throws Exception {
 
-        fingerprintVerificationService.initiateFingerprint("baseurl", "codeChallenge", null, new Result<InitiateFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.initiateFingerprint("baseurl", "codeChallenge", new InitiateFingerprintMFARequestEntity(), new Result<InitiateFingerprintMFAResponseEntity>() {
             @Override
             public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -103,7 +107,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testAuthenticateFingerprint() throws Exception {
 
-        fingerprintVerificationService.authenticateFingerprint("baseurl", null, new Result<AuthenticateFingerprintResponseEntity>() {
+        fingerprintVerificationService.authenticateFingerprint("baseurl", new AuthenticateFingerprintRequestEntity(), new Result<AuthenticateFingerprintResponseEntity>() {
             @Override
             public void success(AuthenticateFingerprintResponseEntity result) {
 

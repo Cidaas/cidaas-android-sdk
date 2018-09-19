@@ -190,7 +190,7 @@ public class LoginService {
         String resumeloginUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 resumeloginUrl=baseurl+URLHelper.getShared().getResumeLoginURL()+resumeLoginRequestEntity.getTrack_id();
             }
@@ -284,7 +284,7 @@ public class LoginService {
         String continuePasswordlessUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 continuePasswordlessUrl=baseurl+URLHelper.getShared().getPasswordlessContinueUrl()+resumeLoginRequestEntity.getTrack_id();
             }

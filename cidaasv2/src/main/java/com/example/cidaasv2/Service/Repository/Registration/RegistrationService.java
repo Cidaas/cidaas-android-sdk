@@ -55,15 +55,6 @@ public class RegistrationService {
 
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static  RegistrationService getShared(Context contextFromCidaas )
     {
@@ -88,7 +79,7 @@ public class RegistrationService {
         String RegistrationUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 RegistrationUrl=baseurl+ URLHelper.getShared().getRegistrationSetup(registrationSetupRequestEntity.getAcceptedLanguage(),registrationSetupRequestEntity.getRequestId());
             }
@@ -157,7 +148,7 @@ public class RegistrationService {
         String RegisterNewUserUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 RegisterNewUserUrl=baseurl+URLHelper.getShared().getRegisterNewUserurl();
             }
@@ -344,7 +335,7 @@ public class RegistrationService {
         String verifyAccountVerificationUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 verifyAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountVerify();
             }

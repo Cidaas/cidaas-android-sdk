@@ -150,7 +150,7 @@ public class AuthenticationAPI {
 
 
     public AuthenticationAPI willReturnTenant() {
-        String json = "{" +
+      /*  String json = "{" +
                 "    success: true," +
                 "    status: 200," +
                 "    data: {" +
@@ -161,7 +161,19 @@ public class AuthenticationAPI {
                 "            USER_NAME" +
                 "        ]" +
                 "    }" +
-                "}";
+                "}";*/
+        String json = "{\n" +
+                "    \"success\": true,\n" +
+                "    \"status\": 200,\n" +
+                "    \"data\": {\n" +
+                "        \"tenant_name\": \"Raja Developers\",\n" +
+                "        \"allowLoginWith\": [\n" +
+                "            \"EMAIL\",\n" +
+                "            \"MOBILE\",\n" +
+                "            \"USER_NAME\"\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}\"";
         server.enqueue(responseWithJSON(json, 202));
         return this;
     }

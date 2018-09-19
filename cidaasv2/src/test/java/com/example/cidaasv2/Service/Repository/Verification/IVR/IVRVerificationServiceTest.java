@@ -4,8 +4,11 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Pattern.PatternVerificationService;
@@ -54,7 +57,7 @@ public class IVRVerificationServiceTest {
     @Test
     public void testEnrollIVRMFA() throws Exception {
 
-        iVRVerificationService.enrollIVRMFA("baseurl", "accessToken", null, new Result<EnrollIVRMFAResponseEntity>() {
+        iVRVerificationService.enrollIVRMFA("baseurl", "accessToken", new EnrollIVRMFARequestEntity(), new Result<EnrollIVRMFAResponseEntity>() {
             @Override
             public void success(EnrollIVRMFAResponseEntity result) {
 
@@ -70,7 +73,7 @@ public class IVRVerificationServiceTest {
     @Test
     public void testInitiateIVRMFA() throws Exception {
 
-        iVRVerificationService.initiateIVRMFA("baseurl", null, new Result<InitiateIVRMFAResponseEntity>() {
+        iVRVerificationService.initiateIVRMFA("baseurl", new InitiateIVRMFARequestEntity(), new Result<InitiateIVRMFAResponseEntity>() {
             @Override
             public void success(InitiateIVRMFAResponseEntity result) {
 
@@ -86,7 +89,7 @@ public class IVRVerificationServiceTest {
     @Test
     public void testAuthenticateIVRMFA() throws Exception {
 
-        iVRVerificationService.authenticateIVRMFA("baseurl", null, new Result<AuthenticateIVRResponseEntity>() {
+        iVRVerificationService.authenticateIVRMFA("baseurl", new AuthenticateIVRRequestEntity(), new Result<AuthenticateIVRResponseEntity>() {
             @Override
             public void success(AuthenticateIVRResponseEntity result) {
 

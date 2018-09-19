@@ -3,6 +3,10 @@ package com.example.cidaasv2.Controller.Repository.Consent;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,6 +49,28 @@ public class ConsentControllerTest {
     @Test
     public void testAcceptConsent() throws Exception {
         consentController.acceptConsent("baseurl", null, null);
+    }
+
+    @Test
+    public void testAcceptConsentValue() throws Exception {
+        ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
+        consentManagementAcceptedRequestEntity.setSub("Sub");
+        consentManagementAcceptedRequestEntity.setClient_id("ClientId");
+        consentManagementAcceptedRequestEntity.setAccepted(true);
+        consentManagementAcceptedRequestEntity.setName("Name");
+        consentManagementAcceptedRequestEntity.setVersion("Version");
+        consentManagementAcceptedRequestEntity.setTrackId("TrackId");
+        consentController.acceptConsent("baseurl", consentManagementAcceptedRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 }
 
