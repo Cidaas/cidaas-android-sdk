@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Service.Repository.RequestId;
+package com.example.cidaasv2.Service.Repository.ChangePassword;
 
 import android.content.Context;
 
@@ -7,8 +7,11 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseDataEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
+import com.example.cidaasv2.Service.Repository.AccessToken.AccessTokenService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,24 +27,25 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
-public class RequestIdServiceCall {
+public class ChangePasswordServiceCall {
+
+    Context context= Mockito.mock(Context.class);
+
     private final CountDownLatch latch = new CountDownLatch(1);
 
-    CidaassdkService service;
-    RequestIdService requestIdService;
+    ChangePasswordService changePasswordService=new ChangePasswordService(context);
+
     DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
     Dictionary<String, String> savedProperties=new Hashtable<>();
 
+    Dictionary<String,String> loginProperties=new Hashtable<>();
 
-
-    Context context;
+    ChangePasswordRequestEntity changePasswordRequestEntity=new ChangePasswordRequestEntity();
 
     @Before
     public void setUp() throws Exception{
-        context=Mockito.mock(Context.class);
-        service=new CidaassdkService();
+        context= Mockito.mock(Context.class);
         MockitoAnnotations.initMocks(this);
-        requestIdService=new RequestIdService(context);
 
         deviceInfoEntity.setDeviceId("DeviceID");
         deviceInfoEntity.setDeviceVersion("DeviceVersion");
@@ -54,18 +58,25 @@ public class RequestIdServiceCall {
         savedProperties.put("Challenge","codeChallenge");
         savedProperties.put("Method", "ChallengeMethod");
 
-    }
 
+        loginProperties.put("ClientId","ClientId");
+        loginProperties.put("RedirectURL","RedirectURL");
+
+        changePasswordRequestEntity.setSub("Sub");
+        changePasswordRequestEntity.setIdentityId("Id");
+        changePasswordRequestEntity.setNew_password("Pass");
+        changePasswordRequestEntity.setConfirm_password("Pass");
+        changePasswordRequestEntity.setOld_password("Pass");
+        changePasswordRequestEntity.setAccess_token("Access");
+
+    }
 
 
     @Test
     public void testWebClient() throws  Exception{
 
-      //  Whitebox.set
         try {
             Timber.e("Success");
-
-
 
             final MockResponse response = new MockResponse().setResponseCode(200)
                     .addHeader("Content-Type", "application/json; charset=utf-8")
@@ -73,31 +84,27 @@ public class RequestIdServiceCall {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"requestId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"changed\": true\n" +
                             "    }\n" +
                             "}");
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/authz-srv/authrequest/authz/generate");
+            server.url("/token-srv/token");
 
 
 
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-
-            Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
-            loginProperties.put("RedirectURL","RedirectURL");
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            requestIdService.getRequestID(loginProperties, deviceInfoEntity,savedProperties,new Result<AuthRequestResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
-                public void success(AuthRequestResponseEntity result) {
+                public void success(ChangePasswordResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getRequestId());
+                    Assert.assertEquals(true,result.getData().isChanged());
                     latch.countDown();
 
                 }
@@ -120,11 +127,10 @@ public class RequestIdServiceCall {
         }
 
     }
-
 
 
     @Test
-    public void testWebClientnull() throws  Exception{
+    public void testWebClientException() throws  Exception{
 
         try {
             Timber.e("Success");
@@ -135,31 +141,27 @@ public class RequestIdServiceCall {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"requestId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"access_token\": \"Raja_Developers\"\n" +
                             "    }\n" +
                             "}");
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/authz-srv/authrequest/authz/generate");
+            server.url("/token-srv/token");
 
 
 
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-
-            Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
-            loginProperties.put("RedirectURL","RedirectURL");
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            requestIdService.getRequestID(loginProperties, deviceInfoEntity,savedProperties,new Result<AuthRequestResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
-                public void success(AuthRequestResponseEntity result) {
+                public void success(ChangePasswordResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getRequestId());
+                    Assert.assertEquals(true,result.getData().isChanged());
                     latch.countDown();
 
                 }
@@ -170,7 +172,7 @@ public class RequestIdServiceCall {
                     latch.countDown();
                 }
             });
-            latch.await();
+            // latch.await();
             //Thread.sleep(3000);
             Timber.e("Success");
 
@@ -182,7 +184,6 @@ public class RequestIdServiceCall {
         }
 
     }
-
 
     @Test
     public void testWebClientFor202() throws  Exception{
@@ -196,7 +197,7 @@ public class RequestIdServiceCall {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "        \"requestId_name\": \"Raja Developers\",\n" +
+                            "        \"tenant_name\": \"Raja Developers\",\n" +
                             "        \"allowLoginWith\": [\n" +
                             "            \"EMAIL\",\n" +
                             "            \"MOBILE\",\n" +
@@ -207,25 +208,20 @@ public class RequestIdServiceCall {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/public-srv/requestIdinfo/basic");
+            server.url("/public-srv/tenantinfo/basic");
 
 
 
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
-            loginProperties.put("RedirectURL","RedirectURL");
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-
-
-            requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
-                public void success(AuthRequestResponseEntity result) {
+                public void success(ChangePasswordResponseEntity result) {
 
-                    Assert.assertEquals("Service failure but successful response",result.getData().getRequestId());
+                    Assert.assertEquals(true,result.getData().isChanged());
                     latch.countDown();
 
                 }
@@ -249,7 +245,6 @@ public class RequestIdServiceCall {
 
     }
 
-
     @Test
     public void testWebClientFor401() throws  Exception{
 
@@ -267,37 +262,34 @@ public class RequestIdServiceCall {
                             "                        \"type\": \"LoginException\",\n" +
                             "                        \"status\": 400,\n" +
                             "                        \"referenceNumber\": \"1537337364806\",\n" +
-                            "                        \"error\": \"Invalid requestId\"\n" +
+                            "                        \"error\": \"Invalid tenant\"\n" +
                             "            }\n" +
                             "}");
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/public-srv/requestIdinfo/basic");
+            server.url("/public-srv/tenantinfo/basic");
 
 
 
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
-
-            Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
-            loginProperties.put("RedirectURL","RedirectURL");
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            requestIdService.getRequestID(loginProperties, deviceInfoEntity,savedProperties,new Result<AuthRequestResponseEntity>() {
+
+            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
-                public void success(AuthRequestResponseEntity result) {
+                public void success(ChangePasswordResponseEntity result) {
 
-                    Assert.assertEquals("Service failure but successful response",result.getData().getRequestId());
+                    Assert.assertEquals(true,result.getData().isChanged());
                     latch.countDown();
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid requestId",error.getErrorMessage());
+                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
                     latch.countDown();
                 }
             });
@@ -325,35 +317,88 @@ public class RequestIdServiceCall {
                     .setBody("{\n" +
                             "    \"success\": false,\n" +
                             "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid requestId\" \n" +
+                            "     \"error\": \"Invalid tenant\" \n" +
                             "}");
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/public-srv/requestIdinfo/basic");
+            server.url("/public-srv/tenantinfo/basic");
 
 
 
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
-            loginProperties.put("RedirectURL","RedirectURL");
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-            requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {
+
+            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
-                public void success(AuthRequestResponseEntity result) {
+                public void success(ChangePasswordResponseEntity result) {
 
-                    Assert.assertEquals("Service failure but successful response",result.getData().getRequestId());
+                    Assert.assertEquals(true,result.getData().isChanged());
                     latch.countDown();
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid requestId",error.getErrorMessage());
+                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+                    latch.countDown();
+                }
+            });
+            //latch.await();
+            //Thread.sleep(3000);
+            Timber.e("Success");
+
+        }
+        catch (Exception e)
+        {
+            Assert.assertEquals(e.getMessage(),true,true);
+            Assert.assertFalse(e.getMessage(),true);
+        }
+
+    }
+
+    @Test
+    public void testWebClientFaliureException() throws  Exception{
+
+        try {
+            Timber.e("Success");
+
+            final MockResponse response = new MockResponse().setResponseCode(401)
+                    .addHeader("Content-Type", "application/json; charset=utf-8")
+                    .setBody("{\n" +
+                            "    \"success\": false,\n" +
+                            "    \"status\": 401,\n" +
+                            "     \"error\": \"Invalid tenant \n" +
+                            "}");
+
+            MockWebServer server = new MockWebServer();
+            String domainURL= server.url("").toString();
+            server.url("/public-srv/tenantinfo/basic");
+
+
+
+            server.enqueue(response);
+            Cidaas.baseurl=domainURL;
+
+
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+
+
+            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
+                @Override
+                public void success(ChangePasswordResponseEntity result) {
+
+                    Assert.assertEquals(true,result.getData().isChanged());
+                    latch.countDown();
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
                     latch.countDown();
                 }
             });
@@ -372,7 +417,7 @@ public class RequestIdServiceCall {
 
 
     @Test
-    public void testWebClientFaliureException() throws  Exception{
+    public void testWebClientThrowException() throws  Exception{
 
         try {
             Timber.e("Success");
@@ -382,35 +427,34 @@ public class RequestIdServiceCall {
                     .setBody("{\n" +
                             "    \"success\": false,\n" +
                             "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid requestId \n" +
+                            "     \"error\": \"Invalid tenant \n" +
                             "}");
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/public-srv/requestIdinfo/basic");
+            server.url("/public-srv/tenantinfo/basic");
 
 
 
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
-            loginProperties.put("RedirectURL","RedirectURL");
 
-            requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+
+
+            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),null, new Result<ChangePasswordResponseEntity>() {
                 @Override
-                public void success(AuthRequestResponseEntity result) {
+                public void success(ChangePasswordResponseEntity result) {
 
-                    Assert.assertEquals("Service failure but successful response",result.getData().getRequestId());
+                    Assert.assertEquals(true,result.getData().isChanged());
                     latch.countDown();
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid requestId",error.getErrorMessage());
+                    //Assert.assertEquals("Invalid tenant",error.getErrorMessage());
                     latch.countDown();
                 }
             });
@@ -426,5 +470,4 @@ public class RequestIdServiceCall {
         }
 
     }
-
 }

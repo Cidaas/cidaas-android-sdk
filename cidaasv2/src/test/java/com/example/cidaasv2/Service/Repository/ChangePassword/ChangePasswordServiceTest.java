@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.ChangePassword;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -23,6 +24,10 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import timber.log.Timber;
 
 import static org.mockito.Mockito.*;
 
@@ -81,7 +86,7 @@ public class ChangePasswordServiceTest {
         changePasswordRequestEntity.setConfirm_password("Password");
         changePasswordRequestEntity.setSub("Sub");
 
-        changePasswordService.changePassword(changePasswordRequestEntity, "baseurl", new Result<ChangePasswordResponseEntity>() {
+        changePasswordService.changePassword(changePasswordRequestEntity, "baseurl", null,new Result<ChangePasswordResponseEntity>() {
             @Override
             public void success(ChangePasswordResponseEntity result) {
 
@@ -98,7 +103,7 @@ public class ChangePasswordServiceTest {
     public void testChangePasswordnull() throws Exception {
         //    when(service.getInstance()).thenReturn(null);
 
-        changePasswordService.changePassword(new ChangePasswordRequestEntity(), "", new Result<ChangePasswordResponseEntity>() {
+        changePasswordService.changePassword(new ChangePasswordRequestEntity(), "", null,new Result<ChangePasswordResponseEntity>() {
             @Override
             public void success(ChangePasswordResponseEntity result) {
 
@@ -109,6 +114,51 @@ public class ChangePasswordServiceTest {
 
             }
         });
+    }
+
+
+    @Test
+    public void testGetClientInfoFail() throws Exception {
+
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+        ChangePasswordRequestEntity changePasswordRequestEntity=new ChangePasswordRequestEntity();
+        changePasswordRequestEntity.setSub("Sub");
+        changePasswordRequestEntity.setIdentityId("Id");
+        changePasswordRequestEntity.setNew_password("Pass");
+        changePasswordRequestEntity.setConfirm_password("Pass");
+        changePasswordRequestEntity.setOld_password("Pass");
+        changePasswordRequestEntity.setAccess_token("Access");
+
+
+
+        changePasswordService.changePassword(changePasswordRequestEntity, "localhost:234235", null,new Result<ChangePasswordResponseEntity>() {
+            @Override
+            public void success(ChangePasswordResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Timber.e("Success");
+            }
+        });
+
+
     }
 }
 

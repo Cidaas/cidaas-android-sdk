@@ -73,12 +73,8 @@ public class ClientServiceTest {
         });
     }
 
-
     @Test
     public void MockTestServer() throws Exception {
-
-
-
     }
 }
 

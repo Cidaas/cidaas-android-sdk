@@ -54,7 +54,7 @@ public class ClientService {
         }
         catch (Exception e)
         {
-            Timber.i(e.getMessage());
+           // Timber.i(e.getMessage());
         }
         return shared;
     }
@@ -140,8 +140,7 @@ public class ClientService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            Timber.d(e.getMessage());callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
 

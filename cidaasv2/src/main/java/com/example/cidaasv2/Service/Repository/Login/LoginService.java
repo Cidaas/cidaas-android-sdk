@@ -34,10 +34,6 @@ import timber.log.Timber;
 public class LoginService {
 
 
-    private String statusId;
-    private String authenticationType;
-    private String sub;
-    private String verificationType;
     private Context context;
 
     public static LoginService shared;
@@ -71,7 +67,7 @@ public class LoginService {
     }
 
     //Login With Credentials
-    public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity, final Result<LoginCredentialsResponseEntity> callback)
+    public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<LoginCredentialsResponseEntity> callback)
     {
         //Local Variables
 
@@ -91,7 +87,20 @@ public class LoginService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
+
+
+
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -129,7 +138,7 @@ public class LoginService {
 
 
                             //If the Login Failed for Consent Management get Consent URL
-                            if(loginCredentialsResponseErrorEntity.getError().getError().toString().equals("ConsentRequired")) {
+                            /*if(loginCredentialsResponseErrorEntity.getError().getError().toString().equals("ConsentRequired")) {
                                 String Consenturl = baseurl + "/consent-management-srv/tenant/version/pageurl?consent_name=" +
                                         loginCredentialsResponseErrorEntity.getError().getConsent_name();
 
@@ -153,7 +162,7 @@ public class LoginService {
                                                 loginCredentialsResponseErrorEntity.getError().getError(), loginCredentialsResponseErrorEntity.getStatus(),null));
                                     }
                                 });
-                            }
+                            }*/
                             //Todo Service call For fetching the Consent details
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
                                     loginCredentialsResponseErrorEntity.getError().getError(), loginCredentialsResponseErrorEntity.getStatus(),
@@ -161,7 +170,7 @@ public class LoginService {
 
                         } catch (Exception e) {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage(), 400,null));
-                            Timber.e("response"+response.message()+e.getMessage());
+                           // Timber.e("response"+response.message()+e.getMessage());
                         }
                         Timber.e("response"+response.message());
                     }
@@ -183,7 +192,7 @@ public class LoginService {
     }
 
     //Resume Login After MFA
-    public void continueMFA(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity, final Result<ResumeLoginResponseEntity> callback)
+    public void continueMFA(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<ResumeLoginResponseEntity> callback)
     {
         //Local Variables
 
@@ -203,7 +212,18 @@ public class LoginService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
+
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -255,7 +275,7 @@ public class LoginService {
 
                         } catch (Exception e) {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null));
-                            Timber.e("response"+response.message()+e.getMessage());
+                            //Timber.e("response"+response.message()+e.getMessage());
                         }
                         Timber.e("response"+response.message());
                     }
@@ -277,7 +297,7 @@ public class LoginService {
     }
 
     //Resume Login
-    public void continuePasswordless(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity, final Result<ResumeLoginResponseEntity> callback)
+    public void continuePasswordless(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<ResumeLoginResponseEntity> callback)
     {
         //Local Variables
 
@@ -297,7 +317,17 @@ public class LoginService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
 
             //Done check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -355,7 +385,7 @@ public class LoginService {
 
                         } catch (Exception e) {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null));
-                            Timber.e("response"+response.message()+e.getMessage());
+                           // Timber.e("response"+response.message()+e.getMessage());
                         }
                         Timber.e("response"+response.message());
                     }

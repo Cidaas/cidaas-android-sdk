@@ -115,7 +115,8 @@ public class RequestIdController {
             }
             //TODO Service call
 
-            RequestIdService.getShared(context).getRequestID(loginproperties, null,null,new Result<AuthRequestResponseEntity>() {
+            RequestIdService.getShared(context).getRequestID(loginproperties, null,null,
+                    new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity authRequestResponseEntity) {
                     Primaryresult.success(authRequestResponseEntity);
@@ -134,7 +135,8 @@ public class RequestIdController {
         {
             String mess=e.toString();
             Primaryresult.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.d(e.getMessage());
+            String loggerMessage = "Request-Id Controller failure : Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
         }
     }
 }

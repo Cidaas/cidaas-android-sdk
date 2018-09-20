@@ -64,7 +64,7 @@ public class AccessTokenController {
                 public void success(Dictionary<String, String>  result) {
                     String baseurl=result.get("DomainURL");
                     //todo Check notnull
-                    AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, new Result<AccessTokenEntity>()
+                    AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, null,null,null,new Result<AccessTokenEntity>()
                     {
                         @Override
                         public void success(final AccessTokenEntity result) {
@@ -172,7 +172,7 @@ public class AccessTokenController {
             Cidaas.getInstance(context).checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result, new Result<AccessTokenEntity>() {
+                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result,null,null, new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
 

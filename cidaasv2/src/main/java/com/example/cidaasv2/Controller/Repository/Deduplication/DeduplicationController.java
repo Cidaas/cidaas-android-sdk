@@ -72,7 +72,7 @@ public class DeduplicationController {
           loginCredentialsRequestEntity.setUsername_type("sub");
           loginCredentialsRequestEntity.setRequestId(requestId);
 
-          LoginService.getShared(context).loginWithCredentials(baseurl,loginCredentialsRequestEntity,deduplicaionResult);
+          LoginService.getShared(context).loginWithCredentials(baseurl,loginCredentialsRequestEntity,null,deduplicaionResult);
 
 
       }

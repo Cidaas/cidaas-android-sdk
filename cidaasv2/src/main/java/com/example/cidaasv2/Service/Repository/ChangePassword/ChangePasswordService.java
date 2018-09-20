@@ -64,14 +64,14 @@ public class ChangePasswordService {
         }
         catch (Exception e)
         {
-            Timber.i(e.getMessage());
+            //Timber.i(e.getMessage());
         }
         return shared;
     }
 
     //Reset Password Validate Code
     public void changePassword(ChangePasswordRequestEntity changePasswordRequestEntity,
-                               String baseurl, final Result<ChangePasswordResponseEntity> callback)
+                               String baseurl, DeviceInfoEntity deviceInfoEntityFromParam,final Result<ChangePasswordResponseEntity> callback)
     {
         //Local Variables
         String changePasswordUrl = "";
@@ -91,8 +91,20 @@ public class ChangePasswordService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
+            else
+            {
+                // deviceInfoEntity=new DeviceInfoEntity();
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);

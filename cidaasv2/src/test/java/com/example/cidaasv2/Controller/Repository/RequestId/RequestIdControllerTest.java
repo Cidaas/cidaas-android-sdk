@@ -15,6 +15,9 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class RequestIdControllerTest {
@@ -41,7 +44,74 @@ public class RequestIdControllerTest {
 
     @Test
     public void testGetRequestId() throws Exception {
+        Dictionary<String,String> loginProperties=new Hashtable<>();
+        loginProperties.put("DomainURL","");
+        loginProperties.put("ClientId","");
+        loginProperties.put("RedirectURL","RedirectURL");
+
+        requestIdController.getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
+    public void nullRedirect() throws Exception {
+        Dictionary<String,String> loginProperties=new Hashtable<>();
+        loginProperties.put("DomainURL","Dom");
+        loginProperties.put("ClientId","Clien");
+        loginProperties.put("RedirectURL","");
+
+        requestIdController.getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+
+    @Test
+    public void nulLogint() throws Exception {
+        Dictionary<String,String> loginProperties=new Hashtable<>();
+        loginProperties.put("DomainURL","Dom");
+        loginProperties.put("ClientId","Clien");
+        loginProperties.put("RedirectURL","");
+
         requestIdController.getRequestId(null, new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+
+    @Test
+    public void nullClientId() throws Exception {
+        Dictionary<String,String> loginProperties=new Hashtable<>();
+        loginProperties.put("DomainURL","Domain");
+        loginProperties.put("ClientId","");
+        loginProperties.put("RedirectURL","RedirectURL");
+
+        requestIdController.getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 

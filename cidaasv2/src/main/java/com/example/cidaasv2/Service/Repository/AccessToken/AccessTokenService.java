@@ -64,22 +64,65 @@ public class AccessTokenService {
     }
 
     //Get Access Token by code
-    public void getAccessTokenByCode(String baseurl,String Code, final Result<AccessTokenEntity> acessTokencallback)
+    public void getAccessTokenByCode(String baseurl,String Code, DeviceInfoEntity deviceInfoEntityFromParam, Dictionary<String, String> loginPropertiesfromParam, Dictionary<String, String> challengePropertiesfromparam,final Result<AccessTokenEntity> acessTokencallback)
     {
         try {
 
             //Local Variables
             String url = "";
             String getAccessTokenUrl = "";
-            Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties();
-            Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
+            else
+            {
+                // deviceInfoEntity=new DeviceInfoEntity();
+            }
+
+
+            //////////////////This is for testing purpose
+            Dictionary<String,String> challengeProperties=new Hashtable<>();
+
+            if(challengePropertiesfromparam==null) {
+                challengeProperties=DBHelper.getShared().getChallengeProperties();
+            }
+            else if(challengePropertiesfromparam!=null)
+            {
+                challengeProperties=challengePropertiesfromparam;
+            }
+            else
+            {
+                // challengeProperties=new Hashtable<>();
+            }
+
+            //////////////////This is for testing purpose
+            Dictionary<String,String> loginProperties=new Hashtable<>();
+
+            if(loginPropertiesfromParam==null) {
+                loginProperties=DBHelper.getShared().getLoginProperties();
+            }
+            else if(loginPropertiesfromParam!=null)
+            {
+                loginProperties=loginPropertiesfromParam;
+            }
+            else
+            {
+                // challengeProperties=new Hashtable<>();
+            }
+
 
             if (loginProperties == null) {
                 // callback.failure(.loginURLMissingException());
             }
 
           //  baseurl=loginProperties.get("DomainURL");
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 getAccessTokenUrl=baseurl+ URLHelper.getShared().getTokenUrl();
             }
@@ -93,8 +136,6 @@ public class AccessTokenService {
             Map<String, String> querymap = new Hashtable<>();
 
 
-            //get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -191,7 +232,7 @@ public class AccessTokenService {
     }
 
 
-    public void getAccessTokenByRefreshToken(String refreshToken,Dictionary<String, String> loginProperties, final Result<AccessTokenEntity> callback)
+    public void getAccessTokenByRefreshToken(String refreshToken,Dictionary<String, String> loginProperties,DeviceInfoEntity deviceInfoEntityFromparam, Dictionary<String, String> challengePropertiesfromparam,final Result<AccessTokenEntity> callback)
     {
         try {
             //Local Variables
@@ -201,9 +242,35 @@ public class AccessTokenService {
             Map<String, String> headers = new Hashtable<>();
             Map<String, String> querymap = new Hashtable<>();
 
-            //get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
+            else
+            {
+                // deviceInfoEntity=new DeviceInfoEntity();
+            }
 
+
+            //////////////////This is for testing purpose
+            Dictionary<String,String> challengeProperties=new Hashtable<>();
+
+            if(challengePropertiesfromparam==null) {
+                challengeProperties=DBHelper.getShared().getChallengeProperties();
+            }
+            else if(challengePropertiesfromparam!=null)
+            {
+                challengeProperties=challengePropertiesfromparam;
+            }
+            else
+            {
+                // challengeProperties=new Hashtable<>();
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentType);
@@ -215,12 +282,6 @@ public class AccessTokenService {
 
 
             //Get Properties From DB
-
-
-
-            Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
-
-            //Todo read From File
 
 
             if (loginProperties == null) {
@@ -283,7 +344,7 @@ public class AccessTokenService {
                             }
 
 
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

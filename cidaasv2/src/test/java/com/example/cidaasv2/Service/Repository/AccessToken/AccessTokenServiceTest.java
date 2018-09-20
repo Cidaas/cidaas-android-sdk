@@ -3,11 +3,14 @@ package com.example.cidaasv2.Service.Repository.AccessToken;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.util.AuthenticationAPI;
 
 import org.junit.Assert;
@@ -20,6 +23,10 @@ import org.robolectric.annotation.Config;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import timber.log.Timber;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
@@ -69,7 +76,7 @@ public class AccessTokenServiceTest {
     @Test
     public void testGetAccessTokenByCode() throws Exception {
 
-        accessTokenService.getAccessTokenByCode("", "", new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByCode("", "",null,null,null ,new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -85,7 +92,7 @@ public class AccessTokenServiceTest {
     @Test
     public void testGetAccessTokenByCodeSucess() throws Exception {
 
-        accessTokenService.getAccessTokenByCode("baseURL", "Code", new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByCode("baseURL", "Code", null,null,null,new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -125,7 +132,7 @@ public class AccessTokenServiceTest {
 
 
 
-        accessTokenService.getAccessTokenByRefreshToken("refreshToken", loginproperties, new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByRefreshToken("refreshToken", loginproperties,null,null, new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -146,7 +153,7 @@ public class AccessTokenServiceTest {
         loginproperties.put("ClientId","ClientId");
         loginproperties.put("RedirectURL","RedirectURL");
 
-        accessTokenService.getAccessTokenByRefreshToken("refreshToken", null, new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByRefreshToken("refreshToken", null,null,null ,new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -182,7 +189,7 @@ public class AccessTokenServiceTest {
 
 
 
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginproperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginproperties,null,null, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     Assert.assertTrue(true);
@@ -197,6 +204,74 @@ public class AccessTokenServiceTest {
         catch (Exception e){
 
         }
+    }
+
+    @Test
+    public void testGetClientInfoFail() throws Exception {
+
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+
+        accessTokenService.getAccessTokenByRefreshToken("localhost:234235", loginproperties,null,null, new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Timber.e("Success");
+            }
+        });
+
+
+    }
+
+    @Test
+    public void testGetClientInfoF() throws Exception {
+
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+        accessTokenService.getAccessTokenByCode("localhost:234235", "code",null,loginproperties,null, new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Timber.e("Success");
+            }
+        });
+
+
     }
 
 
