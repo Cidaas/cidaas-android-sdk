@@ -99,7 +99,7 @@ public class ConsentController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 //Todo Service call
-                ConsentService.getShared(context).acceptConsent(baseurl, consentManagementAcceptedRequestEntity,
+                ConsentService.getShared(context).acceptConsent(baseurl, consentManagementAcceptedRequestEntity,null,
                         new Result<ConsentManagementAcceptResponseEntity>() {
                     @Override
                     public void success(ConsentManagementAcceptResponseEntity serviceresult) {
@@ -110,7 +110,7 @@ public class ConsentController {
                         resumeConsentRequestEntity.setName(consentManagementAcceptedRequestEntity.getName());
                         resumeConsentRequestEntity.setVersion(consentManagementAcceptedRequestEntity.getVersion());
                         resumeConsentRequestEntity.setClient_id(consentManagementAcceptedRequestEntity.getClient_id());
-                        ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity, new Result<ResumeConsentResponseEntity>() {
+                        ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity, null,new Result<ResumeConsentResponseEntity>() {
                             @Override
                             public void success(ResumeConsentResponseEntity result) {
 

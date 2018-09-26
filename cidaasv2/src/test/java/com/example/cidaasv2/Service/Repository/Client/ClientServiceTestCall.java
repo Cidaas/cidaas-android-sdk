@@ -350,7 +350,7 @@ public class ClientServiceTestCall {
 
             MockWebServer server = new MockWebServer();
             server.shutdown();
-            server.start(2007);
+            server.start(2037);
             server.url("/public-srv/Clientinfo/basic");
 
 
@@ -372,7 +372,7 @@ public class ClientServiceTestCall {
             };
             server.setDispatcher(dispatcher);
 
-            Cidaas.baseurl="https://"+server.getHostName()+":2006/";
+            Cidaas.baseurl="https://"+server.getHostName()+":203406/";
 
             clientService.getClientInfo("req","localhost:2006", new Result<ClientInfoEntity>() {
                 @Override

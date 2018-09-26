@@ -78,13 +78,13 @@ public class TOTPVerificationService {
     }
 
 
-    public void scannedTOTP(String baseurl,String usagePass,String statusId,String AccessToken,
+    public void scannedTOTP(String baseurl,String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
                             final Result<ScannedResponseEntity> callback)
     {
         String scannedTOTPUrl="";
         try
         {
-            if(baseurl!=null || !baseurl.equals("")){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 scannedTOTPUrl=baseurl+ URLHelper.getShared().getScannedTOTPURL();
             }
@@ -96,7 +96,15 @@ public class TOTPVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -157,8 +165,9 @@ public class TOTPVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -184,12 +193,12 @@ public class TOTPVerificationService {
 
 
     //setupTOTPMFA
-    public void setupTOTP(String baseurl, String accessToken, String codeChallenge, SetupTOTPMFARequestEntity setupTOTPMFARequestEntity, final Result<SetupTOTPMFAResponseEntity> callback)
+    public void setupTOTP(String baseurl, String accessToken, String codeChallenge, SetupTOTPMFARequestEntity setupTOTPMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupTOTPMFAResponseEntity> callback)
     {
         String setupTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupTOTPMFAUrl=baseurl+URLHelper.getShared().getSetupTOTPMFA();
             }
@@ -205,7 +214,15 @@ public class TOTPVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -270,8 +287,9 @@ public class TOTPVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -297,12 +315,12 @@ public class TOTPVerificationService {
 
 
     //enrollTOTPMFA
-    public void enrollTOTP(String baseurl, String accessToken, EnrollTOTPMFARequestEntity enrollTOTPMFARequestEntity, final Result<EnrollTOTPMFAResponseEntity> callback)
+    public void enrollTOTP(String baseurl, String accessToken, EnrollTOTPMFARequestEntity enrollTOTPMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<EnrollTOTPMFAResponseEntity> callback)
     {
         String enrollTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollTOTPMFAUrl=baseurl+URLHelper.getShared().getEnrollTOTPMFA();
             }
@@ -314,7 +332,15 @@ public class TOTPVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -368,8 +394,9 @@ public class TOTPVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -395,12 +422,12 @@ public class TOTPVerificationService {
 
 
     //initiateTOTPMFA
-    public void initiateTOTP(String baseurl,String codeChallenge, InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity, final Result<InitiateTOTPMFAResponseEntity> callback)
+    public void initiateTOTP(String baseurl,String codeChallenge, InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateTOTPMFAResponseEntity> callback)
     {
         String initiateTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateTOTPMFAUrl=baseurl+URLHelper.getShared().getInitiateTOTPMFA();
             }
@@ -412,7 +439,15 @@ public class TOTPVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -475,8 +510,9 @@ public class TOTPVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -502,12 +538,12 @@ public class TOTPVerificationService {
 
 
     //authenticateTOTPMFA
-    public void authenticateTOTP(String baseurl, AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity, final Result<AuthenticateTOTPResponseEntity> callback)
+    public void authenticateTOTP(String baseurl, AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<AuthenticateTOTPResponseEntity> callback)
     {
         String authenticateTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateTOTPMFAUrl=baseurl+URLHelper.getShared().getAuthenticateTOTPMFA();
             }
@@ -519,7 +555,15 @@ public class TOTPVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -580,8 +624,9 @@ public class TOTPVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_TOTP_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }

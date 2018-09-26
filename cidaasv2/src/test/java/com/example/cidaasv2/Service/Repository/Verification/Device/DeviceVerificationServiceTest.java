@@ -36,7 +36,7 @@ public class DeviceVerificationServiceTest {
     @Test
     public void testValidateDevice() throws Exception {
 
-        deviceVerificationService.validateDevice("baseurl", "intermediateId", "statusId", "codeVerifier", new Result<ValidateDeviceResponseEntity>() {
+        deviceVerificationService.validateDevice("baseurl", "intermediateId", "statusId", "codeVerifier", null,new Result<ValidateDeviceResponseEntity>() {
             @Override
             public void success(ValidateDeviceResponseEntity result) {
 

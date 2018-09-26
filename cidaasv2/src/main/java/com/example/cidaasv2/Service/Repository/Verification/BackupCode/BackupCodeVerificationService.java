@@ -57,15 +57,7 @@ public class  BackupCodeVerificationService {
         }
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static  BackupCodeVerificationService getShared(Context contextFromCidaas )
     {
@@ -83,11 +75,11 @@ public class  BackupCodeVerificationService {
     }
 
     //setupBackupCodeMFA
-    public void setupBackupCodeMFA(String baseurl, String accessToken, final Result<SetupBackupCodeMFAResponseEntity> callback){
+    public void setupBackupCodeMFA(String baseurl, String accessToken,DeviceInfoEntity deviceInfoEntityFromparam, final Result<SetupBackupCodeMFAResponseEntity> callback){
         String setupBackupCodeMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupBackupCodeMFAUrl=baseurl+ URLHelper.getShared().getSetupBackupCodeMFA();
             }
@@ -98,8 +90,17 @@ public class  BackupCodeVerificationService {
             }
 
             Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
+
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -151,8 +152,8 @@ public class  BackupCodeVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -171,19 +172,19 @@ public class  BackupCodeVerificationService {
         catch (Exception e)
         {
             LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
-        }
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+           }
     }
 
 
     //initiateBackupCodeMFA
-    public void initiateBackupCodeMFA(String baseurl, InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity,
+    public void initiateBackupCodeMFA(String baseurl, InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromparam,
                                       final Result<InitiateBackupCodeMFAResponseEntity> callback){
         String initiateBackupCodeMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateBackupCodeMFAUrl=baseurl+URLHelper.getShared().getInitiateBackupCodeMFA();
             }
@@ -194,9 +195,17 @@ public class  BackupCodeVerificationService {
             }
 
             Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
+            // Get Device Information
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -246,8 +255,9 @@ public class  BackupCodeVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -273,13 +283,13 @@ public class  BackupCodeVerificationService {
 
 
     //authenticateBackupCodeMFA
-    public void authenticateBackupCodeMFA(String baseurl, AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity,
+    public void authenticateBackupCodeMFA(String baseurl, AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity,DeviceInfoEntity deviceInfoEntityFromparam,
                                           final Result<AuthenticateBackupCodeResponseEntity> callback)
     {
         String authenticateBackupCodeMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateBackupCodeMFAUrl=baseurl+URLHelper.getShared().getAuthenticateBackupCodeMFA();
             }
@@ -291,8 +301,15 @@ public class  BackupCodeVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -342,8 +359,9 @@ public class  BackupCodeVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }

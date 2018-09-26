@@ -87,7 +87,7 @@ public class VoiceVerificationService {
     }
 
 
-    public void scannedVoice(String baseurl, String usagePass,String statusId,String AccessToken,
+    public void scannedVoice(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
                              final Result<ScannedResponseEntity> callback)
     {
         String scannedVoiceUrl="";
@@ -105,7 +105,15 @@ public class VoiceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -193,7 +201,7 @@ public class VoiceVerificationService {
 
 
     //setupVoiceMFA
-    public void setupVoiceMFA(String baseurl, String accessToken, String codeChallenge, SetupVoiceMFARequestEntity setupVoiceMFARequestEntity, final Result<SetupVoiceMFAResponseEntity> callback)
+    public void setupVoiceMFA(String baseurl, String accessToken, String codeChallenge, SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupVoiceMFAResponseEntity> callback)
     {
         String setupVoiceMFAUrl="";
         try
@@ -211,7 +219,15 @@ public class VoiceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -302,7 +318,7 @@ public class VoiceVerificationService {
     }
 
     //enrollVoiceMFA
-    public void enrollVoice(String baseurl, String accessToken, EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity, final Result<EnrollVoiceMFAResponseEntity> callback)
+    public void enrollVoice(String baseurl, String accessToken, EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<EnrollVoiceMFAResponseEntity> callback)
     {
         String enrollVoiceMFAUrl="";
         try
@@ -319,7 +335,15 @@ public class VoiceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -408,7 +432,7 @@ public class VoiceVerificationService {
 
 
     //initiateVoiceMFA
-    public void initiateVoice(String baseurl, String codeChallenge,InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity, final Result<InitiateVoiceMFAResponseEntity> callback)
+    public void initiateVoice(String baseurl, String codeChallenge,InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateVoiceMFAResponseEntity> callback)
     {
         String initiateVoiceMFAUrl="";
         try
@@ -425,7 +449,15 @@ public class VoiceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -515,7 +547,7 @@ public class VoiceVerificationService {
     }
 
     //authenticateVoiceMFA
-    public void authenticateVoice(String baseurl, AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity, final Result<AuthenticateVoiceResponseEntity> callback)
+    public void authenticateVoice(String baseurl, AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<AuthenticateVoiceResponseEntity> callback)
     {
         String authenticateVoiceMFAUrl="";
         try
@@ -532,7 +564,15 @@ public class VoiceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers

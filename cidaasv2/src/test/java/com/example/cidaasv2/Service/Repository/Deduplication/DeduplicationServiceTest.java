@@ -94,7 +94,7 @@ public class DeduplicationServiceTest {
     @Test
     public void testLoginDeduplication() throws Exception {
 
-//        deduplicationService.loginDeduplication("baseurl", null, null);
+        deduplicationService.registerDeduplication("baseurl", null, null);
     }
 }
 

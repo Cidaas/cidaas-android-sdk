@@ -100,7 +100,7 @@ public class VoiceConfigurationController {
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
-                        VoiceVerificationService.getShared(context).setupVoiceMFA(baseurl, accessTokenresult.getAccess_token(),codeChallenge,setupVoiceMFARequestEntity,
+                        VoiceVerificationService.getShared(context).setupVoiceMFA(baseurl, accessTokenresult.getAccess_token(),codeChallenge,setupVoiceMFARequestEntity,null,
                                 new Result<SetupVoiceMFAResponseEntity>() {
                                     @Override
                                     public void success(final SetupVoiceMFAResponseEntity setupserviceresult) {
@@ -122,12 +122,12 @@ public class VoiceConfigurationController {
                                                 {
                                                     //Device Validation Service
                                                     DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
-                                                            , new Result<ValidateDeviceResponseEntity>() {
+                                                            ,null, new Result<ValidateDeviceResponseEntity>() {
                                                                 @Override
                                                                 public void success(ValidateDeviceResponseEntity result) {
                                                                     // call Scanned Service
                                                                     VoiceVerificationService.getShared(context).scannedVoice(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                            accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                            accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(final ScannedResponseEntity result) {
                                                                                     DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -146,7 +146,7 @@ public class VoiceConfigurationController {
                                                                                     }
 
                                                                                     // call Enroll Service
-                                                                                    VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessTokenresult.getAccess_token(), enrollVoiceMFARequestEntity,new Result<EnrollVoiceMFAResponseEntity>() {
+                                                                                    VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessTokenresult.getAccess_token(), enrollVoiceMFARequestEntity,null,new Result<EnrollVoiceMFAResponseEntity>() {
                                                                                         @Override
                                                                                         public void success(EnrollVoiceMFAResponseEntity serviceresult) {
                                                                                             enrollresult.success(serviceresult);
@@ -243,7 +243,7 @@ public class VoiceConfigurationController {
                     initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge,initiateVoiceMFARequestEntity,
+                VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge,initiateVoiceMFARequestEntity,null,
                         new Result<InitiateVoiceMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -268,14 +268,14 @@ public class VoiceConfigurationController {
                                         if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID, serviceresult.getData().getStatusId(), codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    , null,new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
 
                                                             //Todo call initiate
                                                             initiateVoiceMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
-                                                            VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge, initiateVoiceMFARequestEntity,
+                                                            VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge, initiateVoiceMFARequestEntity,null,
                                                                     new Result<InitiateVoiceMFAResponseEntity>() {
 
                                                                         @Override
@@ -290,7 +290,7 @@ public class VoiceConfigurationController {
                                                                                 authenticateVoiceRequestEntity.setVoiceFile(VoiceImageFile);
 
 
-                                                                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity, new Result<AuthenticateVoiceResponseEntity>() {
+                                                                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity,null, new Result<AuthenticateVoiceResponseEntity>() {
                                                                                     @Override
                                                                                     public void success(AuthenticateVoiceResponseEntity result) {
                                                                                         //Todo Call Resume with Login Service

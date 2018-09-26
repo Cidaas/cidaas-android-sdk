@@ -86,7 +86,7 @@ public class FaceVerificationService {
 
 
     //setupFaceMFA
-    public void setupFaceMFA(String baseurl, String accessToken, String codeChallenge, SetupFaceMFARequestEntity setupFaceMFARequestEntity,
+    public void setupFaceMFA(String baseurl, String accessToken, String codeChallenge, SetupFaceMFARequestEntity setupFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                              final Result<SetupFaceMFAResponseEntity> callback)
     {
         String setupFaceMFAUrl="";
@@ -108,8 +108,15 @@ public class FaceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -204,7 +211,7 @@ public class FaceVerificationService {
         }
     }
 
-    public void scannedFace(String baseurl, String usagePass,String statusId,String AccessToken,
+    public void scannedFace(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
                             final Result<ScannedResponseEntity> callback)
     {
         String scannedFaceUrl="";
@@ -222,8 +229,15 @@ public class FaceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -313,7 +327,7 @@ public class FaceVerificationService {
         return body;
     }
     //enrollFaceMFA
-    public void enrollFace(String baseurl, String accessToken, EnrollFaceMFARequestEntity enrollFaceMFARequestEntity,
+    public void enrollFace(String baseurl, String accessToken, EnrollFaceMFARequestEntity enrollFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                               final Result<EnrollFaceMFAResponseEntity> callback)
     {
         String enrollFaceMFAUrl="";
@@ -334,8 +348,15 @@ public class FaceVerificationService {
 
 
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
@@ -445,7 +466,7 @@ public class FaceVerificationService {
 
 
     //initiateFaceMFA
-    public void initiateFace(String baseurl, String codeChallenge,InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,
+    public void initiateFace(String baseurl, String codeChallenge,InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                 final Result<InitiateFaceMFAResponseEntity> callback){
         String initiateFaceMFAUrl="";
         try
@@ -462,8 +483,15 @@ public class FaceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -546,7 +574,7 @@ public class FaceVerificationService {
 
 
     //authenticateFaceMFA
-    public void authenticateFace(String baseurl, AuthenticateFaceRequestEntity authenticateFaceRequestEntity,
+    public void authenticateFace(String baseurl, AuthenticateFaceRequestEntity authenticateFaceRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                     final Result<AuthenticateFaceResponseEntity> callback){
         String authenticateFaceMFAUrl="";
         try
@@ -563,8 +591,15 @@ public class FaceVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);

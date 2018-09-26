@@ -96,7 +96,7 @@ public class MFAListSettingsController {
                 String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
 
-                    VerificationSettingsService.getShared(context).getmfaList(baseurl, sub, userDeviceId, new Result<MFAListResponseEntity>() {
+                    VerificationSettingsService.getShared(context).getmfaList(baseurl, sub, userDeviceId,null, new Result<MFAListResponseEntity>() {
 
                         @Override
                         public void success(MFAListResponseEntity serviceresult) {

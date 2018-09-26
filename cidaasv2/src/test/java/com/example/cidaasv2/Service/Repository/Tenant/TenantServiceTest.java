@@ -328,7 +328,7 @@ public class TenantServiceTest {
 
             MockWebServer server = new MockWebServer();
             server.shutdown();
-            server.start(4006);
+            server.start(40806);
             server.url("/public-srv/tenantinfo/basic");
 
 

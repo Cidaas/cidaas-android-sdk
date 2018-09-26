@@ -111,7 +111,7 @@ public class TOTPConfigurationController {
                     {
                         //Todo Service call
 
-                        TOTPVerificationService.getShared(context).setupTOTP(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupTOTPMFARequestEntity,new Result<SetupTOTPMFAResponseEntity>() {
+                        TOTPVerificationService.getShared(context).setupTOTP(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupTOTPMFARequestEntity,null,new Result<SetupTOTPMFAResponseEntity>() {
                             @Override
                             public void success(final SetupTOTPMFAResponseEntity setupserviceresult) {
 
@@ -150,12 +150,12 @@ public class TOTPConfigurationController {
                                         {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    ,null, new Result<ValidateDeviceResponseEntity>() {
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
                                                             // call Scanned Service
                                                             TOTPVerificationService.getShared(context).scannedTOTP(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                    accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                    accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                         @Override
                                                                         public void success(final ScannedResponseEntity result) {
                                                                             DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -179,7 +179,7 @@ public class TOTPConfigurationController {
                                                                             }
 
                                                                             // call Enroll Service
-                                                                            TOTPVerificationService.getShared(context).enrollTOTP(baseurl, accessTokenresult.getAccess_token(), enrollTOTPMFARequestEntity,new Result<EnrollTOTPMFAResponseEntity>() {
+                                                                            TOTPVerificationService.getShared(context).enrollTOTP(baseurl, accessTokenresult.getAccess_token(), enrollTOTPMFARequestEntity,null,new Result<EnrollTOTPMFAResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(EnrollTOTPMFAResponseEntity serviceresult) {
                                                                                     enrollresult.success(serviceresult);
@@ -273,7 +273,7 @@ public class TOTPConfigurationController {
                     initiateTOTPMFARequestEntity.getUserDeviceId() != null && initiateTOTPMFARequestEntity.getUserDeviceId() != "" &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                TOTPVerificationService.getShared(context).initiateTOTP(baseurl,codeChallenge ,initiateTOTPMFARequestEntity,
+                TOTPVerificationService.getShared(context).initiateTOTP(baseurl,codeChallenge ,initiateTOTPMFARequestEntity,null,
                         new Result<InitiateTOTPMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -299,7 +299,7 @@ public class TOTPConfigurationController {
                                         if (instceID != null && instceID != "" && serviceresult.getData().getStatusId() != null && serviceresult.getData().getStatusId() != "") {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                  , null , new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
@@ -307,7 +307,7 @@ public class TOTPConfigurationController {
                                                             //Todo call initiate
                                                             initiateTOTPMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
                                                             TOTPVerificationService.getShared(context).initiateTOTP(baseurl, codeChallenge, initiateTOTPMFARequestEntity,
-                                                                    new Result<InitiateTOTPMFAResponseEntity>() {
+                                                                  null,  new Result<InitiateTOTPMFAResponseEntity>() {
 
                                                                         @Override
                                                                         public void success(InitiateTOTPMFAResponseEntity serviceresult) {
@@ -326,7 +326,7 @@ public class TOTPConfigurationController {
                                                                                 authenticateTOTPRequestEntity.setVerifierPassword(totp);
 
 
-                                                                                TOTPVerificationService.getShared(context).authenticateTOTP(baseurl, authenticateTOTPRequestEntity, new Result<AuthenticateTOTPResponseEntity>() {
+                                                                                TOTPVerificationService.getShared(context).authenticateTOTP(baseurl, authenticateTOTPRequestEntity, null,new Result<AuthenticateTOTPResponseEntity>() {
                                                                                     @Override
                                                                                     public void success(AuthenticateTOTPResponseEntity result) {
                                                                                         //Todo Call Resume with Login Service
@@ -560,7 +560,7 @@ public class TOTPConfigurationController {
                                                 @Override
                                                 public void success(ValidateDeviceResponseEntity result) {
                                                     //Todo call Next service
-                                                    scannedTOTP(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,new Result<ScannedResponseEntity>() {
+                                                    scannedTOTP(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,null,new Result<ScannedResponseEntity>() {
                                                         @Override
                                                         public void success(ScannedResponseEntity result) {
                                                             Timber.i(result.getData().getUserDeviceId()+"USewr Device id");
@@ -792,7 +792,7 @@ public class TOTPConfigurationController {
                     enrollTOTPMFARequestEntity.getStatusId() != null && enrollTOTPMFARequestEntity.getStatusId()  != null &&
                     baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
                 //Todo Service call
-                OauthService.getShared(context).enrollTOTPMFA(baseurl, AccessToken, enrollTOTPMFARequestEntity,new Result<EnrollTOTPMFAResponseEntity>() {
+                OauthService.getShared(context).enrollTOTPMFA(baseurl, AccessToken, enrollTOTPMFARequestEntity,null,new Result<EnrollTOTPMFAResponseEntity>() {
                     @Override
                     public void success(EnrollTOTPMFAResponseEntity serviceresult) {
                         result.success(serviceresult);

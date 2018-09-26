@@ -71,7 +71,7 @@ public class DeviceVerificationService {
     }
 
     //ValidateDevice
-    public void validateDevice(String baseurl, String intermediateId,String statusId,String codeVerifier,
+    public void validateDevice(String baseurl, String intermediateId,String statusId,String codeVerifier,DeviceInfoEntity deviceInfoEntityFromParam,
                                final Result<ValidateDeviceResponseEntity> callback)
     {
         String validateDeviceUrl="";
@@ -92,11 +92,20 @@ public class DeviceVerificationService {
 
 
             Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
+            // Get Device Information
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
+
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
 

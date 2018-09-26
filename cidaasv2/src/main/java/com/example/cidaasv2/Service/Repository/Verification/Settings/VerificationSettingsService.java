@@ -74,7 +74,7 @@ public class VerificationSettingsService {
         return shared;
     }
 
-    public void getmfaList( String baseurl,String sub,String userDeviceID, final Result<MFAListResponseEntity> callback)
+    public void getmfaList( String baseurl,String sub,String userDeviceID,DeviceInfoEntity deviceInfoEntityFromParam, final Result<MFAListResponseEntity> callback)
     {
         //Local Variables
         String mfalistUrl = "";
@@ -105,7 +105,16 @@ public class VerificationSettingsService {
             boolean common_configs = true;
             if(userDeviceID.equals("")) {
 
-                DeviceInfoEntity deviceInfoEntity= DBHelper.getShared().getDeviceInfo();
+                DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+                //This is only for testing purpose
+                if(deviceInfoEntityFromParam==null) {
+                    deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                }
+                else if(deviceInfoEntityFromParam!=null)
+                {
+                    deviceInfoEntity=deviceInfoEntityFromParam;
+                }
+
                 userDeviceID=deviceInfoEntity.getDeviceId();
             }
             else {

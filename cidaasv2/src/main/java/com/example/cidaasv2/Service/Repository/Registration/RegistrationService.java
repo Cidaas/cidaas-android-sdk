@@ -72,7 +72,7 @@ public class RegistrationService {
     }
 
     //Get Regsiteration Details
-    public void getRegistrationSetup(String baseurl, final RegistrationSetupRequestEntity registrationSetupRequestEntity, final Result<RegistrationSetupResponseEntity> callback)
+    public void getRegistrationSetup(String baseurl, final RegistrationSetupRequestEntity registrationSetupRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegistrationSetupResponseEntity> callback)
     {
         //Local Variables
 
@@ -141,7 +141,7 @@ public class RegistrationService {
 
 
     //Register New User
-    public void registerNewUser(String baseurl, final RegisterNewUserRequestEntity registerNewUserRequestEntity, final Result<RegisterNewUserResponseEntity> callback)
+    public void registerNewUser(String baseurl, final RegisterNewUserRequestEntity registerNewUserRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegisterNewUserResponseEntity> callback)
     {
         //Local Variables
 
@@ -160,8 +160,15 @@ public class RegistrationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -234,7 +241,7 @@ public class RegistrationService {
     }
 
     //Register New User initiate  Account Verification
-    public void initiateAccountVerification(String baseurl, final RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity, final Result<RegisterUserAccountInitiateResponseEntity> callback)
+    public void initiateAccountVerification(String baseurl, final RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<RegisterUserAccountInitiateResponseEntity> callback)
     {
         //Local Variables
 
@@ -253,8 +260,15 @@ public class RegistrationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -327,7 +341,7 @@ public class RegistrationService {
     }
 
     //Register New User verify  Account Verification
-    public void verifyAccountVerification(String baseurl, final RegisterUserAccountVerifyRequestEntity registerUserAccountVerifyRequestEntity,
+    public void verifyAccountVerification(String baseurl, final RegisterUserAccountVerifyRequestEntity registerUserAccountVerifyRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                           final Result<RegisterUserAccountVerifyResponseEntity> callback)
     {
         //Local Variables
@@ -347,8 +361,15 @@ public class RegistrationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);

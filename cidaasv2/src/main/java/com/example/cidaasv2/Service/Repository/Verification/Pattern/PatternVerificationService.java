@@ -85,13 +85,13 @@ public class PatternVerificationService {
 
 
     //setupPatternMFA
-    public void setupPattern(String baseurl, String accessToken, String codeChallenge, SetupPatternMFARequestEntity setupPatternMFARequestEntity,
+    public void setupPattern(String baseurl, String accessToken, String codeChallenge, SetupPatternMFARequestEntity setupPatternMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                 final Result<SetupPatternMFAResponseEntity> callback)
     {
         String setupPatternMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupPatternMFAUrl=baseurl+URLHelper.getShared().getSetupPatternMFA();
             }
@@ -104,8 +104,15 @@ public class PatternVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Done - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -171,9 +178,10 @@ public class PatternVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
+                            Timber.e("response"+response.message()+e.getMessage());
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,
                                     e.getMessage(), 400,null));
-                            Timber.e("response"+response.message()+e.getMessage());
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -205,13 +213,13 @@ public class PatternVerificationService {
     // 4. done  Maintain logs based on flags
 
     //Scanned Pattern
-    public void scannedPattern(String baseurl, String usagePass,String statusId,String AccessToken,
+    public void scannedPattern(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
                                final Result<ScannedResponseEntity> callback)
     {
         String scannedPatternUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 scannedPatternUrl=baseurl+ URLHelper.getShared().getScannedPatternURL();
             }
@@ -223,7 +231,15 @@ public class PatternVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -286,10 +302,11 @@ public class PatternVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
+                            Timber.e("response"+response.message()+e.getMessage());
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
                                     e.getMessage(), 400,null));
 
-                            Timber.e("response"+response.message()+e.getMessage());
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -323,13 +340,13 @@ public class PatternVerificationService {
     // 4.  Maintain logs based on flags
 
     //enrollPatternMFA
-    public void enrollPattern(String baseurl, String accessToken, EnrollPatternMFARequestEntity enrollPatternMFARequestEntity,
+    public void enrollPattern(String baseurl, String accessToken, EnrollPatternMFARequestEntity enrollPatternMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                  final Result<EnrollPatternMFAResponseEntity> callback)
     {
         String enrollPatternMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollPatternMFAUrl=baseurl+URLHelper.getShared().getEnrollPatternMFA();
             }
@@ -341,7 +358,15 @@ public class PatternVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -405,9 +430,10 @@ public class PatternVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
+                            Timber.e("response"+response.message()+e.getMessage());
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
                                     e.getMessage(), 400,null));
-                            Timber.e("response"+response.message()+e.getMessage());
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -436,13 +462,13 @@ public class PatternVerificationService {
 
 
     //initiatePatternMFA
-    public void initiatePattern(String baseurl, String codeChallenge,InitiatePatternMFARequestEntity initiatePatternMFARequestEntity,
+    public void initiatePattern(String baseurl, String codeChallenge,InitiatePatternMFARequestEntity initiatePatternMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                    final Result<InitiatePatternMFAResponseEntity> callback)
     {
         String initiatePatternMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiatePatternMFAUrl=baseurl+URLHelper.getShared().getInitiatePatternMFA();
             }
@@ -454,7 +480,15 @@ public class PatternVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -519,9 +553,10 @@ public class PatternVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
+
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
                                     e.getMessage(), 400,null));
-                            Timber.e("response"+response.message()+e.getMessage());
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -549,13 +584,13 @@ public class PatternVerificationService {
 
 
     //authenticatePatternMFA
-    public void authenticatePattern(String baseurl, AuthenticatePatternRequestEntity authenticatePatternRequestEntity,
+    public void authenticatePattern(String baseurl, AuthenticatePatternRequestEntity authenticatePatternRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                        final Result<AuthenticatePatternResponseEntity> callback)
     {
         String authenticatePatternMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticatePatternMFAUrl=baseurl+URLHelper.getShared().getAuthenticatePatternMFA();
             }
@@ -567,7 +602,15 @@ public class PatternVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -630,9 +673,10 @@ public class PatternVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
+                            Timber.e("response"+response.message()+e.getMessage());
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
                                     e.getMessage(), 400,null));
-                            Timber.e("response"+response.message()+e.getMessage());
+
                         }
                         Timber.e("response"+response.message());
                     }

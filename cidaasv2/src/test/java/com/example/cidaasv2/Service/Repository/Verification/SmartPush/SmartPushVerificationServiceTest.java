@@ -2,14 +2,23 @@ package com.example.cidaasv2.Service.Repository.Verification.SmartPush;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
@@ -20,6 +29,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import timber.log.Timber;
 
 @RunWith(RobolectricTestRunner.class)
 public class SmartPushVerificationServiceTest {
@@ -34,32 +50,9 @@ public class SmartPushVerificationServiceTest {
     }
 
     @Test
-    public void testGetShared() throws Exception {
-        SmartPushVerificationService result = SmartPushVerificationService.getShared(null);
+    public void testSetupSmartPushMFA() throws Exception {
 
-        Assert.assertTrue(result instanceof SmartPushVerificationService);
-    }
-
-    @Test
-    public void testScannedSmartPush() throws Exception {
-
-        smartPushVerificationService.scannedSmartPush("baseurl", "usagePass", "statusId", "AccessToken", new Result<ScannedResponseEntity>() {
-            @Override
-            public void success(ScannedResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-    }
-
-    @Test
-    public void testSetupSmartPush() throws Exception {
-
-        smartPushVerificationService.setupSmartPush("baseurl", "accessToken", "codeChallenge", new SetupSmartPushMFARequestEntity(), new Result<SetupSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.setupSmartPush("baseurl", "accessToken","code",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
             @Override
             public void success(SetupSmartPushMFAResponseEntity result) {
 
@@ -73,9 +66,140 @@ public class SmartPushVerificationServiceTest {
     }
 
     @Test
-    public void testEnrollSmartPush() throws Exception {
+    public void testSetupSmartPushNullMFA() throws Exception {
 
-        smartPushVerificationService.enrollSmartPush("baseurl", "accessToken", new EnrollSmartPushMFARequestEntity(), new Result<EnrollSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.setupSmartPush("", "accessToken","code",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
+            @Override
+            public void success(SetupSmartPushMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
+    public void testSetupSmartPushFAILMFA() throws Exception {
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+        smartPushVerificationService.setupSmartPush("localhost:234235", "accessToken","code",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
+            @Override
+            public void success(SetupSmartPushMFAResponseEntity result) {
+
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+                Timber.e("Success");
+            }
+        });
+
+    }
+
+    @Test
+    public void testScannedSmartPushMFA() throws Exception {
+
+        smartPushVerificationService.scannedSmartPush("baseurl", "Usa","Status","Access",null,new Result<ScannedResponseEntity>() {
+            @Override
+            public void success(ScannedResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+    @Test
+    public void testScannedSmartPushNUllMFA() throws Exception {
+
+        smartPushVerificationService.scannedSmartPush("", "Usa","Status","accessToken",null,new Result<ScannedResponseEntity>() {
+            @Override
+            public void success(ScannedResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
+    public void testScannedSmartPushFAILMFA() throws Exception {
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+
+        smartPushVerificationService.scannedSmartPush("localhost:234235", "Usa","StatusId","accessToken",null, new Result<ScannedResponseEntity>() {
+            @Override
+            public void success(ScannedResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+                Timber.e("Success");
+            }
+        });
+
+    }
+
+
+    @Test
+    public void testEnrollSmartPushMFA() throws Exception {
+
+        smartPushVerificationService.enrollSmartPush("baseurl", "accessToken", new EnrollSmartPushMFARequestEntity(), null,new Result<EnrollSmartPushMFAResponseEntity>() {
+            @Override
+            public void success(EnrollSmartPushMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+    @Test
+    public void testEnrollSmartPushNULLMFA() throws Exception {
+
+        smartPushVerificationService.enrollSmartPush("", "accessToken", new EnrollSmartPushMFARequestEntity(), null,new Result<EnrollSmartPushMFAResponseEntity>() {
             @Override
             public void success(EnrollSmartPushMFAResponseEntity result) {
 
@@ -89,9 +213,43 @@ public class SmartPushVerificationServiceTest {
     }
 
     @Test
+    public void testEnrollSmartPushFAILMFA() throws Exception {
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+
+        smartPushVerificationService.enrollSmartPush("localhost:234235", "accessToken", new EnrollSmartPushMFARequestEntity(),null, new Result<EnrollSmartPushMFAResponseEntity>() {
+            @Override
+            public void success(EnrollSmartPushMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+                Timber.e("Success");
+            }
+        });
+
+    }
+
+    @Test
     public void testInitiateSmartPush() throws Exception {
 
-        smartPushVerificationService.initiateSmartPush("baseurl", "codeChallenge", new InitiateSmartPushMFARequestEntity(), new Result<InitiateSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.initiateSmartPush("baseurl", "sd",new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
             @Override
             public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -105,9 +263,60 @@ public class SmartPushVerificationServiceTest {
     }
 
     @Test
+    public void testInitiateSmartPushNULLMFA() throws Exception {
+
+        smartPushVerificationService.initiateSmartPush("", "sd",new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
+            @Override
+            public void success(InitiateSmartPushMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+    @Test
+    public void testInitiateSmartPushFAILMFA() throws Exception {
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+
+        smartPushVerificationService.initiateSmartPush("localhost:234235", "sd",new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
+            @Override
+            public void success(InitiateSmartPushMFAResponseEntity result) {
+
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+                Timber.e("Success");
+            }
+        });
+
+    }
+
+    @Test
     public void testAuthenticateSmartPush() throws Exception {
 
-        smartPushVerificationService.authenticateSmartPush("baseurl", new AuthenticateSmartPushRequestEntity(), new Result<AuthenticateSmartPushResponseEntity>() {
+        smartPushVerificationService.authenticateSmartPush("baseurl", new AuthenticateSmartPushRequestEntity(),null, new Result<AuthenticateSmartPushResponseEntity>() {
             @Override
             public void success(AuthenticateSmartPushResponseEntity result) {
 
@@ -119,6 +328,59 @@ public class SmartPushVerificationServiceTest {
             }
         });
     }
+
+    @Test
+    public void testAuthenticateSmartPushNULLMFA() throws Exception {
+
+        smartPushVerificationService.authenticateSmartPush("", new AuthenticateSmartPushRequestEntity(),null, new Result<AuthenticateSmartPushResponseEntity>() {
+            @Override
+            public void success(AuthenticateSmartPushResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+    }
+
+
+    @Test
+    public void testAuthenticateSmartPushFAILMFA() throws Exception {
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        Dictionary<String,String> loginproperties=new Hashtable<>();
+        loginproperties.put("DomainURL","localhost:234235");
+        loginproperties.put("ClientId","ClientId");
+        loginproperties.put("RedirectURL","RedirectURL");
+
+
+
+        smartPushVerificationService.authenticateSmartPush("localhost:234235", new AuthenticateSmartPushRequestEntity(),null, new Result<AuthenticateSmartPushResponseEntity>() {
+            @Override
+            public void success(AuthenticateSmartPushResponseEntity result) {
+
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+                Timber.e("Success");
+            }
+        });
+
+    }
+
 }
 
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

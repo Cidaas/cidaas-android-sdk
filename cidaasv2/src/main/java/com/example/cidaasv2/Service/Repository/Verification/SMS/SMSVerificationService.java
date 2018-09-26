@@ -53,15 +53,6 @@ public class SMSVerificationService {
 
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static SMSVerificationService getShared(Context contextFromCidaas )
     {
@@ -80,12 +71,12 @@ public class SMSVerificationService {
 
 
     //setupSMSMFA
-    public void setupSMSMFA(String baseurl, String accessToken, final Result<SetupSMSMFAResponseEntity> callback)
+    public void setupSMSMFA(String baseurl, String accessToken, DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupSMSMFAResponseEntity> callback)
     {
         String setupSMSMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupSMSMFAUrl=baseurl+ URLHelper.getShared().getSetupSMSMFA();
             }
@@ -97,8 +88,15 @@ public class SMSVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -148,8 +146,9 @@ public class SMSVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -174,11 +173,11 @@ public class SMSVerificationService {
     }
 
     //enrollSMSMFA
-    public void enrollSMSMFA(String baseurl, String accessToken, EnrollSMSMFARequestEntity enrollSMSMFARequestEntity, final Result<EnrollSMSMFAResponseEntity> callback){
+    public void enrollSMSMFA(String baseurl, String accessToken, EnrollSMSMFARequestEntity enrollSMSMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<EnrollSMSMFAResponseEntity> callback){
         String enrollSMSMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollSMSMFAUrl=baseurl+URLHelper.getShared().getEnrollSMSMFA();
             }
@@ -190,7 +189,15 @@ public class SMSVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -243,8 +250,9 @@ public class SMSVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -270,11 +278,11 @@ public class SMSVerificationService {
 
 
     //initiateSMSMFA
-    public void initiateSMSMFA(String baseurl, InitiateSMSMFARequestEntity initiateSMSMFARequestEntity, final Result<InitiateSMSMFAResponseEntity> callback){
+    public void initiateSMSMFA(String baseurl, InitiateSMSMFARequestEntity initiateSMSMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<InitiateSMSMFAResponseEntity> callback){
         String initiateSMSMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateSMSMFAUrl=baseurl+URLHelper.getShared().getInitiateSMSMFA();
             }
@@ -286,7 +294,15 @@ public class SMSVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -336,8 +352,9 @@ public class SMSVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -363,11 +380,11 @@ public class SMSVerificationService {
 
 
     //authenticateSMSMFA
-    public void authenticateSMSMFA(String baseurl, AuthenticateSMSRequestEntity authenticateSMSRequestEntity, final Result<AuthenticateSMSResponseEntity> callback){
+    public void authenticateSMSMFA(String baseurl, AuthenticateSMSRequestEntity authenticateSMSRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<AuthenticateSMSResponseEntity> callback){
         String authenticateSMSMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateSMSMFAUrl=baseurl+URLHelper.getShared().getAuthenticateSMSMFA();
             }
@@ -379,7 +396,15 @@ public class SMSVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -431,8 +456,9 @@ public class SMSVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }

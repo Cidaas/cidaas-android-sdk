@@ -43,7 +43,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testSetupFaceMFA() throws Exception {
 
-        faceVerificationService.setupFaceMFA("baseurl", "accessToken", "codeChallenge", new SetupFaceMFARequestEntity(), new Result<SetupFaceMFAResponseEntity>() {
+        faceVerificationService.setupFaceMFA("baseurl", "accessToken", "codeChallenge", new SetupFaceMFARequestEntity(), null,new Result<SetupFaceMFAResponseEntity>() {
             @Override
             public void success(SetupFaceMFAResponseEntity result) {
 
@@ -59,7 +59,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testSetupFaceMFAdd() throws Exception {
 
-        faceVerificationService.setupFaceMFA("", "accessToken", "codeChallenge", new SetupFaceMFARequestEntity(), new Result<SetupFaceMFAResponseEntity>() {
+        faceVerificationService.setupFaceMFA("", "accessToken", "codeChallenge", new SetupFaceMFARequestEntity(), null,new Result<SetupFaceMFAResponseEntity>() {
             @Override
             public void success(SetupFaceMFAResponseEntity result) {
 
@@ -74,7 +74,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testScannedFace() throws Exception {
 
-        faceVerificationService.scannedFace("baseurl", "usagePass", "statusId", "AccessToken", new Result<ScannedResponseEntity>() {
+        faceVerificationService.scannedFace("baseurl", "usagePass", "statusId", "AccessToken", null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -96,7 +96,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testEnrollFace() throws Exception {
 
-        faceVerificationService.enrollFace("baseurl", "accessToken", new EnrollFaceMFARequestEntity(), new Result<EnrollFaceMFAResponseEntity>() {
+        faceVerificationService.enrollFace("baseurl", "accessToken", new EnrollFaceMFARequestEntity(), null,new Result<EnrollFaceMFAResponseEntity>() {
             @Override
             public void success(EnrollFaceMFAResponseEntity result) {
 
@@ -112,7 +112,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testInitiateFace() throws Exception {
 
-        faceVerificationService.initiateFace("baseurl", "codeChallenge", new InitiateFaceMFARequestEntity(), new Result<InitiateFaceMFAResponseEntity>() {
+        faceVerificationService.initiateFace("baseurl", "codeChallenge", new InitiateFaceMFARequestEntity(), null,new Result<InitiateFaceMFAResponseEntity>() {
             @Override
             public void success(InitiateFaceMFAResponseEntity result) {
 
@@ -128,7 +128,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testAuthenticateFace() throws Exception {
 
-        faceVerificationService.authenticateFace("baseurl", new AuthenticateFaceRequestEntity(), new Result<AuthenticateFaceResponseEntity>() {
+        faceVerificationService.authenticateFace("baseurl", new AuthenticateFaceRequestEntity(), null,new Result<AuthenticateFaceResponseEntity>() {
             @Override
             public void success(AuthenticateFaceResponseEntity result) {
 

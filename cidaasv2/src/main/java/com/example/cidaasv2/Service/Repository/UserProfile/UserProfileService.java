@@ -67,7 +67,7 @@ public class UserProfileService {
     }
 
     //Get Internal UserProfile Info
-    public void getInternalUserProfileInfo(String baseurl,String AccessToken,String sub,final Result<UserprofileResponseEntity> callback)
+    public void getInternalUserProfileInfo(String baseurl,String AccessToken,String sub,DeviceInfoEntity deviceInfoEntityFromParam,final Result<UserprofileResponseEntity> callback)
     {
         //Local Variables
         String InternalUserProfileUrl = "";
@@ -88,8 +88,15 @@ public class UserProfileService {
             Map<String, String> headers = new Hashtable<>();
 
             //get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentType);

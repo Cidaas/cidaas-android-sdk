@@ -52,7 +52,7 @@ public class ResetPasswordServiceTest {
     @Test
     public void testInitiateresetPassword() throws Exception {
 
-        resetPasswordService.initiateresetPassword(new ResetPasswordRequestEntity(), "baseurl", new Result<ResetPasswordResponseEntity>() {
+        resetPasswordService.initiateresetPassword(new ResetPasswordRequestEntity(), "baseurl",null , new Result<ResetPasswordResponseEntity>() {
             @Override
             public void success(ResetPasswordResponseEntity result) {
 
@@ -68,7 +68,7 @@ public class ResetPasswordServiceTest {
     @Test
     public void testInitiateresetPasswordnull() throws Exception {
 
-        resetPasswordService.initiateresetPassword(new ResetPasswordRequestEntity(), "", new Result<ResetPasswordResponseEntity>() {
+        resetPasswordService.initiateresetPassword(new ResetPasswordRequestEntity(), "",null , new Result<ResetPasswordResponseEntity>() {
             @Override
             public void success(ResetPasswordResponseEntity result) {
 

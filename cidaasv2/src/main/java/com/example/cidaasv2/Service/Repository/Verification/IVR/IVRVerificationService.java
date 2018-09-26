@@ -57,15 +57,7 @@ public class IVRVerificationService {
             }
         }
 
-        String codeVerifier, codeChallenge;
-        // Generate Code Challenge and Code verifier
-        private void generateChallenge(){
-            OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-            codeVerifier=generator.getCodeVerifier();
-            codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-        }
 
         public static IVRVerificationService getShared(Context contextFromCidaas )
         {
@@ -85,11 +77,11 @@ public class IVRVerificationService {
 
 
         //setupIVRMFA
-    public void setupIVRMFA(String baseurl, String accessToken, final Result<SetupIVRMFAResponseEntity> callback){
+    public void setupIVRMFA(String baseurl, String accessToken,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupIVRMFAResponseEntity> callback){
         String setupIVRMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupIVRMFAUrl=baseurl+ URLHelper.getShared().getSetupIVRMFA();
             }
@@ -101,7 +93,15 @@ public class IVRVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -152,8 +152,9 @@ public class IVRVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -178,11 +179,11 @@ public class IVRVerificationService {
     }
 
     //enrollIVRMFA
-    public void enrollIVRMFA(String baseurl, String accessToken, EnrollIVRMFARequestEntity enrollIVRMFARequestEntity, final Result<EnrollIVRMFAResponseEntity> callback){
+    public void enrollIVRMFA(String baseurl, String accessToken, EnrollIVRMFARequestEntity enrollIVRMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<EnrollIVRMFAResponseEntity> callback){
         String enrollIVRMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollIVRMFAUrl=baseurl+URLHelper.getShared().getEnrollIVRMFA();
             }
@@ -194,7 +195,15 @@ public class IVRVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -247,8 +256,9 @@ public class IVRVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -273,11 +283,11 @@ public class IVRVerificationService {
     }
 
     //initiateIVRMFA
-    public void initiateIVRMFA(String baseurl, InitiateIVRMFARequestEntity initiateIVRMFARequestEntity, final Result<InitiateIVRMFAResponseEntity> callback){
+    public void initiateIVRMFA(String baseurl, InitiateIVRMFARequestEntity initiateIVRMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<InitiateIVRMFAResponseEntity> callback){
             String initiateIVRMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateIVRMFAUrl=baseurl+URLHelper.getShared().getInitiateIVRMFA();
             }
@@ -289,7 +299,15 @@ public class IVRVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -340,8 +358,9 @@ public class IVRVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -367,11 +386,11 @@ public class IVRVerificationService {
 
 
     //authenticateIVRMFA
-    public void authenticateIVRMFA(String baseurl, AuthenticateIVRRequestEntity authenticateIVRRequestEntity, final Result<AuthenticateIVRResponseEntity> callback){
+    public void authenticateIVRMFA(String baseurl, AuthenticateIVRRequestEntity authenticateIVRRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<AuthenticateIVRResponseEntity> callback){
         String authenticateIVRMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateIVRMFAUrl=baseurl+URLHelper.getShared().getAuthenticateIVRMFA();
             }
@@ -383,7 +402,15 @@ public class IVRVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -435,8 +462,9 @@ public class IVRVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }

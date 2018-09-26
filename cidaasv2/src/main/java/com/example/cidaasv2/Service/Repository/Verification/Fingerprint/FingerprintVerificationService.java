@@ -56,17 +56,13 @@ public class FingerprintVerificationService {
         authenticationType="";
         //Todo setValue for authenticationType
 
-    }
-
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
+        if(service==null) {
+            service=new CidaassdkService();
+        }
 
     }
+
+
 
     public static FingerprintVerificationService getShared(Context contextFromCidaas )
     {
@@ -83,13 +79,13 @@ public class FingerprintVerificationService {
         return shared;
     }
 
-    public void scannedFingerprint(String baseurl, String usagePass,String statusId,String AccessToken,
+    public void scannedFingerprint(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
                                    final Result<ScannedResponseEntity> callback)
     {
         String scannedFingerprintUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 scannedFingerprintUrl=baseurl+ URLHelper.getShared().getScannedFingerprintURL();
             }
@@ -101,8 +97,15 @@ public class FingerprintVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -162,8 +165,9 @@ public class FingerprintVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -189,12 +193,12 @@ public class FingerprintVerificationService {
 
 
     //setupFingerprintMFA
-    public void setupFingerprint(String baseurl, String accessToken, String codeChallenge, SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity, final Result<SetupFingerprintMFAResponseEntity> callback)
+    public void setupFingerprint(String baseurl, String accessToken, String codeChallenge, SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupFingerprintMFAResponseEntity> callback)
     {
         String setupFingerprintMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupFingerprintMFAUrl=baseurl+URLHelper.getShared().getSetupFingerprintMFA();
             }
@@ -210,8 +214,15 @@ public class FingerprintVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -275,8 +286,9 @@ public class FingerprintVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -302,13 +314,13 @@ public class FingerprintVerificationService {
 
 
     //enrollFingerprintMFA
-    public void enrollFingerprint(String baseurl, String accessToken, EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity,
+    public void enrollFingerprint(String baseurl, String accessToken, EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                      final Result<EnrollFingerprintMFAResponseEntity> callback)
     {
         String enrollFingerprintMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollFingerprintMFAUrl=baseurl+URLHelper.getShared().getEnrollFingerprintMFA();
             }
@@ -320,8 +332,15 @@ public class FingerprintVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -379,8 +398,9 @@ public class FingerprintVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -405,13 +425,13 @@ public class FingerprintVerificationService {
     }
 
     //initiateFingerprintMFA
-    public void initiateFingerprint(String baseurl,String codeChallenge, InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,
+    public void initiateFingerprint(String baseurl,String codeChallenge, InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                        final Result<InitiateFingerprintMFAResponseEntity> callback)
     {
         String initiateFingerprintMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateFingerprintMFAUrl=baseurl+URLHelper.getShared().getInitiateFingerprintMFA();
             }
@@ -423,7 +443,15 @@ public class FingerprintVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -483,8 +511,9 @@ public class FingerprintVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -510,13 +539,13 @@ public class FingerprintVerificationService {
 
 
     //authenticateFingerprintMFA
-    public void authenticateFingerprint(String baseurl, AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity,
+    public void authenticateFingerprint(String baseurl, AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                            final Result<AuthenticateFingerprintResponseEntity> callback)
     {
         String authenticateFingerprintMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateFingerprintMFAUrl=baseurl+URLHelper.getShared().getAuthenticateFingerprintMFA();
             }
@@ -528,7 +557,16 @@ public class FingerprintVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
+
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -586,8 +624,9 @@ public class FingerprintVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }

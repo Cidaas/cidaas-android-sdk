@@ -107,7 +107,7 @@ public class SmartPushConfigurationController {
                     {
                         //Todo Service call
 
-                        SmartPushVerificationService.getShared(context).setupSmartPush(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupSmartPushMFARequestEntity,new Result<SetupSmartPushMFAResponseEntity>() {
+                        SmartPushVerificationService.getShared(context).setupSmartPush(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupSmartPushMFARequestEntity,null,new Result<SetupSmartPushMFAResponseEntity>() {
                             @Override
                             public void success(final SetupSmartPushMFAResponseEntity setupserviceresult) {
 
@@ -129,12 +129,12 @@ public class SmartPushConfigurationController {
                                         {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    ,null, new Result<ValidateDeviceResponseEntity>() {
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
                                                             // call Scanned Service
                                                             SmartPushVerificationService.getShared(context).scannedSmartPush(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                    accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                    accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                         @Override
                                                                         public void success(final ScannedResponseEntity result) {
                                                                             DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -159,7 +159,7 @@ public class SmartPushConfigurationController {
                                                                             }
 
                                                                             // call Enroll Service
-                                                                            SmartPushVerificationService.getShared(context).enrollSmartPush(baseurl, accessTokenresult.getAccess_token(), enrollSmartPushMFARequestEntity,new Result<EnrollSmartPushMFAResponseEntity>() {
+                                                                            SmartPushVerificationService.getShared(context).enrollSmartPush(baseurl, accessTokenresult.getAccess_token(), enrollSmartPushMFARequestEntity,null,new Result<EnrollSmartPushMFAResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(EnrollSmartPushMFAResponseEntity serviceresult) {
                                                                                     enrollresult.success(serviceresult);
@@ -260,7 +260,7 @@ public class SmartPushConfigurationController {
                 initiateSmartPushMFARequestEntity.setClient_id(clientId);
 
                 //Todo Service call
-                SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge,initiateSmartPushMFARequestEntity,
+                SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge,initiateSmartPushMFARequestEntity,null,
                         new Result<InitiateSmartPushMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -283,7 +283,7 @@ public class SmartPushConfigurationController {
                                     public void onFinish() {
                                         if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
                                             //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier
+                                            DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier,null
                                                     , new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
@@ -293,7 +293,7 @@ public class SmartPushConfigurationController {
                                                             initiateSmartPushMFARequestEntity.setUsage_pass(result.getData().getUsage_pass());
 
 
-                                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge, initiateSmartPushMFARequestEntity,
+                                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge, initiateSmartPushMFARequestEntity,null,
                                                                     new Result<InitiateSmartPushMFAResponseEntity>() {
 
                                                                         @Override
@@ -308,7 +308,7 @@ public class SmartPushConfigurationController {
                                                                                 authenticateSmartPushRequestEntity.setVerifierPassword(result.getData().getRandomNumber());
 
 
-                                                                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,
+                                                                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,null,
                                                                                         new Result<AuthenticateSmartPushResponseEntity>() {
 
                                                                                             @Override
@@ -514,7 +514,7 @@ public class SmartPushConfigurationController {
                                                 @Override
                                                 public void success(ValidateDeviceResponseEntity result) {
                                                     //Todo call Next service
-                                                    scannedSmartPush(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,new Result<ScannedResponseEntity>() {
+                                                    scannedSmartPush(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,null,new Result<ScannedResponseEntity>() {
                                                         @Override
                                                         public void success(ScannedResponseEntity result) {
                                                             Timber.i(result.getData().getUserDeviceId()+"USewr Device id");
@@ -746,7 +746,7 @@ public class SmartPushConfigurationController {
                     enrollSmartPushMFARequestEntity.getStatusId() != null && enrollSmartPushMFARequestEntity.getStatusId()  != null &&
                     baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
                 //Todo Service call
-                OauthService.getShared(context).enrollSmartPushMFA(baseurl, AccessToken, enrollSmartPushMFARequestEntity,new Result<EnrollSmartPushMFAResponseEntity>() {
+                OauthService.getShared(context).enrollSmartPushMFA(baseurl, AccessToken, enrollSmartPushMFARequestEntity,null,new Result<EnrollSmartPushMFAResponseEntity>() {
                     @Override
                     public void success(EnrollSmartPushMFAResponseEntity serviceresult) {
                         result.success(serviceresult);

@@ -64,7 +64,7 @@ public class RegistrationController {
                     registrationSetupRequestEntity.getRequestId() != null && registrationSetupRequestEntity.getRequestId() != ""
                     && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                RegistrationService.getShared(context).getRegistrationSetup(baseurl, registrationSetupRequestEntity,
+                RegistrationService.getShared(context).getRegistrationSetup(baseurl, registrationSetupRequestEntity,null,
                         new Result<RegistrationSetupResponseEntity>() {
                     @Override
                     public void success(RegistrationSetupResponseEntity serviceresult) {
@@ -131,7 +131,7 @@ public class RegistrationController {
                     registerNewUserRequestEntity.getRegistrationEntity() != null &&
                     registerNewUserRequestEntity.getRegistrationEntity().getFamily_name() != "" && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,
+                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,null,
                         new Result<RegisterNewUserResponseEntity>() {
                     @Override
                     public void success(RegisterNewUserResponseEntity serviceresult) {
@@ -181,7 +181,7 @@ public class RegistrationController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 //Todo Service call
-                RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,
+                RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,null,
                         new Result<RegisterUserAccountInitiateResponseEntity>() {
                     @Override
                     public void success(RegisterUserAccountInitiateResponseEntity serviceresult) {
@@ -223,7 +223,7 @@ public class RegistrationController {
                 registrationEntity.setAccvid(accvid);
 
                 //Todo Service call
-                RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity,
+                RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity,null,
                         new Result<RegisterUserAccountVerifyResponseEntity>() {
                     @Override
                     public void success(RegisterUserAccountVerifyResponseEntity serviceresult) {

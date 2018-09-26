@@ -59,7 +59,7 @@ public class ResetPasswordController {
 
             if(resetPasswordRequestEntity.getRequestId() != null &&resetPasswordRequestEntity.getRequestId()  != ""
                     && baseurl != null && !baseurl.equals("")){
-                ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl,
+                ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl,null,
                         new Result<ResetPasswordResponseEntity>() {
 
                     @Override

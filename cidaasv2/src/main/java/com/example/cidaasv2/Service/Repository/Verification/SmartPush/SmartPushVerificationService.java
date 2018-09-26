@@ -63,15 +63,7 @@ public class SmartPushVerificationService {
         }
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static SmartPushVerificationService getShared(Context contextFromCidaas )
     {
@@ -88,13 +80,13 @@ public class SmartPushVerificationService {
         return shared;
     }
 
-    public void scannedSmartPush(String baseurl, String usagePass,String statusId,String AccessToken,
+    public void scannedSmartPush(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
                                  final Result<ScannedResponseEntity> callback)
     {
         String scannedSmartPushUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 scannedSmartPushUrl=baseurl+ URLHelper.getShared().getScannedSmartPushURL();
             }
@@ -106,8 +98,15 @@ public class SmartPushVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -167,8 +166,9 @@ public class SmartPushVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -194,12 +194,12 @@ public class SmartPushVerificationService {
 
 
     //setupSmartPushMFA
-    public void setupSmartPush(String baseurl, String accessToken, String codeChallenge, SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity, final Result<SetupSmartPushMFAResponseEntity> callback)
+    public void setupSmartPush(String baseurl, String accessToken, String codeChallenge, SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupSmartPushMFAResponseEntity> callback)
     {
         String setupSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupSmartPushMFAUrl=baseurl+URLHelper.getShared().getSetupSmartPushMFA();
             }
@@ -215,7 +215,15 @@ public class SmartPushVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -281,8 +289,9 @@ public class SmartPushVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -308,12 +317,12 @@ public class SmartPushVerificationService {
 
 
     //enrollSmartPushMFA
-    public void enrollSmartPush(String baseurl, String accessToken, EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity, final Result<EnrollSmartPushMFAResponseEntity> callback)
+    public void enrollSmartPush(String baseurl, String accessToken, EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<EnrollSmartPushMFAResponseEntity> callback)
     {
         String enrollSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollSmartPushMFAUrl=baseurl+URLHelper.getShared().getEnrollSmartPushMFA();
             }
@@ -325,7 +334,15 @@ public class SmartPushVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -388,8 +405,9 @@ public class SmartPushVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -415,12 +433,12 @@ public class SmartPushVerificationService {
 
 
     //initiateSmartPushMFA
-    public void initiateSmartPush(String baseurl, String codeChallenge, final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity, final Result<InitiateSmartPushMFAResponseEntity> callback)
+    public void initiateSmartPush(String baseurl, String codeChallenge, final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateSmartPushMFAResponseEntity> callback)
     {
         String initiateSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateSmartPushMFAUrl=baseurl+URLHelper.getShared().getInitiateSmartPushMFA();
             }
@@ -432,7 +450,15 @@ public class SmartPushVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -495,8 +521,9 @@ public class SmartPushVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -549,13 +576,13 @@ public class SmartPushVerificationService {
 
 
     //authenticateSmartPushMFA
-    public void authenticateSmartPush(String baseurl, AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity,
+    public void authenticateSmartPush(String baseurl, AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                          final Result<AuthenticateSmartPushResponseEntity> callback)
     {
         String authenticateSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateSmartPushMFAUrl=baseurl+URLHelper.getShared().getAuthenticateSmartPushMFA();
             }
@@ -567,7 +594,15 @@ public class SmartPushVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -626,8 +661,9 @@ public class SmartPushVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }

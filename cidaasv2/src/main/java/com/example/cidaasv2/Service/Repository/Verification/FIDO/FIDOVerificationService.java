@@ -45,16 +45,16 @@ public class FIDOVerificationService {
 
     public static FIDOVerificationService getShared(Context contextFromCidaas )
     {
-        try {
+       // try {
 
             if (shared == null) {
                 shared = new FIDOVerificationService(contextFromCidaas);
             }
-        }
-        catch (Exception e)
+        //}
+       /* catch (Exception e)
         {
             Timber.i(e.getMessage());
-        }
+        }*/
         return shared;
     }/*
     public void scannedFIDO(String baseurl, String usagePass,String statusId,String AccessToken,

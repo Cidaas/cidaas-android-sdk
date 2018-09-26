@@ -57,15 +57,7 @@ public class EmailVerificationService {
         }
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static EmailVerificationService getShared(Context contextFromCidaas )
     {
@@ -83,11 +75,11 @@ public class EmailVerificationService {
     }
 
     //setupemailMFA
-    public void setupEmailMFA(String baseurl, String accessToken, final Result<SetupEmailMFAResponseEntity> callback){
+    public void setupEmailMFA(String baseurl, String accessToken,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupEmailMFAResponseEntity> callback){
         String setupEmailMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupEmailMFAUrl=baseurl+ URLHelper.getShared().getSetupEmailMFA();
             }
@@ -99,8 +91,15 @@ public class EmailVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -150,8 +149,9 @@ public class EmailVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -169,18 +169,19 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
+            Timber.e("acceptConsent Service exception"+e.getMessage());
             LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+
         }
     }
 
     //enrollemailMFA
-    public void enrollEmailMFA(String baseurl, String accessToken, EnrollEmailMFARequestEntity enrollEmailMFARequestEntity, final Result<EnrollEmailMFAResponseEntity> callback){
+    public void enrollEmailMFA(String baseurl, String accessToken, EnrollEmailMFARequestEntity enrollEmailMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<EnrollEmailMFAResponseEntity> callback){
         String enrollEmailMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollEmailMFAUrl=baseurl+URLHelper.getShared().getEnrollEmailMFA();
             }
@@ -192,8 +193,15 @@ public class EmailVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -245,8 +253,9 @@ public class EmailVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -264,19 +273,20 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
+            Timber.e("acceptConsent Service exception"+e.getMessage());
             LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+
         }
     }
 
 
     //initiateemailMFA
-    public void initiateEmailMFA(String baseurl, InitiateEmailMFARequestEntity initiateEmailMFARequestEntity, final Result<InitiateEmailMFAResponseEntity> callback){
+    public void initiateEmailMFA(String baseurl, InitiateEmailMFARequestEntity initiateEmailMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateEmailMFAResponseEntity> callback){
         String initiateEmailMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateEmailMFAUrl=baseurl+URLHelper.getShared().getInitiateemailMFA();
             }
@@ -288,8 +298,15 @@ public class EmailVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -338,8 +355,9 @@ public class EmailVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -358,18 +376,19 @@ public class EmailVerificationService {
         catch (Exception e)
         {
             LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+
         }
     }
 
 
     //authenticateemailMFA
-    public void authenticateEmailMFA(String baseurl, AuthenticateEmailRequestEntity authenticateEmailRequestEntity, final Result<AuthenticateEmailResponseEntity> callback){
+    public void authenticateEmailMFA(String baseurl, AuthenticateEmailRequestEntity authenticateEmailRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<AuthenticateEmailResponseEntity> callback){
         String authenticateemailMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateemailMFAUrl=baseurl+URLHelper.getShared().getAuthenticateemailMFA();
             }
@@ -381,8 +400,15 @@ public class EmailVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -432,8 +458,9 @@ public class EmailVerificationService {
                                     commonErrorEntity.getError()));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null));
+
                         }
                         Timber.e("response"+response.message());
                     }

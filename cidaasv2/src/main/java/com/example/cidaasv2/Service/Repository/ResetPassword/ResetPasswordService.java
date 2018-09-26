@@ -70,7 +70,7 @@ public class ResetPasswordService {
         return shared;
     }
 
-    public void initiateresetPassword(ResetPasswordRequestEntity resetPasswordRequestEntity, String baseurl, final Result<ResetPasswordResponseEntity> callback)
+    public void initiateresetPassword(ResetPasswordRequestEntity resetPasswordRequestEntity, String baseurl,DeviceInfoEntity deviceInfoEntityFromParam, final Result<ResetPasswordResponseEntity> callback)
     {
         //Local Variables
         String resetpasswordUrl = "";
@@ -90,8 +90,15 @@ public class ResetPasswordService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);

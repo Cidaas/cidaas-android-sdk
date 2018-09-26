@@ -100,7 +100,7 @@ public class FaceConfigurationController {
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
-                        FaceVerificationService.getShared(context).setupFaceMFA(baseurl, accessTokenresult.getAccess_token(),codeChallenge,setupFaceMFARequestEntity,
+                        FaceVerificationService.getShared(context).setupFaceMFA(baseurl, accessTokenresult.getAccess_token(),codeChallenge,setupFaceMFARequestEntity,null,
                                 new Result<SetupFaceMFAResponseEntity>() {
                                     @Override
                                     public void success(final SetupFaceMFAResponseEntity setupserviceresult) {
@@ -122,12 +122,12 @@ public class FaceConfigurationController {
                                                 {
                                                     //Device Validation Service
                                                     DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
-                                                            , new Result<ValidateDeviceResponseEntity>() {
+                                                    ,null , new Result<ValidateDeviceResponseEntity>() {
                                                                 @Override
                                                                 public void success(ValidateDeviceResponseEntity result) {
                                                                     // call Scanned Service
                                                                     FaceVerificationService.getShared(context).scannedFace(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                            accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                            accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(final ScannedResponseEntity result) {
                                                                                     DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -146,7 +146,7 @@ public class FaceConfigurationController {
                                                                                     }
 
                                                                                     // call Enroll Service
-                                                                                    FaceVerificationService.getShared(context).enrollFace(baseurl, accessTokenresult.getAccess_token(), enrollFaceMFARequestEntity,new Result<EnrollFaceMFAResponseEntity>() {
+                                                                                    FaceVerificationService.getShared(context).enrollFace(baseurl, accessTokenresult.getAccess_token(), enrollFaceMFARequestEntity,null,new Result<EnrollFaceMFAResponseEntity>() {
                                                                                         @Override
                                                                                         public void success(EnrollFaceMFAResponseEntity serviceresult) {
                                                                                             enrollresult.success(serviceresult);
@@ -241,7 +241,7 @@ public class FaceConfigurationController {
                     initiateFaceMFARequestEntity.getUserDeviceId() != null && initiateFaceMFARequestEntity.getUserDeviceId() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                FaceVerificationService.getShared(context).initiateFace(baseurl, codeChallenge,initiateFaceMFARequestEntity,
+                FaceVerificationService.getShared(context).initiateFace(baseurl, codeChallenge,initiateFaceMFARequestEntity,null,
                         new Result<InitiateFaceMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -267,14 +267,14 @@ public class FaceConfigurationController {
                                         if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    , null,new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
 
                                                             //Todo call initiate
                                                             initiateFaceMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
-                                                            FaceVerificationService.getShared(context).initiateFace(baseurl, codeChallenge, initiateFaceMFARequestEntity,
+                                                            FaceVerificationService.getShared(context).initiateFace(baseurl, codeChallenge, initiateFaceMFARequestEntity,null,
                                                                     new Result<InitiateFaceMFAResponseEntity>() {
 
                                                                         @Override
@@ -288,7 +288,7 @@ public class FaceConfigurationController {
                                                                                 authenticateFaceRequestEntity.setImagetoSend(faceImageFile);
 
 
-                                                                                FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity, new Result<AuthenticateFaceResponseEntity>() {
+                                                                                FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity,null, new Result<AuthenticateFaceResponseEntity>() {
                                                                                     @Override
                                                                                     public void success(AuthenticateFaceResponseEntity result) {
                                                                                         //Todo Call Resume with Login Service
