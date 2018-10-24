@@ -1,10 +1,12 @@
 package com.example.cidaasv2.Controller;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
@@ -34,6 +36,7 @@ import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPConfigu
 import com.example.cidaasv2.Controller.Repository.Configuration.Voice.VoiceConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
+import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.MFASettings.MFAListSettingsController;
 import com.example.cidaasv2.Controller.Repository.Registration.RegistrationController;
@@ -62,6 +65,7 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResul
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
@@ -126,6 +130,9 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 
+import org.w3c.dom.Document;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -134,11 +141,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import io.card.payment.CardIOActivity;
 import timber.log.Timber;
 
 import static android.content.Context.KEYGUARD_SERVICE;
 import static android.os.Build.MODEL;
 import static android.os.Build.VERSION;
+import static io.card.payment.CardIOActivity.RESULT_SCAN_SUPPRESSED;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -146,6 +155,7 @@ import static android.os.Build.VERSION;
 
 public class Cidaas implements IOAuthWebLogin{
 
+    private static final int MY_SCAN_REQUEST_CODE = 3;
     public Context context;
 
 
@@ -217,8 +227,10 @@ public class Cidaas implements IOAuthWebLogin{
 
     public Cidaas(Context yourContext) {
         this.context=yourContext;
+
         //Initialise Shared Preferences
         DBHelper.setConfig(context);
+
         //Default Value;
         ENABLE_PKCE=true;
 
@@ -227,22 +239,6 @@ public class Cidaas implements IOAuthWebLogin{
 
         //Set Callback Null;
         logincallback=null;
-
-
-        //generateChallenge();
-
-        //String token = FirebaseInstanceId.getInstance().getToken();
-
-       /* if (Build.VERSION.SDK_INT >= 23) {
-            if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED) {
-
-            } else {
-              //  ActivityCompat.requestPermissions(yourContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 209);
-
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-
-        }*/
 
 
         //Add Device info
@@ -255,43 +251,35 @@ public class Cidaas implements IOAuthWebLogin{
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
 
-
-      /*  checkSavedProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> stringresult) {
-                 baseurlArray[0] = stringresult.get("DomainURL");
-                 clientId[0] =stringresult.get("ClientId");
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });*/
-
     }
 
-    //Get Request Id By passing loginProperties as an Object
-        // 1. Read properties from file
-        // 2. Call request id from dictionary method
-        // 3. Maintain logs based on flags
-
+    //Set FCM Token For Update
     public void setFCMToken(String FCMToken){
+
         //Store Device info for Later Purposes
         DBHelper.getShared().setFCMToken(FCMToken);
 
     }
 
-
+    //Get the remote messages from the Push notification
     public static void setremoteMessage(Map<String, String> instanceIdFromPush)
     {
-        if(instanceIdFromPush.get("intermediate_verifiation_id")!=null && instanceIdFromPush.get("intermediate_verifiation_id")!="") {
-            instanceId=instanceIdFromPush.get("intermediate_verifiation_id");
-        }
+       try {
+           if (instanceIdFromPush.get("intermediate_verifiation_id") != null && instanceIdFromPush.get("intermediate_verifiation_id") != "") {
+               instanceId = instanceIdFromPush.get("intermediate_verifiation_id");
+           } else {
+               instanceId = "";
+           }
+       }
+       catch (Exception e)
+       {
+           String loggerMessage = "Set remote Message : "+" Error Message - " + e.getMessage();
+           LogFile.addRecordToLog(loggerMessage);
+       }
 
     }
 
-
+// Get the instance ID
     public String getInstanceId(){
         if(instanceId!=null && instanceId!=""){
             return instanceId;
@@ -300,6 +288,12 @@ public class Cidaas implements IOAuthWebLogin{
             return null;
         }
     }
+
+
+    //Get Request Id By passing loginProperties as an Object
+    // 1. Read properties from file
+    // 2. Call request id from dictionary method
+    // 3. Maintain logs based on flags
 
     // -----------------------------------------------------***** REQUEST ID *****---------------------------------------------------------------
 
@@ -364,13 +358,35 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     //Get Request Id without passing any value
+
+
+
+    public void getRequestId(final Dictionary<String,String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult)
+    {
+        try
+        {
+            RequestIdController.getShared(context).getRequestId(loginproperties,Primaryresult);
+        }
+        catch (Exception e)
+        {
+
+            String loggerMessage = "Request-Id  failure : " + "Error Code - "
+                    +400 + ", Error Message - " + e.getMessage() + ", Status Code - " +  400;
+            LogFile.addRecordToLog(loggerMessage);
+            Timber.e(e.getMessage());
+
+        }
+    }
+
+
+
     @Override
     public void getRequestId(final Result<AuthRequestResponseEntity> resulttoReturn)
     {
         try {
 
             //Todo Check in saved file
-             final Dictionary<String,String> loginProperties= DBHelper.getShared().getLoginProperties();
+             final Dictionary<String,String> loginProperties= null;
              if(loginProperties!=null && !loginProperties.isEmpty() && loginProperties.size()>0 ){
                  //check here for already saved properties
                  checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
@@ -1519,6 +1535,7 @@ loginresult.failure(error);
                     String baseurl = savedProperties.get("DomainURL");
 
 
+
                     if ( sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
                         String logoUrl= "https://docs.cidaas.de/assets/logoss.png";
@@ -2358,7 +2375,7 @@ loginresult.failure(error);
 
 
 
-    // ****** TODO LOGIN WITH voice *****-------------------------------------------------------------------------------------------------------
+    // ******  LOGIN WITH voice *****-------------------------------------------------------------------------------------------------------
 
 
 
@@ -2503,7 +2520,102 @@ loginresult.failure(error);
     }
 
 
-    // ****** TODO LOGIN WITH FACE *****-------------------------------------------------------------------------------------------------------
+    //-----------------Scan the ID card----------------------------------------------------------------------------------
+
+
+
+    public void startDocumentScanner(Activity activity){
+        Intent scanIntent = new Intent(context, CardIOActivity.class);
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN,true); // supmit cuando termine de reconocer el documento
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY,true); // esconder teclado
+        scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO,true); // cambiar logo de paypal por el de card.io
+        scanIntent.putExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE,true); // capture img
+        scanIntent.putExtra(CardIOActivity.EXTRA_CAPTURED_CARD_IMAGE,true); // capturar img
+
+        // laszar activity
+        activity.startActivityForResult(scanIntent, MY_SCAN_REQUEST_CODE);
+
+    }
+
+
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data,Result<File> result)
+    {
+
+        try {
+            if (requestCode == MY_SCAN_REQUEST_CODE || requestCode == RESULT_SCAN_SUPPRESSED) {
+
+                Bitmap card = CardIOActivity.getCapturedCardImage(data);
+
+
+                if (card != null) {
+
+                  File imagefile= DocumentScannnerController.getShared(context).convertImageJpeg(card);
+
+                    // Intent intent=new Intent(this, IdCardScannerActivity.class);
+                    //intent.putExtra("image",byteArray);
+                    //startActivity(intent);
+
+
+                   //return imagefile;
+
+                    result.success(imagefile);
+                }
+                else
+                {
+                    result.failure(new WebAuthError(context).customException(401," no document found",417));
+                }
+
+            }
+        }
+        catch (Exception e)
+        {
+          result.failure(new WebAuthError(context).customException(401,"Bad document or no document",417));
+        }
+    }
+
+    // ****** LOGIN WITH Document *****-------------------------------------------------------------------------------------------------------
+
+         public void loginWithDocument(final File photo, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+             try {
+
+                 if(photo!=null) {
+
+                     checkSavedProperties(new Result<Dictionary<String, String> >() {
+                         @Override
+                         public void success(Dictionary<String, String>  result) {
+                             String baseurl = savedProperties.get("DomainURL");
+
+                             if ( baseurl != null && !baseurl.equals("")) {
+
+                                 DocumentScannnerController.getShared(context).sendtoServicecall(baseurl,photo,resultEntityResult);
+
+                             }
+                             else {
+                                 resultEntityResult.failure(WebAuthError.getShared(context).customException(417,"BaseURL must not be null",417));
+                             }
+                         }
+
+                         @Override
+                         public void failure(WebAuthError error) {
+
+                             resultEntityResult.failure(error);
+                         }
+                     });
+                 }
+                 else {
+                     resultEntityResult.failure(WebAuthError.getShared(context).customException(417,"Photo must not be null",417));
+                 }
+             }
+             catch (Exception e){
+                 resultEntityResult.failure(WebAuthError.getShared(context).customException(417,"Unexpected Error :"+e.getMessage(),417));
+             }
+         }
+
+
+    // ****** GET REGISTERATION *****-------------------------------------------------------------------------------------------------------
+
 
 
     @Override
@@ -3293,11 +3405,6 @@ loginresult.failure(error);
     }
 
 
-
-    /*
-    public void getUserInfo(@NonNull String AccessToken,)*/
-    //To Open Browser
-
     public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain)
     {
         try {
@@ -3332,9 +3439,6 @@ loginresult.failure(error);
             Timber.d(e.getMessage());// TODO: Handle Exception
         }
     }
-
-
-
 
 
     //Todo sConsult and Create a  new Resume if the loginCallback is null
@@ -3681,45 +3785,6 @@ loginresult.failure(error);
             }
         });
     }
-
-/*
-    //To Show Loader
-    private void showLoader(){
-       try {
-
-
-           if (loader != null) {
-               // handle already running
-               if (!displayLoader) {
-                   loader.showLoader();
-                   displayLoader = true;
-               }
-           }
-       }
-       catch (Exception e)
-       {
-           //Todo Handle Exception
-       }
-
-    }
-    //To Hide Loader
-    private void hideLoader() {
-        try {
-            if (loader != null) {
-                //handle already hiding
-                if (displayLoader) {
-                    loader.hideLoader();
-                    displayLoader = false;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Timber.d(ex.getMessage());  //Todo handle Exception
-        }
-    }
-*/
-
 
     //Resume After open App From Broswer
     public void resume(String code)/*,Result<AccessTokenEntity>... callbacktoMain*/

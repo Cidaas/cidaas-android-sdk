@@ -201,18 +201,10 @@ public class EnrollPattern extends AppCompatActivity {
 
     public void SetupFace(View view)
     {
-  /*      cidaas.setupFaceMFA(sub, new Result<SetupFaceMFAResponseEntity>() {
-            @Override
-            public void success(SetupFaceMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Success push", Toast.LENGTH_SHORT).show();
-            }
+       Intent intent=new Intent(getApplicationContext(),FaceDetection.class);
+       startActivity(intent);
 
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Fails push "+error.ErrorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-*/
+
     }
 
     public void EnrollFace(View view){
@@ -224,7 +216,7 @@ try {
     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 201);
   FileOutputStream out;
 
-    Drawable drawable = getApplicationContext().getResources().getDrawable(R.drawable.raja);
+    Drawable drawable = getApplicationContext().getResources().getDrawable(R.drawable.sample);
 // convert drawable to bitmap
 
     Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();

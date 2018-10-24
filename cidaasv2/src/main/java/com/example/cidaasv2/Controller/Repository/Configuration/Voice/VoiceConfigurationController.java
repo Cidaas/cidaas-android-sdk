@@ -53,7 +53,7 @@ public class VoiceConfigurationController {
 
     }
 
-    String codeVerifier, codeChallenge;
+    String codeVerifier="", codeChallenge="";
     // Generate Code Challenge and Code verifier
     public void generateChallenge(){
         OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
@@ -92,7 +92,7 @@ public class VoiceConfigurationController {
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
                 //Todo Service call
 
-                if(codeChallenge==null){
+                if(codeChallenge==null || codeChallenge==""){
                     generateChallenge();
                 }
 

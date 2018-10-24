@@ -82,6 +82,15 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
 
 
+    ///For ID card Scannner
+    compile 'io.card:android-sdk:5.5.1'
+
+    //Google Vision For Camera 2
+    compile 'com.google.android.gms:play-services-vision:11.8.0'
+
+
+
+
 
 
 }

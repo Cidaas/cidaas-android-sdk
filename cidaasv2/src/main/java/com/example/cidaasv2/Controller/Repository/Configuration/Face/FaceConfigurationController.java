@@ -53,7 +53,7 @@ public class FaceConfigurationController {
 
     }
 
-    String codeVerifier, codeChallenge;
+    String codeVerifier="", codeChallenge="";
     // Generate Code Challenge and Code verifier
     public void generateChallenge(){
         OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
@@ -92,7 +92,7 @@ public class FaceConfigurationController {
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
                 //Todo Service call
 
-                if(codeChallenge==null){
+                if(codeChallenge==null || codeChallenge==""){
                     generateChallenge();
                 }
 
@@ -100,6 +100,7 @@ public class FaceConfigurationController {
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
+
                         FaceVerificationService.getShared(context).setupFaceMFA(baseurl, accessTokenresult.getAccess_token(),codeChallenge,setupFaceMFARequestEntity,null,
                                 new Result<SetupFaceMFAResponseEntity>() {
                                     @Override
@@ -146,7 +147,8 @@ public class FaceConfigurationController {
                                                                                     }
 
                                                                                     // call Enroll Service
-                                                                                    FaceVerificationService.getShared(context).enrollFace(baseurl, accessTokenresult.getAccess_token(), enrollFaceMFARequestEntity,null,new Result<EnrollFaceMFAResponseEntity>() {
+                                                                                    FaceVerificationService.getShared(context).
+                                                                                            enrollFace(baseurl, accessTokenresult.getAccess_token(), enrollFaceMFARequestEntity,null,new Result<EnrollFaceMFAResponseEntity>() {
                                                                                         @Override
                                                                                         public void success(EnrollFaceMFAResponseEntity serviceresult) {
                                                                                             enrollresult.success(serviceresult);
@@ -237,10 +239,15 @@ public class FaceConfigurationController {
                 generateChallenge();
             }
             Cidaas.instanceId="";
-            if (    initiateFaceMFARequestEntity.getUsageType() != null && initiateFaceMFARequestEntity.getUsageType() != "" &&
+            if ( initiateFaceMFARequestEntity.getUsageType() != null && initiateFaceMFARequestEntity.getUsageType() != "" &&
                     initiateFaceMFARequestEntity.getUserDeviceId() != null && initiateFaceMFARequestEntity.getUserDeviceId() != ""&&
+                   clientId != null && clientId != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
+
+
+                initiateFaceMFARequestEntity.setClient_id(clientId);
+
                 FaceVerificationService.getShared(context).initiateFace(baseurl, codeChallenge,initiateFaceMFARequestEntity,null,
                         new Result<InitiateFaceMFAResponseEntity>() {
 

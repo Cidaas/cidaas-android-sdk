@@ -77,7 +77,7 @@ public class DeviceVerificationService {
         String validateDeviceUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 validateDeviceUrl=baseurl+ URLHelper.getShared().getValidateDeviceURL();
             }

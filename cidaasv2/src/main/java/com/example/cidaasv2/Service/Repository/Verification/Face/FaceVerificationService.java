@@ -217,7 +217,7 @@ public class FaceVerificationService {
         String scannedFaceUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 scannedFaceUrl=baseurl+URLHelper.getShared().getScannedFaceURL();
             }
@@ -332,7 +332,7 @@ public class FaceVerificationService {
     {
         String enrollFaceMFAUrl="";
         try {
-            if (baseurl != null || baseurl != "") {
+            if (baseurl != null && baseurl != "") {
                 //Construct URL For RequestId
                 enrollFaceMFAUrl = baseurl + URLHelper.getShared().getEnrollFaceMFA();
             } else {
@@ -360,15 +360,15 @@ public class FaceVerificationService {
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
-                /// deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
+                //deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
             }
             enrollFaceMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
+            headers.put("Content-Type", URLHelper.contentType);
             headers.put("user-agent", "cidaas-android");
             headers.put("access_token", accessToken);
             headers.put("verification_api_version","2");
@@ -389,7 +389,7 @@ public class FaceVerificationService {
             Bitmap finalimg = BitmapFactory.decodeFile(enrollFaceMFARequestEntity.getImagetoSend().getAbsolutePath());
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollFaceMFARequestEntity.getImagetoSend());
-            MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "cidaas_face.jpg", requestFile);
+            MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "cidaas.png", requestFile);
 
             if (enrollFaceMFARequestEntity.getImagetoSend().exists())
             {
@@ -471,7 +471,7 @@ public class FaceVerificationService {
         String initiateFaceMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateFaceMFAUrl=baseurl+URLHelper.getShared().getInitiateFaceMFA();
             }
@@ -579,7 +579,7 @@ public class FaceVerificationService {
         String authenticateFaceMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateFaceMFAUrl=baseurl+URLHelper.getShared().getAuthenticateFaceMFA();
             }

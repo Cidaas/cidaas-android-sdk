@@ -115,6 +115,13 @@ public class URLHelper {
 
     String registerdeduplication="/users-srv/deduplication/register/";
 
+    String documentScanner="/access-control-srv/ocr/validate";
+
+
+    public String getDocumentScanner() {
+        return documentScanner;
+    }
+
     public String getMfaList() {
         return mfaList;
     }

@@ -18,11 +18,14 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
+import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.File;
 
 import timber.log.Timber;
 
@@ -124,6 +127,10 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     private void getFCMToken() {
         String token = FirebaseInstanceId.getInstance().getToken();
       cidaas.setFCMToken(token);
+
+
+
+
         Timber.i("FCM TOKEN" + token);
         Toast.makeText(this, "Token"+token, Toast.LENGTH_SHORT).show();
         // save device info
@@ -177,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             Log.d("receiver", "Got message: " + message);
         }
     };
+
 
 
 
@@ -253,5 +261,40 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
+    }
+
+
+    public void documentScanner(View view)
+    {
+        cidaas.startDocumentScanner(this);
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        cidaas.onActivityResult(requestCode, resultCode, data, new Result<File>() {
+            @Override
+            public void success(File result) {
+                cidaas.loginWithDocument(result, new Result<DocumentScannerServiceResultEntity>() {
+                    @Override
+                    public void success(DocumentScannerServiceResultEntity result) {
+                        Toast.makeText(MainActivity.this, "HI "+result.getData().getName(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

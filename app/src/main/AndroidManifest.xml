@@ -3,6 +3,9 @@
     package="com.example.widasrnarayanan.cidaas_sdk_androidv2">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -48,20 +51,22 @@
             android:name=".FCM.MyFirebaseInstanceIDService"
             android:enabled="true"
             android:exported="true">
-        <intent-filter>
-        <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-    </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
         </service>
         <service
             android:name=".FCM.MyFirebaseMessagingService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <activity android:name=".EnrollMFA.EnrollPattern"></activity>
+        <activity android:name=".EnrollMFA.EnrollPattern" />
+        <activity android:name=".EnrollMFA.EnrollFace" />
+        <activity android:name=".EnrollMFA.FaceDetection"></activity>
     </application>
 
 </manifest>
