@@ -202,6 +202,7 @@ public class FileHelper {
                 loginProperties.put("DomainURL", DomainUrl);
                 loginProperties.put("RedirectURL", RedirectURL);
                 loginProperties.put("ClientSecret",ClientSecret);
+                loginProperties.put("ClientSecret",ClientSecret);
 
                 callback.success(loginProperties);
             } else {

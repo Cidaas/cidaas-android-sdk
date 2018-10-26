@@ -412,11 +412,11 @@ public class OauthService {
             }
 
 
-            querymap.put("UserInfoURL",loginProperties.get("UserInfoURL"));
+         //   querymap.put("UserInfoURL",loginProperties.get("UserInfoURL"));
 
             //Assign Url
             //TOdo Perform Null Check
-            url = querymap.get("UserInfoURL");
+            url = loginProperties.get("DomainURL")+URLHelper.getShared().getUserInfoURL();
 
             //call Service
             ICidaasSDKService cidaassdkService = service.getInstance();

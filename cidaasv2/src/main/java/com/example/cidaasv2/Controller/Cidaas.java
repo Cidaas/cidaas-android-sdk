@@ -21,6 +21,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.ChangePassword.ChangePasswordController;
 import com.example.cidaasv2.Controller.Repository.Client.ClientController;
@@ -43,6 +44,7 @@ import com.example.cidaasv2.Controller.Repository.Registration.RegistrationContr
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordController;
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
+import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
@@ -58,6 +60,7 @@ import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
+import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -153,21 +156,21 @@ import static io.card.payment.CardIOActivity.RESULT_SCAN_SUPPRESSED;
  * Created by widasrnarayanan on 16/1/18.
  */
 
-public class Cidaas implements IOAuthWebLogin{
+public class Cidaas implements IOAuthWebLogin {
 
     private static final int MY_SCAN_REQUEST_CODE = 3;
     public Context context;
 
 
-    public  static String instanceId="";
+    public static String instanceId = "";
     public static ICustomLoader loader;
-    public static String baseurl="";
+    public static String baseurl = "";
 
     public RegistrationSetupResultDataEntity[] registerFields;
 
     CountDownTimer countDownTimer;
 
-    public WebAuthError webAuthError=null;
+    public WebAuthError webAuthError = null;
 
 
     public String loginURL;
@@ -175,26 +178,24 @@ public class Cidaas implements IOAuthWebLogin{
     public Result<AccessTokenEntity> logincallback;
 
 
-//saved Properties for Global Access
+    //saved Properties for Global Access
     Dictionary<String, String> savedProperties;
 
-//To check the Loader
+    //To check the Loader
     private boolean displayLoader = false;
 
     //Todo Confirm it must be a static one
     //Extra parameter that is passed in URL
-    public static HashMap<String,String> extraParams=new HashMap<>();
+    public static HashMap<String, String> extraParams = new HashMap<>();
 
 //Create a Shared Instance
 
-   private static Cidaas cidaasInstance;
+    private static Cidaas cidaasInstance;
 
 
-    public static Cidaas getInstance(Context context)
-    {
-        if(cidaasInstance==null)
-        {
-            cidaasInstance=new Cidaas(context);
+    public static Cidaas getInstance(Context context) {
+        if (cidaasInstance == null) {
+            cidaasInstance = new Cidaas(context);
         }
 
         return cidaasInstance;
@@ -202,7 +203,7 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     public boolean isENABLE_PKCE() {
-       ENABLE_PKCE=DBHelper.getShared().getEnablePKCE();
+        ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
         return ENABLE_PKCE;
     }
 
@@ -226,24 +227,24 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     public Cidaas(Context yourContext) {
-        this.context=yourContext;
+        this.context = yourContext;
 
         //Initialise Shared Preferences
         DBHelper.setConfig(context);
 
         //Default Value;
-        ENABLE_PKCE=true;
+        ENABLE_PKCE = true;
 
         //Default Log Value
-        ENABLE_LOG=false;
+        ENABLE_LOG = false;
 
         //Set Callback Null;
-        logincallback=null;
+        logincallback = null;
 
 
         //Add Device info
-        deviceInfoEntity=new DeviceInfoEntity();
-        deviceInfoEntity.setDeviceId(Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID));
+        deviceInfoEntity = new DeviceInfoEntity();
+        deviceInfoEntity.setDeviceId(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         deviceInfoEntity.setDeviceModel(MODEL);
         deviceInfoEntity.setDeviceVersion(String.valueOf(VERSION.RELEASE));
         deviceInfoEntity.setDeviceMake(Build.MANUFACTURER);
@@ -251,10 +252,26 @@ public class Cidaas implements IOAuthWebLogin{
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
 
+
+        saveLoginProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                savedProperties=result;
+                DBHelper.getShared().addLoginProperties(result);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+
+
+
     }
 
     //Set FCM Token For Update
-    public void setFCMToken(String FCMToken){
+    public void setFCMToken(String FCMToken) {
 
         //Store Device info for Later Purposes
         DBHelper.getShared().setFCMToken(FCMToken);
@@ -262,29 +279,25 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
     //Get the remote messages from the Push notification
-    public static void setremoteMessage(Map<String, String> instanceIdFromPush)
-    {
-       try {
-           if (instanceIdFromPush.get("intermediate_verifiation_id") != null && instanceIdFromPush.get("intermediate_verifiation_id") != "") {
-               instanceId = instanceIdFromPush.get("intermediate_verifiation_id");
-           } else {
-               instanceId = "";
-           }
-       }
-       catch (Exception e)
-       {
-           String loggerMessage = "Set remote Message : "+" Error Message - " + e.getMessage();
-           LogFile.addRecordToLog(loggerMessage);
-       }
+    public static void setremoteMessage(Map<String, String> instanceIdFromPush) {
+        try {
+            if (instanceIdFromPush.get("intermediate_verifiation_id") != null && instanceIdFromPush.get("intermediate_verifiation_id") != "") {
+                instanceId = instanceIdFromPush.get("intermediate_verifiation_id");
+            } else {
+                instanceId = "";
+            }
+        } catch (Exception e) {
+            String loggerMessage = "Set remote Message : " + " Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
+        }
 
     }
 
-// Get the instance ID
-    public String getInstanceId(){
-        if(instanceId!=null && instanceId!=""){
+    // Get the instance ID
+    public String getInstanceId() {
+        if (instanceId != null && instanceId != "") {
             return instanceId;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -299,79 +312,72 @@ public class Cidaas implements IOAuthWebLogin{
 
     //Get Request Id By Passing loginProperties as Value in parameters
     @Override
-    public void getRequestId(@NonNull String DomainUrl, @NonNull String ClientId,@NonNull String RedirectURL,
-                             @Nullable String ClientSecret,final Result<AuthRequestResponseEntity> result)
-    {
+    public void getRequestId(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL,
+                             @Nullable String ClientSecret, final Result<AuthRequestResponseEntity> result) {
+
+
+
         //WebError Code instance Creation
-        webAuthError=WebAuthError.getShared(context);
+        webAuthError = WebAuthError.getShared(context);
         try {
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("")
                     && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
 
                 FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL,
                         ClientSecret, new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginproperties) {
-
-                        //on successfully completion of file reading add it to LocalDB(shared Preference) and call requestIdByloginProperties
-
-                        checkPKCEFlow(loginproperties, new Result<Dictionary<String, String>>() {
                             @Override
-                            public void success(Dictionary<String, String> savedLoginProperties) {
-                                //Call requestIdBy LoginProperties parameter
+                            public void success(Dictionary<String, String> loginproperties) {
 
-                                RequestIdController.getShared(context).getRequestId(savedLoginProperties, result);
+                                //on successfully completion of file reading add it to LocalDB(shared Preference) and call requestIdByloginProperties
+
+                                checkPKCEFlow(loginproperties, new Result<Dictionary<String, String>>() {
+                                    @Override
+                                    public void success(Dictionary<String, String> savedLoginProperties) {
+                                        //Call requestIdBy LoginProperties parameter
+
+                                        RequestIdController.getShared(context).getRequestId(savedLoginProperties, result);
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        result.failure(error);
+                                        String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - "
+                                                + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
+                                        LogFile.addRecordToLog(loggerMessage);
+                                    }
+                                });
+
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-                              result.failure(error);
                                 String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - "
                                         + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
                                 LogFile.addRecordToLog(loggerMessage);
+                                result.failure(error);
                             }
                         });
 
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - "
-                                + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
-                        result.failure(error);
-                    }
-                });
-
-            }
-            else
-            {
+            } else {
                 result.failure(webAuthError.propertyMissingException());
             }
-         }
-     catch (Exception e)
-     {
-         String loggerMessage = "Request-Id service Exception :  Error Message - " + e.getMessage();
-         LogFile.addRecordToLog(loggerMessage);
-         Timber.d(e.getMessage());
-     }
+        } catch (Exception e) {
+            String loggerMessage = "Request-Id service Exception :  Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
+            Timber.d(e.getMessage());
+        }
     }
 
     //Get Request Id without passing any value
 
 
-
-    public void getRequestId(final Dictionary<String,String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult)
-    {
-        try
-        {
-            RequestIdController.getShared(context).getRequestId(loginproperties,Primaryresult);
-        }
-        catch (Exception e)
-        {
+    public void getRequestId(final Dictionary<String, String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult) {
+        try {
+            RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult);
+        } catch (Exception e) {
 
             String loggerMessage = "Request-Id  failure : " + "Error Code - "
-                    +400 + ", Error Message - " + e.getMessage() + ", Status Code - " +  400;
+                    + 400 + ", Error Message - " + e.getMessage() + ", Status Code - " + 400;
             LogFile.addRecordToLog(loggerMessage);
             Timber.e(e.getMessage());
 
@@ -379,49 +385,44 @@ public class Cidaas implements IOAuthWebLogin{
     }
 
 
-
     @Override
-    public void getRequestId(final Result<AuthRequestResponseEntity> resulttoReturn)
-    {
+    public void getRequestId(final Result<AuthRequestResponseEntity> resulttoReturn) {
         try {
 
             //Todo Check in saved file
-             final Dictionary<String,String> loginProperties= null;
-             if(loginProperties!=null && !loginProperties.isEmpty() && loginProperties.size()>0 ){
-                 //check here for already saved properties
-                 checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
-                     @Override
-                     public void success(Dictionary<String, String> result) {
-                         RequestIdController.getShared(context). getRequestId(loginProperties, resulttoReturn);
-                     }
+            final Dictionary<String, String> loginProperties = null;
+            if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
+                //check here for already saved properties
+                checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> result) {
+                        RequestIdController.getShared(context).getRequestId(loginProperties, resulttoReturn);
+                    }
 
-                     @Override
-                     public void failure(WebAuthError error) {
-                         resulttoReturn.failure(error);
+                    @Override
+                    public void failure(WebAuthError error) {
+                        resulttoReturn.failure(error);
 
-                     }
-                 });
+                    }
+                });
 
 
-             }
-             else {
-                 //Read File from asset to get URL
-               readFromFile(new Result<Dictionary<String, String>>() {
-                   @Override
-                   public void success(Dictionary<String, String> savedLoginProperties) {
-                       //Call requestIdBy LoginProperties parameter
-                       RequestIdController.getShared(context).getRequestId(savedLoginProperties, resulttoReturn);
-                   }
+            } else {
+                //Read File from asset to get URL
+                readFromFile(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> savedLoginProperties) {
+                        //Call requestIdBy LoginProperties parameter
+                        RequestIdController.getShared(context).getRequestId(savedLoginProperties, resulttoReturn);
+                    }
 
-                   @Override
-                   public void failure(WebAuthError error) {
-                      resulttoReturn.failure(error);
-                   }
-               });
-             }
-        }
-        catch (Exception e)
-        {
+                    @Override
+                    public void failure(WebAuthError error) {
+                        resulttoReturn.failure(error);
+                    }
+                });
+            }
+        } catch (Exception e) {
             //Todo Handle Exception
             Timber.d(e.getMessage());
         }
@@ -435,8 +436,8 @@ public class Cidaas implements IOAuthWebLogin{
                 @Override
                 public void success(Dictionary<String, String> stringresult) {
                     String baseurl = stringresult.get("DomainURL");
-                    String clientId=stringresult.get("ClientId");
-                    TenantController.getShared(context).getTenantInfo(baseurl,tenantresult);
+                    String clientId = stringresult.get("ClientId");
+                    TenantController.getShared(context).getTenantInfo(baseurl, tenantresult);
                 }
 
                 @Override
@@ -449,11 +450,9 @@ public class Cidaas implements IOAuthWebLogin{
 
                 TenantController.getShared(context).getTenantInfo(baseurl,tenantresult);
             }*/
-        }
-        catch (Exception e)
-        {
-            String errorMessae=e.getMessage();
-            tenantresult.failure(WebAuthError.getShared(context).customException(417,errorMessae,HttpStatusCode.EXPECTATION_FAILED));
+        } catch (Exception e) {
+            String errorMessae = e.getMessage();
+            tenantresult.failure(WebAuthError.getShared(context).customException(417, errorMessae, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
@@ -461,24 +460,21 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void getClientInfo(final String RequestId, final Result<ClientInfoEntity> clientInfoEntityResult)
-    {
-        try{
+    public void getClientInfo(final String RequestId, final Result<ClientInfoEntity> clientInfoEntityResult) {
+        try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     //Todo Check notnull Re   questId
                     String baseurl = result.get("DomainURL");
 
-                    if(RequestId!=null && RequestId!="") {
+                    if (RequestId != null && RequestId != "") {
                         ClientController.getShared(context).getClientInfo(baseurl, RequestId, clientInfoEntityResult);
-                    }
-                    else
-                    {
-                        String errorMessage="RequestId must not be empty";
+                    } else {
+                        String errorMessage = "RequestId must not be empty";
 
                         clientInfoEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
                 }
@@ -489,13 +485,11 @@ public class Cidaas implements IOAuthWebLogin{
                     clientInfoEntityResult.failure(error);
                 }
             });
-        }
-        catch (Exception e)
-        {
-            String errorMessage="ClientInfo Exception"+e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = "ClientInfo Exception" + e.getMessage();
 
             clientInfoEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
@@ -504,37 +498,33 @@ public class Cidaas implements IOAuthWebLogin{
 
     @Override
     public void loginWithCredentials(final String requestId, final LoginEntity loginEntity,
-                                     final Result<LoginCredentialsResponseEntity> loginresult)
-    {
-        try{
+                                     final Result<LoginCredentialsResponseEntity> loginresult) {
+        try {
 
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId = savedProperties.get("ClientId");
 
-                    if(loginEntity.getUsername_type()==null && loginEntity.getUsername_type()=="")
-                    {
+                    if (loginEntity.getUsername_type() == null && loginEntity.getUsername_type() == "") {
                         loginEntity.setUsername_type("email");
                     }
 
-                    if ( loginEntity.getPassword() != null && loginEntity.getPassword() != "" &&
-                            loginEntity.getUsername() != null && loginEntity.getUsername() != "")
-                    {
-                        LoginCredentialsRequestEntity loginCredentialsRequestEntity=new LoginCredentialsRequestEntity();
+                    if (loginEntity.getPassword() != null && loginEntity.getPassword() != "" &&
+                            loginEntity.getUsername() != null && loginEntity.getUsername() != "") {
+                        LoginCredentialsRequestEntity loginCredentialsRequestEntity = new LoginCredentialsRequestEntity();
                         loginCredentialsRequestEntity.setUsername(loginEntity.getUsername());
                         loginCredentialsRequestEntity.setUsername_type(loginEntity.getUsername_type());
                         loginCredentialsRequestEntity.setPassword(loginEntity.getPassword());
                         loginCredentialsRequestEntity.setRequestId(requestId);
-                        LoginController.getShared(context).loginwithCredentials(baseurl,loginCredentialsRequestEntity,loginresult);
-                    }
-                    else {
+                        LoginController.getShared(context).loginwithCredentials(baseurl, loginCredentialsRequestEntity, loginresult);
+                    } else {
 
-                        String errorMessage="Username or password must not be empty";
+                        String errorMessage = "Username or password must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
 
@@ -546,26 +536,24 @@ public class Cidaas implements IOAuthWebLogin{
                     loginresult.failure(error);
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
-            String errorMessage="Login with Credentials Exception"+e.getMessage();
+            String errorMessage = "Login with Credentials Exception" + e.getMessage();
 
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
     // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
     @Override
     public void getConsentDetails(@NonNull final String consentName,
-                                  final Result<ConsentDetailsResultEntity> consentResult)
-    {
+                                  final Result<ConsentDetailsResultEntity> consentResult) {
 
         try {
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId = savedProperties.get("ClientId");
 
@@ -573,15 +561,13 @@ public class Cidaas implements IOAuthWebLogin{
                             && clientId != null && !clientId.equals("")) {
 
 
-                        ConsentController.getShared(context).getConsentDetails(baseurl,consentName,consentResult);
-                    }
-                    else
-                    {
+                        ConsentController.getShared(context).getConsentDetails(baseurl, consentName, consentResult);
+                    } else {
 
-                        String errorMessage="ConsentName or consentVersion or trackid must not be empty";
+                        String errorMessage = "ConsentName or consentVersion or trackid must not be empty";
 
                         consentResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         return;
                     }
 
@@ -593,35 +579,32 @@ public class Cidaas implements IOAuthWebLogin{
                     consentResult.failure(error);
                 }
             });
-        }
-        catch (Exception e){
-            String errorMessage="Get Consent Details Exception"+e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = "Get Consent Details Exception" + e.getMessage();
 
             consentResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
 
     }
 
     @Override
     public void loginAfterConsent(@NonNull final ConsentEntity consentEntity,
-                                  final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+                                  final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result)
-                {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
                     String clientId = savedProperties.get("ClientId");
 
 
-                    if (consentEntity.getSub()!=null && !consentEntity.getSub().equals("") &&
-                            consentEntity.getConsentName()!=null && !consentEntity.getConsentName().equals("") &&
-                            consentEntity.getConsentVersion()!=null && !consentEntity.getConsentVersion().equals("")
-                    && consentEntity.isAccepted() != false ) {
+                    if (consentEntity.getSub() != null && !consentEntity.getSub().equals("") &&
+                            consentEntity.getConsentName() != null && !consentEntity.getConsentName().equals("") &&
+                            consentEntity.getConsentVersion() != null && !consentEntity.getConsentVersion().equals("")
+                            && consentEntity.isAccepted() != false) {
 
-                        ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
+                        ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity = new ConsentManagementAcceptedRequestEntity();
                         consentManagementAcceptedRequestEntity.setAccepted(consentEntity.isAccepted());
                         consentManagementAcceptedRequestEntity.setSub(consentEntity.getSub());
                         consentManagementAcceptedRequestEntity.setClient_id(clientId);
@@ -630,13 +613,12 @@ public class Cidaas implements IOAuthWebLogin{
                         consentManagementAcceptedRequestEntity.setVersion(consentEntity.getConsentVersion());
 
 
-                        ConsentController.getShared(context).acceptConsent(baseurl,consentManagementAcceptedRequestEntity,loginresult);
-                    }
-                    else{
-                        String errorMessage="Sub must not be null or Accepted must not be false";
+                        ConsentController.getShared(context).acceptConsent(baseurl, consentManagementAcceptedRequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "Sub must not be null or Accepted must not be false";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
 
                 }
@@ -646,34 +628,30 @@ public class Cidaas implements IOAuthWebLogin{
                     loginresult.failure(error);
                 }
             });
-        }
-        catch (Exception e){
-            String errorMessage="Login after Consent Exception"+e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = "Login after Consent Exception" + e.getMessage();
 
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
     // -----------------------------------------------------***** GET MFA LIST *****---------------------------------------------------------------
 
-@Override
-    public void getMFAList(final String sub, final Result<MFAListResponseEntity> mfaresult)
-    {
-        try{
+    @Override
+    public void getMFAList(final String sub, final Result<MFAListResponseEntity> mfaresult) {
+        try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
-                    if(sub!=null && sub!="") {
-                        MFAListSettingsController.getShared(context).getmfaList(baseurl, sub,mfaresult);
-                    }
-                    else
-                    {
-                        String errorMessage="Sub must not be empty";
+                    if (sub != null && sub != "") {
+                        MFAListSettingsController.getShared(context).getmfaList(baseurl, sub, mfaresult);
+                    } else {
+                        String errorMessage = "Sub must not be empty";
 
                         mfaresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
 
@@ -682,13 +660,11 @@ public class Cidaas implements IOAuthWebLogin{
                     mfaresult.failure(error);
                 }
             });
-        }
-        catch (Exception e)
-        {
-            String errorMessage="Getting MFA List Exception"+e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = "Getting MFA List Exception" + e.getMessage();
 
             mfaresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
@@ -699,17 +675,16 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void configureEmail(final String sub, final Result<SetupEmailMFAResponseEntity> result)
-    {
+    public void configureEmail(final String sub, final Result<SetupEmailMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     ///Todo Call configure email
 
-                    EmailConfigurationController.getShared(context).configureEmail(sub,baseurl,result);
+                    EmailConfigurationController.getShared(context).configureEmail(sub, baseurl, result);
                 }
 
                 @Override
@@ -717,36 +692,31 @@ public class Cidaas implements IOAuthWebLogin{
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
-            String errorMessage="Configure Email Exception"+e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = "Configure Email Exception" + e.getMessage();
 
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
 
     }
 
     @Override
-    public void enrollEmail(final String code, final String statusId, final Result<EnrollEmailMFAResponseEntity> enrollresult)
-    {
+    public void enrollEmail(final String code, final String statusId, final Result<EnrollEmailMFAResponseEntity> enrollresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
                     //todo call enroll Email
-                   if(code!=null && !code.equals("") || statusId!=null && !statusId.equals(""))
-                   {
-                       EmailConfigurationController.getShared(context).enrollEmailMFA(code,statusId,baseurl,enrollresult);
-                   }
-                   else
-                   {
-                       String errorMessage="Code or StatusId Must not be empty";
-                       enrollresult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                   }
+                    if (code != null && !code.equals("") || statusId != null && !statusId.equals("")) {
+                        EmailConfigurationController.getShared(context).enrollEmailMFA(code, statusId, baseurl, enrollresult);
+                    } else {
+                        String errorMessage = "Code or StatusId Must not be empty";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
                 }
 
                 @Override
@@ -754,8 +724,7 @@ public class Cidaas implements IOAuthWebLogin{
                     enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -763,41 +732,36 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void loginWithEmail(final PasswordlessEntity passwordlessEntity, final Result<InitiateEmailMFAResponseEntity> initiateresult)
-    {
+    public void loginWithEmail(final PasswordlessEntity passwordlessEntity, final Result<InitiateEmailMFAResponseEntity> initiateresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
-                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals(""))) {
+                    if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
 
-                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
-                        {
-                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                            {
-                                String errorMessage="trackId must not be empty";
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
 
                                 initiateresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 return;
                             }
                         }
 
-                        InitiateEmailMFARequestEntity initiateEmailMFARequestEntity=new InitiateEmailMFARequestEntity();
+                        InitiateEmailMFARequestEntity initiateEmailMFARequestEntity = new InitiateEmailMFARequestEntity();
                         initiateEmailMFARequestEntity.setSub(passwordlessEntity.getSub());
                         initiateEmailMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateEmailMFARequestEntity.setVerificationType("email");
 
 
-                        EmailConfigurationController.getShared(context).loginWithEmail(baseurl,passwordlessEntity.getTrackId(),
-                                passwordlessEntity.getRequestId(),initiateEmailMFARequestEntity,initiateresult);
-                    }
-                    else
-                    {
+                        EmailConfigurationController.getShared(context).loginWithEmail(baseurl, passwordlessEntity.getTrackId(),
+                                passwordlessEntity.getRequestId(), initiateEmailMFARequestEntity, initiateresult);
+                    } else {
 
                         initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
                     }
@@ -809,32 +773,29 @@ public class Cidaas implements IOAuthWebLogin{
                     initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
     @Override
-    public void verifyEmail(@NonNull final String code, @NonNull final String statusId, final Result<LoginCredentialsResponseEntity> loginresult)
-    {
-        try
-        {
+    public void verifyEmail(@NonNull final String code, @NonNull final String statusId, final Result<LoginCredentialsResponseEntity> loginresult) {
+        try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
                     //Todo call initiate
 
-                    if(code!=null && code!="") {
+                    if (code != null && code != "") {
 
                         AuthenticateEmailRequestEntity authenticateEmailRequestEntity = new AuthenticateEmailRequestEntity();
                         authenticateEmailRequestEntity.setCode(code);
 
-                        EmailConfigurationController.getShared(context).verifyEmail(baseurl,code,statusId,clientId,authenticateEmailRequestEntity,loginresult);
+                        EmailConfigurationController.getShared(context).verifyEmail(baseurl, code, statusId, clientId, authenticateEmailRequestEntity, loginresult);
 /*
                           String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -843,8 +804,7 @@ public class Cidaas implements IOAuthWebLogin{
                           } else {
                               loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                           }*/
-                    }
-                    else {
+                    } else {
                         loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                     }
 
@@ -857,8 +817,7 @@ public class Cidaas implements IOAuthWebLogin{
                 }
             });
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
@@ -867,15 +826,15 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void configureSMS(final String sub,final Result<SetupSMSMFAResponseEntity> result) {
+    public void configureSMS(final String sub, final Result<SetupSMSMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                   SMSConfigurationController.getShared(context).configureSMS(sub,baseurl,result);
+                    SMSConfigurationController.getShared(context).configureSMS(sub, baseurl, result);
                 }
 
                 @Override
@@ -883,29 +842,24 @@ public class Cidaas implements IOAuthWebLogin{
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
 
-    public void enrollSMS(final String code, final String statusId, final Result<EnrollSMSMFAResponseEntity> result)
-    {
+    public void enrollSMS(final String code, final String statusId, final Result<EnrollSMSMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if(code!=null && code !="")
-                    {
-                        SMSConfigurationController.getShared(context).enrollSMSMFA(code,statusId,baseurl,result);
-                    }
-                    else
-                    {
+                    if (code != null && code != "") {
+                        SMSConfigurationController.getShared(context).enrollSMSMFA(code, statusId, baseurl, result);
+                    } else {
 
                     }
 
@@ -916,38 +870,34 @@ public class Cidaas implements IOAuthWebLogin{
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
-    public void loginWithSMS(final PasswordlessEntity passwordlessEntity, final Result<InitiateSMSMFAResponseEntity> initiateresult)
-    {
+    public void loginWithSMS(final PasswordlessEntity passwordlessEntity, final Result<InitiateSMSMFAResponseEntity> initiateresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
-                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
-                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals(""))) {
+                    String clientId = savedProperties.get("ClientId");
+                    if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
 
 
-                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
-                        {
-                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                            {
-                                String errorMessage="trackId must not be empty";
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
 
                                 initiateresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 return;
                             }
                         }
 
-                        InitiateSMSMFARequestEntity initiateSMSMFARequestEntity=new InitiateSMSMFARequestEntity();
+                        InitiateSMSMFARequestEntity initiateSMSMFARequestEntity = new InitiateSMSMFARequestEntity();
                         initiateSMSMFARequestEntity.setSub(passwordlessEntity.getSub());
                         initiateSMSMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateSMSMFARequestEntity.setVerificationType("SMS");
@@ -964,11 +914,9 @@ public class Cidaas implements IOAuthWebLogin{
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
                         */
-                        SMSConfigurationController.getShared(context).loginWithSMS(baseurl,passwordlessEntity.getTrackId(),
-                                clientId,passwordlessEntity.getRequestId(),initiateSMSMFARequestEntity,initiateresult);
-                    }
-                    else
-                    {
+                        SMSConfigurationController.getShared(context).loginWithSMS(baseurl, passwordlessEntity.getTrackId(),
+                                clientId, passwordlessEntity.getRequestId(), initiateSMSMFARequestEntity, initiateresult);
+                    } else {
 
                         initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
                     }
@@ -980,8 +928,7 @@ public class Cidaas implements IOAuthWebLogin{
                     initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -995,17 +942,17 @@ public class Cidaas implements IOAuthWebLogin{
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
                     //Todo call initiate
 
-                    if(code!=null && code!="") {
+                    if (code != null && code != "") {
 
                         AuthenticateSMSRequestEntity authenticateSMSRequestEntity = new AuthenticateSMSRequestEntity();
                         authenticateSMSRequestEntity.setCode(code);
                         authenticateSMSRequestEntity.setStatusId(statusId);
 
-                        SMSConfigurationController.getShared(context).verifySMS(baseurl,clientId,authenticateSMSRequestEntity,loginresult);
+                        SMSConfigurationController.getShared(context).verifySMS(baseurl, clientId, authenticateSMSRequestEntity, loginresult);
 /*
                           String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -1014,12 +961,11 @@ public class Cidaas implements IOAuthWebLogin{
                           } else {
                               loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                           }*/
-                    }
-                    else {
-                        String errorMessage="code must not be empty";
+                    } else {
+                        String errorMessage = "code must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
 
@@ -1031,8 +977,7 @@ public class Cidaas implements IOAuthWebLogin{
                     loginresult.failure(error);
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
@@ -1042,17 +987,16 @@ public class Cidaas implements IOAuthWebLogin{
     //done CHANGE TO LOGIN AND VERIFY
 
     @Override
-    public void configureIVR(final String sub,final Result<SetupIVRMFAResponseEntity> result)
-    {
+    public void configureIVR(final String sub, final Result<SetupIVRMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     //todo call enroll Email
 
-                    IVRConfigurationController.getShared(context).configureIVR(sub,baseurl,result);
+                    IVRConfigurationController.getShared(context).configureIVR(sub, baseurl, result);
                 }
 
                 @Override
@@ -1060,28 +1004,23 @@ public class Cidaas implements IOAuthWebLogin{
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
-    public void enrollIVR(final String code, final String statusId, final Result<EnrollIVRMFAResponseEntity> result)
-    {
+    public void enrollIVR(final String code, final String statusId, final Result<EnrollIVRMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if(code!=null && code !="")
-                    {
-                      IVRConfigurationController.getShared(context).enrollIVRMFA(code,statusId,baseurl,result);
-                    }
-                    else
-                    {
+                    if (code != null && code != "") {
+                        IVRConfigurationController.getShared(context).enrollIVRMFA(code, statusId, baseurl, result);
+                    } else {
 
                     }
                 }
@@ -1091,8 +1030,7 @@ public class Cidaas implements IOAuthWebLogin{
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -1100,42 +1038,37 @@ public class Cidaas implements IOAuthWebLogin{
 
 
     @Override
-    public void loginWithIVR(final PasswordlessEntity passwordlessEntity, final Result<InitiateIVRMFAResponseEntity> initiateresult)
-    {
+    public void loginWithIVR(final PasswordlessEntity passwordlessEntity, final Result<InitiateIVRMFAResponseEntity> initiateresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
-                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
-                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals(""))) {
+                    String clientId = savedProperties.get("ClientId");
+                    if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
 
 
-                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
-                        {
-                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                            {
-                                String errorMessage="trackId must not be empty";
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
 
                                 initiateresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 return;
                             }
                         }
 
-                        InitiateIVRMFARequestEntity initiateIVRMFARequestEntity=new InitiateIVRMFARequestEntity();
+                        InitiateIVRMFARequestEntity initiateIVRMFARequestEntity = new InitiateIVRMFARequestEntity();
                         initiateIVRMFARequestEntity.setSub(passwordlessEntity.getSub());
                         initiateIVRMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateIVRMFARequestEntity.setVerificationType("IVR");
 
 
                         IVRConfigurationController.getShared(context).loginWithIVR(baseurl,
-                                passwordlessEntity.getTrackId(),clientId,passwordlessEntity.getRequestId(),
-                                initiateIVRMFARequestEntity,initiateresult);
-                    }
-                    else
-                    {
+                                passwordlessEntity.getTrackId(), clientId, passwordlessEntity.getRequestId(),
+                                initiateIVRMFARequestEntity, initiateresult);
+                    } else {
 
                         initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
                     }
@@ -1147,8 +1080,7 @@ public class Cidaas implements IOAuthWebLogin{
                     initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -1160,15 +1092,15 @@ public class Cidaas implements IOAuthWebLogin{
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if(code!=null && code!="") {
+                    if (code != null && code != "") {
 
                         AuthenticateIVRRequestEntity authenticateIVRRequestEntity = new AuthenticateIVRRequestEntity();
                         authenticateIVRRequestEntity.setCode(code);
                         authenticateIVRRequestEntity.setStatusId(statusId);
 
-                        IVRConfigurationController.getShared(context).verifyIVR(baseurl,clientId,authenticateIVRRequestEntity,loginresult);
+                        IVRConfigurationController.getShared(context).verifyIVR(baseurl, clientId, authenticateIVRRequestEntity, loginresult);
 /*
                           String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -1177,12 +1109,11 @@ public class Cidaas implements IOAuthWebLogin{
                           } else {
                               loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                           }*/
-                    }
-                    else {
-                        String errorMessage="code must not be empty";
+                    } else {
+                        String errorMessage = "code must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
 
@@ -1193,8 +1124,7 @@ public class Cidaas implements IOAuthWebLogin{
                     loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
@@ -1204,15 +1134,15 @@ public class Cidaas implements IOAuthWebLogin{
     //tODO CHANGE TO LOGIN AND VERIFY
 
     @Override
-    public void configureBackupcode(final String sub,final Result<SetupBackupCodeMFAResponseEntity> result) {
+    public void configureBackupcode(final String sub, final Result<SetupBackupCodeMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     //todo call enroll Email
-                    BackupCodeConfigurationController.getShared(context).configureBackupCode(sub,baseurl,result);
+                    BackupCodeConfigurationController.getShared(context).configureBackupCode(sub, baseurl, result);
 
                 }
 
@@ -1221,8 +1151,7 @@ public class Cidaas implements IOAuthWebLogin{
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -1230,32 +1159,29 @@ public class Cidaas implements IOAuthWebLogin{
 
     @Override
     public void loginWithBackupcode(final String code, final PasswordlessEntity passwordlessEntity,
-                                    final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+                                    final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
-                    if(passwordlessEntity.getSub()!=null && !passwordlessEntity.getSub().equals("") &&
-                            (passwordlessEntity.getUsageType()!=null && !passwordlessEntity.getUsageType().equals("")
-                            && code!=null && !code.equals(""))) {
+                    String clientId = savedProperties.get("ClientId");
+                    if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
+                            (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")
+                                    && code != null && !code.equals(""))) {
 
 
-                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
-                        {
-                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                            {
-                                String errorMessage="trackId must not be empty";
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 return;
                             }
                         }
 
-                        InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity=new InitiateBackupCodeMFARequestEntity();
+                        InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity = new InitiateBackupCodeMFARequestEntity();
                         initiateBackupCodeMFARequestEntity.setSub(passwordlessEntity.getSub());
                         initiateBackupCodeMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateBackupCodeMFARequestEntity.setVerificationType("BACKUPCODE");
@@ -1272,12 +1198,10 @@ public class Cidaas implements IOAuthWebLogin{
                                     errorMessage,HttpStatusCode.EXPECTATION_FAILED));
                         }
                         */
-                        BackupCodeConfigurationController.getShared(context).loginWithBackupCode(code,baseurl,
-                                passwordlessEntity.getTrackId(),clientId,passwordlessEntity.getRequestId(),
-                                initiateBackupCodeMFARequestEntity,loginresult);
-                    }
-                    else
-                    {
+                        BackupCodeConfigurationController.getShared(context).loginWithBackupCode(code, baseurl,
+                                passwordlessEntity.getTrackId(), clientId, passwordlessEntity.getRequestId(),
+                                initiateBackupCodeMFARequestEntity, loginresult);
+                    } else {
 
                         loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                     }
@@ -1289,31 +1213,29 @@ public class Cidaas implements IOAuthWebLogin{
                     loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
     @Override
-    public void verifyBackupcode(final String code, final String statusId, final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+    public void verifyBackupcode(final String code, final String statusId, final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if(code!=null && code!="") {
+                    if (code != null && code != "") {
 
                         AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity = new AuthenticateBackupCodeRequestEntity();
                         authenticateBackupCodeRequestEntity.setVerifierPassword(code);
                         authenticateBackupCodeRequestEntity.setStatusId(statusId);
 
-                        BackupCodeConfigurationController.getShared(context).verifyBackupCode(baseurl,clientId,
-                                authenticateBackupCodeRequestEntity,loginresult);
+                        BackupCodeConfigurationController.getShared(context).verifyBackupCode(baseurl, clientId,
+                                authenticateBackupCodeRequestEntity, loginresult);
 /*
                           String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -1322,12 +1244,11 @@ public class Cidaas implements IOAuthWebLogin{
                           } else {
                               loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                           }*/
-                    }
-                    else {
-                        String errorMessage="code must not be empty";
+                    } else {
+                        String errorMessage = "code must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
 
@@ -1338,8 +1259,7 @@ public class Cidaas implements IOAuthWebLogin{
                     loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
@@ -1349,18 +1269,17 @@ public class Cidaas implements IOAuthWebLogin{
 
     @Override
     public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,
-                                            final Result<EnrollPatternMFAResponseEntity> enrollresult)
-    {
+                                            final Result<EnrollPatternMFAResponseEntity> enrollresult) {
         try {
 
 
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("") &&
-                            pattern!= null && !pattern.equals("")) {
+                            pattern != null && !pattern.equals("")) {
 
                         final String finalBaseurl = baseurl;
 
@@ -1368,14 +1287,12 @@ public class Cidaas implements IOAuthWebLogin{
                         SetupPatternMFARequestEntity setupPatternMFARequestEntity = new SetupPatternMFARequestEntity();
                         setupPatternMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupPatternMFARequestEntity.setLogoUrl(logoUrl);
-                        PatternConfigurationController.getShared(context).configurePattern(sub,finalBaseurl,pattern, setupPatternMFARequestEntity,
+                        PatternConfigurationController.getShared(context).configurePattern(sub, finalBaseurl, pattern, setupPatternMFARequestEntity,
                                 enrollresult);
 
-                    }
-                    else
-                    {
-                        String errorMessage="Sub or Pattern cannot be null";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,errorMessage,
+                    } else {
+                        String errorMessage = "Sub or Pattern cannot be null";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
                                 HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
@@ -1386,12 +1303,10 @@ public class Cidaas implements IOAuthWebLogin{
                 }
             });
 
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("Configure Pattern exception"+e.getMessage());
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Configure Pattern exception" + e.getMessage());
 
-            Timber.e("Configure Pattern exception"+e.getMessage());
+            Timber.e("Configure Pattern exception" + e.getMessage());
         }
 
 
@@ -1406,54 +1321,50 @@ public class Cidaas implements IOAuthWebLogin{
     // 4. Todo Maintain logs based on flags
     @Override
     public void loginWithPatternRecognition(@NonNull final String pattern, @NonNull final PasswordlessEntity passwordlessEntity,
-                                            final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+                                            final Result<LoginCredentialsResponseEntity> loginresult) {
 
         try {
 
 
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
-                            &&  pattern != null && !pattern.equals("")  && passwordlessEntity.getRequestId() != null &&
-                            passwordlessEntity.getRequestId()!="") {
+                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
+                            && pattern != null && !pattern.equals("") && passwordlessEntity.getRequestId() != null &&
+                            passwordlessEntity.getRequestId() != "") {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId.equals("")){
-                            String errorMessage="baseurl or clientId or mobile number must not be empty";
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId or mobile number must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                             return;
                         }
 
-                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
-                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
-                        {
-                            String errorMessage="sub or email or mobile number must not be empty";
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                             return;
                         }
 
-                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
-                        {
-                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                            {
-                                String errorMessage="trackId must not be empty";
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 return;
                             }
                         }
 
-                        InitiatePatternMFARequestEntity initiatePatternMFARequestEntity=new InitiatePatternMFARequestEntity();
+                        InitiatePatternMFARequestEntity initiatePatternMFARequestEntity = new InitiatePatternMFARequestEntity();
                         initiatePatternMFARequestEntity.setSub(passwordlessEntity.getSub());
                         initiatePatternMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiatePatternMFARequestEntity.setEmail(passwordlessEntity.getEmail());
@@ -1462,46 +1373,41 @@ public class Cidaas implements IOAuthWebLogin{
                         //Todo check for email or sub or mobile
 
 
-                        PatternConfigurationController.getShared(context).LoginWithPattern(pattern,baseurl,clientId,
+                        PatternConfigurationController.getShared(context).LoginWithPattern(pattern, baseurl, clientId,
                                 passwordlessEntity.getTrackId(),
-                                passwordlessEntity.getRequestId(),initiatePatternMFARequestEntity,loginresult);
-                    }
-                    else
-                    {
-                        String errorMessage="UsageType or PatternCode or requestId must not be empty";
+                                passwordlessEntity.getRequestId(), initiatePatternMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "UsageType or PatternCode or requestId must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-loginresult.failure(error);
+                    loginresult.failure(error);
                 }
             });
 
 
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("Login with Pattern exception"+e.getMessage());
-            String errorMessage=e.getMessage();
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Login with Pattern exception" + e.getMessage());
+            String errorMessage = e.getMessage();
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Login with Pattern exception"+e.getMessage());
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Login with Pattern exception" + e.getMessage());
         }
     }
 
 
-    public void verifyPattern(String patternString, String statusId, final Result<AuthenticatePatternResponseEntity> result)
-    {
+    public void verifyPattern(String patternString, String statusId, final Result<AuthenticatePatternResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -1511,8 +1417,7 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -1521,32 +1426,27 @@ loginresult.failure(error);
     // ****** TODO LOGIN WITH FACE *****-------------------------------------------------------------------------------------------------------
 
 
-
-
     @Override
-    public void configureFaceRecognition(final File photo,final String sub,  final Result<EnrollFaceMFAResponseEntity> enrollresult)
-    {
+    public void configureFaceRecognition(final File photo, final String sub, final Result<EnrollFaceMFAResponseEntity> enrollresult) {
         try {
 
 
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
 
 
+                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
-                    if ( sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
+                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
 
-                        String logoUrl= "https://docs.cidaas.de/assets/logoss.png";
-
-                        SetupFaceMFARequestEntity setupFaceMFARequestEntity=new SetupFaceMFARequestEntity();
-                        setupFaceMFARequestEntity.setClient_id( savedProperties.get("ClientId"));
+                        SetupFaceMFARequestEntity setupFaceMFARequestEntity = new SetupFaceMFARequestEntity();
+                        setupFaceMFARequestEntity.setClient_id(savedProperties.get("ClientId"));
                         setupFaceMFARequestEntity.setLogoUrl(logoUrl);
 
 
-
-                        FaceConfigurationController.getShared(context).ConfigureFace(photo,sub,baseurl,setupFaceMFARequestEntity,enrollresult);
+                        FaceConfigurationController.getShared(context).ConfigureFace(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
 
 
                     }
@@ -1559,15 +1459,10 @@ loginresult.failure(error);
             });
 
 
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
 
-
-
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("Configure Face exception"+e.getMessage());
-
-            Timber.e("Configure Face exception"+e.getMessage());
+            Timber.e("Configure Face exception" + e.getMessage());
         }
 
 
@@ -1576,39 +1471,37 @@ loginresult.failure(error);
 
     @Override
     public void loginWithFaceRecognition(@NonNull final File photo, @NonNull final PasswordlessEntity passwordlessEntity,
-                                         final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+                                         final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if ( passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
                             passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") &&
-                            photo!=null) {
+                            photo != null) {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null || clientId.equals("")){
-                            String errorMessage="baseurl or clientId must not be empty";
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
-                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
-                        {
-                            String errorMessage="sub or email or mobile number must not be empty";
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
                         if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
-                            if (passwordlessEntity.getTrackId()== null || passwordlessEntity.getTrackId() == "") {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
                                 String errorMessage = "trackId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
@@ -1629,13 +1522,11 @@ loginresult.failure(error);
                         FaceConfigurationController.getShared(context).LoginWithFace(photo, baseurl, clientId,
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateFaceMFARequestEntity, loginresult);
-                    }
-                    else
-                    {
-                        String errorMessage="Image File or RequestId or UsageType must not be empty";
+                    } else {
+                        String errorMessage = "Image File or RequestId or UsageType must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
 
                 }
@@ -1645,24 +1536,21 @@ loginresult.failure(error);
                     loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
-            String errorMessage=e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
 
-
-    public void verifyFace(String statusId, final Result<AuthenticateFaceRequestEntity> result)
-    {
+    public void verifyFace(String statusId, final Result<AuthenticateFaceRequestEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -1672,11 +1560,10 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
-            String errorMessage=e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
 
     }
@@ -1689,12 +1576,10 @@ loginresult.failure(error);
 
     //Get Permission For FingerPrint authentication
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void getPermissionforFingerPrint()
-    {
+    private void getPermissionforFingerPrint() {
         try {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(context, "Please enable the fingerprint permission", Toast.LENGTH_SHORT).show();
-
 
 
             }
@@ -1715,28 +1600,25 @@ loginresult.failure(error);
             }
 
 
-        }
-        catch (Exception e)
-        {
-            Toast.makeText(context,""+e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(context, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
 
         }
         //Caught when no finger print isfound
         catch (NoClassDefFoundError exc) {
-             Toast.makeText(context,"Atleast one fingerprint has to be registered", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Atleast one fingerprint has to be registered", Toast.LENGTH_SHORT).show();
             return;
         }
 
     }
 
     @Override
-    public void configureFingerprint(final String sub, final Result<EnrollFingerprintMFAResponseEntity> enrollresult)
-    {
+    public void configureFingerprint(final String sub, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     final String baseurl = result.get("DomainURL");
                     final String clinetId = result.get("ClientId");
 
@@ -1839,14 +1721,12 @@ loginresult.failure(error);
                         SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity = new SetupFingerprintMFARequestEntity();
                         setupFingerprintMFARequestEntity.setClient_id(clinetId);
                         setupFingerprintMFARequestEntity.setLogoUrl(logoUrl);
-                        FingerprintConfigurationController.getShared(context).configureFingerprint(sub,finalBaseurl, setupFingerprintMFARequestEntity,
+                        FingerprintConfigurationController.getShared(context).configureFingerprint(sub, finalBaseurl, setupFingerprintMFARequestEntity,
                                 enrollresult);
 
-                    }
-                    else
-                    {
-                        String errorMessage="Sub or Pattern cannot be null";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,errorMessage,
+                    } else {
+                        String errorMessage = "Sub or Pattern cannot be null";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
                                 HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
@@ -1857,8 +1737,7 @@ loginresult.failure(error);
                 }
             });
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -1866,14 +1745,13 @@ loginresult.failure(error);
 
 
     @Override
-    public void loginWithFingerprint(final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+    public void loginWithFingerprint(final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     final String baseurl = savedProperties.get("DomainURL");
-                    final String clientId=savedProperties.get("ClientId");
+                    final String clientId = savedProperties.get("ClientId");
 
 
                     //Done Call the finger print method
@@ -1888,39 +1766,37 @@ loginresult.failure(error);
                             }
                         } catch (Exception e) {
 
-                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            String ErrorMessage = "Fingerprint doesnot Support in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
                         //Caught when no finger print isfound
                         catch (NoClassDefFoundError exc) {
-                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            String ErrorMessage = "Fingerprint doesnot Support in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                         }
 
-                    }
-                    else
-                    {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    } else {
+                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
 
 
                     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
 
                     if (!mFingerPrintManager.hasEnrolledFingerprints()) {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
                     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
+                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
 
@@ -1929,16 +1805,16 @@ loginresult.failure(error);
                         public void onAuthenticationError(int errorCode, CharSequence errString) {
                             super.onAuthenticationError(errorCode, errString);
 
-                            String ErrorMessage="Fingerprint permission not given in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            String ErrorMessage = "Fingerprint permission not given in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                         }
 
                         @Override
                         public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
                             super.onAuthenticationHelp(helpCode, helpString);
-                            String ErrorMessage="Fingerprint permission not given in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            String ErrorMessage = "Fingerprint permission not given in your mobile";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
                         @Override
@@ -1949,41 +1825,37 @@ loginresult.failure(error);
                             // Ask to set Verification Type or not
 
 
+                            if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                                    passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
 
-                            if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                                    passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
-
-                                if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
-                                    String errorMessage="baseurl or clientId  must not be empty";
+                                if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                                    String errorMessage = "baseurl or clientId  must not be empty";
 
                                     loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                            errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                            errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 }
 
 
-                                if((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
-                                        passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("") &&
-                                        passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals("")))
-                                {
-                                    String errorMessage="sub or email or mobile number must not be empty";
+                                if ((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
+                                        passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("") &&
+                                        passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals(""))) {
+                                    String errorMessage = "sub or email or mobile number must not be empty";
 
                                     loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                            errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                            errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 }
 
-                                if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
-                                {
-                                    if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                                    {
-                                        String errorMessage="trackId must not be empty For Multifactor Authentication";
+                                if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                                    if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                        String errorMessage = "trackId must not be empty For Multifactor Authentication";
 
                                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                         return;
                                     }
                                 }
 
-                                InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity=new InitiateFingerprintMFARequestEntity();
+                                InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity = new InitiateFingerprintMFARequestEntity();
                                 initiateFingerprintMFARequestEntity.setSub(passwordlessEntity.getSub());
                                 initiateFingerprintMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                                 initiateFingerprintMFARequestEntity.setEmail(passwordlessEntity.getEmail());
@@ -1992,16 +1864,14 @@ loginresult.failure(error);
                                 //Todo check for email or sub or mobile
 
 
-                                FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl,clientId,
-                                        passwordlessEntity.getTrackId(),passwordlessEntity.getRequestId(),
-                                        initiateFingerprintMFARequestEntity,loginresult);
-                            }
-                            else
-                            {
-                                String errorMessage="UsageType or FingerprintCode or requestId must not be empty";
+                                FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl, clientId,
+                                        passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
+                                        initiateFingerprintMFARequestEntity, loginresult);
+                            } else {
+                                String errorMessage = "UsageType or FingerprintCode or requestId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                             }
 
                         }
@@ -2009,12 +1879,12 @@ loginresult.failure(error);
                         @Override
                         public void onAuthenticationFailed() {
                             super.onAuthenticationFailed();
-                            String ErrorMessage="Place your Fingerprint on the fingerprint sensor";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            String ErrorMessage = "Place your Fingerprint on the fingerprint sensor";
+                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                         }
 
-                    },null);
+                    }, null);
 
                 }
 
@@ -2023,22 +1893,20 @@ loginresult.failure(error);
                     loginresult.failure(error);
                 }
             });
-        }
-        catch (Exception e){
-            String errorMessage=e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
-    public void verifyFingerprint(String statusId, final Result<AuthenticateFaceRequestEntity> result)
-    {
+    public void verifyFingerprint(String statusId, final Result<AuthenticateFaceRequestEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -2048,26 +1916,22 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
 
-
     // ****** TODO LOGIN WITH Smart push *****-------------------------------------------------------------------------------------------------------
 
 
-
     @Override
-    public void configureSmartPush(final String sub, final Result<EnrollSmartPushMFAResponseEntity> enrollresult)
-    {
+    public void configureSmartPush(final String sub, final Result<EnrollSmartPushMFAResponseEntity> enrollresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
@@ -2080,14 +1944,12 @@ loginresult.failure(error);
                         setupSmartPushMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupSmartPushMFARequestEntity.setLogoUrl(logoUrl);
 
-                        SmartPushConfigurationController.getShared(context).configureSmartPush(sub,finalBaseurl, setupSmartPushMFARequestEntity,
+                        SmartPushConfigurationController.getShared(context).configureSmartPush(sub, finalBaseurl, setupSmartPushMFARequestEntity,
                                 enrollresult);
 
-                    }
-                    else
-                    {
-                        String errorMessage="Sub or SmartPush cannot be null";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,errorMessage,
+                    } else {
+                        String errorMessage = "Sub or SmartPush cannot be null";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
                                 HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
@@ -2098,8 +1960,7 @@ loginresult.failure(error);
                 }
             });
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -2108,47 +1969,43 @@ loginresult.failure(error);
 
     @Override
     public void loginWithSmartPush(final PasswordlessEntity passwordlessEntity,
-                                   final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+                                   final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
-                    if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
+                    String clientId = savedProperties.get("ClientId");
+                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
-                            String errorMessage="baseurl or clientId  must not be empty";
-
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                        }
-
-                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
-                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
-                        {
-                            String errorMessage="sub or email or mobile number must not be empty";
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId  must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if(passwordlessEntity.getMobile().equals(UsageType.MFA))
-                        {
-                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                            {
-                                String errorMessage="trackId must not be empty";
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        if (passwordlessEntity.getMobile().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 return;
                             }
                         }
 
-                        InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity=new InitiateSmartPushMFARequestEntity();
+                        InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity = new InitiateSmartPushMFARequestEntity();
                         initiateSmartPushMFARequestEntity.setSub(passwordlessEntity.getSub());
                         initiateSmartPushMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateSmartPushMFARequestEntity.setEmail(passwordlessEntity.getEmail());
@@ -2157,16 +2014,14 @@ loginresult.failure(error);
                         //Todo check for email or sub or mobile
 
 
-                        SmartPushConfigurationController.getShared(context).LoginWithSmartPush(baseurl,clientId,
-                                passwordlessEntity.getTrackId(),passwordlessEntity.getRequestId(),
-                                initiateSmartPushMFARequestEntity,loginresult);
-                    }
-                    else
-                    {
-                        String errorMessage="UsageType or SmartPushCode or requestId must not be empty";
+                        SmartPushConfigurationController.getShared(context).LoginWithSmartPush(baseurl, clientId,
+                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
+                                initiateSmartPushMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "UsageType or SmartPushCode or requestId must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
 
                 }
@@ -2176,20 +2031,18 @@ loginresult.failure(error);
                     loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
 
-    public void verifySmartPush(String randomNumber, String statusId, final Result<AuthenticateSmartPushRequestEntity> result)
-    {
+    public void verifySmartPush(String randomNumber, String statusId, final Result<AuthenticateSmartPushRequestEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -2199,8 +2052,7 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -2209,16 +2061,14 @@ loginresult.failure(error);
     // ****** TODO LOGIN WITH TOTP *****-------------------------------------------------------------------------------------------------------
 
 
-
     @Override
-    public void configureTOTP(final String sub, final Result<EnrollTOTPMFAResponseEntity> enrollresult)
-    {
+    public void configureTOTP(final String sub, final Result<EnrollTOTPMFAResponseEntity> enrollresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
-                    String clientId =result.get("ClientId");
+                    String clientId = result.get("ClientId");
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
@@ -2228,13 +2078,11 @@ loginresult.failure(error);
                         SetupTOTPMFARequestEntity setupTOTPMFARequestEntity = new SetupTOTPMFARequestEntity();
                         setupTOTPMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupTOTPMFARequestEntity.setLogoUrl(logoUrl);
-                        TOTPConfigurationController.getShared(context).configureTOTP(sub,finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
+                        TOTPConfigurationController.getShared(context).configureTOTP(sub, finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
 
-                    }
-                    else
-                    {
-                        String errorMessage="Sub or TOTP cannot be null";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,errorMessage,
+                    } else {
+                        String errorMessage = "Sub or TOTP cannot be null";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
                                 HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
@@ -2245,8 +2093,7 @@ loginresult.failure(error);
                 }
             });
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -2255,47 +2102,43 @@ loginresult.failure(error);
 
     @Override
     public void loginWithTOTP(final PasswordlessEntity passwordlessEntity,
-                              final Result<LoginCredentialsResponseEntity> loginresult)
-    {
+                              final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
-                    if ( passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId()!="") {
+                    String clientId = savedProperties.get("ClientId");
+                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
-                            String errorMessage="baseurl or clientId  must not be empty";
-
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                        }
-
-                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
-                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
-                        {
-                            String errorMessage="sub or email or mobile number must not be empty";
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId  must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if(passwordlessEntity.getUsageType().equals(UsageType.MFA))
-                        {
-                            if(passwordlessEntity.getTrackId()==null || passwordlessEntity.getTrackId()=="" )
-                            {
-                                String errorMessage="trackId must not be empty";
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
 
                                 loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                 return;
                             }
                         }
 
-                        InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity=new InitiateTOTPMFARequestEntity();
+                        InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity = new InitiateTOTPMFARequestEntity();
                         initiateTOTPMFARequestEntity.setSub(passwordlessEntity.getSub());
                         initiateTOTPMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateTOTPMFARequestEntity.setEmail(passwordlessEntity.getEmail());
@@ -2304,16 +2147,14 @@ loginresult.failure(error);
                         //Todo check for email or sub or mobile
 
 
-                        TOTPConfigurationController.getShared(context).LoginWithTOTP(baseurl,clientId,
-                                passwordlessEntity.getTrackId(),passwordlessEntity.getRequestId(),
-                                initiateTOTPMFARequestEntity,loginresult);
-                    }
-                    else
-                    {
-                        String errorMessage="UsageType or TOTPCode or requestId must not be empty";
+                        TOTPConfigurationController.getShared(context).LoginWithTOTP(baseurl, clientId,
+                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
+                                initiateTOTPMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "UsageType or TOTPCode or requestId must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
 
@@ -2322,18 +2163,16 @@ loginresult.failure(error);
                     loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
 
 
-    public void listenTOTP(String sub)
-    {
-        final String secret=DBHelper.getShared().getSecret(sub);
+    public void listenTOTP(String sub) {
+        final String secret = DBHelper.getShared().getSecret(sub);
         final Intent i = new Intent("TOTPListener");
-        if(!secret.equals("") && secret!=null) {
+        if (!secret.equals("") && secret != null) {
 
             countDownTimer = new CountDownTimer(System.currentTimeMillis(), 1000) {
                 @Override
@@ -2352,9 +2191,7 @@ loginresult.failure(error);
 
                 }
             }.start();
-        }
-        else
-        {
+        } else {
             //Todo Handle Error Message
             return;
 
@@ -2363,43 +2200,37 @@ loginresult.failure(error);
     }
 
 
-    public void cancelListenTOTP()
-    {
+    public void cancelListenTOTP() {
 
-        if(countDownTimer!=null) {
+        if (countDownTimer != null) {
             countDownTimer.cancel();
         }
 
     }
 
 
-
-
     // ******  LOGIN WITH voice *****-------------------------------------------------------------------------------------------------------
 
 
-
     @Override
-    public void configureVoiceRecognition(final File voice, final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult)
-    {
+    public void configureVoiceRecognition(final File voice, final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String> >() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String>  result) {
+                public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
 
 
-                    if ( sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
+                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
-                        String logoUrl= "https://docs.cidaas.de/assets/logoss.png";
+                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
 
-                        SetupVoiceMFARequestEntity setupVoiceMFARequestEntity=new SetupVoiceMFARequestEntity();
-                        setupVoiceMFARequestEntity.setClient_id( savedProperties.get("ClientId"));
+                        SetupVoiceMFARequestEntity setupVoiceMFARequestEntity = new SetupVoiceMFARequestEntity();
+                        setupVoiceMFARequestEntity.setClient_id(savedProperties.get("ClientId"));
                         setupVoiceMFARequestEntity.setLogoUrl(logoUrl);
 
 
-
-                        VoiceConfigurationController.getShared(context).configureVoice(sub,baseurl,voice,setupVoiceMFARequestEntity,enrollresult);
+                        VoiceConfigurationController.getShared(context).configureVoice(sub, baseurl, voice, setupVoiceMFARequestEntity, enrollresult);
 
 
                     }
@@ -2411,8 +2242,7 @@ loginresult.failure(error);
                 }
             });
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -2427,26 +2257,25 @@ loginresult.failure(error);
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if ( passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
-                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") && voice!=null) {
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") && voice != null) {
 
-                        if(baseurl == null || baseurl.equals("") &&  clientId == null ||clientId.equals("")){
-                            String errorMessage="baseurl or clientId must not be empty";
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if(((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                                (passwordlessEntity.getEmail()==null || passwordlessEntity.getEmail().equals("")) &&
-                                (passwordlessEntity.getMobile()==null || passwordlessEntity.getMobile().equals(""))))
-                        {
-                            String errorMessage="sub or email or mobile number must not be empty";
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
 
                             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
                         if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
@@ -2472,13 +2301,11 @@ loginresult.failure(error);
                         VoiceConfigurationController.getShared(context).LoginWithVoice(voice, baseurl, clientId,
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateVoiceMFARequestEntity, loginresult);
-                    }
-                    else
-                    {
-                        String errorMessage="Image File or RequestId or UsageType must not be empty";
+                    } else {
+                        String errorMessage = "Image File or RequestId or UsageType must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
 
 
@@ -2489,20 +2316,18 @@ loginresult.failure(error);
                     loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
 
-    public void verifyVoice(File voice, String statusId, final Result<AuthenticateVoiceRequestEntity> result)
-    {
+    public void verifyVoice(File voice, String statusId, final Result<AuthenticateVoiceRequestEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -2512,8 +2337,7 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -2523,14 +2347,13 @@ loginresult.failure(error);
     //-----------------Scan the ID card----------------------------------------------------------------------------------
 
 
-
-    public void startDocumentScanner(Activity activity){
+    public void startDocumentScanner(Activity activity) {
         Intent scanIntent = new Intent(context, CardIOActivity.class);
-        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN,true); // supmit cuando termine de reconocer el documento
-        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY,true); // esconder teclado
-        scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO,true); // cambiar logo de paypal por el de card.io
-        scanIntent.putExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE,true); // capture img
-        scanIntent.putExtra(CardIOActivity.EXTRA_CAPTURED_CARD_IMAGE,true); // capturar img
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN, true); // supmit cuando termine de reconocer el documento
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, true); // esconder teclado
+        scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, true); // cambiar logo de paypal por el de card.io
+        scanIntent.putExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE, true); // capture img
+        scanIntent.putExtra(CardIOActivity.EXTRA_CAPTURED_CARD_IMAGE, true); // capturar img
 
         // laszar activity
         activity.startActivityForResult(scanIntent, MY_SCAN_REQUEST_CODE);
@@ -2538,10 +2361,7 @@ loginresult.failure(error);
     }
 
 
-
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data,Result<File> result)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data, Result<File> result) {
 
         try {
             if (requestCode == MY_SCAN_REQUEST_CODE || requestCode == RESULT_SCAN_SUPPRESSED) {
@@ -2551,287 +2371,258 @@ loginresult.failure(error);
 
                 if (card != null) {
 
-                  File imagefile= DocumentScannnerController.getShared(context).convertImageJpeg(card);
+                    File imagefile = DocumentScannnerController.getShared(context).convertImageJpeg(card);
 
                     // Intent intent=new Intent(this, IdCardScannerActivity.class);
                     //intent.putExtra("image",byteArray);
                     //startActivity(intent);
 
 
-                   //return imagefile;
+                    //return imagefile;
 
                     result.success(imagefile);
-                }
-                else
-                {
-                    result.failure(new WebAuthError(context).customException(401," no document found",417));
+                } else {
+                    result.failure(new WebAuthError(context).customException(401, " no document found", 417));
                 }
 
             }
-        }
-        catch (Exception e)
-        {
-          result.failure(new WebAuthError(context).customException(401,"Bad document or no document",417));
+        } catch (Exception e) {
+            result.failure(new WebAuthError(context).customException(401, "Bad document or no document", 417));
         }
     }
 
     // ****** LOGIN WITH Document *****-------------------------------------------------------------------------------------------------------
 
-         public void loginWithDocument(final File photo, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
-             try {
+    public void loginWithDocument(final File photo, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+        try {
 
-                 if(photo!=null) {
+            if (photo != null) {
 
-                     checkSavedProperties(new Result<Dictionary<String, String> >() {
-                         @Override
-                         public void success(Dictionary<String, String>  result) {
-                             String baseurl = savedProperties.get("DomainURL");
+                checkSavedProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> result) {
+                        String baseurl = savedProperties.get("DomainURL");
 
-                             if ( baseurl != null && !baseurl.equals("")) {
+                        if (baseurl != null && !baseurl.equals("")) {
 
-                                 DocumentScannnerController.getShared(context).sendtoServicecall(baseurl,photo,resultEntityResult);
+                            DocumentScannnerController.getShared(context).sendtoServicecall(baseurl, photo, resultEntityResult);
 
-                             }
-                             else {
-                                 resultEntityResult.failure(WebAuthError.getShared(context).customException(417,"BaseURL must not be null",417));
-                             }
-                         }
+                        } else {
+                            resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "BaseURL must not be null", 417));
+                        }
+                    }
 
-                         @Override
-                         public void failure(WebAuthError error) {
+                    @Override
+                    public void failure(WebAuthError error) {
 
-                             resultEntityResult.failure(error);
-                         }
-                     });
-                 }
-                 else {
-                     resultEntityResult.failure(WebAuthError.getShared(context).customException(417,"Photo must not be null",417));
-                 }
-             }
-             catch (Exception e){
-                 resultEntityResult.failure(WebAuthError.getShared(context).customException(417,"Unexpected Error :"+e.getMessage(),417));
-             }
-         }
+                        resultEntityResult.failure(error);
+                    }
+                });
+            } else {
+                resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "Photo must not be null", 417));
+            }
+        } catch (Exception e) {
+            resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "Unexpected Error :" + e.getMessage(), 417));
+        }
+    }
 
 
     // ****** GET REGISTERATION *****-------------------------------------------------------------------------------------------------------
 
 
-
     @Override
     public void getRegistrationFields(@NonNull final String requestId, final String locale,
-                                       final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
-       try{
-
-           checkSavedProperties(new Result<Dictionary<String, String>>() {
-               @Override
-               public void success(Dictionary<String, String> result) {
-                   String baseurl = savedProperties.get("DomainURL");
-                   String clientId=savedProperties.get("ClientId");
-                   String language;
-
-                   if(!requestId.equals("")){
-
-                       final RegistrationSetupRequestEntity registrationSetupRequestEntity;
-
-                       registrationSetupRequestEntity = new RegistrationSetupRequestEntity();
-                       registrationSetupRequestEntity.setRequestId(requestId);
-
-                       if(locale==null || locale=="")
-                       {
-                         language = Locale.getDefault().getLanguage();
-                         registrationSetupRequestEntity.setAcceptedLanguage(language);
-
-                       }
-                       else {
-                           language=locale;
-                           registrationSetupRequestEntity.setAcceptedLanguage(language);
-                       }
-
-                       RegistrationController.getShared(context).getRegisterationFields(baseurl,registrationSetupRequestEntity,
-                               new Result<RegistrationSetupResponseEntity>() {
-                           @Override
-                           public void success(RegistrationSetupResponseEntity result) {
-                               registerFields=result.getData();
-                             registerFieldsresult.success(result);
-                           }
-
-                           @Override
-                           public void failure(WebAuthError error) {
-                            registerFieldsresult.failure(error);
-                           }
-                       });
-
-                   }
-                   else {
-                       String errorMessage="RequestId must not be empty";
-
-                       registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                               errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                   }
-
-               }
-
-               @Override
-               public void failure(WebAuthError error) {
-                   registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException());
-               }
-           });
-       }
-       catch (Exception e)
-       {
-           String errorMessage="Custom Exception"+e.getMessage();
-
-           registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                   errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-       }
-    }
-
-    @Override
-    public void registerUser(@NonNull final String requestId, final RegistrationEntity registrationEntity,
-                             final Result<RegisterNewUserResponseEntity> registerFieldsresult) {
-        try{
+                                      final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
+        try {
 
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                     String language;
 
-                    if(!requestId.equals("")){
-                        if(registerFields!=null)
+                    if (!requestId.equals("")) {
+
+                        final RegistrationSetupRequestEntity registrationSetupRequestEntity;
+
+                        registrationSetupRequestEntity = new RegistrationSetupRequestEntity();
+                        registrationSetupRequestEntity.setRequestId(requestId);
+
+                        if (locale == null || locale == "") {
+                            language = Locale.getDefault().getLanguage();
+                            registrationSetupRequestEntity.setAcceptedLanguage(language);
+
+                        } else {
+                            language = locale;
+                            registrationSetupRequestEntity.setAcceptedLanguage(language);
+                        }
+
+                        RegistrationController.getShared(context).getRegisterationFields(baseurl, registrationSetupRequestEntity,
+                                new Result<RegistrationSetupResponseEntity>() {
+                                    @Override
+                                    public void success(RegistrationSetupResponseEntity result) {
+                                        registerFields = result.getData();
+                                        registerFieldsresult.success(result);
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        registerFieldsresult.failure(error);
+                                    }
+                                });
+
+                    } else {
+                        String errorMessage = "RequestId must not be empty";
+
+                        registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            String errorMessage = "Custom Exception" + e.getMessage();
+
+            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+    @Override
+    public void registerUser(@NonNull final String requestId, final RegistrationEntity registrationEntity,
+                             final Result<RegisterNewUserResponseEntity> registerFieldsresult) {
+        try {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = savedProperties.get("DomainURL");
+                    String clientId = savedProperties.get("ClientId");
+                    String language;
+
+                    if (!requestId.equals("")) {
+                        if (registerFields != null)
 
                         {
-                            if(registerFields.length>0){
-                                for (RegistrationSetupResultDataEntity dataEntity:registerFields) {
+                            if (registerFields.length > 0) {
+                                for (RegistrationSetupResultDataEntity dataEntity : registerFields) {
 
-                                   if(dataEntity.getFieldKey().equals("email")) {
-                                       if (dataEntity.isRequired() && registrationEntity.getEmail().equals(""))
-                                           {
-                                               String errorMessage="Email must not be empty";
-                                               registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                       errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-
-                                           }
-
-                                       }
-
-                                       if(dataEntity.getFieldKey().equals("given_name")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals(""))
-                                        {
-                                            String errorMessage="given_name must not be empty";
+                                    if (dataEntity.getFieldKey().equals("email")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getEmail().equals("")) {
+                                            String errorMessage = "Email must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                                        }
-
-                                    }
-
-                                    if(dataEntity.getFieldKey().equals("family_name")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getFamily_name().equals(""))
-                                        {
-                                            String errorMessage="family_name must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                                        }
-
-                                    }
-
-                                    if(dataEntity.getFieldKey().equals("mobile_number")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getMobile_number().equals(""))
-                                        {
-                                            String errorMessage="mobile_number must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                                        }
-
-                                    }
-
-                                    if(dataEntity.getFieldKey().equals("password")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getPassword().equals(""))
-                                        {
-                                            String errorMessage="password must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
 
                                         }
 
                                     }
 
-                                    if(dataEntity.getFieldKey().equals("password_echo")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals(""))
-                                        {
-                                            String errorMessage="password_echo must not be empty";
+                                    if (dataEntity.getFieldKey().equals("given_name")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals("")) {
+                                            String errorMessage = "given_name must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                         }
-                                        if(registrationEntity.getPassword().equals(registrationEntity.getPassword_echo())) {
 
-                                           String errorMessage="Password and password_echo must be same";
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("family_name")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getFamily_name().equals("")) {
+                                            String errorMessage = "family_name must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                                         }
 
                                     }
 
-                                    if(dataEntity.getFieldKey().equals("username")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getUsername().equals(""))
-                                        {
-                                            String errorMessage="username must not be empty";
+                                    if (dataEntity.getFieldKey().equals("mobile_number")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getMobile_number().equals("")) {
+                                            String errorMessage = "mobile_number must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                                         }
 
                                     }
 
-                                    if(dataEntity.getFieldKey().equals("birthdate")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getBirthdate().equals(""))
-                                        {
-                                            String errorMessage="birthdate must not be empty";
+                                    if (dataEntity.getFieldKey().equals("password")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getPassword().equals("")) {
+                                            String errorMessage = "password must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
 
                                         }
 
                                     }
 
-                                    if(registrationEntity.getProvider()!=null && registrationEntity.getProvider()!="")
-                                    {
+                                    if (dataEntity.getFieldKey().equals("password_echo")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals("")) {
+                                            String errorMessage = "password_echo must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
-                                        String errorMessage="Provider must not be empty";
+                                        }
+                                        if (registrationEntity.getPassword().equals(registrationEntity.getPassword_echo())) {
+
+                                            String errorMessage = "Password and password_echo must be same";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("username")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getUsername().equals("")) {
+                                            String errorMessage = "username must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("birthdate")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getBirthdate().equals("")) {
+                                            String errorMessage = "birthdate must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                        }
+
+                                    }
+
+                                    if (registrationEntity.getProvider() != null && registrationEntity.getProvider() != "") {
+
+                                        String errorMessage = "Provider must not be empty";
                                         registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
 
-                                   }
+                                    }
 
-                                   for(int i=0;i<registrationEntity.getCustomFields().size();i++)
-                                   {
-                                       if(registrationEntity.getCustomFields().keys().hasMoreElements())
-                                       {
+                                    for (int i = 0; i < registrationEntity.getCustomFields().size(); i++) {
+                                        if (registrationEntity.getCustomFields().keys().hasMoreElements()) {
 
-                                          // registrationEntity.getCustomFields().get()
-                                       }
-                                   }
-
+                                            // registrationEntity.getCustomFields().get()
+                                        }
+                                    }
 
 
                                 }
-                            }
-                           else
-                            {
+                            } else {
 
                             }
-                        }
-                        else
-                        {
+                        } else {
 
                         }
 
@@ -2843,7 +2634,7 @@ loginresult.failure(error);
                         registerNewUserRequestEntity.setRegistrationEntity(registrationEntity);
 
 
-                        RegistrationController.getShared(context).registerNewUser(baseurl,registerNewUserRequestEntity,
+                        RegistrationController.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,
                                 new Result<RegisterNewUserResponseEntity>() {
                                     @Override
                                     public void success(RegisterNewUserResponseEntity result) {
@@ -2856,12 +2647,11 @@ loginresult.failure(error);
                                     }
                                 });
 
-                    }
-                    else {
-                        String errorMessage="RequestId must not be empty";
+                    } else {
+                        String errorMessage = "RequestId must not be empty";
 
                         registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
 
                 }
@@ -2871,27 +2661,25 @@ loginresult.failure(error);
                     registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e)
-        {
-            String errorMessage="Custom Exception"+e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = "Custom Exception" + e.getMessage();
 
             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
     @Override
     public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
-                                            final Result<RegisterUserAccountInitiateResponseEntity> Result){
+                                          final Result<RegisterUserAccountInitiateResponseEntity> Result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity=new RegisterUserAccountInitiateRequestEntity();
+                    RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity = new RegisterUserAccountInitiateRequestEntity();
                     registerUserAccountInitiateRequestEntity.setProcessingType("CODE");
 
                  /*   if(verificationMedium.equals("") || verificationMedium.equals(null))
@@ -2907,7 +2695,7 @@ loginresult.failure(error);
                     registerUserAccountInitiateRequestEntity.setSub(sub);
                     registerUserAccountInitiateRequestEntity.setRequestId(requestId);
 
-                    RegistrationController.getShared(context).initiateAccountVerificationService(baseurl,registerUserAccountInitiateRequestEntity,Result);
+                    RegistrationController.getShared(context).initiateAccountVerificationService(baseurl, registerUserAccountInitiateRequestEntity, Result);
 
                 }
 
@@ -2916,8 +2704,7 @@ loginresult.failure(error);
                     Result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
@@ -2925,15 +2712,15 @@ loginresult.failure(error);
 
     @Override
     public void initiateSMSVerification(@NonNull final String sub, @NonNull final String requestId,
-                                                   final Result<RegisterUserAccountInitiateResponseEntity> Result){
+                                        final Result<RegisterUserAccountInitiateResponseEntity> Result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity=new RegisterUserAccountInitiateRequestEntity();
+                    RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity = new RegisterUserAccountInitiateRequestEntity();
                     registerUserAccountInitiateRequestEntity.setProcessingType("CODE");
                     registerUserAccountInitiateRequestEntity.setVerificationMedium("sms");
                     registerUserAccountInitiateRequestEntity.setSub(sub);
@@ -2948,7 +2735,7 @@ loginresult.failure(error);
                     }*/
 
 
-                    RegistrationController.getShared(context).initiateAccountVerificationService(baseurl,registerUserAccountInitiateRequestEntity,Result);
+                    RegistrationController.getShared(context).initiateAccountVerificationService(baseurl, registerUserAccountInitiateRequestEntity, Result);
 
 
                 }
@@ -2958,24 +2745,23 @@ loginresult.failure(error);
                     Result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
+
     @Override
     public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId,
-                                                   final Result<RegisterUserAccountInitiateResponseEntity> Result)
-    {
+                                        final Result<RegisterUserAccountInitiateResponseEntity> Result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity=new RegisterUserAccountInitiateRequestEntity();
+                    RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity = new RegisterUserAccountInitiateRequestEntity();
                     registerUserAccountInitiateRequestEntity.setProcessingType("CODE");
                     registerUserAccountInitiateRequestEntity.setVerificationMedium("ivr");
                     registerUserAccountInitiateRequestEntity.setSub(sub);
@@ -2991,7 +2777,7 @@ loginresult.failure(error);
                     }*/
 
 
-                    RegistrationController.getShared(context).initiateAccountVerificationService(baseurl,registerUserAccountInitiateRequestEntity,Result);
+                    RegistrationController.getShared(context).initiateAccountVerificationService(baseurl, registerUserAccountInitiateRequestEntity, Result);
 
 
                 }
@@ -3001,28 +2787,25 @@ loginresult.failure(error);
                     Result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
     @Override
-    public void verifyAccount(@NonNull final String code, @NonNull final String accvid , final Result<RegisterUserAccountVerifyResponseEntity> result){
+    public void verifyAccount(@NonNull final String code, @NonNull final String accvid, final Result<RegisterUserAccountVerifyResponseEntity> result) {
 
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if(code!=null && !code.equals("") && accvid!=null && accvid!="") {
+                    if (code != null && !code.equals("") && accvid != null && accvid != "") {
                         RegistrationController.getShared(context).verifyAccountVerificationService(baseurl, code, accvid, result);
-                    }
-                    else
-                    {
+                    } else {
 
                     }
 
@@ -3033,8 +2816,7 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
@@ -3043,83 +2825,17 @@ loginresult.failure(error);
     //----------------------------------DEDEUPLICATION------------------------------------------------------------------------------------------------------
 
     @Override
-     public void getDeduplicationDetails(@NonNull final String trackId, final Result<DeduplicationResponseEntity> deduplicaionResult){
-         try {
-             checkSavedProperties(new Result<Dictionary<String, String>>() {
-                 @Override
-                 public void success(Dictionary<String, String> result) {
-                     String baseurl = savedProperties.get("DomainURL");
-                     String clientId=savedProperties.get("ClientId");
-                     if(trackId!=null && !trackId.equals(""))
-                     {
-                         DeduplicationController.getShared(context).getDeduplicationList(baseurl,trackId,deduplicaionResult);
-                     }
-                     else
-                     {
-
-                     }
-                 }
-
-                 @Override
-                 public void failure(WebAuthError error) {
-                     deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
-                 }
-             });
-         }
-         catch (Exception e){
-             deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
-         }
-     }
-
-    @Override
-     public void registerUser(@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult){
-         try {
-             checkSavedProperties(new Result<Dictionary<String, String>>() {
-                 @Override
-                 public void success(Dictionary<String, String> result) {
-                     String baseurl = savedProperties.get("DomainURL");
-                     String clientId=savedProperties.get("ClientId");
-                     if(trackId!=null && trackId!="")
-                     {
-                         DeduplicationController.getShared(context).registerDeduplication(baseurl,trackId,deduplicaionResult);
-                     }
-                     else
-                     {
-                         String errorMessage="TrackId Must not be null";
-                         deduplicaionResult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                     }
-                 }
-
-                 @Override
-                 public void failure(WebAuthError error) {
-                     deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
-                 }
-             });
-         }
-         catch (Exception e){
-             deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
-         }
-     }
-
-    @Override
-    public void loginWithDeduplication(final String requestId,@NonNull final String sub,@NonNull final String password,
-                                   final Result<LoginCredentialsResponseEntity> deduplicaionResult)
-    {
+    public void getDeduplicationDetails(@NonNull final String trackId, final Result<DeduplicationResponseEntity> deduplicaionResult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
-                    if(sub!=null && sub!="" && password!=null && password!="")
-                    {
-                        DeduplicationController.getShared(context).loginDeduplication(baseurl,requestId,sub,password,deduplicaionResult);
-                    }
-                    else
-                    {
-                         String errorMessage="Sub or requestId or Password Must not be null";
-                        deduplicaionResult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    String clientId = savedProperties.get("ClientId");
+                    if (trackId != null && !trackId.equals("")) {
+                        DeduplicationController.getShared(context).getDeduplicationList(baseurl, trackId, deduplicaionResult);
+                    } else {
+
                     }
                 }
 
@@ -3128,8 +2844,61 @@ loginresult.failure(error);
                     deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
+        } catch (Exception e) {
+            deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
-        catch (Exception e){
+    }
+
+    @Override
+    public void registerUser(@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult) {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = savedProperties.get("DomainURL");
+                    String clientId = savedProperties.get("ClientId");
+                    if (trackId != null && trackId != "") {
+                        DeduplicationController.getShared(context).registerDeduplication(baseurl, trackId, deduplicaionResult);
+                    } else {
+                        String errorMessage = "TrackId Must not be null";
+                        deduplicaionResult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+    }
+
+    @Override
+    public void loginWithDeduplication(final String requestId, @NonNull final String sub, @NonNull final String password,
+                                       final Result<LoginCredentialsResponseEntity> deduplicaionResult) {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = savedProperties.get("DomainURL");
+                    String clientId = savedProperties.get("ClientId");
+                    if (sub != null && sub != "" && password != null && password != "") {
+                        DeduplicationController.getShared(context).loginDeduplication(baseurl, requestId, sub, password, deduplicaionResult);
+                    } else {
+                        String errorMessage = "Sub or requestId or Password Must not be null";
+                        deduplicaionResult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
             deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
@@ -3141,160 +2910,143 @@ loginresult.failure(error);
     // Todo change
     @Override
     public void initiateResetPasswordByEmail(final String requestId, final String email,
-                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult)
-    { try {
-        checkSavedProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> result) {
-                String baseurl = savedProperties.get("DomainURL");
-                String clientId = savedProperties.get("ClientId");
-
-                if (email != null && !email.equals("") && requestId != null && !requestId.equals("")) {
-                    ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
-                    resetPasswordRequestEntity.setProcessingType("CODE");
-                    resetPasswordRequestEntity.setRequestId(requestId);
-                    resetPasswordRequestEntity.setEmail(email);
-                    resetPasswordRequestEntity.setResetMedium("email");
-
-                    ResetPasswordController.getShared(context).initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
-                }
-                else {
-                    String ErrorMessage="RequestID or email mustnot be null";
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                }
-            }
-
-
-            @Override
-            public void failure(WebAuthError error) {
-                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
-            }
-        });
-    }
-    catch (Exception e){
-        resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
-    }
-
-    }
-
-    @Override
-    public void initiateResetPasswordBySMS(final String requestId, final String mobileNumber,
-                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult)
-    { try {
-        checkSavedProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> result) {
-                String baseurl = savedProperties.get("DomainURL");
-                String clientId = savedProperties.get("ClientId");
-
-                if (mobileNumber != null && !mobileNumber.equals("") && requestId != null && !requestId.equals("")) {
-                    ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
-                    resetPasswordRequestEntity.setProcessingType("CODE");
-                    resetPasswordRequestEntity.setRequestId(requestId);
-                    resetPasswordRequestEntity.setPhoneNumber(mobileNumber);
-                    resetPasswordRequestEntity.setResetMedium("sms");
-
-                    ResetPasswordController.getShared(context).initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
-                }
-                else {
-                    String ErrorMessage="RequestID or Mobile Number mustnot be null";
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                }
-            }
-
-
-            @Override
-            public void failure(WebAuthError error) {
-                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
-            }
-        });
-    }
-    catch (Exception e){
-        resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
-    }
-
-    }
-
-    @Override
-    public void handleResetPassword(@NonNull final String verificationCode, final String rprq,
-                                    final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult)
-    {
-        try {
-        checkSavedProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> result) {
-                String baseurl = savedProperties.get("DomainURL");
-                String clientId=savedProperties.get("ClientId");
-
-                if(verificationCode!=null && !verificationCode.equals("") && rprq!=null && !rprq.equals("")) {
-
-                    ResetPasswordController.getShared(context).resetPasswordValidateCode(baseurl,verificationCode,rprq,resetpasswordResult);
-
-                }
-                else
-                {
-                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
-                }
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
-            }
-        });
-    }
-    catch (Exception e){
-        resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
-    }
-
-    }
-
-//Todo Change to entity
-    @Override
-    public void resetPassword(@NonNull final ResetPasswordEntity resetPasswordEntity,
-                              final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
-    {
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
-                    if(resetPasswordEntity.getPassword()!=null && !resetPasswordEntity.getPassword().equals("") &&
-                            resetPasswordEntity.getConfirmPassword()!=null && !resetPasswordEntity.getConfirmPassword().equals(""))
-                    {
-                        if(resetPasswordEntity.getPassword().equals(resetPasswordEntity.getConfirmPassword()))
-                        {
-                            if(resetPasswordEntity.getResetRequestId()!=null && !resetPasswordEntity.getResetRequestId().equals("") &&
-                                    resetPasswordEntity.getExchangeId()!=null && !resetPasswordEntity.getExchangeId().equals(""))
-                            {
+                    if (email != null && !email.equals("") && requestId != null && !requestId.equals("")) {
+                        ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
+                        resetPasswordRequestEntity.setProcessingType("CODE");
+                        resetPasswordRequestEntity.setRequestId(requestId);
+                        resetPasswordRequestEntity.setEmail(email);
+                        resetPasswordRequestEntity.setResetMedium("email");
+
+                        ResetPasswordController.getShared(context).initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
+                    } else {
+                        String ErrorMessage = "RequestID or email mustnot be null";
+                        resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+
+    }
+
+    @Override
+    public void initiateResetPasswordBySMS(final String requestId, final String mobileNumber,
+                                           final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = savedProperties.get("DomainURL");
+                    String clientId = savedProperties.get("ClientId");
+
+                    if (mobileNumber != null && !mobileNumber.equals("") && requestId != null && !requestId.equals("")) {
+                        ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
+                        resetPasswordRequestEntity.setProcessingType("CODE");
+                        resetPasswordRequestEntity.setRequestId(requestId);
+                        resetPasswordRequestEntity.setPhoneNumber(mobileNumber);
+                        resetPasswordRequestEntity.setResetMedium("sms");
+
+                        ResetPasswordController.getShared(context).initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
+                    } else {
+                        String ErrorMessage = "RequestID or Mobile Number mustnot be null";
+                        resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+
+    }
+
+    @Override
+    public void handleResetPassword(@NonNull final String verificationCode, final String rprq,
+                                    final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult) {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = savedProperties.get("DomainURL");
+                    String clientId = savedProperties.get("ClientId");
+
+                    if (verificationCode != null && !verificationCode.equals("") && rprq != null && !rprq.equals("")) {
+
+                        ResetPasswordController.getShared(context).resetPasswordValidateCode(baseurl, verificationCode, rprq, resetpasswordResult);
+
+                    } else {
+                        resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+
+    }
+
+    //Todo Change to entity
+    @Override
+    public void resetPassword(@NonNull final ResetPasswordEntity resetPasswordEntity,
+                              final Result<ResetNewPasswordResponseEntity> resetpasswordResult) {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = savedProperties.get("DomainURL");
+                    String clientId = savedProperties.get("ClientId");
+
+                    if (resetPasswordEntity.getPassword() != null && !resetPasswordEntity.getPassword().equals("") &&
+                            resetPasswordEntity.getConfirmPassword() != null && !resetPasswordEntity.getConfirmPassword().equals("")) {
+                        if (resetPasswordEntity.getPassword().equals(resetPasswordEntity.getConfirmPassword())) {
+                            if (resetPasswordEntity.getResetRequestId() != null && !resetPasswordEntity.getResetRequestId().equals("") &&
+                                    resetPasswordEntity.getExchangeId() != null && !resetPasswordEntity.getExchangeId().equals("")) {
                                 ResetPasswordController.getShared(context).
-                                        resetNewPassword(baseurl,resetPasswordEntity,resetpasswordResult);
-                            }
-                            else {
-                                String errorMessage="resetRequestId and ExchangeId must not be null";
+                                        resetNewPassword(baseurl, resetPasswordEntity, resetpasswordResult);
+                            } else {
+                                String errorMessage = "resetRequestId and ExchangeId must not be null";
 
                                 resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                             }
-                        }
-                        else
-                        {
-                            String errorMessage="Password and confirmPassword must  be same";
+                        } else {
+                            String errorMessage = "Password and confirmPassword must  be same";
 
                             resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                    }
-                    else
-                    {
-                        String errorMessage="Password or confirmPassword must not be empty";
+                    } else {
+                        String errorMessage = "Password or confirmPassword must not be empty";
 
                         resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                     }
                 }
 
@@ -3303,12 +3055,11 @@ loginresult.failure(error);
                     resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
-            String errorMessage=e.getMessage();
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
 
             resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
 
         }
@@ -3318,17 +3069,16 @@ loginresult.failure(error);
     //----------------------------------------------------------------------------------------------------------------------------------------
 
     //Todo change to Sub and Identity id
-    public void changePassword(String sub,final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> result)
-    {
+    public void changePassword(String sub, final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
 
 
-                    ChangePasswordController.getShared(context).changePassword(baseurl,changePasswordRequestEntity,result);
+                    ChangePasswordController.getShared(context).changePassword(baseurl, changePasswordRequestEntity, result);
                 }
 
                 @Override
@@ -3336,8 +3086,7 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
@@ -3345,14 +3094,11 @@ loginresult.failure(error);
 
     @Override
     public void getAccessToken(String sub, Result<AccessTokenEntity> result) {
-        try
-        {
-            AccessTokenController.getShared(context).getAccessToken(sub,result);
-        }
-        catch (Exception e)
-        {
-            String errorMessage="Access Token Exception"+e.getMessage();
-            result.failure(WebAuthError.getShared(context).customException(417,errorMessage,417));
+        try {
+            AccessTokenController.getShared(context).getAccessToken(sub, result);
+        } catch (Exception e) {
+            String errorMessage = "Access Token Exception" + e.getMessage();
+            result.failure(WebAuthError.getShared(context).customException(417, errorMessage, 417));
         }
     }
 
@@ -3360,7 +3106,7 @@ loginresult.failure(error);
     @Override
     public void getUserInfo(String sub, final Result<UserinfoEntity> callback) {
         try {
-            if(sub!=null && sub!="") {
+            if (sub != null && sub != "") {
 
                 getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
@@ -3368,13 +3114,13 @@ loginresult.failure(error);
                         OauthService.getShared(context).getUserinfo(result.getAccess_token(), new Result<UserinfoEntity>() {
                             @Override
                             public void success(UserinfoEntity result) {
-                               // hideLoader();
+                                // hideLoader();
                                 callback.success(result);
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-                               // hideLoader();
+                                // hideLoader();
                                 callback.failure(error);
                             }
                         });
@@ -3387,14 +3133,11 @@ loginresult.failure(error);
                     }
                 });
 
+            } else {
+                String errorMessage = "Sub must not be null";
+                callback.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }
-            else {
-                String errorMessage="Sub must not be null";
-                callback.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-            }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Timber.d(e.getMessage()); //Todo Handle Exception
         }
     }
@@ -3405,8 +3148,7 @@ loginresult.failure(error);
     }
 
 
-    public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain)
-    {
+    public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain) {
         try {
 
 
@@ -3416,8 +3158,7 @@ loginresult.failure(error);
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 
 
-                if(color!=null)
-                {
+                if (color != null) {
 
                     builder.setToolbarColor(Color.parseColor(color));
                 }
@@ -3425,17 +3166,13 @@ loginresult.failure(error);
                 CustomTabsIntent customTabsIntent = builder.build();
 
                 customTabsIntent.launchUrl(context, Uri.parse(url));
-            }
-            else
-            {
+            } else {
                 //TODo callback Failure
                 String loggerMessage = "LoginURL failure : " + "Error Code - ";
                 // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Timber.d(e.getMessage());// TODO: Handle Exception
         }
     }
@@ -3444,30 +3181,70 @@ loginresult.failure(error);
     //Todo sConsult and Create a  new Resume if the loginCallback is null
     //Get Code By URl
 
-    public void getLoginCode(String url,Result<AccessTokenEntity> callback) {
-       try {
-          // showLoader();
-           String code = getCodeFromUrl(url);
-           if (code != null) {
-             //  hideLoader();
+    public void getLoginCode(String url, Result<AccessTokenEntity> callback) {
+        try {
+            // showLoader();
+            String code = getCodeFromUrl(url);
+            if (code != null) {
+                //  hideLoader();
 
-               getAccessTokenByCode(code, callback);
-           } else {
-              // hideLoader();
-               String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - ";
-               //+error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
-               LogFile.addRecordToLog(loggerMessage);
-           }
-       }
-       catch (Exception e)
-       {
-           Timber.d(e.getMessage()); //Todo handle Exception
-       }
+                getAccessTokenByCode(code, callback);
+            } else {
+                // hideLoader();
+                String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - ";
+                //+error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
+                LogFile.addRecordToLog(loggerMessage);
+            }
+        } catch (Exception e) {
+            Timber.d(e.getMessage()); //Todo handle Exception
+        }
     }
 
 
     public void getAccessTokenByCode(String code, Result<AccessTokenEntity> result) {
 
+    }
+
+
+    private void saveLoginProperties(final Result<Dictionary<String, String>> result)
+    {
+        readFromFile(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> loginProperties) {
+                savedProperties = loginProperties;
+                if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
+                    webAuthError = webAuthError.propertyMissingException();
+                    String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - "
+                            + webAuthError.errorCode + ", Error Message -  DomainURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
+                    LogFile.addRecordToLog(loggerMessage);
+                    result.failure(webAuthError);
+                }
+                if (savedProperties.get("ClientId").equals("") || savedProperties.get("ClientId") == null || savedProperties == null) {
+                    webAuthError = webAuthError.propertyMissingException();
+                    String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - ClientId is missing"
+                            + webAuthError.errorCode + ", Error Message -  ClientId is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
+
+                    LogFile.addRecordToLog(loggerMessage);
+                    result.failure(webAuthError);
+                }
+                if (savedProperties.get("RedirectURL").equals("") || savedProperties.get("RedirectURL") == null || savedProperties == null) {
+                    webAuthError = webAuthError.propertyMissingException();
+                    String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - RedirectURL is missing"
+                            + webAuthError.errorCode + ", Error Message -  RedirectURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
+
+                    LogFile.addRecordToLog(loggerMessage);
+                    result.failure(webAuthError);
+                }
+                Cidaas.baseurl = savedProperties.get("DomainURL");
+                result.success(savedProperties);
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                result.failure(error);
+            }
+        });
     }
 
 
@@ -3479,14 +3256,14 @@ loginresult.failure(error);
     // 3. Done Call configure Pattern From Pattern Controller and return the result
     // 4. Done Maintain logs based on flags
 
-    public  void checkSavedProperties(final Result<Dictionary<String, String> > result){
+    public void checkSavedProperties(final Result<Dictionary<String, String>> result) {
 
-        if(savedProperties==null){
+        if (savedProperties == null) {
             //Read from file if localDB is null
             readFromFile(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    savedProperties=loginProperties;
+                    savedProperties = loginProperties;
                     if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
                         webAuthError = webAuthError.propertyMissingException();
                         String loggerMessage = "Setup Pattern MFA readProperties failure : " + "Error Code - "
@@ -3502,7 +3279,7 @@ loginresult.failure(error);
                         LogFile.addRecordToLog(loggerMessage);
                         result.failure(webAuthError);
                     }
-                    Cidaas.baseurl=savedProperties.get("DomainURL");
+                    Cidaas.baseurl = savedProperties.get("DomainURL");
                     result.success(savedProperties);
 
                 }
@@ -3512,24 +3289,21 @@ loginresult.failure(error);
                     result.failure(error);
                 }
             });
-        }
-        else
-        {
-            Cidaas.baseurl=savedProperties.get("DomainURL");
+        } else {
+            Cidaas.baseurl = savedProperties.get("DomainURL");
             result.success(savedProperties);
         }
 
 
     }
 
-    public void loginWithFIDO(String usageType, String email, String sub, String trackId,final Result<LoginCredentialsResponseEntity> result)
-    {
+    public void loginWithFIDO(String usageType, String email, String sub, String trackId, final Result<LoginCredentialsResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                 }
 
                 @Override
@@ -3537,52 +3311,49 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
 
 
-// -----------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------
     //Private Methods
     private String getCodeFromUrl(String url) {
-    try {
-        String code = null;
-        if (url.contains("code=")) {
-            String[] codeComponents = url.split("code=");
-            if (codeComponents.length > 1) {
-                codeComponents = codeComponents[1].split("&");
-                if (codeComponents.length > 0) {
-                    code = codeComponents[0];
-                    return code;
-                } else {
-                    return code;
+        try {
+            String code = null;
+            if (url.contains("code=")) {
+                String[] codeComponents = url.split("code=");
+                if (codeComponents.length > 1) {
+                    codeComponents = codeComponents[1].split("&");
+                    if (codeComponents.length > 0) {
+                        code = codeComponents[0];
+                        return code;
+                    } else {
+                        return code;
+                    }
                 }
             }
+            return code;
+        } catch (Exception e) {
+            Timber.d(e.getMessage());
+            return null;
+            //Todo Handle Exception
         }
-        return code;
     }
-    catch (Exception e)
-    {
-        Timber.d(e.getMessage());
-        return null;
-        //Todo Handle Exception
-    }
-}
 
     //Method to check the pkce flow and save it to DB
-    private void checkPKCEFlow(Dictionary<String,String> loginproperties,Result<Dictionary<String,String>> savedResult){
-        try{
+    private void checkPKCEFlow(Dictionary<String, String> loginproperties, Result<Dictionary<String, String>> savedResult) {
+        try {
 
-            webAuthError=WebAuthError.getShared(context);
+            webAuthError = WebAuthError.getShared(context);
             // Global Checking
             //Check all the login Properties are Correct
             if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
                     || !((Hashtable) loginproperties).containsKey("DomainURL")) {
                 webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Request-Id readProperties failure : " + "Error Code - " +webAuthError.errorCode + ", Error Message - "
-                        + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
+                String loggerMessage = "Request-Id readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
+                        + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
 
@@ -3592,17 +3363,19 @@ loginresult.failure(error);
                     || !((Hashtable) loginproperties).containsKey("ClientId")) {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
-                        +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
+                        + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
-                savedResult.failure(webAuthError);return;
+                savedResult.failure(webAuthError);
+                return;
             }
             if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                     || loginproperties.get("RedirectURL").equals("")) {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
-                        +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
+                        + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
-                savedResult.failure(webAuthError);return;
+                savedResult.failure(webAuthError);
+                return;
             }
 
 
@@ -3628,10 +3401,8 @@ loginresult.failure(error);
             }*/
             DBHelper.getShared().addLoginProperties(savedProperties);
             savedResult.success(savedProperties);
-        }
-        catch (Exception e)
-        {
-            Timber.e("Request-Id service exception : "+e.getMessage());
+        } catch (Exception e) {
+            Timber.e("Request-Id service exception : " + e.getMessage());
             savedResult.failure(webAuthError);
         }
     }
@@ -3656,9 +3427,7 @@ loginresult.failure(error);
 
                 }
             });
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Timber.d(e.getMessage());
         }
     }
@@ -3666,10 +3435,9 @@ loginresult.failure(error);
     //Get Login URL Method by  passing RequestId
 
     public void getLoginURL(@NonNull String RequestId, final Result<String> callback) {
-        try
-        {
+        try {
             //Check requestId is not null
-            if(RequestId != "") {
+            if (RequestId != "") {
                 OauthService.getShared(context).getLoginUrl(RequestId, new Result<String>() {
                     @Override
                     public void success(String result) {
@@ -3680,13 +3448,12 @@ loginresult.failure(error);
                     public void failure(WebAuthError error) {
                         callback.failure(error);
                         String loggerMessage = "Login URL service failure : " + "Error Code - "
-                                +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
+                                + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
                         LogFile.addRecordToLog(loggerMessage);
                     }
                 });
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             //Todo Handle Error
             Timber.d(ex.getMessage());
         }
@@ -3701,7 +3468,7 @@ loginresult.failure(error);
             //Get Request ID
             if (ClientId != null && !Objects.equals(ClientId, "") && DomainUrl != null && !Objects.equals(DomainUrl, "")
                     && RedirectURL != null && !Objects.equals(RedirectURL, "")) {
-                getRequestId(DomainUrl, ClientId, RedirectURL,ClientSecret, new Result<AuthRequestResponseEntity>() {
+                getRequestId(DomainUrl, ClientId, RedirectURL, ClientSecret, new Result<AuthRequestResponseEntity>() {
                     @Override
                     public void success(AuthRequestResponseEntity result) {
                         // if request ID is valid we call get LoginURl
@@ -3714,9 +3481,7 @@ loginresult.failure(error);
                     }
                 });
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Timber.d(ex.getMessage());
             //Todo Handle Exception
         }
@@ -3727,7 +3492,7 @@ loginresult.failure(error);
     public void getLoginURL(@NonNull Dictionary<String, String> loginproperties, final Result<String> callback) {
         try {
             //Get Request ID
-            RequestIdController.getShared(context). getRequestId(loginproperties, new Result<AuthRequestResponseEntity>() {
+            RequestIdController.getShared(context).getRequestId(loginproperties, new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
                     //Call Loginurl if requestId is Valid
@@ -3739,15 +3504,13 @@ loginresult.failure(error);
                     callback.failure(error);
                 }
             });
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Timber.d(e.getMessage());    //Todo Handle Exception
         }
     }
 
     //ReadFromXML File
-    private void readFromFile(final Result<Dictionary<String,String>> loginPropertiesResult){
+    private void readFromFile(final Result<Dictionary<String, String>> loginPropertiesResult) {
         FileHelper fileHelper = FileHelper.getShared(context);
         fileHelper.readProperties(context.getAssets(), "Cidaas.xml", new Result<Dictionary<String, String>>() {
             @Override
@@ -3766,8 +3529,8 @@ loginresult.failure(error);
                     @Override
                     public void failure(WebAuthError error) {
                         loginPropertiesResult.failure(error);
-                        String loggerMessage = "Request-Id PKCE FLOW readProperties failure : " + "Error Code - " +error.errorCode +
-                                ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
+                        String loggerMessage = "Request-Id PKCE FLOW readProperties failure : " + "Error Code - " + error.errorCode +
+                                ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
                         LogFile.addRecordToLog(loggerMessage);
                     }
                 });
@@ -3787,9 +3550,8 @@ loginresult.failure(error);
     }
 
     //Resume After open App From Broswer
-    public void resume(String code)/*,Result<AccessTokenEntity>... callbacktoMain*/
-    {
-        if(logincallback!=null) {
+    public void resume(String code)/*,Result<AccessTokenEntity>... callbacktoMain*/ {
+        if (logincallback != null) {
             getLoginCode(code, logincallback);
         }
       /* else if(callbacktoMain!=null)
@@ -3802,14 +3564,13 @@ loginresult.failure(error);
     }
 
 
-
     public void configureFIDO(String sub, final Result<EnrollFIDOMFAResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = savedProperties.get("DomainURL");
-                    String clientId=savedProperties.get("ClientId");
+                    String clientId = savedProperties.get("ClientId");
                 }
 
                 @Override
@@ -3817,13 +3578,120 @@ loginresult.failure(error);
                     result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
 
+
+    private void checkLoginProperties(final Dictionary<String, String> loginproperties,Result<String> result)
+    {
+        WebAuthError webAuthError = null;
+
+        //WebError Code instance Creation
+        webAuthError= WebAuthError.getShared(context);
+        // Global Checking
+        //Check all the login Properties are Correct
+        if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
+                || !((Hashtable) loginproperties).containsKey("DomainURL")) {
+            webAuthError = webAuthError.propertyMissingException();
+            String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
+                    +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
+            LogFile.addRecordToLog(loggerMessage);
+            result.failure(webAuthError);
+
+            return;
+        }
+        if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
+                || !((Hashtable) loginproperties).containsKey("ClientId")) {
+            webAuthError = webAuthError.propertyMissingException();
+            String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
+                    +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
+            LogFile.addRecordToLog(loggerMessage);
+            result.failure(webAuthError);return;
+        }
+        if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
+                || loginproperties.get("RedirectURL").equals("")) {
+            webAuthError = webAuthError.propertyMissingException();
+            String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
+                    +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
+            LogFile.addRecordToLog(loggerMessage);
+            result.failure(webAuthError);
+            return;
+        }
+
+    }
+
+
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties)
+    {
+        try
+        {
+            if(loginproperties!=null) {
+                DBHelper.getShared().addLoginProperties(loginproperties);
+            }
+        }
+        catch (Exception e)
+        {
+            String loggerMessage = "Set File : " + " Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
+
+        }
+
+    }
+
+
+    public static String getSDKVersion(){
+        String version="";
+        try {
+
+            version ="("+ BuildConfig.VERSION_NAME+")";
+        } catch (Exception e) {
+            return "";
+        }
+
+        return  version;
+    }
+
+
+
+    public void setAccessToken(AccessTokenEntity accessTokenEntity){
+        try
+        {
+
+            if(accessTokenEntity.getSub()!=null && accessTokenEntity.getSub()!="") {
+                EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
+                    @Override
+                    public void success(AccessTokenModel accessTokenModel) {
+                      DBHelper.getShared().setAccessToken(accessTokenModel);
+                      //result.success("Access Token Saved SuccessFully");
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        String loggerMessage = "Set Access Token : " + " Error Message - "+error.getErrorMessage();
+                        LogFile.addRecordToLog(loggerMessage);
+
+                        //result.failure(error);
+                    }
+                });
+            }
+            else
+            {
+                String loggerMessage = "Set Access Token : " + " Error Message - Sub must not be null";
+                LogFile.addRecordToLog(loggerMessage);
+               // result.failure(WebAuthError.getShared(context).customException(417,"Sub must not be null",417));
+            }
+
+        }
+        catch (Exception e){
+
+            String loggerMessage = "Set Access Token : " + " Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
+            //result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
+        }
+    }
 
 
 

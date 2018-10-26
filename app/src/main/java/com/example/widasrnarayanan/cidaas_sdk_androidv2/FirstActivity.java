@@ -48,7 +48,6 @@ public class FirstActivity extends AppCompatActivity {
      cidaas.getDeduplicationDetails("", new Result<DeduplicationResponseEntity>() {
          @Override
          public void success(DeduplicationResponseEntity result) {
-
          }
 
          @Override

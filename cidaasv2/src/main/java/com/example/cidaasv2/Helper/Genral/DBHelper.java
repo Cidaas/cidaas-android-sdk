@@ -195,7 +195,7 @@ public void setEnableLog(boolean enableLog)
         boolean result = false;
         try {
             String jsonString = shared_objectMapper.writeValueAsString(loginpropObj);
-            editor.putString(LoginProperties, jsonString);
+            editor.putString(LoginProperties+loginpropObj.get("DomainURL"), jsonString);
             result = editor.commit();
         } catch (Exception e) {
             result = false;

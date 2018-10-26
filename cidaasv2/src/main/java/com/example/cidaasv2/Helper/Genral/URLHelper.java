@@ -95,6 +95,7 @@ public class URLHelper {
     String resumeConsentURL="/login-srv/precheck/continue/sdk/";
 
     String internaluserProfileURL="/users-srv/internal/userinfo/profile/";
+    String userInfoURL="/users-srv/userinfo";
 
     String RegisterUserAccountInitiate="/verification-srv/account/initiate";
     String RegisterUserAccountVerify="/verification-srv/account/verify";
@@ -117,6 +118,10 @@ public class URLHelper {
 
     String documentScanner="/access-control-srv/ocr/validate";
 
+
+    public String getUserInfoURL() {
+        return userInfoURL;
+    }
 
     public String getDocumentScanner() {
         return documentScanner;
