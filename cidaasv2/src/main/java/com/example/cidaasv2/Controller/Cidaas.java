@@ -3629,12 +3629,19 @@ public class Cidaas implements IOAuthWebLogin {
         try
         {
             if(loginproperties!=null) {
+
+
                 DBHelper.getShared().addLoginProperties(loginproperties);
+            }
+            else
+            {
+                String loggerMessage = "SetURL File : " + " Error Message -Login properties in null " ;
+                LogFile.addRecordToLog(loggerMessage);
             }
         }
         catch (Exception e)
         {
-            String loggerMessage = "Set File : " + " Error Message - " + e.getMessage();
+            String loggerMessage = "SetURL File : " + " Error Message - " + e.getMessage();
             LogFile.addRecordToLog(loggerMessage);
 
         }

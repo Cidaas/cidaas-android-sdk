@@ -33,6 +33,10 @@ dependencies {
     implementation project(':cidaasv2')
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+
+
+    //Google Vision For Camera 2
+    compile 'com.google.android.gms:play-services-vision:11.8.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

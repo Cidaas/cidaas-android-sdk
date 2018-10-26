@@ -85,8 +85,7 @@ dependencies {
     ///For ID card Scannner
     compile 'io.card:android-sdk:5.5.1'
 
-    //Google Vision For Camera 2
-    compile 'com.google.android.gms:play-services-vision:11.8.0'
+
 
 
 
