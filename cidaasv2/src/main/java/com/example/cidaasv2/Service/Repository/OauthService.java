@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Service.Repository;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -252,7 +253,7 @@ public class OauthService {
 
 
     //Get Login URL
-    public void getLoginUrl(String requestId, final Result<String> callback)
+    public void getLoginUrl(String requestId, @NonNull String DomainURL, final Result<String> callback)
     {
        try {
            //Local Variables
@@ -275,7 +276,7 @@ public class OauthService {
 
            //Get Properties From DB
 
-           Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties();
+           Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
            if (loginProperties == null) {
                callback.failure(webAuthError.loginURLMissingException());
            }
@@ -381,7 +382,7 @@ public class OauthService {
 
 
 
-    public void getUserinfo(String AccessToken, final Result<UserinfoEntity> callback) {
+    public void getUserinfo(String AccessToken,String DomainURL, final Result<UserinfoEntity> callback) {
         try {
             //Local Variables
             String url = "";
@@ -406,7 +407,7 @@ public class OauthService {
 
             //Get Properties From DB
 
-            Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties();
+            Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
             if (loginProperties == null) {
                 callback.failure(webAuthError.loginURLMissingException());
             }

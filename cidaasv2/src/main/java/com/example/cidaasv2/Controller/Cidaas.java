@@ -133,9 +133,6 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 
-import org.w3c.dom.Document;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -145,6 +142,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.card.payment.CardIOActivity;
+import okhttp3.internal.http2.ErrorCode;
 import timber.log.Timber;
 
 import static android.content.Context.KEYGUARD_SERVICE;
@@ -174,12 +172,13 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     public String loginURL;
+    public String DomainURL="";
     public String redirectUrl;
     public Result<AccessTokenEntity> logincallback;
 
 
     //saved Properties for Global Access
-    Dictionary<String, String> savedProperties;
+  //  Dictionary<String, String> savedProperties;
 
     //To check the Loader
     private boolean displayLoader = false;
@@ -252,17 +251,34 @@ public class Cidaas implements IOAuthWebLogin {
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
 
-
+//Read and save file in shared preference
         saveLoginProperties(new Result<Dictionary<String, String>>() {
             @Override
-            public void success(Dictionary<String, String> result) {
-                savedProperties=result;
-                DBHelper.getShared().addLoginProperties(result);
+            public void success(final Dictionary<String, String> loginResult) {
+              //  savedProperties=result;
+                DomainURL=loginResult.get("DomainURL");
+
+                checkPKCEFlow(loginResult, new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> result) {
+                        DBHelper.getShared().addLoginProperties(result);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
+                                + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
+                        LogFile.addRecordToLog(loggerMessage);
+                    }
+                });
+
             }
 
             @Override
             public void failure(WebAuthError error) {
-
+                String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
+                        + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
+                LogFile.addRecordToLog(loggerMessage);
             }
         });
 
@@ -390,7 +406,12 @@ public class Cidaas implements IOAuthWebLogin {
         try {
 
             //Todo Check in saved file
-            final Dictionary<String, String> loginProperties = null;
+
+            if(DomainURL!=null && !DomainURL.equals("")){
+
+
+            final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
+
             if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
                 //check here for already saved properties
                 checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
@@ -402,11 +423,8 @@ public class Cidaas implements IOAuthWebLogin {
                     @Override
                     public void failure(WebAuthError error) {
                         resulttoReturn.failure(error);
-
                     }
                 });
-
-
             } else {
                 //Read File from asset to get URL
                 readFromFile(new Result<Dictionary<String, String>>() {
@@ -421,6 +439,11 @@ public class Cidaas implements IOAuthWebLogin {
                         resulttoReturn.failure(error);
                     }
                 });
+              }
+            }
+             else
+            {
+                resulttoReturn.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL must not be null",HttpStatusCode.EXPECTATION_FAILED));
             }
         } catch (Exception e) {
             //Todo Handle Exception
@@ -432,19 +455,27 @@ public class Cidaas implements IOAuthWebLogin {
     @Override
     public void getTenantInfo(final Result<TenantInfoEntity> tenantresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> stringresult) {
-                    String baseurl = stringresult.get("DomainURL");
-                    String clientId = stringresult.get("ClientId");
-                    TenantController.getShared(context).getTenantInfo(baseurl, tenantresult);
-                }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    tenantresult.failure(error);
-                }
-            });
+            if(DomainURL!=null && DomainURL!="") {
+
+                checkSavedProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> stringresult) {
+                        String baseurl = stringresult.get("DomainURL");
+                        String clientId = stringresult.get("ClientId");
+                        TenantController.getShared(context).getTenantInfo(baseurl, tenantresult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        tenantresult.failure(error);
+                    }
+                });
+            }
+            else
+            {
+                tenantresult.failure(WebAuthError.getShared(context).customException(417, "DomainURL Must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+            }
 
             /*if ((baseurl != null) && (baseurl.equals(""))) {
 
@@ -504,8 +535,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (loginEntity.getUsername_type() == null && loginEntity.getUsername_type() == "") {
                         loginEntity.setUsername_type("email");
@@ -554,8 +585,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (consentName != null && !consentName.equals("") && baseurl != null && !baseurl.equals("")
                             && clientId != null && !clientId.equals("")) {
@@ -595,8 +626,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
 
                     if (consentEntity.getSub() != null && !consentEntity.getSub().equals("") &&
@@ -680,8 +711,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
                     ///Todo Call configure email
 
                     EmailConfigurationController.getShared(context).configureEmail(sub, baseurl, result);
@@ -707,8 +738,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     //todo call enroll Email
                     if (code != null && !code.equals("") || statusId != null && !statusId.equals("")) {
@@ -737,8 +768,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
                             (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
@@ -785,8 +816,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     //Todo call initiate
 
@@ -831,8 +862,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
 
                     SMSConfigurationController.getShared(context).configureSMS(sub, baseurl, result);
                 }
@@ -854,8 +885,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
 
                     if (code != null && code != "") {
                         SMSConfigurationController.getShared(context).enrollSMSMFA(code, statusId, baseurl, result);
@@ -881,8 +912,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
                             (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
 
@@ -941,8 +972,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     //Todo call initiate
 
@@ -992,8 +1023,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
                     //todo call enroll Email
 
                     IVRConfigurationController.getShared(context).configureIVR(sub, baseurl, result);
@@ -1015,8 +1046,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
 
                     if (code != null && code != "") {
                         IVRConfigurationController.getShared(context).enrollIVRMFA(code, statusId, baseurl, result);
@@ -1043,8 +1074,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
                             (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
 
@@ -1091,8 +1122,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (code != null && code != "") {
 
@@ -1139,8 +1170,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
                     //todo call enroll Email
                     BackupCodeConfigurationController.getShared(context).configureBackupCode(sub, baseurl, result);
 
@@ -1164,8 +1195,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
                             (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")
                                     && code != null && !code.equals(""))) {
@@ -1225,8 +1256,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (code != null && code != "") {
 
@@ -1329,8 +1360,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
                             && pattern != null && !pattern.equals("") && passwordlessEntity.getRequestId() != null &&
@@ -1406,8 +1437,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -1434,7 +1465,7 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
+                    String baseurl = result.get("DomainURL");
 
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
@@ -1442,7 +1473,7 @@ public class Cidaas implements IOAuthWebLogin {
                         String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
 
                         SetupFaceMFARequestEntity setupFaceMFARequestEntity = new SetupFaceMFARequestEntity();
-                        setupFaceMFARequestEntity.setClient_id(savedProperties.get("ClientId"));
+                        setupFaceMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupFaceMFARequestEntity.setLogoUrl(logoUrl);
 
 
@@ -1477,8 +1508,8 @@ public class Cidaas implements IOAuthWebLogin {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
                             passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") &&
@@ -1549,8 +1580,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -1750,8 +1781,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    final String baseurl = savedProperties.get("DomainURL");
-                    final String clientId = savedProperties.get("ClientId");
+                    final String baseurl = result.get("DomainURL");
+                    final String clientId = result.get("ClientId");
 
 
                     //Done Call the finger print method
@@ -1905,8 +1936,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -1974,8 +2005,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
                             passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
 
@@ -2041,8 +2072,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -2107,8 +2138,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
                             passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
 
@@ -2218,7 +2249,7 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
+                    String baseurl = result.get("DomainURL");
 
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
@@ -2226,7 +2257,7 @@ public class Cidaas implements IOAuthWebLogin {
                         String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
 
                         SetupVoiceMFARequestEntity setupVoiceMFARequestEntity = new SetupVoiceMFARequestEntity();
-                        setupVoiceMFARequestEntity.setClient_id(savedProperties.get("ClientId"));
+                        setupVoiceMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupVoiceMFARequestEntity.setLogoUrl(logoUrl);
 
 
@@ -2256,8 +2287,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
                             passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") && voice != null) {
@@ -2326,8 +2357,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     //todo call enroll Email
 
                 }
@@ -2401,7 +2432,7 @@ public class Cidaas implements IOAuthWebLogin {
                 checkSavedProperties(new Result<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> result) {
-                        String baseurl = savedProperties.get("DomainURL");
+                        String baseurl = result.get("DomainURL");
 
                         if (baseurl != null && !baseurl.equals("")) {
 
@@ -2438,8 +2469,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     String language;
 
                     if (!requestId.equals("")) {
@@ -2502,8 +2533,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     String language;
 
                     if (!requestId.equals("")) {
@@ -2676,8 +2707,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity = new RegisterUserAccountInitiateRequestEntity();
                     registerUserAccountInitiateRequestEntity.setProcessingType("CODE");
@@ -2717,8 +2748,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity = new RegisterUserAccountInitiateRequestEntity();
                     registerUserAccountInitiateRequestEntity.setProcessingType("CODE");
@@ -2758,8 +2789,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity = new RegisterUserAccountInitiateRequestEntity();
                     registerUserAccountInitiateRequestEntity.setProcessingType("CODE");
@@ -2800,8 +2831,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
 
                     if (code != null && !code.equals("") && accvid != null && accvid != "") {
                         RegistrationController.getShared(context).verifyAccountVerificationService(baseurl, code, accvid, result);
@@ -2830,8 +2861,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (trackId != null && !trackId.equals("")) {
                         DeduplicationController.getShared(context).getDeduplicationList(baseurl, trackId, deduplicaionResult);
                     } else {
@@ -2855,8 +2886,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (trackId != null && trackId != "") {
                         DeduplicationController.getShared(context).registerDeduplication(baseurl, trackId, deduplicaionResult);
                     } else {
@@ -2883,8 +2914,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                     if (sub != null && sub != "" && password != null && password != "") {
                         DeduplicationController.getShared(context).loginDeduplication(baseurl, requestId, sub, password, deduplicaionResult);
                     } else {
@@ -2915,8 +2946,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (email != null && !email.equals("") && requestId != null && !requestId.equals("")) {
                         ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
@@ -2951,8 +2982,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (mobileNumber != null && !mobileNumber.equals("") && requestId != null && !requestId.equals("")) {
                         ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
@@ -2987,8 +3018,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (verificationCode != null && !verificationCode.equals("") && rprq != null && !rprq.equals("")) {
 
@@ -3019,8 +3050,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
                     if (resetPasswordEntity.getPassword() != null && !resetPasswordEntity.getPassword().equals("") &&
                             resetPasswordEntity.getConfirmPassword() != null && !resetPasswordEntity.getConfirmPassword().equals("")) {
@@ -3074,8 +3105,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
 
 
                     ChangePasswordController.getShared(context).changePassword(baseurl, changePasswordRequestEntity, result);
@@ -3111,20 +3142,25 @@ public class Cidaas implements IOAuthWebLogin {
                 getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(AccessTokenEntity result) {
-                        OauthService.getShared(context).getUserinfo(result.getAccess_token(), new Result<UserinfoEntity>() {
-                            @Override
-                            public void success(UserinfoEntity result) {
-                                // hideLoader();
-                                callback.success(result);
-                            }
 
-                            @Override
-                            public void failure(WebAuthError error) {
-                                // hideLoader();
-                                callback.failure(error);
-                            }
-                        });
+                      if(DomainURL!=null && DomainURL!="") {
+                             OauthService.getShared(context).getUserinfo(result.getAccess_token(), DomainURL, new Result<UserinfoEntity>() {
+                               @Override
+                              public void success(UserinfoEntity result) {
+                            // hideLoader();
+                                  callback.success(result);
+                               }
 
+                               @Override
+                               public void failure(WebAuthError error) {
+                               // hideLoader();
+                               callback.failure(error);
+                           }
+                         });
+                      }
+                     else {
+                          callback.failure(WebAuthError.getShared(context).customException(417, "DomainURL Must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                            }
                     }
 
                     @Override
@@ -3135,7 +3171,7 @@ public class Cidaas implements IOAuthWebLogin {
 
             } else {
                 String errorMessage = "Sub must not be null";
-                callback.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }
         } catch (Exception e) {
             Timber.d(e.getMessage()); //Todo Handle Exception
@@ -3211,15 +3247,14 @@ public class Cidaas implements IOAuthWebLogin {
         readFromFile(new Result<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> loginProperties) {
-                savedProperties = loginProperties;
-                if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
+                if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
                     webAuthError = webAuthError.propertyMissingException();
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message -  DomainURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                     LogFile.addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
-                if (savedProperties.get("ClientId").equals("") || savedProperties.get("ClientId") == null || savedProperties == null) {
+                if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
                     webAuthError = webAuthError.propertyMissingException();
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - ClientId is missing"
                             + webAuthError.errorCode + ", Error Message -  ClientId is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
@@ -3227,7 +3262,7 @@ public class Cidaas implements IOAuthWebLogin {
                     LogFile.addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
-                if (savedProperties.get("RedirectURL").equals("") || savedProperties.get("RedirectURL") == null || savedProperties == null) {
+                if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
                     webAuthError = webAuthError.propertyMissingException();
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - RedirectURL is missing"
                             + webAuthError.errorCode + ", Error Message -  RedirectURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
@@ -3235,8 +3270,8 @@ public class Cidaas implements IOAuthWebLogin {
                     LogFile.addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
-                Cidaas.baseurl = savedProperties.get("DomainURL");
-                result.success(savedProperties);
+                Cidaas.baseurl = loginProperties.get("DomainURL");
+                result.success(loginProperties);
 
             }
 
@@ -3258,20 +3293,53 @@ public class Cidaas implements IOAuthWebLogin {
 
     public void checkSavedProperties(final Result<Dictionary<String, String>> result) {
 
-        if (savedProperties == null) {
+        //if (savedProperties == null) {
             //Read from file if localDB is null
+
+
+        if(DomainURL!=null && !DomainURL.equals("")){
+
+
+            final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
+
+            if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
+                //check here for already saved properties
+             result.success(loginProperties);
+            } else {
+                //Read File from asset to get URL
+                readFromFile(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> savedLoginProperties) {
+                        //Call requestIdBy LoginProperties parameter
+                       result.success(savedLoginProperties);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+
+                        result.failure(error);
+                    }
+                });
+            }
+        }
+        else
+        {
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL must not be null",HttpStatusCode.EXPECTATION_FAILED));
+        }
+
+/*
             readFromFile(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    savedProperties = loginProperties;
-                    if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
+                    // savedProperties = loginProperties;
+                    if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
                         webAuthError = webAuthError.propertyMissingException();
                         String loggerMessage = "Setup Pattern MFA readProperties failure : " + "Error Code - "
                                 + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                         LogFile.addRecordToLog(loggerMessage);
                         result.failure(webAuthError);
                     }
-                    if (savedProperties.get("ClientId").equals("") || savedProperties.get("ClientId") == null || savedProperties == null) {
+                    if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
                         webAuthError = webAuthError.propertyMissingException();
                         String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
                                 + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
@@ -3279,20 +3347,18 @@ public class Cidaas implements IOAuthWebLogin {
                         LogFile.addRecordToLog(loggerMessage);
                         result.failure(webAuthError);
                     }
-                    Cidaas.baseurl = savedProperties.get("DomainURL");
-                    result.success(savedProperties);
+                    Cidaas.baseurl = loginProperties.get("DomainURL");
+                    result.success(loginProperties);
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
+
                     result.failure(error);
                 }
             });
-        } else {
-            Cidaas.baseurl = savedProperties.get("DomainURL");
-            result.success(savedProperties);
-        }
+            */
 
 
     }
@@ -3302,8 +3368,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                 }
 
                 @Override
@@ -3352,7 +3418,7 @@ public class Cidaas implements IOAuthWebLogin {
             if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
                     || !((Hashtable) loginproperties).containsKey("DomainURL")) {
                 webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Request-Id readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
+                String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
                         + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
@@ -3362,7 +3428,7 @@ public class Cidaas implements IOAuthWebLogin {
             if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
                     || !((Hashtable) loginproperties).containsKey("ClientId")) {
                 webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
+                String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
@@ -3371,7 +3437,7 @@ public class Cidaas implements IOAuthWebLogin {
             if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                     || loginproperties.get("RedirectURL").equals("")) {
                 webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
+                String loggerMessage = "Check PKCE Flow  readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
@@ -3379,7 +3445,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
 
 
-            savedProperties = loginproperties;
+          //  savedProperties = loginproperties;
             //Get enable Pkce Flag
             ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
 
@@ -3390,7 +3456,7 @@ public class Cidaas implements IOAuthWebLogin {
                     webAuthError = webAuthError.propertyMissingException();
                     savedResult.failure(webAuthError);
                 } else {
-                    savedProperties.put("ClientSecret", loginproperties.get("ClientSecret"));
+                    loginproperties.put("ClientSecret", loginproperties.get("ClientSecret"));
                 }
             }/* else {
                 //Create Challenge And Verifier
@@ -3399,10 +3465,10 @@ public class Cidaas implements IOAuthWebLogin {
                 savedProperties.put("Challenge", generator.getCodeChallenge(savedProperties.get("Verifier")));
                 savedProperties.put("Method", generator.codeChallengeMethod);
             }*/
-            DBHelper.getShared().addLoginProperties(savedProperties);
-            savedResult.success(savedProperties);
+            DBHelper.getShared().addLoginProperties(loginproperties);
+            savedResult.success(loginproperties);
         } catch (Exception e) {
-            Timber.e("Request-Id service exception : " + e.getMessage());
+            Timber.e("Check PKCE Flow  service exception : " + e.getMessage());
             savedResult.failure(webAuthError);
         }
     }
@@ -3437,8 +3503,9 @@ public class Cidaas implements IOAuthWebLogin {
     public void getLoginURL(@NonNull String RequestId, final Result<String> callback) {
         try {
             //Check requestId is not null
-            if (RequestId != "") {
-                OauthService.getShared(context).getLoginUrl(RequestId, new Result<String>() {
+            if (RequestId != "" && DomainURL!="" && DomainURL!=null) {
+
+                OauthService.getShared(context).getLoginUrl(RequestId,DomainURL, new Result<String>() {
                     @Override
                     public void success(String result) {
                         callback.success(result);
@@ -3452,6 +3519,14 @@ public class Cidaas implements IOAuthWebLogin {
                         LogFile.addRecordToLog(loggerMessage);
                     }
                 });
+            }
+
+            else
+            {
+                callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL or RequestId must not be null",HttpStatusCode.EXPECTATION_FAILED));
+                String loggerMessage = "Login URL service failure : " + "Error Code - "
+                        + WebAuthErrorCode.PROPERTY_MISSING+ ", Error Message -DomainURL or RequestId must not be null , Status Code - " + HttpStatusCode.EXPECTATION_FAILED;
+                LogFile.addRecordToLog(loggerMessage);
             }
         } catch (Exception ex) {
             //Todo Handle Error
@@ -3520,9 +3595,9 @@ public class Cidaas implements IOAuthWebLogin {
                 checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> savedLoginProperties) {
-
-
                         loginPropertiesResult.success(savedLoginProperties);
+                        DomainURL=savedLoginProperties.get("DomainURL");
+                        DBHelper.getShared().addLoginProperties(savedLoginProperties);
 
                     }
 
@@ -3569,8 +3644,8 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = savedProperties.get("DomainURL");
-                    String clientId = savedProperties.get("ClientId");
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
                 }
 
                 @Override
@@ -3632,6 +3707,8 @@ public class Cidaas implements IOAuthWebLogin {
 
 
                 DBHelper.getShared().addLoginProperties(loginproperties);
+
+
             }
             else
             {

@@ -204,12 +204,12 @@ public void setEnableLog(boolean enableLog)
 
 
     //Get Login Object
-    public Dictionary<String,String> getLoginProperties()
+    public Dictionary<String,String> getLoginProperties(String DomainURL)
     {
 
         Dictionary<String,String> loginProperties=new Hashtable<>();
         try {
-            String jsonString =preferences.getString(LoginProperties,(new JSONObject().toString()));
+            String jsonString =preferences.getString(LoginProperties+DomainURL,(new JSONObject().toString()));
             JSONObject jsonObject = new JSONObject(jsonString);
             Iterator<String> keysItr = jsonObject.keys();
             while (keysItr.hasNext()) {

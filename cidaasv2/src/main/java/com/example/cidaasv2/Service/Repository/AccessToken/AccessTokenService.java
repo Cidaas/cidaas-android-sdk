@@ -105,7 +105,7 @@ public class AccessTokenService {
             Dictionary<String,String> loginProperties=new Hashtable<>();
 
             if(loginPropertiesfromParam==null) {
-                loginProperties=DBHelper.getShared().getLoginProperties();
+                loginProperties=DBHelper.getShared().getLoginProperties(baseurl);
             }
             else if(loginPropertiesfromParam!=null)
             {
