@@ -3704,8 +3704,7 @@ public class Cidaas implements IOAuthWebLogin {
         try
         {
             if(loginproperties!=null) {
-
-
+                DomainURL=loginproperties.get("DomainURL");
                 DBHelper.getShared().addLoginProperties(loginproperties);
 
 
