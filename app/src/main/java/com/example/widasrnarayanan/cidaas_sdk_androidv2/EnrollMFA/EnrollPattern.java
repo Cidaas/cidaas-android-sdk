@@ -118,6 +118,8 @@ public class EnrollPattern extends AppCompatActivity {
         });
     }
 
+
+
     public void SetupSmartPush(View view)
     {
      /*  cidaas.setupSmartPushMFA(sub, new Result<SetupSmartPushMFAResponseEntity>() {

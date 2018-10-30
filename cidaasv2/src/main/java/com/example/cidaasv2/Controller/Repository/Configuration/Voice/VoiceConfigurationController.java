@@ -3,7 +3,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Voice;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -21,14 +20,12 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.Authenticat
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
@@ -81,7 +78,7 @@ public class VoiceConfigurationController {
 
 
     //Service call To SetupVoiceMFA
-    public void configureVoice(@NonNull final String sub, @NonNull final String baseurl, final File imageFile,
+    public void configureVoice(@NonNull final String sub, @NonNull final String baseurl, final File audioFile,
                           @NonNull final SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,
                           @NonNull final Result<EnrollVoiceMFAResponseEntity> enrollresult)
     {
@@ -137,7 +134,7 @@ public class VoiceConfigurationController {
                                                                                             result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
                                                                                         enrollVoiceMFARequestEntity.setSub(sub);
-                                                                                        enrollVoiceMFARequestEntity.setAudioFile(imageFile);
+                                                                                        enrollVoiceMFARequestEntity.setAudioFile(audioFile);
                                                                                         enrollVoiceMFARequestEntity.setStatusId(setupserviceresult.getData().getStatusId());
                                                                                         enrollVoiceMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());
                                                                                     }
@@ -159,13 +156,13 @@ public class VoiceConfigurationController {
                                                                                     });
 
                                                                                     Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                                    Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                                   // Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                                 }
 
                                                                                 @Override
                                                                                 public void failure(WebAuthError error) {
                                                                                     enrollresult.failure(error);
-                                                                                    Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                                  //  Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                                 }
                                                                             });
                                                                 }
@@ -173,7 +170,7 @@ public class VoiceConfigurationController {
                                                                 @Override
                                                                 public void failure(WebAuthError error) {
                                                                     enrollresult.failure(error);
-                                                                    Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                   // Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                 }
                                                             });
                                                 }
@@ -318,7 +315,7 @@ public class VoiceConfigurationController {
 
                                                                                         }
                                                                                         //  loginresult.success(result);
-                                                                                        Toast.makeText(context, "Success Voice", Toast.LENGTH_SHORT).show();
+                                                                                  //      Toast.makeText(context, "Success Voice", Toast.LENGTH_SHORT).show();
 
                                                                                     }
 
@@ -342,7 +339,7 @@ public class VoiceConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                          //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
 

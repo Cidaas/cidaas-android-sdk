@@ -74,11 +74,18 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseDataEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
@@ -132,6 +139,11 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
+import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.Pattern.PatternVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -1432,14 +1444,22 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void verifyPattern(String patternString, String statusId, final Result<AuthenticatePatternResponseEntity> result) {
+    public void verifyPattern(final String patternString, final String statusId, final Result<AuthenticatePatternResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-                    //todo call enroll Email
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    //todo call verify pattern
+
+                    AuthenticatePatternRequestEntity authenticatePatternRequestEntity=new AuthenticatePatternRequestEntity();
+                    authenticatePatternRequestEntity.setStatusId(statusId);
+                    authenticatePatternRequestEntity.setVerifierPassword(patternString);
+                    authenticatePatternRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+                    PatternVerificationService.getShared(context).authenticatePattern(baseurl,authenticatePatternRequestEntity,null,result);
 
                 }
 
@@ -1575,14 +1595,23 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void verifyFace(String statusId, final Result<AuthenticateFaceRequestEntity> result) {
+    public void verifyFace(@NonNull final File photo,final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
                     //todo call enroll Email
+
+                    AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
+                    authenticateFaceRequestEntity.setStatusId(statusId);
+                    authenticateFaceRequestEntity.setImagetoSend(photo);
+                    authenticateFaceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+                    FaceVerificationService.getShared(context).authenticateFace(baseurl,authenticateFaceRequestEntity,null,result);
+
 
                 }
 
@@ -1825,11 +1854,6 @@ public class Cidaas implements IOAuthWebLogin {
                         loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
 
                     }
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
 
                     mFingerPrintManager.authenticate(null, null, 0, new FingerprintManager.AuthenticationCallback() {
                         @Override
@@ -1931,7 +1955,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void verifyFingerprint(String statusId, final Result<AuthenticateFaceRequestEntity> result) {
+    public void verifyFingerprint(final String statusId, final Result<AuthenticateFingerprintResponseEntity> callBackresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -1940,15 +1964,22 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId = result.get("ClientId");
                     //todo call enroll Email
 
+                    AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity=new AuthenticateFingerprintRequestEntity();
+                    authenticateFingerprintRequestEntity.setStatusId(statusId);
+                    authenticateFingerprintRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+                    FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl,authenticateFingerprintRequestEntity,null,callBackresult);
+
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
     }
@@ -2067,14 +2098,25 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void verifySmartPush(String randomNumber, String statusId, final Result<AuthenticateSmartPushRequestEntity> result) {
+    public void verifySmartPush(final String randomNumber, final String statusId, final Result<AuthenticateSmartPushResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
                     //todo call enroll Email
+
+
+                    AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity=new AuthenticateSmartPushRequestEntity();
+                    authenticateSmartPushRequestEntity.setStatusId(statusId);
+                    authenticateSmartPushRequestEntity.setVerifierPassword(randomNumber);
+                    authenticateSmartPushRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+                    SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,null,result);
+
+
 
                 }
 
@@ -2352,14 +2394,25 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void verifyVoice(File voice, String statusId, final Result<AuthenticateVoiceRequestEntity> result) {
+    public void verifyVoice(final File voice, final String statusId, final Result<AuthenticateVoiceResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
                     //todo call enroll Email
+
+
+                    AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity=new AuthenticateVoiceRequestEntity();
+                    authenticateVoiceRequestEntity.setStatusId(statusId);
+                    authenticateVoiceRequestEntity.setVoiceFile(voice);
+                    authenticateVoiceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+                    VoiceVerificationService.getShared(context).authenticateVoice(baseurl,authenticateVoiceRequestEntity,null,result);
+
+
 
                 }
 

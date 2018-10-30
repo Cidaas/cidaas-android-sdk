@@ -27,10 +27,14 @@ import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -317,13 +321,18 @@ public class VoiceVerificationService {
         }
     }
 
+    public RequestBody StringtoRequestBody(String value) {
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"), value);
+        return body;
+    }
+
     //enrollVoiceMFA
     public void enrollVoice(String baseurl, String accessToken, EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<EnrollVoiceMFAResponseEntity> callback)
     {
         String enrollVoiceMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 enrollVoiceMFAUrl=baseurl+URLHelper.getShared().getEnrollVoiceMFA();
             }
@@ -334,8 +343,11 @@ public class VoiceVerificationService {
             }
 
             Map<String, String> headers = new Hashtable<>();
+            HashMap<String, RequestBody> voiceSetupMap = new HashMap<>();
+
             // Get Device Information
             DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+
             //This is only for testing purpose
             if(deviceInfoEntityFromParam==null) {
                 deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
@@ -347,8 +359,9 @@ public class VoiceVerificationService {
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
+            headers.put("Content-Type", URLHelper.contentType);
             headers.put("user-agent", "cidaas-android");
+            headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
 
 
@@ -362,10 +375,24 @@ public class VoiceVerificationService {
             }
             enrollVoiceMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollVoiceMFARequestEntity.getAudioFile());
+            MultipartBody.Part audioFile = MultipartBody.Part.createFormData("audio", "Audio.fav", requestFile);
+
+            voiceSetupMap.put("statusId", StringtoRequestBody(enrollVoiceMFARequestEntity.getStatusId()));
+            //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            voiceSetupMap.put("userDeviceId", StringtoRequestBody(enrollVoiceMFARequestEntity.getUserDeviceId()));
+            voiceSetupMap.put("deviceId", StringtoRequestBody(enrollVoiceMFARequestEntity.getDeviceInfo().getDeviceId()));
+            voiceSetupMap.put("deviceMake", StringtoRequestBody(enrollVoiceMFARequestEntity.getDeviceInfo().getDeviceMake()));
+            voiceSetupMap.put("deviceModel", StringtoRequestBody(enrollVoiceMFARequestEntity.getDeviceInfo().getDeviceModel()));
+            voiceSetupMap.put("deviceVersion", StringtoRequestBody(enrollVoiceMFARequestEntity.getDeviceInfo().getDeviceVersion()));
+            voiceSetupMap.put("pushNotificationId", StringtoRequestBody(enrollVoiceMFARequestEntity.getDeviceInfo().getPushNotificationId()));
+
+
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.enrollVoiceMFA(enrollVoiceMFAUrl,headers, enrollVoiceMFARequestEntity).enqueue(new Callback<EnrollVoiceMFAResponseEntity>() {
+            cidaasSDKService.enrollVoiceMFA(enrollVoiceMFAUrl,headers, audioFile,voiceSetupMap).enqueue(new Callback<EnrollVoiceMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<EnrollVoiceMFAResponseEntity> call, Response<EnrollVoiceMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -563,6 +590,9 @@ public class VoiceVerificationService {
             }
 
             Map<String, String> headers = new Hashtable<>();
+            HashMap<String, RequestBody> voiceSetupMap = new HashMap<>();
+
+
             // Get Device Information
             DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
             //This is only for testing purpose
@@ -576,7 +606,7 @@ public class VoiceVerificationService {
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
+          //  headers.put("Content-Type", URLHelper.contentType);
             headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
 
@@ -592,11 +622,24 @@ public class VoiceVerificationService {
 
             authenticateVoiceRequestEntity.setDeviceInfo(deviceInfoEntity);
 
+            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), authenticateVoiceRequestEntity.getVoiceFile());
+            MultipartBody.Part audioFile = MultipartBody.Part.createFormData("audio", "Audio.fav", requestFile);
+
+            voiceSetupMap.put("statusId", StringtoRequestBody(authenticateVoiceRequestEntity.getStatusId()));
+            //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            voiceSetupMap.put("userDeviceId", StringtoRequestBody(authenticateVoiceRequestEntity.getUserDeviceId()));
+            voiceSetupMap.put("deviceId", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceId()));
+            voiceSetupMap.put("deviceMake", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceMake()));
+            voiceSetupMap.put("deviceModel", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceModel()));
+            voiceSetupMap.put("deviceVersion", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceVersion()));
+            voiceSetupMap.put("pushNotificationId", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getPushNotificationId()));
+
+
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.authenticateVoiceMFA(authenticateVoiceMFAUrl,headers, authenticateVoiceRequestEntity).enqueue(new Callback<AuthenticateVoiceResponseEntity>() {
+            cidaasSDKService.authenticateVoiceMFA(authenticateVoiceMFAUrl,headers,audioFile,voiceSetupMap).enqueue(new Callback<AuthenticateVoiceResponseEntity>() {
                 @Override
                 public void onResponse(Call<AuthenticateVoiceResponseEntity> call, Response<AuthenticateVoiceResponseEntity> response) {
                     if (response.isSuccessful()) {

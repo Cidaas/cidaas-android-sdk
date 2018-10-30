@@ -3,7 +3,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Face;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -161,13 +160,13 @@ public class FaceConfigurationController {
                                                                                     });
 
                                                                                     Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                                    Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                                  //  Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                                 }
 
                                                                                 @Override
                                                                                 public void failure(WebAuthError error) {
                                                                                     enrollresult.failure(error);
-                                                                                    Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                                  //  Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                                 }
                                                                             });
                                                                 }
@@ -175,7 +174,7 @@ public class FaceConfigurationController {
                                                                 @Override
                                                                 public void failure(WebAuthError error) {
                                                                     enrollresult.failure(error);
-                                                                    Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                   // Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                 }
                                                             });
                                                 }
@@ -323,7 +322,7 @@ public class FaceConfigurationController {
 
                                                                                         }
                                                                                         //  loginresult.success(result);
-                                                                                        Toast.makeText(context, "Sucess Face", Toast.LENGTH_SHORT).show();
+                                                                                     //   Toast.makeText(context, "Sucess Face", Toast.LENGTH_SHORT).show();
                                /*
 
                                 LoginController.getShared(context).resumeLogin();*/
@@ -351,7 +350,7 @@ public class FaceConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
 

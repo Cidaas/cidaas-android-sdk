@@ -3,7 +3,6 @@ package com.example.cidaasv2.Service.Repository.Verification.Face;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -13,7 +12,6 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
@@ -368,7 +366,7 @@ public class FaceVerificationService {
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentType);
+           // headers.put("Content-Type", URLHelper.contentType);
             headers.put("user-agent", "cidaas-android");
             headers.put("access_token", accessToken);
             headers.put("verification_api_version","2");
@@ -386,6 +384,12 @@ public class FaceVerificationService {
             faceSetupMap.put("deviceVersion", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getDeviceVersion()));
             faceSetupMap.put("pushNotificationId", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getPushNotificationId()));
 
+
+
+
+
+
+
             Bitmap finalimg = BitmapFactory.decodeFile(enrollFaceMFARequestEntity.getImagetoSend().getAbsolutePath());
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollFaceMFARequestEntity.getImagetoSend());
@@ -393,7 +397,7 @@ public class FaceVerificationService {
 
             if (enrollFaceMFARequestEntity.getImagetoSend().exists())
             {
-                Toast.makeText(context, "FIle found", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "FIle found", Toast.LENGTH_SHORT).show();
             }
 
 
@@ -401,7 +405,7 @@ public class FaceVerificationService {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.enrollFaceMFA(enrollFaceMFAUrl,headers,photo ,faceSetupMap).enqueue(new Callback<EnrollFaceMFAResponseEntity>() {
+            cidaasSDKService.enrollFaceMFA(enrollFaceMFAUrl,headers,photo,faceSetupMap).enqueue(new Callback<EnrollFaceMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<EnrollFaceMFAResponseEntity> call, Response<EnrollFaceMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -602,7 +606,7 @@ public class FaceVerificationService {
             }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
+          //  headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
 
@@ -610,19 +614,20 @@ public class FaceVerificationService {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
-            HashMap<String, String> faceSetupMap = new HashMap<>();
+            HashMap<String, RequestBody> faceSetupMap = new HashMap<>();
 
             authenticateFaceRequestEntity.setDeviceInfo(deviceInfoEntity);
 
 
-            faceSetupMap.put("statusId",authenticateFaceRequestEntity.getStatusId());
+            faceSetupMap.put("statusId", StringtoRequestBody(authenticateFaceRequestEntity.getStatusId()));
             //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
-            faceSetupMap.put("userDeviceId",authenticateFaceRequestEntity.getUserDeviceId());
-            faceSetupMap.put("deviceId",authenticateFaceRequestEntity.getDeviceInfo().getDeviceId());
-            faceSetupMap.put("deviceMake",authenticateFaceRequestEntity.getDeviceInfo().getDeviceMake());
-            faceSetupMap.put("deviceModel",authenticateFaceRequestEntity.getDeviceInfo().getDeviceModel());
-            faceSetupMap.put("deviceVersion",authenticateFaceRequestEntity.getDeviceInfo().getDeviceVersion());
-            faceSetupMap.put("pushNotificationId",authenticateFaceRequestEntity.getDeviceInfo().getPushNotificationId());
+            faceSetupMap.put("userDeviceId", StringtoRequestBody(authenticateFaceRequestEntity.getUserDeviceId()));
+            faceSetupMap.put("deviceId", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceId()));
+            faceSetupMap.put("deviceMake", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceMake()));
+            faceSetupMap.put("deviceModel", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceModel()));
+            faceSetupMap.put("deviceVersion", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceVersion()));
+            faceSetupMap.put("pushNotificationId", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getPushNotificationId()));
+
 
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), authenticateFaceRequestEntity.getImagetoSend());

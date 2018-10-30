@@ -18,7 +18,25 @@
         android:layout_below="@id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/voicebutton"
         android:text="Voice click"
         android:onClick="voiceClick"/>
+
+
+    <Button
+        android:id="@+id/verifyface"
+        android:layout_below="@+id/voicebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="vverifyFace"
+        android:text="Verify Face"/>
+    <Button
+        android:id="@+id/verifyVoice"
+        android:layout_below="@id/verifyface"
+        android:onClick="verifyVoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify voice"
+        />
 
 </RelativeLayout>

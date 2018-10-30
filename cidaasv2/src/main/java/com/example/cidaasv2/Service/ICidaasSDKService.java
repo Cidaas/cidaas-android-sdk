@@ -263,11 +263,13 @@ public interface ICidaasSDKService {
 
     //Setup Face MFA
     @POST
-    Call<SetupFaceMFAResponseEntity> setupFaceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupFaceMFARequestEntity setupFaceMFARequestEntity);
+    Call<SetupFaceMFAResponseEntity> setupFaceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                  @Body SetupFaceMFARequestEntity setupFaceMFARequestEntity);
 
     //Enroll Face MFA
-    @POST
+
     @Multipart
+    @POST
     Call<EnrollFaceMFAResponseEntity> enrollFaceMFA(@Url String url, @HeaderMap Map<String,String>headers,
                                                     @Part MultipartBody.Part face,
                                                     @PartMap() HashMap<String, RequestBody> map);
@@ -275,7 +277,8 @@ public interface ICidaasSDKService {
 
     //Inititate Face MFA
     @POST
-    Call<InitiateFaceMFAResponseEntity> initiateFaceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateFaceMFARequestEntity initiateFaceMFARequestEntity);
+    Call<InitiateFaceMFAResponseEntity> initiateFaceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                        @Body InitiateFaceMFARequestEntity initiateFaceMFARequestEntity);
 
     //Authenticate Face MFA
     @POST
@@ -283,7 +286,35 @@ public interface ICidaasSDKService {
     Call<AuthenticateFaceResponseEntity> authenticateFaceMFA(@Url String url,
                                                              @HeaderMap Map<String,String>headers,
                                                              @Part MultipartBody.Part face,
-                                                             @PartMap() HashMap<String, String> map);
+                                                             @PartMap() HashMap<String, RequestBody> map);
+
+
+
+    //Setup Voice MFA
+    @POST
+    Call<SetupVoiceMFAResponseEntity> setupVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                    @Body SetupVoiceMFARequestEntity setupVoiceMFARequestEntity);
+
+    //Enroll Voice MFA
+    @POST
+    @Multipart
+    Call<EnrollVoiceMFAResponseEntity> enrollVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                      @Part MultipartBody.Part audio,
+                                                      @PartMap() HashMap<String, RequestBody> map);
+
+
+    //Inititate Voice MFA
+    @POST
+    Call<InitiateVoiceMFAResponseEntity> initiateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                          @Body InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity);
+
+    //Authenticate Voice MFA
+    @Multipart
+    @POST
+    Call<AuthenticateVoiceResponseEntity> authenticateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                               @Part MultipartBody.Part audio,
+                                                               @PartMap() HashMap<String, RequestBody> map);
+
 
     //Setup FIDO MFA
     @POST
@@ -385,22 +416,6 @@ public interface ICidaasSDKService {
     @POST
     Call<AuthenticateTOTPResponseEntity> authenticateTOTPMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity);
 
-    //Setup Voice MFA
-    @POST
-    Call<SetupVoiceMFAResponseEntity> setupVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupVoiceMFARequestEntity setupVoiceMFARequestEntity);
-
-    //Enroll Voice MFA
-    @POST
-    Call<EnrollVoiceMFAResponseEntity> enrollVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity);
-
-
-    //Inititate Voice MFA
-    @POST
-    Call<InitiateVoiceMFAResponseEntity> initiateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity);
-
-    //Authenticate Voice MFA
-    @POST
-    Call<AuthenticateVoiceResponseEntity> authenticateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity);
 
 
     //Reset Password
