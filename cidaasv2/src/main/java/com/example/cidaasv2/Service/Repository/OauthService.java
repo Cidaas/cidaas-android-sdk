@@ -312,7 +312,7 @@ public class OauthService {
                        }
                        else {
                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                   "Service failure but successful response" , 400,null));
+                                   "Service failure but successful response" , 400,null,null));
                        }
                    }
                    else {
@@ -336,7 +336,7 @@ public class OauthService {
 
 
 
-                           callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null));
+                           callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null,null));
                        } catch (IOException e) {
                            e.printStackTrace();
                        }
@@ -347,7 +347,7 @@ public class OauthService {
                @Override
                public void onFailure(Call<String> call, Throwable t) {
                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,t.getMessage(), 400,null));
+                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,t.getMessage(), 400,null,null));
 
                }
            });
@@ -432,7 +432,7 @@ public class OauthService {
                       }
                       else {
                           callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                  "Service failure but successful response" , 400,null));
+                                  "Service failure but successful response" , 400,null,null));
                       }
                   }
                   else {
@@ -457,7 +457,7 @@ public class OauthService {
 
 
 
-                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null));
+                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null,null));
                       } catch (IOException e) {
                           e.printStackTrace();
                       }
@@ -468,7 +468,7 @@ public class OauthService {
               @Override
               public void onFailure(Call<UserinfoEntity> call, Throwable t) {
                   Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                  callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null));
+                  callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
 
               }
           });

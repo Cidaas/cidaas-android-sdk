@@ -83,6 +83,7 @@ public class URLHelper {
     String initiateTOTPMFA="/verification-srv/totp/initiate";
     String authenticateTOTPMFA="/verification-srv/totp/authenticate";
     String setupVoiceMFA="/verification-srv/voice/setup";
+
     String enrollVoiceMFA="/verification-srv/voice/enroll";
     String initiateVoiceMFA="/verification-srv/voice/initiate";
     String authenticateVoiceMFA="/verification-srv/voice/authenticate";

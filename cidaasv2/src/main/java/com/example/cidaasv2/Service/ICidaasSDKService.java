@@ -312,7 +312,7 @@ public interface ICidaasSDKService {
     @Multipart
     @POST
     Call<AuthenticateVoiceResponseEntity> authenticateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
-                                                               @Part MultipartBody.Part audio,
+                                                               @Part MultipartBody.Part voice,
                                                                @PartMap() HashMap<String, RequestBody> map);
 
 

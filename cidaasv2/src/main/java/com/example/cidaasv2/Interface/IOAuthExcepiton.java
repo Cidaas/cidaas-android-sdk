@@ -1,5 +1,6 @@
 package com.example.cidaasv2.Interface;
 
+import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 
 /**
@@ -10,7 +11,7 @@ public interface IOAuthExcepiton {
     public WebAuthError fileNotFoundException();
     public WebAuthError noContentInFileException();
     public WebAuthError propertyMissingException();
-    public WebAuthError serviceFailureException(int errorCode, String errorMessage,int StatusCode,Object error);
+    public WebAuthError serviceFailureException(int errorCode, String errorMessage, int StatusCode, Object error, ErrorEntity errorEntity);
     public WebAuthError loginURLMissingException();
     public WebAuthError redirectURLMissingException();
     public WebAuthError userCancelledException();

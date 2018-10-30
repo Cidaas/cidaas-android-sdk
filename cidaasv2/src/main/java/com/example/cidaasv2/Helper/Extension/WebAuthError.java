@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 
+import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Interface.IOAuthExcepiton;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -20,7 +21,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
    public int statusCode=400;
    private Context context;
    public String ErrorMessage="";
-   public String consentUrl="";
+   public ErrorEntity errorEntity;
 
     public int getErrorCode() {
         return errorCode;
@@ -46,12 +47,12 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         ErrorMessage = errorMessage;
     }
 
-    public String getConsentUrl() {
-        return consentUrl;
+    public ErrorEntity getErrorEntity() {
+        return errorEntity;
     }
 
-    public void setConsentUrl(String consentUrl) {
-        this.consentUrl = consentUrl;
+    public void setErrorEntity(ErrorEntity errorEntity) {
+        this.errorEntity = errorEntity;
     }
 
     public Object getError() {
@@ -118,12 +119,13 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //Service FailureException
     @Override
-    public WebAuthError serviceFailureException(int errorCode, String errorMessage, int StatusCode,Object error) {
+    public WebAuthError serviceFailureException(int errorCode, String errorMessage, int StatusCode,Object error,ErrorEntity errorEntity) {
 
         WebAuthError.shared.errorCode=errorCode;
         WebAuthError.shared.statusCode=StatusCode;
         WebAuthError.shared.ErrorMessage=errorMessage;
         WebAuthError.shared.error=error;
+        WebAuthError.shared.errorEntity=errorEntity;
         return WebAuthError.shared;
     }
 //LoginUrl MissingException

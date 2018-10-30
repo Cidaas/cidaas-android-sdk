@@ -3346,10 +3346,6 @@ public class Cidaas implements IOAuthWebLogin {
 
     public void checkSavedProperties(final Result<Dictionary<String, String>> result) {
 
-        //if (savedProperties == null) {
-            //Read from file if localDB is null
-
-
         if(DomainURL!=null && !DomainURL.equals("")){
 
 
@@ -3357,6 +3353,26 @@ public class Cidaas implements IOAuthWebLogin {
 
             if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
                 //check here for already saved properties
+
+                if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
+                    webAuthError = webAuthError.propertyMissingException();
+                    String loggerMessage = "Check saved properties failure : " + "Error Code - "
+                            + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
+                    LogFile.addRecordToLog(loggerMessage);
+                    result.failure(webAuthError);
+                    return;
+                }
+                if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
+                    webAuthError = webAuthError.propertyMissingException();
+                    String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
+                            + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
+
+                    LogFile.addRecordToLog(loggerMessage);
+                    result.failure(webAuthError);
+                    return;
+                }
+
+
              result.success(loginProperties);
             } else {
                 //Read File from asset to get URL
@@ -3379,40 +3395,6 @@ public class Cidaas implements IOAuthWebLogin {
         {
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL must not be null",HttpStatusCode.EXPECTATION_FAILED));
         }
-
-/*
-            readFromFile(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    // savedProperties = loginProperties;
-                    if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
-                        webAuthError = webAuthError.propertyMissingException();
-                        String loggerMessage = "Setup Pattern MFA readProperties failure : " + "Error Code - "
-                                + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
-                        result.failure(webAuthError);
-                    }
-                    if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
-                        webAuthError = webAuthError.propertyMissingException();
-                        String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
-                                + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-
-                        LogFile.addRecordToLog(loggerMessage);
-                        result.failure(webAuthError);
-                    }
-                    Cidaas.baseurl = loginProperties.get("DomainURL");
-                    result.success(loginProperties);
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-
-                    result.failure(error);
-                }
-            });
-            */
-
 
     }
 
@@ -3828,7 +3810,5 @@ public class Cidaas implements IOAuthWebLogin {
             //result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
         }
     }
-
-
 
 }

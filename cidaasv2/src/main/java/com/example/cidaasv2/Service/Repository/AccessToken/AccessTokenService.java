@@ -128,7 +128,7 @@ public class AccessTokenService {
             }
             else {
                 acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
@@ -177,7 +177,7 @@ public class AccessTokenService {
                         }
                         else {
                             acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
-                                    "Service failure but successful response" , 400,null));
+                                    "Service failure but successful response" , 400,null,null));
                         }
                     }
                     else {
@@ -201,7 +201,7 @@ public class AccessTokenService {
 
 
 
-                            acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,errorMessage, 400,null));
+                            acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,errorMessage, 400,null,null));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -212,7 +212,7 @@ public class AccessTokenService {
                 @Override
                 public void onFailure(Call<AccessTokenEntity> call, Throwable t) {
                     Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                    acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), 400,null));
+                    acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
         }
@@ -220,7 +220,7 @@ public class AccessTokenService {
         {
             Timber.d(e.getMessage());
 
-            acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage(), 400,null));
+            acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage(), 400,null,null));
         }
     }
 
@@ -321,7 +321,7 @@ public class AccessTokenService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                    "Service failure but successful response" , 400,null));
+                                    "Service failure but successful response" , 400,null,null));
                         }
                     }
                     else {
@@ -344,7 +344,7 @@ public class AccessTokenService {
                             }
 
 
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null,null));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -355,7 +355,7 @@ public class AccessTokenService {
                 @Override
                 public void onFailure(Call<AccessTokenEntity> call, Throwable t) {
                     Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });
