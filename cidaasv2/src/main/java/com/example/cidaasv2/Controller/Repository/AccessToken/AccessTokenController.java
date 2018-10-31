@@ -175,7 +175,17 @@ public class AccessTokenController {
                     AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result,null,null, new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
+                            EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
+                                @Override
+                                public void success(AccessTokenModel result) {
+                                    DBHelper.getShared().setAccessToken(result);
+                                }
 
+                                @Override
+                                public void failure(WebAuthError error) {
+                                     //Todo Handle Error
+                                }
+                            });
                             callback.success(result);
                         }
 

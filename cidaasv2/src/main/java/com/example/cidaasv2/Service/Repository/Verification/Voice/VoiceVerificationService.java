@@ -482,7 +482,7 @@ public class VoiceVerificationService {
         String initiateVoiceMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateVoiceMFAUrl=baseurl+URLHelper.getShared().getInitiateVoiceMFA();
             }

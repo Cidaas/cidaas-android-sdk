@@ -192,13 +192,13 @@ public class TOTPConfigurationController {
                                                                             });
 
                                                                             Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                         }
 
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             enrollresult.failure(error);
-                                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                     //       Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -206,7 +206,7 @@ public class TOTPConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             enrollresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                          //  Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -331,7 +331,7 @@ public class TOTPConfigurationController {
                                                                                     public void success(AuthenticateTOTPResponseEntity result) {
                                                                                         //Todo Call Resume with Login Service
                                                                                         //  loginresult.success(result);
-                                                                                        Toast.makeText(context, "Sucess TOTP", Toast.LENGTH_SHORT).show();
+                                                                                       // Toast.makeText(context, "Sucess TOTP", Toast.LENGTH_SHORT).show();
                                                                                         ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
 
                                                                                         //Todo Check not Null values
@@ -373,7 +373,7 @@ public class TOTPConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                   //         Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
 

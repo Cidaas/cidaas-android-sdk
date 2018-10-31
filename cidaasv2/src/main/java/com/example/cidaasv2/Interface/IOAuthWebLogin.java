@@ -108,7 +108,7 @@ public interface IOAuthWebLogin {
     void loginWithFingerprint(PasswordlessEntity passwordlessEntity,final Result<LoginCredentialsResponseEntity> loginresult);
 
     //PATTERN
-    void configurePatternRecognition(@NonNull final String pattern,String sub,Result<EnrollPatternMFAResponseEntity> result);
+    void configurePatternRecognition(@NonNull final String pattern,String sub,String logoURL,Result<EnrollPatternMFAResponseEntity> result);
     void loginWithPatternRecognition(@NonNull final String pattern, @NonNull final PasswordlessEntity passwordlessEntity,
                                      final Result<LoginCredentialsResponseEntity> loginresult);
     //SMARTPUSH

@@ -172,13 +172,13 @@ public class SmartPushConfigurationController {
                                                                             });
 
                                                                             Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                          //  Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                         }
 
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             enrollresult.failure(error);
-                                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -186,7 +186,7 @@ public class SmartPushConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             enrollresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                           // Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -316,7 +316,7 @@ public class SmartPushConfigurationController {
 
                                                                                                 //Todo Call Resume with Login Service
                                                                                                 //  loginresult.success(result);
-                                                                                                Toast.makeText(context, "Sucess SmartPush", Toast.LENGTH_SHORT).show();
+                                                                                        //        Toast.makeText(context, "Sucess SmartPush", Toast.LENGTH_SHORT).show();
 
                                                                                                 ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
 
@@ -353,7 +353,7 @@ public class SmartPushConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                        //    Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -361,7 +361,7 @@ public class SmartPushConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             loginresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                       //     Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }

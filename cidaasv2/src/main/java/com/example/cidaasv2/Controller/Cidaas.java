@@ -19,7 +19,7 @@ import android.support.annotation.RequiresApi;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
+
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -1311,7 +1311,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,
+    public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,@NonNull String logoURL,
                                             final Result<EnrollPatternMFAResponseEntity> enrollresult) {
         try {
 
@@ -1334,7 +1334,7 @@ public class Cidaas implements IOAuthWebLogin {
                                 enrollresult);
 
                     } else {
-                        String errorMessage = "Sub or Pattern cannot be null";
+                        String errorMessage = "Sub or Pattern or logoURL cannot be null";
                         enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
                                 HttpStatusCode.EXPECTATION_FAILED));
                     }
@@ -1639,18 +1639,18 @@ public class Cidaas implements IOAuthWebLogin {
     private void getPermissionforFingerPrint() {
         try {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "Please enable the fingerprint permission", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(context, "Please enable the fingerprint permission", Toast.LENGTH_SHORT).show();
 
 
             }
             if (!mFingerPrintManager.isHardwareDetected()) {
-                Toast.makeText(context, "Fingerprint doesnot support in your mobile", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "Fingerprint doesnot support in your mobile", Toast.LENGTH_SHORT).show();
 
             }
 
 
             if (!mFingerPrintManager.hasEnrolledFingerprints()) {
-                Toast.makeText(context, "Your Device has no registered Fingerprints! Please register atleast one in your Device settings", Toast.LENGTH_LONG).show();
+              //  Toast.makeText(context, "Your Device has no registered Fingerprints! Please register atleast one in your Device settings", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -1661,13 +1661,13 @@ public class Cidaas implements IOAuthWebLogin {
 
 
         } catch (Exception e) {
-            Toast.makeText(context, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
 
         }
         //Caught when no finger print isfound
         catch (NoClassDefFoundError exc) {
-            Toast.makeText(context, "Atleast one fingerprint has to be registered", Toast.LENGTH_SHORT).show();
+      //      Toast.makeText(context, "Atleast one fingerprint has to be registered", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -1821,7 +1821,7 @@ public class Cidaas implements IOAuthWebLogin {
                             FingerprintManager mFingerPrintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
                             getPermissionforFingerPrint();
                             if (!mFingerPrintManager.isHardwareDetected()) {
-                                Toast.makeText(context, "Fingerprint doesnot support", Toast.LENGTH_SHORT).show();
+                            //    Toast.makeText(context, "Fingerprint doesnot support", Toast.LENGTH_SHORT).show();
                                 Timber.d("error Touch ID Raja");
                             }
                         } catch (Exception e) {
@@ -3385,7 +3385,6 @@ public class Cidaas implements IOAuthWebLogin {
 
                     @Override
                     public void failure(WebAuthError error) {
-
                         result.failure(error);
                     }
                 });
@@ -3719,7 +3718,8 @@ public class Cidaas implements IOAuthWebLogin {
             String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                     +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
             LogFile.addRecordToLog(loggerMessage);
-            result.failure(webAuthError);return;
+            result.failure(webAuthError);
+            return;
         }
         if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                 || loginproperties.get("RedirectURL").equals("")) {

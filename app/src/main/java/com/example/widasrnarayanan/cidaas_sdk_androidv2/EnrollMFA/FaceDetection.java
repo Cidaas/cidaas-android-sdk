@@ -74,7 +74,7 @@ public class FaceDetection extends Activity {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(FaceDetection.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FaceDetection.this, "Login Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -94,7 +94,7 @@ public class FaceDetection extends Activity {
 
     public void verifyVoice(View view)
     {
-        File imagefile=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Cidaas-Faces","voice.wav");
+        final File imagefile=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Cidaas-Faces","voice.wav");
 
         final PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
         passwordlessEntity.setEmail("raja.narayanan@widas.in");
@@ -106,26 +106,22 @@ public class FaceDetection extends Activity {
             public void success(AuthRequestResponseEntity result) {
 
                 passwordlessEntity.setRequestId(result.getData().getRequestId());
+                cidaas.loginWithVoiceRecognition(imagefile, passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Toast.makeText(FaceDetection.this, "Login Successfully"+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(FaceDetection.this, "Login Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void failure(WebAuthError error) {
-
-            }
-        });
-
-
-
-
-        cidaas.loginWithVoiceRecognition(imagefile, passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
-            @Override
-            public void success(LoginCredentialsResponseEntity result) {
-                Toast.makeText(FaceDetection.this, "Login Successfully"+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(FaceDetection.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FaceDetection.this, "Login Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

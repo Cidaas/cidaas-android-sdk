@@ -10,6 +10,7 @@ import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
@@ -221,7 +222,7 @@ public class VoiceConfigurationController {
                                final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
-
+             initiateVoiceMFARequestEntity.setClient_id(clientId);
             if(initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
@@ -237,6 +238,7 @@ public class VoiceConfigurationController {
             }
             Cidaas.instanceId="";
             if (    initiateVoiceMFARequestEntity.getUsageType() != null && initiateVoiceMFARequestEntity.getUsageType() != "" &&
+                    initiateVoiceMFARequestEntity.getClient_id() != null && initiateVoiceMFARequestEntity.getClient_id() != "" &&
                     initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
@@ -364,6 +366,11 @@ public class VoiceConfigurationController {
                                 loginresult.failure(error);
                             }
                         });
+            }
+            else
+            {
+                String message="Usage type ,ClientId,Userdevice Id must not be null";
+                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,message,HttpStatusCode.EXPECTATION_FAILED));
             }
         }
         catch (Exception e)
