@@ -63,7 +63,7 @@ public class WebAuthErrorTest {
 
     @Test
     public void testServiceFailureException() throws Exception {
-        WebAuthError result = webAuthError.serviceFailureException(0, "errorMessage", 0, "error");
+        WebAuthError result = webAuthError.serviceFailureException(0, "errorMessage", 0, "error",null);
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
@@ -118,14 +118,14 @@ public class WebAuthErrorTest {
 
     @Test
     public void testErrorCode() throws Exception {
-      WebAuthError.getShared(context).setConsentUrl("ConsentURL");
+      //WebAuthError.getShared(context).setConsentUrl("ConsentURL");
         WebAuthError.getShared(context).setError(error);
         WebAuthError.getShared(context).setErrorCode(27);
         WebAuthError.getShared(context).setErrorMessage("Message");
         WebAuthError.getShared(context).setStatusCode(17);
 
 
-        Assert.assertEquals("ConsentURL",WebAuthError.getShared(context).getConsentUrl());
+       // Assert.assertEquals("ConsentURL",WebAuthError.getShared(context).getConsentUrl());
         Assert.assertEquals("Message",WebAuthError.getShared(context).getErrorMessage());
         Assert.assertEquals(27,WebAuthError.getShared(context).getErrorCode());
         Assert.assertEquals(17,WebAuthError.getShared(context).getStatusCode());

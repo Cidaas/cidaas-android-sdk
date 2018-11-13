@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             }
         });*/
 
-            cidaas.configureFingerprint("sub", new Result<EnrollFingerprintMFAResponseEntity>() {
+            cidaas.configureFingerprint("sub","", new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         cidaas.onActivityResult(requestCode, resultCode, data, new Result<File>() {
             @Override
             public void success(File result) {
-                cidaas.loginWithDocument(result, new Result<DocumentScannerServiceResultEntity>() {
+                cidaas.VerifyDocument(result, new Result<DocumentScannerServiceResultEntity>() {
                     @Override
                     public void success(DocumentScannerServiceResultEntity result) {
                         Toast.makeText(MainActivity.this, "HI "+result.getData().getName(), Toast.LENGTH_SHORT).show();

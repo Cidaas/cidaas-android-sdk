@@ -378,6 +378,7 @@ public class SmartPushConfigurationController {
 
                             @Override
                             public void failure(WebAuthError error) {
+
                                 loginresult.failure(error);
                             }
                         });

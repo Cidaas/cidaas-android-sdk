@@ -31,7 +31,7 @@ public class OauthServiceTest {
     @Test
     public void testGetLoginUrl() throws Exception {
 
-        oauthService.getLoginUrl("requestId", new Result<String>() {
+        oauthService.getLoginUrl("requestId","", new Result<String>() {
             @Override
             public void success(String result) {
 
@@ -47,7 +47,7 @@ public class OauthServiceTest {
     @Test
     public void testGetUserinfo() throws Exception {
 
-        oauthService.getUserinfo("AccessToken", new Result<UserinfoEntity>() {
+        oauthService.getUserinfo("AccessToken","", new Result<UserinfoEntity>() {
             @Override
             public void success(UserinfoEntity result) {
 

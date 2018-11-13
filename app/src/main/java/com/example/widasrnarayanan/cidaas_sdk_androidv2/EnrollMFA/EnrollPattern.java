@@ -105,7 +105,7 @@ public class EnrollPattern extends AppCompatActivity {
 
 
     public void SetupPattern(View view){
-        cidaas.configurePatternRecognition("RED[1,2,3,4]",sub,new Result<EnrollPatternMFAResponseEntity>() {
+        cidaas.configurePatternRecognition("RED[1,2,3,4]",sub,null,new Result<EnrollPatternMFAResponseEntity>() {
             @Override
             public void success(EnrollPatternMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Success Pattern", Toast.LENGTH_SHORT).show();
@@ -135,7 +135,7 @@ public class EnrollPattern extends AppCompatActivity {
         });
 */
 
-     cidaas.configureSmartPush(sub, new Result<EnrollSmartPushMFAResponseEntity>() {
+     cidaas.configureSmartPush(sub,"", new Result<EnrollSmartPushMFAResponseEntity>() {
          @Override
          public void success(EnrollSmartPushMFAResponseEntity result) {
              Toast.makeText(EnrollPattern.this, "Success push", Toast.LENGTH_SHORT).show();
@@ -275,7 +275,7 @@ catch (Exception ec){
 
 public void EnrollTOTP(View view){
  try{
-     cidaas.configureTOTP(sub, new Result<EnrollTOTPMFAResponseEntity>() {
+     cidaas.configureTOTP(sub,"", new Result<EnrollTOTPMFAResponseEntity>() {
          @Override
          public void success(EnrollTOTPMFAResponseEntity result) {
              Toast.makeText(EnrollPattern.this, "Result"+result.getData().getSub(), Toast.LENGTH_SHORT).show();

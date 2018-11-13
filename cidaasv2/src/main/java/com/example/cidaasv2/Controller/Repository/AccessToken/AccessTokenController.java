@@ -9,6 +9,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Repository.AccessToken.AccessTokenService;
 
 import java.util.Dictionary;
@@ -211,6 +212,40 @@ public class AccessTokenController {
         {
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.d(e.getMessage()); //Todo Handle Exception
+        }
+    }
+
+
+    //Get access Token by Social
+    public void getAccessTokenBySocial(String tokenOrCode, String provider, String givenType, String requestId, String viewType,Dictionary<String,String> loginProperties, final Result<AccessTokenEntity> accessTokenEntityResult)
+    {
+        try
+        {
+            AccessTokenService.getShared(context).getAccessTokenBySocial(tokenOrCode, provider, givenType, requestId, viewType,loginProperties, new Result<SocialProviderEntity>() {
+                @Override
+                public void success(SocialProviderEntity result) {
+                    getAccessTokenByCode(result.getCode(), new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            accessTokenEntityResult.success(result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            accessTokenEntityResult.failure(error);
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    accessTokenEntityResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
         }
     }
 }

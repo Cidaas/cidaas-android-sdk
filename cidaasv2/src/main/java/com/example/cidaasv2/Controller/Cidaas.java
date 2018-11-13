@@ -20,7 +20,6 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
-
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.ChangePassword.ChangePasswordController;
@@ -74,7 +73,6 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseDataEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintResponseEntity;
@@ -154,7 +152,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.card.payment.CardIOActivity;
-import okhttp3.internal.http2.ErrorCode;
 import timber.log.Timber;
 
 import static android.content.Context.KEYGUARD_SERVICE;
@@ -182,6 +179,8 @@ public class Cidaas implements IOAuthWebLogin {
 
     public WebAuthError webAuthError = null;
 
+
+    String logoURLlocal="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.cidaas.com/wp-content/uploads/2018/02/logo.png";
 
     public String loginURL;
     public String DomainURL="";
@@ -411,6 +410,35 @@ public class Cidaas implements IOAuthWebLogin {
 
         }
     }
+
+
+    public void getRequestId(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, final Result<AuthRequestResponseEntity> Primaryresult) {
+        try {
+            if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("")
+                    && RedirectURL != null && !RedirectURL.equals("")) {
+              FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, new Result<Dictionary<String, String>>() {
+                  @Override
+                  public void success(Dictionary<String, String> result) {
+                      RequestIdController.getShared(context).getRequestId(result, Primaryresult);
+                  }
+
+                  @Override
+                  public void failure(WebAuthError error) {
+                      Primaryresult.failure(error);
+                  }
+              });
+            }
+
+        } catch (Exception e) {
+
+            String loggerMessage = "Request-Id  failure : " + "Error Code - "
+                    + 400 + ", Error Message - " + e.getMessage() + ", Status Code - " + 400;
+            LogFile.addRecordToLog(loggerMessage);
+            Timber.e(e.getMessage());
+
+        }
+    }
+
 
 
     @Override
@@ -1311,7 +1339,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,@NonNull String logoURL,
+    public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,@NonNull final String logoURL,
                                             final Result<EnrollPatternMFAResponseEntity> enrollresult) {
         try {
 
@@ -1321,15 +1349,20 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
 
+
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("") &&
                             pattern != null && !pattern.equals("")) {
 
                         final String finalBaseurl = baseurl;
 
-                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+
+                        if(!logoURL.equals("") && logoURL!=null) {
+                           logoURLlocal=logoURL;
+                        }
+
                         SetupPatternMFARequestEntity setupPatternMFARequestEntity = new SetupPatternMFARequestEntity();
                         setupPatternMFARequestEntity.setClient_id(result.get("ClientId"));
-                        setupPatternMFARequestEntity.setLogoUrl(logoUrl);
+                        setupPatternMFARequestEntity.setLogoUrl(logoURLlocal);
                         PatternConfigurationController.getShared(context).configurePattern(sub, finalBaseurl, pattern, setupPatternMFARequestEntity,
                                 enrollresult);
 
@@ -1478,7 +1511,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configureFaceRecognition(final File photo, final String sub, final Result<EnrollFaceMFAResponseEntity> enrollresult) {
+    public void configureFaceRecognition(final File photo, final String sub,@NonNull final String logoURL, final Result<EnrollFaceMFAResponseEntity> enrollresult) {
         try {
 
 
@@ -1490,11 +1523,15 @@ public class Cidaas implements IOAuthWebLogin {
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
-                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+                       if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
+
+                        // String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
 
                         SetupFaceMFARequestEntity setupFaceMFARequestEntity = new SetupFaceMFARequestEntity();
                         setupFaceMFARequestEntity.setClient_id(result.get("ClientId"));
-                        setupFaceMFARequestEntity.setLogoUrl(logoUrl);
+                        setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
                         FaceConfigurationController.getShared(context).ConfigureFace(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
@@ -1674,7 +1711,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     @Override
-    public void configureFingerprint(final String sub, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
+    public void configureFingerprint(final String sub,@NonNull final String logoURL, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -1777,10 +1814,16 @@ public class Cidaas implements IOAuthWebLogin {
                         final String finalBaseurl = baseurl;
 
 
-                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+                       // String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+
+
+                       if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
+
                         SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity = new SetupFingerprintMFARequestEntity();
                         setupFingerprintMFARequestEntity.setClient_id(clinetId);
-                        setupFingerprintMFARequestEntity.setLogoUrl(logoUrl);
+                        setupFingerprintMFARequestEntity.setLogoUrl(logoURLlocal);
                         FingerprintConfigurationController.getShared(context).configureFingerprint(sub, finalBaseurl, setupFingerprintMFARequestEntity,
                                 enrollresult);
 
@@ -1989,7 +2032,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configureSmartPush(final String sub, final Result<EnrollSmartPushMFAResponseEntity> enrollresult) {
+    public void configureSmartPush(final String sub,@NonNull final String logoURL, final Result<EnrollSmartPushMFAResponseEntity> enrollresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2000,11 +2043,15 @@ public class Cidaas implements IOAuthWebLogin {
 
                         final String finalBaseurl = baseurl;
 
-                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+                        //String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+
+                       if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
 
                         SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity = new SetupSmartPushMFARequestEntity();
                         setupSmartPushMFARequestEntity.setClient_id(result.get("ClientId"));
-                        setupSmartPushMFARequestEntity.setLogoUrl(logoUrl);
+                        setupSmartPushMFARequestEntity.setLogoUrl(logoURLlocal);
 
                         SmartPushConfigurationController.getShared(context).configureSmartPush(sub, finalBaseurl, setupSmartPushMFARequestEntity,
                                 enrollresult);
@@ -2114,6 +2161,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateSmartPushRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
+
                     SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,null,result);
 
 
@@ -2135,7 +2183,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configureTOTP(final String sub, final Result<EnrollTOTPMFAResponseEntity> enrollresult) {
+    public void configureTOTP(final String sub,@NonNull final String logoURL, final Result<EnrollTOTPMFAResponseEntity> enrollresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2147,10 +2195,16 @@ public class Cidaas implements IOAuthWebLogin {
 
                         final String finalBaseurl = baseurl;
 
-                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+                        //String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+
+                       if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
+
+
                         SetupTOTPMFARequestEntity setupTOTPMFARequestEntity = new SetupTOTPMFARequestEntity();
                         setupTOTPMFARequestEntity.setClient_id(result.get("ClientId"));
-                        setupTOTPMFARequestEntity.setLogoUrl(logoUrl);
+                        setupTOTPMFARequestEntity.setLogoUrl(logoURLlocal);
                         TOTPConfigurationController.getShared(context).configureTOTP(sub, finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
 
                     } else {
@@ -2286,7 +2340,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configureVoiceRecognition(final File voice, final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult) {
+    public void configureVoiceRecognition(final File voice, @NonNull final String logoURL,final String sub, final Result<EnrollVoiceMFAResponseEntity> enrollresult) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2296,11 +2350,16 @@ public class Cidaas implements IOAuthWebLogin {
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
-                        String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+                      //  String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+
+
+                       if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
 
                         SetupVoiceMFARequestEntity setupVoiceMFARequestEntity = new SetupVoiceMFARequestEntity();
                         setupVoiceMFARequestEntity.setClient_id(result.get("ClientId"));
-                        setupVoiceMFARequestEntity.setLogoUrl(logoUrl);
+                        setupVoiceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
                         VoiceConfigurationController.getShared(context).configureVoice(sub, baseurl, voice, setupVoiceMFARequestEntity, enrollresult);
@@ -2445,6 +2504,8 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+
+
     public void onActivityResult(int requestCode, int resultCode, Intent data, Result<File> result) {
 
         try {
@@ -2477,7 +2538,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     // ****** LOGIN WITH Document *****-------------------------------------------------------------------------------------------------------
 
-    public void loginWithDocument(final File photo, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+    public void VerifyDocument(final File photo, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
         try {
 
             if (photo != null) {
@@ -3185,6 +3246,48 @@ public class Cidaas implements IOAuthWebLogin {
             result.failure(WebAuthError.getShared(context).customException(417, errorMessage, 417));
         }
     }
+
+
+
+
+    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType, final Result<AccessTokenEntity> accessTokenCallback)
+    {
+        try
+        {
+            DomainURL=DomainUrl;
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(final Dictionary<String, String> lpresult) {
+
+                    getRequestId(lpresult, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,lpresult,accessTokenCallback);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                         accessTokenCallback.failure(error);
+                        }
+                    });
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    accessTokenCallback.failure(error);
+                }
+            });
+
+
+        }
+        catch (Exception e)
+        {
+            //todo handle excep
+        }
+    }
+
 
     //Get userinfo Based on Access Token
     @Override

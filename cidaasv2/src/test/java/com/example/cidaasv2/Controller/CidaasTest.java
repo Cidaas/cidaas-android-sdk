@@ -13,13 +13,11 @@ import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
@@ -42,7 +40,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.io.File;
 import java.util.Dictionary;
 import java.util.HashMap;
 
@@ -435,7 +432,7 @@ public class CidaasTest {
     @Test
     public void testConfigurePatternRecognition() throws Exception {
 
-        cidaas.configurePatternRecognition("pattern", "sub", null);
+        cidaas.configurePatternRecognition("pattern", "sub", "",null);
     }
 
     @Test
@@ -495,13 +492,13 @@ public class CidaasTest {
     @Test
     public void testVerifyFace() throws Exception {
 
-        cidaas.verifyFace("statusId", null);
+        cidaas.verifyFace(null,"statusId", null);
     }
 
     @Test
     public void testConfigureFingerprint() throws Exception {
 
-        cidaas.configureFingerprint("sub", new Result<EnrollFingerprintMFAResponseEntity>() {
+        cidaas.configureFingerprint("sub","" , new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -538,7 +535,7 @@ public class CidaasTest {
     @Test
     public void testConfigureSmartPush() throws Exception {
 
-        cidaas.configureSmartPush("sub", new Result<EnrollSmartPushMFAResponseEntity>() {
+        cidaas.configureSmartPush("sub","" , new Result<EnrollSmartPushMFAResponseEntity>() {
             @Override
             public void success(EnrollSmartPushMFAResponseEntity result) {
 
@@ -569,9 +566,9 @@ public class CidaasTest {
     @Test
     public void testVerifySmartPush() throws Exception {
 
-        cidaas.verifySmartPush("randomNumber", "statusId", new Result<AuthenticateSmartPushRequestEntity>() {
+        cidaas.verifySmartPush("randomNumber", "statusId", new Result<AuthenticateSmartPushResponseEntity>() {
             @Override
-            public void success(AuthenticateSmartPushRequestEntity result) {
+            public void success(AuthenticateSmartPushResponseEntity result) {
 
             }
 
@@ -585,7 +582,7 @@ public class CidaasTest {
     @Test
     public void testConfigureTOTP() throws Exception {
 
-        cidaas.configureTOTP("sub", new Result<EnrollTOTPMFAResponseEntity>() {
+        cidaas.configureTOTP("sub","" ,new Result<EnrollTOTPMFAResponseEntity>() {
             @Override
             public void success(EnrollTOTPMFAResponseEntity result) {
 

@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                         // onSuccess of Login go to next Activity and Display the Access Token
                         Toast.makeText(LoginActivity.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
                         Intent intent=new Intent(LoginActivity.this,SuccessfulLogin.class);
-                      //  intent.putExtra("sub",sub);
+                        intent.putExtra("sub",result.getData().getSub());
                         startActivity(intent);
                     }
 

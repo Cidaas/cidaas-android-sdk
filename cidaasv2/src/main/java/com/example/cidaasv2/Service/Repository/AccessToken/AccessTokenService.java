@@ -2,19 +2,19 @@ package com.example.cidaasv2.Service.Repository.AccessToken;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Genral.GenralHelper;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
-import com.example.cidaasv2.Service.Repository.RequestId.RequestIdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -303,7 +303,7 @@ public class AccessTokenService {
             //TOdo Perform Null Check
            // url = querymap.get("TokenURL");
             baseurl=loginProperties.get("DomainURL");
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 url=baseurl+ URLHelper.getShared().getTokenUrl();
             }
@@ -366,4 +366,119 @@ public class AccessTokenService {
             Timber.d(e.getMessage());
         }
     }
-}
+
+
+    //get Access Token by Social
+    public void getAccessTokenBySocial(String tokenOrCode, String provider, String givenType, String requestId, String viewType,Dictionary<String,String> loginProperties, final Result<SocialProviderEntity> callback)
+    {
+       try
+       {
+           String baseURL;
+           baseURL= GenralHelper.getShared().constructSocialServiceURl(tokenOrCode,provider,givenType,loginProperties.get("ClientId"),loginProperties.get("RedirectURL"),viewType);
+
+
+           baseURL=baseURL+URLHelper.getShared().getPreAuthCode()+requestId;
+
+
+           ICidaasSDKService cidaasSDKService = service.getInstance();
+           cidaasSDKService.getAccessTokenBySocial(baseURL).enqueue(new Callback<SocialProviderEntity>() {
+
+               @Override
+               public void onResponse(Call<SocialProviderEntity> call, Response<SocialProviderEntity> response) {
+
+                   if (response.isSuccessful()) {
+
+                   //todo save the accesstoken in Storage helper
+                   if(response.code()==200) {
+                       callback.success(response.body());
+                   }
+                   else {
+                       callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                               "Service failure but successful response" , 400,null,null));
+                   }
+               }
+                    else {
+                   assert response.errorBody() != null;
+                   try {
+
+                       //Todo Handle proper error message
+                       String errorResponse=response.errorBody().source().readByteString().utf8();
+
+                       CommonErrorEntity commonErrorEntity;
+                       commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+                       String errorMessage="";
+                       if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                           errorMessage=commonErrorEntity.getError().toString();
+                       }
+                       else
+                       {
+                           errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                       }
+
+
+                       callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null,null));
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+                   Timber.e("response"+response.message());
+               }
+               }
+
+               @Override
+               public void onFailure(Call<SocialProviderEntity> call, Throwable t) {
+                   Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
+                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+
+               }
+           });
+
+
+       }
+       catch (Exception e)
+       {
+
+       }
+    }
+
+
+    /*public void getAccessTokenBySocial(String tokenOrCode, String provider, String givenType) {
+        try {
+            showLoader();
+            CidaasSDKEntity.cidaasSDKEntityInstance.readInputs(GLOBAL_ACTIVITY.getApplicationContext());
+            new ErrorEntity();
+            String url = CidaasSDKHelper.constructSocialServiceURl(tokenOrCode, provider, givenType);
+            if (GLOBAL_PRE_AUTH_CODE != "") {
+                url = url + "&preAuthCode=" + GLOBAL_PRE_AUTH_CODE;
+            } else {
+                GLOBAL_INITIAL_CODE_VERIFIER = this.getCodeVerifier();
+                GLOBAL_CODE_CHALLENGE = this.getCodeChallenge(GLOBAL_INITIAL_CODE_VERIFIER);
+                url = url + "&code_challenge=" + GLOBAL_CODE_CHALLENGE + "&code_challenge_method=" + CidaasSDKHelper.codeChallengeMethod;
+            }
+
+            CidaasSDKService service = new CidaasSDKService();
+            service.getAccessTokenBySocial(url, new ISocialEntity() {
+                public void onSuccess(SocialProviderEntity socialEntity) {
+                    if (socialEntity.getRedirectUrl() != null && socialEntity.getRedirectUrl() != "") {
+                        CidaasSDK.this.webViewInstance.setVisibility(0);
+                        CidaasSDK.this.webViewInstance.loadUrl(socialEntity.getRedirectUrl());
+                    } else {
+                        CidaasSDK.getAccessTokenByCode(socialEntity.getCode(), CidaasSDK.GLOBAL_CODE_VERIFIER);
+                    }
+
+                    CidaasLog.addRecordToSuccessLog("Successfully get access token by Social", CidaasSDK.ENABLE_LOG);
+                }
+
+                public void onError(ErrorEntity errorEntity) {
+                    CidaasSDK.hideLoader();
+                    CidaasSDK.iAccessTokenEntity.onError(errorEntity);
+                    CidaasLog.addRecordToErrorLog(errorEntity.getMessage(), CidaasSDK.ENABLE_LOG);
+                }
+            });
+        } catch (Exception var7) {
+            CidaasLog.addRecordToErrorLog(var7.getMessage(), ENABLE_LOG);
+        }
+*/
+    }
+
+

@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Helper.Genral;
 
 import android.content.Context;
-import android.media.midi.MidiOutputPort;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -12,16 +11,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.concurrent.Callable;
-
-import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
 
 @RunWith(RobolectricTestRunner.class)
@@ -117,7 +112,7 @@ public class DBHelperRunnnerTest {
     @Test
     public void testGetLoginProperties() throws Exception {
         dBHelper.addLoginProperties(null);
-        Dictionary<String, String> result = dBHelper.getLoginProperties();
+        Dictionary<String, String> result = dBHelper.getLoginProperties("");
         Assert.assertEquals(null, result);
     }
 

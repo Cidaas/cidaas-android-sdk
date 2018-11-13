@@ -1,24 +1,52 @@
-/*
 package com.example.cidaasv2.Controller.Repository.UserProfile;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
+import com.example.cidaasv2.Service.Repository.UserProfile.UserProfileService;
 
 import java.util.Dictionary;
 
 import timber.log.Timber;
 
 public class UserProfileController {
-*/
-/*
 
-    //Get Internal userProfile
+
+
+    private Context context;
+
+    public static UserProfileController shared;
+
+    public UserProfileController(Context contextFromCidaas) {
+
+        context=contextFromCidaas;
+        //Todo setValue for authenticationType
+
+    }
+
+    public static UserProfileController getShared(Context contextFromCidaas )
+    {
+        try {
+
+            if (shared == null) {
+                shared = new UserProfileController(contextFromCidaas);
+            }
+        }
+        catch (Exception e)
+        {
+            Timber.i(e.getMessage());
+        }
+        return shared;
+    }
+
+    /*//Get Internal userProfile
     public void getInternalUserProfile(@NonNull String AccessToken, @NonNull String sub, @NonNull final Result<UserprofileResponseEntity> result){
         try {
             String baseurl="";
@@ -91,9 +119,18 @@ public class UserProfileController {
             Timber.e(e.getMessage());
         }
     }
-*//*
 
+*/
+    public void getUserProfile()
+    {
+        try
+        {
+            UserProfileService.getShared(context);
+        }
+        catch (Exception e)
+        {
 
+        }
+    }
 
 }
-*/

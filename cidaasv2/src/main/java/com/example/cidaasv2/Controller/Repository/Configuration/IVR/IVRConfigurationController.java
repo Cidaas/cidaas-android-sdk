@@ -85,6 +85,9 @@ public class IVRConfigurationController {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
                         //Todo Service call
+
+
+
                         IVRVerificationService.getShared(context).setupIVRMFA(baseurl, accessTokenresult.getAccess_token(),null,
                                 new Result<SetupIVRMFAResponseEntity>()
                                 {

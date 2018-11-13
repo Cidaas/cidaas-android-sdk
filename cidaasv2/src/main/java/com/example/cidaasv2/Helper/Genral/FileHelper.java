@@ -202,7 +202,32 @@ public class FileHelper {
                 loginProperties.put("DomainURL", DomainUrl);
                 loginProperties.put("RedirectURL", RedirectURL);
                 loginProperties.put("ClientSecret",ClientSecret);
-                loginProperties.put("ClientSecret",ClientSecret);
+
+
+                callback.success(loginProperties);
+            } else {
+                //T handle Error
+                callback.failure(webAuthError.propertyMissingException());
+            }
+        }
+        catch (Exception e)
+        {
+            Timber.e(e.getMessage());
+            callback.failure(webAuthError.propertyMissingException());
+        }
+    }
+
+
+    //Convert parameter into a Dictionary Object
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl,@NonNull String ClientId,@NonNull String RedirectURL, Result<Dictionary<String,String>> callback)
+    {
+        try {
+            Dictionary<String, String> loginProperties = new Hashtable<>();
+            if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") ) {
+
+                loginProperties.put("ClientId", ClientId);
+                loginProperties.put("DomainURL", DomainUrl);
+                loginProperties.put("RedirectURL", RedirectURL);
 
                 callback.success(loginProperties);
             } else {

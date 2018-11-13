@@ -110,7 +110,11 @@ public class URLHelper {
     String scannedTOTPURL="/verification-srv/totp/scanned";
     String scannedVoiceURL="/verification-srv/voice/scanned";
     String scannedFIDOURL="/verification-srv/fido/scanned";
+
     String tokenUrl="/token-srv/token";
+    String socialTokenURL="/login-srv/social/token";
+
+    String preAuthCode="&preAuthCode=" ;
 
     String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
     String deduplicationList="users-srv/deduplication/info/";
@@ -119,6 +123,14 @@ public class URLHelper {
 
     String documentScanner="/access-control-srv/ocr/validate";
 
+
+    public String getPreAuthCode() {
+        return preAuthCode;
+    }
+
+    public String getSocialTokenURL() {
+        return socialTokenURL;
+    }
 
     public String getUserInfoURL() {
         return userInfoURL;
@@ -171,6 +183,8 @@ public class URLHelper {
     public String getTokenUrl() {
         return tokenUrl;
     }
+
+
 
     public String getScannedPatternURL() {
         return scannedPatternURL;

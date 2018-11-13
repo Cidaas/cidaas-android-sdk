@@ -39,7 +39,6 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.BackupCode.EnrollBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.BackupCode.EnrollBackupCodeMFAResponseEntity;
@@ -60,7 +59,6 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPu
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFAResponseEntity;
@@ -112,6 +110,7 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEnt
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
+import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
@@ -164,6 +163,11 @@ public interface ICidaasSDKService {
     Call<AccessTokenEntity> getAccessTokenByRefreshToken(@Url String url,
                                                        @HeaderMap Map<String,String>headers,
                                                        @FieldMap(encoded = true) Map<String, String> params);
+
+
+    @GET
+    Call<SocialProviderEntity> getAccessTokenBySocial(@Url String url);
+
 
     //Todo Add FieldMap Pending
    // @FormUrlEncoded
@@ -465,6 +469,9 @@ public interface ICidaasSDKService {
     @POST
     @Multipart
     Call<DocumentScannerServiceResultEntity> enrollDocument(@Url String url, @Part MultipartBody.Part face);
+
+
+
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
     //Get Registration Setup

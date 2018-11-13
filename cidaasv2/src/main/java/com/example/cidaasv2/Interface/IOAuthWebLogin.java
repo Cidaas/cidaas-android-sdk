@@ -99,12 +99,12 @@ public interface IOAuthWebLogin {
     void verifyBackupcode(String code,String StatusId,Result<LoginCredentialsResponseEntity> result);
 
     //FACE
-    void configureFaceRecognition(File photo,String sub, Result<EnrollFaceMFAResponseEntity> result);
+    void configureFaceRecognition(File photo,String sub, @NonNull final String logoURL,Result<EnrollFaceMFAResponseEntity> result);
     void loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntity,
                                    final Result<LoginCredentialsResponseEntity> loginresult);
 
     //FINGERPRINT
-    void configureFingerprint(String sub,Result<EnrollFingerprintMFAResponseEntity> result);
+    void configureFingerprint(String sub,@NonNull final String logoURL,Result<EnrollFingerprintMFAResponseEntity> result);
     void loginWithFingerprint(PasswordlessEntity passwordlessEntity,final Result<LoginCredentialsResponseEntity> loginresult);
 
     //PATTERN
@@ -112,15 +112,15 @@ public interface IOAuthWebLogin {
     void loginWithPatternRecognition(@NonNull final String pattern, @NonNull final PasswordlessEntity passwordlessEntity,
                                      final Result<LoginCredentialsResponseEntity> loginresult);
     //SMARTPUSH
-    void configureSmartPush(String sub,Result<EnrollSmartPushMFAResponseEntity> result);
+    void configureSmartPush(String sub,@NonNull final String logoURL,Result<EnrollSmartPushMFAResponseEntity> result);
     void loginWithSmartPush(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
 
     //TOTP
-    void configureTOTP(String sub,Result<EnrollTOTPMFAResponseEntity> result);
+    void configureTOTP(String sub,@NonNull final String logoURL,Result<EnrollTOTPMFAResponseEntity> result);
     void loginWithTOTP(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
 
     //VOICE
-    void configureVoiceRecognition(File voice,String sub,Result<EnrollVoiceMFAResponseEntity> result);
+    void configureVoiceRecognition(File voice,@NonNull final String logoURL,String sub,Result<EnrollVoiceMFAResponseEntity> result);
     void loginWithVoiceRecognition(File voice,PasswordlessEntity passwordlessEntity,
                                     final Result<LoginCredentialsResponseEntity> loginresult);
 
