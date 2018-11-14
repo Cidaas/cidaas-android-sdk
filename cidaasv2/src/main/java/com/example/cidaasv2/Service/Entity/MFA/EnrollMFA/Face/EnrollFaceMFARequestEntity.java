@@ -5,14 +5,25 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class EnrollFaceMFARequestEntity implements Serializable{
     String statusId;
     File imagetoSend;
+    List<File> imagesToSend;
     private String userDeviceId;
     String sub;
     DeviceInfoEntity deviceInfo;
+
+
+    public List<File> getImagesToSend() {
+        return imagesToSend;
+    }
+
+    public void setImagesToSend(List<File> imagesToSend) {
+        this.imagesToSend = imagesToSend;
+    }
 
     public String getSub() {
         return sub;

@@ -147,6 +147,7 @@ import java.io.File;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -258,6 +259,10 @@ public class Cidaas implements IOAuthWebLogin {
         deviceInfoEntity.setDeviceModel(MODEL);
         deviceInfoEntity.setDeviceVersion(String.valueOf(VERSION.RELEASE));
         deviceInfoEntity.setDeviceMake(Build.MANUFACTURER);
+
+
+        Cidaas.baseurl=DomainURL;
+
 
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
@@ -1644,6 +1649,165 @@ public class Cidaas implements IOAuthWebLogin {
                     AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
                     authenticateFaceRequestEntity.setStatusId(statusId);
                     authenticateFaceRequestEntity.setImagetoSend(photo);
+                    authenticateFaceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+                    FaceVerificationService.getShared(context).authenticateFace(baseurl,authenticateFaceRequestEntity,null,result);
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+        }
+
+    }
+
+
+
+    // ****** TODO LOGIN WITH MultiFACE *****-------------------------------------------------------------------------------------------------------
+
+
+    public void configureFaceRecognition(final List<File> photo, final String sub, @NonNull final String logoURL, final Result<EnrollFaceMFAResponseEntity> enrollresult) {
+        try {
+
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+
+
+                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
+
+                        if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
+
+                        // String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+
+                        SetupFaceMFARequestEntity setupFaceMFARequestEntity = new SetupFaceMFARequestEntity();
+                        setupFaceMFARequestEntity.setClient_id(result.get("ClientId"));
+                        setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
+
+
+                        FaceConfigurationController.getShared(context).ConfigureFaces(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
+
+
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollresult.failure(error);
+                }
+            });
+
+
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
+
+            Timber.e("Configure Face exception" + e.getMessage());
+        }
+
+
+    }
+
+
+
+    public void loginWithFaceRecognition(@NonNull final List<File> photo, @NonNull final PasswordlessEntity passwordlessEntity,
+                                         final Result<LoginCredentialsResponseEntity> loginresult) {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("") &&
+                            photo != null) {
+
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
+
+                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                return;
+                            }
+                        }
+
+                        InitiateFaceMFARequestEntity initiateFaceMFARequestEntity = new InitiateFaceMFARequestEntity();
+                        initiateFaceMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateFaceMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateFaceMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateFaceMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+                        //Todo check for email or sub or mobile
+
+
+                        FaceConfigurationController.getShared(context).LoginWithFaces(photo, baseurl, clientId,
+                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
+                                initiateFaceMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "Image File or RequestId or UsageType must not be empty";
+
+                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+
+    public void verifyFace(@NonNull final List<File> photo,final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    //todo call enroll Email
+
+                    AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
+                    authenticateFaceRequestEntity.setStatusId(statusId);
+                    authenticateFaceRequestEntity.setImagesToSend(photo);
                     authenticateFaceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
@@ -3843,6 +4007,7 @@ public class Cidaas implements IOAuthWebLogin {
         {
             if(loginproperties!=null) {
                 DomainURL=loginproperties.get("DomainURL");
+                Cidaas.baseurl=DomainURL;
                 DBHelper.getShared().addLoginProperties(loginproperties);
 
 

@@ -374,7 +374,7 @@ public class AccessTokenService {
        try
        {
            String baseURL;
-           baseURL= GenralHelper.getShared().constructSocialServiceURl(tokenOrCode,provider,givenType,loginProperties.get("ClientId"),loginProperties.get("RedirectURL"),viewType);
+           baseURL= GenralHelper.getShared().constructSocialServiceURl(tokenOrCode,provider,givenType,loginProperties,viewType);
 
 
            baseURL=baseURL+URLHelper.getShared().getPreAuthCode()+requestId;
