@@ -34,6 +34,7 @@ public class DBHelper {
     private static final String userDeviceInfo="User_device_Info";
     private static final String pkceEnableStatus = "OAuthEnablePkce";
     private static final String logEnableStatus = "OAuthEnableLog";
+    private static String user_storage_key = "cidaas_user_details_";
     private static ObjectMapper shared_objectMapper=new ObjectMapper();
     private static Activity context;
 
@@ -383,7 +384,7 @@ public void setEnableLog(boolean enableLog)
         try {
             String key=userInfoModel.getUserid();
             String jsonString =shared_objectMapper.writeValueAsString(userInfoModel);
-            editor.putString(key, jsonString);
+            editor.putString(user_storage_key+key, jsonString);
             editor.commit();
         }
         catch (Exception e)
