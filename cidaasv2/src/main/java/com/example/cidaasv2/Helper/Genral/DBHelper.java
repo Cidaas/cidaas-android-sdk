@@ -35,6 +35,7 @@ public class DBHelper {
     private static final String pkceEnableStatus = "OAuthEnablePkce";
     private static final String logEnableStatus = "OAuthEnableLog";
     private static String user_storage_key = "cidaas_user_details_";
+    private static String user_storage_info = "cidaas_user_info_";
     private static ObjectMapper shared_objectMapper=new ObjectMapper();
     private static Activity context;
 
@@ -355,7 +356,7 @@ public void setEnableLog(boolean enableLog)
         try {
             String key=accessTokenModel.getUserId();
             String jsonString =shared_objectMapper.writeValueAsString(accessTokenModel);
-            editor.putString(key, jsonString);
+            editor.putString(user_storage_key+key, jsonString);
             result=editor.commit();
         }
         catch (Exception e)
@@ -367,7 +368,7 @@ public void setEnableLog(boolean enableLog)
     //Todo Get Access Token
     public AccessTokenModel getAccessToken(String userId)
     {
-        String jsonString =preferences.getString(userId,"");
+        String jsonString =preferences.getString(user_storage_key+userId,"");
         AccessTokenModel accessTokenModel;
         try {
             accessTokenModel=shared_objectMapper.readValue(jsonString,AccessTokenModel.class);
@@ -384,7 +385,7 @@ public void setEnableLog(boolean enableLog)
         try {
             String key=userInfoModel.getUserid();
             String jsonString =shared_objectMapper.writeValueAsString(userInfoModel);
-            editor.putString(user_storage_key+key, jsonString);
+            editor.putString(user_storage_info+key, jsonString);
             editor.commit();
         }
         catch (Exception e)
@@ -396,7 +397,7 @@ public void setEnableLog(boolean enableLog)
     //Todo Get User info
     public UserInfoModel getUserInfo(String userId)
     {
-        String jsonString =preferences.getString(userId,"DefaultUserinfo");
+        String jsonString =preferences.getString(user_storage_info+userId,"DefaultUserinfo");
         UserInfoModel userInfoModel;
         try {
             userInfoModel=shared_objectMapper.readValue(jsonString,UserInfoModel.class);
