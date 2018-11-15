@@ -122,7 +122,7 @@ public class AccessTokenController {
                 {
                     long milliseconds=System.currentTimeMillis();
                     long currentSeconds=milliseconds/1000;
-                    long timeToExpire=accessTokenModel.getExpiresIn()+accessTokenModel.getSeconds()-10;
+                    long timeToExpire=accessTokenModel.getExpires_in()+accessTokenModel.getSeconds()-10;
                     if(timeToExpire>currentSeconds)
                     {
                         EntityToModelConverter.getShared().accessTokenModelToAccessTokenEntity(accessTokenModel, sub, new Result<AccessTokenEntity>() {
@@ -142,7 +142,7 @@ public class AccessTokenController {
                     }
                     else
                     {
-                        getAccessTokenByRefreshToken(accessTokenModel.getRefreshToken(),callback);
+                        getAccessTokenByRefreshToken(accessTokenModel.getRefresh_token(),callback);
                     }
                 }
                 else

@@ -35,9 +35,9 @@ public static EntityToModelConverter sharedinstance;
         {
             String EncryptedToken="";
 
-            AccessTokenModel.getShared().setExpiresIn(accessTokenEntity.getExpires_in());
-            AccessTokenModel.getShared().setIdToken(accessTokenEntity.getId_token());
-            AccessTokenModel.getShared().setRefreshToken(accessTokenEntity.getRefresh_token());
+            AccessTokenModel.getShared().setExpires_in(accessTokenEntity.getExpires_in());
+            AccessTokenModel.getShared().setId_token(accessTokenEntity.getId_token());
+            AccessTokenModel.getShared().setRefresh_token(accessTokenEntity.getRefresh_token());
             AccessTokenModel.getShared().setScope(accessTokenEntity.getScope());
             AccessTokenModel.getShared().setUserState(accessTokenEntity.getUserstate());
             //Additional Details to store token in Local DB
@@ -86,9 +86,9 @@ public static EntityToModelConverter sharedinstance;
 
 
            accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
-            accessTokenEntity.setExpires_in(accessTokenModel.getExpiresIn());
-            accessTokenEntity.setId_token(accessTokenModel.getIdToken());
-            accessTokenEntity.setRefresh_token(accessTokenModel.getRefreshToken());
+            accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
+            accessTokenEntity.setId_token(accessTokenModel.getId_token());
+            accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
             accessTokenEntity.setScope(accessTokenModel.getScope());
             accessTokenEntity.setUserstate(accessTokenModel.getUserState());
 

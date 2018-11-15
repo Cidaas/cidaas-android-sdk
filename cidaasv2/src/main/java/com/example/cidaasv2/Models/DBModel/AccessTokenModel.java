@@ -23,16 +23,18 @@ public class AccessTokenModel implements Serializable {
     //Properties
     private String access_token;
     private String userState;
-    private String refreshToken;
-    private String idToken;
+    private String refresh_token;
+    private String id_token;
     private String scope;
-    private int expiresIn=0;
+    private int expires_in=0;
     private String key;
     private String salt;
     private String userId;
     private long seconds=0;
     private String plainToken;
     private boolean isEncrypted=false;
+    private String token_type="";
+    private String id_token_expires_in="";
   //Getters and Setters
 
 
@@ -52,21 +54,6 @@ public class AccessTokenModel implements Serializable {
         this.userState = userState;
     }
 
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public void setIdToken(String idToken) {
-        this.idToken = idToken;
-    }
 
     public String getScope() {
         return scope;
@@ -76,13 +63,47 @@ public class AccessTokenModel implements Serializable {
         this.scope = scope;
     }
 
-    public int getExpiresIn() {
-        return expiresIn;
+    public String getRefresh_token() {
+        return refresh_token;
     }
 
-    public void setExpiresIn(int expiresIn) {
-        this.expiresIn = expiresIn;
+    public void setRefresh_token(String refresh_token) {
+        this.refresh_token = refresh_token;
     }
+
+    public String getId_token() {
+        return id_token;
+    }
+
+    public void setId_token(String id_token) {
+        this.id_token = id_token;
+    }
+
+    public int getExpires_in() {
+        return expires_in;
+    }
+
+    public void setExpires_in(int expires_in) {
+        this.expires_in = expires_in;
+    }
+
+    public String getToken_type() {
+        return token_type;
+    }
+
+    public void setToken_type(String token_type) {
+        this.token_type = token_type;
+    }
+
+    public String getId_token_expires_in() {
+        return id_token_expires_in;
+    }
+
+    public void setId_token_expires_in(String id_token_expires_in) {
+        this.id_token_expires_in = id_token_expires_in;
+    }
+
+
 
     public String getKey() {
         return key;
