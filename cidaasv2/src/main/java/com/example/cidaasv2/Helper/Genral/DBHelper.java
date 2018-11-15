@@ -119,7 +119,7 @@ public void setEnableLog(boolean enableLog)
     {
         if (preferences == null)
         {
-            preferences = context.getSharedPreferences("cidaas_Shared_preference", 0);
+            preferences = context.getSharedPreferences("cidaas_preference", 0);
             editor = preferences.edit();
         }
     }
