@@ -1,11 +1,13 @@
 package com.example.cidaasv2.Models.DBModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
  */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccessTokenModel implements Serializable {
   //Shared instance
   public static AccessTokenModel sharedinstance;
@@ -19,7 +21,7 @@ public class AccessTokenModel implements Serializable {
     }
 
     //Properties
-    private String accessToken;
+    private String access_token;
     private String userState;
     private String refreshToken;
     private String idToken;
@@ -33,12 +35,13 @@ public class AccessTokenModel implements Serializable {
     private boolean isEncrypted=false;
   //Getters and Setters
 
-    public String getAccessToken() {
-        return accessToken;
+
+    public String getAccess_token() {
+        return access_token;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
     }
 
     public String getUserState() {

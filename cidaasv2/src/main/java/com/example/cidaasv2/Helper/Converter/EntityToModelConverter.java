@@ -56,12 +56,12 @@ public static EntityToModelConverter sharedinstance;
                     EncryptedToken="";
                 }
             if(EncryptedToken!="") {
-                AccessTokenModel.getShared().setAccessToken(EncryptedToken);
+                AccessTokenModel.getShared().setAccess_token(EncryptedToken);
                 AccessTokenModel.getShared().setEncrypted(true);
             }
             else
             {
-                AccessTokenModel.getShared().setAccessToken(accessTokenEntity.getAccess_token());
+                AccessTokenModel.getShared().setAccess_token(accessTokenEntity.getAccess_token());
                 AccessTokenModel.getShared().setEncrypted(false);
                 AccessTokenModel.getShared().setPlainToken(accessTokenEntity.getAccess_token());
             }
@@ -85,7 +85,7 @@ public static EntityToModelConverter sharedinstance;
             AccessTokenEntity accessTokenEntity=new AccessTokenEntity();
 
 
-           accessTokenEntity.setAccess_token(accessTokenModel.getAccessToken());
+           accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
             accessTokenEntity.setExpires_in(accessTokenModel.getExpiresIn());
             accessTokenEntity.setId_token(accessTokenModel.getIdToken());
             accessTokenEntity.setRefresh_token(accessTokenModel.getRefreshToken());

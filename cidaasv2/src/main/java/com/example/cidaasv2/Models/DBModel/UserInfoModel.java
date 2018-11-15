@@ -1,11 +1,14 @@
 package com.example.cidaasv2.Models.DBModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfoModel implements Serializable{
 
 
