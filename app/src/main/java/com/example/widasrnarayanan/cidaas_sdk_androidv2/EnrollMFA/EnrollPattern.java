@@ -423,7 +423,7 @@ catch (Exception e)
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Error req "+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EnrollPattern.this, "Error Finger "+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 

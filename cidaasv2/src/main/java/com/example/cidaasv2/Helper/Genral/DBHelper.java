@@ -30,6 +30,7 @@ public class DBHelper {
     private static final String DeviceInfo="Device_info";
     private static final String FCMTokenInfo="FCMTOKEN_info";
     private static final String SecretInfo="Secret_info";
+    private static final String UserAgent="UserAgent";
     private static final String userDeviceInfo="User_device_Info";
     private static final String pkceEnableStatus = "OAuthEnablePkce";
     private static final String logEnableStatus = "OAuthEnableLog";
@@ -62,6 +63,8 @@ public class DBHelper {
 
         }
     }
+
+
 
 //Get EnablePKCE
     public boolean getEnablePKCE()
@@ -165,6 +168,34 @@ public void setEnableLog(boolean enableLog)
     }
 
 
+
+    //Add Secret Based on Sub
+    public void setUserAgent(String userAgent){
+        boolean result=false;
+        try {
+            editor.putString(UserAgent,userAgent);
+            editor.commit();
+        }
+        catch (Exception e)
+        {
+            result=false;
+        }
+
+    }
+
+    //get Device info
+    public String getUserAgent()
+    {
+        String userAgent;
+        try {
+            userAgent = preferences.getString(UserAgent, "");
+        }
+        catch (Exception e)
+        {
+            userAgent="";
+        }
+        return userAgent;
+    }
 
 
     //Get Login Object

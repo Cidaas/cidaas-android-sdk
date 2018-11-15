@@ -16,6 +16,16 @@ public class InitiateTOTPMFARequestEntity implements Serializable{
     String usagePass;
     DeviceInfoEntity deviceInfo;
 
+    String source="MOBILE";
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     public String getUsagePass() {
         return usagePass;
     }

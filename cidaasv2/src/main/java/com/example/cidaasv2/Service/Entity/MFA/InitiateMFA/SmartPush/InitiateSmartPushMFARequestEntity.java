@@ -16,6 +16,16 @@ public class InitiateSmartPushMFARequestEntity implements Serializable{
     String usage_pass;
     DeviceInfoEntity deviceInfo;
 
+    String source="MOBILE";
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
 
     public String getUsage_pass() {
         return usage_pass;

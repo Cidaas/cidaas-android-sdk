@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -182,6 +183,8 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     String logoURLlocal="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.cidaas.com/wp-content/uploads/2018/02/logo.png";
+    public static String APP_NAME = "cidaas";
+    public static String APP_VERSION = "";
 
     public String loginURL;
     public String DomainURL="";
@@ -264,6 +267,26 @@ public class Cidaas implements IOAuthWebLogin {
         Cidaas.baseurl=DomainURL;
 
 
+        PackageManager packageManager = context.getPackageManager();
+        ApplicationInfo applicationInfo = null;
+
+        try {
+            applicationInfo = packageManager.getApplicationInfo(context.getApplicationInfo().packageName, 0);
+           APP_VERSION= context.getPackageManager().getPackageInfo(context.getApplicationInfo().packageName, 0).versionName;
+        } catch (final PackageManager.NameNotFoundException e) {
+        }
+
+        if(applicationInfo!=null) {
+
+            APP_NAME = packageManager.getApplicationLabel(applicationInfo).toString();
+        }
+        else
+        {
+            APP_NAME="UNKNOWN";
+        }
+
+
+
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
 
@@ -299,8 +322,9 @@ public class Cidaas implements IOAuthWebLogin {
         });
 
 
-
     }
+
+
 
     //Set FCM Token For Update
     public void setFCMToken(String FCMToken) {
@@ -4042,6 +4066,21 @@ public class Cidaas implements IOAuthWebLogin {
 
         return  version;
     }
+
+    public String getUserAgent()
+    {
+        try
+        {
+            return DBHelper.getShared().getUserAgent();
+        }
+        catch (Exception e)
+        {
+            String loggerMessage = "get UserAgent : " + " Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
+            return "";
+        }
+    }
+
 
 
 
