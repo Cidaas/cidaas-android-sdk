@@ -400,7 +400,7 @@ public class FaceConfigurationController {
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
                 //Todo Service call
 
-                if(codeChallenge==null || codeChallenge==""){
+                if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null){
                     generateChallenge();
                 }
 

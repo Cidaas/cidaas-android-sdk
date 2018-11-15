@@ -96,7 +96,7 @@ public class PatternConfigurationController {
     {
         try{
 
-            if(codeChallenge=="" && codeVerifier=="") {
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
                 //Generate Challenge
                 generateChallenge();
             }

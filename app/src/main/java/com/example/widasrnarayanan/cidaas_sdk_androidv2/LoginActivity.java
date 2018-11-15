@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
@@ -210,6 +212,43 @@ public class LoginActivity extends AppCompatActivity {
         // Clear the Text Fields
         username.setText("");
         password.setText("");
+    }
+
+    //loginWithSmartPush
+    public void loginWithSmartPush(View view)
+    {
+        final PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+        passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+
+                passwordlessEntity.setRequestId(result.getData().getRequestId());
+                final String Username=username.getText().toString();
+
+                passwordlessEntity.setEmail(Username);
+
+                cidaas.loginWithSmartPush(passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Toast.makeText(LoginActivity.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(LoginActivity.this, "Failure Login", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(LoginActivity.this, "Failure Request Id", Toast.LENGTH_SHORT).show();
+            }
+        });
+        // Clear the Text Fields
+
     }
 
 }

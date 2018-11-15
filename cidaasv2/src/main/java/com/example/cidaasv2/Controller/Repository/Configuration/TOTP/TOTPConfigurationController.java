@@ -257,7 +257,7 @@ public class TOTPConfigurationController {
                               final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try {
-            if(codeChallenge.equals("") && codeVerifier.equals("")) {
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
                 //Generate Challenge
                 generateChallenge();
             }

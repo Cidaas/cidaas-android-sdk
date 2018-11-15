@@ -1097,17 +1097,17 @@ public class Cidaas implements IOAuthWebLogin {
                     if (code != null && code != "") {
                         IVRConfigurationController.getShared(context).enrollIVRMFA(code, statusId, baseurl, result);
                     } else {
-
+                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,"Code Must not be null",HttpStatusCode.BAD_REQUEST));
                     }
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(error);
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
         }
 
     }
@@ -2021,6 +2021,57 @@ public class Cidaas implements IOAuthWebLogin {
                     final String clientId = result.get("ClientId");
 
 
+                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
+
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId  must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty For Multifactor Authentication";
+
+                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                return;
+                            }
+                        }
+
+                        InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity = new InitiateFingerprintMFARequestEntity();
+                        initiateFingerprintMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateFingerprintMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateFingerprintMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateFingerprintMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+                        //Todo check for email or sub or mobile
+
+
+                        FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl, clientId,
+                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
+                                initiateFingerprintMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "UsageType or FingerprintCode or requestId must not be empty";
+
+                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+
+
+                    /*
                     //Done Call the finger print method
                     if (Build.VERSION.SDK_INT >= 23) {
                         try {
@@ -2087,54 +2138,6 @@ public class Cidaas implements IOAuthWebLogin {
                             // Ask to set Verification Type or not
 
 
-                            if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                                    passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
-
-                                if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
-                                    String errorMessage = "baseurl or clientId  must not be empty";
-
-                                    loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                            errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                                }
-
-
-                                if ((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("") &&
-                                        passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("") &&
-                                        passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals(""))) {
-                                    String errorMessage = "sub or email or mobile number must not be empty";
-
-                                    loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                            errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                                }
-
-                                if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
-                                    if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
-                                        String errorMessage = "trackId must not be empty For Multifactor Authentication";
-
-                                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                                        return;
-                                    }
-                                }
-
-                                InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity = new InitiateFingerprintMFARequestEntity();
-                                initiateFingerprintMFARequestEntity.setSub(passwordlessEntity.getSub());
-                                initiateFingerprintMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
-                                initiateFingerprintMFARequestEntity.setEmail(passwordlessEntity.getEmail());
-                                initiateFingerprintMFARequestEntity.setMobile(passwordlessEntity.getMobile());
-
-                                //Todo check for email or sub or mobile
-
-
-                                FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl, clientId,
-                                        passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
-                                        initiateFingerprintMFARequestEntity, loginresult);
-                            } else {
-                                String errorMessage = "UsageType or FingerprintCode or requestId must not be empty";
-
-                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                            }
 
                         }
 
@@ -2146,7 +2149,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                         }
 
-                    }, null);
+                    }, null);*/
 
                 }
 
@@ -2268,7 +2271,7 @@ public class Cidaas implements IOAuthWebLogin {
                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                         }
 
-                        if (passwordlessEntity.getMobile().equals(UsageType.MFA)) {
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
                             if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
                                 String errorMessage = "trackId must not be empty";
 

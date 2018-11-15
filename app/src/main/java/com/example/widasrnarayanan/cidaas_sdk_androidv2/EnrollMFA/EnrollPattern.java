@@ -26,6 +26,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
@@ -366,6 +367,7 @@ catch (Exception e)
 }
 }
 
+
     private String getFCMToken() {
         String token = FirebaseInstanceId.getInstance().getToken();
         Timber.i("FCM TOKEN" + token);
@@ -373,6 +375,57 @@ catch (Exception e)
         return token;
         // save device info
 
+
+    }
+
+
+
+    public void enrollFinger(View view)
+    {
+        cidaas.configureFingerprint(sub, "", new Result<EnrollFingerprintMFAResponseEntity>() {
+            @Override
+            public void success(EnrollFingerprintMFAResponseEntity result) {
+                Toast.makeText(EnrollPattern.this, "Enroll SuccssFull", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(EnrollPattern.this, "Enroll Fail", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void usageFinger(View view)
+    {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+                PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                passwordlessEntity.setRequestId(result.getData().getRequestId());
+                passwordlessEntity.setSub(sub);
+                passwordlessEntity.setTrackId(trackId);
+                passwordlessEntity.setMobile("+919787113989");
+
+                cidaas.loginWithFingerprint(passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Toast.makeText(EnrollPattern.this, "Success Finger"+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(EnrollPattern.this, "Error Finger "+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(EnrollPattern.this, "Error req "+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 }

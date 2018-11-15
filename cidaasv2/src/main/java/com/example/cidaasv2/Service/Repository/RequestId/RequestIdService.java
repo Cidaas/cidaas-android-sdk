@@ -151,7 +151,7 @@ public class RequestIdService {
             authRequestEntity.setRedirect_uri(loginProperties.get("RedirectURL"));
             authRequestEntity.setResponse_type("code");
             authRequestEntity.setNonce("12345");
-            authRequestEntity.setScope("openid profile email offline_access");
+            authRequestEntity.setScope("openid profile email phone offline_access");
             authRequestEntity.setClient_secret(challengeProperties.get("ClientSecret"));
             authRequestEntity.setCode_challenge(challengeProperties.get("Challenge"));
             authRequestEntity.setCode_challenge_method("S256");

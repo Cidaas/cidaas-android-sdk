@@ -62,7 +62,8 @@ public class FingerprintConfigurationController {
 
     }
 
-    String codeVerifier, codeChallenge;
+    String codeVerifier="" ;
+            String codeChallenge="";
     // Generate Code Challenge and Code verifier
     public void generateChallenge(){
         OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
@@ -250,7 +251,7 @@ public class FingerprintConfigurationController {
             {
                 initiateFingerprintMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
             }
-            if(codeChallenge=="" && codeVerifier=="") {
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
                 //Generate Challenge
                 generateChallenge();
             }

@@ -92,6 +92,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFAResponseEntity;
@@ -232,7 +233,7 @@ public interface ICidaasSDKService {
 
     //Setup IVR MFA
     @POST
-    Call<SetupIVRMFAResponseEntity> setupIVRMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfoEntity);
+    Call<SetupIVRMFAResponseEntity> setupIVRMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupIVRMFARequestEntity setupIVRMFARequestEntity);
 
     //Enroll IVR MFA
     @POST

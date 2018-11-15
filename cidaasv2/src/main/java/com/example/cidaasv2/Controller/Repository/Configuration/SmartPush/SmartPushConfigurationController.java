@@ -237,7 +237,11 @@ public class SmartPushConfigurationController {
     {
         try{
 
-
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
             if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
@@ -248,16 +252,13 @@ public class SmartPushConfigurationController {
             }
 
 
-            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
-                //Generate Challenge
-                generateChallenge();
-            }
-            Cidaas.instanceId="";
+
+
             if (    initiateSmartPushMFARequestEntity.getUsageType() != null && initiateSmartPushMFARequestEntity.getUsageType() != "" &&
                     initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != ""&&
                     baseurl != null && !baseurl.equals("")) {
 
-                initiateSmartPushMFARequestEntity.setClient_id(clientId);
+               // initiateSmartPushMFARequestEntity.setClient_id(clientId);
 
                 //Todo Service call
                 SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge,initiateSmartPushMFARequestEntity,null,

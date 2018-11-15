@@ -19,6 +19,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,7 +78,7 @@ public class IVRVerificationService {
 
 
         //setupIVRMFA
-    public void setupIVRMFA(String baseurl, String accessToken,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupIVRMFAResponseEntity> callback){
+    public void setupIVRMFA(String baseurl, String accessToken,String phoneNumber,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupIVRMFAResponseEntity> callback){
         String setupIVRMFAUrl="";
         try
         {
@@ -110,11 +111,15 @@ public class IVRVerificationService {
             headers.put("access_token",accessToken);
 
 
+            SetupIVRMFARequestEntity setupIVRMFARequestEntity=new SetupIVRMFARequestEntity();
+            setupIVRMFARequestEntity.setDeviceInfo(deviceInfoEntity);
+            setupIVRMFARequestEntity.setPhone(phoneNumber);
+
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.setupIVRMFA(setupIVRMFAUrl,headers, deviceInfoEntity).enqueue(new Callback<SetupIVRMFAResponseEntity>() {
+            cidaasSDKService.setupIVRMFA(setupIVRMFAUrl,headers, setupIVRMFARequestEntity).enqueue(new Callback<SetupIVRMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<SetupIVRMFAResponseEntity> call, Response<SetupIVRMFAResponseEntity> response) {
                     if (response.isSuccessful()) {

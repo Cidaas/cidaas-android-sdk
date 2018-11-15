@@ -18,7 +18,7 @@ public class UserinfoEntity implements Serializable{
     private String sub;
     private String given_name;
     private String email;
-    private String mobile;
+    private String mobile_number;
     private String nickname;
     private String preferred_username;
     private String website;
@@ -77,12 +77,12 @@ public class UserinfoEntity implements Serializable{
         this.email = email;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getMobile_number() {
+        return mobile_number;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setMobile_number(String mobile_number) {
+        this.mobile_number = mobile_number;
     }
 
     public String getNickname() {
