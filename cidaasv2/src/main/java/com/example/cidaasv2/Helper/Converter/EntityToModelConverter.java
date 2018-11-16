@@ -40,9 +40,11 @@ public static EntityToModelConverter sharedinstance;
             AccessTokenModel.getShared().setRefresh_token(accessTokenEntity.getRefresh_token());
             AccessTokenModel.getShared().setScope(accessTokenEntity.getScope());
             AccessTokenModel.getShared().setUserState(accessTokenEntity.getUserstate());
+
             //Additional Details to store token in Local DB
             AccessTokenModel.getShared().setUserId(userId);
             AccessTokenModel.getShared().setSalt(UUID.randomUUID().toString());
+
             //AccessTokenModel.getShared().setKey(UUID.randomUUID().toString());
             //Convert Milliseconds int0 seconds
             AccessTokenModel.getShared().setSeconds(System.currentTimeMillis()/1000);

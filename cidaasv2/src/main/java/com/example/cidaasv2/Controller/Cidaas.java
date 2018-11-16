@@ -4035,6 +4035,13 @@ public class Cidaas implements IOAuthWebLogin {
             if(loginproperties!=null) {
                 DomainURL=loginproperties.get("DomainURL");
                 Cidaas.baseurl=DomainURL;
+
+
+                if(loginproperties.get("userDeviceId")!=null) {
+                    String userDeviceId = loginproperties.get("userDeviceId");
+                    DBHelper.getShared().setUserDeviceId(userDeviceId, DomainURL);
+                }
+
                 DBHelper.getShared().addLoginProperties(loginproperties);
 
 
