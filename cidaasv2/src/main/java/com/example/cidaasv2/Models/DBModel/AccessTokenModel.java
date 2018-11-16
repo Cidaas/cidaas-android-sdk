@@ -32,7 +32,7 @@ public class AccessTokenModel implements Serializable {
     private String userId;
     private long seconds=0;
     private String plainToken;
-    private boolean isEncrypted=false;
+    private boolean isEncrypted=true;
     private String token_type="";
     private String id_token_expires_in="";
   //Getters and Setters
