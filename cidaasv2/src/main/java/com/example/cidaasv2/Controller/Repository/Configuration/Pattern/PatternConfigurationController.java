@@ -96,7 +96,7 @@ public class PatternConfigurationController {
     {
         try{
 
-            if(codeChallenge=="" && codeVerifier=="") {
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
                 //Generate Challenge
                 generateChallenge();
             }
@@ -112,7 +112,7 @@ public class PatternConfigurationController {
                     {
                         //Done Service call
 
-                        PatternVerificationService.getShared(context).setupPattern(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupPatternMFARequestEntity,new Result<SetupPatternMFAResponseEntity>() {
+                        PatternVerificationService.getShared(context).setupPattern(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupPatternMFARequestEntity,null,new Result<SetupPatternMFAResponseEntity>() {
                             @Override
                             public void success(final SetupPatternMFAResponseEntity setupserviceresult) {
 
@@ -133,13 +133,13 @@ public class PatternConfigurationController {
                                         if(instceID!=null && !instceID.equals("") && setupserviceresult.getData().getStatusId()!=null && !setupserviceresult.getData().getStatusId().equals(""))
                                         {
                                             //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
+                                            DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier,null
                                                     , new Result<ValidateDeviceResponseEntity>() {
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
                                                             // call Scanned Service
                                                             PatternVerificationService.getShared(context).scannedPattern(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                    accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                    accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                         @Override
                                                                         public void success(final ScannedResponseEntity result) {
                                                                             DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -158,7 +158,7 @@ public class PatternConfigurationController {
                                                                      }
 
                                                                             // call Enroll Service
-                                                                            PatternVerificationService.getShared(context).enrollPattern(baseurl, accessTokenresult.getAccess_token(), enrollPatternMFARequestEntity,new Result<EnrollPatternMFAResponseEntity>() {
+                                                                            PatternVerificationService.getShared(context).enrollPattern(baseurl, accessTokenresult.getAccess_token(), enrollPatternMFARequestEntity,null,new Result<EnrollPatternMFAResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(EnrollPatternMFAResponseEntity serviceresult) {
                                                                                     enrollresult.success(serviceresult);
@@ -171,13 +171,13 @@ public class PatternConfigurationController {
                                                                             });
 
                                                                             Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                         }
 
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             enrollresult.failure(error);
-                                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -185,7 +185,7 @@ public class PatternConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             enrollresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                           // Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -257,7 +257,7 @@ public class PatternConfigurationController {
                     initiatePatternMFARequestEntity.getUserDeviceId() != null && !initiatePatternMFARequestEntity.getUserDeviceId().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                PatternVerificationService.getShared(context).initiatePattern(baseurl,codeChallenge, initiatePatternMFARequestEntity,
+                PatternVerificationService.getShared(context).initiatePattern(baseurl,codeChallenge, initiatePatternMFARequestEntity,null,
                         new Result<InitiatePatternMFAResponseEntity>() {
 
                             @Override
@@ -279,7 +279,7 @@ public class PatternConfigurationController {
                                     public void onFinish() {
                                         if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
                                             //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier
+                                            DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier,null
                                                     , new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
@@ -287,7 +287,7 @@ public class PatternConfigurationController {
 
                                                             //Todo call initiate
                                                             initiatePatternMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
-                                                            PatternVerificationService.getShared(context).initiatePattern(baseurl, codeChallenge, initiatePatternMFARequestEntity,
+                                                            PatternVerificationService.getShared(context).initiatePattern(baseurl, codeChallenge, initiatePatternMFARequestEntity,null,
                                                                     new Result<InitiatePatternMFAResponseEntity>() {
 
                                                                         @Override
@@ -302,7 +302,7 @@ public class PatternConfigurationController {
                                                                                 authenticatePatternRequestEntity.setVerifierPassword(patternString);
 
 
-                                                                                PatternVerificationService.getShared(context).authenticatePattern(baseurl, authenticatePatternRequestEntity, new Result<AuthenticatePatternResponseEntity>() {
+                                                                                PatternVerificationService.getShared(context).authenticatePattern(baseurl, authenticatePatternRequestEntity,null, new Result<AuthenticatePatternResponseEntity>() {
                                                                                     @Override
                                                                                     public void success(AuthenticatePatternResponseEntity result) {
                                                                                         //Todo Call Resume with Login Service
@@ -326,7 +326,7 @@ public class PatternConfigurationController {
 
                                                                                         }
                                                                                         //  loginresult.success(result);
-                                                                                        Toast.makeText(context, "Sucess Pattern", Toast.LENGTH_SHORT).show();
+                                                                                    //    Toast.makeText(context, "Sucess Pattern", Toast.LENGTH_SHORT).show();
                                /*
 
                                 LoginController.getShared(context).resumeLogin();*/
@@ -352,7 +352,7 @@ public class PatternConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                          //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
 
@@ -362,7 +362,7 @@ public class PatternConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             loginresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                        //    Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }

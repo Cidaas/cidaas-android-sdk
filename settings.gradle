@@ -1,1 +1,1 @@
-include ':app', ':cidaasv2'
+include ':app', ':cidaasv2', ':cidaas-google-sdk-v2'

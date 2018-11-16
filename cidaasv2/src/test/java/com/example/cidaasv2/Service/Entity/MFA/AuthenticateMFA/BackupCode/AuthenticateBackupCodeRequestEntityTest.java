@@ -4,22 +4,18 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateBackupCodeRequestEntityTest {
-    @Mock
-    DeviceInfoEntity deviceInfo;
-    @InjectMocks
+
+
+
     AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity=new AuthenticateBackupCodeRequestEntity();
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
 
@@ -48,13 +44,13 @@ public class AuthenticateBackupCodeRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateBackupCodeRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateBackupCodeRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateBackupCodeRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
 

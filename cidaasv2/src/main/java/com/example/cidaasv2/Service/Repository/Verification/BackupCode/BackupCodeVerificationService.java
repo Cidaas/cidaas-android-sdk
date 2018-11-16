@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -57,15 +58,7 @@ public class  BackupCodeVerificationService {
         }
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static  BackupCodeVerificationService getShared(Context contextFromCidaas )
     {
@@ -83,23 +76,32 @@ public class  BackupCodeVerificationService {
     }
 
     //setupBackupCodeMFA
-    public void setupBackupCodeMFA(String baseurl, String accessToken, final Result<SetupBackupCodeMFAResponseEntity> callback){
+    public void setupBackupCodeMFA(String baseurl, String accessToken,DeviceInfoEntity deviceInfoEntityFromparam, final Result<SetupBackupCodeMFAResponseEntity> callback){
         String setupBackupCodeMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 setupBackupCodeMFAUrl=baseurl+ URLHelper.getShared().getSetupBackupCodeMFA();
             }
             else {
                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
             Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
+
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -122,7 +124,7 @@ public class  BackupCodeVerificationService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null));
+                                    "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
@@ -136,23 +138,30 @@ public class  BackupCodeVerificationService {
                             commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
 
                             String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
                             if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                 errorMessage=commonErrorEntity.getError().toString();
                             }
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
 
                             //Todo Service call For fetching the Consent details
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
                                     errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError()));
+                                    commonErrorEntity.getError(),errorEntity));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null,null));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -162,7 +171,7 @@ public class  BackupCodeVerificationService {
                 public void onFailure(Call<SetupBackupCodeMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
                     LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -171,32 +180,40 @@ public class  BackupCodeVerificationService {
         catch (Exception e)
         {
             LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
-        }
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+           }
     }
 
 
     //initiateBackupCodeMFA
-    public void initiateBackupCodeMFA(String baseurl, InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity,
+    public void initiateBackupCodeMFA(String baseurl, InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromparam,
                                       final Result<InitiateBackupCodeMFAResponseEntity> callback){
         String initiateBackupCodeMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 initiateBackupCodeMFAUrl=baseurl+URLHelper.getShared().getInitiateBackupCodeMFA();
             }
             else {
                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
             Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
+            // Get Device Information
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -216,7 +233,7 @@ public class  BackupCodeVerificationService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null));
+                                    "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
@@ -231,23 +248,31 @@ public class  BackupCodeVerificationService {
 
 
                             String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
                             if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                 errorMessage=commonErrorEntity.getError().toString();
                             }
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
 
                             //Todo Service call For fetching the Consent details
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
                                     errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError()));
+                                    commonErrorEntity.getError(),errorEntity));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -257,7 +282,7 @@ public class  BackupCodeVerificationService {
                 public void onFailure(Call<InitiateBackupCodeMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
                     LogFile.addRecordToLog("InitiateBackUpCodeMFAResponseEntity Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -273,26 +298,33 @@ public class  BackupCodeVerificationService {
 
 
     //authenticateBackupCodeMFA
-    public void authenticateBackupCodeMFA(String baseurl, AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity,
+    public void authenticateBackupCodeMFA(String baseurl, AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity,DeviceInfoEntity deviceInfoEntityFromparam,
                                           final Result<AuthenticateBackupCodeResponseEntity> callback)
     {
         String authenticateBackupCodeMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 authenticateBackupCodeMFAUrl=baseurl+URLHelper.getShared().getAuthenticateBackupCodeMFA();
             }
             else {
                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -312,7 +344,7 @@ public class  BackupCodeVerificationService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null));
+                                    "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
@@ -327,23 +359,31 @@ public class  BackupCodeVerificationService {
 
 
                             String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
                             if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                 errorMessage=commonErrorEntity.getError().toString();
                             }
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
 
                             //Todo Service call For fetching the Consent details
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,
                                     errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError()));
+                                    commonErrorEntity.getError(),errorEntity));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null));
                             Timber.e("response"+response.message()+e.getMessage());
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null,null));
+
                         }
                         Timber.e("response"+response.message());
                     }
@@ -353,7 +393,7 @@ public class  BackupCodeVerificationService {
                 public void onFailure(Call<AuthenticateBackupCodeResponseEntity> call, Throwable t) {
                     Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
                     LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 

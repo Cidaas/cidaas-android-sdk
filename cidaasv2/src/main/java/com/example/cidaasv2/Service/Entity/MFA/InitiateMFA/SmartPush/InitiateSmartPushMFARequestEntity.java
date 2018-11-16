@@ -8,20 +8,31 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InitiateSmartPushMFARequestEntity implements Serializable{
     String email;
+    String mobile;
     String sub;
     String userDeviceId;
     String client_id;
     String usageType;
-    String usagePass;
+    String usage_pass;
     DeviceInfoEntity deviceInfo;
-    String mobile;
 
-    public String getUsagePass() {
-        return usagePass;
+    String source="MOBILE";
+
+    public String getSource() {
+        return source;
     }
 
-    public void setUsagePass(String usagePass) {
-        this.usagePass = usagePass;
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
     }
 
     public String getMobile() {

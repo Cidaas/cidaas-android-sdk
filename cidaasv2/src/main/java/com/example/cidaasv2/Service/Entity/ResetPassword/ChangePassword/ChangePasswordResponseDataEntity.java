@@ -13,6 +13,7 @@ public class ChangePasswordResponseDataEntity implements Serializable{
     }
 
     public void setChanged(boolean changed) {
+
         this.changed = changed;
     }
 }

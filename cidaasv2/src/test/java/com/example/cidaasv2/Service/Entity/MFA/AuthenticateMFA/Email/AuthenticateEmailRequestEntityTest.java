@@ -4,22 +4,18 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateEmailRequestEntityTest {
-    @Mock
-    DeviceInfoEntity deviceInfo;
-    @InjectMocks
+
+
+
     AuthenticateEmailRequestEntity authenticateEmailRequestEntity=new AuthenticateEmailRequestEntity();
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
     @Test
@@ -47,13 +43,13 @@ public class AuthenticateEmailRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateEmailRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateEmailRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-        /*assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateEmailRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
 }

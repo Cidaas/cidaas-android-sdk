@@ -3,7 +3,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Voice;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -11,6 +10,7 @@ import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
@@ -21,14 +21,12 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.Authenticat
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
@@ -53,7 +51,7 @@ public class VoiceConfigurationController {
 
     }
 
-    String codeVerifier, codeChallenge;
+    String codeVerifier="", codeChallenge="";
     // Generate Code Challenge and Code verifier
     public void generateChallenge(){
         OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
@@ -81,7 +79,7 @@ public class VoiceConfigurationController {
 
 
     //Service call To SetupVoiceMFA
-    public void configureVoice(@NonNull final String sub, @NonNull final String baseurl, final File imageFile,
+    public void configureVoice(@NonNull final String sub, @NonNull final String baseurl, final File audioFile,
                           @NonNull final SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,
                           @NonNull final Result<EnrollVoiceMFAResponseEntity> enrollresult)
     {
@@ -92,7 +90,7 @@ public class VoiceConfigurationController {
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
                 //Todo Service call
 
-                if(codeChallenge==null){
+                if(codeChallenge==null || codeChallenge==""){
                     generateChallenge();
                 }
 
@@ -100,7 +98,7 @@ public class VoiceConfigurationController {
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
-                        VoiceVerificationService.getShared(context).setupVoiceMFA(baseurl, accessTokenresult.getAccess_token(),codeChallenge,setupVoiceMFARequestEntity,
+                        VoiceVerificationService.getShared(context).setupVoiceMFA(baseurl, accessTokenresult.getAccess_token(),codeChallenge,setupVoiceMFARequestEntity,null,
                                 new Result<SetupVoiceMFAResponseEntity>() {
                                     @Override
                                     public void success(final SetupVoiceMFAResponseEntity setupserviceresult) {
@@ -122,12 +120,12 @@ public class VoiceConfigurationController {
                                                 {
                                                     //Device Validation Service
                                                     DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
-                                                            , new Result<ValidateDeviceResponseEntity>() {
+                                                            ,null, new Result<ValidateDeviceResponseEntity>() {
                                                                 @Override
                                                                 public void success(ValidateDeviceResponseEntity result) {
                                                                     // call Scanned Service
                                                                     VoiceVerificationService.getShared(context).scannedVoice(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                            accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                            accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(final ScannedResponseEntity result) {
                                                                                     DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -137,7 +135,7 @@ public class VoiceConfigurationController {
                                                                                             result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
                                                                                         enrollVoiceMFARequestEntity.setSub(sub);
-                                                                                        enrollVoiceMFARequestEntity.setAudioFile(imageFile);
+                                                                                        enrollVoiceMFARequestEntity.setAudioFile(audioFile);
                                                                                         enrollVoiceMFARequestEntity.setStatusId(setupserviceresult.getData().getStatusId());
                                                                                         enrollVoiceMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());
                                                                                     }
@@ -146,7 +144,7 @@ public class VoiceConfigurationController {
                                                                                     }
 
                                                                                     // call Enroll Service
-                                                                                    VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessTokenresult.getAccess_token(), enrollVoiceMFARequestEntity,new Result<EnrollVoiceMFAResponseEntity>() {
+                                                                                    VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessTokenresult.getAccess_token(), enrollVoiceMFARequestEntity,null,new Result<EnrollVoiceMFAResponseEntity>() {
                                                                                         @Override
                                                                                         public void success(EnrollVoiceMFAResponseEntity serviceresult) {
                                                                                             enrollresult.success(serviceresult);
@@ -159,13 +157,13 @@ public class VoiceConfigurationController {
                                                                                     });
 
                                                                                     Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                                    Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                                   // Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                                 }
 
                                                                                 @Override
                                                                                 public void failure(WebAuthError error) {
                                                                                     enrollresult.failure(error);
-                                                                                    Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                                  //  Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                                 }
                                                                             });
                                                                 }
@@ -173,7 +171,7 @@ public class VoiceConfigurationController {
                                                                 @Override
                                                                 public void failure(WebAuthError error) {
                                                                     enrollresult.failure(error);
-                                                                    Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                   // Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                 }
                                                             });
                                                 }
@@ -224,26 +222,27 @@ public class VoiceConfigurationController {
                                final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
-
-          /*  if(initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != "" )
+             initiateVoiceMFARequestEntity.setClient_id(clientId);
+            if(initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
             }
             else
             {
                 initiateVoiceMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-            }*/
+            }
 
-            if(codeChallenge=="" && codeVerifier=="") {
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
                 //Generate Challenge
                 generateChallenge();
             }
             Cidaas.instanceId="";
             if (    initiateVoiceMFARequestEntity.getUsageType() != null && initiateVoiceMFARequestEntity.getUsageType() != "" &&
+                    initiateVoiceMFARequestEntity.getClient_id() != null && initiateVoiceMFARequestEntity.getClient_id() != "" &&
                     initiateVoiceMFARequestEntity.getUserDeviceId() != null && initiateVoiceMFARequestEntity.getUserDeviceId() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge,initiateVoiceMFARequestEntity,
+                VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge,initiateVoiceMFARequestEntity,null,
                         new Result<InitiateVoiceMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -268,14 +267,14 @@ public class VoiceConfigurationController {
                                         if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID, serviceresult.getData().getStatusId(), codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    , null,new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
 
                                                             //Todo call initiate
                                                             initiateVoiceMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
-                                                            VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge, initiateVoiceMFARequestEntity,
+                                                            VoiceVerificationService.getShared(context).initiateVoice(baseurl, codeChallenge, initiateVoiceMFARequestEntity,null,
                                                                     new Result<InitiateVoiceMFAResponseEntity>() {
 
                                                                         @Override
@@ -290,7 +289,7 @@ public class VoiceConfigurationController {
                                                                                 authenticateVoiceRequestEntity.setVoiceFile(VoiceImageFile);
 
 
-                                                                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity, new Result<AuthenticateVoiceResponseEntity>() {
+                                                                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity,null, new Result<AuthenticateVoiceResponseEntity>() {
                                                                                     @Override
                                                                                     public void success(AuthenticateVoiceResponseEntity result) {
                                                                                         //Todo Call Resume with Login Service
@@ -318,7 +317,7 @@ public class VoiceConfigurationController {
 
                                                                                         }
                                                                                         //  loginresult.success(result);
-                                                                                        Toast.makeText(context, "Success Voice", Toast.LENGTH_SHORT).show();
+                                                                                  //      Toast.makeText(context, "Success Voice", Toast.LENGTH_SHORT).show();
 
                                                                                     }
 
@@ -342,7 +341,7 @@ public class VoiceConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                          //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
 
@@ -367,6 +366,11 @@ public class VoiceConfigurationController {
                                 loginresult.failure(error);
                             }
                         });
+            }
+            else
+            {
+                String message="Usage type ,ClientId,Userdevice Id must not be null";
+                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,message,HttpStatusCode.EXPECTATION_FAILED));
             }
         }
         catch (Exception e)

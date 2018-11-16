@@ -3,15 +3,19 @@ package com.example.cidaasv2.Interface;
 
 import android.support.annotation.NonNull;
 
+import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
+import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
+import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
+import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
@@ -23,108 +27,136 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARes
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
-import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
+import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
+import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
+import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
+import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 
 import java.io.File;
-import java.util.Dictionary;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
  */
 
 public interface IOAuthWebLogin {
-    //login Methods
+
+    //Get RequestId
      void getRequestId(Result<AuthRequestResponseEntity> result);
      void getRequestId(String DomainUrl,String ClientId,String RedirectURL,String ClientSecret,Result<AuthRequestResponseEntity> result);
      //void getRequestId(Dictionary<String,String> loginproperties,Result<AuthRequestResponseEntity> result);
 
-     void getLoginURL(Result<String> result);
-     void getLoginURL(String RequestId,Result<String> result);
-     void getLoginURL(String DomainUrl,String ClientId,String RedirectURL,String ClientSecret,Result<String> result);
-     void getLoginURL(Dictionary<String,String> loginproperties,Result<String> result);
+    //Get Tenant Info
+    void getTenantInfo(Result<TenantInfoEntity> result);
+
+    //Get ClientInfo
+    void getClientInfo(String RequestId,Result<ClientInfoEntity> clientInfoEntityResult);
 
 
     //Login methods
-     void loginWithCredentials(String requestId, LoginEntity loginEntity, Result<LoginCredentialsResponseEntity> result);
-     void loginWithEmail(PasswordlessEntity passwordlessEntity, final Result<InitiateEmailMFAResponseEntity> initiateresult);
+    void loginWithCredentials(String requestId, LoginEntity loginEntity, Result<LoginCredentialsResponseEntity> result);
 
-     void loginWithSMS(PasswordlessEntity passwordlessEntity,Result<InitiateSMSMFAResponseEntity> result);
+    //Consent Details
+    void getConsentDetails(String consentName, Result<ConsentDetailsResultEntity> consentResult);
+    void loginAfterConsent(ConsentEntity consentEntity,Result<LoginCredentialsResponseEntity> loginresult);
 
+    //MFA
+    void getMFAList(String sub,Result<MFAListResponseEntity> mfaresult);
+
+    //Configuration EMAIL
+    void configureEmail(String sub,Result<SetupEmailMFAResponseEntity> result);
+    void enrollEmail(String code,String statusId,Result<EnrollEmailMFAResponseEntity> result);
+    void loginWithEmail(PasswordlessEntity passwordlessEntity, final Result<InitiateEmailMFAResponseEntity> initiateresult);
     void verifyEmail(String code,String statusId,Result<LoginCredentialsResponseEntity> result);
 
+    //SMS
+    void configureSMS(String sub,Result<SetupSMSMFAResponseEntity> result);
+    void enrollSMS(String code,String statusId,Result<EnrollSMSMFAResponseEntity> result);
+    void loginWithSMS(PasswordlessEntity passwordlessEntity,Result<InitiateSMSMFAResponseEntity> result);
     void verifySMS(String code,String statusId,Result<LoginCredentialsResponseEntity> result);
 
+// IVR
+    void configureIVR(String sub,Result<SetupIVRMFAResponseEntity> result);
+    void enrollIVR(String code,String statusId,Result<EnrollIVRMFAResponseEntity> result);
+    void loginWithIVR(PasswordlessEntity passwordlessEntity,final Result<InitiateIVRMFAResponseEntity> initiateresult);
     void verifyIVR(String code,String statusId,Result<LoginCredentialsResponseEntity> result);
 
-    void verifyBackupCode(String code,String StatusId,Result<LoginCredentialsResponseEntity> result);
+    //Backupcode
+    void configureBackupcode(String sub,Result<SetupBackupCodeMFAResponseEntity> result);
+    void loginWithBackupcode(String code,PasswordlessEntity passwordlessEntity, Result<LoginCredentialsResponseEntity> result);
+    void verifyBackupcode(String code,String StatusId,Result<LoginCredentialsResponseEntity> result);
 
-     void loginWithIVR(PasswordlessEntity passwordlessEntity,final Result<InitiateIVRMFAResponseEntity> initiateresult);
-
-     void loginWithBackupCode(String code,PasswordlessEntity passwordlessEntity, Result<LoginCredentialsResponseEntity> result);
-
-     void loginWithFaceRecognition(File faceimageFile, PasswordlessEntity passwordlessEntity,
+    //FACE
+    void configureFaceRecognition(File photo,String sub, @NonNull final String logoURL,Result<EnrollFaceMFAResponseEntity> result);
+    void loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntity,
                                    final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithFIDO(String usageType,String email, String sub,String trackId,Result<LoginCredentialsResponseEntity> result);
-     void loginWithFingerprint(PasswordlessEntity passwordlessEntity,final Result<LoginCredentialsResponseEntity> loginresult);
+    //FINGERPRINT
+    void configureFingerprint(String sub,@NonNull final String logoURL,Result<EnrollFingerprintMFAResponseEntity> result);
+    void loginWithFingerprint(PasswordlessEntity passwordlessEntity,final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithPatternRecognition(@NonNull final String patternCode, @NonNull final PasswordlessEntity passwordlessEntity,
-                                      final Result<LoginCredentialsResponseEntity> loginresult);
+    //PATTERN
+    void configurePatternRecognition(@NonNull final String pattern,String sub,String logoURL,Result<EnrollPatternMFAResponseEntity> result);
+    void loginWithPatternRecognition(@NonNull final String pattern, @NonNull final PasswordlessEntity passwordlessEntity,
+                                     final Result<LoginCredentialsResponseEntity> loginresult);
+    //SMARTPUSH
+    void configureSmartPush(String sub,@NonNull final String logoURL,Result<EnrollSmartPushMFAResponseEntity> result);
+    void loginWithSmartPush(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithSmartPush(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
+    //TOTP
+    void configureTOTP(String sub,@NonNull final String logoURL,Result<EnrollTOTPMFAResponseEntity> result);
+    void loginWithTOTP(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
 
-     void loginWithTOTP(PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult);
-
-     void loginWithVoiceRecognition(File VoiceaudioFile,PasswordlessEntity passwordlessEntity,
+    //VOICE
+    void configureVoiceRecognition(File voice,@NonNull final String logoURL,String sub,Result<EnrollVoiceMFAResponseEntity> result);
+    void loginWithVoiceRecognition(File voice,PasswordlessEntity passwordlessEntity,
                                     final Result<LoginCredentialsResponseEntity> loginresult);
 
-
-     //Configure methods
-    void configureEmail(String sub,Result<SetupEmailMFAResponseEntity> result);
-    void configureSMS(String sub,Result<SetupSMSMFAResponseEntity> result);
-    void configureIVR(String sub,Result<SetupIVRMFAResponseEntity> result);
-    void configureBackupCode(String sub,Result<SetupBackupCodeMFAResponseEntity> result);
+//--------------------------------REGISTRATION-------------------------------------------
 
 
-    void configureFaceRecognition(File faceimageFile,String sub, Result<EnrollFaceMFAResponseEntity> result);
-    void configureFIDO(String sub,Result<EnrollFIDOMFAResponseEntity> result);
-    void configureFingerprint(String sub,Result<EnrollFingerprintMFAResponseEntity> result);
-    void configurePatternRecognition(String patternString,String sub,Result<EnrollPatternMFAResponseEntity> result);
-    void configureSmartPush(String sub,Result<EnrollSmartPushMFAResponseEntity> result);
-    void configureTOTP(String sub,Result<EnrollTOTPMFAResponseEntity> result);
-    void configureVoiceRecognition(File VoiceaudioFile,String sub,Result<EnrollVoiceMFAResponseEntity> result);
+    void getRegistrationFields(String requestId, String locale,Result<RegistrationSetupResponseEntity> result);
+    void registerUser(String requestId, RegistrationEntity registrationEntity,final Result<RegisterNewUserResponseEntity> registerFieldsresult);
+
+    void initiateEmailVerification(String requestId,String sub, final Result<RegisterUserAccountInitiateResponseEntity> Result);
+    void initiateSMSVerification(String requestId,String sub, final Result<RegisterUserAccountInitiateResponseEntity> Result);
+    void initiateIVRVerification(String requestId,String sub, final Result<RegisterUserAccountInitiateResponseEntity> Result);
+    void verifyAccount(String code,String aacvid, Result<RegisterUserAccountVerifyResponseEntity> result);
+
+//--------------------------------DEDUPLICATION-------------------------------------------
+    void getDeduplicationDetails(String trackId, final Result<DeduplicationResponseEntity> deduplicaionResult);
+    void registerUser(String trackId,final Result<RegisterDeduplicationEntity> deduplicaionResult);
+    void loginWithDeduplication(String requestId,String sub,String password, final Result<LoginCredentialsResponseEntity> deduplicaionResult);
+
+//--------------------------------RESETPASSWORD-------------------------------------------
+
+    //Reset Password
+    void initiateResetPasswordByEmail(String requestId,String email, Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult);
+    void initiateResetPasswordBySMS(String requestId,String mobile, Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult);
+    void handleResetPassword(String code,String rprq, final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult);
+    void resetPassword(ResetPasswordEntity resetPasswordEntity, final Result<ResetNewPasswordResponseEntity> resetpasswordResult);
+
+//---------------------------------Change Password-------------------------------
+
+void changePassword(String sub, ChangePasswordRequestEntity changePasswordRequestEntity,Result<ChangePasswordResponseEntity> result);
 
 
-    //Browser opening methods
-    void loginWithBrowser(String color,Result<AccessTokenEntity> result);
+//-----------------------------common Methods--------------------------------------
+    void getAccessToken(String sub,Result<AccessTokenEntity> result);
+    void renewToken(String refershtoken,Result<AccessTokenEntity> result);
+    void getUserInfo(String sub, Result<UserinfoEntity> result);
 
-
-    void getRegisterationFields(String requestId, String acceptLanguage,Result<RegistrationSetupResponseEntity> result);
-
-    //Get Tenant Info
-     void getTenantInfo(Result<TenantInfoEntity> result);
-
-    //Get ClientInfo
-     void getClientInfo(String RequestId,Result<ClientInfoEntity> clientInfoEntityResult);
-
-     //Reset Password
-    void initiateResetPassword(String requestId,ResetPasswordRequestEntity resetPasswordRequestEntity, Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult);
-
-    //Authorization Methods
-     void getLoginCode(String url,Result<AccessTokenEntity> callback);
-
-     void getAccessTokenByCode(String code, Result<AccessTokenEntity> result);
-     void getAccessToken(String userid,Result<AccessTokenEntity> result);
-     void getAccessTokenByRefreshToken(String refershtoken,Result<AccessTokenEntity> result);
-
-     void getUserInfo(String access_token, Result<UserinfoEntity> result);
 
 }

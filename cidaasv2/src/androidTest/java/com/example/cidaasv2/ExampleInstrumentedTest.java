@@ -1,9 +1,11 @@
 package com.example.cidaasv2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,4 +25,26 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.example.cidaasv2.test", appContext.getPackageName());
     }
+
+    private SharedPreferences sharedPreferences;
+
+    @Before
+    public void before() {
+        Context context = InstrumentationRegistry.getTargetContext();
+        sharedPreferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+    }
+
+
+    @Test
+    public void put_and_get_preference() throws Exception {
+        String string1 = "test";
+        sharedPreferences.edit().putString("test", string1).apply();
+        String string2 = sharedPreferences.getString("test", "");
+
+        // Verify that the received data is correct.
+        assertEquals(string1, string2);
+    }
+
+
+
 }

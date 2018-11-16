@@ -59,6 +59,7 @@ public class DeviceInfoEntity implements Parcelable {
 
   @Override
   public int describeContents() {
+    
     return 0;
   }
 

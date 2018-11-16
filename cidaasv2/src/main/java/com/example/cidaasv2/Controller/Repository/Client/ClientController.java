@@ -50,8 +50,7 @@ public class ClientController {
             }
         }
         catch (Exception e)
-        {
-            Timber.i(e.getMessage());
+        { Timber.i(e.getMessage());
         }
         return shared;
     }
@@ -126,8 +125,7 @@ public class ClientController {
             }
         }
         catch (Exception e)
-        {
-            Timber.e(e.getMessage());
+        { Timber.e(e.getMessage());
         }
     }
 

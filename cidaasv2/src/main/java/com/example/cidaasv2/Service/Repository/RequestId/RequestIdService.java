@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -64,7 +65,7 @@ public class RequestIdService {
 
 
     //Get Request ID From Service
-    public void getRequestID(Dictionary<String,String> loginProperties, final Result<AuthRequestResponseEntity> callback)
+    public void getRequestID(Dictionary<String,String> loginProperties,DeviceInfoEntity deviceInfoEntityFromparam,Dictionary<String,String> challengePropertiesfromparam, final Result<AuthRequestResponseEntity> callback)
     {
         try {
             //Local Variables
@@ -76,7 +77,36 @@ public class RequestIdService {
             URLHelper urlComponents;
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+               deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }
+            else
+            {
+               // deviceInfoEntity=new DeviceInfoEntity();
+            }
+
+
+            //////////////////This is for testing purpose
+            Dictionary<String,String> challengeProperties=new Hashtable<>();
+
+            if(challengePropertiesfromparam==null) {
+                challengeProperties=DBHelper.getShared().getChallengeProperties();
+            }
+            else if(challengePropertiesfromparam!=null)
+            {
+                challengeProperties=challengePropertiesfromparam;
+            }
+            else
+            {
+               // challengeProperties=new Hashtable<>();
+            }
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -114,7 +144,6 @@ public class RequestIdService {
             }
 
 
-            Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
 
             //Create Auth Request entity to get Request Id
             authRequestEntity=new AuthRequestEntity();
@@ -122,7 +151,7 @@ public class RequestIdService {
             authRequestEntity.setRedirect_uri(loginProperties.get("RedirectURL"));
             authRequestEntity.setResponse_type("code");
             authRequestEntity.setNonce("12345");
-            authRequestEntity.setScope("openid profile email offline_access");
+            authRequestEntity.setScope("openid profile email phone offline_access");
             authRequestEntity.setClient_secret(challengeProperties.get("ClientSecret"));
             authRequestEntity.setCode_challenge(challengeProperties.get("Challenge"));
             authRequestEntity.setCode_challenge_method("S256");
@@ -142,7 +171,7 @@ public class RequestIdService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
-                                    "Service failure but successful response" , 400,null));
+                                    "Service failure but successful response" , 400,null,null));
                         }
                     }
                     else {
@@ -156,18 +185,25 @@ public class RequestIdService {
                             commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
 
                             String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
                             if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                 errorMessage=commonErrorEntity.getError().toString();
                             }
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
 
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError()));
+                                    commonErrorEntity.getError(),errorEntity));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -178,7 +214,7 @@ public class RequestIdService {
                 @Override
                 public void onFailure(Call<AuthRequestResponseEntity> call, Throwable t) {
                     Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 

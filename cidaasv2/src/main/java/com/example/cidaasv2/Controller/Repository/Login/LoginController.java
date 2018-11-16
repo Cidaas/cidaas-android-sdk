@@ -52,7 +52,7 @@ public class LoginController {
         try {
             if (baseurl!=null) {
                 //Todo Service call
-                LoginService.getShared(context).loginWithCredentials(baseurl, loginEntity, new Result<LoginCredentialsResponseEntity>() {
+                LoginService.getShared(context).loginWithCredentials(baseurl, loginEntity,null, new Result<LoginCredentialsResponseEntity>() {
                     @Override
                     public void success(LoginCredentialsResponseEntity serviceresult) {
                         //Resume Login
@@ -108,7 +108,7 @@ public class LoginController {
                     baseurl != null && !baseurl.equals("")) {
 
                 //Done Service call
-                LoginService.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
+                LoginService.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, null,new Result<ResumeLoginResponseEntity>() {
                     @Override
                     public void success(final ResumeLoginResponseEntity serviceresult) {
 
@@ -162,7 +162,7 @@ public class LoginController {
                      baseurl != null && !baseurl.equals("")) {
 
                 //Done Service call
-                LoginService.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
+                LoginService.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity,null, new Result<ResumeLoginResponseEntity>() {
                     @Override
                     public void success(final ResumeLoginResponseEntity serviceresult) {
 

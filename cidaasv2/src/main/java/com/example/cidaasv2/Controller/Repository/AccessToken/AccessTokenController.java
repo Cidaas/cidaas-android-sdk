@@ -3,17 +3,14 @@ package com.example.cidaasv2.Controller.Repository.AccessToken;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Controller.Repository.Configuration.Pattern.PatternConfigurationController;
 import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Repository.AccessToken.AccessTokenService;
-import com.example.cidaasv2.Service.Repository.OauthService;
 
 import java.util.Dictionary;
 
@@ -68,7 +65,7 @@ public class AccessTokenController {
                 public void success(Dictionary<String, String>  result) {
                     String baseurl=result.get("DomainURL");
                     //todo Check notnull
-                    AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, new Result<AccessTokenEntity>()
+                    AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, null,null,null,new Result<AccessTokenEntity>()
                     {
                         @Override
                         public void success(final AccessTokenEntity result) {
@@ -101,7 +98,7 @@ public class AccessTokenController {
 
                 @Override
                 public void failure(WebAuthError error) {
-
+                    callback.failure(error);
                 }
             });
 
@@ -125,7 +122,7 @@ public class AccessTokenController {
                 {
                     long milliseconds=System.currentTimeMillis();
                     long currentSeconds=milliseconds/1000;
-                    long timeToExpire=accessTokenModel.getExpiresIn()+accessTokenModel.getSeconds()-10;
+                    long timeToExpire=accessTokenModel.getExpires_in()+accessTokenModel.getSeconds()-10;
                     if(timeToExpire>currentSeconds)
                     {
                         EntityToModelConverter.getShared().accessTokenModelToAccessTokenEntity(accessTokenModel, sub, new Result<AccessTokenEntity>() {
@@ -145,7 +142,7 @@ public class AccessTokenController {
                     }
                     else
                     {
-                        getAccessTokenByRefreshToken(accessTokenModel.getRefreshToken(),callback);
+                        getAccessTokenByRefreshToken(accessTokenModel.getRefresh_token(),callback);
                     }
                 }
                 else
@@ -176,10 +173,20 @@ public class AccessTokenController {
             Cidaas.getInstance(context).checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result, new Result<AccessTokenEntity>() {
+                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result,null,null, new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
+                            EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
+                                @Override
+                                public void success(AccessTokenModel result) {
+                                    DBHelper.getShared().setAccessToken(result);
+                                }
 
+                                @Override
+                                public void failure(WebAuthError error) {
+                                     //Todo Handle Error
+                                }
+                            });
                             callback.success(result);
                         }
 
@@ -193,7 +200,8 @@ public class AccessTokenController {
                 }
 
                 @Override
-                public void failure(WebAuthError error) {
+                public void failure(WebAuthError error)
+                {
                     callback.failure(error);
                 }
             });
@@ -204,6 +212,40 @@ public class AccessTokenController {
         {
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.d(e.getMessage()); //Todo Handle Exception
+        }
+    }
+
+
+    //Get access Token by Social
+    public void getAccessTokenBySocial(String tokenOrCode, String provider, String givenType, String requestId, String viewType,Dictionary<String,String> loginProperties, final Result<AccessTokenEntity> accessTokenEntityResult)
+    {
+        try
+        {
+            AccessTokenService.getShared(context).getAccessTokenBySocial(tokenOrCode, provider, givenType, requestId, viewType,loginProperties, new Result<SocialProviderEntity>() {
+                @Override
+                public void success(SocialProviderEntity result) {
+                    getAccessTokenByCode(result.getCode(), new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            accessTokenEntityResult.success(result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            accessTokenEntityResult.failure(error);
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    accessTokenEntityResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
         }
     }
 }

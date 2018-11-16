@@ -62,7 +62,8 @@ public class FingerprintConfigurationController {
 
     }
 
-    String codeVerifier, codeChallenge;
+    String codeVerifier="" ;
+            String codeChallenge="";
     // Generate Code Challenge and Code verifier
     public void generateChallenge(){
         OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
@@ -119,7 +120,7 @@ public class FingerprintConfigurationController {
                     {
                         //Todo Service call
 
-                        FingerprintVerificationService.getShared(context).setupFingerprint(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupFingerprintMFARequestEntity,new Result<SetupFingerprintMFAResponseEntity>() {
+                        FingerprintVerificationService.getShared(context).setupFingerprint(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupFingerprintMFARequestEntity,null,new Result<SetupFingerprintMFAResponseEntity>() {
                             @Override
                             public void success(final SetupFingerprintMFAResponseEntity setupserviceresult) {
 
@@ -141,12 +142,12 @@ public class FingerprintConfigurationController {
                                         {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    , null,new Result<ValidateDeviceResponseEntity>() {
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
                                                             // call Scanned Service
                                                             FingerprintVerificationService.getShared(context).scannedFingerprint(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                    accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                    accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                         @Override
                                                                         public void success(final ScannedResponseEntity result) {
                                                                             DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -164,7 +165,7 @@ public class FingerprintConfigurationController {
                                                                             }
 
                                                                             // call Enroll Service
-                                                                            FingerprintVerificationService.getShared(context).enrollFingerprint(baseurl, accessTokenresult.getAccess_token(), enrollFingerprintMFARequestEntity,new Result<EnrollFingerprintMFAResponseEntity>() {
+                                                                            FingerprintVerificationService.getShared(context).enrollFingerprint(baseurl, accessTokenresult.getAccess_token(), enrollFingerprintMFARequestEntity,null,new Result<EnrollFingerprintMFAResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(EnrollFingerprintMFAResponseEntity serviceresult) {
                                                                                     enrollresult.success(serviceresult);
@@ -177,13 +178,13 @@ public class FingerprintConfigurationController {
                                                                             });
 
                                                                             Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                         }
 
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             enrollresult.failure(error);
-                                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -191,7 +192,7 @@ public class FingerprintConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             enrollresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                            //Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -250,7 +251,7 @@ public class FingerprintConfigurationController {
             {
                 initiateFingerprintMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
             }
-            if(codeChallenge=="" && codeVerifier=="") {
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
                 //Generate Challenge
                 generateChallenge();
             }
@@ -260,7 +261,7 @@ public class FingerprintConfigurationController {
                     initiateFingerprintMFARequestEntity.getUserDeviceId() != null && !initiateFingerprintMFARequestEntity.getUserDeviceId().equals("")
                     && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl,codeChallenge, initiateFingerprintMFARequestEntity,
+                FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl,codeChallenge, initiateFingerprintMFARequestEntity,null,
                         new Result<InitiateFingerprintMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -285,18 +286,18 @@ public class FingerprintConfigurationController {
                                         if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && !serviceresult.getData().getStatusId().equals("")) {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    ,null, new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
 
                                                             //Todo call initiate
                                                             initiateFingerprintMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
-                                                            FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl, codeChallenge, initiateFingerprintMFARequestEntity,
+                                                            FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl, codeChallenge, initiateFingerprintMFARequestEntity,null,
                                                                     new Result<InitiateFingerprintMFAResponseEntity>() {
 
                                                                         @Override
-                                                                        public void success(InitiateFingerprintMFAResponseEntity result) {
+                                                                        public void success(InitiateFingerprintMFAResponseEntity serviceresult) {
 
                                                                             if (serviceresult.getData().getStatusId() != null &&
                                                                                     !serviceresult.getData().getStatusId().equals("")) {
@@ -308,12 +309,12 @@ public class FingerprintConfigurationController {
 
 
 
-                                                                                FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity, new Result<AuthenticateFingerprintResponseEntity>() {
+                                                                                FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity, null,new Result<AuthenticateFingerprintResponseEntity>() {
                                                                                     @Override
                                                                                     public void success(AuthenticateFingerprintResponseEntity result) {
                                                                                         //Todo Call Resume with Login Service
                                                                                         //  loginresult.success(result);
-                                                                                        Toast.makeText(context, "Sucess Fingerprint", Toast.LENGTH_SHORT).show();
+                                                                                     //   Toast.makeText(context, "Sucess Fingerprint", Toast.LENGTH_SHORT).show();
 
 
 
@@ -362,7 +363,7 @@ public class FingerprintConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                           // Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
 

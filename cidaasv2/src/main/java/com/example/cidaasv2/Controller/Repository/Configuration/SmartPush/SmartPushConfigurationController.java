@@ -107,7 +107,7 @@ public class SmartPushConfigurationController {
                     {
                         //Todo Service call
 
-                        SmartPushVerificationService.getShared(context).setupSmartPush(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupSmartPushMFARequestEntity,new Result<SetupSmartPushMFAResponseEntity>() {
+                        SmartPushVerificationService.getShared(context).setupSmartPush(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupSmartPushMFARequestEntity,null,new Result<SetupSmartPushMFAResponseEntity>() {
                             @Override
                             public void success(final SetupSmartPushMFAResponseEntity setupserviceresult) {
 
@@ -129,12 +129,12 @@ public class SmartPushConfigurationController {
                                         {
                                             //Device Validation Service
                                             DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
-                                                    , new Result<ValidateDeviceResponseEntity>() {
+                                                    ,null, new Result<ValidateDeviceResponseEntity>() {
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
                                                             // call Scanned Service
                                                             SmartPushVerificationService.getShared(context).scannedSmartPush(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
-                                                                    accessTokenresult.getAccess_token(),new Result<ScannedResponseEntity>() {
+                                                                    accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                         @Override
                                                                         public void success(final ScannedResponseEntity result) {
                                                                             DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
@@ -159,7 +159,7 @@ public class SmartPushConfigurationController {
                                                                             }
 
                                                                             // call Enroll Service
-                                                                            SmartPushVerificationService.getShared(context).enrollSmartPush(baseurl, accessTokenresult.getAccess_token(), enrollSmartPushMFARequestEntity,new Result<EnrollSmartPushMFAResponseEntity>() {
+                                                                            SmartPushVerificationService.getShared(context).enrollSmartPush(baseurl, accessTokenresult.getAccess_token(), enrollSmartPushMFARequestEntity,null,new Result<EnrollSmartPushMFAResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(EnrollSmartPushMFAResponseEntity serviceresult) {
                                                                                     enrollresult.success(serviceresult);
@@ -172,13 +172,13 @@ public class SmartPushConfigurationController {
                                                                             });
 
                                                                             Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                          //  Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                         }
 
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             enrollresult.failure(error);
-                                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                         //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -186,7 +186,7 @@ public class SmartPushConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             enrollresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                           // Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -237,27 +237,31 @@ public class SmartPushConfigurationController {
     {
         try{
 
-
-          /*  if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != "" )
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
+            if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
             }
             else
             {
                 initiateSmartPushMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-            }*/
-
-
-            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
-                //Generate Challenge
-                generateChallenge();
             }
-            Cidaas.instanceId="";
+
+
+
+
             if (    initiateSmartPushMFARequestEntity.getUsageType() != null && initiateSmartPushMFARequestEntity.getUsageType() != "" &&
-                 /*   initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != ""&&*/
+                    initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != ""&&
                     baseurl != null && !baseurl.equals("")) {
+
+               // initiateSmartPushMFARequestEntity.setClient_id(clientId);
+
                 //Todo Service call
-                SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge,initiateSmartPushMFARequestEntity,
+                SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge,initiateSmartPushMFARequestEntity,null,
                         new Result<InitiateSmartPushMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -280,30 +284,32 @@ public class SmartPushConfigurationController {
                                     public void onFinish() {
                                         if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
                                             //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier
+                                            DeviceVerificationService.getShared(context).validateDevice(baseurl, instceID, serviceresult.getData().getStatusId(), codeVerifier,null
                                                     , new Result<ValidateDeviceResponseEntity>() {
 
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
 
                                                             //Todo call initiate
-                                                            initiateSmartPushMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
-                                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge, initiateSmartPushMFARequestEntity,
+                                                            initiateSmartPushMFARequestEntity.setUsage_pass(result.getData().getUsage_pass());
+
+
+                                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge, initiateSmartPushMFARequestEntity,null,
                                                                     new Result<InitiateSmartPushMFAResponseEntity>() {
 
                                                                         @Override
                                                                         public void success(InitiateSmartPushMFAResponseEntity result) {
-                                                                            if (serviceresult.getData().getRandomNumber() != null && !serviceresult.getData().getRandomNumber().equals("") && serviceresult.getData().getStatusId() != null &&
-                                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                                            if (result.getData().getRandomNumber() != null && !result.getData().getRandomNumber().equals("") && result.getData().getStatusId() != null &&
+                                                                                    !result.getData().getStatusId().equals("")) {
 
 
                                                                                 AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity = new AuthenticateSmartPushRequestEntity();
                                                                                 authenticateSmartPushRequestEntity.setUserDeviceId(initiateSmartPushMFARequestEntity.getUserDeviceId());
-                                                                                authenticateSmartPushRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                                                                authenticateSmartPushRequestEntity.setVerifierPassword(serviceresult.getData().getRandomNumber());
+                                                                                authenticateSmartPushRequestEntity.setStatusId(result.getData().getStatusId());
+                                                                                authenticateSmartPushRequestEntity.setVerifierPassword(result.getData().getRandomNumber());
 
 
-                                                                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,
+                                                                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,null,
                                                                                         new Result<AuthenticateSmartPushResponseEntity>() {
 
                                                                                             @Override
@@ -311,15 +317,15 @@ public class SmartPushConfigurationController {
 
                                                                                                 //Todo Call Resume with Login Service
                                                                                                 //  loginresult.success(result);
-                                                                                                Toast.makeText(context, "Sucess SmartPush", Toast.LENGTH_SHORT).show();
+                                                                                        //        Toast.makeText(context, "Sucess SmartPush", Toast.LENGTH_SHORT).show();
 
                                                                                                 ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
 
                                                                                                 //Todo Check not Null values
                                                                                                 resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                                                 resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                                                resumeLoginRequestEntity.setUsageType(result.getData().getUsageType());
-                                                                                                resumeLoginRequestEntity.setVerificationType(result.getData().getVerificationType());
+                                                                                                resumeLoginRequestEntity.setUsageType(initiateSmartPushMFARequestEntity.getUsageType());
+                                                                                                resumeLoginRequestEntity.setVerificationType("push");
                                                                                                 resumeLoginRequestEntity.setClient_id(clientId);
                                                                                                 resumeLoginRequestEntity.setRequestId(requestId);
 
@@ -348,7 +354,7 @@ public class SmartPushConfigurationController {
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             loginresult.failure(error);
-                                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                        //    Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -356,7 +362,7 @@ public class SmartPushConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             loginresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                       //     Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -373,6 +379,7 @@ public class SmartPushConfigurationController {
 
                             @Override
                             public void failure(WebAuthError error) {
+
                                 loginresult.failure(error);
                             }
                         });
@@ -463,6 +470,7 @@ public class SmartPushConfigurationController {
             }
 
 
+
         }
         catch (Exception e)
         {
@@ -508,7 +516,7 @@ public class SmartPushConfigurationController {
                                                 @Override
                                                 public void success(ValidateDeviceResponseEntity result) {
                                                     //Todo call Next service
-                                                    scannedSmartPush(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,new Result<ScannedResponseEntity>() {
+                                                    scannedSmartPush(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,null,new Result<ScannedResponseEntity>() {
                                                         @Override
                                                         public void success(ScannedResponseEntity result) {
                                                             Timber.i(result.getData().getUserDeviceId()+"USewr Device id");
@@ -740,7 +748,7 @@ public class SmartPushConfigurationController {
                     enrollSmartPushMFARequestEntity.getStatusId() != null && enrollSmartPushMFARequestEntity.getStatusId()  != null &&
                     baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
                 //Todo Service call
-                OauthService.getShared(context).enrollSmartPushMFA(baseurl, AccessToken, enrollSmartPushMFARequestEntity,new Result<EnrollSmartPushMFAResponseEntity>() {
+                OauthService.getShared(context).enrollSmartPushMFA(baseurl, AccessToken, enrollSmartPushMFARequestEntity,null,new Result<EnrollSmartPushMFAResponseEntity>() {
                     @Override
                     public void success(EnrollSmartPushMFAResponseEntity serviceresult) {
                         result.success(serviceresult);

@@ -57,7 +57,7 @@ public class SMSConfigurationController {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
                         //Todo Service call
-                        SMSVerificationService.getShared(context).setupSMSMFA(baseurl, accessTokenresult.getAccess_token(),
+                        SMSVerificationService.getShared(context).setupSMSMFA(baseurl, accessTokenresult.getAccess_token(),null,
                                 new Result<SetupSMSMFAResponseEntity>()
                                 {
                                     @Override
@@ -112,7 +112,7 @@ public class SMSConfigurationController {
                         {
                             //Done Service call
                             SMSVerificationService.getShared(context).enrollSMSMFA(baseurl, accessresult.getAccess_token(),
-                                    enrollSMSMFARequestEntity, new Result<EnrollSMSMFAResponseEntity>() {
+                                    enrollSMSMFARequestEntity, null,new Result<EnrollSMSMFAResponseEntity>() {
                                         @Override
                                         public void success(EnrollSMSMFAResponseEntity serviceresult) {
                                             result.success(serviceresult);
@@ -180,7 +180,7 @@ public class SMSConfigurationController {
                     initiateSMSMFARequestEntity.getVerificationType() != null && initiateSMSMFARequestEntity.getVerificationType() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                SMSVerificationService.getShared(context).initiateSMSMFA(baseurl, initiateSMSMFARequestEntity,
+                SMSVerificationService.getShared(context).initiateSMSMFA(baseurl, initiateSMSMFARequestEntity,null,
                         new Result<InitiateSMSMFAResponseEntity>() {
                     @Override
                     public void success(InitiateSMSMFAResponseEntity serviceresult) {
@@ -219,7 +219,7 @@ public class SMSConfigurationController {
             if(authenticateSMSRequestEntity.getStatusId()!=null && authenticateSMSRequestEntity.getStatusId()!="") {
                 if ( baseurl != null && !baseurl.equals("")) {
                     //Todo Service call
-                    SMSVerificationService.getShared(context).authenticateSMSMFA(baseurl, authenticateSMSRequestEntity,
+                    SMSVerificationService.getShared(context).authenticateSMSMFA(baseurl, authenticateSMSRequestEntity,null,
                             new Result<AuthenticateSMSResponseEntity>() {
                         @Override
                         public void success(AuthenticateSMSResponseEntity serviceresult) {
@@ -281,7 +281,7 @@ public class SMSConfigurationController {
 
             if (baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
                 //Todo Service call
-                SMSVerificationService.getShared(context).setupSMSMFA(baseurl, AccessToken, new Result<SetupSMSMFAResponseEntity>() {
+                SMSVerificationService.getShared(context).setupSMSMFA(baseurl, AccessToken,null, new Result<SetupSMSMFAResponseEntity>() {
                     @Override
                     public void success(SetupSMSMFAResponseEntity serviceresult) {
                         result.success(serviceresult);

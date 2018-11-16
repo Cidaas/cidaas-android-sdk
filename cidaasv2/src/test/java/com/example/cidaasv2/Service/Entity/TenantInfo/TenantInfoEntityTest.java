@@ -1,23 +1,48 @@
 package com.example.cidaasv2.Service.Entity.TenantInfo;
 
-import org.junit.Before;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import com.example.cidaasv2.Service.Entity.UserProfile.UseprofileResponseDataEntity;
+import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
 
-import static org.mockito.Mockito.*;
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class TenantInfoEntityTest {
-    @Mock
+
     TenantInfoDataEntity data;
-    @InjectMocks
+
+
     TenantInfoEntity tenantInfoEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        tenantInfoEntity=new TenantInfoEntity();
     }
 
+    @Test
+    public void setSuccess(){
+        tenantInfoEntity.setSuccess(true);
+        Assert.assertTrue(tenantInfoEntity.isSuccess());
+
+    }
+
+    @Test
+    public void setStatus(){
+        tenantInfoEntity.setStatus(27);
+        Assert.assertEquals(27,tenantInfoEntity.getStatus());
+
+    }
+
+    @Test
+    public void setData(){
+        data=new TenantInfoDataEntity();
+
+        data.setTenant_name("Test");
+        tenantInfoEntity.setData(data);
+        Assert.assertEquals("Test",tenantInfoEntity.getData().getTenant_name());
+
+    }
 
 }
 

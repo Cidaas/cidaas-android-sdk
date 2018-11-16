@@ -110,7 +110,7 @@ public class ChangePasswordController {
                     && changePasswordRequestEntity.getOld_password() != null &&changePasswordRequestEntity.getOld_password()  != ""
                     && baseurl != null && !baseurl.equals("")){
 
-                ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl,
+                ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl,null,
                         new Result<ChangePasswordResponseEntity>() {
 
                             @Override

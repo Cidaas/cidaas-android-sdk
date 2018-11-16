@@ -4,22 +4,17 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticatePatternRequestEntityTest {
-    @Mock
-    DeviceInfoEntity deviceInfo;
-    @InjectMocks
+
+
     AuthenticatePatternRequestEntity authenticatePatternRequestEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+authenticatePatternRequestEntity=new AuthenticatePatternRequestEntity();
     }
 
     @Test
@@ -47,14 +42,22 @@ public class AuthenticatePatternRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticatePatternRequestEntity.setDeviceInfo(deviceInfo);
+        authenticatePatternRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticatePatternRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticatePatternRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticatePatternRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
+
 
 }
 

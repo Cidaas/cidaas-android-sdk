@@ -4,22 +4,18 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateFingerprintRequestEntityTest {
-    @Mock
-    DeviceInfoEntity deviceInfo;
-    @InjectMocks
+
+
+
     AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+          authenticateFingerprintRequestEntity=new AuthenticateFingerprintRequestEntity();
     }
     @Test
     public void getStatusID()
@@ -46,13 +42,20 @@ public class AuthenticateFingerprintRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateFingerprintRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateFingerprintRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-        /*assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateFingerprintRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
+    }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateFingerprintRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateFingerprintRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
     }
 
 }

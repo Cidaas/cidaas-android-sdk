@@ -3,9 +3,12 @@ package com.example.cidaasv2.Service.Repository.Verification.Settings;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
@@ -72,7 +75,7 @@ public class VerificationSettingsService {
         return shared;
     }
 
-    public void getmfaList( String baseurl,String sub,String userDeviceID, final Result<MFAListResponseEntity> callback)
+    public void getmfaList( String baseurl,String sub,String userDeviceID,DeviceInfoEntity deviceInfoEntityFromParam, final Result<MFAListResponseEntity> callback)
     {
         //Local Variables
         String mfalistUrl = "";
@@ -83,24 +86,45 @@ public class VerificationSettingsService {
                 if(sub!=null && sub!=""){
                     //Construct URL For RequestId
 
-                    mfalistUrl=baseurl+ URLHelper.getShared().getMfa_URL();
+                    //mfalistUrl=baseurl+ URLHelper.getShared().getMfa_URL();
+                   //TODO change to getMfaList();
+                     mfalistUrl=baseurl+ URLHelper.getShared().getMfaList();
                 }
                 else {
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,context.getString(R.string.MFA_LIST_FAILURE),
-                            400,null));
+                            400,null,null));
                     return;
                 }
             }
             else {
                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,context.getString(R.string.PROPERTY_MISSING),
-                        400,null));
+                        400,null,null));
                 return;
             }
 
 
+            boolean common_configs = true;
+            if(userDeviceID.equals("")) {
+
+                DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+                //This is only for testing purpose
+                if(deviceInfoEntityFromParam==null) {
+                    deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                }
+                else if(deviceInfoEntityFromParam!=null)
+                {
+                    deviceInfoEntity=deviceInfoEntityFromParam;
+                }
+
+                userDeviceID=deviceInfoEntity.getDeviceId();
+            }
+            else {
+
+            }
+
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getmfaList(mfalistUrl,sub,userDeviceID).enqueue(new Callback<MFAListResponseEntity>() {
+            cidaasSDKService.getmfaList(mfalistUrl,sub,userDeviceID,common_configs).enqueue(new Callback<MFAListResponseEntity>() {
                 @Override
                 public void onResponse(Call<MFAListResponseEntity> call, Response<MFAListResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -109,7 +133,7 @@ public class VerificationSettingsService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,
-                                    "Service failure but successful response" ,response.code(),null));
+                                    "Service failure but successful response" ,response.code(),null,null));
                         }
                     }
                     else {
@@ -124,18 +148,25 @@ public class VerificationSettingsService {
 
 
                             String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
                             if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                 errorMessage=commonErrorEntity.getError().toString();
                             }
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
 
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError()));
+                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -146,7 +177,7 @@ public class VerificationSettingsService {
                 @Override
                 public void onFailure(Call<MFAListResponseEntity> call, Throwable t) {
                     Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });

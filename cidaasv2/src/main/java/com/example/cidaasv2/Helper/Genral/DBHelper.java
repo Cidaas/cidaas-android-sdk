@@ -30,9 +30,12 @@ public class DBHelper {
     private static final String DeviceInfo="Device_info";
     private static final String FCMTokenInfo="FCMTOKEN_info";
     private static final String SecretInfo="Secret_info";
+    private static final String UserAgent="UserAgent";
     private static final String userDeviceInfo="User_device_Info";
     private static final String pkceEnableStatus = "OAuthEnablePkce";
     private static final String logEnableStatus = "OAuthEnableLog";
+    private static String user_storage_key = "cidaas_user_details_";
+    private static String user_storage_info = "cidaas_user_info_";
     private static ObjectMapper shared_objectMapper=new ObjectMapper();
     private static Activity context;
 
@@ -62,6 +65,8 @@ public class DBHelper {
 
         }
     }
+
+
 
 //Get EnablePKCE
     public boolean getEnablePKCE()
@@ -114,7 +119,7 @@ public void setEnableLog(boolean enableLog)
     {
         if (preferences == null)
         {
-            preferences = context.getSharedPreferences("cidaas_Shared_preference", 0);
+            preferences = context.getSharedPreferences("cidaas_preference", 0);
             editor = preferences.edit();
         }
     }
@@ -166,6 +171,34 @@ public void setEnableLog(boolean enableLog)
 
 
 
+    //Add Secret Based on Sub
+    public void setUserAgent(String userAgent){
+        boolean result=false;
+        try {
+            editor.putString(UserAgent,userAgent);
+            editor.commit();
+        }
+        catch (Exception e)
+        {
+            result=false;
+        }
+
+    }
+
+    //get Device info
+    public String getUserAgent()
+    {
+        String userAgent;
+        try {
+            userAgent = preferences.getString(UserAgent, "");
+        }
+        catch (Exception e)
+        {
+            userAgent="";
+        }
+        return userAgent;
+    }
+
 
     //Get Login Object
     public Dictionary<String,String> getChallengeProperties()
@@ -195,7 +228,7 @@ public void setEnableLog(boolean enableLog)
         boolean result = false;
         try {
             String jsonString = shared_objectMapper.writeValueAsString(loginpropObj);
-            editor.putString(LoginProperties, jsonString);
+            editor.putString(LoginProperties+loginpropObj.get("DomainURL"), jsonString);
             result = editor.commit();
         } catch (Exception e) {
             result = false;
@@ -204,12 +237,12 @@ public void setEnableLog(boolean enableLog)
 
 
     //Get Login Object
-    public Dictionary<String,String> getLoginProperties()
+    public Dictionary<String,String> getLoginProperties(String DomainURL)
     {
 
         Dictionary<String,String> loginProperties=new Hashtable<>();
         try {
-            String jsonString =preferences.getString(LoginProperties,(new JSONObject().toString()));
+            String jsonString =preferences.getString(LoginProperties+DomainURL,(new JSONObject().toString()));
             JSONObject jsonObject = new JSONObject(jsonString);
             Iterator<String> keysItr = jsonObject.keys();
             while (keysItr.hasNext()) {
@@ -291,7 +324,7 @@ public void setEnableLog(boolean enableLog)
     //Add User Device id with Domain URL
     public void setUserDeviceId(String userDeviceId,String domainURL)
     {
-        boolean result=false;
+        boolean result=true;
         try {
             editor.putString(userDeviceInfo+domainURL,userDeviceId);
             editor.commit();
@@ -321,9 +354,9 @@ public void setEnableLog(boolean enableLog)
     {
         boolean result=false;
         try {
-            String key=AccessTokenModel.getShared().getUserId();
+            String key=accessTokenModel.getUserId();
             String jsonString =shared_objectMapper.writeValueAsString(accessTokenModel);
-            editor.putString(key, jsonString);
+            editor.putString(user_storage_key+key, jsonString);
             result=editor.commit();
         }
         catch (Exception e)
@@ -335,7 +368,7 @@ public void setEnableLog(boolean enableLog)
     //Todo Get Access Token
     public AccessTokenModel getAccessToken(String userId)
     {
-        String jsonString =preferences.getString(userId,"");
+        String jsonString =preferences.getString(user_storage_key+userId,"");
         AccessTokenModel accessTokenModel;
         try {
             accessTokenModel=shared_objectMapper.readValue(jsonString,AccessTokenModel.class);
@@ -349,11 +382,10 @@ public void setEnableLog(boolean enableLog)
     //Todo Set UserInfo
     public void setUserInfo(UserInfoModel userInfoModel)
     {
-
         try {
-            String key=UserInfoModel.getShared().getUserid();
+            String key=userInfoModel.getUserid();
             String jsonString =shared_objectMapper.writeValueAsString(userInfoModel);
-            editor.putString(key, jsonString);
+            editor.putString(user_storage_info+key, jsonString);
             editor.commit();
         }
         catch (Exception e)
@@ -365,7 +397,7 @@ public void setEnableLog(boolean enableLog)
     //Todo Get User info
     public UserInfoModel getUserInfo(String userId)
     {
-        String jsonString =preferences.getString(userId,"");
+        String jsonString =preferences.getString(user_storage_info+userId,"DefaultUserinfo");
         UserInfoModel userInfoModel;
         try {
             userInfoModel=shared_objectMapper.readValue(jsonString,UserInfoModel.class);

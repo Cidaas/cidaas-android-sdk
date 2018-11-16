@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Service.Repository;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -251,100 +252,8 @@ public class OauthService {
     // --------------------------------------------------*****  LOGIN *****-----------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
-    //Get MFA List
-
-    public void getmfaList(String sub, String baseurl,String userDeviceID, final Result<MFAListResponseEntity> callback)
-    {
-        //Local Variables
-        String mfalistUrl = "";
-        try{
-
-            if(baseurl!=null && baseurl!=""){
-                //Construct URL For RequestId
-                if(sub!=null && sub!=""){
-                    //Construct URL For RequestId
-
-                    mfalistUrl=baseurl+URLHelper.getShared().getMfa_URL();
-                }
-                else {
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,context.getString(R.string.MFA_LIST_FAILURE),
-                            400,null));
-                    return;
-                }
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,context.getString(R.string.PROPERTY_MISSING),
-                        400,null));
-                return;
-            }
-
-
-            //Call Service-getRequestId
-            ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getmfaList(mfalistUrl,sub,userDeviceID).enqueue(new Callback<MFAListResponseEntity>() {
-                @Override
-                public void onResponse(Call<MFAListResponseEntity> call, Response<MFAListResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,
-                                    "Service failure but successful response" ,response.code(),null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError()));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Timber.e("response"+response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<MFAListResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null));
-
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            Timber.d(e.getMessage());
-            callback.failure(webAuthError);
-        }
-    }
-
-
     //Get Login URL
-    public void getLoginUrl(String requestId, final Result<String> callback)
+    public void getLoginUrl(String requestId, @NonNull String DomainURL, final Result<String> callback)
     {
        try {
            //Local Variables
@@ -367,7 +276,7 @@ public class OauthService {
 
            //Get Properties From DB
 
-           Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties();
+           Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
            if (loginProperties == null) {
                callback.failure(webAuthError.loginURLMissingException());
            }
@@ -403,7 +312,7 @@ public class OauthService {
                        }
                        else {
                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                   "Service failure but successful response" , 400,null));
+                                   "Service failure but successful response" , 400,null,null));
                        }
                    }
                    else {
@@ -427,7 +336,7 @@ public class OauthService {
 
 
 
-                           callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null));
+                           callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null,null));
                        } catch (IOException e) {
                            e.printStackTrace();
                        }
@@ -438,7 +347,7 @@ public class OauthService {
                @Override
                public void onFailure(Call<String> call, Throwable t) {
                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,t.getMessage(), 400,null));
+                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,t.getMessage(), 400,null,null));
 
                }
            });
@@ -473,7 +382,7 @@ public class OauthService {
 
 
 
-    public void getUserinfo(String AccessToken, final Result<UserinfoEntity> callback) {
+    public void getUserinfo(String AccessToken,String DomainURL, final Result<UserinfoEntity> callback) {
         try {
             //Local Variables
             String url = "";
@@ -498,17 +407,17 @@ public class OauthService {
 
             //Get Properties From DB
 
-            Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties();
+            Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
             if (loginProperties == null) {
                 callback.failure(webAuthError.loginURLMissingException());
             }
 
 
-            querymap.put("UserInfoURL",loginProperties.get("UserInfoURL"));
+         //   querymap.put("UserInfoURL",loginProperties.get("UserInfoURL"));
 
             //Assign Url
             //TOdo Perform Null Check
-            url = querymap.get("UserInfoURL");
+            url = loginProperties.get("DomainURL")+URLHelper.getShared().getUserInfoURL();
 
             //call Service
             ICidaasSDKService cidaassdkService = service.getInstance();
@@ -523,7 +432,7 @@ public class OauthService {
                       }
                       else {
                           callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                  "Service failure but successful response" , 400,null));
+                                  "Service failure but successful response" , 400,null,null));
                       }
                   }
                   else {
@@ -548,7 +457,7 @@ public class OauthService {
 
 
 
-                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null));
+                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null,null));
                       } catch (IOException e) {
                           e.printStackTrace();
                       }
@@ -559,7 +468,7 @@ public class OauthService {
               @Override
               public void onFailure(Call<UserinfoEntity> call, Throwable t) {
                   Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                  callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null));
+                  callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
 
               }
           });

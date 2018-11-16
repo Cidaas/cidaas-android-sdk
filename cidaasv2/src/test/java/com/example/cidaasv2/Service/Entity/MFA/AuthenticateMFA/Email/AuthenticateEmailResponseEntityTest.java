@@ -3,22 +3,18 @@ package com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateEmailResponseEntityTest {
-    @Mock
+
     AuthenticateEmailResponseDataEntity data;
-    @InjectMocks
+
     AuthenticateEmailResponseEntity authenticateEmailResponseEntity=new AuthenticateEmailResponseEntity();
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
 

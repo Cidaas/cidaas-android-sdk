@@ -39,4 +39,14 @@ public class SuccessfulLogin extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+
+    public void ConfigIVR(View view){
+
+        Intent intent=new Intent(SuccessfulLogin.this,IVRConfigActivity.class);
+        intent.putExtra("sub",sub);
+        intent.putExtra("accessToken",accessToken);
+        startActivity(intent);
+
+    }
 }

@@ -18,11 +18,14 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
+import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.File;
 
 import timber.log.Timber;
 
@@ -124,6 +127,10 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     private void getFCMToken() {
         String token = FirebaseInstanceId.getInstance().getToken();
       cidaas.setFCMToken(token);
+
+
+
+
         Timber.i("FCM TOKEN" + token);
         Toast.makeText(this, "Token"+token, Toast.LENGTH_SHORT).show();
         // save device info
@@ -184,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
 
 
 
+
     @Override
     protected void onDestroy() {
         // Unregister since the activity is about to be closed.
@@ -225,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             }
         });*/
 
-            cidaas.configureFingerprint("sub", new Result<EnrollFingerprintMFAResponseEntity>() {
+            cidaas.configureFingerprint("sub","", new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -253,5 +261,19 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
+    }
+
+
+    public void documentScanner(View view)
+    {
+      //  cidaas.startDocumentScanner(this);
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }

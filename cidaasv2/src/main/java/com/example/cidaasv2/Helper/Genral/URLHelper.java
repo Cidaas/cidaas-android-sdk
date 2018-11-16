@@ -38,7 +38,10 @@ public class URLHelper {
     String clientUrl="/public-srv/public/";
     String tenantUrl="/public-srv/tenantinfo/basic";
     String registerNewUserurl="/users-srv/register";
+
     String mfa_URL="/verification-srv/settings/list?sub=";
+    String mfaList="/verification-srv/settings/listbydeviceid";
+
     String setupEmailMFA="/verification-srv/email/setup";
     String enrollEmailMFA="/verification-srv/email/enroll";
     String initiateemailMFA="/verification-srv/email/initiate";
@@ -80,6 +83,7 @@ public class URLHelper {
     String initiateTOTPMFA="/verification-srv/totp/initiate";
     String authenticateTOTPMFA="/verification-srv/totp/authenticate";
     String setupVoiceMFA="/verification-srv/voice/setup";
+
     String enrollVoiceMFA="/verification-srv/voice/enroll";
     String initiateVoiceMFA="/verification-srv/voice/initiate";
     String authenticateVoiceMFA="/verification-srv/voice/authenticate";
@@ -92,6 +96,7 @@ public class URLHelper {
     String resumeConsentURL="/login-srv/precheck/continue/sdk/";
 
     String internaluserProfileURL="/users-srv/internal/userinfo/profile/";
+    String userInfoURL="/users-srv/userinfo";
 
     String RegisterUserAccountInitiate="/verification-srv/account/initiate";
     String RegisterUserAccountVerify="/verification-srv/account/verify";
@@ -105,11 +110,39 @@ public class URLHelper {
     String scannedTOTPURL="/verification-srv/totp/scanned";
     String scannedVoiceURL="/verification-srv/voice/scanned";
     String scannedFIDOURL="/verification-srv/fido/scanned";
+
     String tokenUrl="/token-srv/token";
+    String socialTokenURL="/login-srv/social/token";
+
+    String preAuthCode="&preAuthCode=" ;
 
     String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
     String deduplicationList="users-srv/deduplication/info/";
+
     String registerdeduplication="/users-srv/deduplication/register/";
+
+    String documentScanner="/access-control-srv/ocr/validate";
+
+
+    public String getPreAuthCode() {
+        return preAuthCode;
+    }
+
+    public String getSocialTokenURL() {
+        return socialTokenURL;
+    }
+
+    public String getUserInfoURL() {
+        return userInfoURL;
+    }
+
+    public String getDocumentScanner() {
+        return documentScanner;
+    }
+
+    public String getMfaList() {
+        return mfaList;
+    }
 
     public String getRegisterdeduplication() {
         return registerdeduplication;
@@ -150,6 +183,8 @@ public class URLHelper {
     public String getTokenUrl() {
         return tokenUrl;
     }
+
+
 
     public String getScannedPatternURL() {
         return scannedPatternURL;

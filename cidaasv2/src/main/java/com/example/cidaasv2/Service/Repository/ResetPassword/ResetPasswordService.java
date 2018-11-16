@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -12,7 +13,7 @@ import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
@@ -54,15 +55,6 @@ public class ResetPasswordService {
 
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static  ResetPasswordService getShared(Context contextFromCidaas )
     {
@@ -79,7 +71,7 @@ public class ResetPasswordService {
         return shared;
     }
 
-    public void initiateresetPassword(ResetPasswordRequestEntity resetPasswordRequestEntity, String baseurl, final Result<ResetPasswordResponseEntity> callback)
+    public void initiateresetPassword(ResetPasswordRequestEntity resetPasswordRequestEntity, String baseurl,DeviceInfoEntity deviceInfoEntityFromParam, final Result<ResetPasswordResponseEntity> callback)
     {
         //Local Variables
         String resetpasswordUrl = "";
@@ -91,7 +83,7 @@ public class ResetPasswordService {
             }
             else {
                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
@@ -99,8 +91,15 @@ public class ResetPasswordService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -121,7 +120,7 @@ public class ResetPasswordService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
-                                    "Service failure but successful response" , 400,null));
+                                    "Service failure but successful response" , 400,null,null));
                         }
                     }
                     else {
@@ -136,18 +135,25 @@ public class ResetPasswordService {
 
 
                             String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
                             if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                 errorMessage=commonErrorEntity.getError().toString();
                             }
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
 
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
-                                    errorMessage,commonErrorEntity.getStatus(),commonErrorEntity.getError()));
+                                    errorMessage,commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -158,7 +164,7 @@ public class ResetPasswordService {
                 @Override
                 public void onFailure(Call<ResetPasswordResponseEntity> call, Throwable t) {
                     Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });
@@ -186,7 +192,7 @@ public class ResetPasswordService {
             }
             else {
                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
@@ -217,7 +223,7 @@ public class ResetPasswordService {
                                 }
                                 else {
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
-                                            "Service failure but successful response" , 400,null));
+                                            "Service failure but successful response" , 400,null,null));
                                 }
                             }
                             else {
@@ -233,17 +239,24 @@ public class ResetPasswordService {
 
 
                                     String errorMessage="";
+                                    ErrorEntity errorEntity=new ErrorEntity();
                                     if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                         errorMessage=commonErrorEntity.getError().toString();
                                     }
                                     else
                                     {
                                         errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                                     }
 
 
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),commonErrorEntity.getError()));
+                                            errorMessage, commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -254,7 +267,7 @@ public class ResetPasswordService {
                         @Override
                         public void onFailure(Call<ResetPasswordValidateCodeResponseEntity> call, Throwable t) {
                             Timber.e("Faliure in Request id service call"+t.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,t.getMessage(), 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,t.getMessage(), 400,null,null));
 
                         }
                     });
@@ -272,7 +285,7 @@ public class ResetPasswordService {
 
 
     //Reset Password Validate Code
-    public void resetNewPassword(ResetNewPasswordRequestEntity resetNewPasswordRequestEntity,
+    public void resetNewPassword(ResetPasswordEntity resetPasswordEntity,
                                  String baseurl, final Result<ResetNewPasswordResponseEntity> callback)
     {
         //Local Variables
@@ -285,7 +298,7 @@ public class ResetPasswordService {
             }
             else {
                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null));
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
@@ -306,7 +319,7 @@ public class ResetPasswordService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.ResetNewPassword(ResetNewPasswordUrl,headers,resetNewPasswordRequestEntity)
+            cidaasSDKService.ResetNewPassword(ResetNewPasswordUrl,headers, resetPasswordEntity)
                     .enqueue(new Callback<ResetNewPasswordResponseEntity>() {
                         @Override
                         public void onResponse(Call<ResetNewPasswordResponseEntity> call, Response<ResetNewPasswordResponseEntity> response) {
@@ -316,7 +329,7 @@ public class ResetPasswordService {
                                 }
                                 else {
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,
-                                            "Service failure but successful response" , 400,null));
+                                            "Service failure but successful response" , 400,null,null));
                                 }
                             }
                             else {
@@ -332,17 +345,24 @@ public class ResetPasswordService {
 
 
                                     String errorMessage="";
+                                    ErrorEntity errorEntity=new ErrorEntity();
                                     if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                         errorMessage=commonErrorEntity.getError().toString();
                                     }
                                     else
                                     {
                                         errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                                     }
 
 
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),commonErrorEntity.getError()));
+                                            errorMessage, commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -353,7 +373,7 @@ public class ResetPasswordService {
                         @Override
                         public void onFailure(Call<ResetNewPasswordResponseEntity> call, Throwable t) {
                             Timber.e("Faliure in Request id service call"+t.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,t.getMessage(), 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,t.getMessage(), 400,null,null));
 
                         }
                     });

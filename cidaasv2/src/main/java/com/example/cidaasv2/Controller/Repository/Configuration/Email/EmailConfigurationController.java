@@ -80,7 +80,7 @@ public class EmailConfigurationController {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
                         //Todo Service call
-                        EmailVerificationService.getShared(context).setupEmailMFA(baseurl, accessTokenresult.getAccess_token(),
+                        EmailVerificationService.getShared(context).setupEmailMFA(baseurl, accessTokenresult.getAccess_token(),null,
                                 new Result<SetupEmailMFAResponseEntity>()
                         {
                             @Override
@@ -136,7 +136,7 @@ public class EmailConfigurationController {
                         {
                             //Done Service call
                             EmailVerificationService.getShared(context).enrollEmailMFA(baseurl, accessresult.getAccess_token(),
-                                    enrollEmailMFARequestEntity,
+                                    enrollEmailMFARequestEntity,null,
                                     new Result<EnrollEmailMFAResponseEntity>() {
                                 @Override
                                 public void success(EnrollEmailMFAResponseEntity serviceresult) {
@@ -190,7 +190,7 @@ public class EmailConfigurationController {
                     initiateEmailMFARequestEntity.getVerificationType() != null && initiateEmailMFARequestEntity.getVerificationType() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                EmailVerificationService.getShared(context).initiateEmailMFA(baseurl, initiateEmailMFARequestEntity, new Result<InitiateEmailMFAResponseEntity>() {
+                EmailVerificationService.getShared(context).initiateEmailMFA(baseurl, initiateEmailMFARequestEntity, null,new Result<InitiateEmailMFAResponseEntity>() {
                     @Override
                     public void success(InitiateEmailMFAResponseEntity serviceresult) {
                        // StatusId=serviceresult.getData().getStatusId();
@@ -228,7 +228,7 @@ public class EmailConfigurationController {
                     authenticateEmailRequestEntity.getStatusId() != null && authenticateEmailRequestEntity.getStatusId() != "" &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                EmailVerificationService.getShared(context).authenticateEmailMFA(baseurl, authenticateEmailRequestEntity,
+                EmailVerificationService.getShared(context).authenticateEmailMFA(baseurl, authenticateEmailRequestEntity,null,
                         new Result<AuthenticateEmailResponseEntity>() {
 
                     @Override

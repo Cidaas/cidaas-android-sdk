@@ -1,15 +1,20 @@
 package com.example.cidaasv2.Service;
 
-import android.content.SharedPreferences;
-
+import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import timber.log.Timber;
 
 /**
  * Created by widasrnarayanan on 17/1/18.
@@ -20,18 +25,44 @@ public class CidaassdkService {
     public ICidaasSDKService getInstance()
     {
 
+        String baseurl= Cidaas.baseurl;
+
+        if(baseurl==null || baseurl.equals(""))
+        {
+            baseurl="https://www.google.com";
+        }
+
+
+
         ICidaasSDKService iCidaasSDKService=null;
         OkHttpClient okHttpClient=null;
 
-        // HttpClient
+        final String HEADER_USER_AGENT = "User-Agent";
         okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(20, TimeUnit.SECONDS)
-                .connectTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .addNetworkInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request originalRequest = chain.request();
+                        Request requestWithUserAgent = originalRequest.newBuilder()
+                                .header(HEADER_USER_AGENT, createCustomUserAgent(originalRequest))
+                                .build();
+                        for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
+                            Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
+                            DBHelper.getShared().setUserAgent("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
+                        }
+
+                        return chain.proceed(requestWithUserAgent);
+                    }
+                })
                 .build();
+
+
 
         Retrofit retrofit=new Retrofit.Builder()
                // .baseUrl(DBHelper.getShared().getLoginProperties().get("DomainURL"))
-                .baseUrl("https://www.google.com")//Todo Get Base URL
+                .baseUrl(baseurl)//done Get Base URL
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(okHttpClient)
@@ -39,5 +70,16 @@ public class CidaassdkService {
           iCidaasSDKService=retrofit.create(ICidaasSDKService.class);
         return iCidaasSDKService;
     }
+
+    private String createCustomUserAgent(Request originalRequest) {
+        // App name can be also retrieved programmatically, but no need to do it for this sample needs
+        String ua = Cidaas.APP_NAME;
+        String baseUa = System.getProperty("http.agent");
+        if (baseUa != null) {
+            ua = ua + "/" + Cidaas.APP_VERSION+"("+ BuildConfig.VERSION_NAME+")"+ " " + baseUa;
+        }
+        return ua;
+    }
+
 
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -55,15 +56,6 @@ public class RegistrationService {
 
     }
 
-    String codeVerifier, codeChallenge;
-    // Generate Code Challenge and Code verifier
-    private void generateChallenge(){
-        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
-
-    }
 
     public static  RegistrationService getShared(Context contextFromCidaas )
     {
@@ -81,19 +73,19 @@ public class RegistrationService {
     }
 
     //Get Regsiteration Details
-    public void getRegistrationSetup(String baseurl, final RegistrationSetupRequestEntity registrationSetupRequestEntity, final Result<RegistrationSetupResponseEntity> callback)
+    public void getRegistrationSetup(String baseurl, final RegistrationSetupRequestEntity registrationSetupRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegistrationSetupResponseEntity> callback)
     {
         //Local Variables
 
         String RegistrationUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 RegistrationUrl=baseurl+ URLHelper.getShared().getRegistrationSetup(registrationSetupRequestEntity.getAcceptedLanguage(),registrationSetupRequestEntity.getRequestId());
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null));
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
@@ -110,7 +102,7 @@ public class RegistrationService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    "Service failure but successful response" , response.code(),null));
+                                    "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
@@ -123,9 +115,9 @@ public class RegistrationService {
                             registrationSetupErrorEntity=objectMapper.readValue(errorResponse,RegistrationSetupErrorEntity.class);
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    registrationSetupErrorEntity.getError().getError(), registrationSetupErrorEntity.getStatus(),registrationSetupErrorEntity.getError()));
+                                    registrationSetupErrorEntity.getError().getError(), registrationSetupErrorEntity.getStatus(),registrationSetupErrorEntity.getError(),null));
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null,null));
                             Timber.e("response"+response.message()+e.getMessage());
                         }
                         Timber.e("response"+response.message());
@@ -135,7 +127,7 @@ public class RegistrationService {
                 @Override
                 public void onFailure(Call<RegistrationSetupResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -150,27 +142,34 @@ public class RegistrationService {
 
 
     //Register New User
-    public void registerNewUser(String baseurl, final RegisterNewUserRequestEntity registerNewUserRequestEntity, final Result<RegisterNewUserResponseEntity> callback)
+    public void registerNewUser(String baseurl, final RegisterNewUserRequestEntity registerNewUserRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegisterNewUserResponseEntity> callback)
     {
         //Local Variables
 
         String RegisterNewUserUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 RegisterNewUserUrl=baseurl+URLHelper.getShared().getRegisterNewUserurl();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null));
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -193,7 +192,7 @@ public class RegistrationService {
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    "Service failure but successful response" , response.code(),null));
+                                    "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
@@ -208,20 +207,27 @@ public class RegistrationService {
 
 
                             String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
                             if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                 errorMessage=commonErrorEntity.getError().toString();
                             }
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError()));
+                                    errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
 
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null,null));
                             Timber.e("response"+response.message()+e.getMessage());
                         }
                         Timber.e("response"+response.message());
@@ -231,7 +237,7 @@ public class RegistrationService {
                 @Override
                 public void onFailure(Call<RegisterNewUserResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Register new User service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,t.getMessage(), 400,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
         }
@@ -243,7 +249,7 @@ public class RegistrationService {
     }
 
     //Register New User initiate  Account Verification
-    public void initiateAccountVerification(String baseurl, final RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity, final Result<RegisterUserAccountInitiateResponseEntity> callback)
+    public void initiateAccountVerification(String baseurl, final RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<RegisterUserAccountInitiateResponseEntity> callback)
     {
         //Local Variables
 
@@ -255,15 +261,22 @@ public class RegistrationService {
                 initiateAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountInitiate();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null));
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -286,7 +299,7 @@ public class RegistrationService {
                                 }
                                 else {
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                            "Service failure but successful response" , response.code(),null));
+                                            "Service failure but successful response" , response.code(),null,null));
                                 }
                             }
                             else {
@@ -301,20 +314,27 @@ public class RegistrationService {
 
 
                                     String errorMessage="";
+                                    ErrorEntity errorEntity=new ErrorEntity();
                                     if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                         errorMessage=commonErrorEntity.getError().toString();
                                     }
                                     else
                                     {
                                         errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                                     }
 
 
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError()));
+                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
 
                                 } catch (Exception e) {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null));
+                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null,null));
                                     Timber.e("response"+response.message()+e.getMessage());
                                 }
                                 Timber.e("response"+response.message());
@@ -324,7 +344,7 @@ public class RegistrationService {
                         @Override
                         public void onFailure(Call<RegisterUserAccountInitiateResponseEntity> call, Throwable t) {
                             Timber.e("Failure in Register new User service call"+t.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,t.getMessage(), 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,t.getMessage(), 400,null,null));
                         }
                     });
         }
@@ -336,7 +356,7 @@ public class RegistrationService {
     }
 
     //Register New User verify  Account Verification
-    public void verifyAccountVerification(String baseurl, final RegisterUserAccountVerifyRequestEntity registerUserAccountVerifyRequestEntity,
+    public void verifyAccountVerification(String baseurl, final RegisterUserAccountVerifyRequestEntity registerUserAccountVerifyRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                           final Result<RegisterUserAccountVerifyResponseEntity> callback)
     {
         //Local Variables
@@ -344,20 +364,27 @@ public class RegistrationService {
         String verifyAccountVerificationUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null && baseurl!=""){
                 //Construct URL For RequestId
                 verifyAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountVerify();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null));
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
 
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
@@ -380,7 +407,7 @@ public class RegistrationService {
                                 }
                                 else {
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            "Service failure but successful response" , response.code(),null));
+                                            "Service failure but successful response" , response.code(),null,null));
                                 }
                             }
                             else {
@@ -395,20 +422,27 @@ public class RegistrationService {
 
 
                                     String errorMessage="";
+                                    ErrorEntity errorEntity=new ErrorEntity();
                                     if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
                                         errorMessage=commonErrorEntity.getError().toString();
                                     }
                                     else
                                     {
                                         errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                                     }
 
 
                                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError()));
+                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
 
                                 } catch (Exception e) {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null));
+                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null,null));
                                     Timber.e("response"+response.message()+e.getMessage());
                                 }
                                 Timber.e("response"+response.message());
@@ -418,7 +452,7 @@ public class RegistrationService {
                         @Override
                         public void onFailure(Call<RegisterUserAccountVerifyResponseEntity> call, Throwable t) {
                             Timber.e("Failure in Register new User service call"+t.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,t.getMessage(), 400,null));
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,t.getMessage(), 400,null,null));
                         }
                     });
         }

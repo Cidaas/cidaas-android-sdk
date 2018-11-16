@@ -35,14 +35,16 @@ public static EntityToModelConverter sharedinstance;
         {
             String EncryptedToken="";
 
-            AccessTokenModel.getShared().setExpiresIn(accessTokenEntity.getExpires_in());
-            AccessTokenModel.getShared().setIdToken(accessTokenEntity.getId_token());
-            AccessTokenModel.getShared().setRefreshToken(accessTokenEntity.getRefresh_token());
+            AccessTokenModel.getShared().setExpires_in(accessTokenEntity.getExpires_in());
+            AccessTokenModel.getShared().setId_token(accessTokenEntity.getId_token());
+            AccessTokenModel.getShared().setRefresh_token(accessTokenEntity.getRefresh_token());
             AccessTokenModel.getShared().setScope(accessTokenEntity.getScope());
             AccessTokenModel.getShared().setUserState(accessTokenEntity.getUserstate());
+
             //Additional Details to store token in Local DB
             AccessTokenModel.getShared().setUserId(userId);
             AccessTokenModel.getShared().setSalt(UUID.randomUUID().toString());
+
             //AccessTokenModel.getShared().setKey(UUID.randomUUID().toString());
             //Convert Milliseconds int0 seconds
             AccessTokenModel.getShared().setSeconds(System.currentTimeMillis()/1000);
@@ -56,12 +58,12 @@ public static EntityToModelConverter sharedinstance;
                     EncryptedToken="";
                 }
             if(EncryptedToken!="") {
-                AccessTokenModel.getShared().setAccessToken(EncryptedToken);
+                AccessTokenModel.getShared().setAccess_token(EncryptedToken);
                 AccessTokenModel.getShared().setEncrypted(true);
             }
             else
             {
-                AccessTokenModel.getShared().setAccessToken(accessTokenEntity.getAccess_token());
+                AccessTokenModel.getShared().setAccess_token(accessTokenEntity.getAccess_token());
                 AccessTokenModel.getShared().setEncrypted(false);
                 AccessTokenModel.getShared().setPlainToken(accessTokenEntity.getAccess_token());
             }
@@ -85,10 +87,10 @@ public static EntityToModelConverter sharedinstance;
             AccessTokenEntity accessTokenEntity=new AccessTokenEntity();
 
 
-           accessTokenEntity.setAccess_token(accessTokenModel.getAccessToken());
-            accessTokenEntity.setExpires_in(accessTokenModel.getExpiresIn());
-            accessTokenEntity.setId_token(accessTokenModel.getIdToken());
-            accessTokenEntity.setRefresh_token(accessTokenModel.getRefreshToken());
+           accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
+            accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
+            accessTokenEntity.setId_token(accessTokenModel.getId_token());
+            accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
             accessTokenEntity.setScope(accessTokenModel.getScope());
             accessTokenEntity.setUserstate(accessTokenModel.getUserState());
 
@@ -100,14 +102,18 @@ public static EntityToModelConverter sharedinstance;
             }
             else
             {
-                accessTokenEntity.setAccess_token(accessTokenModel.getShared().getPlainToken());
+                if(accessTokenModel.getPlainToken()==null || (accessTokenModel.getPlainToken()==""))
+                {
+                    accessTokenModel.setPlainToken(accessTokenEntity.getAccess_token());
+                }
+                accessTokenEntity.setAccess_token(accessTokenModel.getPlainToken());
             }
             callback.success(accessTokenEntity);
         }
         catch (Exception e)
         {
             //TODO Handle Error
-
+          callback.failure(null);
         }
     }
 

@@ -3,22 +3,18 @@ package com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateFaceResponseEntityTest {
-    @Mock
+
     AuthenticateFaceResponseDataEntity data;
-    @InjectMocks
+
     AuthenticateFaceResponseEntity authenticateFaceResponseEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+      authenticateFaceResponseEntity=new AuthenticateFaceResponseEntity();
     }
 
 

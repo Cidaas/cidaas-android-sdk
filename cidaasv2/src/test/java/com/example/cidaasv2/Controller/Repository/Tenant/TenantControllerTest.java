@@ -2,30 +2,41 @@ package com.example.cidaasv2.Controller.Repository.Tenant;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoDataEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 
+import java.util.concurrent.CountDownLatch;
+
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import timber.log.Timber;
+
+import static com.example.cidaasv2.Controller.HelperClass.removeLastChar;
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class TenantControllerTest {
-    @Mock
     Context context;
-    @Mock
-    TenantController shared;
-    @InjectMocks
-    TenantController tenantController;
+
+    TenantController tenantController=new TenantController(context);
+    final CountDownLatch latch = new CountDownLatch(1);
+
 
     @Before
     public void setUp() {
+        context= RuntimeEnvironment.application;
         MockitoAnnotations.initMocks(this);
     }
 
@@ -36,8 +47,22 @@ public class TenantControllerTest {
     }
 
     @Test
-    public void testGetTenantInfoBaseurlNull() throws Exception {
+    public void testGetSharednull() throws Exception {
+        TenantController result = TenantController.getShared(null);
+        Assert.assertThat(new TenantController(null), samePropertyValuesAs(result));
+    }
 
+    @Test
+    public void testGetSharedexception() throws Exception {
+        TenantController result = TenantController.getShared(null);
+
+        Assert.assertThat(new TenantController(context), samePropertyValuesAs(result));
+       // throw new IllegalAccessException();
+    }
+
+
+    @Test
+    public void testGetTenantInfoBaseurlNull() throws Exception {
         tenantController.getTenantInfo("", new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
@@ -52,12 +77,14 @@ public class TenantControllerTest {
         });
     }
 
+
+
     @Test
     public void testGetTenantInfo() throws Exception {
-         tenantController.getTenantInfo("https://nightlybuild.cidaas.de", new Result<TenantInfoEntity>() {
+         tenantController.getTenantInfo("base", new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
-              Assert.assertTrue(result.getStatus()==00);
+              Assert.assertTrue("Failed",result.getStatus()==200);
             }
             @Override
             public void failure(WebAuthError error) {
@@ -66,6 +93,40 @@ public class TenantControllerTest {
             }
         });
     }
+
+
+
+    @Test
+    public void testGetClientInfoFail() throws Exception {
+
+        Context context= Mockito.mock(Context.class);
+
+
+        MockWebServer server = new MockWebServer();
+        String domainURL= server.url("").toString();
+        server.url("/public-srv/Clientinfo/basic");
+        server.enqueue(new MockResponse());
+
+
+        Cidaas.baseurl=domainURL;
+
+
+        tenantController.getTenantInfo("localhost:234235",  new Result<TenantInfoEntity>() {
+            @Override
+            public void success(TenantInfoEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Timber.e("Success");
+            }
+        });
+
+
+    }
+
+
 
 
 }

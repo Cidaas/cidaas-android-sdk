@@ -8,7 +8,10 @@ import java.io.Serializable;
 public class MFAListResponseDataEntity implements Serializable{
     String _id;
     String verificationType;
+/*
     MFAListDeviceEntity[] devices;
+*/
+/*
 
     public MFAListDeviceEntity[] getDevices() {
         return devices;
@@ -17,6 +20,7 @@ public class MFAListResponseDataEntity implements Serializable{
     public void setDevices(MFAListDeviceEntity[] devices) {
         this.devices = devices;
     }
+*/
 
     public String get_id() {
         return _id;

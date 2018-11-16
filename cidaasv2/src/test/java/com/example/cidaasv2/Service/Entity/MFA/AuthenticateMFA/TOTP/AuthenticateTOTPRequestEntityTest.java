@@ -4,22 +4,17 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateTOTPRequestEntityTest {
-    @Mock
-    DeviceInfoEntity deviceInfo;
-    @InjectMocks
+
+
     AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    authenticateTOTPRequestEntity=new AuthenticateTOTPRequestEntity();
     }
 
     @Test
@@ -47,14 +42,22 @@ public class AuthenticateTOTPRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateTOTPRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateTOTPRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-/*        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
+        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateTOTPRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
+
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateTOTPRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateTOTPRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
+
 
 
 }

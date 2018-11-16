@@ -92,38 +92,30 @@ public class MFAListSettingsController {
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
                 // Change service call to private
 
-                String userDeviceId= DBHelper.getShared().getUserDeviceId(baseurl);
+               // String userDeviceId="f2188f15-56ee-447a-abab-8a781039fa5f";//Todo Changed to
+                String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                VerificationSettingsService.getShared(context).getmfaList( baseurl,sub, userDeviceId,new Result<MFAListResponseEntity>() {
 
-                    @Override
-                    public void success(MFAListResponseEntity serviceresult) {
-                        result.success(serviceresult);
+                    VerificationSettingsService.getShared(context).getmfaList(baseurl, sub, userDeviceId,null, new Result<MFAListResponseEntity>() {
 
-                        MFAListResponseDataEntity[] data=serviceresult.getData();
-                        PhysicalVerificationEntity physicalVerificationEntity=new PhysicalVerificationEntity();
-
-                        for (MFAListResponseDataEntity mfaList:data
-                                ) {
-                            if(mfaList.getVerificationType().equals("EMAIL")) {
-
-                                //Todo move to button Click
-                                physicalVerificationEntity.setUserDeviceId(mfaList.get_id());
-
-                                if(mfaList.get_id()!=null)
-                                {
-                                    DBHelper.getShared().setUserDeviceId(mfaList.get_id(),baseurl);
-                                }
-                            }
+                        @Override
+                        public void success(MFAListResponseEntity serviceresult) {
+                            result.success(serviceresult);
                         }
-                    }
 
-                    @Override
-                    public void failure(WebAuthError error) {
+                        @Override
+                        public void failure(WebAuthError error) {
 
-                        result.failure(error);
-                    }
-                });
+                            result.failure(error);
+                        }
+                    });
+                /*}
+                else
+                {
+                    String errorMessae="UserDeviceID must not be empty ";
+
+                    result.failure(WebAuthError.getShared(context).customException(417,errorMessae,417));
+                }*/
             }
             else
             {

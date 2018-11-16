@@ -4,26 +4,22 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class AuthenticateVoiceRequestEntityTest {
-    @Mock
-    DeviceInfoEntity deviceInfo;
-    @Mock
+
+
+
     File voiceFile;
-    @InjectMocks
+
     AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+       authenticateVoiceRequestEntity=new AuthenticateVoiceRequestEntity();
     }
 
     @Test
@@ -52,16 +48,21 @@ public class AuthenticateVoiceRequestEntityTest {
         deviceInfoEntity.setDeviceModel("deviceModel");
         deviceInfoEntity.setDeviceVersion("deviceVersion");
 
-        authenticateVoiceRequestEntity.setDeviceInfo(deviceInfo);
+        authenticateVoiceRequestEntity.setDeviceInfo(deviceInfoEntity);
 
-        //assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));4
-        /*
+        assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceId().equals("deviceID"));
         assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceMake().equals("deviceMake"));
         assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceModel().equals("deviceModel"));
         assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceVersion().equals("deviceVersion"));
-        assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));*/
+        assertTrue(authenticateVoiceRequestEntity.getDeviceInfo().getPushNotificationId().equals("push"));
     }
 
+    @Test
+    public void getUserDeviceId()
+    {
+        authenticateVoiceRequestEntity.setUserDeviceId("UserDeveiceId");
+        assertTrue(authenticateVoiceRequestEntity.getUserDeviceId().equals("UserDeveiceId"));
+    }
 
 }
 

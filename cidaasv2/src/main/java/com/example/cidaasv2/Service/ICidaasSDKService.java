@@ -6,9 +6,20 @@ import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementResponseEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
-import com.example.cidaasv2.Service.Entity.Deduplication.LoginDeduplication.LoginDeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailRequestEntity;
@@ -28,15 +39,7 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
-import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementResponseEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.BackupCode.EnrollBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.BackupCode.EnrollBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFARequestEntity;
@@ -56,7 +59,6 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPu
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFAResponseEntity;
@@ -80,20 +82,17 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFAR
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeRequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFAResponseEntity;
@@ -104,6 +103,18 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeRequestEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
+import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
+import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
+import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceRequestEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
@@ -112,17 +123,6 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
-import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
-import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
-import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
@@ -131,6 +131,7 @@ import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
@@ -163,6 +164,11 @@ public interface ICidaasSDKService {
     Call<AccessTokenEntity> getAccessTokenByRefreshToken(@Url String url,
                                                        @HeaderMap Map<String,String>headers,
                                                        @FieldMap(encoded = true) Map<String, String> params);
+
+
+    @GET
+    Call<SocialProviderEntity> getAccessTokenBySocial(@Url String url);
+
 
     //Todo Add FieldMap Pending
    // @FormUrlEncoded
@@ -227,7 +233,7 @@ public interface ICidaasSDKService {
 
     //Setup IVR MFA
     @POST
-    Call<SetupIVRMFAResponseEntity> setupIVRMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfoEntity);
+    Call<SetupIVRMFAResponseEntity> setupIVRMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupIVRMFARequestEntity setupIVRMFARequestEntity);
 
     //Enroll IVR MFA
     @POST
@@ -262,11 +268,13 @@ public interface ICidaasSDKService {
 
     //Setup Face MFA
     @POST
-    Call<SetupFaceMFAResponseEntity> setupFaceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupFaceMFARequestEntity setupFaceMFARequestEntity);
+    Call<SetupFaceMFAResponseEntity> setupFaceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                  @Body SetupFaceMFARequestEntity setupFaceMFARequestEntity);
 
     //Enroll Face MFA
-    @POST
+
     @Multipart
+    @POST
     Call<EnrollFaceMFAResponseEntity> enrollFaceMFA(@Url String url, @HeaderMap Map<String,String>headers,
                                                     @Part MultipartBody.Part face,
                                                     @PartMap() HashMap<String, RequestBody> map);
@@ -274,7 +282,8 @@ public interface ICidaasSDKService {
 
     //Inititate Face MFA
     @POST
-    Call<InitiateFaceMFAResponseEntity> initiateFaceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateFaceMFARequestEntity initiateFaceMFARequestEntity);
+    Call<InitiateFaceMFAResponseEntity> initiateFaceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                        @Body InitiateFaceMFARequestEntity initiateFaceMFARequestEntity);
 
     //Authenticate Face MFA
     @POST
@@ -282,7 +291,35 @@ public interface ICidaasSDKService {
     Call<AuthenticateFaceResponseEntity> authenticateFaceMFA(@Url String url,
                                                              @HeaderMap Map<String,String>headers,
                                                              @Part MultipartBody.Part face,
-                                                             @PartMap() HashMap<String, String> map);
+                                                             @PartMap() HashMap<String, RequestBody> map);
+
+
+
+    //Setup Voice MFA
+    @POST
+    Call<SetupVoiceMFAResponseEntity> setupVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                    @Body SetupVoiceMFARequestEntity setupVoiceMFARequestEntity);
+
+    //Enroll Voice MFA
+    @POST
+    @Multipart
+    Call<EnrollVoiceMFAResponseEntity> enrollVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                      @Part MultipartBody.Part audio,
+                                                      @PartMap() HashMap<String, RequestBody> map);
+
+
+    //Inititate Voice MFA
+    @POST
+    Call<InitiateVoiceMFAResponseEntity> initiateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                          @Body InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity);
+
+    //Authenticate Voice MFA
+    @Multipart
+    @POST
+    Call<AuthenticateVoiceResponseEntity> authenticateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                               @Part MultipartBody.Part voice,
+                                                               @PartMap() HashMap<String, RequestBody> map);
+
 
     //Setup FIDO MFA
     @POST
@@ -359,6 +396,10 @@ public interface ICidaasSDKService {
     @POST
     Call<InitiateSmartPushMFAResponseEntity> initiateSmartPushMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity);
 
+    //Inititate SmartPush MFA
+    @POST
+    Call<ResponseBody> initiateSmartPushMFARAW(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity);
+
     //Authenticate SmartPush MFA
     @POST
     Call<AuthenticateSmartPushResponseEntity> authenticateSmartPushMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity);
@@ -380,22 +421,6 @@ public interface ICidaasSDKService {
     @POST
     Call<AuthenticateTOTPResponseEntity> authenticateTOTPMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity);
 
-    //Setup Voice MFA
-    @POST
-    Call<SetupVoiceMFAResponseEntity> setupVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupVoiceMFARequestEntity setupVoiceMFARequestEntity);
-
-    //Enroll Voice MFA
-    @POST
-    Call<EnrollVoiceMFAResponseEntity> enrollVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity);
-
-
-    //Inititate Voice MFA
-    @POST
-    Call<InitiateVoiceMFAResponseEntity> initiateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity);
-
-    //Authenticate Voice MFA
-    @POST
-    Call<AuthenticateVoiceResponseEntity> authenticateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity);
 
 
     //Reset Password
@@ -410,7 +435,7 @@ public interface ICidaasSDKService {
     //Reset New Password
     @POST
     Call<ResetNewPasswordResponseEntity> ResetNewPassword(@Url String url, @HeaderMap Map<String,String>headers,
-                                                        @Body ResetNewPasswordRequestEntity resetNewPasswordRequestEntity);
+                                                        @Body ResetPasswordEntity resetPasswordEntity);
 
     //Change Password
     @POST
@@ -436,7 +461,16 @@ public interface ICidaasSDKService {
 
     //Login with Credentials
     @POST
-    Call<LoginDeduplicationResponseEntity> logindeDuplicatopm(@Url String url, @HeaderMap Map<String,String>headers, @Body LoginEntity loginCredentialsRequestEntity);
+    Call<LoginCredentialsResponseEntity> logindeDuplicatopm(@Url String url, @HeaderMap Map<String,String>headers, @Body LoginEntity loginCredentialsRequestEntity);
+
+
+
+
+    //Enroll Face MFA
+    @POST
+    @Multipart
+    Call<DocumentScannerServiceResultEntity> enrollDocument(@Url String url, @Part MultipartBody.Part face);
+
 
 
 
@@ -469,7 +503,8 @@ public interface ICidaasSDKService {
 
     //Get MFA list
     @GET
-    Call<MFAListResponseEntity> getmfaList(@Url String url, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId);
+    Call<MFAListResponseEntity> getmfaList(@Url String url, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId, @Query("common_configs") boolean common_configs);
+
 
     //Get ConsentInfo
     @GET

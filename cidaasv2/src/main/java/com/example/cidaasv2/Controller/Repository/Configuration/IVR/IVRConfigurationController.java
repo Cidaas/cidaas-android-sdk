@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
@@ -21,6 +22,8 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARespons
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.UserinfoEntity;
+import com.example.cidaasv2.Service.Repository.UserProfile.UserProfileService;
 import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 
@@ -85,19 +88,39 @@ public class IVRConfigurationController {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
                         //Todo Service call
-                        IVRVerificationService.getShared(context).setupIVRMFA(baseurl, accessTokenresult.getAccess_token(),
-                                new Result<SetupIVRMFAResponseEntity>()
-                                {
-                                    @Override
-                                    public void success(SetupIVRMFAResponseEntity serviceresult) {
-                                        result.success(serviceresult);
-                                    }
 
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        result.failure(error);
-                                    }
-                                });
+                        UserProfileController.getShared(context).getUserProfile(accessTokenresult.getAccess_token(), baseurl, new Result<UserinfoEntity>() {
+                            @Override
+                            public void success(UserinfoEntity userresult) {
+
+                                if(userresult.getMobile_number()!=null && userresult.getMobile_number()!="") {
+
+                                    //Done add phone number
+                                    IVRVerificationService.getShared(context).setupIVRMFA(baseurl, accessTokenresult.getAccess_token(), userresult.getMobile_number(), null,
+                                            new Result<SetupIVRMFAResponseEntity>() {
+                                                @Override
+                                                public void success(SetupIVRMFAResponseEntity serviceresult) {
+                                                    result.success(serviceresult);
+                                                }
+
+                                                @Override
+                                                public void failure(WebAuthError error) {
+                                                    result.failure(error);
+                                                }
+                                            });
+                                }
+                                else
+                                {
+                                    result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,"Mobile number must not be null",HttpStatusCode.EXPECTATION_FAILED));
+                                }
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+
                     }
 
                     @Override
@@ -122,11 +145,12 @@ public class IVRConfigurationController {
     public void enrollIVRMFA(@NonNull final String code,String StatusId,@NonNull final String baseurl, @NonNull final Result<EnrollIVRMFAResponseEntity> result)
     {
         try{
-
-            if(Sub!="" && StatusId!="")
+          //Problem may occur due to sub
+            if(Sub!="" && StatusId!="" && Sub!=null && StatusId!=null)
             {
                 final EnrollIVRMFARequestEntity enrollIVRMFARequestEntity=new EnrollIVRMFARequestEntity();
                 enrollIVRMFARequestEntity.setCode(code);
+                enrollIVRMFARequestEntity.setSub(Sub);
                 enrollIVRMFARequestEntity.setStatusId(StatusId);
 
                 AccessTokenController.getShared(context).getAccessToken(Sub, new Result<AccessTokenEntity>() {
@@ -137,7 +161,7 @@ public class IVRConfigurationController {
                                 baseurl != null && !baseurl.equals("") && accessresult.getAccess_token() != null && !accessresult.getAccess_token().equals(""))
                         {
                             //Done Service call
-                            IVRVerificationService.getShared(context).enrollIVRMFA(baseurl, accessresult.getAccess_token(), enrollIVRMFARequestEntity,
+                            IVRVerificationService.getShared(context).enrollIVRMFA(baseurl, accessresult.getAccess_token(), enrollIVRMFARequestEntity,null,
                                     new Result<EnrollIVRMFAResponseEntity>() {
                                         @Override
                                         public void success(EnrollIVRMFAResponseEntity serviceresult) {
@@ -161,6 +185,10 @@ public class IVRConfigurationController {
                         result.failure(error);
                     }
                 });
+            }
+            else
+            {
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,"Sub or statusID must not be null",HttpStatusCode.BAD_REQUEST));
             }
 
 
@@ -190,7 +218,7 @@ public class IVRConfigurationController {
                     initiateIVRMFARequestEntity.getVerificationType() != null && initiateIVRMFARequestEntity.getVerificationType() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                IVRVerificationService.getShared(context).initiateIVRMFA(baseurl, initiateIVRMFARequestEntity, new Result<InitiateIVRMFAResponseEntity>() {
+                IVRVerificationService.getShared(context).initiateIVRMFA(baseurl, initiateIVRMFARequestEntity, null,new Result<InitiateIVRMFAResponseEntity>() {
                     @Override
                     public void success(InitiateIVRMFAResponseEntity serviceresult) {
                         result.success(serviceresult);
@@ -226,7 +254,7 @@ public class IVRConfigurationController {
             if(authenticateIVRRequestEntity.getStatusId()!=null && authenticateIVRRequestEntity.getStatusId()!="") {
                 if ( baseurl != null && !baseurl.equals("")) {
                     //Todo Service call
-                    IVRVerificationService.getShared(context).authenticateIVRMFA(baseurl, authenticateIVRRequestEntity, new Result<AuthenticateIVRResponseEntity>() {
+                    IVRVerificationService.getShared(context).authenticateIVRMFA(baseurl, authenticateIVRRequestEntity, null,new Result<AuthenticateIVRResponseEntity>() {
                         @Override
                         public void success(AuthenticateIVRResponseEntity serviceresult) {
 

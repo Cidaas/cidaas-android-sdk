@@ -37,6 +37,4 @@ public class LoginCredentialsResponseEntity implements Serializable {
     private int status;
     private AccessTokenEntity data;
 
-
-
 }
