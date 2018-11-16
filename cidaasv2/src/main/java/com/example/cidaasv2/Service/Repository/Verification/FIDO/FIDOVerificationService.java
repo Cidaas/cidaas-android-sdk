@@ -72,7 +72,7 @@ public class FIDOVerificationService {
                         context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
-
+get
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
             DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();

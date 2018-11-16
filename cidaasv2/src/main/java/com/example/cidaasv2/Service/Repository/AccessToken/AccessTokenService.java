@@ -290,6 +290,12 @@ public class AccessTokenService {
             }
 
 
+            if(challengeProperties.get("Verifier")==null)
+            {
+                challengeProperties.put("Verifier","");
+            }
+
+
             //Add Body Parameter
             //TODO generate Body Parameter
             querymap.put("grant_type", "refresh_token");
