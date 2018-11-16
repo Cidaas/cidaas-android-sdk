@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
 
     public void documentScanner(View view)
     {
-        cidaas.startDocumentScanner(this);
+      //  cidaas.startDocumentScanner(this);
 
     }
 
@@ -275,26 +275,5 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        cidaas.onActivityResult(requestCode, resultCode, data, new Result<File>() {
-            @Override
-            public void success(File result) {
-                cidaas.VerifyDocument(result, new Result<DocumentScannerServiceResultEntity>() {
-                    @Override
-                    public void success(DocumentScannerServiceResultEntity result) {
-                        Toast.makeText(MainActivity.this, "HI "+result.getData().getName(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

@@ -1,13 +1,11 @@
 package com.example.cidaasv2.Controller;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
@@ -153,13 +151,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import io.card.payment.CardIOActivity;
 import timber.log.Timber;
 
-import static android.content.Context.KEYGUARD_SERVICE;
 import static android.os.Build.MODEL;
 import static android.os.Build.VERSION;
-import static io.card.payment.CardIOActivity.RESULT_SCAN_SUPPRESSED;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -2681,7 +2676,7 @@ public class Cidaas implements IOAuthWebLogin {
     //-----------------Scan the ID card----------------------------------------------------------------------------------
 
 
-    public void startDocumentScanner(Activity activity) {
+ /*   public void startDocumentScanner(Activity activity) {
         Intent scanIntent = new Intent(context, CardIOActivity.class);
         scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_SCAN, true); // supmit cuando termine de reconocer el documento
         scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, true); // esconder teclado
@@ -2692,10 +2687,11 @@ public class Cidaas implements IOAuthWebLogin {
         // laszar activity
         activity.startActivityForResult(scanIntent, MY_SCAN_REQUEST_CODE);
 
-    }
+    }*/
 
 
 
+/*
 
     public void onActivityResult(int requestCode, int resultCode, Intent data, Result<File> result) {
 
@@ -2726,6 +2722,7 @@ public class Cidaas implements IOAuthWebLogin {
             result.failure(new WebAuthError(context).customException(401, "Bad document or no document", 417));
         }
     }
+*/
 
     // ****** LOGIN WITH Document *****-------------------------------------------------------------------------------------------------------
 

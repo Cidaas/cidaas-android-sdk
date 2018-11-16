@@ -20,6 +20,7 @@ android {
     }
     buildTypes {
         release {
+
             minifyEnabled false
             //testCoverageEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -87,8 +88,8 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
 
 
-    ///For ID card Scannner
-    compile 'io.card:android-sdk:5.5.1'
+    /*///For ID card Scannner
+    compile 'io.card:android-sdk:5.5.1'*/
 
 
 
