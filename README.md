@@ -30,7 +30,7 @@ allprojects {
  Add the dependency to app module
  ```java
 dependencies {
- implementation 'com.github.Cidaas:cidaas-v2-sdk-android:0.0.0.6'
+ implementation 'com.github.Cidaas:cidaas-v2-sdk-android:1.0.0'
 }
  ```
  ## Getting started
