@@ -25,7 +25,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             //Toast.makeText(this, "Success"+remoteMessage.getMessageType(), Toast.LENGTH_SHORT).show();
             Cidaas cidaas=new Cidaas(this);
-            if(remoteMessage.getData().get("intermediate_verifiation_id")!=null && remoteMessage.getData().get("intermediate_verifiation_id")!="") {
+            if(remoteMessage.getData().get("usage_pass")!=null && remoteMessage.getData().get("usage_pass")!="") {
                 cidaas.setremoteMessage(remoteMessage.getData());
 
 

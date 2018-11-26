@@ -83,11 +83,14 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeletePatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
@@ -141,6 +144,8 @@ import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.Fingerpr
 import com.example.cidaasv2.Service.Repository.Verification.Pattern.PatternVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -332,8 +337,8 @@ public class Cidaas implements IOAuthWebLogin {
     //Get the remote messages from the Push notification
     public static void setremoteMessage(Map<String, String> instanceIdFromPush) {
         try {
-            if (instanceIdFromPush.get("intermediate_verifiation_id") != null && instanceIdFromPush.get("intermediate_verifiation_id") != "") {
-                instanceId = instanceIdFromPush.get("intermediate_verifiation_id");
+            if (instanceIdFromPush.get("usage_pass") != null && instanceIdFromPush.get("usage_pass") != "") {
+                instanceId = instanceIdFromPush.get("usage_pass");
             } else {
                 instanceId = "";
             }
@@ -1364,7 +1369,8 @@ public class Cidaas implements IOAuthWebLogin {
 
     @Override
     public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,@NonNull final String logoURL,
-                                            final Result<EnrollPatternMFAResponseEntity> enrollresult) {
+                                            final Result<EnrollPatternMFAResponseEntity> enrollresult)
+    {
         try {
 
 
@@ -1399,19 +1405,91 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
+
                     enrollresult.failure(error);
                 }
             });
 
         } catch (Exception e) {
             LogFile.addRecordToLog("Configure Pattern exception" + e.getMessage());
-
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure Pattern exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure Pattern exception" + e.getMessage());
         }
 
 
     }
 
+
+
+    public void enrollPattern(@NonNull final String patternString, @NonNull final String accessToken,@NonNull final String statusId,  final Result<EnrollPatternMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String userDeviceId=result.get("userDeviceId");
+
+                    EnrollPatternMFARequestEntity enrollPatternMFARequestEntity=new EnrollPatternMFARequestEntity();
+                    enrollPatternMFARequestEntity.setVerifierPassword(patternString);
+                    enrollPatternMFARequestEntity.setStatusId(statusId);
+                    enrollPatternMFARequestEntity.setUserDeviceId(userDeviceId);
+
+
+                    PatternConfigurationController.getShared(context).enrollPattern(baseurl,accessToken,enrollPatternMFARequestEntity,enrollResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                   enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll Pattern exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Pattern exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Pattern exception" + e.getMessage());
+        }
+    }
+
+    public void scannedPattern(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+      try
+      {
+
+          checkSavedProperties(new Result<Dictionary<String, String>>() {
+              @Override
+              public void success(Dictionary<String, String> result) {
+
+                  String baseurl = result.get("DomainURL");
+                  String clientId=result.get("ClientId");
+                  String userDeviceId=result.get("userDeviceId");
+
+
+                  PatternConfigurationController.getShared(context).scannedWithPattern(baseurl,statusId,clientId,scannedResult);
+              }
+
+              @Override
+              public void failure(WebAuthError error) {
+                  scannedResult.failure(error);
+              }
+          });
+
+      }
+      catch (Exception e)
+      {
+          LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
+          scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
+                  HttpStatusCode.EXPECTATION_FAILED));
+          Timber.e("Scanned Pattern exception" + e.getMessage());
+      }
+    }
 
     //Todo login with pattern by Passing the pattern String Directly
     // 1. Todo Check For Local Variable or Read properties from file
@@ -1501,7 +1579,8 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void verifyPattern(final String patternString, final String statusId, final Result<AuthenticatePatternResponseEntity> result) {
+    public void verifyPattern(final String patternString, final String statusId, final Result<AuthenticatePatternResponseEntity> result)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -1530,6 +1609,10 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+
+
+
+
 
     // ****** TODO LOGIN WITH FACE *****-------------------------------------------------------------------------------------------------------
 
@@ -2218,7 +2301,8 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configureSmartPush(final String sub,@NonNull final String logoURL, final Result<EnrollSmartPushMFAResponseEntity> enrollresult) {
+    public void configureSmartPush(final String sub,@NonNull final String logoURL, final Result<EnrollSmartPushMFAResponseEntity> enrollresult)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2261,6 +2345,17 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
+    public void enrollSmartPush()
+    {
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
 
     @Override
     public void loginWithSmartPush(final PasswordlessEntity passwordlessEntity,
@@ -2671,6 +2766,68 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+
+
+
+
+
+    //---------------------------------------DELETE CALL-------------------------------------------------------------------------------------------------
+
+
+
+
+    //Delete call
+    public void delete(@NonNull final String verificationType, final Result<DeleteMFAResponseEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    String userDeviceId="";
+
+                    String typeOfVerification="";
+
+                    if(verificationType!=null && verificationType!="") {
+
+                         typeOfVerification = verificationType.toUpperCase();
+                    }
+                    else
+                    {
+                        result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"Verification Type must not be empty",HttpStatusCode.BAD_REQUEST));
+
+                    }
+
+                    if(lpresult.get("userDeviceId")!=null && lpresult.get("userDeviceId")!="")
+                    {
+                        userDeviceId=lpresult.get("userDeviceId");
+
+                        MFAListSettingsController.getShared(context).deleteMFA(baseurl,userDeviceId,typeOfVerification,result);
+                    }
+                    else
+                    {
+                        result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.e("Faliure in delete service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+
+
 
 
     //-----------------Scan the ID card----------------------------------------------------------------------------------
@@ -3399,6 +3556,8 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+
+
     //----------------------------------------------------------------------------------------------------------------------------------------
 
     //Todo change to Sub and Identity id
@@ -3971,6 +4130,8 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
+
+
                 }
 
                 @Override
@@ -4034,7 +4195,7 @@ public class Cidaas implements IOAuthWebLogin {
                 Cidaas.baseurl=DomainURL;
 
 
-                if(loginproperties.get("userDeviceId")!=null) {
+                if(loginproperties.get("userDeviceId")!=null && loginproperties.get("userDeviceId")!="") {
                     String userDeviceId = loginproperties.get("userDeviceId");
                     DBHelper.getShared().setUserDeviceId(userDeviceId, DomainURL);
                 }

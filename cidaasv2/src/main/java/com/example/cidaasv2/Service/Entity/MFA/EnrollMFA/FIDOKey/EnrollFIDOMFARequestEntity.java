@@ -10,7 +10,17 @@ public class EnrollFIDOMFARequestEntity implements Serializable{
     String statusId;
     String verifierPassword;
     String sub;
+    String userDeviceId;
     DeviceInfoEntity deviceInfo;
+
+
+    public String getUserDeviceId() {
+        return userDeviceId;
+    }
+
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
+    }
 
     public String getSub() {
         return sub;

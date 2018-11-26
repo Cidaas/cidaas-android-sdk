@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -67,7 +68,7 @@
         <activity android:name=".EnrollMFA.EnrollPattern" />
         <activity android:name=".EnrollMFA.EnrollFace" />
         <activity android:name=".EnrollMFA.FaceDetection" />
-        <activity android:name=".IVRConfigActivity"></activity>
+        <activity android:name=".IVRConfigActivity" />
     </application>
 
 </manifest>

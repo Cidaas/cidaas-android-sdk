@@ -10,7 +10,25 @@ public class AuthenticateFIDORequestEntity implements Serializable {
 
     String statusId;
     String code;
+    String userDeviceId;
+    String verifierPassword;
     DeviceInfoEntity deviceInfo;
+
+    public String getUserDeviceId() {
+        return userDeviceId;
+    }
+
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
+    }
+
+    public String getVerifierPassword() {
+        return verifierPassword;
+    }
+
+    public void setVerifierPassword(String verifierPassword) {
+        this.verifierPassword = verifierPassword;
+    }
 
     public String getStatusId() {
         return statusId;

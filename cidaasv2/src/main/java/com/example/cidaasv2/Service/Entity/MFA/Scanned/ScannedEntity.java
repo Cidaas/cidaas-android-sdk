@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class ScannedEntity implements Serializable{
     String usage_pass;
     String statusId;
+    String client_id;
     DeviceInfoEntity deviceInfo;
 
     public String getUsage_pass() {

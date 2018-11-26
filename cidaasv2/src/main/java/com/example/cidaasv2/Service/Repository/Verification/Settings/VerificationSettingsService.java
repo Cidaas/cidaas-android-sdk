@@ -13,6 +13,7 @@ import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
+import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -176,6 +177,123 @@ public class VerificationSettingsService {
 
                 @Override
                 public void onFailure(Call<MFAListResponseEntity> call, Throwable t) {
+                    Timber.e("Faliure in Request id service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null,null));
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.d(e.getMessage());
+
+
+
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+    }
+
+
+
+    public void deleteMFA(String baseurl,String userDeviceID,String verificationType,DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
+    {
+        //Local Variables
+        String deleteMFAURL = "";
+        try{
+
+            if(baseurl!=null && baseurl!=""){
+
+                //Construct URL For RequestId
+                if(userDeviceID!=null && userDeviceID!=""){
+
+                    //Delete MFA
+                    deleteMFAURL=baseurl+ URLHelper.getShared().getDeleteMFA(userDeviceID,verificationType);
+                }
+                else {
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_MFA_FAILURE,context.getString(R.string.USER_DEVICE_ID_FAILURE),
+                            400,null,null));
+                    return;
+                }
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_MFA_FAILURE,context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        400,null,null));
+                return;
+            }
+
+
+            if(userDeviceID.equals("")) {
+
+                DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+                //This is only for testing purpose
+                if(deviceInfoEntityFromParam==null) {
+                    deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                }
+                else if(deviceInfoEntityFromParam!=null)
+                {
+                    deviceInfoEntity=deviceInfoEntityFromParam;
+                }
+
+                userDeviceID=deviceInfoEntity.getDeviceId();
+            }
+            else {
+
+            }
+
+            //Call Service-getRequestId
+            ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.delete(deleteMFAURL,userDeviceID).enqueue(new Callback<DeleteMFAResponseEntity>() {
+                @Override
+                public void onResponse(Call<DeleteMFAResponseEntity> call, Response<DeleteMFAResponseEntity> response) {
+                    if (response.isSuccessful()) {
+                        if(response.code()==200) {
+                            callback.success(response.body());
+                        }
+                        else {
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_MFA_FAILURE,
+                                    "Service failure but successful response" ,response.code(),null,null));
+                        }
+                    }
+                    else {
+                        assert response.errorBody() != null;
+                        try {
+
+                            //Todo Handle proper error message
+                            String errorResponse=response.errorBody().source().readByteString().utf8();
+
+                            CommonErrorEntity commonErrorEntity;
+                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+
+                            String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
+                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                errorMessage=commonErrorEntity.getError().toString();
+                            }
+                            else
+                            {
+                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                            }
+
+
+
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
+                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Timber.e("response"+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<DeleteMFAResponseEntity> call, Throwable t) {
                     Timber.e("Faliure in Request id service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null,null));
 

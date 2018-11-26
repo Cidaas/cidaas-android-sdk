@@ -9,7 +9,16 @@ public class ScannedRequestEntity implements Serializable {
     String usage_pass;
     DeviceInfoEntity deviceInfo;
     String statusId;
+    String client_id;
 
+
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
+    }
 
     public String getUsage_pass() {
         return usage_pass;

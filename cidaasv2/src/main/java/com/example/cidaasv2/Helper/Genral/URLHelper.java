@@ -30,63 +30,78 @@ public class URLHelper {
     String request_id_url="/authz-srv/authrequest/authz/generate";
 
     String consent_url= "/consent-management-srv/tenant/version/pageurl?consent_name=";
-    String consent_details="/consent-management-srv/settings/public?name=";
 
+    String consent_details="/consent-management-srv/settings/public?name=";
     String  acceptConsent="/consent-management-srv/user/status";
+
     String loginWithCredentials="/login-srv/login/sdk";
     String registrationSetup="/registration-setup-srv/public/list?acceptlanguage=";
+
     String clientUrl="/public-srv/public/";
     String tenantUrl="/public-srv/tenantinfo/basic";
     String registerNewUserurl="/users-srv/register";
 
     String mfa_URL="/verification-srv/settings/list?sub=";
     String mfaList="/verification-srv/settings/listbydeviceid";
+    String deleteMFA="verification-srv/settings/delete/";
 
     String setupEmailMFA="/verification-srv/email/setup";
     String enrollEmailMFA="/verification-srv/email/enroll";
     String initiateemailMFA="/verification-srv/email/initiate";
     String authenticateemailMFA="/verification-srv/email/authenticate";
+
+
     String setupSMSMFA="/verification-srv/sms/setup";
     String enrollSMSMFA="/verification-srv/sms/enroll";
     String initiateSMSMFA="/verification-srv/sms/initiate";
     String authenticateSMSMFA="/verification-srv/sms/authenticate";
+
     String setupIVRMFA="/verification-srv/ivr/setup";
     String enrollIVRMFA="/verification-srv/ivr/enroll";
     String initiateIVRMFA="/verification-srv/ivr/initiate";
     String authenticateIVRMFA="/verification-srv/ivr/authenticate";
+
     String setupBackupCodeMFA="/verification-srv/backupcode/setup";
     String enrollBackupCodeMFA="/verification-srv/backupcode/enroll";
     String initiateBackupCodeMFA="/verification-srv/backupcode/initiate";
     String authenticateBackupCodeMFA="/verification-srv/backupcode/authenticate";
+
     String setupFaceMFA="/verification-srv/face/setup";
     String enrollFaceMFA="/verification-srv/face/enroll";
     String initiateFaceMFA="/verification-srv/face/initiate";
     String authenticateFaceMFA="/verification-srv/face/authenticate";
+
     String setupFingerprintMFA="/verification-srv/touchid/setup";
     String enrollFingerprintMFA="/verification-srv/touchid/enroll";
     String initiateFingerprintMFA="/verification-srv/touchid/initiate";
     String authenticateFingerprintMFA="/verification-srv/touchid/authenticate";
+
     String setupFIDOMFA="/verification-srv/fidou2f/setup";
     String enrollFIDOMFA="/verification-srv/fidou2f/enroll";
     String initiateFIDOMFA="/verification-srv/fidou2f/initiate";
     String authenticateFIDOMFA="/verification-srv/fidou2f/authenticate";
+
     String setupPatternMFA="/verification-srv/pattern/setup";
     String enrollPatternMFA="/verification-srv/pattern/enroll";
     String initiatePatternMFA="/verification-srv/pattern/initiate";
     String authenticatePatternMFA="/verification-srv/pattern/authenticate";
+
     String setupSmartPushMFA="/verification-srv/push/setup";
     String enrollSmartPushMFA="/verification-srv/push/enroll";
     String initiateSmartPushMFA="/verification-srv/push/initiate";
     String authenticateSmartPushMFA="/verification-srv/push/authenticate";
+
     String setupTOTPMFA="/verification-srv/totp/setup";
     String enrollTOTPMFA="/verification-srv/totp/enroll";
     String initiateTOTPMFA="/verification-srv/totp/initiate";
     String authenticateTOTPMFA="/verification-srv/totp/authenticate";
-    String setupVoiceMFA="/verification-srv/voice/setup";
 
+    String setupVoiceMFA="/verification-srv/voice/setup";
     String enrollVoiceMFA="/verification-srv/voice/enroll";
     String initiateVoiceMFA="/verification-srv/voice/initiate";
     String authenticateVoiceMFA="/verification-srv/voice/authenticate";
+
+
     String initiateResetPassword="/users-srv/resetpassword/initiate";
     String ResetPasswordValidateCode="/users-srv/resetpassword/validatecode";
     String ResetNewPasswordURl="/users-srv/resetpassword/accept";
@@ -122,6 +137,57 @@ public class URLHelper {
     String registerdeduplication="/users-srv/deduplication/register/";
 
     String documentScanner="/access-control-srv/ocr/validate";
+
+
+    public String getDeleteMFA(String userDeviceId,String verificationType) {
+        return deleteMFA+userDeviceId+"/"+verificationType;
+    }
+
+    public String getDeleteEmailMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/EMAIL";
+    }
+
+    public String getDeleteSMSMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/SMS";
+    }
+
+    public String getDeleteIVRMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/IVR";
+    }
+
+    public String getDeleteBackupcodeMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/BACKUPCODE";
+    }
+
+    public String getDeletePatternMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/PATTERN";
+    }
+    public String getDeleteFingerprintMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/TOUCHID";
+    }
+    public String getDeleteSmartPushMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/PUSH";
+    }
+    public String getDeleteFaceMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/FACE";
+    }
+
+    public String getDeleteVoiceMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/VOICE";
+    }
+
+
+    public String getDeleteFIDOMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/FIDOU2F";
+    }
+
+    public String getDeleteTOTPMFA(String userDeviceId) {
+        return deleteMFA+userDeviceId+"/TOTP";
+    }
+
+
+
+
 
 
     public String getPreAuthCode() {

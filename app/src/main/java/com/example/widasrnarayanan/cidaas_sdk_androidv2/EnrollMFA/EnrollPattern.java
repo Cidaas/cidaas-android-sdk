@@ -105,8 +105,9 @@ public class EnrollPattern extends AppCompatActivity {
 
 
 
+
     public void SetupPattern(View view){
-        cidaas.configurePatternRecognition("RED[1,2,3,4]",sub,null,new Result<EnrollPatternMFAResponseEntity>() {
+        cidaas.configurePatternRecognition("RED[1,2,3,4]",sub,"",new Result<EnrollPatternMFAResponseEntity>() {
             @Override
             public void success(EnrollPatternMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Success Pattern", Toast.LENGTH_SHORT).show();

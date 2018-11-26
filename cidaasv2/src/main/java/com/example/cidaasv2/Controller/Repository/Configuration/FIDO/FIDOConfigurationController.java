@@ -1,8 +1,31 @@
 package com.example.cidaasv2.Controller.Repository.Configuration.FIDO;
 
 import android.content.Context;
+import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 
+import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
+import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDORequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDOResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
+import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.FIDO.FIDOVerificationService;
+import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import timber.log.Timber;
 
@@ -60,11 +83,10 @@ public class FIDOConfigurationController {
     // 4.  Maintain logs based on flags
 
 
-/*
     //Service call To SetupFIDOMFA
     public void configureFIDO(@NonNull final String sub, @NonNull final String baseurl, @NonNull final String FIDOString,
-                                 @NonNull final SetupFIDOMFARequestEntity setupFIDOMFARequestEntity,
-                                 @NonNull final Result<EnrollFIDOMFAResponseEntity> enrollresult)
+                              @NonNull final SetupFIDOMFARequestEntity setupFIDOMFARequestEntity,
+                              @NonNull final Result<EnrollFIDOMFAResponseEntity> enrollresult)
     {
         try{
             //Generate Challenge
@@ -81,7 +103,7 @@ public class FIDOConfigurationController {
                     {
                         //Todo Service call
 
-                        FIDOVerificationService.getShared(context).setupFIDO(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupFIDOMFARequestEntity,new Result<SetupFIDOMFAResponseEntity>() {
+                        FIDOVerificationService.getShared(context).setupFIDOMFA(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupFIDOMFARequestEntity,null,new Result<SetupFIDOMFAResponseEntity>() {
                             @Override
                             public void success(final SetupFIDOMFAResponseEntity setupserviceresult) {
 
@@ -102,7 +124,7 @@ public class FIDOConfigurationController {
                                         if(instceID!=null && instceID!="" && setupserviceresult.getData().getStatusId()!=null && setupserviceresult.getData().getStatusId()!="")
                                         {
                                             //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
+                                            DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier,null
                                                     , new Result<ValidateDeviceResponseEntity>() {
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
@@ -127,7 +149,7 @@ public class FIDOConfigurationController {
                                                                             }
 
                                                                             // call Enroll Service
-                                                                            FIDOVerificationService.getShared(context).enrollFIDO(baseurl, accessTokenresult.getAccess_token(), enrollFIDOMFARequestEntity,new Result<EnrollFIDOMFAResponseEntity>() {
+                                                                            FIDOVerificationService.getShared(context).enrollFIDOMFA(baseurl, accessTokenresult.getAccess_token(), enrollFIDOMFARequestEntity,new Result<EnrollFIDOMFAResponseEntity>() {
                                                                                 @Override
                                                                                 public void success(EnrollFIDOMFAResponseEntity serviceresult) {
                                                                                     enrollresult.success(serviceresult);
@@ -140,13 +162,13 @@ public class FIDOConfigurationController {
                                                                             });
 
                                                                             Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
+                                                                          //  Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
                                                                         }
 
                                                                         @Override
                                                                         public void failure(WebAuthError error) {
                                                                             enrollresult.failure(error);
-                                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                                            //Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     });
                                                         }
@@ -154,7 +176,7 @@ public class FIDOConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             enrollresult.failure(error);
-                                                            Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                          //  Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -220,7 +242,7 @@ public class FIDOConfigurationController {
                     initiateFIDOMFARequestEntity.getEmail() != null && initiateFIDOMFARequestEntity.getEmail() != ""&&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                FIDOVerificationService.getShared(context).initiateFIDO(baseurl, initiateFIDOMFARequestEntity,
+                FIDOVerificationService.getShared(context).initiateFIDOMFA(baseurl, initiateFIDOMFARequestEntity,
                         new Result<InitiateFIDOMFAResponseEntity>() {
 
                             //Todo Call Validate Device
@@ -237,14 +259,13 @@ public class FIDOConfigurationController {
                                     authenticateFIDORequestEntity.setVerifierPassword(FIDOString);
 
 
-                                    FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity, new Result<AuthenticateFIDOResponseEntity>() {
+                                    FIDOVerificationService.getShared(context).authenticateFIDOMFA(baseurl, authenticateFIDORequestEntity, new Result<AuthenticateFIDOResponseEntity>() {
                                         @Override
                                         public void success(AuthenticateFIDOResponseEntity result) {
                                             //Todo Call Resume with Login Service
                                             //  loginresult.success(result);
-                                            Toast.makeText(context, "Sucess FIDO", Toast.LENGTH_SHORT).show();
-                               */
-/* ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
+                                        //    Toast.makeText(context, "Sucess FIDO", Toast.LENGTH_SHORT).show();
+                                ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
 
                                 //Todo Check not Null values
                                 resumeLoginRequestEntity.setSub("");
@@ -254,7 +275,7 @@ public class FIDOConfigurationController {
                                 resumeLoginRequestEntity.setVerificationType("");
                                 resumeLoginRequestEntity.setClient_id("");
 
-                                LoginController.getShared(context).resumeLogin();*//*
+                                LoginController.getShared(context).continueMFA(baseurl,resumeLoginRequestEntity,loginresult);
 
                                         }
 
@@ -284,7 +305,6 @@ public class FIDOConfigurationController {
             Timber.e(e.getMessage());
         }
     }
-*/
 
 
 }
