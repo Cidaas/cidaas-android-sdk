@@ -209,7 +209,7 @@ public class PatternVerificationService {
                                final Result<ScannedResponseEntity> callback) {
         String scannedPatternUrl = "";
         try {
-            if (baseurl != null && baseurl != "" && scannedRequestEntity.getClient_id() != null && scannedRequestEntity.getClient_id() != "") {
+            if (baseurl != null && baseurl != "" ) {  //&& scannedRequestEntity.getClient_id() != null && scannedRequestEntity.getClient_id() != ""
                 //Construct URL For RequestId
                 scannedPatternUrl = baseurl + URLHelper.getShared().getScannedPatternURL();
             } else {
