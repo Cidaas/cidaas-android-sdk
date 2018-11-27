@@ -12,6 +12,7 @@ import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
@@ -38,6 +39,7 @@ import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.util.Dictionary;
@@ -100,7 +102,7 @@ public class FingerprintConfigurationController {
     // 4.  Maintain logs based on flags
 
 
-    //Service call To SetupFingerprintMFA
+   /* //Service call To SetupFingerprintMFA
     public void configureFingerprint(@NonNull final String sub, @NonNull final String baseurl,
                                  @NonNull final SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity,
                                  @NonNull final Result<EnrollFingerprintMFAResponseEntity> enrollresult)
@@ -397,167 +399,455 @@ public class FingerprintConfigurationController {
             Timber.e(e.getMessage());
         }
     }
+*/
 
 
-    /*
-    //setupFingerprintMFA
-    public void setupFingerprintMFA(@NonNull String sub, @NonNull final Result<SetupFingerprintMFAResponseEntity> result){
-        try {
-            String baseurl="";
-            if(savedProperties==null){
+    //Service call To SetupFingerprintMFA
+    public void configureFingerprint(@NonNull final String sub, @NonNull final String baseurl,
+                                 @NonNull final SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity,
+                                 @NonNull final Result<EnrollFingerprintMFAResponseEntity> enrollresult)
+    {
+        try{
 
-                savedProperties= DBHelper.getShared().getLoginProperties();
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
+                //Generate Challenge
+                generateChallenge();
             }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
+            Cidaas.instanceId="";
 
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
+            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
+            {
+                @Override
+                public void success(final AccessTokenEntity accessTokenresult) {
 
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Setup Fingerprint MFA readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            } if (savedProperties.get("ClientId").equals("") || savedProperties.get("ClientId") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            }
-            else {
-                baseurl = savedProperties.get("DomainURL");
-
-                if ( sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
-
-                    final String finalBaseurl = baseurl;
-                    getAccessToken(sub, new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(AccessTokenEntity accesstokenresult) {
-
-                            String logoUrl= "https://docs.cidaas.de/assets/logoss.png";
-
-
-
-                            SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity=new SetupFingerprintMFARequestEntity();
-                            setupFingerprintMFARequestEntity.setClient_id( savedProperties.get("ClientId"));
-                            setupFingerprintMFARequestEntity.setLogoUrl(logoUrl);
-
-
-                            setupFingerprintMFAService(accesstokenresult.getAccess_token(), finalBaseurl,setupFingerprintMFARequestEntity,result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            result.failure(error);
-                        }
-                    });
-
-
+                    setupFingerprint(baseurl,accessTokenresult.getAccess_token(),setupFingerprintMFARequestEntity,enrollresult);
                 }
 
-            }
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollresult.failure(error);
+                }
 
-
+            });
 
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent exception"+e.getMessage());
-            Timber.e("acceptConsent exception"+e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            Timber.e(e.getMessage());
         }
     }
 
-    //Service call To SetupFingerprintMFA
-    private void setupFingerprintMFAService(@NonNull final String AccessToken, @NonNull String baseurl, SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity,
-                                            @NonNull final Result<SetupFingerprintMFAResponseEntity> result)
+
+    private void setupFingerprint(final String baseurl, final String accessToken,
+                              SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity,final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
     {
-        try{
+        try
+        {
+            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") &&
+                    setupFingerprintMFARequestEntity.getClient_id()!=null && !setupFingerprintMFARequestEntity.getClient_id().equals(""))
+            {
+                //Done Service call
 
-            if (baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
-                //Todo Service call
-
-                if(codeChallenge==null){
-                    generateChallenge();
-                }
-                OauthService.getShared(context).setupFingerprintMFA(baseurl, AccessToken,codeChallenge,setupFingerprintMFARequestEntity,
-                        new Result<SetupFingerprintMFAResponseEntity>() {
+                FingerprintVerificationService.getShared(context).setupFingerprint(baseurl, accessToken,
+                        setupFingerprintMFARequestEntity,null,new Result<SetupFingerprintMFAResponseEntity>() {
                             @Override
-                            public void success(final SetupFingerprintMFAResponseEntity serviceresult) {
+                            public void success(final SetupFingerprintMFAResponseEntity setupserviceresult) {
+
+                                Cidaas.instanceId="";
 
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID=getInstanceId();
-                                        if(instceID!=null && instceID!="")
+                                        instceID= Cidaas.instanceId;
+
+                                        Timber.e("");
+                                        if(instceID!=null && !instceID.equals(""))
                                         {
+                                            this.cancel();
                                             onFinish();
                                         }
 
                                     }
-
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="")
-                                        {
-                                            //Todo Call Next Service cALL TO Validate DEVICE
-                                            validateDevice(instceID, serviceresult.getData().getStatusId(), new Result<ValidateDeviceResponseEntity>() {
-                                                @Override
-                                                public void success(ValidateDeviceResponseEntity result) {
-                                                    //Todo call Next service
-                                                    scannedFingerprint(result.getData().getUsage_pass(), serviceresult.getData().getStatusId(), AccessToken,new Result<ScannedResponseEntity>() {
+                                        if(instceID!=null && !instceID.equals("") ) {
+
+                                            SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity1 = new SetupFingerprintMFARequestEntity();
+                                            setupFingerprintMFARequestEntity1.setUsage_pass(instceID);
+                                            // call Scanned Service
+                                            FingerprintVerificationService.getShared(context).setupFingerprint(baseurl, accessToken,
+                                                    setupFingerprintMFARequestEntity1, null, new Result<SetupFingerprintMFAResponseEntity>() {
                                                         @Override
-                                                        public void success(ScannedResponseEntity result) {
-                                                            Timber.i(result.getData().getUserDeviceId()+"USewr Device id");
-                                                            Toast.makeText(context, result.getData().getUserDeviceId()+"USewr Device id", Toast.LENGTH_SHORT).show();
+                                                        public void success(final SetupFingerprintMFAResponseEntity result) {
+                                                            DBHelper.getShared().setUserDeviceId(result.getData().getUdi(), baseurl);
+
+                                                            //Entity For Fingerprint
+                                                            EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity = new EnrollFingerprintMFARequestEntity();
+                                                            enrollFingerprintMFARequestEntity.setStatusId(setupserviceresult.getData().getSt());
+                                                            enrollFingerprintMFARequestEntity.setUserDeviceId(result.getData().getUdi());
+
+
+                                                            enrollFingerprint(baseurl,accessToken,enrollFingerprintMFARequestEntity,enrollResult);
+
+
                                                         }
 
                                                         @Override
                                                         public void failure(WebAuthError error) {
-                                                            Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                            enrollResult.failure(error);
                                                         }
                                                     });
-                                                }
-
-                                                @Override
-                                                public void failure(WebAuthError error) {
-                                                    Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
                                         }
+
+                                        else {
+                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                        }
+                                    }
+
+                                }.start();
+
+                            }
+
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                enrollResult.failure(error);
+                            }
+                        });
+            }
+            else
+            {
+
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
+        }
+        catch (Exception e)
+        {
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
+                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+
+        }
+    }
+
+
+
+    public void scannedWithFingerprint(final String baseurl,String statusId, String clientId, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+            if (baseurl != null && !baseurl.equals("")  && statusId!=null && !statusId.equals("") && clientId!=null && !clientId.equals("")) {
+
+                final ScannedRequestEntity scannedRequestEntity = new ScannedRequestEntity();
+                scannedRequestEntity.setStatusId(statusId);
+                scannedRequestEntity.setClient_id(clientId);
+
+
+                FingerprintVerificationService.getShared(context).scannedFingerprint(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+                    @Override
+                    public void success(ScannedResponseEntity result) {
+                        Cidaas.instanceId="";
+
+
+                        new CountDownTimer(5000, 500) {
+                            String instceID = "";
+
+                            public void onTick(long millisUntilFinished) {
+                                instceID = Cidaas.instanceId;
+
+                                Timber.e("");
+                                if (instceID != null && !instceID.equals("")) {
+                                    this.cancel();
+                                    onFinish();
+                                }
+
+                            }
+
+                            public void onFinish() {
+
+                                if(instceID!=null && !instceID.equals("") ) {
+
+                                    ScannedRequestEntity scannedRequestEntity= new ScannedRequestEntity();
+                                    scannedRequestEntity.setUsage_pass(instceID);
+
+                                    FingerprintVerificationService.getShared(context).scannedFingerprint(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+
+                                        @Override
+                                        public void success(ScannedResponseEntity result) {
+                                            scannedResult.success(result);
+                                        }
+
+                                        @Override
+                                        public void failure(WebAuthError error) {
+                                            scannedResult.failure(error);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                }
+                            }
+                        }.start();
+
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        scannedResult.failure(error);
+                    }
+                });
+            }
+            else {
+                scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
+                        "BaseURL or ClientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+            }
+
+        }
+        catch (Exception e)
+        {
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
+                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+
+        }
+    }
+
+
+
+    public void enrollFingerprint(@NonNull final String baseurl, @NonNull final String accessToken,
+                              @NonNull EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
+
+                if (enrollFingerprintMFARequestEntity.getUserDeviceId() != null && !enrollFingerprintMFARequestEntity.getUserDeviceId().equals("") &&
+                        enrollFingerprintMFARequestEntity.getStatusId() != null && !enrollFingerprintMFARequestEntity.getStatusId().equals("") ) {
+
+                    // call Enroll Service
+                    FingerprintVerificationService.getShared(context).enrollFingerprint(baseurl, accessToken, enrollFingerprintMFARequestEntity,
+                            null, new Result<EnrollFingerprintMFAResponseEntity>() {
+
+                                @Override
+                                public void success(final EnrollFingerprintMFAResponseEntity serviceresult) {
+
+                                    Cidaas.instanceId = "";
+
+                                    //Timer
+                                    new CountDownTimer(5000, 500) {
+                                        String instceID = "";
+
+                                        public void onTick(long millisUntilFinished) {
+                                            instceID = Cidaas.instanceId;
+
+                                            Timber.e("");
+                                            if (instceID != null && !instceID.equals("")) {
+                                                this.cancel();
+                                                onFinish();
+                                            }
+
+                                        }
+
+                                        public void onFinish() {
+                                            if (instceID != null && !instceID.equals("")) {
+
+                                                //enroll
+                                                EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity = new EnrollFingerprintMFARequestEntity();
+                                                enrollFingerprintMFARequestEntity.setUsage_pass(instceID);
+
+                                                // call Enroll Service
+                                                FingerprintVerificationService.getShared(context).enrollFingerprint(baseurl, accessToken, enrollFingerprintMFARequestEntity,
+                                                        null, new Result<EnrollFingerprintMFAResponseEntity>() {
+                                                            @Override
+                                                            public void success(EnrollFingerprintMFAResponseEntity serviceresult) {
+                                                                enrollResult.success(serviceresult);
+                                                            }
+
+                                                            @Override
+                                                            public void failure(WebAuthError error) {
+                                                                enrollResult.failure(error);
+                                                            }
+                                                        });
+                                            }
+                                            else {
+                                                // return Error Message
+                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            }
+
+                                        }
+                                    }.start();
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    enrollResult.failure(error);
+                                    //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } else {
+                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
+                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                }
+            }
+            else
+            {
+                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
+                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+            }
+
+
+        }
+        catch (Exception e)
+        {
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
+                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+
+        }
+    }
+
+
+    //Login with Fingerprint
+    public void LoginWithFingerprint( @NonNull final String baseurl, @NonNull final String clientId,
+                                  @NonNull final String trackId, @NonNull final String requestId,
+                                  @NonNull final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,
+                                  final Result<LoginCredentialsResponseEntity> loginresult)
+    {
+        try{
+
+            if(codeChallenge.equals("") && codeVerifier.equals("")) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
+            if(initiateFingerprintMFARequestEntity.getUserDeviceId() != null && !initiateFingerprintMFARequestEntity.getUserDeviceId().equals(""))
+            {
+                //Do nothing
+            }
+            else
+            {
+                initiateFingerprintMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+            }
+            initiateFingerprintMFARequestEntity.setClient_id(clientId);
+
+
+            if (    initiateFingerprintMFARequestEntity.getUsageType() != null && !initiateFingerprintMFARequestEntity.getUsageType().equals("") &&
+                    initiateFingerprintMFARequestEntity.getUserDeviceId() != null && !initiateFingerprintMFARequestEntity.getUserDeviceId().equals("") &&
+                    baseurl != null && !baseurl.equals("")) {
+                //Todo Service call
+                FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl,codeChallenge, initiateFingerprintMFARequestEntity,null,
+                        new Result<InitiateFingerprintMFAResponseEntity>() {
+
+                            @Override
+                            public void success(final InitiateFingerprintMFAResponseEntity serviceresult) {
+
+                                Cidaas.instanceId="";
+                                new CountDownTimer(5000, 500) {
+                                    String instceID="";
+                                    public void onTick(long millisUntilFinished) {
+                                        instceID= Cidaas.instanceId;
+
+                                        Timber.e("");
+                                        if(instceID!=null && instceID!="")
+                                        {
+                                            this.cancel();
+                                            onFinish();
+                                        }
+
+                                    }
+                                    public void onFinish() {
+                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+
+                                            //Todo call initiate
+                                            final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity=new InitiateFingerprintMFARequestEntity();
+                                            initiateFingerprintMFARequestEntity.setUsagePass(instceID);
+
+                                            final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                                            FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl, codeChallenge, initiateFingerprintMFARequestEntity,null,
+                                                    new Result<InitiateFingerprintMFAResponseEntity>() {
+
+                                                        @Override
+                                                        public void success(InitiateFingerprintMFAResponseEntity result) {
+                                                            if (serviceresult.getData().getStatusId() != null &&
+                                                                    !serviceresult.getData().getStatusId().equals("")) {
+
+
+                                                                AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity = new AuthenticateFingerprintRequestEntity();
+                                                                authenticateFingerprintRequestEntity.setUserDeviceId(userDeviceId);
+                                                                authenticateFingerprintRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+
+
+                                                                authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity, new Result<AuthenticateFingerprintResponseEntity>() {
+                                                                    @Override
+                                                                    public void success(AuthenticateFingerprintResponseEntity result) {
+
+                                                                        //Todo Call Resume with Login Service
+
+                                                                        ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
+
+                                                                        //Todo Check not Null values
+                                                                        resumeLoginRequestEntity.setSub(result.getData().getSub());
+                                                                        resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
+                                                                        resumeLoginRequestEntity.setVerificationType("FINGERPRINT");
+                                                                        resumeLoginRequestEntity.setUsageType(initiateFingerprintMFARequestEntity.getUsageType());
+                                                                        resumeLoginRequestEntity.setClient_id(clientId);
+                                                                        resumeLoginRequestEntity.setRequestId(requestId);
+
+                                                                        if (initiateFingerprintMFARequestEntity.getUsageType().equals(UsageType.MFA)) {
+                                                                            resumeLoginRequestEntity.setTrack_id(trackId);
+                                                                            LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, loginresult);
+                                                                        } else if (initiateFingerprintMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS)) {
+                                                                            resumeLoginRequestEntity.setTrack_id("");
+                                                                            LoginController.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, loginresult);
+
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void failure(WebAuthError error) {
+                                                                        loginresult.failure(error);
+                                                                    }
+                                                                });
+
+
+
+                                                            }
+                                                            else {
+                                                                String errorMessage="Status Id or Fingerprint Must not be null";
+                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                                            }
+
+                                                        }
+
+                                                        @Override
+                                                        public void failure(WebAuthError error) {
+                                                            loginresult.failure(error);
+                                                            //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        }
+
                                         else {
                                             // return Error Message
-                                            webAuthError=WebAuthError.getShared(context).deviceVerificationFailureException();
-                                            result.failure(webAuthError);
+
+                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
                                         }
                                     }
                                 }.start();
 
-
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-
-                                result.failure(error);
+                                loginresult.failure(error);
                             }
                         });
             }
             else
             {
-                webAuthError=webAuthError.propertyMissingException();
-                webAuthError.ErrorMessage="one of the Login properties missing";
-                result.failure(webAuthError);
+
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
             }
         }
         catch (Exception e)
@@ -567,207 +857,74 @@ public class FingerprintConfigurationController {
     }
 
 
-    //Scanned Fingerprint
-    private void scannedFingerprint(@NonNull String usagePass,@NonNull String statusId,@NonNull String AccessToken, @NonNull final Result<ScannedResponseEntity> result){
-        try {
-            String baseurl="";
-            if(savedProperties==null){
+    //Authenticate Fingerprint
 
-                savedProperties=DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-
-
-
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Setup Fingerprint MFA readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            }
-            if (savedProperties.get("ClientId").equals("") || savedProperties.get("ClientId") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            }
-            else {
-                baseurl = savedProperties.get("DomainURL");
-
-                if ( statusId != null && !statusId.equals("") && usagePass != null && !usagePass.equals("") && baseurl != null
-                        && !baseurl.equals("")) {
-
-                    scannedFingerprintService(usagePass, baseurl,statusId,AccessToken,result);
-
-
-                }
-
-            }
-
-        }
-        catch (Exception e)
+    public void authenticateFingerprint(final String baseurl, final AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity, final Result<AuthenticateFingerprintResponseEntity> authResult)
+    {
+        try
         {
-            LogFile.addRecordToLog("acceptConsent exception"+e.getMessage());
-            Timber.e("acceptConsent exception"+e.getMessage());
-        }
-    }
-
-    //Service call To Scanned Fingerprint Service
-    private void scannedFingerprintService(@NonNull String usagePass,@NonNull String baseurl,
-                                           @NonNull String statusId,@NonNull String AccessToken,
-                                           @NonNull final Result<ScannedResponseEntity> scannedResponseResult){
-        try{
-
-            if ( statusId != null && !statusId.equals("") && usagePass != null && !usagePass.equals("") && baseurl != null
-                    && !baseurl.equals("")) {
-                //Todo Service call
-                OauthService.getShared(context).scannedFingerprint(baseurl, usagePass, statusId,AccessToken,
-                        new Result<ScannedResponseEntity>() {
-                            @Override
-                            public void success(final ScannedResponseEntity serviceresult) {
-                                //Todo Call Scanned Service
+            FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity,null, new Result<AuthenticateFingerprintResponseEntity>() {
+                @Override
+                public void success(final AuthenticateFingerprintResponseEntity serviceresult) {
 
 
-                                scannedResponseResult.success(serviceresult);
+                    Cidaas.instanceId = "";
+
+                    //Timer
+                    new CountDownTimer(5000, 500) {
+                        String instceID = "";
+
+                        public void onTick(long millisUntilFinished) {
+                            instceID = Cidaas.instanceId;
+
+                            Timber.e("");
+                            if (instceID != null && !instceID.equals("")) {
+                                this.cancel();
+                                onFinish();
                             }
 
-                            @Override
-                            public void failure(WebAuthError error) {
-                                scannedResponseResult.failure(error);
+                        }
+
+                        public void onFinish() {
+                            if (instceID != null && !instceID.equals("")) {
+                                AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity=new AuthenticateFingerprintRequestEntity();
+                                authenticateFingerprintRequestEntity.setUsage_pass(instceID);
+
+                                FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity,null, new Result<AuthenticateFingerprintResponseEntity>() {
+                                    @Override
+                                    public void success(AuthenticateFingerprintResponseEntity result) {
+                                        authResult.success(result);
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        authResult.failure(error);
+                                    }
+                                });
                             }
-                        });
-            }
-            else
-            {
-                webAuthError=webAuthError.propertyMissingException();
-                webAuthError.ErrorMessage="one of the Login properties missing";
-                scannedResponseResult.failure(webAuthError);
-            }
+                            else {
+                                // return Error Message
+                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                            }
+
+                        }
+                    }.start();
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    authResult.failure(error);
+                }
+            });
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
+            authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,
+                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
         }
     }
 
-    //enrollFingerprintMFA
-    public void enrollFingerprintMFA(@NonNull final EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity,
-                                     @NonNull final Result<EnrollFingerprintMFAResponseEntity> result){
-        try {
-            String baseurl="";
-            if(savedProperties==null){
-
-                savedProperties=DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Setup Fingerprint MFA readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                result.failure(webAuthError);
-            } else {
-                baseurl = savedProperties.get("DomainURL");
-
-                if ( enrollFingerprintMFARequestEntity.getVerifierPassword() != null && !enrollFingerprintMFARequestEntity.getVerifierPassword().equals("") &&
-                        enrollFingerprintMFARequestEntity.getSub() != null && enrollFingerprintMFARequestEntity.getSub()  != null &&
-                        enrollFingerprintMFARequestEntity.getStatusId() != null && enrollFingerprintMFARequestEntity.getStatusId()  != null &&
-                        baseurl != null && !baseurl.equals("")) {
-
-                    final String finalBaseurl = baseurl;
-                    getAccessToken(enrollFingerprintMFARequestEntity.getSub(), new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(AccessTokenEntity accesstokenresult) {
-                            enrollFingerprintMFAService(accesstokenresult.getAccess_token(), finalBaseurl,enrollFingerprintMFARequestEntity,result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            result.failure(error);
-                        }
-                    });
 
 
-                }
-                else {
-                    webAuthError=webAuthError.propertyMissingException();
-                    webAuthError.ErrorMessage="one of the Login properties missing";
-                    result.failure(webAuthError);
-                }
-
-            }
-
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("acceptConsent exception"+e.getMessage());
-            Timber.e("acceptConsent exception"+e.getMessage());
-        }
-    }
-
-    //Service call To enrollFingerprintMFA
-    private void enrollFingerprintMFAService(@NonNull String AccessToken, @NonNull String baseurl,
-                                             @NonNull final EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity,
-                                             @NonNull final Result<EnrollFingerprintMFAResponseEntity> result){
-        try{
-
-            if (enrollFingerprintMFARequestEntity.getVerifierPassword() != null && !enrollFingerprintMFARequestEntity.getVerifierPassword().equals("") &&
-                    enrollFingerprintMFARequestEntity.getSub() != null && enrollFingerprintMFARequestEntity.getSub()  != null &&
-                    enrollFingerprintMFARequestEntity.getStatusId() != null && enrollFingerprintMFARequestEntity.getStatusId()  != null &&
-                    baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
-                //Todo Service call
-                OauthService.getShared(context).enrollFingerprintMFA(baseurl, AccessToken, enrollFingerprintMFARequestEntity,new Result<EnrollFingerprintMFAResponseEntity>() {
-                    @Override
-                    public void success(EnrollFingerprintMFAResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-            else
-            {
-                webAuthError=webAuthError.propertyMissingException();
-                webAuthError.ErrorMessage="one of the Login properties missing";
-                result.failure(webAuthError);
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }*/
 
 }

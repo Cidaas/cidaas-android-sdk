@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class EnrollFIDOMFARequestEntity implements Serializable{
     String statusId;
     String verifierPassword;
-    String sub;
+    String usage_pass;
     String userDeviceId;
     DeviceInfoEntity deviceInfo;
 
@@ -22,12 +22,12 @@ public class EnrollFIDOMFARequestEntity implements Serializable{
         this.userDeviceId = userDeviceId;
     }
 
-    public String getSub() {
-        return sub;
+    public String getUsage_pass() {
+        return usage_pass;
     }
 
-    public void setSub(String sub) {
-        this.sub = sub;
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
     }
 
     public String getStatusId() {
