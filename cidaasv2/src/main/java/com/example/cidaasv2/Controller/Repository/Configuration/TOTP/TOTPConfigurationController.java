@@ -115,12 +115,12 @@ public class TOTPConfigurationController {
                             @Override
                             public void success(final SetupTOTPMFAResponseEntity setupserviceresult) {
 
-                                String queryString=setupserviceresult.getData().getUdi();
+                            //    String queryString=;
 
-                                String [] stringArray = queryString.split("&", 2);
+                             /*   String [] stringArray = queryString.split("&", 2);
                                  secretWithValue=stringArray[0];
-                                String [] stringArray1=secretWithValue.split("=",2);
-                                secret=stringArray1[1];
+                                String [] stringArray1=secretWithValue.split("=",2);*/
+                                secret=setupserviceresult.getData().getSecret();
 
                                  if(secret!=null && !secret.equals(""))
                                  {

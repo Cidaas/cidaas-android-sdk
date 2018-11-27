@@ -866,10 +866,12 @@ public class VoiceConfigurationController {
 
                         public void onFinish() {
                             if (instceID != null && !instceID.equals("")) {
-                                AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity=new AuthenticateVoiceRequestEntity();
-                                authenticateVoiceRequestEntity.setUsage_pass(instceID);
+                                AuthenticateVoiceRequestEntity authenticateVoiceRequest=new AuthenticateVoiceRequestEntity();
+                                authenticateVoiceRequest.setUsage_pass(instceID);
+                                authenticateVoiceRequest.setVoiceFile(authenticateVoiceRequestEntity.getVoiceFile());
 
-                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity,null, new Result<AuthenticateVoiceResponseEntity>() {
+
+                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequest,null, new Result<AuthenticateVoiceResponseEntity>() {
                                     @Override
                                     public void success(AuthenticateVoiceResponseEntity result) {
                                         authResult.success(result);

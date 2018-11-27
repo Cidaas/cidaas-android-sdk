@@ -881,10 +881,11 @@ public class FaceConfigurationController {
 
                         public void onFinish() {
                             if (instceID != null && !instceID.equals("")) {
-                                AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
-                                authenticateFaceRequestEntity.setUsage_pass(instceID);
+                                AuthenticateFaceRequestEntity authenticateFaceRequest=new AuthenticateFaceRequestEntity();
+                                authenticateFaceRequest.setImagetoSend(authenticateFaceRequestEntity.getImagetoSend());
+                                authenticateFaceRequest.setUsage_pass(instceID);
 
-                                FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity,null, new Result<AuthenticateFaceResponseEntity>() {
+                                FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequest,null, new Result<AuthenticateFaceResponseEntity>() {
                                     @Override
                                     public void success(AuthenticateFaceResponseEntity result) {
                                         authResult.success(result);
