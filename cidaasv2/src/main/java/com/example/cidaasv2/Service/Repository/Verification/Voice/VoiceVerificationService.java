@@ -642,7 +642,7 @@ public class VoiceVerificationService {
             MultipartBody.Part audioFile = MultipartBody.Part.createFormData("voice", "Audio.fav", requestFile);
 
             voiceSetupMap.put("statusId", StringtoRequestBody(authenticateVoiceRequestEntity.getStatusId()));
-            //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            voiceSetupMap.put("usage_pass",StringtoRequestBody(authenticateVoiceRequestEntity.getUsage_pass()));
             voiceSetupMap.put("userDeviceId", StringtoRequestBody(authenticateVoiceRequestEntity.getUserDeviceId()));
             voiceSetupMap.put("deviceId", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceId()));
             voiceSetupMap.put("deviceMake", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceMake()));

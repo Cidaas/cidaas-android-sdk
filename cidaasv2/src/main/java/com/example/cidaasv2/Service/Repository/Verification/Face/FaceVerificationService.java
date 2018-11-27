@@ -794,6 +794,7 @@ public class FaceVerificationService {
 
             faceSetupMap.put("statusId", StringtoRequestBody(authenticateFaceRequestEntity.getStatusId()));
             //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            faceSetupMap.put("usage_pass",StringtoRequestBody(authenticateFaceRequestEntity.getUsage_pass()));
             faceSetupMap.put("userDeviceId", StringtoRequestBody(authenticateFaceRequestEntity.getUserDeviceId()));
             faceSetupMap.put("deviceId", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceId()));
             faceSetupMap.put("deviceMake", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceMake()));
