@@ -93,6 +93,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARespons
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
@@ -1544,7 +1545,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else if(verificationType.equalsIgnoreCase("PUSH"))
                     {
-
+                      SmartPushConfigurationController.getShared(context).scannedWithSmartPush(baseurl,statusId,clientId,scannedResult);
                     }
                     else if(verificationType.equalsIgnoreCase("FIDOU2F"))
                     {
@@ -2426,17 +2427,87 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-    public void enrollSmartPush()
+    public void scannedSmartPush(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
     {
         try
         {
 
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+                    String userDeviceId=result.get("userDeviceId");
+
+
+                    SmartPushConfigurationController.getShared(context).scannedWithSmartPush(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
         }
         catch (Exception e)
         {
-
+            LogFile.addRecordToLog("Scanned SmartPush exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned SmartPush exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned SmartPush exception" + e.getMessage());
         }
     }
+
+    public void enrollSmartPush(@NonNull final String randomNumber, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollSmartPushMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=result.get("userDeviceId");
+
+                    final EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity=new EnrollSmartPushMFARequestEntity();
+                    enrollSmartPushMFARequestEntity.setVerifierPassword(randomNumber);
+                    enrollSmartPushMFARequestEntity.setStatusId(statusId);
+                    enrollSmartPushMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            SmartPushConfigurationController.getShared(context).enrollSmartPush(baseurl,result.getAccess_token(),enrollSmartPushMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll SmartPush exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll SmartPush exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll SmartPush exception" + e.getMessage());
+        }
+    }
+
 
     @Override
     public void loginWithSmartPush(final PasswordlessEntity passwordlessEntity,
@@ -2524,7 +2595,8 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-                    SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,null,result);
+                    SmartPushConfigurationController.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,result);
+                    //SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,null,result);
 
 
 

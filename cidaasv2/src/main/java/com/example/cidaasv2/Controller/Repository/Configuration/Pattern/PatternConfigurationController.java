@@ -472,12 +472,31 @@ public class PatternConfigurationController {
                                                                     @Override
                                                                     public void success(AuthenticatePatternResponseEntity result) {
 
+                                                                        //Todo Call Resume with Login Service
 
+                                                                        ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
+
+                                                                        //Todo Check not Null values
+                                                                        resumeLoginRequestEntity.setSub(result.getData().getSub());
+                                                                        resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
+                                                                        resumeLoginRequestEntity.setVerificationType("PATTERN");
+                                                                        resumeLoginRequestEntity.setUsageType(initiatePatternMFARequestEntity.getUsageType());
+                                                                        resumeLoginRequestEntity.setClient_id(clientId);
+                                                                        resumeLoginRequestEntity.setRequestId(requestId);
+
+                                                                        if (initiatePatternMFARequestEntity.getUsageType().equals(UsageType.MFA)) {
+                                                                            resumeLoginRequestEntity.setTrack_id(trackId);
+                                                                            LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, loginresult);
+                                                                        } else if (initiatePatternMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS)) {
+                                                                            resumeLoginRequestEntity.setTrack_id("");
+                                                                            LoginController.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, loginresult);
+
+                                                                        }
                                                                     }
 
                                                                     @Override
                                                                     public void failure(WebAuthError error) {
-
+                                                                        loginresult.failure(error);
                                                                     }
                                                                 });
 

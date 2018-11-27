@@ -21,15 +21,12 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
@@ -89,12 +86,47 @@ public class SmartPushConfigurationController {
     // 3.  Call Enroll SmartPush and return the result
     // 4.  Maintain logs based on flags
 
-
     //Service call To SetupSmartPushMFA
     public void configureSmartPush(@NonNull final String sub, @NonNull final String baseurl,
                                  @NonNull final SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity,
                                  @NonNull final Result<EnrollSmartPushMFAResponseEntity> enrollresult)
-    {/*
+    {
+        try{
+
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
+
+            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
+            {
+                @Override
+                public void success(final AccessTokenEntity accessTokenresult) {
+
+                    setupSmartPush(baseurl,accessTokenresult.getAccess_token(),setupSmartPushMFARequestEntity,enrollresult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollresult.failure(error);
+                }
+
+            });
+
+        }
+        catch (Exception e)
+        {
+            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            Timber.e(e.getMessage());
+        }
+    }
+
+  /*  //Service call To SetupSmartPushMFA
+    public void configureSmartPush(@NonNull final String sub, @NonNull final String baseurl,
+                                 @NonNull final SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity,
+                                 @NonNull final Result<EnrollSmartPushMFAResponseEntity> enrollresult)
+    {*//*
         try{
             //Generate Challenge
             generateChallenge();
@@ -230,9 +262,9 @@ public class SmartPushConfigurationController {
         {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e(e.getMessage());
-        }*/
+        }*//*
     }
-
+*/
 
 
     //Scanned push
@@ -319,7 +351,7 @@ public class SmartPushConfigurationController {
     }
 
 
-    private void setupSmartPush(final String baseurl, final String accessToken, final String SmartPushString,
+    private void setupSmartPush(final String baseurl, final String accessToken,
                               SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity,final Result<EnrollSmartPushMFAResponseEntity> enrollResult)
     {
         try
@@ -363,7 +395,7 @@ public class SmartPushConfigurationController {
 
                                                             //Entity For SmartPush
                                                             EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity = new EnrollSmartPushMFARequestEntity();
-                                                            enrollSmartPushMFARequestEntity.setVerifierPassword(SmartPushString);
+                                                            enrollSmartPushMFARequestEntity.setVerifierPassword(setupserviceresult.getData().getRns());
                                                             enrollSmartPushMFARequestEntity.setStatusId(setupserviceresult.getData().getSt());
                                                             enrollSmartPushMFARequestEntity.setUserDeviceId(result.getData().getUdi());
 
@@ -506,6 +538,7 @@ public class SmartPushConfigurationController {
         }
     }
 
+/*
 
     //Login with SmartPush
     public void LoginWithSmartPush(@NonNull final String baseurl, @NonNull final String clientId, @NonNull final String trackId, @NonNull final String requestId,
@@ -673,6 +706,240 @@ public class SmartPushConfigurationController {
             Timber.e(e.getMessage());
         }
     }
+
+*/
+
+
+
+
+
+    //Login with SmartPush
+    public void LoginWithSmartPush(@NonNull final String baseurl, @NonNull final String clientId,
+                                  @NonNull final String trackId, @NonNull final String requestId,
+                                  @NonNull final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity,
+                                  final Result<LoginCredentialsResponseEntity> loginresult)
+    {
+        try{
+
+            if(codeChallenge.equals("") && codeVerifier.equals("")) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
+            if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && !initiateSmartPushMFARequestEntity.getUserDeviceId().equals(""))
+            {
+                //Do nothing
+            }
+            else
+            {
+                initiateSmartPushMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+            }
+            initiateSmartPushMFARequestEntity.setClient_id(clientId);
+
+
+            if (    initiateSmartPushMFARequestEntity.getUsageType() != null && !initiateSmartPushMFARequestEntity.getUsageType().equals("") &&
+                    initiateSmartPushMFARequestEntity.getUserDeviceId() != null && !initiateSmartPushMFARequestEntity.getUserDeviceId().equals("") &&
+                    baseurl != null && !baseurl.equals("")) {
+                //Todo Service call
+                SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl,codeChallenge, initiateSmartPushMFARequestEntity,null,
+                        new Result<InitiateSmartPushMFAResponseEntity>() {
+
+                            @Override
+                            public void success(final InitiateSmartPushMFAResponseEntity serviceresult) {
+
+                                Cidaas.instanceId="";
+                                new CountDownTimer(5000, 500) {
+                                    String instceID="";
+                                    public void onTick(long millisUntilFinished) {
+                                        instceID= Cidaas.instanceId;
+
+                                        Timber.e("");
+                                        if(instceID!=null && instceID!="")
+                                        {
+                                            this.cancel();
+                                            onFinish();
+                                        }
+
+                                    }
+                                    public void onFinish() {
+                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+
+                                            //Todo call initiate
+                                            final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity=new InitiateSmartPushMFARequestEntity();
+                                            initiateSmartPushMFARequestEntity.setUsage_pass(instceID);
+
+                                            final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge, initiateSmartPushMFARequestEntity,null,
+                                                    new Result<InitiateSmartPushMFAResponseEntity>() {
+
+                                                        @Override
+                                                        public void success(InitiateSmartPushMFAResponseEntity result) {
+                                                            if (serviceresult.getData().getRandomNumber() != null && !serviceresult.getData().getRandomNumber().equals("") && serviceresult.getData().getStatusId() != null &&
+                                                                    !serviceresult.getData().getStatusId().equals("")) {
+
+
+                                                                AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity = new AuthenticateSmartPushRequestEntity();
+                                                                authenticateSmartPushRequestEntity.setUserDeviceId(userDeviceId);
+                                                                authenticateSmartPushRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                authenticateSmartPushRequestEntity.setVerifierPassword(serviceresult.getData().getRandomNumber());
+
+
+                                                                authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity, new Result<AuthenticateSmartPushResponseEntity>() {
+                                                                    @Override
+                                                                    public void success(AuthenticateSmartPushResponseEntity result) {
+                                                                        //Todo Call Resume with Login Service
+                                                                        //  loginresult.success(result);
+                                                                        //        Toast.makeText(context, "Sucess SmartPush", Toast.LENGTH_SHORT).show();
+
+                                                                        ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
+
+                                                                        //Todo Check not Null values
+                                                                        resumeLoginRequestEntity.setSub(result.getData().getSub());
+                                                                        resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
+                                                                        resumeLoginRequestEntity.setUsageType(initiateSmartPushMFARequestEntity.getUsageType());
+                                                                        resumeLoginRequestEntity.setVerificationType("push");
+                                                                        resumeLoginRequestEntity.setClient_id(clientId);
+                                                                        resumeLoginRequestEntity.setRequestId(requestId);
+
+                                                                        if (initiateSmartPushMFARequestEntity.getUsageType().equals(UsageType.MFA)) {
+                                                                            resumeLoginRequestEntity.setTrack_id(trackId);
+                                                                            LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, loginresult);
+                                                                        } else if (initiateSmartPushMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS)) {
+                                                                            resumeLoginRequestEntity.setTrack_id("");
+                                                                            LoginController.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, loginresult);
+
+                                                                        }
+
+                                                                    }
+
+                                                                    @Override
+                                                                    public void failure(WebAuthError error)
+                                                                    {
+                                                                        loginresult.failure(error);
+                                                                    }
+                                                                });
+
+
+
+                                                            }
+                                                            else {
+                                                                String errorMessage="Status Id or SmartPush Must not be null";
+                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                                            }
+
+                                                        }
+
+                                                        @Override
+                                                        public void failure(WebAuthError error) {
+                                                            loginresult.failure(error);
+                                                            //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        }
+
+                                        else {
+                                            // return Error Message
+
+                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                        }
+                                    }
+                                }.start();
+
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                loginresult.failure(error);
+                            }
+                        });
+            }
+            else
+            {
+
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
+        }
+        catch (Exception e)
+        {
+            Timber.e(e.getMessage());
+        }
+    }
+
+
+    //Authenticate SmartPush
+
+    public void authenticateSmartPush(final String baseurl, final AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity, final Result<AuthenticateSmartPushResponseEntity> authResult)
+    {
+        try
+        {
+            SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,null, new Result<AuthenticateSmartPushResponseEntity>() {
+                @Override
+                public void success(final AuthenticateSmartPushResponseEntity serviceresult) {
+
+
+                    Cidaas.instanceId = "";
+
+                    //Timer
+                    new CountDownTimer(5000, 500) {
+                        String instceID = "";
+
+                        public void onTick(long millisUntilFinished) {
+                            instceID = Cidaas.instanceId;
+
+                            Timber.e("");
+                            if (instceID != null && !instceID.equals("")) {
+                                this.cancel();
+                                onFinish();
+                            }
+
+                        }
+
+                        public void onFinish() {
+                            if (instceID != null && !instceID.equals("")) {
+                                AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity=new AuthenticateSmartPushRequestEntity();
+                                authenticateSmartPushRequestEntity.setUsage_pass(instceID);
+
+                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,null, new Result<AuthenticateSmartPushResponseEntity>() {
+                                    @Override
+                                    public void success(AuthenticateSmartPushResponseEntity result) {
+                                        authResult.success(result);
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        authResult.failure(error);
+                                    }
+                                });
+                            }
+                            else {
+                                // return Error Message
+                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                            }
+
+                        }
+                    }.start();
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    authResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,
+                    "SmartPush Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+
+
+
+
+
 
 
     //Todo Save UserDeviceId After Scanned with DomainURL
