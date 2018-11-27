@@ -590,7 +590,7 @@ public class VoiceConfigurationController {
 
 
     public void enrollVoice(@NonNull final String baseurl, @NonNull final String accessToken,
-                              @NonNull EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity, final Result<EnrollVoiceMFAResponseEntity> enrollResult)
+                            @NonNull final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity, final Result<EnrollVoiceMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -629,11 +629,12 @@ public class VoiceConfigurationController {
                                             if (instceID != null && !instceID.equals("")) {
 
                                                 //enroll
-                                                EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity = new EnrollVoiceMFARequestEntity();
-                                                enrollVoiceMFARequestEntity.setUsage_pass(instceID);
+                                                EnrollVoiceMFARequestEntity enrollVoiceMFARequest = new EnrollVoiceMFARequestEntity();
+                                                enrollVoiceMFARequest.setUsage_pass(instceID);
+                                                enrollVoiceMFARequest.setAudioFile(enrollVoiceMFARequestEntity.getAudioFile());
 
                                                 // call Enroll Service
-                                                VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessToken, enrollVoiceMFARequestEntity,
+                                                VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessToken, enrollVoiceMFARequest,
                                                         null, new Result<EnrollVoiceMFAResponseEntity>() {
                                                             @Override
                                                             public void success(EnrollVoiceMFAResponseEntity serviceresult) {

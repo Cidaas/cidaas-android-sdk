@@ -87,6 +87,7 @@ import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeletePatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
@@ -1539,7 +1540,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else if(verificationType.equalsIgnoreCase("FACE"))
                     {
-
+                        FaceConfigurationController.getShared(context).scannedWithFace(baseurl,statusId,clientId,scannedResult);
                     }
                     else if(verificationType.equalsIgnoreCase("TOTP"))
                     {
@@ -1702,7 +1703,8 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configureFaceRecognition(final File photo, final String sub,@NonNull final String logoURL, final Result<EnrollFaceMFAResponseEntity> enrollresult) {
+    public void configureFaceRecognition(final File photo, final String sub,@NonNull final String logoURL, final Result<EnrollFaceMFAResponseEntity> enrollresult)
+    {
         try {
 
 
@@ -1725,7 +1727,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                        FaceConfigurationController.getShared(context).ConfigureFace(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
+                        FaceConfigurationController.getShared(context).configureFace(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
 
 
                     }
@@ -1822,6 +1824,87 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+    public void scannedFace(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+                    String userDeviceId=result.get("userDeviceId");
+
+
+                    FaceConfigurationController.getShared(context).scannedWithFace(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Face exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Face exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Face exception" + e.getMessage());
+        }
+    }
+
+    public void enrollFace(@NonNull final File Face, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFaceMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=result.get("userDeviceId");
+
+                    final EnrollFaceMFARequestEntity enrollFaceMFARequestEntity=new EnrollFaceMFARequestEntity();
+                    enrollFaceMFARequestEntity.setImagetoSend(Face);
+                    enrollFaceMFARequestEntity.setStatusId(statusId);
+                    enrollFaceMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            FaceConfigurationController.getShared(context).enrollFace(baseurl,result.getAccess_token(),enrollFaceMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll Face exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Face exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Face exception" + e.getMessage());
+        }
+    }
+
 
     public void verifyFace(@NonNull final File photo,final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
         try {
@@ -1838,7 +1921,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateFaceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
-                    FaceVerificationService.getShared(context).authenticateFace(baseurl,authenticateFaceRequestEntity,null,result);
+                    FaceConfigurationController.getShared(context).authenticateFace(baseurl,authenticateFaceRequestEntity,result);
 
 
                 }
@@ -1884,7 +1967,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                        FaceConfigurationController.getShared(context).ConfigureFaces(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
+                      //  FaceConfigurationController.getShared(context).ConfigureFaces(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
 
 
                     }
@@ -1957,9 +2040,9 @@ public class Cidaas implements IOAuthWebLogin {
                         //Todo check for email or sub or mobile
 
 
-                        FaceConfigurationController.getShared(context).LoginWithFaces(photo, baseurl, clientId,
+                      /*  FaceConfigurationController.getShared(context).LoginWithFaces(photo, baseurl, clientId,
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
-                                initiateFaceMFARequestEntity, loginresult);
+                                initiateFaceMFARequestEntity, loginresult);*/
                     } else {
                         String errorMessage = "Image File or RequestId or UsageType must not be empty";
 

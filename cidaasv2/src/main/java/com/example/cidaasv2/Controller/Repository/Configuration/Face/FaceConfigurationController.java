@@ -10,6 +10,7 @@ import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
@@ -27,6 +28,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARespons
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
@@ -79,6 +81,7 @@ public class FaceConfigurationController {
     }
 
 
+/*
 
     //Service call To SetupFaceMFA
     public void ConfigureFace(final File imageFile,@NonNull final String sub, @NonNull final String baseurl,
@@ -324,9 +327,11 @@ public class FaceConfigurationController {
                                                                                         }
                                                                                         //  loginresult.success(result);
                                                                                      //   Toast.makeText(context, "Sucess Face", Toast.LENGTH_SHORT).show();
-                               /*
+                               */
+/*
 
-                                LoginController.getShared(context).resumeLogin();*/
+                                LoginController.getShared(context).resumeLogin();*//*
+
                                                                                     }
 
                                                                                     @Override
@@ -385,9 +390,535 @@ public class FaceConfigurationController {
             Timber.e(e.getMessage());
         }
     }
+*/
+
+    //Service call To SetupFaceMFA
+    public void configureFace(@NonNull final File FaceImageFile,@NonNull final String sub, @NonNull final String baseurl,
+                               @NonNull final SetupFaceMFARequestEntity setupFaceMFARequestEntity,
+                               @NonNull final Result<EnrollFaceMFAResponseEntity> enrollresult)
+    {
+        try{
+
+            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
+
+            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
+            {
+                @Override
+                public void success(final AccessTokenEntity accessTokenresult) {
+
+                    setupFace(baseurl,accessTokenresult.getAccess_token(),FaceImageFile,setupFaceMFARequestEntity,enrollresult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollresult.failure(error);
+                }
+
+            });
+
+        }
+        catch (Exception e)
+        {
+            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            Timber.e(e.getMessage());
+        }
+    }
+
+
+    private void setupFace(final String baseurl, final String accessToken, @NonNull final File FaceImageFile,
+                            SetupFaceMFARequestEntity setupFaceMFARequestEntity,final Result<EnrollFaceMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") &&
+                    setupFaceMFARequestEntity.getClient_id()!=null && !setupFaceMFARequestEntity.getClient_id().equals(""))
+            {
+                //Done Service call
+
+                FaceVerificationService.getShared(context).setupFaceMFA(baseurl, accessToken,
+                        setupFaceMFARequestEntity,null,new Result<SetupFaceMFAResponseEntity>() {
+                            @Override
+                            public void success(final SetupFaceMFAResponseEntity setupserviceresult) {
+
+                                Cidaas.instanceId="";
+
+                                new CountDownTimer(5000, 500) {
+                                    String instceID="";
+                                    public void onTick(long millisUntilFinished) {
+                                        instceID= Cidaas.instanceId;
+
+                                        Timber.e("");
+                                        if(instceID!=null && !instceID.equals(""))
+                                        {
+                                            this.cancel();
+                                            onFinish();
+                                        }
+
+                                    }
+                                    public void onFinish() {
+                                        if(instceID!=null && !instceID.equals("") ) {
+
+                                            SetupFaceMFARequestEntity setupFaceMFARequestEntity1 = new SetupFaceMFARequestEntity();
+                                            setupFaceMFARequestEntity1.setUsage_pass(instceID);
+                                            // call Scanned Service
+                                            FaceVerificationService.getShared(context).setupFaceMFA(baseurl, accessToken,
+                                                    setupFaceMFARequestEntity1, null, new Result<SetupFaceMFAResponseEntity>() {
+                                                        @Override
+                                                        public void success(final SetupFaceMFAResponseEntity result) {
+                                                            DBHelper.getShared().setUserDeviceId(result.getData().getUdi(), baseurl);
+
+                                                            //Entity For Face
+                                                            EnrollFaceMFARequestEntity enrollFaceMFARequestEntity = new EnrollFaceMFARequestEntity();
+                                                            enrollFaceMFARequestEntity.setImagetoSend(FaceImageFile);
+                                                            enrollFaceMFARequestEntity.setStatusId(setupserviceresult.getData().getSt());
+                                                            enrollFaceMFARequestEntity.setUserDeviceId(result.getData().getUdi());
+
+
+                                                            enrollFace(baseurl,accessToken,enrollFaceMFARequestEntity,enrollResult);
+
+
+                                                        }
+
+                                                        @Override
+                                                        public void failure(WebAuthError error) {
+                                                            enrollResult.failure(error);
+                                                        }
+                                                    });
+                                        }
+
+                                        else {
+                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                        }
+                                    }
+
+                                }.start();
+
+                            }
+
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                enrollResult.failure(error);
+                            }
+                        });
+            }
+            else
+            {
+
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
+        }
+        catch (Exception e)
+        {
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+
+        }
+    }
 
 
 
+    public void scannedWithFace(final String baseurl,  String statusId, String clientId, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+            if (baseurl != null && !baseurl.equals("")  && statusId!=null && !statusId.equals("") && clientId!=null && !clientId.equals("")) {
+
+                final ScannedRequestEntity scannedRequestEntity = new ScannedRequestEntity();
+                scannedRequestEntity.setStatusId(statusId);
+                scannedRequestEntity.setClient_id(clientId);
+
+
+                FaceVerificationService.getShared(context).scannedFace(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+                    @Override
+                    public void success(ScannedResponseEntity result) {
+                        Cidaas.instanceId="";
+
+
+                        new CountDownTimer(5000, 500) {
+                            String instceID = "";
+
+                            public void onTick(long millisUntilFinished) {
+                                instceID = Cidaas.instanceId;
+
+                                Timber.e("");
+                                if (instceID != null && !instceID.equals("")) {
+                                    this.cancel();
+                                    onFinish();
+                                }
+
+                            }
+
+                            public void onFinish() {
+
+                                if(instceID!=null && !instceID.equals("") ) {
+
+                                    ScannedRequestEntity scannedRequestEntity= new ScannedRequestEntity();
+                                    scannedRequestEntity.setUsage_pass(instceID);
+
+                                    FaceVerificationService.getShared(context).scannedFace(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+
+                                        @Override
+                                        public void success(ScannedResponseEntity result) {
+                                            scannedResult.success(result);
+                                        }
+
+                                        @Override
+                                        public void failure(WebAuthError error) {
+                                            scannedResult.failure(error);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                }
+                            }
+                        }.start();
+
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        scannedResult.failure(error);
+                    }
+                });
+            }
+            else {
+                scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,
+                        "BaseURL or ClientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+            }
+
+        }
+        catch (Exception e)
+        {
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,
+                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+
+        }
+    }
+
+
+
+    public void enrollFace(@NonNull final String baseurl, @NonNull final String accessToken,
+                           @NonNull final EnrollFaceMFARequestEntity enrollFaceMFARequestEntity, final Result<EnrollFaceMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
+
+                if (enrollFaceMFARequestEntity.getUserDeviceId() != null && !enrollFaceMFARequestEntity.getUserDeviceId().equals("") &&
+                        enrollFaceMFARequestEntity.getStatusId() != null && !enrollFaceMFARequestEntity.getStatusId().equals("") &&
+                        enrollFaceMFARequestEntity.getImagetoSend() != null ) {
+
+                    // call Enroll Service
+                    FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequestEntity,
+                            null, new Result<EnrollFaceMFAResponseEntity>() {
+
+                                @Override
+                                public void success(final EnrollFaceMFAResponseEntity serviceresult) {
+
+                                    Cidaas.instanceId = "";
+
+                                    //Timer
+                                    new CountDownTimer(5000, 500) {
+                                        String instceID = "";
+
+                                        public void onTick(long millisUntilFinished) {
+                                            instceID = Cidaas.instanceId;
+
+                                            Timber.e("");
+                                            if (instceID != null && !instceID.equals("")) {
+                                                this.cancel();
+                                                onFinish();
+                                            }
+
+                                        }
+
+                                        public void onFinish() {
+                                            if (instceID != null && !instceID.equals("")) {
+
+                                                //enroll
+                                                EnrollFaceMFARequestEntity enrollFaceMFARequest = new EnrollFaceMFARequestEntity();
+                                                enrollFaceMFARequest.setUsage_pass(instceID);
+                                                enrollFaceMFARequest.setImagetoSend(enrollFaceMFARequestEntity.getImagetoSend());
+
+                                                // call Enroll Service
+                                                FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequest,
+                                                        null, new Result<EnrollFaceMFAResponseEntity>() {
+                                                            @Override
+                                                            public void success(EnrollFaceMFAResponseEntity serviceresult) {
+                                                                enrollResult.success(serviceresult);
+                                                            }
+
+                                                            @Override
+                                                            public void failure(WebAuthError error) {
+                                                                enrollResult.failure(error);
+                                                            }
+                                                        });
+                                            }
+                                            else {
+                                                // return Error Message
+                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            }
+
+                                        }
+                                    }.start();
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    enrollResult.failure(error);
+                                    //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } else {
+                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                }
+            }
+            else
+            {
+                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+            }
+
+
+        }
+        catch (Exception e)
+        {
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+
+        }
+    }
+
+
+    //Login with Face
+    public void LoginWithFace(@NonNull final File FaceImageFile,@NonNull final String baseurl, @NonNull final String clientId,
+                               @NonNull final String trackId, @NonNull final String requestId,
+                               @NonNull final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,
+                               final Result<LoginCredentialsResponseEntity> loginresult)
+    {
+        try{
+
+            if(codeChallenge.equals("") && codeVerifier.equals("")) {
+                //Generate Challenge
+                generateChallenge();
+            }
+            Cidaas.instanceId="";
+            if(initiateFaceMFARequestEntity.getUserDeviceId() != null && !initiateFaceMFARequestEntity.getUserDeviceId().equals(""))
+            {
+                //Do nothing
+            }
+            else
+            {
+                initiateFaceMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+            }
+            initiateFaceMFARequestEntity.setClient_id(clientId);
+
+
+            if (    initiateFaceMFARequestEntity.getUsageType() != null && !initiateFaceMFARequestEntity.getUsageType().equals("") &&
+                    initiateFaceMFARequestEntity.getUserDeviceId() != null && !initiateFaceMFARequestEntity.getUserDeviceId().equals("") &&
+                    baseurl != null && !baseurl.equals("")) {
+                //Todo Service call
+                FaceVerificationService.getShared(context).initiateFace(baseurl,codeChallenge, initiateFaceMFARequestEntity,null,
+                        new Result<InitiateFaceMFAResponseEntity>() {
+
+                            @Override
+                            public void success(final InitiateFaceMFAResponseEntity serviceresult) {
+
+                                Cidaas.instanceId="";
+                                new CountDownTimer(5000, 500) {
+                                    String instceID="";
+                                    public void onTick(long millisUntilFinished) {
+                                        instceID= Cidaas.instanceId;
+
+                                        Timber.e("");
+                                        if(instceID!=null && instceID!="")
+                                        {
+                                            this.cancel();
+                                            onFinish();
+                                        }
+
+                                    }
+                                    public void onFinish() {
+                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+
+                                            //Todo call initiate
+                                            final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity=new InitiateFaceMFARequestEntity();
+                                            initiateFaceMFARequestEntity.setUsagePass(instceID);
+
+                                            final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                                            FaceVerificationService.getShared(context).initiateFace(baseurl, codeChallenge, initiateFaceMFARequestEntity,null,
+                                                    new Result<InitiateFaceMFAResponseEntity>() {
+
+                                                        @Override
+                                                        public void success(InitiateFaceMFAResponseEntity result) {
+                                                            if (FaceImageFile != null && serviceresult.getData().getStatusId() != null &&
+                                                                    !serviceresult.getData().getStatusId().equals("")) {
+
+
+                                                                AuthenticateFaceRequestEntity authenticateFaceRequestEntity = new AuthenticateFaceRequestEntity();
+                                                                authenticateFaceRequestEntity.setUserDeviceId(userDeviceId);
+                                                                authenticateFaceRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                authenticateFaceRequestEntity.setImagetoSend(FaceImageFile);
+
+
+                                                                authenticateFace(baseurl, authenticateFaceRequestEntity, new Result<AuthenticateFaceResponseEntity>() {
+                                                                    @Override
+                                                                    public void success(AuthenticateFaceResponseEntity result) {
+
+                                                                        //Todo Call Resume with Login Service
+
+                                                                        ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
+
+                                                                        //Todo Check not Null values
+                                                                        resumeLoginRequestEntity.setSub(result.getData().getSub());
+                                                                        resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
+                                                                        resumeLoginRequestEntity.setVerificationType("FACE");
+                                                                        resumeLoginRequestEntity.setUsageType(initiateFaceMFARequestEntity.getUsageType());
+                                                                        resumeLoginRequestEntity.setClient_id(clientId);
+                                                                        resumeLoginRequestEntity.setRequestId(requestId);
+
+                                                                        if (initiateFaceMFARequestEntity.getUsageType().equals(UsageType.MFA)) {
+                                                                            resumeLoginRequestEntity.setTrack_id(trackId);
+                                                                            LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, loginresult);
+                                                                        } else if (initiateFaceMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS)) {
+                                                                            resumeLoginRequestEntity.setTrack_id("");
+                                                                            LoginController.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, loginresult);
+
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void failure(WebAuthError error) {
+                                                                        loginresult.failure(error);
+                                                                    }
+                                                                });
+
+
+
+                                                            }
+                                                            else {
+                                                                String errorMessage="Status Id or Face Must not be null";
+                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
+                                                            }
+
+                                                        }
+
+                                                        @Override
+                                                        public void failure(WebAuthError error) {
+                                                            loginresult.failure(error);
+                                                            //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        }
+
+                                        else {
+                                            // return Error Message
+
+                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                        }
+                                    }
+                                }.start();
+
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                loginresult.failure(error);
+                            }
+                        });
+            }
+            else
+            {
+
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
+        }
+        catch (Exception e)
+        {
+            Timber.e(e.getMessage());
+        }
+    }
+
+
+    //Authenticate Face
+
+    public void authenticateFace(final String baseurl, final AuthenticateFaceRequestEntity authenticateFaceRequestEntity, final Result<AuthenticateFaceResponseEntity> authResult)
+    {
+        try
+        {
+            FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity,null, new Result<AuthenticateFaceResponseEntity>() {
+                @Override
+                public void success(final AuthenticateFaceResponseEntity serviceresult) {
+
+
+                    Cidaas.instanceId = "";
+
+                    //Timer
+                    new CountDownTimer(5000, 500) {
+                        String instceID = "";
+
+                        public void onTick(long millisUntilFinished) {
+                            instceID = Cidaas.instanceId;
+
+                            Timber.e("");
+                            if (instceID != null && !instceID.equals("")) {
+                                this.cancel();
+                                onFinish();
+                            }
+
+                        }
+
+                        public void onFinish() {
+                            if (instceID != null && !instceID.equals("")) {
+                                AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
+                                authenticateFaceRequestEntity.setUsage_pass(instceID);
+
+                                FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity,null, new Result<AuthenticateFaceResponseEntity>() {
+                                    @Override
+                                    public void success(AuthenticateFaceResponseEntity result) {
+                                        authResult.success(result);
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        authResult.failure(error);
+                                    }
+                                });
+                            }
+                            else {
+                                // return Error Message
+                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                            }
+
+                        }
+                    }.start();
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    authResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+/*
     //Service call To SetupFaceMFA
     public void ConfigureFaces(final List<File> imageFile, @NonNull final String sub, @NonNull final String baseurl,
                                @NonNull final SetupFaceMFARequestEntity setupFaceMFARequestEntity,
@@ -632,9 +1163,9 @@ public class FaceConfigurationController {
                                                                                         }
                                                                                         //  loginresult.success(result);
                                                                                         //   Toast.makeText(context, "Sucess Face", Toast.LENGTH_SHORT).show();
-                               /*
+                               *//*
 
-                                LoginController.getShared(context).resumeLogin();*/
+                                LoginController.getShared(context).resumeLogin();*//*
                                                                                     }
 
                                                                                     @Override
@@ -692,7 +1223,7 @@ public class FaceConfigurationController {
         {
             Timber.e(e.getMessage());
         }
-    }
+    }*/
 
 
 }

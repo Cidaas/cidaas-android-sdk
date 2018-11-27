@@ -85,7 +85,7 @@ public class FaceVerificationService {
 
 
     //setupFaceMFA
-    public void setupFaceMFA(String baseurl, String accessToken, String codeChallenge, SetupFaceMFARequestEntity setupFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void setupFaceMFA(String baseurl, String accessToken, SetupFaceMFARequestEntity setupFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                              final Result<SetupFaceMFAResponseEntity> callback)
     {
         String setupFaceMFAUrl="";
@@ -122,8 +122,7 @@ public class FaceVerificationService {
             headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -213,7 +212,7 @@ public class FaceVerificationService {
         }
     }
 
-    public void scannedFace(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedFace(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                             final Result<ScannedResponseEntity> callback)
     {
         String scannedFaceUrl="";
@@ -243,9 +242,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_token",AccessToken);
 
 
 
@@ -253,9 +250,7 @@ public class FaceVerificationService {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
-            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
-            scannedRequestEntity.setUsage_pass(usagePass);
-            scannedRequestEntity.setStatusId(statusId);
+
             scannedRequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -378,7 +373,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
            // headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
+
             headers.put("access_token", accessToken);
             headers.put("verification_api_version","2");
 

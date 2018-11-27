@@ -8,10 +8,10 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class EnrollVoiceMFARequestEntity implements Serializable{
-    String statusId;
+    String statusId="";
     File audioFile;
-    String userDeviceId;
-    String usage_pass;
+    String userDeviceId="";
+    String usage_pass="";
     DeviceInfoEntity deviceInfo;
 
     public String getUsage_pass() {
