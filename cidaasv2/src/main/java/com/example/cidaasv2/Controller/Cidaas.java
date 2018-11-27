@@ -1674,7 +1674,9 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticatePatternRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
-                    PatternVerificationService.getShared(context).authenticatePattern(baseurl,authenticatePatternRequestEntity,null,result);
+
+                    PatternConfigurationController.getShared(context).authenticatePattern(baseurl,authenticatePatternRequestEntity,result);
+                   // PatternVerificationService.getShared(context).authenticatePattern(baseurl,authenticatePatternRequestEntity,null,result);
 
                 }
 

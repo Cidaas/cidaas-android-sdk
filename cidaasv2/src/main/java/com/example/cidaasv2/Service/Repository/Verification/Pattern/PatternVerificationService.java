@@ -120,8 +120,6 @@ public class PatternVerificationService {
                 //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-              /*  deviceInfoEntity.setPushNotificationId("emwuJgX9_5g:APA91bGyW8Tgl7p68siQvJc8qtS_lkc6ffTPnk1-6Mq2PWjbzmDJMaT30uCRx9F" +
-                        "aiJnmkRc9nWUIaGXtB9khMThBfGsNaHo-N_iW-8Tt1GUn5fY9yurjq94mQNfd45P10XcvUJBF4WZwfV-N6IEmBQWRHKmyII1QLA");*/
             }
             setupPatternMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 

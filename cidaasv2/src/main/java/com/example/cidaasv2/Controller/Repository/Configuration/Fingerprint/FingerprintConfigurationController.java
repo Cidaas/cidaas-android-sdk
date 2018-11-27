@@ -138,15 +138,15 @@ public class FingerprintConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && setupserviceresult.getData().getStatusId()!=null && setupserviceresult.getData().getStatusId()!="")
+                                        if(instceID!=null && instceID!="" )
                                         {
                                             //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,setupserviceresult.getData().getStatusId(),codeVerifier
+                                            DeviceVerificationService.getShared(context).validateDevice(baseurl,instceID,"",codeVerifier
                                                     , null,new Result<ValidateDeviceResponseEntity>() {
                                                         @Override
                                                         public void success(ValidateDeviceResponseEntity result) {
                                                             // call Scanned Service
-                                                            FingerprintVerificationService.getShared(context).scannedFingerprint(baseurl,result.getData().getUsage_pass(),setupserviceresult.getData().getStatusId(),
+                                                            FingerprintVerificationService.getShared(context).scannedFingerprint(baseurl,result.getData().getUsage_pass(),"",
                                                                     accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
                                                                         @Override
                                                                         public void success(final ScannedResponseEntity result) {
@@ -157,7 +157,7 @@ public class FingerprintConfigurationController {
                                                                                     result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
                                                                                 enrollFingerprintMFARequestEntity.setSub(sub);
-                                                                                enrollFingerprintMFARequestEntity.setStatusId(setupserviceresult.getData().getStatusId());
+                                                                                enrollFingerprintMFARequestEntity.setStatusId("");
                                                                                 enrollFingerprintMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());
                                                                             }
                                                                             else {
