@@ -2804,6 +2804,7 @@ public class Cidaas implements IOAuthWebLogin {
                         SetupTOTPMFARequestEntity setupTOTPMFARequestEntity = new SetupTOTPMFARequestEntity();
                         setupTOTPMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupTOTPMFARequestEntity.setLogoUrl(logoURLlocal);
+
                         TOTPConfigurationController.getShared(context).configureTOTP(sub, finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
 
                     } else {
@@ -2893,6 +2894,42 @@ public class Cidaas implements IOAuthWebLogin {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
+
+
+    public void scannedTOTP(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+                    String userDeviceId=result.get("userDeviceId");
+
+
+                    TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned TOTP exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned TOTP exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned TOTP exception" + e.getMessage());
+        }
+    }
+
+
 
 
     public void listenTOTP(String sub) {

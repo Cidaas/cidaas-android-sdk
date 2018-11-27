@@ -79,7 +79,7 @@ public class TOTPVerificationService {
     }
 
 
-    public void scannedTOTP(String baseurl,String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedTOTP(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                             final Result<ScannedResponseEntity> callback)
     {
         String scannedTOTPUrl="";
@@ -110,18 +110,15 @@ public class TOTPVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_token",AccessToken);
+
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
-            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
-            scannedRequestEntity.setUsage_pass(usagePass);
-            scannedRequestEntity.setStatusId(statusId);
+
             scannedRequestEntity.setDeviceInfo(deviceInfoEntity);
 
 
@@ -202,7 +199,7 @@ public class TOTPVerificationService {
 
 
     //setupTOTPMFA
-    public void setupTOTP(String baseurl, String accessToken, String codeChallenge, SetupTOTPMFARequestEntity setupTOTPMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupTOTPMFAResponseEntity> callback)
+    public void setupTOTP(String baseurl, String accessToken, SetupTOTPMFARequestEntity setupTOTPMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupTOTPMFAResponseEntity> callback)
     {
         String setupTOTPMFAUrl="";
         try
@@ -236,11 +233,9 @@ public class TOTPVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -361,7 +356,6 @@ public class TOTPVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("access_token",accessToken);
             headers.put("verification_api_version","2");
 
