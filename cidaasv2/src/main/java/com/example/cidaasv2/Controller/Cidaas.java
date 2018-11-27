@@ -1422,7 +1422,9 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void enrollPattern(@NonNull final String patternString, @NonNull final String accessToken,@NonNull final String statusId,  final Result<EnrollPatternMFAResponseEntity> enrollResult)
+
+
+    public void enrollPattern(@NonNull final String patternString, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollPatternMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -1431,16 +1433,28 @@ public class Cidaas implements IOAuthWebLogin {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
-                    String baseurl = result.get("DomainURL");
+                    final String baseurl = result.get("DomainURL");
                     String userDeviceId=result.get("userDeviceId");
 
-                    EnrollPatternMFARequestEntity enrollPatternMFARequestEntity=new EnrollPatternMFARequestEntity();
+                    final EnrollPatternMFARequestEntity enrollPatternMFARequestEntity=new EnrollPatternMFARequestEntity();
                     enrollPatternMFARequestEntity.setVerifierPassword(patternString);
                     enrollPatternMFARequestEntity.setStatusId(statusId);
                     enrollPatternMFARequestEntity.setUserDeviceId(userDeviceId);
 
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            PatternConfigurationController.getShared(context).enrollPattern(baseurl,result.getAccess_token(),enrollPatternMFARequestEntity,enrollResult);
+                        }
 
-                    PatternConfigurationController.getShared(context).enrollPattern(baseurl,accessToken,enrollPatternMFARequestEntity,enrollResult);
+                        @Override
+                        public void failure(WebAuthError error) {
+                          enrollResult.failure(error);
+                        }
+                    });
+
+
+
                 }
 
                 @Override
@@ -1490,6 +1504,71 @@ public class Cidaas implements IOAuthWebLogin {
           Timber.e("Scanned Pattern exception" + e.getMessage());
       }
     }
+
+
+
+
+    public void scanned(@NonNull final String statusId, @NonNull final String sub,@NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+                    String userDeviceId=result.get("userDeviceId");
+
+
+                    if(verificationType.equalsIgnoreCase("PATTERN"))
+                    {
+                        PatternConfigurationController.getShared(context).scannedWithPattern(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("TOUCHID"))
+                    {
+
+                    }
+                    else if(verificationType.equalsIgnoreCase("VOICE"))
+                    {
+
+                    }
+                    else if(verificationType.equalsIgnoreCase("FACE"))
+                    {
+
+                    }
+                    else if(verificationType.equalsIgnoreCase("TOTP"))
+                    {
+
+                    }
+                    else if(verificationType.equalsIgnoreCase("PUSH"))
+                    {
+
+                    }
+                    else if(verificationType.equalsIgnoreCase("FIDOU2F"))
+                    {
+
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Pattern exception" + e.getMessage());
+        }
+    }
+
 
     //Todo login with pattern by Passing the pattern String Directly
     // 1. Todo Check For Local Variable or Read properties from file
