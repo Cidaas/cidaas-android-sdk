@@ -97,6 +97,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFARespons
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFARequestEntity;
@@ -1534,7 +1535,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else if(verificationType.equalsIgnoreCase("VOICE"))
                     {
-                        
+                        VoiceConfigurationController.getShared(context).scannedWithVoice(baseurl,statusId,clientId,scannedResult);
                     }
                     else if(verificationType.equalsIgnoreCase("FACE"))
                     {
@@ -2228,7 +2229,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void enrollFingerprint(@NonNull final String randomNumber, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
+    public void enrollFingerprint( @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -2241,7 +2242,6 @@ public class Cidaas implements IOAuthWebLogin {
                     String userDeviceId=result.get("userDeviceId");
 
                     final EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity=new EnrollFingerprintMFARequestEntity();
-                    enrollFingerprintMFARequestEntity.setVerifierPassword(randomNumber);
                     enrollFingerprintMFARequestEntity.setStatusId(statusId);
                     enrollFingerprintMFARequestEntity.setUserDeviceId(userDeviceId);
 
@@ -2878,7 +2878,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupVoiceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                        VoiceConfigurationController.getShared(context).configureVoice(sub, baseurl, voice, setupVoiceMFARequestEntity, enrollresult);
+                        VoiceConfigurationController.getShared(context).configureVoice(voice,sub, baseurl, setupVoiceMFARequestEntity, enrollresult);
 
 
                     }
@@ -2894,6 +2894,87 @@ public class Cidaas implements IOAuthWebLogin {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
+    }
+
+    public void scannedVoice(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+                    String userDeviceId=result.get("userDeviceId");
+
+
+                    VoiceConfigurationController.getShared(context).scannedWithVoice(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Voice exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Voice exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Voice exception" + e.getMessage());
+        }
+    }
+
+    public void enrollVoice(@NonNull final File voice, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollVoiceMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=result.get("userDeviceId");
+
+                    final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity=new EnrollVoiceMFARequestEntity();
+                    enrollVoiceMFARequestEntity.setAudioFile(voice);
+                    enrollVoiceMFARequestEntity.setStatusId(statusId);
+                    enrollVoiceMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            VoiceConfigurationController.getShared(context).enrollVoice(baseurl,result.getAccess_token(),enrollVoiceMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll Voice exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Voice exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Voice exception" + e.getMessage());
+        }
     }
 
 
@@ -2985,7 +3066,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateVoiceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
-                    VoiceVerificationService.getShared(context).authenticateVoice(baseurl,authenticateVoiceRequestEntity,null,result);
+                    VoiceConfigurationController.getShared(context).authenticateVoice(baseurl,authenticateVoiceRequestEntity,result);
 
 
 

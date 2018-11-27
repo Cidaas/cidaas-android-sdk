@@ -247,7 +247,7 @@ try {
     enrollFaceMFARequestEntity.setUserDeviceId(userdeviceID);
     enrollFaceMFARequestEntity.setStatusId("6e32f505-f5d8-4ddb-a2d5-cb239be93eca");
     enrollFaceMFARequestEntity.setImagetoSend(imgae);
-    enrollFaceMFARequestEntity.setSub(sub);
+
 }
 catch (Exception ec){
     Toast.makeText(this, "Test"+ec, Toast.LENGTH_SHORT).show();
