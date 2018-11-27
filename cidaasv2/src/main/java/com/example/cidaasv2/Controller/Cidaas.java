@@ -2878,7 +2878,7 @@ public class Cidaas implements IOAuthWebLogin {
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateTOTPMFARequestEntity, loginresult);
                     } else {
-                        String errorMessage = "UsageType or TOTPCode or requestId must not be empty";
+                        String errorMessage = "UsageType or requestId must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                 errorMessage, HttpStatusCode.EXPECTATION_FAILED));
