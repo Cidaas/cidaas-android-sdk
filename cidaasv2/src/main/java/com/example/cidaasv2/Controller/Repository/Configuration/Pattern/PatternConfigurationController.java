@@ -343,7 +343,7 @@ public class PatternConfigurationController {
 
                                                 //enroll
                                                 EnrollPatternMFARequestEntity enrollPatternMFARequestEntity = new EnrollPatternMFARequestEntity();
-                                                enrollPatternMFARequestEntity.setUsage_pass(serviceresult.getData().getUsage_pass());
+                                                enrollPatternMFARequestEntity.setUsage_pass(instceID);
 
                                                 // call Enroll Service
                                                 PatternVerificationService.getShared(context).enrollPattern(baseurl, accessToken, enrollPatternMFARequestEntity,
