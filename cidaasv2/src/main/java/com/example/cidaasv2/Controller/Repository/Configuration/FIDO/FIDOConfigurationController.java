@@ -139,7 +139,7 @@ public class FIDOConfigurationController {
                                                                             if(sub != null && !sub.equals("") && FIDOString!=null && !FIDOString.equals("") &&
                                                                                     result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
-                                                                                enrollFIDOMFARequestEntity.setSub(sub);
+
                                                                                 enrollFIDOMFARequestEntity.setVerifierPassword(FIDOString);
                                                                                 enrollFIDOMFARequestEntity.setStatusId("");
                                                                                 enrollFIDOMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());

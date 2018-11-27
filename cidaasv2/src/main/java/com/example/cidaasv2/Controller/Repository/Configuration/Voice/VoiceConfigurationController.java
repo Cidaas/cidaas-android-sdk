@@ -134,7 +134,6 @@ public class VoiceConfigurationController {
                                                                                     if(sub != null && !sub.equals("")  &&
                                                                                             result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
-                                                                                        enrollVoiceMFARequestEntity.setSub(sub);
                                                                                         enrollVoiceMFARequestEntity.setAudioFile(audioFile);
                                                                                       //  enrollVoiceMFARequestEntity.setStatusId(setupserviceresult.getData().getStatusId());
                                                                                         enrollVoiceMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());

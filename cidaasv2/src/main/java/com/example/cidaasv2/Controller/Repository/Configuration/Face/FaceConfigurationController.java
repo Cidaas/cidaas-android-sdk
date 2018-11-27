@@ -137,7 +137,7 @@ public class FaceConfigurationController {
                                                                                     if(sub != null && !sub.equals("")  &&
                                                                                             result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
-                                                                                        enrollFaceMFARequestEntity.setSub(sub);
+
                                                                                         enrollFaceMFARequestEntity.setImagetoSend(imageFile);
                                                                                         enrollFaceMFARequestEntity.setStatusId("");
                                                                                         enrollFaceMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());
@@ -445,7 +445,7 @@ public class FaceConfigurationController {
                                                                                     if(sub != null && !sub.equals("")  &&
                                                                                             result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
 
-                                                                                        enrollFaceMFARequestEntity.setSub(sub);
+
                                                                                         enrollFaceMFARequestEntity.setImagesToSend(imageFile);
                                                                                         enrollFaceMFARequestEntity.setStatusId("");
                                                                                         enrollFaceMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());

@@ -1534,7 +1534,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else if(verificationType.equalsIgnoreCase("VOICE"))
                     {
-
+                        
                     }
                     else if(verificationType.equalsIgnoreCase("FACE"))
                     {
