@@ -3320,6 +3320,19 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+    //Deny Call
+    public void denyNotification(@NonNull final String reason,@NonNull final String statusId)
+    {
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
 
 
     //-----------------Scan the ID card----------------------------------------------------------------------------------
