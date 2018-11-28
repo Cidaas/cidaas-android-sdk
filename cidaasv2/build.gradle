@@ -7,7 +7,6 @@ tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
 }
 
-
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -39,7 +38,6 @@ android {
 }
 
 dependencies {
-
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -87,17 +85,8 @@ dependencies {
     testImplementation "com.android.support.test:monitor:1.0.2"
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
 
-
     /*///For ID card Scannner
     compile 'io.card:android-sdk:5.5.1'*/
-
-
-
-
-
-
-
-
 }
 
 
@@ -119,4 +108,3 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
             'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ])
 }
-

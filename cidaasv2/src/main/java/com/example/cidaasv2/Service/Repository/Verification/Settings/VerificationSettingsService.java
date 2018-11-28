@@ -196,7 +196,7 @@ public class VerificationSettingsService {
 
 
 
-    public void deleteMFA(String baseurl, String userDeviceID, @NonNull final String accessToken, String verificationType, DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
+    public void deleteMFA(String baseurl,  @NonNull final String accessToken,String userDeviceID, String verificationType, DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
     {
         //Local Variables
         String deleteMFAURL = "";
