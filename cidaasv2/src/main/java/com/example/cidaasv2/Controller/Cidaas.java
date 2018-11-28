@@ -1544,7 +1544,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else if(verificationType.equalsIgnoreCase("TOTP"))
                     {
-
+                        TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
                     }
                     else if(verificationType.equalsIgnoreCase("PUSH"))
                     {
