@@ -312,6 +312,7 @@ public class SmartPushConfigurationController {
 
                                         @Override
                                         public void success(ScannedResponseEntity result) {
+                                            DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
                                             scannedResult.success(result);
                                         }
 

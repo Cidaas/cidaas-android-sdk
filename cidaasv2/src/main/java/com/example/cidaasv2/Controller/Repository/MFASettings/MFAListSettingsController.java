@@ -96,12 +96,14 @@ public class MFAListSettingsController {
 
 
     //Service call To delete MFA list
-    public void deleteMFA(@NonNull final String baseurl, @NonNull String userDeviceId, @NonNull String verificationType, final Result<DeleteMFAResponseEntity> result){
+    public void deleteMFA(@NonNull final String baseurl,@NonNull final String accessToken, @NonNull String userDeviceId, @NonNull String verificationType, final Result<DeleteMFAResponseEntity> result){
         try{
 
-            if (baseurl != null && !baseurl.equals("") && userDeviceId != null && !userDeviceId.equals("") && verificationType != null && !verificationType.equals("")) {
+            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") && userDeviceId != null && !userDeviceId.equals("")
+                    && verificationType != null && !verificationType.equals("")) {
 
-                VerificationSettingsService.getShared(context).deleteMFA(baseurl, userDeviceId,verificationType,null, new Result<DeleteMFAResponseEntity>() {
+                VerificationSettingsService.getShared(context).deleteMFA(baseurl, accessToken,userDeviceId,verificationType,null,
+                        new Result<DeleteMFAResponseEntity>() {
 
                     @Override
                     public void success(DeleteMFAResponseEntity serviceresult) {
@@ -117,9 +119,44 @@ public class MFAListSettingsController {
             }
             else
             {
-                String errorMessae="UserDeviceID or baseURL must not be empty ";
+                String errorMessage="UserDeviceID or AccessToken or VerificationType or baseURL must not be empty ";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessae, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            }
+        }
+        catch (Exception e)
+        {
+
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e(e.getMessage());
+        }
+    }
+
+    //Service call To delete MFA list
+    public void deleteAllMFA(@NonNull final String baseurl,@NonNull final String accessToken, @NonNull String userDeviceId, final Result<DeleteMFAResponseEntity> result){
+        try{
+
+            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") && userDeviceId != null && !userDeviceId.equals("") ) {
+
+                VerificationSettingsService.getShared(context).deleteAllMFA(baseurl,accessToken, userDeviceId,null, new Result<DeleteMFAResponseEntity>() {
+
+                    @Override
+                    public void success(DeleteMFAResponseEntity serviceresult) {
+                        result.success(serviceresult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+
+                        result.failure(error);
+                    }
+                });
+            }
+            else
+            {
+                String errorMessage="UserDeviceID or baseURL must not be empty ";
+
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }
         }
         catch (Exception e)

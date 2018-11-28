@@ -520,8 +520,35 @@ public interface ICidaasSDKService {
 
     //Delete
     @DELETE
-    Call<DeleteMFAResponseEntity> delete(@Url String url, @Header("access_token") String accessToken);
+    Call<DeleteMFAResponseEntity> delete(@Url String url, @Header("access_token") String accessToken);//Delete
 
+    //DeleteAll
+    @DELETE
+    Call<DeleteMFAResponseEntity> deleteAll(@Url String url, @Header("access_token") String accessToken);
+
+
+    //Construct URL
+    @GET
+    Call<Object> getUrlList(@Url String url);
+/*
+    @POST
+    Call<NotificationEntity> getPendingNotification(@Url String url, @Header("Content-Type") String content_type,
+                                                    @Header("access_token") String access_token);
+
+    @POST
+    Call<ResponseBody> getDenyService(@Url String url, @Header("Content-Type") String content_type,
+                                      @Header("access_token") String access_token, @Body DenyRequest denyRequest);
+
+    @POST
+    Call<FidoEnrollServiceResultEntity> enrollFido(@Url String url, @Header("Content-Type") String content_type,
+                                                   @Header("access_token") String access_token, @Body FidoEnrollServiceEntity fidoRequest
+    );
+
+    @POST
+    Call<FidoAuthenticateServiceResultEntity> authenticateFido(@Url String url,
+                                                               @Header("Content-Type") String content_type,
+                                                               @Header("access_token") String access_token,
+                                                               @Body FidoAuthenticateServiceEntity fidoAuthenticateServiceEntity);*/
 
 
 }

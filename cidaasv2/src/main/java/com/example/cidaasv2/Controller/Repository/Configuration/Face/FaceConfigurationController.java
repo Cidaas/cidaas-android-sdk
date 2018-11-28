@@ -564,6 +564,7 @@ public class FaceConfigurationController {
 
                                         @Override
                                         public void success(ScannedResponseEntity result) {
+                                            DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
                                             scannedResult.success(result);
                                         }
 

@@ -15,7 +15,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -84,7 +83,6 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeletePatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
@@ -144,11 +142,6 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Pattern.PatternVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
-import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
@@ -1438,7 +1431,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
-                    String userDeviceId=result.get("userDeviceId");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollPatternMFARequestEntity enrollPatternMFARequestEntity=new EnrollPatternMFARequestEntity();
                     enrollPatternMFARequestEntity.setVerifierPassword(patternString);
@@ -1487,7 +1480,6 @@ public class Cidaas implements IOAuthWebLogin {
 
                   String baseurl = result.get("DomainURL");
                   String clientId=result.get("ClientId");
-                  String userDeviceId=result.get("userDeviceId");
 
 
                   PatternConfigurationController.getShared(context).scannedWithPattern(baseurl,statusId,clientId,scannedResult);
@@ -1523,7 +1515,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     String baseurl = result.get("DomainURL");
                     String clientId=result.get("ClientId");
-                    String userDeviceId=result.get("userDeviceId");
+
 
 
                     if(verificationType.equalsIgnoreCase("PATTERN"))
@@ -1835,7 +1827,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     String baseurl = result.get("DomainURL");
                     String clientId=result.get("ClientId");
-                    String userDeviceId=result.get("userDeviceId");
+
 
 
                     FaceConfigurationController.getShared(context).scannedWithFace(baseurl,statusId,clientId,scannedResult);
@@ -1867,7 +1859,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
-                    String userDeviceId=result.get("userDeviceId");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollFaceMFARequestEntity enrollFaceMFARequestEntity=new EnrollFaceMFARequestEntity();
                     enrollFaceMFARequestEntity.setImagetoSend(Face);
@@ -2290,7 +2282,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     String baseurl = result.get("DomainURL");
                     String clientId=result.get("ClientId");
-                    String userDeviceId=result.get("userDeviceId");
+
 
 
                     FingerprintConfigurationController.getShared(context).scannedWithFingerprint(baseurl,statusId,clientId,scannedResult);
@@ -2322,15 +2314,16 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
-                    String userDeviceId=result.get("userDeviceId");
-
-                    final EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity=new EnrollFingerprintMFARequestEntity();
-                    enrollFingerprintMFARequestEntity.setStatusId(statusId);
-                    enrollFingerprintMFARequestEntity.setUserDeviceId(userDeviceId);
+                    final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
+                            EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity=new EnrollFingerprintMFARequestEntity();
+                            enrollFingerprintMFARequestEntity.setStatusId(statusId);
+                            enrollFingerprintMFARequestEntity.setUserDeviceId(userDeviceId);
+
+
                             FingerprintConfigurationController.getShared(context).enrollFingerprint(baseurl,result.getAccess_token(),enrollFingerprintMFARequestEntity,enrollResult);
                         }
 
@@ -2603,8 +2596,6 @@ public class Cidaas implements IOAuthWebLogin {
 
                     String baseurl = result.get("DomainURL");
                     String clientId=result.get("ClientId");
-                    String userDeviceId=result.get("userDeviceId");
-
 
                     SmartPushConfigurationController.getShared(context).scannedWithSmartPush(baseurl,statusId,clientId,scannedResult);
                 }
@@ -2635,7 +2626,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
-                    String userDeviceId=result.get("userDeviceId");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity=new EnrollSmartPushMFARequestEntity();
                     enrollSmartPushMFARequestEntity.setVerifierPassword(randomNumber);
@@ -2907,7 +2898,6 @@ public class Cidaas implements IOAuthWebLogin {
 
                     String baseurl = result.get("DomainURL");
                     String clientId=result.get("ClientId");
-                    String userDeviceId=result.get("userDeviceId");
 
 
                     TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
@@ -3027,7 +3017,6 @@ public class Cidaas implements IOAuthWebLogin {
 
                     String baseurl = result.get("DomainURL");
                     String clientId=result.get("ClientId");
-                    String userDeviceId=result.get("userDeviceId");
 
 
                     VoiceConfigurationController.getShared(context).scannedWithVoice(baseurl,statusId,clientId,scannedResult);
@@ -3059,7 +3048,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
-                    String userDeviceId=result.get("userDeviceId");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity=new EnrollVoiceMFARequestEntity();
                     enrollVoiceMFARequestEntity.setAudioFile(voice);
@@ -3213,14 +3202,14 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     //Delete call
-    public void delete(@NonNull final String verificationType, final Result<DeleteMFAResponseEntity> result)
+    public void delete(@NonNull final String verificationType, @NonNull final String sub, final Result<DeleteMFAResponseEntity> deleteResult)
     {
         try
         {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = lpresult.get("DomainURL");
+                    final String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
                     String userDeviceId="";
 
@@ -3232,15 +3221,83 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else
                     {
-                        result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"Verification Type must not be empty",HttpStatusCode.BAD_REQUEST));
+                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"Verification Type must not be empty",HttpStatusCode.BAD_REQUEST));
 
                     }
 
-                    if(lpresult.get("userDeviceId")!=null && lpresult.get("userDeviceId")!="")
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="")
                     {
-                        userDeviceId=lpresult.get("userDeviceId");
+                        userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                        MFAListSettingsController.getShared(context).deleteMFA(baseurl,userDeviceId,typeOfVerification,result);
+                        final String finalUserDeviceId = userDeviceId;
+                        final String finalTypeOfVerification = typeOfVerification;
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity result) {
+                                //After getting Access Token
+                                MFAListSettingsController.getShared(context).deleteMFA(baseurl, result.getAccess_token(),finalUserDeviceId, finalTypeOfVerification,deleteResult);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                deleteResult.failure(error);
+                            }
+                        });
+
+
+                    }
+                    else
+                    {
+                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    deleteResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.e("Faliure in delete service call"+e.getMessage());
+            deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+    //Delete call
+    public void deleteAll( @NonNull final String sub,final Result<DeleteMFAResponseEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    String userDeviceId="";
+
+
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="")
+                    {
+                        userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                        final String finalUserDeviceId = userDeviceId;
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenresult) {
+
+                                MFAListSettingsController.getShared(context).deleteAllMFA(baseurl,accessTokenresult.getAccess_token(), finalUserDeviceId,result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+
+
                     }
                     else
                     {
@@ -3256,12 +3313,11 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            Timber.e("Faliure in delete service call"+e.getMessage());
+            Timber.e("Faliure in delete All service call"+e.getMessage());
             result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
 
         }
     }
-
 
 
 
@@ -4123,7 +4179,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain) {
+    /*public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain) {
         try {
 
 
@@ -4152,7 +4208,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-
+*/
     //Todo sConsult and Create a  new Resume if the loginCallback is null
     //Get Code By URl
 

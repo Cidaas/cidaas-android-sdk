@@ -518,7 +518,9 @@ public class VoiceConfigurationController {
                 scannedRequestEntity.setClient_id(clientId);
 
 
-                VoiceVerificationService.getShared(context).scannedVoice(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+                VoiceVerificationService.getShared(context).scannedVoice(baseurl,  scannedRequestEntity,
+                        null, new Result<ScannedResponseEntity>()
+                        {
                     @Override
                     public void success(ScannedResponseEntity result) {
                         Cidaas.instanceId="";
@@ -545,10 +547,13 @@ public class VoiceConfigurationController {
                                     ScannedRequestEntity scannedRequestEntity= new ScannedRequestEntity();
                                     scannedRequestEntity.setUsage_pass(instceID);
 
-                                    VoiceVerificationService.getShared(context).scannedVoice(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+                                    VoiceVerificationService.getShared(context).scannedVoice(baseurl,  scannedRequestEntity,
+                                            null, new Result<ScannedResponseEntity>()
+                                            {
 
                                         @Override
                                         public void success(ScannedResponseEntity result) {
+                                            DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
                                             scannedResult.success(result);
                                         }
 

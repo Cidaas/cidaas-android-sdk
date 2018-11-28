@@ -58,8 +58,8 @@ dependencies {
     implementation 'io.reactivex:rxjava:1.2.9'
     implementation 'com.jakewharton.rxbinding:rxbinding:1.0.1'
 
-    //For Custom Tabs
-    implementation 'com.android.support:customtabs:27.1.1'
+   /* //For Custom Tabs
+    implementation 'com.android.support:customtabs:27.1.1'*/
 
     //For Encryption
     implementation 'com.scottyab:aescrypt:0.0.1'
