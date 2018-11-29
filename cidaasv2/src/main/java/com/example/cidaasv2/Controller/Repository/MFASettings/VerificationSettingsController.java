@@ -3,44 +3,41 @@ package com.example.cidaasv2.Controller.Repository.MFASettings;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.example.cidaasv2.Helper.Entity.PhysicalVerificationEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListDeviceEntity;
-import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseDataEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
-import com.example.cidaasv2.Service.Repository.OauthService;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Settings.VerificationSettingsService;
 
 import timber.log.Timber;
 
-public class MFAListSettingsController {
+public class VerificationSettingsController {
 
 
 
     private Context context;
 
-    public static MFAListSettingsController shared;
+    public static VerificationSettingsController shared;
 
-    public MFAListSettingsController(Context contextFromCidaas) {
+    public VerificationSettingsController(Context contextFromCidaas) {
 
         context=contextFromCidaas;
         //Todo setValue for authenticationType
 
     }
 
-    public static MFAListSettingsController getShared(Context contextFromCidaas )
+    public static VerificationSettingsController getShared(Context contextFromCidaas )
     {
         try {
 
             if (shared == null) {
-                shared = new MFAListSettingsController(contextFromCidaas);
+                shared = new VerificationSettingsController(contextFromCidaas);
             }
         }
         catch (Exception e)
@@ -170,7 +167,7 @@ public class MFAListSettingsController {
     }
 
 
-    //To deny notification Service
+    //To get pending notification Service
     public void denyNotification(@NonNull final String baseurl, @NonNull final String accessToken, DenyNotificationRequestEntity denyNotificationRequestEntity,final Result<DenyNotificationResponseEntity> result){
         try{
 
@@ -194,13 +191,49 @@ public class MFAListSettingsController {
             {
                 String errorMessage="AccessToken or baseURL must not be empty ";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DENY_NOTIFICATION,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }
         }
         catch (Exception e)
         {
 
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e(e.getMessage());
+        }
+    }
+
+
+    //To deny notification Service
+    public void getPendingNotification(@NonNull final String baseurl, @NonNull final String accessToken, @NonNull final String userDeviceId,final Result<NotificationEntity> result){
+        try{
+
+            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")&& userDeviceId != null && !userDeviceId.equals("")  ) {
+
+                VerificationSettingsService.getShared(context).getPendingNotification(baseurl,accessToken,userDeviceId, null, new Result<NotificationEntity>() {
+
+                    @Override
+                    public void success(NotificationEntity serviceresult) {
+                        result.success(serviceresult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+
+                        result.failure(error);
+                    }
+                });
+            }
+            else
+            {
+                String errorMessage="AccessToken or baseURL or UserDeviceId must not be empty ";
+
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            }
+        }
+        catch (Exception e)
+        {
+
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
             Timber.e(e.getMessage());
         }
     }

@@ -46,6 +46,7 @@ public class URLHelper {
     String deleteMFA="/verification-srv/settings/delete/";
     String deleteAllMFA="/verification-srv/settings/deleteall/";
     String denyNotification="/verification-srv/notification/reject";
+    String PendingNotificationURL="verification-srv/notification/initiated/";
 
     String setupEmailMFA="/verification-srv/email/setup";
     String enrollEmailMFA="/verification-srv/email/enroll";
@@ -141,7 +142,11 @@ public class URLHelper {
     String documentScanner="/access-control-srv/ocr/validate";
 
 
-    public String getDeleteMFA(String userDeviceId,String verificationType) {
+    public String getPendingNotificationURL() {
+        return PendingNotificationURL;
+    }
+
+    public String getDeleteMFA(String userDeviceId, String verificationType) {
         return deleteMFA+userDeviceId+"/"+verificationType;
     }
 

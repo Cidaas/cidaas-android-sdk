@@ -15,10 +15,11 @@ import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -456,19 +457,6 @@ public class VerificationSettingsService {
             }
 
 
-
-
-               /* DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-                //This is only for testing purpose
-                if(deviceInfoEntityFromParam==null) {
-                    deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-                }
-                else if(deviceInfoEntityFromParam!=null)
-                {
-                    deviceInfoEntity=deviceInfoEntityFromParam;
-                }
-*/
-
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
             cidaasSDKService.denyNotificationService(denyNotificationURL,URLHelper.contentTypeJson,accessToken,denyNotificationRequestEntity).enqueue(new Callback<DenyNotificationResponseEntity>() {
@@ -525,6 +513,98 @@ public class VerificationSettingsService {
 
                 @Override
                 public void onFailure(Call<DenyNotificationResponseEntity> call, Throwable t) {
+                    Timber.e("Faliure in Deny notification service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,t.getMessage(), 400,null,null));
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+    }
+
+
+    //Service call to get pending notification
+
+    public void getPendingNotification(String baseurl, @NonNull final String accessToken, @NonNull final String userDeviceId,DeviceInfoEntity deviceInfoEntityFromParam, final Result<NotificationEntity> callback)
+    {
+        //Local Variables
+        String getPendingNotificationURL = "";
+        try{
+
+            if(baseurl!=null && baseurl!="") {
+
+                //Construct URL For
+                //Deny Notification MFA
+                getPendingNotificationURL = baseurl + URLHelper.getShared().getPendingNotificationURL()+userDeviceId;
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        400,null,null));
+                return;
+            }
+
+
+            //Call Service-getRequestId
+            ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.getPendingNotification(getPendingNotificationURL,URLHelper.contentTypeJson,accessToken).enqueue(new Callback<NotificationEntity>()
+            {
+                @Override
+                public void onResponse(Call<NotificationEntity> call, Response<NotificationEntity> response) {
+                    if (response.isSuccessful()) {
+                        if(response.code()==200) {
+                            callback.success(response.body());
+                        }
+                        else {
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+                                    "Service failure but successful response" ,response.code(),null,null));
+                        }
+                    }
+                    else {
+                        assert response.errorBody() != null;
+                        try {
+
+                            //Todo Handle proper error message
+                            String errorResponse=response.errorBody().source().readByteString().utf8();
+
+                            CommonErrorEntity commonErrorEntity;
+                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+
+                            String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
+                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                errorMessage=commonErrorEntity.getError().toString();
+                            }
+                            else
+                            {
+                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                            }
+
+
+
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage,
+                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+                        }
+                        Timber.e("response"+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<NotificationEntity> call, Throwable t) {
                     Timber.e("Faliure in Deny notification service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,t.getMessage(), 400,null,null));
 

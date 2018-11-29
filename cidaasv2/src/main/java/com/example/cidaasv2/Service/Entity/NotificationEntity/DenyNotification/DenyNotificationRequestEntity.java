@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Service.Entity.DenyNotificationEntity;
+package com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

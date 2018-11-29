@@ -15,8 +15,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.Resum
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -106,6 +106,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
@@ -484,6 +485,11 @@ public interface ICidaasSDKService {
 
 
 
+    //Pending Notification
+    @POST
+    Call<NotificationEntity> getPendingNotification(@Url String url, @Header("Content-Type") String content_type,
+                                                    @Header("access_token") String access_token);
+
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
     //Get Registration Setup
@@ -543,9 +549,7 @@ public interface ICidaasSDKService {
     @GET
     Call<Object> getUrlList(@Url String url);
 /*
-    @POST
-    Call<NotificationEntity> getPendingNotification(@Url String url, @Header("Content-Type") String content_type,
-                                                    @Header("access_token") String access_token);
+
 
 
 

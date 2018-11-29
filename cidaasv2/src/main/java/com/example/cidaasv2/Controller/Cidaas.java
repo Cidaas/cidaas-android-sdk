@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -36,7 +34,7 @@ import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
-import com.example.cidaasv2.Controller.Repository.MFASettings.MFAListSettingsController;
+import com.example.cidaasv2.Controller.Repository.MFASettings.VerificationSettingsController;
 import com.example.cidaasv2.Controller.Repository.Registration.RegistrationController;
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordController;
@@ -65,8 +63,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResul
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
-import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -125,6 +123,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPush
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
@@ -745,7 +744,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
                     if (sub != null && sub != "") {
-                        MFAListSettingsController.getShared(context).getmfaList(baseurl, sub, mfaresult);
+                        VerificationSettingsController.getShared(context).getmfaList(baseurl, sub, mfaresult);
                     } else {
                         String errorMessage = "Sub must not be empty";
 
@@ -3237,7 +3236,7 @@ public class Cidaas implements IOAuthWebLogin {
                             @Override
                             public void success(AccessTokenEntity result) {
                                 //After getting Access Token
-                                MFAListSettingsController.getShared(context).deleteMFA(baseurl, result.getAccess_token(),finalUserDeviceId, finalTypeOfVerification,deleteResult);
+                                VerificationSettingsController.getShared(context).deleteMFA(baseurl, result.getAccess_token(),finalUserDeviceId, finalTypeOfVerification,deleteResult);
                             }
 
                             @Override
@@ -3290,7 +3289,7 @@ public class Cidaas implements IOAuthWebLogin {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
 
-                                MFAListSettingsController.getShared(context).deleteAllMFA(baseurl,accessTokenresult.getAccess_token(), finalUserDeviceId,result);
+                                VerificationSettingsController.getShared(context).deleteAllMFA(baseurl,accessTokenresult.getAccess_token(), finalUserDeviceId,result);
                             }
 
                             @Override
@@ -3334,24 +3333,24 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId = lpresult.get("ClientId");
                     String userDeviceId="";
 
+                    if(sub!=null && sub!="") {
+
 
                         AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
 
-                                if(reason!="" && reason!=null && statusId!=null && statusId!="") {
+                                if (reason != "" && reason != null && statusId != null && statusId != "") {
 
                                     DenyNotificationRequestEntity denyNotificationRequestEntity = new DenyNotificationRequestEntity();
                                     denyNotificationRequestEntity.setReject_reason(reason);
                                     denyNotificationRequestEntity.setStatusId(statusId);
 
 
-                                    MFAListSettingsController.getShared(context).denyNotification(baseurl, accessTokenresult.getAccess_token(), denyNotificationRequestEntity, result);
-                                }
-                                else
-                                {
-                                    result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
-                                            "Verification Type must not be empty",HttpStatusCode.BAD_REQUEST));
+                                    VerificationSettingsController.getShared(context).denyNotification(baseurl, accessTokenresult.getAccess_token(), denyNotificationRequestEntity, result);
+                                } else {
+                                    result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
+                                            "Verification Type must not be empty", HttpStatusCode.BAD_REQUEST));
                                 }
                             }
 
@@ -3360,6 +3359,77 @@ public class Cidaas implements IOAuthWebLogin {
                                 result.failure(error);
                             }
                         });
+                    }
+                    else {
+                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+                                "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+            Timber.e("Faliure in delete All service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+
+    //Get Pending Notification
+    public void getPendingNotificationList(@NonNull final String sub,  final Result<NotificationEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+
+
+                    if(sub!=null && sub!="") {
+
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenresult) {
+
+                                if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="") {
+                                    String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+
+
+                                    if (userDeviceId != "" && userDeviceId != null) {
+
+
+                                        VerificationSettingsController.getShared(context).getPendingNotification(baseurl, accessTokenresult.getAccess_token(), userDeviceId, result);
+                                    } else {
+                                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
+                                                "User Device Id must not be empty", HttpStatusCode.BAD_REQUEST));
+                                    }
+                                }
+                                else
+                                {
+                                    result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                                }
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+                    }
+                    else {
+                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+                                "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                    }
 
                 }
 
