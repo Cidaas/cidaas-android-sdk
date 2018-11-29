@@ -132,6 +132,7 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEnt
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
@@ -3226,7 +3227,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     }
 
-                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="")
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="" && sub!=null && sub!="")
                     {
                         userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -3249,7 +3250,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else
                     {
-                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID or Sub must not be empty",HttpStatusCode.BAD_REQUEST));
                     }
                 }
 
@@ -3280,7 +3281,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String userDeviceId="";
 
 
-                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="")
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="" && sub!=null && sub!="")
                     {
                         userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -3302,7 +3303,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else
                     {
-                        result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                        result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID or sub must not be empty",HttpStatusCode.BAD_REQUEST));
                     }
                 }
 
@@ -3447,6 +3448,53 @@ public class Cidaas implements IOAuthWebLogin {
 
         }
     }
+
+
+    //Get user List Notification
+    public void getConfigurationList(@NonNull final String sub,  final Result<ConfiguredMFAListEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+
+                    if(sub!=null && sub!="") {
+
+                        if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="") {
+
+                            String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+                            VerificationSettingsController.getShared(context).getConfiguredMFAList(baseurl, sub, userDeviceId, result);
+                         }
+                         else
+                         {
+                            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                         }
+
+                       }
+                       else {
+                          result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,
+                            "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                       }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+            Timber.e("Faliure in getConfiguration List  service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+
 
 
 

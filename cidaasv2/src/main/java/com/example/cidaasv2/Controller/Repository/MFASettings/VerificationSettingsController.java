@@ -13,6 +13,7 @@ import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.D
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
+import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Settings.VerificationSettingsService;
 
 import timber.log.Timber;
@@ -137,19 +138,7 @@ public class VerificationSettingsController {
 
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") && userDeviceId != null && !userDeviceId.equals("") ) {
 
-                VerificationSettingsService.getShared(context).deleteAllMFA(baseurl,accessToken, userDeviceId,null, new Result<DeleteMFAResponseEntity>() {
-
-                    @Override
-                    public void success(DeleteMFAResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-
-                        result.failure(error);
-                    }
-                });
+                VerificationSettingsService.getShared(context).deleteAllMFA(baseurl,accessToken, userDeviceId,null, result);
             }
             else
             {
@@ -173,19 +162,7 @@ public class VerificationSettingsController {
 
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")  ) {
 
-                VerificationSettingsService.getShared(context).denyNotification(baseurl,accessToken,denyNotificationRequestEntity, null, new Result<DenyNotificationResponseEntity>() {
-
-                    @Override
-                    public void success(DenyNotificationResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-
-                        result.failure(error);
-                    }
-                });
+                VerificationSettingsService.getShared(context).denyNotification(baseurl,accessToken,denyNotificationRequestEntity, null, result);
             }
             else
             {
@@ -209,19 +186,7 @@ public class VerificationSettingsController {
 
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")&& userDeviceId != null && !userDeviceId.equals("")  ) {
 
-                VerificationSettingsService.getShared(context).getPendingNotification(baseurl,accessToken,userDeviceId, null, new Result<NotificationEntity>() {
-
-                    @Override
-                    public void success(NotificationEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-
-                        result.failure(error);
-                    }
-                });
+                VerificationSettingsService.getShared(context).getPendingNotification(baseurl,accessToken,userDeviceId, null, result);
             }
             else
             {
@@ -237,4 +202,29 @@ public class VerificationSettingsController {
             Timber.e(e.getMessage());
         }
     }
+
+
+    //To get Configured MFA List of a user
+    public void getConfiguredMFAList(@NonNull final String baseurl, @NonNull final String sub, @NonNull final String userDeviceId,final Result<ConfiguredMFAListEntity> result){
+        try{
+
+            if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")&& userDeviceId != null && !userDeviceId.equals("")  ) {
+
+                VerificationSettingsService.getShared(context).getConfiguredMFAList(baseurl,sub,userDeviceId, null, result);
+            }
+            else
+            {
+                String errorMessage="sub or baseURL or UserDeviceId must not be empty ";
+
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            }
+        }
+        catch (Exception e)
+        {
+
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e(e.getMessage());
+        }
+    }
+
 }

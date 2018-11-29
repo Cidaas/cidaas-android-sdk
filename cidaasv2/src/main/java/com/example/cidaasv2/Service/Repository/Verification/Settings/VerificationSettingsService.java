@@ -20,6 +20,7 @@ import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.D
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
+import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,7 +39,7 @@ public class VerificationSettingsService {
     //Local variables
     private String statusId;
     private String authenticationType;
-    private String sub;
+
     private String verificationType;
     private Context context;
 
@@ -607,6 +608,99 @@ public class VerificationSettingsService {
                 public void onFailure(Call<NotificationEntity> call, Throwable t) {
                     Timber.e("Faliure in Deny notification service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,t.getMessage(), 400,null,null));
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+    }
+
+
+
+    //Service call to get Configured MFA List
+
+    public void getConfiguredMFAList(String baseurl, @NonNull final String sub, @NonNull final String userDeviceId,DeviceInfoEntity deviceInfoEntityFromParam, final Result<ConfiguredMFAListEntity> callback)
+    {
+        //Local Variables
+        String ConfiguredMFAListURL = "";
+        try{
+
+            if(baseurl!=null && baseurl!="") {
+
+                //Construct URL For
+                //Deny Notification MFA
+                ConfiguredMFAListURL = baseurl + URLHelper.getShared().getConfiguredMFAListURL();
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        400,null,null));
+                return;
+            }
+
+
+            //Call Service-getRequestId
+            ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.getConfiguredMFAList(ConfiguredMFAListURL,sub,userDeviceId).enqueue(new Callback<ConfiguredMFAListEntity>()
+            {
+                @Override
+                public void onResponse(Call<ConfiguredMFAListEntity> call, Response<ConfiguredMFAListEntity> response) {
+                    if (response.isSuccessful()) {
+                        if(response.code()==200) {
+                            callback.success(response.body());
+                        }
+                        else {
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,
+                                    "Service failure but successful response" ,response.code(),null,null));
+                        }
+                    }
+                    else {
+                        assert response.errorBody() != null;
+                        try {
+
+                            //Todo Handle proper error message
+                            String errorResponse=response.errorBody().source().readByteString().utf8();
+
+                            CommonErrorEntity commonErrorEntity;
+                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+
+                            String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
+                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                errorMessage=commonErrorEntity.getError().toString();
+                            }
+                            else
+                            {
+                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                            }
+
+
+
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,errorMessage,
+                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,
+                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+                        }
+                        Timber.e("response"+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ConfiguredMFAListEntity> call, Throwable t) {
+                    Timber.e("Faliure in Deny notification service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });

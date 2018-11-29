@@ -117,6 +117,7 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCo
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceRequestEntity;
@@ -530,6 +531,9 @@ public interface ICidaasSDKService {
     //Get Consent String Details
     @GET
     Call<ConsentDetailsResultEntity> getConsentStringDetails(@Url String url);
+
+    @GET
+    Call<ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);
 
     //-----------------------------------------------------DELETE Call-----------------------------------------------------------------
 
