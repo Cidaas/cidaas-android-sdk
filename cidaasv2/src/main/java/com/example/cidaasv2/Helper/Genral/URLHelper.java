@@ -45,6 +45,7 @@ public class URLHelper {
     String mfaList="/verification-srv/settings/listbydeviceid";
     String deleteMFA="/verification-srv/settings/delete/";
     String deleteAllMFA="/verification-srv/settings/deleteall/";
+    String denyNotification="/verification-srv/notification/reject";
 
     String setupEmailMFA="/verification-srv/email/setup";
     String enrollEmailMFA="/verification-srv/email/enroll";
@@ -147,6 +148,10 @@ public class URLHelper {
 
     public String getDeleteAllMFA() {
         return deleteAllMFA;
+    }
+
+    public String getDenyNotification() {
+        return denyNotification;
     }
 
     public String getDeleteEmailMFA(String userDeviceId) {

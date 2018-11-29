@@ -16,6 +16,7 @@
 
     <string name="EMPTY_BASE_URL_SERVICE">Base URL is empty.</string>
     <string name="USER_DEVICE_ID_FAILURE">User device id must not be empty .</string>
+    <string name="DENY_NOTIFICATION_FAILURE">User device id must not be empty .</string>
 
     <string name="MFA_LIST_FAILURE">MFA List Response is empty.</string>
     <string name="EMPTY_REDIRECT_URL">Redirect URL is empty.</string>

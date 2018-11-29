@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -14,12 +15,14 @@ import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
+
 import java.util.LinkedHashMap;
 
 import retrofit2.Call;
@@ -169,8 +172,10 @@ public class VerificationSettingsService {
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
                                     commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
+                                    "Delete All Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -286,8 +291,10 @@ public class VerificationSettingsService {
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
                                     commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,
+                                    "Delete  Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -311,7 +318,7 @@ public class VerificationSettingsService {
         }
     }
 
-    //Delete All
+    //Service call to Delete All MFA
 
     public void deleteAllMFA(String baseurl,@NonNull final String accessToken,String userDeviceID,DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
     {
@@ -401,10 +408,12 @@ public class VerificationSettingsService {
 
 
 
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage,
                                     commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,
+                                    "Delete All Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -421,9 +430,110 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+    }
+
+
+    //Service call to deny notification
+
+    public void denyNotification(String baseurl, @NonNull final String accessToken, DenyNotificationRequestEntity denyNotificationRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<DenyNotificationResponseEntity> callback)
+    {
+        //Local Variables
+        String denyNotificationURL = "";
+        try{
+
+            if(baseurl!=null && baseurl!="") {
+
+                //Construct URL For
+                //Deny Notification MFA
+                denyNotificationURL = baseurl + URLHelper.getShared().getDenyNotification();
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        400,null,null));
+                return;
+            }
 
 
 
+
+               /* DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+                //This is only for testing purpose
+                if(deviceInfoEntityFromParam==null) {
+                    deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                }
+                else if(deviceInfoEntityFromParam!=null)
+                {
+                    deviceInfoEntity=deviceInfoEntityFromParam;
+                }
+*/
+
+            //Call Service-getRequestId
+            ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.denyNotificationService(denyNotificationURL,URLHelper.contentTypeJson,accessToken,denyNotificationRequestEntity).enqueue(new Callback<DenyNotificationResponseEntity>() {
+                @Override
+                public void onResponse(Call<DenyNotificationResponseEntity> call, Response<DenyNotificationResponseEntity> response) {
+                    if (response.isSuccessful()) {
+                        if(response.code()==200) {
+                            callback.success(response.body());
+                        }
+                        else {
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,
+                                    "Service failure but successful response" ,response.code(),null,null));
+                        }
+                    }
+                    else {
+                        assert response.errorBody() != null;
+                        try {
+
+                            //Todo Handle proper error message
+                            String errorResponse=response.errorBody().source().readByteString().utf8();
+
+                            CommonErrorEntity commonErrorEntity;
+                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+
+                            String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
+                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                errorMessage=commonErrorEntity.getError().toString();
+                            }
+                            else
+                            {
+                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                            }
+
+
+
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,errorMessage,
+                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DENY_NOTIFICATION,
+                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+                        }
+                        Timber.e("response"+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<DenyNotificationResponseEntity> call, Throwable t) {
+                    Timber.e("Faliure in Deny notification service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,t.getMessage(), 400,null,null));
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }

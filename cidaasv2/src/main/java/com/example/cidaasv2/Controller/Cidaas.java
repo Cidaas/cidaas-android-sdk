@@ -65,6 +65,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResul
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -3321,14 +3323,57 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     //Deny Call
-    public void denyNotification(@NonNull final String reason,@NonNull final String statusId)
+    public void denyNotification(@NonNull final String sub, @NonNull final String reason, @NonNull final String statusId, final Result<DenyNotificationResponseEntity> result)
     {
         try
         {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    String userDeviceId="";
 
+
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenresult) {
+
+                                if(reason!="" && reason!=null && statusId!=null && statusId!="") {
+
+                                    DenyNotificationRequestEntity denyNotificationRequestEntity = new DenyNotificationRequestEntity();
+                                    denyNotificationRequestEntity.setReject_reason(reason);
+                                    denyNotificationRequestEntity.setStatusId(statusId);
+
+
+                                    MFAListSettingsController.getShared(context).denyNotification(baseurl, accessTokenresult.getAccess_token(), denyNotificationRequestEntity, result);
+                                }
+                                else
+                                {
+                                    result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
+                                            "Verification Type must not be empty",HttpStatusCode.BAD_REQUEST));
+                                }
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
         }
         catch (Exception e)
         {
+
+            Timber.e("Faliure in delete All service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
 
         }
     }

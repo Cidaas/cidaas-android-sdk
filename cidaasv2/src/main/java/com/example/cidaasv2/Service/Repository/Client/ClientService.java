@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -131,8 +132,10 @@ public class ClientService {
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage,
                                     commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                                    "ClientInfo Failure Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }

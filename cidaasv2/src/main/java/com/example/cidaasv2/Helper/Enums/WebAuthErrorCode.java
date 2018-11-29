@@ -98,6 +98,7 @@ public class WebAuthErrorCode {
   public static final int DEDUPLICATION_LOGIN_FAILURE = 10089;
 
   public static final int DELETE_MFA_FAILURE = 10090;
+  public static final int DENY_NOTIFICATION = 10091;
 
   /*public static final int DELETE_EMAIL_MFA_FAILURE = 10090;
   public static final int DELETE_BACKUPCODE_MFA_FAILURE = 10091;

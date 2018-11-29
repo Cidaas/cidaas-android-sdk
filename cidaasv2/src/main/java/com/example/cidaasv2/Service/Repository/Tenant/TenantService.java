@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -15,7 +16,6 @@ import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import retrofit2.Call;
@@ -126,6 +126,8 @@ public class TenantService {
                         } catch (Exception e) {
                             Timber.e(e);
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.TENANT_INFO_FAILURE,
+                                    "TenantINfo All Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }

@@ -9,6 +9,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListDeviceEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseDataEntity;
@@ -132,7 +134,7 @@ public class MFAListSettingsController {
         }
     }
 
-    //Service call To delete MFA list
+    //To delete MFA list
     public void deleteAllMFA(@NonNull final String baseurl,@NonNull final String accessToken, @NonNull String userDeviceId, final Result<DeleteMFAResponseEntity> result){
         try{
 
@@ -155,6 +157,42 @@ public class MFAListSettingsController {
             else
             {
                 String errorMessage="UserDeviceID or baseURL must not be empty ";
+
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            }
+        }
+        catch (Exception e)
+        {
+
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e(e.getMessage());
+        }
+    }
+
+
+    //To deny notification Service
+    public void denyNotification(@NonNull final String baseurl, @NonNull final String accessToken, DenyNotificationRequestEntity denyNotificationRequestEntity,final Result<DenyNotificationResponseEntity> result){
+        try{
+
+            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")  ) {
+
+                VerificationSettingsService.getShared(context).denyNotification(baseurl,accessToken,denyNotificationRequestEntity, null, new Result<DenyNotificationResponseEntity>() {
+
+                    @Override
+                    public void success(DenyNotificationResponseEntity serviceresult) {
+                        result.success(serviceresult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+
+                        result.failure(error);
+                    }
+                });
+            }
+            else
+            {
+                String errorMessage="AccessToken or baseURL must not be empty ";
 
                 result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }

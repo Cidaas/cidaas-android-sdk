@@ -436,10 +436,6 @@ public class VoiceVerificationService {
                             }
 
 
-
-
-
-
                             //Todo Service call For fetching the Consent details
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
                                     errorMessage, commonErrorEntity.getStatus(),

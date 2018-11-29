@@ -12,13 +12,11 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceDataEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;

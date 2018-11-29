@@ -15,6 +15,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.Resum
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.DenyNotificationEntity.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -475,6 +477,12 @@ public interface ICidaasSDKService {
     Call<DocumentScannerServiceResultEntity> enrollDocument(@Url String url, @Part MultipartBody.Part face);
 
 
+    // Deny Notification
+    @POST
+    Call<DenyNotificationResponseEntity> denyNotificationService(@Url String url, @Header("Content-Type") String content_type,
+                                      @Header("access_token") String access_token, @Body DenyNotificationRequestEntity denyRequest);
+
+
 
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
@@ -517,14 +525,18 @@ public interface ICidaasSDKService {
     @GET
     Call<ConsentDetailsResultEntity> getConsentStringDetails(@Url String url);
 
+    //-----------------------------------------------------DELETE Call-----------------------------------------------------------------
 
     //Delete
     @DELETE
     Call<DeleteMFAResponseEntity> delete(@Url String url, @Header("access_token") String accessToken);//Delete
 
+
+
     //DeleteAll
     @DELETE
     Call<DeleteMFAResponseEntity> deleteAll(@Url String url, @Header("access_token") String accessToken);
+
 
 
     //Construct URL
@@ -535,9 +547,7 @@ public interface ICidaasSDKService {
     Call<NotificationEntity> getPendingNotification(@Url String url, @Header("Content-Type") String content_type,
                                                     @Header("access_token") String access_token);
 
-    @POST
-    Call<ResponseBody> getDenyService(@Url String url, @Header("Content-Type") String content_type,
-                                      @Header("access_token") String access_token, @Body DenyRequest denyRequest);
+
 
     @POST
     Call<FidoEnrollServiceResultEntity> enrollFido(@Url String url, @Header("Content-Type") String content_type,
