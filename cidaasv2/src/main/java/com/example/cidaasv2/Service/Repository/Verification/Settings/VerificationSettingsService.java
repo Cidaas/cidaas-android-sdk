@@ -620,6 +620,111 @@ public class VerificationSettingsService {
     }
 
 
+    //Service call to get pending notification
+
+    public void updateFCMToken(String baseurl, @NonNull final String accessToken, @NonNull final String FCMToken,DeviceInfoEntity deviceInfoEntityFromParam, final Result<Object> callback)
+    {
+        //Local Variables
+        String fcmTokenURL = "";
+        try{
+
+            if(baseurl!=null && baseurl!="") {
+
+                //Construct URL For
+                //Deny Notification MFA
+                fcmTokenURL = baseurl + URLHelper.getShared().getUpdateFCMTokenURL();
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.UPDATE_FCM_TOKEN,context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        400,null,null));
+                return;
+            }
+
+
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromParam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromParam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromParam;
+            }
+            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+                deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+            }
+
+            //Call Service-getRequestId
+            ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.updateFCMToken(fcmTokenURL,accessToken,deviceInfoEntity).enqueue(new Callback<Object>()
+            {
+                @Override
+                public void onResponse(Call<Object> call, Response<Object> response) {
+                    if (response.isSuccessful()) {
+                        if(response.code()==200) {
+                            callback.success(response.body());
+                        }
+                        else {
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.UPDATE_FCM_TOKEN,
+                                    "Service failure but successful response" ,response.code(),null,null));
+                        }
+                    }
+                    else {
+                        assert response.errorBody() != null;
+                        try {
+
+                            //Todo Handle proper error message
+                            String errorResponse=response.errorBody().source().readByteString().utf8();
+
+                            CommonErrorEntity commonErrorEntity;
+                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+
+                            String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
+                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                errorMessage=commonErrorEntity.getError().toString();
+                            }
+                            else
+                            {
+                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                            }
+
+
+
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage,
+                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+                        }
+                        Timber.e("response"+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Object> call, Throwable t) {
+                    Timber.e("Faliure in Deny notification service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,t.getMessage(), 400,null,null));
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+    }
+
+
 
     //Service call to get Configured MFA List
 

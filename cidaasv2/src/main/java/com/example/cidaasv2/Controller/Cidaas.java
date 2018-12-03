@@ -144,6 +144,7 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.Settings.VerificationSettingsService;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
@@ -1504,6 +1505,68 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+    public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
+    {
+
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+
+                    String oldFCMToken=DBHelper.getShared().getFCMToken();
+
+
+                    if(oldFCMToken.equalsIgnoreCase(FCMToken))
+                    {
+                        //Do nothing
+                    }
+                    else{
+                      DBHelper.getShared().setFCMToken(FCMToken);
+
+                      AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                          @Override
+                          public void success(AccessTokenEntity result) {
+                              VerificationSettingsController.getShared(context).updateFCMToken(baseurl, result.getAccess_token(), FCMToken, new Result<Object>() {
+                                  @Override
+                                  public void success(Object result) {
+                                      LogFile.addRecordToLog("Update FCM Token Success");
+                                  }
+
+                                  @Override
+                                  public void failure(WebAuthError error) {
+                                      LogFile.addRecordToLog("Update FCM Token Error" + error.getMessage());
+                                  }
+                              });
+                          }
+
+                          @Override
+                          public void failure(WebAuthError error) {
+                              LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                          }
+                      });
+
+
+                    }
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                }
+            });
+        }
+
+        catch (Exception e)
+        {
+         LogFile.addRecordToLog("Update FCM Token exception" + e.getMessage());
+         Timber.e("Update FCM Token exception" + e.getMessage());
+        }
+}
 
 
     public void scanned(@NonNull final String statusId, @NonNull final String sub,@NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)

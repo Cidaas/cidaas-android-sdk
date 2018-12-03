@@ -492,6 +492,12 @@ public interface ICidaasSDKService {
                                                     @Header("access_token") String access_token);
 
 
+    @POST
+    Call<Object> updateFCMToken(@Url String url,
+                                @Header("access_token") String access_token,
+                                @Body DeviceInfoEntity deviceInfoEntity);
+
+
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
     //Get Registration Setup
     @GET

@@ -48,6 +48,7 @@ public class URLHelper {
     String denyNotification="/verification-srv/notification/reject";
     String PendingNotificationURL="/verification-srv/notification/initiated/";
     String configuredMFAListURL="/verification-srv/settings/listbydeviceid";
+    String updateFCMTokenURL="/device-srv/device/updatefcm";
 
     String setupEmailMFA="/verification-srv/email/setup";
     String enrollEmailMFA="/verification-srv/email/enroll";
@@ -155,6 +156,9 @@ public class URLHelper {
         return deleteMFA+userDeviceId+"/"+verificationType;
     }
 
+    public String getUpdateFCMTokenURL() {
+        return updateFCMTokenURL;
+    }
 
     public String getDeleteAllMFA() {
         return deleteAllMFA;

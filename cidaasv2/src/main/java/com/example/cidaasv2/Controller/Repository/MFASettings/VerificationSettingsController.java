@@ -227,4 +227,28 @@ public class VerificationSettingsController {
         }
     }
 
+
+    //update FCM TOken
+    public void updateFCMToken(@NonNull final String baseurl, @NonNull final String AccessToken, @NonNull final String FCMToken,final Result<Object> result){
+        try{
+
+            if (baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")&& FCMToken != null && !FCMToken.equals("")  ) {
+
+                VerificationSettingsService.getShared(context).updateFCMToken(baseurl,AccessToken,FCMToken, null, result);
+            }
+            else
+            {
+                String errorMessage="sub or baseURL or UserDeviceId must not be empty ";
+
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            }
+        }
+        catch (Exception e)
+        {
+
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e(e.getMessage());
+        }
+    }
+
 }
