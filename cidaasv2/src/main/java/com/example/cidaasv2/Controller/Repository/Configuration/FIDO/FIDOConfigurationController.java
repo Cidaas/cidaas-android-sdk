@@ -27,8 +27,10 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchRespon
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.U2F_V2;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.NFC_sign_object;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NFCSignObject;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.FIDO.FIDOVerificationService;
@@ -134,7 +136,7 @@ public class FIDOConfigurationController {
     }
 
 
-    private EnrollFIDOMFARequestEntity generateEnrollEntity(final IsoDep isoTag,String challenge,String appId,String FIDORequestID,String baseURL) {
+    public EnrollFIDOMFARequestEntity generateEnrollEntity(final IsoDep isoTag,String challenge,String appId,String FIDORequestID,String baseURL) {
         try {
 
             U2F_V2 u2f=new U2F_V2(isoTag);
@@ -170,6 +172,47 @@ public class FIDOConfigurationController {
         }
 
 
+    }
+
+    public AuthenticateFIDORequestEntity generateAuthenticateEntity(IsoDep isoTag, String baseURL, NFCSignObject signEntity) {
+        try {
+            U2F_V2 u2f = new U2F_V2(isoTag);
+            Timber.d("base url signning time" + baseURL);
+            Timber.d("signEntity " + new ObjectMapper().writeValueAsString(signEntity));
+            String value = u2f.sign(signEntity, baseURL);
+            JSONObject json = new JSONObject(value);
+
+            AuthenticateFIDORequestEntity fidoAuthenticateServiceEntity = new AuthenticateFIDORequestEntity();
+            if (json != null) {
+                try {
+
+                    FidoSignTouchResponse fidoSignTouchResponse = new FidoSignTouchResponse();
+                    if (json.getString("clientData") != null){
+                        fidoSignTouchResponse.setClientData(json.getString("clientData"));
+                    }
+                    fidoSignTouchResponse.setFidoRequestId(signEntity.getFidoRequestId());
+
+                    if (signEntity.getRegisteredKeys().length > 0) {
+                        fidoSignTouchResponse.setKeyHandle(signEntity.getRegisteredKeys()[0].getKeyHandle());
+                    }
+                    if (json.getString("signatureData") != null) {
+                        fidoSignTouchResponse.setSignatureData(json.getString("signatureData"));
+                    }
+
+                    fidoAuthenticateServiceEntity.setFidoSignTouchResponse(fidoSignTouchResponse);
+
+                } catch (Exception ex) {
+                    Timber.d(ex.getMessage());
+                }
+            }
+
+
+            return fidoAuthenticateServiceEntity;
+        }
+        catch (Exception e)
+        {
+          return null;
+        }
     }
 
 
@@ -524,17 +567,15 @@ public class FIDOConfigurationController {
                                                     new Result<InitiateFIDOMFAResponseEntity>() {
 
                                                         @Override
-                                                        public void success(InitiateFIDOMFAResponseEntity result) {
-                                                            if (isoTag != null && !isoTag.equals("") && serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                        public void success(InitiateFIDOMFAResponseEntity initiateresult) {
+                                                            if (isoTag != null && !isoTag.equals("") && initiateresult.getData().getStatusId() != null &&
+                                                                    !initiateresult.getData().getStatusId().equals("")) {
 
 
-                                                               // generateAuthenticateEntity();
+                                                                AuthenticateFIDORequestEntity authenticateFIDORequestEntity = generateAuthenticateEntity(isoTag,baseurl,initiateresult.getData().getFido_init_request_data());
 
-                                                                AuthenticateFIDORequestEntity authenticateFIDORequestEntity = new AuthenticateFIDORequestEntity();
                                                                 authenticateFIDORequestEntity.setUserDeviceId(userDeviceId);
-                                                                authenticateFIDORequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                                               // authenticateFIDORequestEntity.setFidoSignTouchResponse(FIDOString);
+                                                                authenticateFIDORequestEntity.setStatusId(initiateresult.getData().getStatusId());
 
 
                                                                 authenticateFIDO(baseurl, authenticateFIDORequestEntity, new Result<AuthenticateFIDOResponseEntity>() {
@@ -616,21 +657,6 @@ public class FIDOConfigurationController {
         }
     }
 
-  /*  private void generateAuthenticateEntity(IsoDep isoTag,String baseURL,) {
-        try {
-            U2F_V2 u2f = new U2F_V2(isoTag);
-            Timber.d("base url signning time" + baseURL);
-            Timber.d("signEntity " + new ObjectMapper().writeValueAsString(signEntity));
-            String value = u2f.sign(signEntity, authenticationEntity.getBaseURL());
-            JSONObject json = new JSONObject(value);
-            //if (isVerification) {
-            u2f.authenticateFido(json);
-        }
-        catch (Exception e)
-        {
-
-        }
-    }*/
 
 
     //Authenticate FIDO
@@ -639,7 +665,8 @@ public class FIDOConfigurationController {
     {
         try
         {
-            FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity,null, new Result<AuthenticateFIDOResponseEntity>() {
+            FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity,
+                    null, new Result<AuthenticateFIDOResponseEntity>() {
                 @Override
                 public void success(final AuthenticateFIDOResponseEntity serviceresult) {
 
@@ -666,7 +693,8 @@ public class FIDOConfigurationController {
                                 AuthenticateFIDORequestEntity authenticateFIDORequestEntity=new AuthenticateFIDORequestEntity();
                                 authenticateFIDORequestEntity.setUsage_pass(instceID);
 
-                                FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity,null, new Result<AuthenticateFIDOResponseEntity>() {
+                                FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity,
+                                        null, new Result<AuthenticateFIDOResponseEntity>() {
                                     @Override
                                     public void success(AuthenticateFIDOResponseEntity result) {
                                         authResult.success(result);

@@ -135,7 +135,7 @@ public class VerificationSettingsService {
                 @Override
                 public void onResponse(Call<MFAListResponseEntity> call, Response<MFAListResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if(response.code()==200 || response.code()==204){
                             callback.success(response.body());
                         }
                         else {
@@ -464,7 +464,7 @@ public class VerificationSettingsService {
                 @Override
                 public void onResponse(Call<DenyNotificationResponseEntity> call, Response<DenyNotificationResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if(response.code()==200 || response.code()==204) {
                             callback.success(response.body());
                         }
                         else {

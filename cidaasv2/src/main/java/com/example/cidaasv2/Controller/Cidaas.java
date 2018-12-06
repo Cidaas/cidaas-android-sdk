@@ -136,6 +136,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPush
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NFCSignObject;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
@@ -158,6 +159,7 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Settings.VerificationSettingsService;
+import com.example.cidaasv2.Service.Scanned.ScannedResponseDataEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
@@ -2627,20 +2629,51 @@ public class Cidaas implements IOAuthWebLogin {
     // ****** DONE FIDO *****-------------------------------------------------------------------------------------------------------
 
 
-    public void enrollFIDO(@NonNull final IsoDep isoTag) {
+   /* public void enrollFIDO(@NonNull final IsoDep isoTag, final ScannedResponseDataEntity scannedResponseDataEntity, @NonNull final String sub, @NonNull final String statusId, final Result<EnrollFIDOMFAResponseEntity> enrollResult) {
     try
     {
 
 
 
+        checkSavedProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> lpresult) {
+                final String baseurl = lpresult.get("DomainURL");
+
+                AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                    @Override
+                    public void success(AccessTokenEntity accessTOkenresult) {
+
+
+
+
+                        FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,accessTOkenresult.getAccess_token(),,enrollResult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+
 
     }
     catch (Exception e)
      {
-
+         LogFile.addRecordToLog("enroll FIDO exception" + e.getMessage());
+         enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll FIDO exception"+ e.getMessage(),
+                 HttpStatusCode.EXPECTATION_FAILED));
+         Timber.e("Enroll FIDO exception" + e.getMessage());
      }
     }
-
+*/
     public void configureFIDORecognition(@NonNull final IsoDep isoTag, @NonNull final String sub, @NonNull final String logoURL,
                                          final Result<EnrollFIDOMFAResponseEntity> enrollresult)
     {
@@ -2670,8 +2703,8 @@ public class Cidaas implements IOAuthWebLogin {
                         setupFIDOMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                       /* FIDOConfigurationController.getShared(context).configureFIDO(sub, finalBaseurl, isoTag, setupFIDOMFARequestEntity,
-                                enrollresult);*/
+                        FIDOConfigurationController.getShared(context).configureFIDO(isoTag,sub, finalBaseurl, setupFIDOMFARequestEntity,
+                                enrollresult);
 
                     } else {
                         String errorMessage = "Sub or FIDO or logoURL cannot be null";
@@ -2701,7 +2734,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void enrollFIDO(@NonNull final FIDOTouchResponse FIDO, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFIDOMFAResponseEntity> enrollResult)
+    public void enrollFIDO(@NonNull final IsoDep isoTag, final ScannedResponseDataEntity scannedResponseDataEntity, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFIDOMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -2713,15 +2746,41 @@ public class Cidaas implements IOAuthWebLogin {
                     final String baseurl = result.get("DomainURL");
                     String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                    final EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity=new EnrollFIDOMFARequestEntity();
-                    enrollFIDOMFARequestEntity.setFidoTouchResponse(FIDO);
+                 // EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity=new EnrollFIDOMFARequestEntity();
+                    /*enrollFIDOMFARequestEntity.setFidoTouchResponse(FIDO);
                     enrollFIDOMFARequestEntity.setStatusId(statusId);
-                    enrollFIDOMFARequestEntity.setUserDeviceId(userDeviceId);
+                    enrollFIDOMFARequestEntity.setUserDeviceId(userDeviceId);*/
+
+
+
+                    //Entity For FIDO
+
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
-                            FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,result.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
+
+                            if (scannedResponseDataEntity != null && scannedResponseDataEntity.getFidoInitRequest() != null
+                                    && scannedResponseDataEntity.getFidoInitRequest().getRegisterRequests() != null
+                                    && scannedResponseDataEntity.getFidoInitRequest().getRegisterRequests().length > 0) {
+
+
+                                EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity =
+                                        FIDOConfigurationController.getShared(context).generateEnrollEntity(isoTag, scannedResponseDataEntity.getFidoInitRequest().getRegisterRequests()[0].getChallenge(),
+                                                scannedResponseDataEntity.getFidoInitRequest().getAppId(),scannedResponseDataEntity.getFidoInitRequest().getFidoRequestId(),baseurl);
+
+                                enrollFIDOMFARequestEntity.setStatusId(statusId);
+                                enrollFIDOMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                                FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,result.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
+
+
+                            }
+                            else
+                            {
+                                enrollResult.failure(WebAuthError.getShared(context)
+                                        .customException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,"One of the property is missing",HttpStatusCode.EXPECTATION_FAILED));
+                            }
+
                         }
 
                         @Override
@@ -2790,7 +2849,7 @@ public class Cidaas implements IOAuthWebLogin {
     // 3. Todo Call configure FIDO From FIDO Controller and return the result
     // 4. Todo Maintain logs based on flags
 
-    public void loginWithFIDO(@NonNull final FidoSignTouchResponse FIDO, @NonNull final PasswordlessEntity passwordlessEntity,
+    public void loginWithFIDO(@NonNull final IsoDep isoTag, @NonNull final PasswordlessEntity passwordlessEntity,
                                             final Result<LoginCredentialsResponseEntity> loginresult) {
 
         try {
@@ -2803,8 +2862,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId = result.get("ClientId");
 
                     if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
-                            && FIDO != null && !FIDO.equals("") && passwordlessEntity.getRequestId() != null &&
-                            passwordlessEntity.getRequestId() != "") {
+                            && passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
 
                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                             String errorMessage = "baseurl or clientId or mobile number must not be empty";
@@ -2842,8 +2900,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                         //Todo check for email or sub or mobile
 
-                        IsoDep isoDep = null;
-                        FIDOConfigurationController.getShared(context).LoginWithFIDO(isoDep, baseurl, clientId,
+                        FIDOConfigurationController.getShared(context).LoginWithFIDO(isoTag, baseurl, clientId,
                                 passwordlessEntity.getTrackId(),
                                 passwordlessEntity.getRequestId(), initiateFIDOMFARequestEntity, loginresult);
                     } else {
@@ -2871,7 +2928,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void verifyFIDO(final FidoSignTouchResponse FIDOString, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
+    public void verifyFIDO(final IsoDep isoTag, final NFCSignObject signObject, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2881,9 +2938,9 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId = lpresult.get("ClientId");
                     //todo call verify FIDO
 
-                    AuthenticateFIDORequestEntity authenticateFIDORequestEntity=new AuthenticateFIDORequestEntity();
+                    AuthenticateFIDORequestEntity
+                            authenticateFIDORequestEntity=FIDOConfigurationController.getShared(context).generateAuthenticateEntity(isoTag,baseurl,signObject);
                     authenticateFIDORequestEntity.setStatusId(statusId);
-                    authenticateFIDORequestEntity.setFidoSignTouchResponse(FIDOString);
                     authenticateFIDORequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
