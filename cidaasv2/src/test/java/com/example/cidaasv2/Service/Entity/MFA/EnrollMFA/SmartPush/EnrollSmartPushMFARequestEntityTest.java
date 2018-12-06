@@ -35,12 +35,6 @@ public class EnrollSmartPushMFARequestEntityTest {
         assertTrue(enrollSmartPushMFARequestEntity.getVerifierPassword().equals("Code"));
     }
 
-    @Test
-    public void setSub()
-    {
-        enrollSmartPushMFARequestEntity.setSub("Sub");
-        assertTrue(enrollSmartPushMFARequestEntity.getSub().equals("Sub"));
-    }
 
 
 

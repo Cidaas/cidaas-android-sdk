@@ -35,10 +35,10 @@ public class SmartPushConfigurationControllerTest {
         DBHelper.setConfig(context);
 
         AccessTokenModel accessTokenModel=new AccessTokenModel();
-        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setAccess_token("New Access Token");
         accessTokenModel.setUserId("userId");
         accessTokenModel.setEncrypted(false);
-        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setRefresh_token("RefreshToken");
         accessTokenModel.setPlainToken("PlainToken");
         accessTokenModel.setSeconds(System.currentTimeMillis()+1000000);
 
@@ -92,10 +92,10 @@ public class SmartPushConfigurationControllerTest {
     @Test
     public void testLoginWithSmartPushnull() throws Exception {
         AccessTokenModel accessTokenModel=new AccessTokenModel();
-        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setAccess_token("New Access Token");
         accessTokenModel.setUserId("userId");
         accessTokenModel.setEncrypted(true);
-        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setRefresh_token("RefreshToken");
         accessTokenModel.setPlainToken("PlainToken");
         accessTokenModel.setSeconds(System.currentTimeMillis()+1000000);
 

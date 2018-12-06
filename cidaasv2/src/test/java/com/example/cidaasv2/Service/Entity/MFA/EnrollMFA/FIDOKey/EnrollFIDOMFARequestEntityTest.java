@@ -35,13 +35,7 @@ public class EnrollFIDOMFARequestEntityTest {
         assertTrue(enrollFIDOMFARequestEntity.getVerifierPassword().equals("Code"));
     }
 
-    @Test
-    public void setSub()
-    {
-        enrollFIDOMFARequestEntity.setSub("Sub");
-        assertTrue(enrollFIDOMFARequestEntity.getSub().equals("Sub"));
-    }
-
+  
 
 
     @Test

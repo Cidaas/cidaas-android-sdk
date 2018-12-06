@@ -119,7 +119,6 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
 
@@ -527,7 +526,6 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             // headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
             headers.put("access_token", accessToken);
             headers.put("verification_api_version","2");
 
@@ -636,7 +634,7 @@ public class FaceVerificationService {
     }
 
     //initiateFaceMFA
-    public void initiateFace(String baseurl, String codeChallenge,InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void initiateFace(String baseurl, InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                 final Result<InitiateFaceMFAResponseEntity> callback){
         String initiateFaceMFAUrl="";
         try
@@ -665,10 +663,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -780,8 +775,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
           //  headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("verification_api_version","2");
+             headers.put("verification_api_version","2");
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -915,8 +909,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             //  headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("verification_api_version","2");
+             headers.put("verification_api_version","2");
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());

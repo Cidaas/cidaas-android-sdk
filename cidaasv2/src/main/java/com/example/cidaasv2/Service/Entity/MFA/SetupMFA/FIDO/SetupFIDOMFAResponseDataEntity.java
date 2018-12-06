@@ -1,5 +1,6 @@
 package com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO;
 
+import com.example.cidaasv2.Service.Scanned.FIDOInitRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -21,6 +22,16 @@ public class SetupFIDOMFAResponseDataEntity implements Serializable{
     String udi="";
     String current_status;
 
+    FIDOInitRequest fidoInitRequest;
+
+
+    public FIDOInitRequest getFidoInitRequest() {
+        return fidoInitRequest;
+    }
+
+    public void setFidoInitRequest(FIDOInitRequest fidoInitRequest) {
+        this.fidoInitRequest = fidoInitRequest;
+    }
 
     public String getSecret() {
         return secret;

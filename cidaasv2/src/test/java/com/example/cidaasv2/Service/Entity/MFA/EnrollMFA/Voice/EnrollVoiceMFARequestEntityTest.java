@@ -42,12 +42,6 @@ public class EnrollVoiceMFARequestEntityTest {
        // assertTrue(enrollVoiceMFARequestEntity.getAudioFile().equals("Code"));
     }
 
-    @Test
-    public void setSub()
-    {
-        enrollVoiceMFARequestEntity.setSub("Sub");
-        assertTrue(enrollVoiceMFARequestEntity.getSub().equals("Sub"));
-    }
 
 
 

@@ -81,10 +81,10 @@ public class URLHelper {
     String initiateFingerprintMFA="/verification-srv/touchid/initiate";
     String authenticateFingerprintMFA="/verification-srv/touchid/authenticate";
 
-    String setupFIDOMFA="/verification-srv/fidou2f/setup";
-    String enrollFIDOMFA="/verification-srv/fidou2f/enroll";
-    String initiateFIDOMFA="/verification-srv/fidou2f/initiate";
-    String authenticateFIDOMFA="/verification-srv/fidou2f/authenticate";
+    String setupFIDOMFA="/verification-srv//fidou2f/mobile/setup";
+    String enrollFIDOMFA="/verification-srv/fidou2f/mobile/enroll";
+    String initiateFIDOMFA="/verification-srv/fidou2f/mobile/initiate";
+    String authenticateFIDOMFA="/verification-srv/fidou2f/mobile/authenticate";
 
     String setupPatternMFA="/verification-srv/pattern/setup";
     String enrollPatternMFA="/verification-srv/pattern/enroll";
@@ -129,7 +129,8 @@ public class URLHelper {
     String scannedSmartPushURL="/verification-srv/push/scanned";
     String scannedTOTPURL="/verification-srv/totp/scanned";
     String scannedVoiceURL="/verification-srv/voice/scanned";
-    String scannedFIDOURL="/verification-srv/fido/scanned";
+
+    String scannedFIDOURL="/verification-srv/fidou2f/mobile/scanned";
 
     String tokenUrl="/token-srv/token";
     String socialTokenURL="/login-srv/social/token";

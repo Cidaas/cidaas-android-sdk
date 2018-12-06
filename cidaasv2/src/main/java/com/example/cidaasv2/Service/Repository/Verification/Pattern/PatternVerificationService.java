@@ -437,7 +437,7 @@ public class PatternVerificationService {
 
 
     //initiatePatternMFA
-    public void initiatePattern(String baseurl, String codeChallenge, InitiatePatternMFARequestEntity initiatePatternMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
+    public void initiatePattern(String baseurl,InitiatePatternMFARequestEntity initiatePatternMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                                 final Result<InitiatePatternMFAResponseEntity> callback) {
         String initiatePatternMFAUrl = "";
         try {
@@ -466,8 +466,7 @@ public class PatternVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version", "2");
-            headers.put("access_challenge", codeChallenge);
-            headers.put("access_challenge_method", "S256");
+
 
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
 

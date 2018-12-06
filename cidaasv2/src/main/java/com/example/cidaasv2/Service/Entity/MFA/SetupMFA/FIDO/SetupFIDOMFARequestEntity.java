@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO;
 
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Service.Scanned.FIDOInitRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -11,6 +12,15 @@ public class SetupFIDOMFARequestEntity implements Serializable{
     DeviceInfoEntity deviceInfo;
     String  client_id;
     String usage_pass;
+    FIDOInitRequest fidoInitRequest;
+
+    public FIDOInitRequest getFidoInitRequest() {
+        return fidoInitRequest;
+    }
+
+    public void setFidoInitRequest(FIDOInitRequest fidoInitRequest) {
+        this.fidoInitRequest = fidoInitRequest;
+    }
 
     public String getUsage_pass() {
         return usage_pass;

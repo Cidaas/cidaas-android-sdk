@@ -11,9 +11,11 @@ public class AuthenticateFIDORequestEntity implements Serializable {
     String statusId;
     String code;
     String userDeviceId;
-    String verifierPassword;
     DeviceInfoEntity deviceInfo;
     String usage_pass;
+
+
+    private FidoSignTouchResponse fidoSignTouchResponse;
 
     public String getUsage_pass() {
         return usage_pass;
@@ -32,12 +34,12 @@ public class AuthenticateFIDORequestEntity implements Serializable {
         this.userDeviceId = userDeviceId;
     }
 
-    public String getVerifierPassword() {
-        return verifierPassword;
+    public FidoSignTouchResponse getFidoSignTouchResponse() {
+        return fidoSignTouchResponse;
     }
 
-    public void setVerifierPassword(String verifierPassword) {
-        this.verifierPassword = verifierPassword;
+    public void setFidoSignTouchResponse(FidoSignTouchResponse fidoSignTouchResponse) {
+        this.fidoSignTouchResponse = fidoSignTouchResponse;
     }
 
     public String getStatusId() {

@@ -25,6 +25,8 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
@@ -33,6 +35,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPu
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -103,6 +106,93 @@ public class EnrollPattern extends AppCompatActivity {
 
 }
 
+
+public void enrollPattern(View view)
+{
+
+
+    try{
+        /*cidaas.scannedPattern("fe690559-3c7c-4b24-aab3-50f4050d9f52", "825ef0f8-4f2d-46ad-831d-08a30561305d", new Result<ScannedResponseEntity>() {
+            @Override
+            public void success(ScannedResponseEntity result) {
+                cidaas.enrollPattern("RED[1,2,3,4]", "825ef0f8-4f2d-46ad-831d-08a30561305d", "fe690559-3c7c-4b24-aab3-50f4050d9f52", new Result<EnrollPatternMFAResponseEntity>() {
+                    @Override
+                    public void success(EnrollPatternMFAResponseEntity result) {
+                        Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(EnrollPattern.this, "Failure", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });*/
+
+        cidaas.enrollPattern("RED[1,2,3,4]", "825ef0f8-4f2d-46ad-831d-08a30561305d", "7fb7863a-a2da-4eca-b57b-0cfaaf581d9a", new Result<EnrollPatternMFAResponseEntity>() {
+            @Override
+            public void success(EnrollPatternMFAResponseEntity result) {
+                Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(EnrollPattern.this, "Failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    catch (Exception e)
+    {
+
+    }
+
+
+}
+
+
+public void FIDO(View view)
+{
+    cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        @Override
+        public void success(AuthRequestResponseEntity result) {
+
+
+            PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+            passwordlessEntity.setEmail("");
+            passwordlessEntity.setMobile("");
+            passwordlessEntity.setSub(sub);
+            passwordlessEntity.setRequestId(result.getData().getRequestId());
+            passwordlessEntity.setTrackId(trackId);
+            passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+
+            FidoSignTouchResponse fidoTouchResponse=new FidoSignTouchResponse();
+    fidoTouchResponse.setFidoRequestId("reqid");
+    fidoTouchResponse.setClientData("challenge");
+
+    cidaas.loginWithFIDO(fidoTouchResponse, passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+        @Override
+        public void success(LoginCredentialsResponseEntity result) {
+
+        }
+
+        @Override
+        public void failure(WebAuthError error) {
+
+        }
+    });
+        }
+
+        @Override
+        public void failure(WebAuthError error) {
+
+        }
+    });
+}
 
 
 

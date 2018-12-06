@@ -3,6 +3,7 @@ package com.example.cidaasv2.Service.Repository.Verification.Fingerprint;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
@@ -22,6 +23,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerp
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -44,6 +46,8 @@ public class FingerprintVerificationServiceTest {
     Context context;
     FingerprintVerificationService fingerprintVerificationService;
 
+    ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+
     @Before
     public void setUp() {
         context= RuntimeEnvironment.application;
@@ -51,6 +55,11 @@ public class FingerprintVerificationServiceTest {
 
         DBHelper.setConfig(context);
         DBHelper.getShared().setFCMToken("FCM");
+
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
     }
 
     @Test
@@ -65,7 +74,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testSetupFingerprintMFA() throws Exception {
 
-        fingerprintVerificationService.setupFingerprint("baseurl", "accessToken","code",new SetupFingerprintMFARequestEntity(),null, new Result<SetupFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.setupFingerprint("baseurl", "accessToken",new SetupFingerprintMFARequestEntity(),null, new Result<SetupFingerprintMFAResponseEntity>() {
             @Override
             public void success(SetupFingerprintMFAResponseEntity result) {
 
@@ -81,7 +90,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testSetupFingerprintNullMFA() throws Exception {
 
-        fingerprintVerificationService.setupFingerprint("", "accessToken","code",new SetupFingerprintMFARequestEntity(),null, new Result<SetupFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.setupFingerprint("", "accessToken",new SetupFingerprintMFARequestEntity(),null, new Result<SetupFingerprintMFAResponseEntity>() {
             @Override
             public void success(SetupFingerprintMFAResponseEntity result) {
 
@@ -112,7 +121,7 @@ public class FingerprintVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-        fingerprintVerificationService.setupFingerprint("localhost:234235", "accessToken","code",new SetupFingerprintMFARequestEntity(),null, new Result<SetupFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.setupFingerprint("localhost:234235", "accessToken",new SetupFingerprintMFARequestEntity(),null, new Result<SetupFingerprintMFAResponseEntity>() {
             @Override
             public void success(SetupFingerprintMFAResponseEntity result) {
 
@@ -131,7 +140,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testScannedFingerprintMFA() throws Exception {
 
-        fingerprintVerificationService.scannedFingerprint("baseurl", "Usa","Status","Access",null,new Result<ScannedResponseEntity>() {
+        fingerprintVerificationService.scannedFingerprint("baseurl", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -146,7 +155,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testScannedFingerprintNUllMFA() throws Exception {
 
-        fingerprintVerificationService.scannedFingerprint("", "Usa","Status","accessToken",null,new Result<ScannedResponseEntity>() {
+        fingerprintVerificationService.scannedFingerprint("", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -178,7 +187,7 @@ public class FingerprintVerificationServiceTest {
 
 
 
-        fingerprintVerificationService.scannedFingerprint("localhost:234235", "Usa","StatusId","accessToken",null, new Result<ScannedResponseEntity>() {
+        fingerprintVerificationService.scannedFingerprint("localhost:234235", scannedRequestEntity,null, new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 

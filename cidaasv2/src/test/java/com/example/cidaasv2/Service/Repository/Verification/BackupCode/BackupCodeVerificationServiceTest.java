@@ -1,3 +1,4 @@
+/*
 package com.example.cidaasv2.Service.Repository.Verification.BackupCode;
 
 import android.content.Context;
@@ -219,7 +220,8 @@ public class BackupCodeVerificationServiceTest {
         });
     }
 
-    @Test
+  */
+/*  @Test
     public void testAuthenticateBackupCodeMFANUll() throws Exception {
 
         backupCodeVerificationService.authenticateBackupCodeMFA("", new AuthenticateBackupCodeRequestEntity(), null, new Result<AuthenticateBackupCodeResponseEntity>() {
@@ -234,6 +236,7 @@ public class BackupCodeVerificationServiceTest {
             }
         });
     }
+*//*
 
 
     @Test
@@ -277,3 +280,4 @@ public class BackupCodeVerificationServiceTest {
 }
 
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
+*/

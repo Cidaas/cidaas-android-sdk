@@ -16,6 +16,7 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
@@ -164,17 +165,17 @@ public class CidaasTest {
     @Test
     public void testSetremoteMessage() throws Exception {
         Cidaas.setremoteMessage(new HashMap<String, String>() {{
-            put("intermediate_verifiation_id", "intermediate_verifiation_id");
+            put("usage_pass", "usage_pass");
         }});
     }
 
     @Test
     public void testGetremoteMessage() throws Exception {
         Cidaas.setremoteMessage(new HashMap<String, String>() {{
-            put("intermediate_verifiation_id", "intermediate_verifiation_id");
+            put("usage_pass", "usage_pass");
         }});
 
-        Assert.assertEquals("intermediate_verifiation_id",cidaas.getInstanceId());
+        Assert.assertEquals("usage_pass",cidaas.getInstanceId());
     }
 
     @Test
@@ -432,7 +433,17 @@ public class CidaasTest {
     @Test
     public void testConfigurePatternRecognition() throws Exception {
 
-        cidaas.configurePatternRecognition("pattern", "sub", "",null);
+        cidaas.configurePatternRecognition("pattern", "sub", "", new Result<EnrollPatternMFAResponseEntity>() {
+            @Override
+            public void success(EnrollPatternMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
@@ -921,11 +932,6 @@ public class CidaasTest {
         cidaas.renewToken("refershtoken", null);
     }
 
-    @Test
-    public void testLoginWithBrowser() throws Exception {
-        cidaas.loginURL= "https://loginurl";
-                cidaas.loginWithBrowser("color", null);
-    }
 
     @Test
     public void testGetLoginCode() throws Exception {

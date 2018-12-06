@@ -483,7 +483,7 @@ public class FingerprintConfigurationController {
 
                                                             //Entity For Fingerprint
                                                             EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity = new EnrollFingerprintMFARequestEntity();
-                                                            enrollFingerprintMFARequestEntity.setStatusId(setupserviceresult.getData().getSt());
+                                                            enrollFingerprintMFARequestEntity.setStatusId(result.getData().getSt());
                                                             enrollFingerprintMFARequestEntity.setUserDeviceId(result.getData().getUdi());
 
 
@@ -735,7 +735,7 @@ public class FingerprintConfigurationController {
                     initiateFingerprintMFARequestEntity.getUserDeviceId() != null && !initiateFingerprintMFARequestEntity.getUserDeviceId().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl,codeChallenge, initiateFingerprintMFARequestEntity,null,
+                FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl, initiateFingerprintMFARequestEntity,null,
                         new Result<InitiateFingerprintMFAResponseEntity>() {
 
                             @Override
@@ -764,7 +764,7 @@ public class FingerprintConfigurationController {
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                                            FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl, codeChallenge, initiateFingerprintMFARequestEntity,null,
+                                            FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl,  initiateFingerprintMFARequestEntity,null,
                                                     new Result<InitiateFingerprintMFAResponseEntity>() {
 
                                                         @Override

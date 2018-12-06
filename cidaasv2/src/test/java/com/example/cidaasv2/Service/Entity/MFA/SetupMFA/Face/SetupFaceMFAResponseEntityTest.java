@@ -40,9 +40,9 @@ public class SetupFaceMFAResponseEntityTest {
     public void setData(){
         data=new SetupFaceMFAResponseDataEntity();
 
-        data.setStatusId("Test");
+        data.setSt("Test");
         setupFaceMFAResponseEntity.setData(data);
-        Assert.assertEquals("Test",setupFaceMFAResponseEntity.getData().getStatusId());
+        Assert.assertEquals("Test",setupFaceMFAResponseEntity.getData().getSt());
 
     }
 

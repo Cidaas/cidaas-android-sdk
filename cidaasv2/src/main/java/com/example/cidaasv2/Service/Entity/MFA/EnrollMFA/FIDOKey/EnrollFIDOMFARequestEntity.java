@@ -8,9 +8,10 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class EnrollFIDOMFARequestEntity implements Serializable{
     String statusId;
-    String verifierPassword;
+
     String usage_pass;
     String userDeviceId;
+    FIDOTouchResponse fidoTouchResponse;
     DeviceInfoEntity deviceInfo;
 
 
@@ -38,12 +39,12 @@ public class EnrollFIDOMFARequestEntity implements Serializable{
         this.statusId = statusId;
     }
 
-    public String getVerifierPassword() {
-        return verifierPassword;
+    public FIDOTouchResponse getFidoTouchResponse() {
+        return fidoTouchResponse;
     }
 
-    public void setVerifierPassword(String verifierPassword) {
-        this.verifierPassword = verifierPassword;
+    public void setFidoTouchResponse(FIDOTouchResponse fidoTouchResponse) {
+        this.fidoTouchResponse = fidoTouchResponse;
     }
 
     public DeviceInfoEntity getDeviceInfo() {

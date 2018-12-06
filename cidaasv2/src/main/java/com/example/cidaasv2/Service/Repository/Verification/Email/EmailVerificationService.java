@@ -11,7 +11,6 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailRequestEntity;
@@ -104,8 +103,7 @@ public class EmailVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("access_token",accessToken);
+           headers.put("access_token",accessToken);
 
 
 
@@ -213,8 +211,7 @@ public class EmailVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("access_token",accessToken);
+           headers.put("access_token",accessToken);
 
 
             enrollEmailMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -325,7 +322,6 @@ public class EmailVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
 
             initiateEmailMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -434,7 +430,6 @@ public class EmailVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
 
             authenticateEmailRequestEntity.setDeviceInfo(deviceInfoEntity);
 

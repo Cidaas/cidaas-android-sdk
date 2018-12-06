@@ -10,6 +10,7 @@ public class InitiateFIDOMFAResponseEntity implements Serializable{
     int status;
     InitiateFIDOMFAResponseDataEntity data;
 
+
     public boolean isSuccess() {
         return success;
     }

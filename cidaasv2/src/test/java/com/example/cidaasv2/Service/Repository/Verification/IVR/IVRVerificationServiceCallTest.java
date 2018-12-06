@@ -14,10 +14,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
-import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -476,7 +473,7 @@ public class IVRVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
+            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken","phnumber",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
                 @Override
                 public void success(SetupIVRMFAResponseEntity result) {
 
@@ -540,7 +537,7 @@ public class IVRVerificationServiceCallTest {
 
 
 
-            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken",null ,new Result<SetupIVRMFAResponseEntity>() {
+            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken","phnumber",null ,new Result<SetupIVRMFAResponseEntity>() {
                 @Override
                 public void success(SetupIVRMFAResponseEntity result) {
 
@@ -607,7 +604,7 @@ public class IVRVerificationServiceCallTest {
 
 
 
-            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
+            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken","phnumber",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
                 @Override
                 public void success(SetupIVRMFAResponseEntity result) {
 
@@ -673,7 +670,7 @@ public class IVRVerificationServiceCallTest {
 
 
 
-            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
+            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken","phnumber",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
                 @Override
                 public void success(SetupIVRMFAResponseEntity result) {
 
@@ -730,7 +727,7 @@ public class IVRVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
+            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken","phnumber",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
                 @Override
                 public void success(SetupIVRMFAResponseEntity result) {
 
@@ -788,7 +785,7 @@ public class IVRVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
+            ivrVerificationService.setupIVRMFA(loginProperties.get("DomainURL"),"AccessToken","phnumber",deviceInfoEntity ,new Result<SetupIVRMFAResponseEntity>() {
                 @Override
                 public void success(SetupIVRMFAResponseEntity result) {
 

@@ -1,27 +1,19 @@
-package com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey;
+package com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class AuthenticateFIDOResponseDataEntity implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown=true)
+public class EnrollFIDOMFAResponseDataEntity implements Serializable {
+
     String sub;
     String trackingCode;
     String verificationType;
     String usageType;
+    String current_status;
+    String usage_pass;
 
-    private String statusId;
-
-    public String getStatusId ()
-    {
-        return statusId;
-    }
-
-    public void setStatusId (String statusId)
-    {
-        this.statusId = statusId;
-    }
 
     public String getSub() {
         return sub;
@@ -53,5 +45,21 @@ public class AuthenticateFIDOResponseDataEntity implements Serializable {
 
     public void setUsageType(String usageType) {
         this.usageType = usageType;
+    }
+
+    public String getCurrent_status() {
+        return current_status;
+    }
+
+    public void setCurrent_status(String current_status) {
+        this.current_status = current_status;
+    }
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
     }
 }

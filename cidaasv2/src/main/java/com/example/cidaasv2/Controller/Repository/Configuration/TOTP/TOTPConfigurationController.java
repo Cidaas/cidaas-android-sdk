@@ -555,7 +555,7 @@ public class TOTPConfigurationController {
                                                                 totp=  generateTOTP(secret);
 
                                                                 enrollTOTPMFARequestEntity.setVerifierPassword(totp.getTotp_string());
-                                                                enrollTOTPMFARequestEntity.setStatusId(setupserviceresult.getData().getSt());
+                                                                enrollTOTPMFARequestEntity.setStatusId(result.getData().getSt());
                                                                 enrollTOTPMFARequestEntity.setUserDeviceId(result.getData().getUdi());
 
                                                             }

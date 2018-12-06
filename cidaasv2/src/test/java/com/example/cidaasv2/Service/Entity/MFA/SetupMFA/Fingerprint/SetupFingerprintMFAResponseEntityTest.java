@@ -40,9 +40,9 @@ public class SetupFingerprintMFAResponseEntityTest {
     public void setData(){
         data=new SetupFingerprintMFAResponseDataEntity();
 
-        data.setStatusId("Test");
+        data.setSt("Test");
         setupFingerprintMFAResponseEntity.setData(data);
-        Assert.assertEquals("Test",setupFingerprintMFAResponseEntity.getData().getStatusId());
+        Assert.assertEquals("Test",setupFingerprintMFAResponseEntity.getData().getSt());
 
 
     }

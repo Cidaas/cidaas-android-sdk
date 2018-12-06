@@ -7,48 +7,27 @@ public class SetupFingerprintMFAResponseDataEntityTest {
     SetupFingerprintMFAResponseDataEntity setupFingerprintMFAResponseDataEntity=new SetupFingerprintMFAResponseDataEntity();
 
 
-    @Test
-    public void setQrCode() throws Exception {
 
-        setupFingerprintMFAResponseDataEntity.setQrCode("Test");
-
-        Assert.assertEquals("Test",setupFingerprintMFAResponseDataEntity.getQrCode());
-    }
-
-    @Test
-    public void setOtpauth() throws Exception {
-
-        setupFingerprintMFAResponseDataEntity.setOtpauth("Test");
-
-        Assert.assertEquals("Test",setupFingerprintMFAResponseDataEntity.getOtpauth());
-    }
-    @Test
-    public void setQueryString() throws Exception {
-
-        setupFingerprintMFAResponseDataEntity.setQueryString("Test");
-
-        Assert.assertEquals("Test",setupFingerprintMFAResponseDataEntity.getQueryString());
-    }
     @Test
     public void setStatusId() throws Exception {
 
-        setupFingerprintMFAResponseDataEntity.setStatusId("StatusId");
+        setupFingerprintMFAResponseDataEntity.setSt("StatusId");
 
-        Assert.assertEquals("StatusId",setupFingerprintMFAResponseDataEntity.getStatusId());
+        Assert.assertEquals("StatusId",setupFingerprintMFAResponseDataEntity.getSt());
     }
     @Test
-    public void setVerifierId() throws Exception {
+    public void setsecret() throws Exception {
 
-        setupFingerprintMFAResponseDataEntity.setVerifierId("VerifierId");
+        setupFingerprintMFAResponseDataEntity.setSecret("VerifierId");
 
-        Assert.assertEquals("VerifierId",setupFingerprintMFAResponseDataEntity.getVerifierId());
+        Assert.assertEquals("VerifierId",setupFingerprintMFAResponseDataEntity.getSecret());
     }
     @Test
     public void setRandomNumber() throws Exception {
 
-        setupFingerprintMFAResponseDataEntity.setRandomNumber("Test");
+        setupFingerprintMFAResponseDataEntity.setRns("Test");
 
-        Assert.assertEquals("Test",setupFingerprintMFAResponseDataEntity.getRandomNumber());
+        Assert.assertEquals("Test",setupFingerprintMFAResponseDataEntity.getRns());
     }
 
     @Test

@@ -469,10 +469,8 @@ public class TOTPVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 

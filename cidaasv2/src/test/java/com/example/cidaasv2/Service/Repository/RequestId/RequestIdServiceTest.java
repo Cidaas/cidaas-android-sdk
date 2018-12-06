@@ -78,7 +78,7 @@ public class RequestIdServiceTest {
         });
     }
 
-    @Test
+   /* @Test
     public void testGetRequestIDNotnull() throws Exception {
         Dictionary<String,String> loginProperties=new Hashtable<>();
         loginProperties.put("DomainURL","DomainURL");
@@ -96,7 +96,7 @@ public class RequestIdServiceTest {
             }
         });
     }
-
+*/
 
     @Test
     public void testGetRequestIDnull() throws Exception {

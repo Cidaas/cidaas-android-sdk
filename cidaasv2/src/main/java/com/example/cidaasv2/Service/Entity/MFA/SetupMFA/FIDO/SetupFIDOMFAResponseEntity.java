@@ -11,6 +11,7 @@ public class SetupFIDOMFAResponseEntity implements Serializable{
     int status;
     SetupFIDOMFAResponseDataEntity data;
 
+
     public boolean isSuccess() {
         return success;
     }

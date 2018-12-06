@@ -289,7 +289,7 @@ public class EnrollFace extends AppCompatActivity {
                 });*/
 
 
-               cidaas.configureFaceRecognition(convertImageJpegForFace(bitmap),"", ssub, new Result<EnrollFaceMFAResponseEntity>() {
+               cidaas.configureFaceRecognition(convertImageJpegForFace(bitmap), ssub,"", new Result<EnrollFaceMFAResponseEntity>() {
                    @Override
                    public void success(EnrollFaceMFAResponseEntity result) {
                        Toast.makeText(EnrollFace.this, "Face Configured Successfully "+result.getData().getSub(), Toast.LENGTH_SHORT).show();

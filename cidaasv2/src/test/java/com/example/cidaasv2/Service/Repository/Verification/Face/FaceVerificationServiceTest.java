@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.Face;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
@@ -12,6 +13,7 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFAR
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFAResponseEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -27,10 +29,17 @@ public class FaceVerificationServiceTest {
     Context context;
     FaceVerificationService faceVerificationService;
 
+    ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+
     @Before
     public void setUp() {
         context= RuntimeEnvironment.application;
       faceVerificationService=new FaceVerificationService(context);
+
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
     }
 
     @Test
@@ -43,7 +52,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testSetupFaceMFA() throws Exception {
 
-        faceVerificationService.setupFaceMFA("baseurl", "accessToken", "codeChallenge", new SetupFaceMFARequestEntity(), null,new Result<SetupFaceMFAResponseEntity>() {
+        faceVerificationService.setupFaceMFA("baseurl", "accessToken",  new SetupFaceMFARequestEntity(), null,new Result<SetupFaceMFAResponseEntity>() {
             @Override
             public void success(SetupFaceMFAResponseEntity result) {
 
@@ -59,7 +68,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testSetupFaceMFAdd() throws Exception {
 
-        faceVerificationService.setupFaceMFA("", "accessToken", "codeChallenge", new SetupFaceMFARequestEntity(), null,new Result<SetupFaceMFAResponseEntity>() {
+        faceVerificationService.setupFaceMFA("", "accessToken", new SetupFaceMFARequestEntity(), null,new Result<SetupFaceMFAResponseEntity>() {
             @Override
             public void success(SetupFaceMFAResponseEntity result) {
 
@@ -74,7 +83,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testScannedFace() throws Exception {
 
-        faceVerificationService.scannedFace("baseurl", "usagePass", "statusId", "AccessToken", null,new Result<ScannedResponseEntity>() {
+        faceVerificationService.scannedFace("baseurl",  scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 

@@ -19,6 +19,7 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSma
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -41,6 +42,7 @@ public class SmartpushVerificationServiceCalltest {
     CidaassdkService service;
     SmartPushVerificationService smartPushVerificationService;
     DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+    ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
     Dictionary<String, String> savedProperties=new Hashtable<>();
 
     CountDownLatch latch=new CountDownLatch(1);
@@ -67,6 +69,12 @@ public class SmartpushVerificationServiceCalltest {
         savedProperties.put("Verifier", "codeVerifier");
         savedProperties.put("Challenge","codeChallenge");
         savedProperties.put("Method", "ChallengeMethod");
+
+
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
 
     }
 
@@ -459,7 +467,7 @@ public class SmartpushVerificationServiceCalltest {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"statusId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"st\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
                             "    }\n" +
                             "}");
 
@@ -479,11 +487,11 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(SetupSmartPushMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
 
                     latch.countDown();
 
@@ -522,7 +530,7 @@ public class SmartpushVerificationServiceCalltest {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"statusId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"st\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
                             "    }\n" +
                             "}");
 
@@ -543,11 +551,11 @@ public class SmartpushVerificationServiceCalltest {
 
 
 
-            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupSmartPushMFARequestEntity(),null ,new Result<SetupSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken",new SetupSmartPushMFARequestEntity(),null ,new Result<SetupSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(SetupSmartPushMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -610,11 +618,11 @@ public class SmartpushVerificationServiceCalltest {
 
 
 
-            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(SetupSmartPushMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -676,11 +684,11 @@ public class SmartpushVerificationServiceCalltest {
 
 
 
-            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(SetupSmartPushMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -733,11 +741,11 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(SetupSmartPushMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -791,11 +799,11 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.setupSmartPush(loginProperties.get("DomainURL"),"AccessToken",new SetupSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<SetupSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(SetupSmartPushMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -856,7 +864,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -900,7 +908,7 @@ public class SmartpushVerificationServiceCalltest {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"statusId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"st\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
                             "    }\n" +
                             "}");
 
@@ -921,7 +929,7 @@ public class SmartpushVerificationServiceCalltest {
 
 
 
-            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), "USP","STAID","accs",null ,new Result<ScannedResponseEntity>() {
+            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), scannedRequestEntity,null ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -988,7 +996,7 @@ public class SmartpushVerificationServiceCalltest {
 
 
 
-            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1053,7 +1061,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1110,7 +1118,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1168,7 +1176,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            smartPushVerificationService.scannedSmartPush(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1339,7 +1347,7 @@ public class SmartpushVerificationServiceCalltest {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"statusId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"st\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
                             "    }\n" +
                             "}");
 

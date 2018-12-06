@@ -166,14 +166,14 @@ public class PatternConfigurationController {
                                             PatternVerificationService.getShared(context).setupPattern(baseurl, accessToken,
                                                     setupPatternMFARequestEntity1, null, new Result<SetupPatternMFAResponseEntity>() {
                                                         @Override
-                                                        public void success(final SetupPatternMFAResponseEntity result) {
-                                                            DBHelper.getShared().setUserDeviceId(result.getData().getUdi(), baseurl);
+                                                        public void success(final SetupPatternMFAResponseEntity setupPatternresult) {
+                                                            DBHelper.getShared().setUserDeviceId(setupPatternresult.getData().getUdi(), baseurl);
 
                                                             //Entity For Pattern
                                                             EnrollPatternMFARequestEntity enrollPatternMFARequestEntity = new EnrollPatternMFARequestEntity();
                                                             enrollPatternMFARequestEntity.setVerifierPassword(patternString);
-                                                            enrollPatternMFARequestEntity.setStatusId(setupserviceresult.getData().getSt());
-                                                            enrollPatternMFARequestEntity.setUserDeviceId(result.getData().getUdi());
+                                                            enrollPatternMFARequestEntity.setStatusId(setupPatternresult.getData().getSt());
+                                                            enrollPatternMFARequestEntity.setUserDeviceId(setupPatternresult.getData().getUdi());
 
 
                                                             enrollPattern(baseurl,accessToken,enrollPatternMFARequestEntity,enrollResult);
@@ -425,7 +425,7 @@ public class PatternConfigurationController {
                     initiatePatternMFARequestEntity.getUserDeviceId() != null && !initiatePatternMFARequestEntity.getUserDeviceId().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                PatternVerificationService.getShared(context).initiatePattern(baseurl,codeChallenge, initiatePatternMFARequestEntity,null,
+                PatternVerificationService.getShared(context).initiatePattern(baseurl, initiatePatternMFARequestEntity,null,
                         new Result<InitiatePatternMFAResponseEntity>() {
 
                             @Override
@@ -454,7 +454,7 @@ public class PatternConfigurationController {
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                                            PatternVerificationService.getShared(context).initiatePattern(baseurl, codeChallenge, initiatePatternMFARequestEntity,null,
+                                            PatternVerificationService.getShared(context).initiatePattern(baseurl,  initiatePatternMFARequestEntity,null,
                                                     new Result<InitiatePatternMFAResponseEntity>() {
 
                                                         @Override

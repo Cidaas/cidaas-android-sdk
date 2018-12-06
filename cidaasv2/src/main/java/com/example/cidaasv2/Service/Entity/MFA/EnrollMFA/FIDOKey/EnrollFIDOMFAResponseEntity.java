@@ -9,6 +9,15 @@ public class EnrollFIDOMFAResponseEntity implements Serializable{
 
     boolean success;
     int status;
+    private EnrollFIDOMFAResponseDataEntity data;
+
+    public EnrollFIDOMFAResponseDataEntity getData() {
+        return data;
+    }
+
+    public void setData(EnrollFIDOMFAResponseDataEntity data) {
+        this.data = data;
+    }
 
     public boolean isSuccess() {
         return success;

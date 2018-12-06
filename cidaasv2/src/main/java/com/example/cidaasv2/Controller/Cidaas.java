@@ -6,13 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
+import android.net.Uri;
+import android.nfc.tech.IsoDep;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -22,6 +26,7 @@ import com.example.cidaasv2.Controller.Repository.ChangePassword.ChangePasswordC
 import com.example.cidaasv2.Controller.Repository.Client.ClientController;
 import com.example.cidaasv2.Controller.Repository.Configuration.BackupCode.BackupCodeConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Email.EmailConfigurationController;
+import com.example.cidaasv2.Controller.Repository.Configuration.FIDO.FIDOConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Face.FaceConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Fingerprint.FingerprintConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.IVR.IVRConfigurationController;
@@ -63,6 +68,14 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResul
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDORequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDOResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.U2F_V2;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
@@ -174,6 +187,7 @@ public class Cidaas implements IOAuthWebLogin {
     public static String instanceId = "";
     public static ICustomLoader loader;
     public static String baseurl = "";
+    public static final String FIDO_VERSION = "U2F_V2";
 
     public RegistrationSetupResultDataEntity[] registerFields;
 
@@ -1364,6 +1378,138 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+
+
+    // ****** DONE Verification *****-------------------------------------------------------------------------------------------------------
+
+
+
+    public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
+    {
+
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+
+                    String oldFCMToken=DBHelper.getShared().getFCMToken();
+
+
+                    if(oldFCMToken.equalsIgnoreCase(FCMToken))
+                    {
+                        //Do nothing
+                    }
+                    else{
+                        DBHelper.getShared().setFCMToken(FCMToken);
+
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity result) {
+                                VerificationSettingsController.getShared(context).updateFCMToken(baseurl, result.getAccess_token(), FCMToken, new Result<Object>() {
+                                    @Override
+                                    public void success(Object result) {
+                                        LogFile.addRecordToLog("Update FCM Token Success");
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        LogFile.addRecordToLog("Update FCM Token Error" + error.getMessage());
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                            }
+                        });
+
+
+                    }
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                }
+            });
+        }
+
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Update FCM Token exception" + e.getMessage());
+            Timber.e("Update FCM Token exception" + e.getMessage());
+        }
+    }
+
+
+    public void scanned(@NonNull final String statusId, @NonNull final String sub,@NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+
+                    if(verificationType.equalsIgnoreCase("PATTERN"))
+                    {
+                        PatternConfigurationController.getShared(context).scannedWithPattern(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("TOUCHID"))
+                    {
+                        FingerprintConfigurationController.getShared(context).scannedWithFingerprint(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("VOICE"))
+                    {
+                        VoiceConfigurationController.getShared(context).scannedWithVoice(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("FACE"))
+                    {
+                        FaceConfigurationController.getShared(context).scannedWithFace(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("TOTP"))
+                    {
+                        TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("PUSH"))
+                    {
+                        SmartPushConfigurationController.getShared(context).scannedWithSmartPush(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("FIDOU2F"))
+                    {
+                        FIDOConfigurationController.getShared(context).scannedWithFIDO(baseurl,statusId,clientId,scannedResult);
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Pattern exception" + e.getMessage());
+        }
+    }
+
+
     // ****** DONE PATTERN *****-------------------------------------------------------------------------------------------------------
 
 
@@ -1504,131 +1650,6 @@ public class Cidaas implements IOAuthWebLogin {
       }
     }
 
-
-    public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
-    {
-
-        try {
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-
-                    final String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-
-                    String oldFCMToken=DBHelper.getShared().getFCMToken();
-
-
-                    if(oldFCMToken.equalsIgnoreCase(FCMToken))
-                    {
-                        //Do nothing
-                    }
-                    else{
-                      DBHelper.getShared().setFCMToken(FCMToken);
-
-                      AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
-                          @Override
-                          public void success(AccessTokenEntity result) {
-                              VerificationSettingsController.getShared(context).updateFCMToken(baseurl, result.getAccess_token(), FCMToken, new Result<Object>() {
-                                  @Override
-                                  public void success(Object result) {
-                                      LogFile.addRecordToLog("Update FCM Token Success");
-                                  }
-
-                                  @Override
-                                  public void failure(WebAuthError error) {
-                                      LogFile.addRecordToLog("Update FCM Token Error" + error.getMessage());
-                                  }
-                              });
-                          }
-
-                          @Override
-                          public void failure(WebAuthError error) {
-                              LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
-                          }
-                      });
-
-
-                    }
-
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
-                }
-            });
-        }
-
-        catch (Exception e)
-        {
-         LogFile.addRecordToLog("Update FCM Token exception" + e.getMessage());
-         Timber.e("Update FCM Token exception" + e.getMessage());
-        }
-}
-
-
-    public void scanned(@NonNull final String statusId, @NonNull final String sub,@NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
-    {
-        try
-        {
-
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-
-                    String baseurl = result.get("DomainURL");
-                    String clientId=result.get("ClientId");
-
-
-
-                    if(verificationType.equalsIgnoreCase("PATTERN"))
-                    {
-                        PatternConfigurationController.getShared(context).scannedWithPattern(baseurl,statusId,clientId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("TOUCHID"))
-                    {
-                        FingerprintConfigurationController.getShared(context).scannedWithFingerprint(baseurl,statusId,clientId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("VOICE"))
-                    {
-                        VoiceConfigurationController.getShared(context).scannedWithVoice(baseurl,statusId,clientId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("FACE"))
-                    {
-                        FaceConfigurationController.getShared(context).scannedWithFace(baseurl,statusId,clientId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("TOTP"))
-                    {
-                        TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("PUSH"))
-                    {
-                      SmartPushConfigurationController.getShared(context).scannedWithSmartPush(baseurl,statusId,clientId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("FIDOU2F"))
-                    {
-
-                    }
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    scannedResult.failure(error);
-                }
-            });
-
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
-            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Scanned Pattern exception" + e.getMessage());
-        }
-    }
 
 
     //Todo login with pattern by Passing the pattern String Directly
@@ -2602,6 +2623,289 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+
+    // ****** DONE FIDO *****-------------------------------------------------------------------------------------------------------
+
+
+    public void enrollFIDO(@NonNull final IsoDep isoTag) {
+    try
+    {
+
+
+
+
+    }
+    catch (Exception e)
+     {
+
+     }
+    }
+
+    public void configureFIDORecognition(@NonNull final IsoDep isoTag, @NonNull final String sub, @NonNull final String logoURL,
+                                         final Result<EnrollFIDOMFAResponseEntity> enrollresult)
+    {
+        try {
+
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+
+
+                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
+
+                        final String finalBaseurl = baseurl;
+
+
+                        if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
+
+
+
+
+                        SetupFIDOMFARequestEntity setupFIDOMFARequestEntity = new SetupFIDOMFARequestEntity();
+                        setupFIDOMFARequestEntity.setClient_id(result.get("ClientId"));
+                        setupFIDOMFARequestEntity.setLogoUrl(logoURLlocal);
+
+
+                       /* FIDOConfigurationController.getShared(context).configureFIDO(sub, finalBaseurl, isoTag, setupFIDOMFARequestEntity,
+                                enrollresult);*/
+
+                    } else {
+                        String errorMessage = "Sub or FIDO or logoURL cannot be null";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
+                                HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+
+                    enrollresult.failure(error);
+                }
+            });
+
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Configure FIDO exception" + e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure FIDO exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Configure FIDO exception" + e.getMessage());
+        }
+
+
+    }
+
+
+
+
+
+    public void enrollFIDO(@NonNull final FIDOTouchResponse FIDO, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFIDOMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                    final EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity=new EnrollFIDOMFARequestEntity();
+                    enrollFIDOMFARequestEntity.setFidoTouchResponse(FIDO);
+                    enrollFIDOMFARequestEntity.setStatusId(statusId);
+                    enrollFIDOMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,result.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll FIDO exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll FIDO exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll FIDO exception" + e.getMessage());
+        }
+    }
+
+    public void scannedFIDO(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+                    FIDOConfigurationController.getShared(context).scannedWithFIDO(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned FIDO exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned FIDO exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned FIDO exception" + e.getMessage());
+        }
+    }
+
+
+
+    //Todo login with FIDO by Passing the FIDO String Directly
+    // 1. Todo Check For Local Variable or Read properties from file
+    // 2. Todo Check For NotNull Values
+    // 3. Todo getAccessToken From Sub
+    // 3. Todo Call configure FIDO From FIDO Controller and return the result
+    // 4. Todo Maintain logs based on flags
+
+    public void loginWithFIDO(@NonNull final FidoSignTouchResponse FIDO, @NonNull final PasswordlessEntity passwordlessEntity,
+                                            final Result<LoginCredentialsResponseEntity> loginresult) {
+
+        try {
+
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+
+                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
+                            && FIDO != null && !FIDO.equals("") && passwordlessEntity.getRequestId() != null &&
+                            passwordlessEntity.getRequestId() != "") {
+
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            return;
+                        }
+
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            return;
+                        }
+
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
+
+                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                return;
+                            }
+                        }
+
+                        InitiateFIDOMFARequestEntity initiateFIDOMFARequestEntity = new InitiateFIDOMFARequestEntity();
+                        initiateFIDOMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateFIDOMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateFIDOMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateFIDOMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+                        //Todo check for email or sub or mobile
+
+                        IsoDep isoDep = null;
+                        FIDOConfigurationController.getShared(context).LoginWithFIDO(isoDep, baseurl, clientId,
+                                passwordlessEntity.getTrackId(),
+                                passwordlessEntity.getRequestId(), initiateFIDOMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "UsageType or FIDOCode or requestId must not be empty";
+
+                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            });
+
+
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Login with FIDO exception" + e.getMessage());
+            String errorMessage = e.getMessage();
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Login with FIDO exception" + e.getMessage());
+        }
+    }
+
+
+    public void verifyFIDO(final FidoSignTouchResponse FIDOString, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
+    {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    //todo call verify FIDO
+
+                    AuthenticateFIDORequestEntity authenticateFIDORequestEntity=new AuthenticateFIDORequestEntity();
+                    authenticateFIDORequestEntity.setStatusId(statusId);
+                    authenticateFIDORequestEntity.setFidoSignTouchResponse(FIDOString);
+                    authenticateFIDORequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+
+                    FIDOConfigurationController.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,result);
+                    // FIDOVerificationService.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,null,result);
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+
+    }
+
+
+
     // ****** TODO LOGIN WITH Smart push *****-------------------------------------------------------------------------------------------------------
 
 
@@ -3267,7 +3571,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     //Delete call
-    public void delete(@NonNull final String verificationType, @NonNull final String sub, final Result<DeleteMFAResponseEntity> deleteResult)
+    public void deleteVerificationByType(@NonNull final String verificationType, @NonNull final String sub, final Result<DeleteMFAResponseEntity> deleteResult)
     {
         try
         {
@@ -3332,7 +3636,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     //Delete call
-    public void deleteAll( @NonNull final String sub,final Result<DeleteMFAResponseEntity> result)
+    public void deleteVerificationByDevice( @NonNull final String sub,final Result<DeleteMFAResponseEntity> result)
     {
         try
         {
@@ -4418,7 +4722,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    /*public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain) {
+    public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain) {
         try {
 
 
@@ -4447,7 +4751,6 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-*/
     //Todo sConsult and Create a  new Resume if the loginCallback is null
     //Get Code By URl
 

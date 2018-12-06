@@ -40,9 +40,9 @@ public class SetupSmartPushMFAResponseEntityTest {
     public void setData(){
         data=new SetupSmartPushMFAResponseDataEntity();
 
-        data.setStatusId("Test");
+        data.setSt("Test");
         setupSmartPushMFAResponseEntity.setData(data);
-        Assert.assertEquals("Test",setupSmartPushMFAResponseEntity.getData().getStatusId());
+        Assert.assertEquals("Test",setupSmartPushMFAResponseEntity.getData().getSt());
 
     }
 

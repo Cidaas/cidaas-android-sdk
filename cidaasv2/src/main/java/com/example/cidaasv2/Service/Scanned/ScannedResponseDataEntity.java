@@ -8,7 +8,16 @@ import java.io.Serializable;
 public class ScannedResponseDataEntity implements Serializable {
     String userDeviceId;
     String current_status;
+    FIDOInitRequest fidoInitRequest;
 
+
+    public FIDOInitRequest getFidoInitRequest() {
+        return fidoInitRequest;
+    }
+
+    public void setFidoInitRequest(FIDOInitRequest fidoInitRequest) {
+        this.fidoInitRequest = fidoInitRequest;
+    }
 
     public String getCurrent_status() {
         return current_status;

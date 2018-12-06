@@ -11,7 +11,6 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
@@ -23,7 +22,6 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMF
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
-import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,7 +112,6 @@ public class VoiceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
 
 
@@ -362,7 +359,6 @@ public class VoiceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
           //  headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
 
@@ -469,7 +465,7 @@ public class VoiceVerificationService {
 
 
     //initiateVoiceMFA
-    public void initiateVoice(String baseurl, String codeChallenge,InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateVoiceMFAResponseEntity> callback)
+    public void initiateVoice(String baseurl, InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateVoiceMFAResponseEntity> callback)
     {
         String initiateVoiceMFAUrl="";
         try
@@ -499,10 +495,8 @@ public class VoiceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -622,7 +616,6 @@ public class VoiceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
           //  headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
 
 

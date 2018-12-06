@@ -3,6 +3,7 @@ package com.example.cidaasv2.Service.Repository.Verification.SmartPush;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
@@ -21,6 +22,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPush
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -41,18 +43,26 @@ import timber.log.Timber;
 public class SmartPushVerificationServiceTest {
 
     SmartPushVerificationService smartPushVerificationService;
+    ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
     Context context;
 
     @Before
     public void setUp() {
         context= RuntimeEnvironment.application;
      smartPushVerificationService=new SmartPushVerificationService(context);
+
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
     }
+
+
 
     @Test
     public void testSetupSmartPushMFA() throws Exception {
 
-        smartPushVerificationService.setupSmartPush("baseurl", "accessToken","code",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.setupSmartPush("baseurl", "accessToken",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
             @Override
             public void success(SetupSmartPushMFAResponseEntity result) {
 
@@ -68,7 +78,7 @@ public class SmartPushVerificationServiceTest {
     @Test
     public void testSetupSmartPushNullMFA() throws Exception {
 
-        smartPushVerificationService.setupSmartPush("", "accessToken","code",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.setupSmartPush("", "accessToken",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
             @Override
             public void success(SetupSmartPushMFAResponseEntity result) {
 
@@ -99,7 +109,7 @@ public class SmartPushVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-        smartPushVerificationService.setupSmartPush("localhost:234235", "accessToken","code",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.setupSmartPush("localhost:234235", "accessToken",new SetupSmartPushMFARequestEntity(),null, new Result<SetupSmartPushMFAResponseEntity>() {
             @Override
             public void success(SetupSmartPushMFAResponseEntity result) {
 
@@ -118,7 +128,7 @@ public class SmartPushVerificationServiceTest {
     @Test
     public void testScannedSmartPushMFA() throws Exception {
 
-        smartPushVerificationService.scannedSmartPush("baseurl", "Usa","Status","Access",null,new Result<ScannedResponseEntity>() {
+        smartPushVerificationService.scannedSmartPush("baseurl", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -133,7 +143,7 @@ public class SmartPushVerificationServiceTest {
     @Test
     public void testScannedSmartPushNUllMFA() throws Exception {
 
-        smartPushVerificationService.scannedSmartPush("", "Usa","Status","accessToken",null,new Result<ScannedResponseEntity>() {
+        smartPushVerificationService.scannedSmartPush("", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -165,7 +175,7 @@ public class SmartPushVerificationServiceTest {
 
 
 
-        smartPushVerificationService.scannedSmartPush("localhost:234235", "Usa","StatusId","accessToken",null, new Result<ScannedResponseEntity>() {
+        smartPushVerificationService.scannedSmartPush("localhost:234235", scannedRequestEntity,null, new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 

@@ -396,8 +396,8 @@ public class SmartPushConfigurationController {
 
                                                             //Entity For SmartPush
                                                             EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity = new EnrollSmartPushMFARequestEntity();
-                                                            enrollSmartPushMFARequestEntity.setVerifierPassword(setupserviceresult.getData().getRns());
-                                                            enrollSmartPushMFARequestEntity.setStatusId(setupserviceresult.getData().getSt());
+                                                            enrollSmartPushMFARequestEntity.setVerifierPassword(result.getData().getRns());
+                                                            enrollSmartPushMFARequestEntity.setStatusId(result.getData().getSt());
                                                             enrollSmartPushMFARequestEntity.setUserDeviceId(result.getData().getUdi());
 
 
@@ -742,7 +742,7 @@ public class SmartPushConfigurationController {
                     initiateSmartPushMFARequestEntity.getUserDeviceId() != null && !initiateSmartPushMFARequestEntity.getUserDeviceId().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl,codeChallenge, initiateSmartPushMFARequestEntity,null,
+                SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl,initiateSmartPushMFARequestEntity,null,
                         new Result<InitiateSmartPushMFAResponseEntity>() {
 
                             @Override
@@ -771,7 +771,7 @@ public class SmartPushConfigurationController {
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, codeChallenge, initiateSmartPushMFARequestEntity,null,
+                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, initiateSmartPushMFARequestEntity,null,
                                                     new Result<InitiateSmartPushMFAResponseEntity>() {
 
                                                         @Override

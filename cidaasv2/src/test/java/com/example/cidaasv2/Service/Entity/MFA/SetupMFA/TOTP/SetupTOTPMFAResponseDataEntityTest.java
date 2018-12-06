@@ -6,59 +6,98 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class SetupTOTPMFAResponseDataEntityTest {
-    SetupTOTPMFAResponseDataEntity setupTOTPResponseDataEntity=new SetupTOTPMFAResponseDataEntity();
-
+    SetupTOTPMFAResponseDataEntity setupResponseDataEntity=new SetupTOTPMFAResponseDataEntity();
 
     @Test
-    public void setQrCode() throws Exception {
+    public void setSecret() throws Exception {
 
-        setupTOTPResponseDataEntity.setQrCode("Test");
+        setupResponseDataEntity.setSecret("Test");
 
-        Assert.assertEquals("Test",setupTOTPResponseDataEntity.getQrCode());
+        Assert.assertEquals("Test",setupResponseDataEntity.getSecret());
     }
 
     @Test
     public void setOtpauth() throws Exception {
 
-        setupTOTPResponseDataEntity.setOtpauth("Test");
+        setupResponseDataEntity.setT("Test");
 
-        Assert.assertEquals("Test",setupTOTPResponseDataEntity.getOtpauth());
+        Assert.assertEquals("Test",setupResponseDataEntity.getT());
     }
     @Test
     public void setQueryString() throws Exception {
 
-        setupTOTPResponseDataEntity.setQueryString("Test");
+        setupResponseDataEntity.setD("Test");
 
-        Assert.assertEquals("Test",setupTOTPResponseDataEntity.getQueryString());
+        Assert.assertEquals("Test",setupResponseDataEntity.getD());
     }
     @Test
-    public void setStatusId() throws Exception {
+    public void setissuer() throws Exception {
 
-        setupTOTPResponseDataEntity.setStatusId("StatusId");
+        setupResponseDataEntity.setIssuer("test");
 
-        Assert.assertEquals("StatusId",setupTOTPResponseDataEntity.getStatusId());
+        Assert.assertEquals("test",setupResponseDataEntity.getIssuer());
     }
     @Test
-    public void setVerifierId() throws Exception {
+    public void setl() throws Exception {
 
-        setupTOTPResponseDataEntity.setVerifierId("VerifierId");
+        setupResponseDataEntity.setL("test");
 
-        Assert.assertEquals("VerifierId",setupTOTPResponseDataEntity.getVerifierId());
+        Assert.assertEquals("test",setupResponseDataEntity.getL());
     }
     @Test
     public void setRandomNumber() throws Exception {
 
-        setupTOTPResponseDataEntity.setRandomNumber("Test");
+        setupResponseDataEntity.setRns("Test");
 
-        Assert.assertEquals("Test",setupTOTPResponseDataEntity.getRandomNumber());
+        Assert.assertEquals("Test",setupResponseDataEntity.getRns());
     }
 
     @Test
     public void setCurrent_status() throws Exception {
 
-        setupTOTPResponseDataEntity.setCurrent_status("Test");
+        setupResponseDataEntity.setCurrent_status("Test");
 
-        Assert.assertEquals("Test",setupTOTPResponseDataEntity.getCurrent_status());
+        Assert.assertEquals("Test",setupResponseDataEntity.getCurrent_status());
+    }
+
+
+
+    @Test
+    public void setSt() throws Exception {
+
+        setupResponseDataEntity.setSt("StatusId");
+
+        Assert.assertEquals("StatusId",setupResponseDataEntity.getSt());
+    }
+
+    @Test
+    public void setUdi() throws Exception {
+
+        setupResponseDataEntity.setUdi("udi");
+
+        Assert.assertEquals("udi",setupResponseDataEntity.getUdi());
+    }
+    @Test
+    public void setRurl() throws Exception {
+
+        setupResponseDataEntity.setRurl("Test");
+
+        Assert.assertEquals("Test",setupResponseDataEntity.getRurl());
+    }
+    @Test
+    public void setCid() throws Exception {
+
+        setupResponseDataEntity.setCid("Test");
+
+        Assert.assertEquals("Test",setupResponseDataEntity.getCid());
+    }
+
+    @Test
+    public void setSub() throws Exception {
+
+        setupResponseDataEntity.setSub("Test");
+
+        Assert.assertEquals("Test",setupResponseDataEntity.getSub());
     }
 }
 
