@@ -2629,7 +2629,7 @@ public class Cidaas implements IOAuthWebLogin {
     // ****** DONE FIDO *****-------------------------------------------------------------------------------------------------------
 
 
-   /* public void enrollFIDO(@NonNull final IsoDep isoTag, final ScannedResponseDataEntity scannedResponseDataEntity, @NonNull final String sub, @NonNull final String statusId, final Result<EnrollFIDOMFAResponseEntity> enrollResult) {
+    public void enrollFIDO(@NonNull final FIDOTouchResponse fidoResponse,  @NonNull final String sub, @NonNull final String statusId, final Result<EnrollFIDOMFAResponseEntity> enrollResult) {
     try
     {
 
@@ -2644,22 +2644,24 @@ public class Cidaas implements IOAuthWebLogin {
                     @Override
                     public void success(AccessTokenEntity accessTOkenresult) {
 
+                        EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity=new EnrollFIDOMFARequestEntity();
+                        enrollFIDOMFARequestEntity.setFidoTouchResponse(fidoResponse);
+                        enrollFIDOMFARequestEntity.setStatusId(statusId);
+                        enrollFIDOMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
-
-
-                        FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,accessTOkenresult.getAccess_token(),,enrollResult);
+                        FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,accessTOkenresult.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
                     }
 
                     @Override
                     public void failure(WebAuthError error) {
-
+                        enrollResult.failure(error);
                     }
                 });
             }
 
             @Override
             public void failure(WebAuthError error) {
-
+                enrollResult.failure(error);
             }
         });
 
@@ -2673,7 +2675,6 @@ public class Cidaas implements IOAuthWebLogin {
          Timber.e("Enroll FIDO exception" + e.getMessage());
      }
     }
-*/
     public void configureFIDORecognition(@NonNull final IsoDep isoTag, @NonNull final String sub, @NonNull final String logoURL,
                                          final Result<EnrollFIDOMFAResponseEntity> enrollresult)
     {
@@ -2734,7 +2735,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void enrollFIDO(@NonNull final IsoDep isoTag, final ScannedResponseDataEntity scannedResponseDataEntity, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFIDOMFAResponseEntity> enrollResult)
+   /* public void enrollFIDO(@NonNull final IsoDep isoTag, final ScannedResponseDataEntity scannedResponseDataEntity, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFIDOMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -2747,9 +2748,9 @@ public class Cidaas implements IOAuthWebLogin {
                     String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                  // EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity=new EnrollFIDOMFARequestEntity();
-                    /*enrollFIDOMFARequestEntity.setFidoTouchResponse(FIDO);
+                    *//*enrollFIDOMFARequestEntity.setFidoTouchResponse(FIDO);
                     enrollFIDOMFARequestEntity.setStatusId(statusId);
-                    enrollFIDOMFARequestEntity.setUserDeviceId(userDeviceId);*/
+                    enrollFIDOMFARequestEntity.setUserDeviceId(userDeviceId);*//*
 
 
 
@@ -2806,7 +2807,7 @@ public class Cidaas implements IOAuthWebLogin {
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll FIDO exception" + e.getMessage());
         }
-    }
+    }*/
 
     public void scannedFIDO(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
     {
@@ -2928,7 +2929,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void verifyFIDO(final IsoDep isoTag, final NFCSignObject signObject, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
+    /*public void verifyFIDO(final IsoDep isoTag, final NFCSignObject signObject, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
     {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -2959,8 +2960,41 @@ public class Cidaas implements IOAuthWebLogin {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
-    }
+    }*/
 
+
+    public void verifyFIDO(final FidoSignTouchResponse fidoSignTouchResponse, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
+    {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    //todo call verify FIDO
+
+                    AuthenticateFIDORequestEntity authenticateFIDORequestEntity=new AuthenticateFIDORequestEntity();
+                    authenticateFIDORequestEntity.setStatusId(statusId);
+                    authenticateFIDORequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                    authenticateFIDORequestEntity.setFidoSignTouchResponse(fidoSignTouchResponse);
+
+
+
+                    FIDOConfigurationController.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,result);
+                    // FIDOVerificationService.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,null,result);
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+
+    }
 
 
     // ****** TODO LOGIN WITH Smart push *****-------------------------------------------------------------------------------------------------------
