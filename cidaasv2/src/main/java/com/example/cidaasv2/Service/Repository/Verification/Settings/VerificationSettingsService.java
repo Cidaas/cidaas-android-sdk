@@ -754,7 +754,7 @@ public class VerificationSettingsService {
                 @Override
                 public void onResponse(Call<ConfiguredMFAListEntity> call, Response<ConfiguredMFAListEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if(response.code()==200 || response.code()==204) {
                             callback.success(response.body());
                         }
                         else {
