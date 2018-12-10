@@ -536,7 +536,7 @@ public class VerificationSettingsService {
         String getPendingNotificationURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="") {
+            if(baseurl!=null && baseurl!="" ) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -556,7 +556,7 @@ public class VerificationSettingsService {
                 @Override
                 public void onResponse(Call<NotificationEntity> call, Response<NotificationEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if(response.code()==200 || response.code()==204 ) {
                             callback.success(response.body());
                         }
                         else {

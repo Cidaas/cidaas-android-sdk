@@ -2675,7 +2675,7 @@ public class Cidaas implements IOAuthWebLogin {
          Timber.e("Enroll FIDO exception" + e.getMessage());
      }
     }
-    public void configureFIDORecognition(@NonNull final IsoDep isoTag, @NonNull final String sub, @NonNull final String logoURL,
+    public void configureFIDO(@NonNull final IsoDep isoTag, @NonNull final String sub, @NonNull final String logoURL,
                                          final Result<EnrollFIDOMFAResponseEntity> enrollresult)
     {
         try {
@@ -5247,6 +5247,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
+/*
 
     public void configureFIDO(String sub, final Result<EnrollFIDOMFAResponseEntity> result) {
         try {
@@ -5269,6 +5270,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+*/
 
 
     private void checkLoginProperties(final Dictionary<String, String> loginproperties,Result<String> result)
