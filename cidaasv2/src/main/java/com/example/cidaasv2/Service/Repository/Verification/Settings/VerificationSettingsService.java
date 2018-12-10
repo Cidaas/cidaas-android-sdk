@@ -135,8 +135,15 @@ public class VerificationSettingsService {
                 @Override
                 public void onResponse(Call<MFAListResponseEntity> call, Response<MFAListResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200 || response.code()==204){
+                        if(response.code()==200 ){
                             callback.success(response.body());
+                        }
+                        else if(response.code()==204)
+                        {
+                            MFAListResponseEntity mfaListResponseEntity=new MFAListResponseEntity();
+                            mfaListResponseEntity.setStatus(response.code());
+                            mfaListResponseEntity.setSuccess(response.isSuccessful());
+                            callback.success(mfaListResponseEntity);
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,
@@ -556,8 +563,16 @@ public class VerificationSettingsService {
                 @Override
                 public void onResponse(Call<NotificationEntity> call, Response<NotificationEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200 || response.code()==204 ) {
+                        if(response.code()==200) {
                             callback.success(response.body());
+                        }
+                        else if(response.code()==204)
+                        {
+                            NotificationEntity notificationEntity=new NotificationEntity();
+
+                            notificationEntity.setStatus(response.code());
+                            notificationEntity.setSuccess(response.isSuccessful());
+                            callback.success(notificationEntity);
                         }
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
@@ -754,9 +769,18 @@ public class VerificationSettingsService {
                 @Override
                 public void onResponse(Call<ConfiguredMFAListEntity> call, Response<ConfiguredMFAListEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200 || response.code()==204) {
+                        if(response.code()==200 ) {
                             callback.success(response.body());
                         }
+                        else if(response.code()==204)
+                        {
+                            ConfiguredMFAListEntity configuredMFAListEntity=new ConfiguredMFAListEntity();
+
+                            configuredMFAListEntity.setStatus(response.code());
+                            configuredMFAListEntity.setSuccess(response.isSuccessful());
+                            callback.success(configuredMFAListEntity);
+                        }
+
                         else {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,
                                     "Service failure but successful response" ,response.code(),null,null));

@@ -8,19 +8,12 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NotificationEntity implements Serializable {
 
-    private String status;
+    private int status;
 
     private List<PushNotificationEntity> data;
 
-    private String success;
+    private boolean success;
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public List<PushNotificationEntity> getData() {
         return data;
@@ -31,11 +24,19 @@ public class NotificationEntity implements Serializable {
     }
 
 
-    public String getSuccess() {
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean isSuccess() {
         return success;
     }
 
-    public void setSuccess(String success) {
+    public void setSuccess(boolean success) {
         this.success = success;
     }
 }
