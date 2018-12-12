@@ -203,6 +203,7 @@ public class FileHelper {
                 loginProperties.put("RedirectURL", RedirectURL);
                 loginProperties.put("ClientSecret",ClientSecret);
 
+                DBHelper.getShared().addLoginProperties(loginProperties);
 
                 callback.success(loginProperties);
             } else {
@@ -229,6 +230,7 @@ public class FileHelper {
                 loginProperties.put("DomainURL", DomainUrl);
                 loginProperties.put("RedirectURL", RedirectURL);
 
+                DBHelper.getShared().addLoginProperties(loginProperties);
                 callback.success(loginProperties);
             } else {
                 //T handle Error

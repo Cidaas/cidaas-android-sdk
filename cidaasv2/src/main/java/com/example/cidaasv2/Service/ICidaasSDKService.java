@@ -138,6 +138,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
@@ -151,6 +153,7 @@ import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
+import timber.log.Timber;
 
 /**
  * Created by widasrnarayanan on 17/1/18.
@@ -520,7 +523,6 @@ public interface ICidaasSDKService {
     @GET
     Call<UserprofileResponseEntity> getInternalUserProfileInfo(@Url String url, @HeaderMap Map<String,String>headers);
 
-
     //Get Client
     @GET
     Call<ClientInfoEntity> getClientInfo(@Url String url);
@@ -541,6 +543,10 @@ public interface ICidaasSDKService {
     @GET
     Call<ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);
 
+    //Construct URL
+    @GET
+    Call<Object> getUrlList(@Url String url);
+
     //-----------------------------------------------------DELETE Call-----------------------------------------------------------------
 
     //Delete
@@ -555,9 +561,7 @@ public interface ICidaasSDKService {
 
 
 
-    //Construct URL
-    @GET
-    Call<Object> getUrlList(@Url String url);
+
 /*
 
 

@@ -155,7 +155,7 @@ public void enrollPattern(View view)
 }
 
 
-public void FIDO(View view)
+/*public void FIDO(View view)
 {
     cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
         @Override
@@ -192,7 +192,7 @@ public void FIDO(View view)
 
         }
     });
-}
+}*/
 
 
 

@@ -115,6 +115,8 @@ public class RequestIdController {
             }
             //TODO Service call
 
+            DBHelper.getShared().addLoginProperties(loginproperties);
+
             RequestIdService.getShared(context).getRequestID(loginproperties, null,null,
                     new Result<AuthRequestResponseEntity>() {
                 @Override

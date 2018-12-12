@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
@@ -26,6 +28,9 @@ import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.File;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 import timber.log.Timber;
 
@@ -47,6 +52,19 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         if (url != null) {
             cidaas.resume(url);
 
+
+            /*, new Result<AccessTokenEntity>() {
+                @Override
+                public void success(AccessTokenEntity result) {
+                    Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Toast.makeText(MainActivity.this, "Failure", Toast.LENGTH_SHORT).show();
+                }
+            }
+            */
         }
         else {
         }
@@ -73,6 +91,88 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     }*/
 
 
+
+    public void loginWithBrowser(View view)
+    {
+        try
+        {
+
+            HashMap<String,String> extraParam=new HashMap<>();
+            extraParam.put("scope","openid profile email phone offline_access");
+            Cidaas.extraParams=extraParam;
+            cidaas.loginWithBrowser("#009900", new Result<AccessTokenEntity>() {
+                @Override
+                public void success(AccessTokenEntity result) {
+                    Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+
+
+                    Intent intent=new Intent(MainActivity.this,SuccessfulLogin.class);
+                    intent.putExtra("sub",result.getSub());
+                    intent.putExtra("accessToken",result.getAccess_token());
+                    startActivity(intent);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(MainActivity.this, "Failure"+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+
+
+    public void loginWithSocial(View view)
+    {
+        try
+        {
+
+            HashMap<String,String> extraParam=new HashMap<>();
+            extraParam.put("scope","openid profile email phone offline_access");
+            Cidaas.extraParams=extraParam;
+
+            cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+                @Override
+                public void success(AuthRequestResponseEntity result) {
+                    cidaas.SocialloginWithBrowser(result.getData().getRequestId(),"facebook","#009900", new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+
+
+                            Intent intent=new Intent(MainActivity.this,SuccessfulLogin.class);
+                            intent.putExtra("sub",result.getSub());
+                            intent.putExtra("accessToken",result.getAccess_token());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(MainActivity.this, "Failure"+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+
     //get Request Id
     public void getRequestIdMethod(View view)
     {
@@ -85,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Request id Failed"+error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Request id Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

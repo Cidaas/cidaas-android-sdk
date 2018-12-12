@@ -2,19 +2,18 @@ package com.example.cidaasv2.Service.Repository.Login;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Genral.URLHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseErrorEntity;
@@ -393,6 +392,99 @@ public class LoginService {
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
+    }
+
+
+    //Get all URL from the domain
+    public void getURLList(final String baseurl, final Result<Object> callback)
+    {
+            String openIdurl = "";
+            try{
+
+                if(baseurl!=null && baseurl!=""){
+                    //Construct URL For RequestId
+                    openIdurl=baseurl +URLHelper.getShared().getOpenIdURL();
+                }
+                else {
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
+                            context.getString(R.string.EMPTY_BASE_URL_SERVICE), HttpStatusCode.EXPECTATION_FAILED,null,null));
+
+                    return;
+                }
+
+                //Call Service-getURLList
+                final ICidaasSDKService cidaasSDKService = service.getInstance();
+                cidaasSDKService.getUrlList(openIdurl).enqueue(new Callback<Object>() {
+                    @Override
+                    public void onResponse(Call<Object> call, Response<Object> response) {
+                        if (response.isSuccessful()) {
+                            if(response.code()==200) {
+                                callback.success(response.body());
+                            }
+                            else {
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+                                        "Service failure but successful response" , response.code(),null,null));
+                            }
+                        }
+                        else {
+                            assert response.errorBody() != null;
+                            try {
+
+                                // Handle proper error message
+                                String errorResponse=response.errorBody().source().readByteString().utf8();
+                                final CommonErrorEntity commonErrorEntity;
+                                commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+                                String errorMessage="";
+                                ErrorEntity errorEntity=new ErrorEntity();
+                                if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                    errorMessage=commonErrorEntity.getError().toString();
+                                }
+                                else
+                                {
+                                    if(commonErrorEntity.getError_description()!=null && !commonErrorEntity.getError_description().equals(""))
+                                    {
+                                        errorMessage=commonErrorEntity.getError_description();
+                                    }
+                                    else {
+                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                        errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                        errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                        errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                        errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                        errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                        errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                                    }
+                                }
+
+
+                                //Todo Service call For fetching the Consent details
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+                                        errorMessage, commonErrorEntity.getStatus(),
+                                        commonErrorEntity.getError(),errorEntity));
+
+                            } catch (Exception e) {
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null,null));
+                                // Timber.e("response"+response.message()+e.getMessage());
+                            }
+                            Timber.e("response"+response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Object> call, Throwable t) {
+                        Timber.e("Failure in Login with credentials service call"+t.getMessage());
+                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,t.getMessage(), 400,null,null));
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                LogFile.addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
+                Timber.d(e.getMessage());
+                callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
+
     }
 
 }

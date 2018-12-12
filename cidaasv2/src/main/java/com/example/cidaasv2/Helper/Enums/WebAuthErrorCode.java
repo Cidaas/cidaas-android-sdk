@@ -104,6 +104,9 @@ public class WebAuthErrorCode {
   public static final int PENDING_NOTIFICATION_FAILURE = 10092;
   public static final int CONFIGURED_LIST_MFA_FAILURE = 10093;
   public static final int UPDATE_FCM_TOKEN = 10094;
+  public static final int GET_LOGIN_URL_FAILURE = 10095;
+  public static final int GET_SOCIAL_LOGIN_URL_FAILURE = 10096;
+
 
   /*public static final int DELETE_EMAIL_MFA_FAILURE = 10090;
   public static final int DELETE_BACKUPCODE_MFA_FAILURE = 10091;

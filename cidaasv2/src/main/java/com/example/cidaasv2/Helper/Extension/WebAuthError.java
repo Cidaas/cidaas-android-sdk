@@ -105,7 +105,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.NO_CONTENT_IN_FILE;
         WebAuthError.shared.statusCode=HttpStatusCode.NO_CONTENT;
-        WebAuthError.shared.ErrorMessage=context.getString(R.string.NO_CONTENT_IN_FILE);
+        WebAuthError.shared.setErrorMessage(context.getString(R.string.NO_CONTENT_IN_FILE));
         return WebAuthError.shared;
     }
 //PropertyMissingException

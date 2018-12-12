@@ -946,11 +946,6 @@ public class CidaasTest {
         cidaas.getLoginCode("url", null);
     }
 
-    @Test
-    public void testGetAccessTokenByCode() throws Exception {
-        cidaas.getAccessTokenByCode("code", null);
-    }
-
 
     @Test
     public void testLoginWithFIDO() throws Exception {
@@ -963,10 +958,7 @@ public class CidaasTest {
         cidaas.getLoginURL(null);
     }
 
-    @Test
-    public void testGetLoginURL2() throws Exception {
-        cidaas.getLoginURL("RequestId", null);
-    }
+
 
     @Test
     public void testGetLoginURL3() throws Exception {
@@ -974,10 +966,7 @@ public class CidaasTest {
         cidaas.getLoginURL("DomainUrl", "ClientId", "RedirectURL", "ClientSecret", null);
     }
 
-    @Test
-    public void testGetLoginURL4() throws Exception {
-        cidaas.getLoginURL("String", null);
-    }
+
 
     @Test
     public void testResume() throws Exception {
@@ -997,10 +986,6 @@ public class CidaasTest {
         cidaas.resume("code");
     }
 
-    @Test
-    public void testConfigureFIDO() throws Exception {
 
-        cidaas.configureFIDO("sub", null);
-    }
 }
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
