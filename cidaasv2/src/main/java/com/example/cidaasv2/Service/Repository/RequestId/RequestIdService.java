@@ -135,9 +135,12 @@ public class RequestIdService {
             String codeChallenge="";
             String clientSecret="";
 
-
-            codeChallenge=challengeProperties.get("Challenge");
-            clientSecret=challengeProperties.get("ClientSecret");
+if(challengeProperties.get("Challenge")!=null) {
+    codeChallenge = challengeProperties.get("Challenge");
+}
+if(challengeProperties.get("CllientSecret")!=null) {
+    clientSecret = challengeProperties.get("ClientSecret");
+}
 
 
 /*
