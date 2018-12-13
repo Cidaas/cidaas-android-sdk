@@ -131,6 +131,15 @@ public class RequestIdService {
             }
 
 
+
+            String codeChallenge="";
+            String clientSecret="";
+
+
+            codeChallenge=challengeProperties.get("Challenge");
+            clientSecret=challengeProperties.get("ClientSecret");
+
+
 /*
 
             //Create Auth Request entity to get Request Id
@@ -146,14 +155,14 @@ public class RequestIdService {
 */
 
 
-                Map<String, String> authRequestEntityMap = new HashMap<>();
+            Map<String, String> authRequestEntityMap = new HashMap<>();
 
             authRequestEntityMap.put("client_id", URLEncoder.encode(loginProperties.get("ClientId"),"utf-8"));
             authRequestEntityMap.put("redirect_uri", URLEncoder.encode(loginProperties.get("RedirectURL"), "utf-8"));
             authRequestEntityMap.put("response_type","code");
             authRequestEntityMap.put("nonce",UUID.randomUUID().toString());
-            authRequestEntityMap.put("client_secret",challengeProperties.get("ClientSecret"));
-            authRequestEntityMap.put("code_challenge",challengeProperties.get("Challenge"));
+            authRequestEntityMap.put("client_secret",clientSecret);
+            authRequestEntityMap.put("code_challenge",codeChallenge);
             authRequestEntityMap.put("code_challenge_method","S256");
 
             for(Map.Entry<String,String> entry : Cidaas.extraParams.entrySet()) {
