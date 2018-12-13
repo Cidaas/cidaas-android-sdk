@@ -271,7 +271,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testInitiateFingerprint() throws Exception {
 
-        fingerprintVerificationService.initiateFingerprint("baseurl", "sd",new InitiateFingerprintMFARequestEntity(),null, new Result<InitiateFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.initiateFingerprint("baseurl", new InitiateFingerprintMFARequestEntity(),null, new Result<InitiateFingerprintMFAResponseEntity>() {
             @Override
             public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -287,7 +287,7 @@ public class FingerprintVerificationServiceTest {
     @Test
     public void testInitiateFingerprintNULLMFA() throws Exception {
 
-        fingerprintVerificationService.initiateFingerprint("", "sd",new InitiateFingerprintMFARequestEntity(),null, new Result<InitiateFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.initiateFingerprint("", new InitiateFingerprintMFARequestEntity(),null, new Result<InitiateFingerprintMFAResponseEntity>() {
             @Override
             public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -319,7 +319,7 @@ public class FingerprintVerificationServiceTest {
 
 
 
-        fingerprintVerificationService.initiateFingerprint("localhost:234235", "sd",new InitiateFingerprintMFARequestEntity(),null, new Result<InitiateFingerprintMFAResponseEntity>() {
+        fingerprintVerificationService.initiateFingerprint("localhost:234235", new InitiateFingerprintMFARequestEntity(),null, new Result<InitiateFingerprintMFAResponseEntity>() {
             @Override
             public void success(InitiateFingerprintMFAResponseEntity result) {
 

@@ -95,7 +95,7 @@ public class VoiceVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), "inter",new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
+            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateVoiceMFAResponseEntity result) {
 
@@ -158,7 +158,7 @@ public class VoiceVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), "inter",new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
+            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateVoiceMFAResponseEntity result) {
 
@@ -224,7 +224,7 @@ public class VoiceVerificationServiceCallTest {
 
 
 
-            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), "inter",new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
+            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateVoiceMFAResponseEntity result) {
 
@@ -289,7 +289,7 @@ public class VoiceVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), "inter",new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
+            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateVoiceMFAResponseEntity result) {
 
@@ -345,7 +345,7 @@ public class VoiceVerificationServiceCallTest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), "inter",new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
+            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateVoiceMFAResponseEntity result) {
 
@@ -402,7 +402,7 @@ public class VoiceVerificationServiceCallTest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), "inter",new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
+            voiceVerificationService.initiateVoice(loginProperties.get("DomainURL"), new InitiateVoiceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateVoiceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateVoiceMFAResponseEntity result) {
 

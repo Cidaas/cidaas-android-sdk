@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
          final String Password=password.getText().toString();
 
         // call the requestId method
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(final AuthRequestResponseEntity requestIdresult) {
                 // onSuccess of RequestId call the login with Credentials by psssing username,password request id as Arguments
@@ -220,7 +220,7 @@ public class LoginActivity extends AppCompatActivity {
         final PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
         passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 

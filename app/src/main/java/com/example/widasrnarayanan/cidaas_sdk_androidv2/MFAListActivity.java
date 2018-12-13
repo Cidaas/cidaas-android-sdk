@@ -62,7 +62,7 @@ public class MFAListActivity extends AppCompatActivity {
 
     public void email(View view){
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -103,7 +103,7 @@ public class MFAListActivity extends AppCompatActivity {
   }
     public void sms(View view){
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -144,7 +144,7 @@ public class MFAListActivity extends AppCompatActivity {
     }
     public void ivr(View view){
 
-            cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+            cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
              public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -183,7 +183,7 @@ public class MFAListActivity extends AppCompatActivity {
     }
     public void pattern(View view){
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 RequestId=result.getData().getRequestId();
@@ -241,7 +241,7 @@ public class MFAListActivity extends AppCompatActivity {
     }
     public void smartpush(View view){
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 

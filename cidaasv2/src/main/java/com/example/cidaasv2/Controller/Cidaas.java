@@ -417,7 +417,7 @@ public class Cidaas implements IOAuthWebLogin {
                                     public void success(Dictionary<String, String> savedLoginProperties) {
                                         //Call requestIdBy LoginProperties parameter
 
-                                        RequestIdController.getShared(context).getRequestId(savedLoginProperties, result);
+                                        RequestIdController.getShared(context).getRequestId(savedLoginProperties, result,extraParams);
                                     }
 
                                     @Override
@@ -453,13 +453,13 @@ public class Cidaas implements IOAuthWebLogin {
     //Get Request Id without passing any value
 
 
-    public void getRequestId(final Dictionary<String, String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult) {
+    public void getRequestId(final Dictionary<String, String> loginproperties ,final Result<AuthRequestResponseEntity> Primaryresult,@Nullable HashMap<String, String>... extraParams) {
         try {
 
             DomainURL=loginproperties.get("DomainURL");
             Cidaas.baseurl=DomainURL;
 
-            RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult);
+            RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult,extraParams);
         } catch (Exception e) {
 
             String loggerMessage = "Request-Id  failure : " + "Error Code - "
@@ -471,7 +471,8 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void getRequestId(@NonNull final String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, final Result<AuthRequestResponseEntity> Primaryresult) {
+    public void getRequestId(@NonNull final String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL,
+                             @Nullable final HashMap<String, String> extraParams , final Result<AuthRequestResponseEntity> Primaryresult) {
         try {
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("")
                     && RedirectURL != null && !RedirectURL.equals("")) {
@@ -482,7 +483,7 @@ public class Cidaas implements IOAuthWebLogin {
                       DomainURL=DomainUrl;
                       Cidaas.baseurl=DomainURL;
 
-                      RequestIdController.getShared(context).getRequestId(result, Primaryresult);
+                      RequestIdController.getShared(context).getRequestId(result, Primaryresult,extraParams);
                   }
 
                   @Override
@@ -505,7 +506,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void getRequestId(final Result<AuthRequestResponseEntity> resulttoReturn) {
+    public void getRequestId( final Result<AuthRequestResponseEntity> resulttoReturn,@Nullable final HashMap<String, String>... extraParams) {
         try {
 
             //Todo Check in saved file
@@ -525,7 +526,7 @@ public class Cidaas implements IOAuthWebLogin {
                             checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
                                 @Override
                                 public void success(Dictionary<String, String> result) {
-                                    RequestIdController.getShared(context).getRequestId(loginProperties, resulttoReturn);
+                                    RequestIdController.getShared(context).getRequestId(loginProperties, resulttoReturn,extraParams);
                                 }
 
                                 @Override
@@ -540,7 +541,7 @@ public class Cidaas implements IOAuthWebLogin {
                                 @Override
                                 public void success(Dictionary<String, String> savedLoginProperties) {
                                     //Call requestIdBy LoginProperties parameter
-                                    RequestIdController.getShared(context).getRequestId(savedLoginProperties, resulttoReturn);
+                                    RequestIdController.getShared(context).getRequestId(savedLoginProperties, resulttoReturn,extraParams);
                                 }
 
                                 @Override
@@ -604,6 +605,37 @@ public class Cidaas implements IOAuthWebLogin {
 
     // -----------------------------------------------------***** CLIENT INFO *****-------------------------------------------------------------------------
 
+   public void getClientInfo(final Result<ClientInfoEntity> clientInfoEntityResult,final HashMap<String,String>... extraParams)
+   {
+       try
+       {
+           checkSavedProperties(new Result<Dictionary<String, String>>() {
+               @Override
+               public void success(Dictionary<String, String> loginProperties) {
+                   getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                       @Override
+                       public void success(AuthRequestResponseEntity result) {
+                           getClientInfo(result.getData().getRequestId(),clientInfoEntityResult);
+                       }
+
+                       @Override
+                       public void failure(WebAuthError error) {
+                           clientInfoEntityResult.failure(error);
+                       }
+                   },extraParams);
+               }
+
+               @Override
+               public void failure(WebAuthError error) {
+                   clientInfoEntityResult.failure(error);
+               }
+           });
+       }
+       catch (Exception e)
+       {
+
+       }
+   }
 
     @Override
     public void getClientInfo(final String RequestId, final Result<ClientInfoEntity> clientInfoEntityResult) {
@@ -640,6 +672,39 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     // -----------------------------------------------------***** LOGIN WITH CREDENTIALS *****---------------------------------------------------------------
+
+    public void loginWithCredentials(final LoginEntity loginEntity,
+                                     final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            loginWithCredentials(result.getData().getRequestId(),loginEntity,loginresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            loginresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
 
 
     @Override
@@ -4076,6 +4141,39 @@ public class Cidaas implements IOAuthWebLogin {
     // ****** GET REGISTERATION *****-------------------------------------------------------------------------------------------------------
 
 
+    public void getRegistrationFields( final String locale, final Result<RegistrationSetupResponseEntity> registerFieldsresult,
+                                       final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            getRegistrationFields(result.getData().getRequestId(),locale,registerFieldsresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            registerFieldsresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
     @Override
     public void getRegistrationFields(@NonNull final String requestId, final String locale,
                                       final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
@@ -4137,6 +4235,39 @@ public class Cidaas implements IOAuthWebLogin {
 
             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+    public void registerUser( final RegistrationEntity registrationEntity, final Result<RegisterNewUserResponseEntity> registerFieldsresult,
+                                       final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            registerUser(result.getData().getRequestId(),registrationEntity,registerFieldsresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            registerFieldsresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
         }
     }
 
@@ -4315,6 +4446,40 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+    public void initiateEmailVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                       final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateEmailVerification(result.getData().getRequestId(),sub,Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+
     @Override
     public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
                                           final Result<RegisterUserAccountInitiateResponseEntity> Result) {
@@ -4356,6 +4521,40 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
+    public void initiateSMSVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                           final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateSMSVerification(result.getData().getRequestId(),sub,Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+
     @Override
     public void initiateSMSVerification(@NonNull final String sub, @NonNull final String requestId,
                                         final Result<RegisterUserAccountInitiateResponseEntity> Result) {
@@ -4396,6 +4595,39 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+    public void initiateIVRVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                           final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateIVRVerification(result.getData().getRequestId(),sub,Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
 
     @Override
     public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId,
@@ -4438,6 +4670,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+
 
     @Override
     public void verifyAccount(@NonNull final String code, @NonNull final String accvid, final Result<RegisterUserAccountVerifyResponseEntity> result) {
@@ -4522,6 +4755,41 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+
+    public void loginWithDeduplication(@NonNull final String sub, @NonNull final String password,
+                                     final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            loginWithDeduplication(result.getData().getRequestId(),sub,password,loginresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            loginresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+
     @Override
     public void loginWithDeduplication(final String requestId, @NonNull final String sub, @NonNull final String password,
                                        final Result<LoginCredentialsResponseEntity> deduplicaionResult) {
@@ -4552,6 +4820,38 @@ public class Cidaas implements IOAuthWebLogin {
 
     //----------------------------------------------------------------------------------------------------------------------------------------
 
+    public void initiateResetPasswordByEmail(final String email,
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateResetPasswordByEmail(result.getData().getRequestId(),email,resetPasswordResponseEntityResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            resetPasswordResponseEntityResult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
 
     // Todo change
     @Override
@@ -4588,6 +4888,38 @@ public class Cidaas implements IOAuthWebLogin {
             resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
+    }
+    public void initiateResetPasswordBySMS(final String mobileNumber,
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateResetPasswordBySMS(result.getData().getRequestId(),mobileNumber,resetPasswordResponseEntityResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            resetPasswordResponseEntityResult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
     }
 
     @Override
@@ -4753,7 +5085,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType, final Result<AccessTokenEntity> accessTokenCallback)
+    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType, final HashMap<String,String> extraParams, final Result<AccessTokenEntity> accessTokenCallback)
     {
         try
         {
@@ -4762,7 +5094,7 @@ public class Cidaas implements IOAuthWebLogin {
                 @Override
                 public void success(final Dictionary<String, String> lpresult) {
 
-                    getRequestId(lpresult, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(lpresult,new Result<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
                             AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,lpresult,accessTokenCallback);
@@ -4772,7 +5104,7 @@ public class Cidaas implements IOAuthWebLogin {
                         public void failure(WebAuthError error) {
                          accessTokenCallback.failure(error);
                         }
-                    });
+                    },extraParams);
 
 
                 }
@@ -4856,24 +5188,14 @@ public class Cidaas implements IOAuthWebLogin {
                                              builder.setShowTitle(true);//TO show title
 
                       //  CustomTabsClient.getPackageName()
-builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-
-
+                    builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
                         if (color != null) {
 
                             builder.setToolbarColor(Color.parseColor(color));
                         }
 
-
                         CustomTabsIntent customTabsIntent = builder.build();
-
-                      /*  customTabsIntent.intent.setPackage("com.android.chrome");
-*/
-
-
-
-
 
                   String packageName= CustomTabHelper.getShared().getPackageNameToUse(context);
 
@@ -4903,54 +5225,91 @@ builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim
         }
     }
 
+    public void loginWithSocial(@NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain, final HashMap<String, String>... extraParams)
+    {
 
+      checkSavedProperties(new Result<Dictionary<String, String>>() {
+          @Override
+          public void success(Dictionary<String, String> loginProperties) {
+              getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
+                  @Override
+                  public void success(AuthRequestResponseEntity result) {
+                      loginWithSocial(result.getData().getRequestId(),provider,color,callbacktoMain);
+                  }
 
-    public void SocialloginWithBrowser(@NonNull String requestId,@NonNull String provider,@Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+                  @Override
+                  public void failure(WebAuthError error) {
+                      callbacktoMain.failure(error);
+                  }
+              },extraParams);
+          }
+
+          @Override
+          public void failure(WebAuthError error) {
+              callbacktoMain.failure(error);
+          }
+      });
+
+    }
+
+    public void loginWithSocial(@NonNull final String requestId, @NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
         try {
 
-            getSocialLoginURL(provider,requestId,new Result<String>() {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(String socialLoginURL) {
-                    logincallback = callbacktoMain;
-                    if (socialLoginURL != null) {
-                        String url = socialLoginURL;
-                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                        builder.setShowTitle(true);//TO show title
+                public void success(Dictionary<String, String> result) {
+                    getSocialLoginURL(provider,requestId,new Result<String>() {
+                        @Override
+                        public void success(String socialLoginURL) {
+                            logincallback = callbacktoMain;
+                            if (socialLoginURL != null) {
+                                String url = socialLoginURL;
+                                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                                builder.setShowTitle(true);//TO show title
 
-                        //  CustomTabsClient.getPackageName()
-                        builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                                //  CustomTabsClient.getPackageName()
+                                builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
 
 
-                        if (color != null) {
+                                if (color != null) {
 
-                            builder.setToolbarColor(Color.parseColor(color));
+                                    builder.setToolbarColor(Color.parseColor(color));
+                                }
+
+
+                                CustomTabsIntent customTabsIntent = builder.build();
+
+                                String packageName= CustomTabHelper.getShared().getPackageNameToUse(context);
+
+                                if(packageName!=null && packageName!="")
+                                {
+                                    customTabsIntent.intent.setPackage(packageName);
+                                }
+
+                                customTabsIntent.launchUrl(context, Uri.parse(url));
+                            } else {
+                                //TODo callback Failure
+                                String loggerMessage = "LoginURL failure : " + "Error Code - ";
+                                // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
+                                LogFile.addRecordToLog(loggerMessage);
+                            }
                         }
 
-
-                        CustomTabsIntent customTabsIntent = builder.build();
-
-                        String packageName= CustomTabHelper.getShared().getPackageNameToUse(context);
-
-                        if(packageName!=null && packageName!="")
-                        {
-                            customTabsIntent.intent.setPackage(packageName);
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callbacktoMain.failure(error);
                         }
+                    });
 
-                        customTabsIntent.launchUrl(context, Uri.parse(url));
-                    } else {
-                        //TODo callback Failure
-                        String loggerMessage = "LoginURL failure : " + "Error Code - ";
-                        // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
-                    }
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    callbacktoMain.failure(error);
+                  callbacktoMain.failure(error);
                 }
             });
+
 
 
         } catch (Exception e) {
@@ -5249,23 +5608,47 @@ builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim
                 });
 
 
-           /*   if ( DomainURL!="" && DomainURL!=null) { }
-
-            else
-            {
-                callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL or RequestId must not be null",HttpStatusCode.EXPECTATION_FAILED));
-                String loggerMessage = "Login URL service failure : " + "Error Code - "
-                        + WebAuthErrorCode.PROPERTY_MISSING+ ", Error Message -DomainURL or RequestId must not be null , Status Code - " + HttpStatusCode.EXPECTATION_FAILED;
-                LogFile.addRecordToLog(loggerMessage);
-            }*/
         } catch (Exception ex) {
             //Todo Handle Error
             Timber.d(ex.getMessage());
         }
     }
 
+
+    public void getSocialLoginURL(final String provider, final Result<String> callback, final HashMap<String,String>... extraParams) {
+     try
+     {
+         checkSavedProperties(new Result<Dictionary<String, String>>() {
+             @Override
+             public void success(Dictionary<String, String> loginProperties) {
+                 getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
+                     @Override
+                     public void success(AuthRequestResponseEntity result) {
+                         getSocialLoginURL(result.getData().getRequestId(),provider,callback);
+                     }
+
+                     @Override
+                     public void failure(WebAuthError error) {
+                         callback.failure(error);
+                     }
+                 },extraParams);
+             }
+
+             @Override
+             public void failure(WebAuthError error) {
+
+             }
+         });
+
+     }
+     catch (Exception e)
+     {
+
+     }
+    }
+
     //Get Social Login URL
-    public void getSocialLoginURL(final String provider, final String requestId, final Result<String> callback) {
+    public void getSocialLoginURL(final String requestId, final String provider, final Result<String> callback) {
         try {
             //Check requestId is not null
 

@@ -121,7 +121,7 @@ public class FaceVerificationServiceTest {
     @Test
     public void testInitiateFace() throws Exception {
 
-        faceVerificationService.initiateFace("baseurl", "codeChallenge", new InitiateFaceMFARequestEntity(), null,new Result<InitiateFaceMFAResponseEntity>() {
+        faceVerificationService.initiateFace("baseurl", new InitiateFaceMFARequestEntity(), null,new Result<InitiateFaceMFAResponseEntity>() {
             @Override
             public void success(InitiateFaceMFAResponseEntity result) {
 

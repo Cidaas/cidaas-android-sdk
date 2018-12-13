@@ -115,7 +115,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),"codeChallenge",new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -178,7 +178,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),"codeChallenge",new InitiateSmartPushMFARequestEntity(),null ,new Result<InitiateSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),new InitiateSmartPushMFARequestEntity(),null ,new Result<InitiateSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -244,7 +244,7 @@ public class SmartpushVerificationServiceCalltest {
 
 
 
-            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),"codeChallenge",new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -309,7 +309,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),"codeChallenge",new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -365,7 +365,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),"codeChallenge",new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -422,7 +422,7 @@ public class SmartpushVerificationServiceCalltest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),"codeChallenge",new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
+            smartPushVerificationService.initiateSmartPush(loginProperties.get("DomainURL"),new InitiateSmartPushMFARequestEntity(),deviceInfoEntity ,new Result<InitiateSmartPushMFAResponseEntity>() {
                 @Override
                 public void success(InitiateSmartPushMFAResponseEntity result) {
 

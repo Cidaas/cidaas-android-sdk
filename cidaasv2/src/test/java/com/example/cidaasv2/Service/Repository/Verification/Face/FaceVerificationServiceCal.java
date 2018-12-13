@@ -95,7 +95,7 @@ public class FaceVerificationServiceCal {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), "inter",new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
+            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFaceMFAResponseEntity result) {
 
@@ -158,7 +158,7 @@ public class FaceVerificationServiceCal {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), "inter",new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
+            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFaceMFAResponseEntity result) {
 
@@ -224,7 +224,7 @@ public class FaceVerificationServiceCal {
 
 
 
-            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), "inter",new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
+            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFaceMFAResponseEntity result) {
 
@@ -289,7 +289,7 @@ public class FaceVerificationServiceCal {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), "inter",new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
+            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFaceMFAResponseEntity result) {
 
@@ -345,7 +345,7 @@ public class FaceVerificationServiceCal {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), "inter",new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
+            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFaceMFAResponseEntity result) {
 
@@ -402,7 +402,7 @@ public class FaceVerificationServiceCal {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), "inter",new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
+            faceVerificationService.initiateFace(loginProperties.get("DomainURL"), new InitiateFaceMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFaceMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFaceMFAResponseEntity result) {
 

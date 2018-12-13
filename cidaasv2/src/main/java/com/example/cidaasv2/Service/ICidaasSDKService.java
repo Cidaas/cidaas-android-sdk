@@ -181,9 +181,9 @@ public interface ICidaasSDKService {
 
 
     //Todo Add FieldMap Pending
-   // @FormUrlEncoded
+    @FormUrlEncoded
     @POST
-    Call<AuthRequestResponseEntity> getRequestId(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthRequestEntity authRequestEntity);
+    Call<AuthRequestResponseEntity> getRequestId(@Url String url, @HeaderMap Map<String,String>headers,  @FieldMap(encoded = true) Map<String, String> params);
 
     //Todo Add FieldMap Pending
    // @FormUrlEncoded

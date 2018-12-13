@@ -42,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         //Call requestId and get registeration Details
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 //todo On Success Of Request id Call registration service

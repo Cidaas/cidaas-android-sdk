@@ -136,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             extraParam.put("scope","openid profile email phone offline_access");
             Cidaas.extraParams=extraParam;
 
-            cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+            cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
-                    cidaas.SocialloginWithBrowser(result.getData().getRequestId(),"facebook","#009900", new Result<AccessTokenEntity>() {
+                    cidaas.loginWithSocial(result.getData().getRequestId(),"facebook","#009900", new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
                             Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     //get Request Id
     public void getRequestIdMethod(View view)
     {
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 requestId=result.getData().getRequestId();
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
 
     //get ClientInfo
     public void getClientInfo(View view){
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             //cidaas.getRequestId(obj,new Result<String>() {
             @Override
             public void success(AuthRequestResponseEntity requestIdresult) {

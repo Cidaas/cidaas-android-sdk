@@ -623,12 +623,12 @@ public class URLHelper {
         {
           String finalSocialURL = baseURL+socialLoginURL+provider+"/"+requestId;
 
-            Uri.Builder builder = new Uri.Builder();
+           /* Uri.Builder builder = new Uri.Builder();
             builder
                     .appendQueryParameter("provider", provider)
-                    .appendQueryParameter("requestId", requestId);
+                    .appendQueryParameter("requestId", requestId);*/
 
-          return finalSocialURL+builder.build().toString();
+          return finalSocialURL;/*+builder.build().toString()*/
         }
         catch (Exception e)
         {

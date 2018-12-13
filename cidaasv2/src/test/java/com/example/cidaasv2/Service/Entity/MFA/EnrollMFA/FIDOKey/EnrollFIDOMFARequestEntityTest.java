@@ -29,16 +29,6 @@ public class EnrollFIDOMFARequestEntityTest {
     }
 
     @Test
-    public void getCode()
-    {
-        enrollFIDOMFARequestEntity.setVerifierPassword("Code");
-        assertTrue(enrollFIDOMFARequestEntity.getVerifierPassword().equals("Code"));
-    }
-
-  
-
-
-    @Test
     public void getDeviceInfoEntity()
     {
         DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();

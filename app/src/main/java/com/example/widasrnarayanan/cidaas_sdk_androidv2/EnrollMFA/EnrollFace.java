@@ -264,7 +264,7 @@ public class EnrollFace extends AppCompatActivity {
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
 
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();

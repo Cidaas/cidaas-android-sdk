@@ -112,7 +112,7 @@ public class PatternVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),"codeChallenge",new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -175,7 +175,7 @@ public class PatternVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),"codeChallenge",new InitiatePatternMFARequestEntity(),null ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),null ,new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -241,7 +241,7 @@ public class PatternVerificationServiceCallTest {
 
 
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),"codeChallenge",new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -306,7 +306,7 @@ public class PatternVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),"codeChallenge",new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -362,7 +362,7 @@ public class PatternVerificationServiceCallTest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),"codeChallenge",new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -419,7 +419,7 @@ public class PatternVerificationServiceCallTest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),"codeChallenge",new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 

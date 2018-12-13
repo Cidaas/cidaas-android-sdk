@@ -110,7 +110,7 @@ public class VoiceVerificationServiceTest {
     @Test
     public void testInitiateVoice() throws Exception {
 
-        voiceVerificationService.initiateVoice("baseurl", "codeChallenge", new InitiateVoiceMFARequestEntity(), null,new Result<InitiateVoiceMFAResponseEntity>() {
+        voiceVerificationService.initiateVoice("baseurl",  new InitiateVoiceMFARequestEntity(), null,new Result<InitiateVoiceMFAResponseEntity>() {
             @Override
             public void success(InitiateVoiceMFAResponseEntity result) {
 

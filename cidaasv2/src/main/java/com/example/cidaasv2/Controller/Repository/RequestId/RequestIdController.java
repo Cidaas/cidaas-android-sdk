@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Controller.Repository.RequestId;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -12,6 +13,7 @@ import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.RequestId.RequestIdService;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import timber.log.Timber;
@@ -73,7 +75,7 @@ public class RequestIdController {
     }
 
     //Service call for RequestID
-    public void getRequestId(final Dictionary<String,String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult)
+    public void getRequestId(final Dictionary<String,String> loginproperties,  final Result<AuthRequestResponseEntity> Primaryresult,@Nullable HashMap<String, String>... extraParams )
     {
         WebAuthError webAuthError = null;
 
@@ -131,7 +133,7 @@ public class RequestIdController {
                             "Error Code - " +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
                     LogFile.addRecordToLog(loggerMessage);
                 }
-            });
+            },extraParams);
         }
         catch (Exception e)
         {

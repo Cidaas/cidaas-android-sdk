@@ -259,7 +259,7 @@ public class SmartPushVerificationServiceTest {
     @Test
     public void testInitiateSmartPush() throws Exception {
 
-        smartPushVerificationService.initiateSmartPush("baseurl", "sd",new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.initiateSmartPush("baseurl", new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
             @Override
             public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -275,7 +275,7 @@ public class SmartPushVerificationServiceTest {
     @Test
     public void testInitiateSmartPushNULLMFA() throws Exception {
 
-        smartPushVerificationService.initiateSmartPush("", "sd",new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.initiateSmartPush("", new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
             @Override
             public void success(InitiateSmartPushMFAResponseEntity result) {
 
@@ -307,7 +307,7 @@ public class SmartPushVerificationServiceTest {
 
 
 
-        smartPushVerificationService.initiateSmartPush("localhost:234235", "sd",new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
+        smartPushVerificationService.initiateSmartPush("localhost:234235", new InitiateSmartPushMFARequestEntity(),null, new Result<InitiateSmartPushMFAResponseEntity>() {
             @Override
             public void success(InitiateSmartPushMFAResponseEntity result) {
 

@@ -523,7 +523,7 @@ public class FingerPrintVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),"codeChallenge",new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
+            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -586,7 +586,7 @@ public class FingerPrintVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),"codeChallenge",new InitiateFingerprintMFARequestEntity(),null ,new Result<InitiateFingerprintMFAResponseEntity>() {
+            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),new InitiateFingerprintMFARequestEntity(),null ,new Result<InitiateFingerprintMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -652,7 +652,7 @@ public class FingerPrintVerificationServiceCallTest {
 
 
 
-            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),"codeChallenge",new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
+            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -717,7 +717,7 @@ public class FingerPrintVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),"codeChallenge",new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
+            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -773,7 +773,7 @@ public class FingerPrintVerificationServiceCallTest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),"codeChallenge",new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
+            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFingerprintMFAResponseEntity result) {
 
@@ -830,7 +830,7 @@ public class FingerPrintVerificationServiceCallTest {
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),"codeChallenge",new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
+            fingerprintVerificationService.initiateFingerprint(loginProperties.get("DomainURL"),new InitiateFingerprintMFARequestEntity(),deviceInfoEntity ,new Result<InitiateFingerprintMFAResponseEntity>() {
                 @Override
                 public void success(InitiateFingerprintMFAResponseEntity result) {
 

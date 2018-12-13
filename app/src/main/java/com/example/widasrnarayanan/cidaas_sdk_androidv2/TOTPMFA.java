@@ -42,7 +42,7 @@ public class TOTPMFA extends AppCompatActivity {
     public void TOTPVerifyCode(View view){
         String verificationCode=verificationCodeTextbox.getText().toString();
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
