@@ -152,6 +152,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 import timber.log.Timber;
 
@@ -181,8 +182,9 @@ public interface ICidaasSDKService {
 
 
     //Todo Add FieldMap Pending
-    @FormUrlEncoded
+
     @POST
+    @FormUrlEncoded
     Call<AuthRequestResponseEntity> getRequestId(@Url String url, @HeaderMap Map<String,String>headers,  @FieldMap(encoded = true) Map<String, String> params);
 
     //Todo Add FieldMap Pending

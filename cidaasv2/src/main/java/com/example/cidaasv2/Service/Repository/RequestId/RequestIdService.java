@@ -109,7 +109,7 @@ public class RequestIdService {
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
+            headers.put("Content-Type", URLHelper.contentType);
             headers.put("device-id", deviceInfoEntity.getDeviceId());
             headers.put("device-make", deviceInfoEntity.getDeviceMake());
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
@@ -133,7 +133,7 @@ public class RequestIdService {
 
 
             String codeChallenge="";
-            String clientSecret="";
+            String clientSecret=" ";
 
 if(challengeProperties.get("Challenge")!=null) {
     codeChallenge = challengeProperties.get("Challenge");
@@ -210,7 +210,7 @@ if(challengeProperties.get("CllientSecret")!=null) {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());

@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class ErrorEntity implements Serializable
 {
 
-    int code;
+    String code;
     String moreInfo;
     String type;
     int status;
@@ -16,11 +16,11 @@ public class ErrorEntity implements Serializable
     String error;
 
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

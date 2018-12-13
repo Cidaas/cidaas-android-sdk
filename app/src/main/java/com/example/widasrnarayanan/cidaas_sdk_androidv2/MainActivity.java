@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     //get Request Id
     public void getRequestIdMethod(View view)
     {
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 requestId=result.getData().getRequestId();
