@@ -5085,19 +5085,19 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType, final HashMap<String,String> extraParams, final Result<AccessTokenEntity> accessTokenCallback)
+    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType,final Result<AccessTokenEntity> accessTokenCallback, final HashMap<String,String>... extraParams)
     {
         try
         {
             DomainURL=DomainUrl;
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(final Dictionary<String, String> lpresult) {
+                public void success(final Dictionary<String, String> loginProperties) {
 
-                    getRequestId(lpresult,new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,lpresult,accessTokenCallback);
+                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,loginProperties,accessTokenCallback);
                         }
 
                         @Override
