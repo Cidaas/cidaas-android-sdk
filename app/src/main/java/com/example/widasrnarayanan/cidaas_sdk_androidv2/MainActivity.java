@@ -136,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             extraParam.put("scope","openid profile email phone offline_access");
             Cidaas.extraParams=extraParam;
 
-            cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+            cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
-                    cidaas.loginWithSocial(result.getData().getRequestId(),"facebook","#009900", new Result<AccessTokenEntity>() {
+                    cidaas.loginWithSocial(result.getData().getRequestId(),"linkedin","#009900", new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
                             Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();

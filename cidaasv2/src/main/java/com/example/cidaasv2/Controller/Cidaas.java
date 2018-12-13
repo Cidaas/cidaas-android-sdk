@@ -5258,9 +5258,9 @@ public class Cidaas implements IOAuthWebLogin {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    getSocialLoginURL(provider,requestId,new Result<String>() {
+                    getSocialLoginURL(requestId,provider,new Result<String>() {
                         @Override
-                        public void success(String socialLoginURL) {
+                        public void success(String socialLoginURL)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {
                             logincallback = callbacktoMain;
                             if (socialLoginURL != null) {
                                 String url = socialLoginURL;
