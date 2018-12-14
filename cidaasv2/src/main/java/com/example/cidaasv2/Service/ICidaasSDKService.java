@@ -311,6 +311,12 @@ public interface ICidaasSDKService {
                                                              @HeaderMap Map<String,String>headers,
                                                              @Part MultipartBody.Part face,
                                                              @PartMap() HashMap<String, RequestBody> map);
+    //Authenticate Face MFA
+    @POST
+    @Multipart
+    Call<AuthenticateFaceResponseEntity> authenticateFaceWithoutPhotoMFA(@Url String url,
+                                                             @HeaderMap Map<String,String>headers,
+                                                             @PartMap() HashMap<String, RequestBody> map);
 
 
 
@@ -326,6 +332,12 @@ public interface ICidaasSDKService {
                                                       @Part MultipartBody.Part audio,
                                                       @PartMap() HashMap<String, RequestBody> map);
 
+    //Enroll Voice MFA
+    @POST
+    @Multipart
+    Call<EnrollVoiceMFAResponseEntity> enrollVoiceWithoutAudioMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                      @PartMap() HashMap<String, RequestBody> map);
+
 
     //Inititate Voice MFA
     @POST
@@ -337,6 +349,12 @@ public interface ICidaasSDKService {
     @POST
     Call<AuthenticateVoiceResponseEntity> authenticateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
                                                                @Part MultipartBody.Part voice,
+                                                               @PartMap() HashMap<String, RequestBody> map);
+
+    //Authenticate Voice MFA
+    @Multipart
+    @POST
+    Call<AuthenticateVoiceResponseEntity> authenticateVoiceWithoutAudioMFA(@Url String url, @HeaderMap Map<String,String>headers,
                                                                @PartMap() HashMap<String, RequestBody> map);
 
 

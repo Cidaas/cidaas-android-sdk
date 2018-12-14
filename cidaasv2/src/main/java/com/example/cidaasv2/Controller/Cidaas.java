@@ -2089,7 +2089,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void verifyFace(@NonNull final File photo,final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
+    public void verifyFace(@NonNull final File photo,@NonNull final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2097,6 +2097,8 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
                     //todo call enroll Email
+
+
 
                     AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
                     authenticateFaceRequestEntity.setStatusId(statusId);
@@ -5883,7 +5885,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void setAccessToken(AccessTokenEntity accessTokenEntity,Result<LoginCredentialsRequestEntity> result){
+    public void setAccessToken(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result){
         try
         {
 
@@ -5894,7 +5896,10 @@ public class Cidaas implements IOAuthWebLogin {
                     @Override
                     public void success(AccessTokenModel accessTokenModel) {
                       DBHelper.getShared().setAccessToken(accessTokenModel);
-                      //result.success("Access Token Saved SuccessFully");
+                        LoginCredentialsResponseEntity loginCredentialsResponseEntity=new LoginCredentialsResponseEntity();
+                        loginCredentialsResponseEntity.setData(accessTokenEntity);
+                        loginCredentialsResponseEntity.setStatus(200);
+                        loginCredentialsResponseEntity.setSuccess(true);
                     }
 
                     @Override
@@ -5902,9 +5907,14 @@ public class Cidaas implements IOAuthWebLogin {
                         String loggerMessage = "Set Access Token : " + " Error Message - "+error.getErrorMessage();
                         LogFile.addRecordToLog(loggerMessage);
 
-                        //result.failure(error);
+                        result.failure(error);
                     }
                 });
+
+
+
+
+
             }
             else
             {

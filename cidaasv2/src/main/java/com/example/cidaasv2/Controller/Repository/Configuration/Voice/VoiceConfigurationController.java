@@ -303,8 +303,24 @@ public class VoiceConfigurationController {
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
                 if (enrollVoiceMFARequestEntity.getUserDeviceId() != null && !enrollVoiceMFARequestEntity.getUserDeviceId().equals("") &&
-                        enrollVoiceMFARequestEntity.getStatusId() != null && !enrollVoiceMFARequestEntity.getStatusId().equals("") &&
-                        enrollVoiceMFARequestEntity.getAudioFile() != null ) {
+                        enrollVoiceMFARequestEntity.getStatusId() != null && !enrollVoiceMFARequestEntity.getStatusId().equals("")) {
+
+
+                    final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntityWithPass=new EnrollVoiceMFARequestEntity();
+
+
+
+                    if( enrollVoiceMFARequestEntity.getAudioFile() != null)
+                    {
+                        enrollVoiceMFARequestEntityWithPass.setAudioFile(enrollVoiceMFARequestEntity.getAudioFile());
+                        enrollVoiceMFARequestEntity.setAudioFile(null);
+                    }
+                    else
+                    {
+                        enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    }
+
 
                     // call Enroll Service
                     VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessToken, enrollVoiceMFARequestEntity,
@@ -334,23 +350,31 @@ public class VoiceConfigurationController {
                                             if (instceID != null && !instceID.equals("")) {
 
                                                 //enroll
-                                                EnrollVoiceMFARequestEntity enrollVoiceMFARequest = new EnrollVoiceMFARequestEntity();
-                                                enrollVoiceMFARequest.setUsage_pass(instceID);
-                                                enrollVoiceMFARequest.setAudioFile(enrollVoiceMFARequestEntity.getAudioFile());
 
-                                                // call Enroll Service
-                                                VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessToken, enrollVoiceMFARequest,
-                                                        null, new Result<EnrollVoiceMFAResponseEntity>() {
-                                                            @Override
-                                                            public void success(EnrollVoiceMFAResponseEntity serviceresult) {
-                                                                enrollResult.success(serviceresult);
-                                                            }
+                                                enrollVoiceMFARequestEntityWithPass.setUsage_pass(instceID);
 
-                                                            @Override
-                                                            public void failure(WebAuthError error) {
-                                                                enrollResult.failure(error);
-                                                            }
-                                                        });
+                                                if(enrollVoiceMFARequestEntityWithPass.getAudioFile()!=null) {
+
+                                                    // call Enroll Service
+                                                    VoiceVerificationService.getShared(context).enrollVoice(baseurl, accessToken, enrollVoiceMFARequestEntityWithPass,
+                                                            null, new Result<EnrollVoiceMFAResponseEntity>() {
+                                                                @Override
+                                                                public void success(EnrollVoiceMFAResponseEntity serviceresult) {
+                                                                    enrollResult.success(serviceresult);
+                                                                }
+
+                                                                @Override
+                                                                public void failure(WebAuthError error) {
+                                                                    enrollResult.failure(error);
+                                                                }
+                                                            });
+                                                }
+                                                else
+                                                {
+                                                    // return Error Message
+                                                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
+                                                            "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                                }
                                             }
                                             else {
                                                 // return Error Message
@@ -547,7 +571,30 @@ public class VoiceConfigurationController {
     {
         try
         {
-            VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity,null, new Result<AuthenticateVoiceResponseEntity>() {
+
+            if(baseurl!=null && !baseurl.equals("") ) {
+
+                if (authenticateVoiceRequestEntity.getUserDeviceId() != null && !authenticateVoiceRequestEntity.getUserDeviceId().equals("") &&
+                        authenticateVoiceRequestEntity.getStatusId() != null && !authenticateVoiceRequestEntity.getStatusId().equals("")) {
+
+
+                    final AuthenticateVoiceRequestEntity authenticateVoiceRequestEntityWithPass=new AuthenticateVoiceRequestEntity();
+
+
+
+                    if( authenticateVoiceRequestEntity.getVoiceFile() != null)
+                    {
+                        authenticateVoiceRequestEntityWithPass.setVoiceFile(authenticateVoiceRequestEntity.getVoiceFile());
+                        authenticateVoiceRequestEntity.setVoiceFile(null);
+                    }
+                    else
+                    {
+                        authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
+                                "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    }
+
+
+                    VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntity,null, new Result<AuthenticateVoiceResponseEntity>() {
                 @Override
                 public void success(final AuthenticateVoiceResponseEntity serviceresult) {
 
@@ -571,22 +618,29 @@ public class VoiceConfigurationController {
 
                         public void onFinish() {
                             if (instceID != null && !instceID.equals("")) {
-                                AuthenticateVoiceRequestEntity authenticateVoiceRequest=new AuthenticateVoiceRequestEntity();
-                                authenticateVoiceRequest.setUsage_pass(instceID);
-                                authenticateVoiceRequest.setVoiceFile(authenticateVoiceRequestEntity.getVoiceFile());
+
+                                authenticateVoiceRequestEntityWithPass.setUsage_pass(instceID);
+
+                                if( authenticateVoiceRequestEntityWithPass.getVoiceFile() != null) {
 
 
-                                VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequest,null, new Result<AuthenticateVoiceResponseEntity>() {
-                                    @Override
-                                    public void success(AuthenticateVoiceResponseEntity result) {
-                                        authResult.success(result);
-                                    }
+                                    VoiceVerificationService.getShared(context).authenticateVoice(baseurl, authenticateVoiceRequestEntityWithPass, null, new Result<AuthenticateVoiceResponseEntity>() {
+                                        @Override
+                                        public void success(AuthenticateVoiceResponseEntity result) {
+                                            authResult.success(result);
+                                        }
 
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        authResult.failure(error);
-                                    }
-                                });
+                                        @Override
+                                        public void failure(WebAuthError error) {
+                                            authResult.failure(error);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
+                                            "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                }
                             }
                             else {
                                 // return Error Message
@@ -602,6 +656,17 @@ public class VoiceConfigurationController {
                     authResult.failure(error);
                 }
             });
+                } else {
+                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
+                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                }
+            }
+            else
+            {
+                authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
+                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+            }
+
         }
         catch (Exception e)
         {

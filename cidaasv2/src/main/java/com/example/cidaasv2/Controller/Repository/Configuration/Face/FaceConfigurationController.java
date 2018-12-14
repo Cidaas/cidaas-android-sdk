@@ -297,7 +297,7 @@ public class FaceConfigurationController {
     {
         try
         {
-           File image=null;
+
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
                 if (enrollFaceMFARequestEntity.getUserDeviceId() != null && !enrollFaceMFARequestEntity.getUserDeviceId().equals("") &&
@@ -350,24 +350,31 @@ public class FaceConfigurationController {
 
                                                 enrollFaceMFARequestEntityWithPass.setUsage_pass(instceID);
 
+                                                if(enrollFaceMFARequestEntityWithPass.getImagetoSend() != null) {
 
-                                                // call Enroll Service
-                                                FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequestEntityWithPass,
-                                                        null, new Result<EnrollFaceMFAResponseEntity>() {
-                                                            @Override
-                                                            public void success(EnrollFaceMFAResponseEntity serviceresult) {
-                                                                enrollResult.success(serviceresult);
-                                                            }
 
-                                                            @Override
-                                                            public void failure(WebAuthError error) {
-                                                                enrollResult.failure(error);
-                                                            }
-                                                        });
+                                                    // call Enroll Service
+                                                    FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequestEntityWithPass,
+                                                            null, new Result<EnrollFaceMFAResponseEntity>() {
+                                                                @Override
+                                                                public void success(EnrollFaceMFAResponseEntity serviceresult) {
+                                                                    enrollResult.success(serviceresult);
+                                                                }
+
+                                                                @Override
+                                                                public void failure(WebAuthError error) {
+                                                                    enrollResult.failure(error);
+                                                                }
+                                                            });
+                                                }
+                                                else {
+                                                    enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                                }
                                             }
                                             else {
                                                 // return Error Message
-                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                                        "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                                             }
 
                                         }
@@ -559,7 +566,31 @@ public class FaceConfigurationController {
     {
         try
         {
-            FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity,null, new Result<AuthenticateFaceResponseEntity>() {
+            if(baseurl!=null && !baseurl.equals("")) {
+
+                if (authenticateFaceRequestEntity.getUserDeviceId() != null && !authenticateFaceRequestEntity.getUserDeviceId().equals("") &&
+                        authenticateFaceRequestEntity.getStatusId() != null && !authenticateFaceRequestEntity.getStatusId().equals("")
+                        ) {
+
+
+                    final AuthenticateFaceRequestEntity authenticateFaceRequestEntityWithPass=new AuthenticateFaceRequestEntity();
+
+
+
+                    if(authenticateFaceRequestEntity.getImagetoSend() != null)
+                    {
+                        authenticateFaceRequestEntityWithPass.setImagetoSend(authenticateFaceRequestEntity.getImagetoSend());
+                        authenticateFaceRequestEntity.setImagetoSend(null);
+                    }
+                    else
+                    {
+                        authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                                "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    }
+
+
+                    FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntity,
+                            null, new Result<AuthenticateFaceResponseEntity>() {
                 @Override
                 public void success(final AuthenticateFaceResponseEntity serviceresult) {
 
@@ -583,21 +614,30 @@ public class FaceConfigurationController {
 
                         public void onFinish() {
                             if (instceID != null && !instceID.equals("")) {
-                                AuthenticateFaceRequestEntity authenticateFaceRequest=new AuthenticateFaceRequestEntity();
-                                authenticateFaceRequest.setImagetoSend(authenticateFaceRequestEntity.getImagetoSend());
-                                authenticateFaceRequest.setUsage_pass(instceID);
 
-                                FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequest,null, new Result<AuthenticateFaceResponseEntity>() {
-                                    @Override
-                                    public void success(AuthenticateFaceResponseEntity result) {
-                                        authResult.success(result);
-                                    }
 
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        authResult.failure(error);
-                                    }
-                                });
+                                authenticateFaceRequestEntityWithPass.setUsage_pass(instceID);
+
+
+                                if(authenticateFaceRequestEntityWithPass!=null) {
+
+                                    FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntityWithPass, null, new Result<AuthenticateFaceResponseEntity>() {
+                                        @Override
+                                        public void success(AuthenticateFaceResponseEntity result) {
+                                            authResult.success(result);
+                                        }
+
+                                        @Override
+                                        public void failure(WebAuthError error) {
+                                            authResult.failure(error);
+                                        }
+                                    });
+                                }
+                                else {
+                                    // return Error Message
+                                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                                            "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                }
                             }
                             else {
                                 // return Error Message
@@ -613,6 +653,17 @@ public class FaceConfigurationController {
                     authResult.failure(error);
                 }
             });
+                } else {
+                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                            "UserdeviceId or  StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                }
+            }
+            else
+            {
+                authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                        "BaseURL  must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+            }
+
         }
         catch (Exception e)
         {
