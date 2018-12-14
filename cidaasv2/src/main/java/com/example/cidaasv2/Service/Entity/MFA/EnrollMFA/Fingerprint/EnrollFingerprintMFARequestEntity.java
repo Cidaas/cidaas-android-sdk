@@ -11,7 +11,16 @@ public class EnrollFingerprintMFARequestEntity implements Serializable{
     String verifierPassword;
     String sub;
     String userDeviceId;
+    String usage_pass;
     DeviceInfoEntity deviceInfo;
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
 
     public String getUserDeviceId() {
         return userDeviceId;

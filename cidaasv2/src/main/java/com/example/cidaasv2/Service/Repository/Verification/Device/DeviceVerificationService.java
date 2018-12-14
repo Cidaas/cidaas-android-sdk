@@ -1,9 +1,7 @@
 package com.example.cidaasv2.Service.Repository.Verification.Device;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
-import com.example.cidaasv2.Controller.Repository.Configuration.Pattern.PatternConfigurationController;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -11,18 +9,15 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Genral.URLHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceRequestEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
-import com.example.cidaasv2.Service.Repository.OauthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -161,7 +156,7 @@ public class DeviceVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());

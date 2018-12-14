@@ -136,4 +136,17 @@ public class UserProfileController {
         }
     }
 
+
+    public void getUserConfigurationList()
+    {
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
 }

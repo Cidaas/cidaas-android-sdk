@@ -40,9 +40,9 @@ public class SetupTOTPMFAResponseEntityTest {
     public void setData(){
         data=new SetupTOTPMFAResponseDataEntity();
 
-        data.setStatusId("Test");
+        data.setSt("Test");
         setupTOTPMFAResponseEntity.setData(data);
-        Assert.assertEquals("Test",setupTOTPMFAResponseEntity.getData().getStatusId());
+        Assert.assertEquals("Test",setupTOTPMFAResponseEntity.getData().getSt());
 
     }
 

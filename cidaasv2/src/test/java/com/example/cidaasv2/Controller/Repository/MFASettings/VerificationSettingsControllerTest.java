@@ -14,21 +14,21 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class MFAListSettingsControllerTest {
+public class VerificationSettingsControllerTest {
     Context context;
-    MFAListSettingsController shared;
-    MFAListSettingsController mFAListSettingsController;
+    VerificationSettingsController shared;
+    VerificationSettingsController mFAListSettingsController;
 
     @Before
     public void setUp() {
         context= RuntimeEnvironment.application;
-        mFAListSettingsController=new MFAListSettingsController(context);
+        mFAListSettingsController=new VerificationSettingsController(context);
     }
 
     @Test
     public void testGetShared() throws Exception {
-        MFAListSettingsController result = MFAListSettingsController.getShared(null);
-        Assert.assertTrue(result instanceof MFAListSettingsController);
+        VerificationSettingsController result = VerificationSettingsController.getShared(null);
+        Assert.assertTrue(result instanceof VerificationSettingsController);
     }
 
     @Test

@@ -36,12 +36,6 @@ public class EnrollPatternMFARequestEntityTest {
         assertTrue(enrollPatternMFARequestEntity.getVerifierPassword().equals("Code"));
     }
 
-    @Test
-    public void setSub()
-    {
-        enrollPatternMFARequestEntity.setSub("Sub");
-        assertTrue(enrollPatternMFARequestEntity.getSub().equals("Sub"));
-    }
 
 
 

@@ -41,9 +41,9 @@ public class SetupFIDOMFAResponseEntityTest {
     public void setData(){
         data=new SetupFIDOMFAResponseDataEntity();
 
-        data.setStatusId("Test");
+        data.setSt("Test");
         setupFIDOMFAResponseEntity.setData(data);
-        Assert.assertEquals("Test",setupFIDOMFAResponseEntity.getData().getStatusId());
+        Assert.assertEquals("Test",setupFIDOMFAResponseEntity.getData().getSt());
 
     }
 

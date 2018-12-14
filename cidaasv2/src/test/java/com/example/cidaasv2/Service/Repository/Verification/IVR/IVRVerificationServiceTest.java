@@ -57,7 +57,7 @@ public class IVRVerificationServiceTest {
     @Test
     public void testSetupIVRMFA() throws Exception {
 
-        iVRVerificationService.setupIVRMFA("baseurl", "accessToken",null, new Result<SetupIVRMFAResponseEntity>() {
+        iVRVerificationService.setupIVRMFA("baseurl", "AccessToken","phnumber",null, new Result<SetupIVRMFAResponseEntity>() {
             @Override
             public void success(SetupIVRMFAResponseEntity result) {
 
@@ -73,7 +73,7 @@ public class IVRVerificationServiceTest {
     @Test
     public void testSetupIVRNullMFA() throws Exception {
 
-        iVRVerificationService.setupIVRMFA("", "accessToken",null, new Result<SetupIVRMFAResponseEntity>() {
+        iVRVerificationService.setupIVRMFA("", "AccessToken","phnumber",null, new Result<SetupIVRMFAResponseEntity>() {
             @Override
             public void success(SetupIVRMFAResponseEntity result) {
 
@@ -104,7 +104,7 @@ public class IVRVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-        iVRVerificationService.setupIVRMFA("localhost:234235", "accessToken",null, new Result<SetupIVRMFAResponseEntity>() {
+        iVRVerificationService.setupIVRMFA("localhost:234235", "AccessToken","phnumber",null, new Result<SetupIVRMFAResponseEntity>() {
             @Override
             public void success(SetupIVRMFAResponseEntity result) {
 

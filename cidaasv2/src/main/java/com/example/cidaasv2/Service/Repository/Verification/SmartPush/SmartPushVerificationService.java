@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Service.Repository.Verification.SmartPush;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -10,9 +9,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Genral.URLHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
@@ -20,12 +18,10 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseDataEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
-import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +30,6 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,8 +76,8 @@ public class SmartPushVerificationService {
         return shared;
     }
 
-    public void scannedSmartPush(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
-                                 final Result<ScannedResponseEntity> callback)
+    public void scannedSmartPush(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+                                 final Result<ScannedResponseEntity>  callback)
     {
         String scannedSmartPushUrl="";
         try
@@ -111,19 +106,14 @@ public class SmartPushVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_token",AccessToken);
-
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
-            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
-            scannedRequestEntity.setUsage_pass(usagePass);
-            scannedRequestEntity.setStatusId(statusId);
+
             scannedRequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -159,7 +149,7 @@ public class SmartPushVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -202,7 +192,7 @@ public class SmartPushVerificationService {
 
 
     //setupSmartPushMFA
-    public void setupSmartPush(String baseurl, String accessToken, String codeChallenge, SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupSmartPushMFAResponseEntity> callback)
+    public void setupSmartPush(String baseurl, String accessToken,  SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupSmartPushMFAResponseEntity> callback)
     {
         String setupSmartPushMFAUrl="";
         try
@@ -236,21 +226,15 @@ public class SmartPushVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
-
-               // deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
-                // deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
-            }
+             }
             setupSmartPushMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -289,7 +273,7 @@ public class SmartPushVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -368,12 +352,10 @@ public class SmartPushVerificationService {
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
-                //Todo Chaange to FCM acceptence now it is in Authenticator
+                //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                //  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
-                // "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
-            }
+           }
 
 
             enrollSmartPushMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -412,7 +394,7 @@ public class SmartPushVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -455,7 +437,7 @@ public class SmartPushVerificationService {
 
 
     //initiateSmartPushMFA
-    public void initiateSmartPush(String baseurl, String codeChallenge, final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateSmartPushMFAResponseEntity> callback)
+    public void initiateSmartPush(String baseurl, final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateSmartPushMFAResponseEntity> callback)
     {
         String initiateSmartPushMFAUrl="";
         try
@@ -485,10 +467,8 @@ public class SmartPushVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
@@ -535,7 +515,7 @@ public class SmartPushVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -684,7 +664,7 @@ public class SmartPushVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());

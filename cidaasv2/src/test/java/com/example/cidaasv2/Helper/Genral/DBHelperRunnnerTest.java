@@ -111,9 +111,11 @@ public class DBHelperRunnnerTest {
 
     @Test
     public void testGetLoginProperties() throws Exception {
-        dBHelper.addLoginProperties(null);
-        Dictionary<String, String> result = dBHelper.getLoginProperties("");
-        Assert.assertEquals(null, result);
+        Dictionary<String, String> loginProperties=new Hashtable<>();
+        loginProperties.put("DomainURL","DomainURL");
+        dBHelper.addLoginProperties(loginProperties);
+        Dictionary<String, String> result = dBHelper.getLoginProperties("DomainURL");
+        Assert.assertEquals("DomainURL", result.get("DomainURL"));
     }
 
     @Test
@@ -194,18 +196,18 @@ public class DBHelperRunnnerTest {
     @Test
     public void testGetAccessToken() throws Exception {
         AccessTokenModel accessTokenModel=new AccessTokenModel();
-        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setAccess_token("New Access Token");
         accessTokenModel.setUserId("userId");
         accessTokenModel.setEncrypted(true);
-        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setRefresh_token("RefreshToken");
         accessTokenModel.setPlainToken("PlainToken");
 
         dBHelper.setAccessToken(accessTokenModel);
 
         AccessTokenModel result = dBHelper.getAccessToken("userId");
-        Assert.assertEquals("New Access Token", result.getAccessToken());
+        Assert.assertEquals("New Access Token", result.getAccess_token());
         Assert.assertEquals("userId", result.getUserId());
-        Assert.assertEquals("RefreshToken", result.getRefreshToken());
+        Assert.assertEquals("RefreshToken", result.getRefresh_token());
         Assert.assertEquals("PlainToken", result.getPlainToken());
         Assert.assertEquals(true, result.isEncrypted());
     }

@@ -3,25 +3,19 @@ package com.example.cidaasv2.Service.Repository.Deduplication;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Entity.LoginEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Genral.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -128,7 +122,7 @@ public class DeduplicationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -139,8 +133,10 @@ public class DeduplicationService {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
                                     errorMessage, commonErrorEntity.getStatus(),
                                     commonErrorEntity.getError(),errorEntity));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                                    "Deduplication Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -222,7 +218,7 @@ public class DeduplicationService {
                             }
                             else
                             {
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -233,8 +229,10 @@ public class DeduplicationService {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
                                     errorMessage, commonErrorEntity.getStatus(),
                                     commonErrorEntity.getError(),errorEntity));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                                    "Deduplication Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }

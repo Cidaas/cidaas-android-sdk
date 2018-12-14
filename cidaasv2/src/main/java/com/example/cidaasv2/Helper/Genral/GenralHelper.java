@@ -1,5 +1,7 @@
 package com.example.cidaasv2.Helper.Genral;
 
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+
 import java.util.Dictionary;
 
 public class GenralHelper {
@@ -26,6 +28,6 @@ public class GenralHelper {
 
     public  String constructSocialServiceURl(String tokenOrCode, String provider, String givenType, Dictionary<String,String> loginProperties, String viewType) {
 
-        return loginProperties.get("DomainURL")+URLHelper.getShared().getSocialTokenURL() + "?codeOrToken=" + tokenOrCode + "&provider=" + provider + "&clientId=" +loginProperties.get("ClientId") + "&givenType=" + givenType + "&responseType=" + GenralHelper.responseType + "&redirectUrl=" + loginProperties.get("RedirectURL") + "&viewtype=" + viewType;
+        return loginProperties.get("DomainURL")+ URLHelper.getShared().getSocialTokenURL() + "?codeOrToken=" + tokenOrCode + "&provider=" + provider + "&clientId=" +loginProperties.get("ClientId") + "&givenType=" + givenType + "&responseType=" + GenralHelper.responseType + "&redirectUrl=" + loginProperties.get("RedirectURL") + "&viewtype=" + viewType;
     }
 }

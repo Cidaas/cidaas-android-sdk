@@ -11,6 +11,18 @@ public class AuthenticateFIDOResponseDataEntity implements Serializable {
     String verificationType;
     String usageType;
 
+    private String statusId;
+
+    public String getStatusId ()
+    {
+        return statusId;
+    }
+
+    public void setStatusId (String statusId)
+    {
+        this.statusId = statusId;
+    }
+
     public String getSub() {
         return sub;
     }

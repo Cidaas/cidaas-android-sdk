@@ -10,6 +10,16 @@ public class SetupTOTPMFARequestEntity implements Serializable{
     String logoUrl;
     DeviceInfoEntity deviceInfo;
     String  client_id;
+    String usage_pass;
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
+
 
     public String getLogoUrl() {
         return logoUrl;

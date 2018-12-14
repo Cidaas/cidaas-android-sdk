@@ -87,14 +87,38 @@ public class WebAuthErrorCode {
   public static final int INITIATE_ACCOUNT_VERIFICATION_FAILURE = 10078;
   public static final int VERIFY_ACCOUNT_VERIFICATION_FAILURE = 10079;
   public static final int DEVICE_VERIFICATION_FAILURE=10080;
+
   public static final int SCANNED_PATTERN_MFA_FAILURE = 10081;
   public static final int SCANNED_FACE_MFA_FAILURE = 10082;
   public static final int SCANNED_VOICE_MFA_FAILURE = 10083;
   public static final int SCANNED_TOTP_MFA_FAILURE = 10084;
   public static final int SCANNED_FINGERPRINT_MFA_FAILURE = 10085;
   public static final int SCANNED_SMARTPUSH_MFA_FAILURE = 10086;
-  public static final int DEDUPLICATION_LIST_FAILURE = 10087;
-  public static final int DEDUPLICATION_REGISTRATION_FAILURE = 10088;
-  public static final int DEDUPLICATION_LOGIN_FAILURE = 10089;
+  public static final int SCANNED_FIDO_MFA_FAILURE = 10087;
+
+  public static final int DEDUPLICATION_LIST_FAILURE = 10088;
+  public static final int DEDUPLICATION_REGISTRATION_FAILURE = 10089;
+
+  public static final int DELETE_MFA_FAILURE = 10090;
+  public static final int DENY_NOTIFICATION = 10091;
+  public static final int PENDING_NOTIFICATION_FAILURE = 10092;
+  public static final int CONFIGURED_LIST_MFA_FAILURE = 10093;
+  public static final int UPDATE_FCM_TOKEN = 10094;
+  public static final int GET_LOGIN_URL_FAILURE = 10095;
+  public static final int GET_SOCIAL_LOGIN_URL_FAILURE = 10096;
+
+
+  /*public static final int DELETE_EMAIL_MFA_FAILURE = 10090;
+  public static final int DELETE_BACKUPCODE_MFA_FAILURE = 10091;
+  public static final int DELETE_SMS_MFA_FAILURE = 10092;
+  public static final int DELETE_IVR_MFA_FAILURE = 10093;
+  public static final int DELETE_PATTERN_MFA_FAILURE = 10094;
+  public static final int DELETE_FACE_MFA_FAILURE = 10095;
+  public static final int DELETE_VOICE_MFA_FAILURE = 10096;
+  public static final int DELETE_TOTP_MFA_FAILURE = 10097;
+  public static final int DELETE_FINGERPRINT_MFA_FAILURE = 10098;
+  public static final int DELETE_SMARTPUSH_MFA_FAILURE = 10099;*/
+
+
 
 }

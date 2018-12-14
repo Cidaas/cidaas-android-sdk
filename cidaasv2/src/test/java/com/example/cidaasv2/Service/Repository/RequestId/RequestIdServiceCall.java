@@ -89,7 +89,7 @@ public class RequestIdServiceCall {
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
             loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
+            loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
@@ -151,7 +151,7 @@ public class RequestIdServiceCall {
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
             loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
+            loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
@@ -216,7 +216,7 @@ public class RequestIdServiceCall {
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
             loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
+            loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
@@ -282,7 +282,7 @@ public class RequestIdServiceCall {
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
             loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
+            loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
@@ -339,7 +339,7 @@ public class RequestIdServiceCall {
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
             loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
+            loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
             requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {
@@ -396,7 +396,7 @@ public class RequestIdServiceCall {
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
             loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
-            loginProperties.put("ClientID","ClientID");
+            loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
             requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {

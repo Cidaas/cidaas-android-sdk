@@ -46,8 +46,8 @@ public class UserinfoEntityTest {
 
     @Test
     public void setMobile() throws Exception {
-        userinfoEntity.setMobile("Test");
-        Assert.assertEquals("Test", userinfoEntity.getMobile());
+        userinfoEntity.setMobile_number("Test");
+        Assert.assertEquals("Test", userinfoEntity.getMobile_number());
     }
 
     @Test

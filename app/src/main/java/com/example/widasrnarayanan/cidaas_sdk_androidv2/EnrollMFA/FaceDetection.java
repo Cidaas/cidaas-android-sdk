@@ -37,7 +37,7 @@ public class FaceDetection extends Activity {
 
         File imagefile=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Cidaas-Faces","cidaas.png");
 
-        cidaas.configureFaceRecognition(imagefile,"", ssub, new Result<EnrollFaceMFAResponseEntity>() {
+        cidaas.configureFaceRecognition(imagefile, ssub,"", new Result<EnrollFaceMFAResponseEntity>() {
             @Override
             public void success(EnrollFaceMFAResponseEntity result) {
                 Toast.makeText(FaceDetection.this, "Success Face"+result.getData().getUsageType(), Toast.LENGTH_SHORT).show();
@@ -61,7 +61,7 @@ public class FaceDetection extends Activity {
         passwordlessEntity.setSub(ssub);
         passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -101,7 +101,7 @@ public class FaceDetection extends Activity {
         passwordlessEntity.setSub(ssub);
         passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 

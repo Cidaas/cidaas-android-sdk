@@ -1,5 +1,6 @@
 package com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO;
 
+import com.example.cidaasv2.Service.Scanned.FIDOInitRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -7,60 +8,117 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class SetupFIDOMFAResponseDataEntity implements Serializable{
 
-    String qrCode="";
-    String otpauth="";
-    String queryString= "";
-    String statusId="";
-    String verifierId= "";
-    String randomNumber= "";
-    String current_status="";
+    String secret="";
+    String t="";
+    String d= "";
+    String issuer="";
+    String l= "";
+    String sub= "";
+    String rns="";
 
-    public String getQrCode() {
-        return qrCode;
+    String cid="";
+    String rurl= "";
+    String st= "";
+    String udi="";
+    String current_status;
+
+    FIDOInitRequest fidoInitRequest;
+
+
+    public FIDOInitRequest getFidoInitRequest() {
+        return fidoInitRequest;
     }
 
-    public void setQrCode(String qrCode) {
-        this.qrCode = qrCode;
+    public void setFidoInitRequest(FIDOInitRequest fidoInitRequest) {
+        this.fidoInitRequest = fidoInitRequest;
     }
 
-    public String getOtpauth() {
-        return otpauth;
+    public String getSecret() {
+        return secret;
     }
 
-    public void setOtpauth(String otpauth) {
-        this.otpauth = otpauth;
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 
-    public String getQueryString() {
-        return queryString;
+    public String getT() {
+        return t;
     }
 
-    public void setQueryString(String queryString) {
-        this.queryString = queryString;
+    public void setT(String t) {
+        this.t = t;
     }
 
-    public String getStatusId() {
-        return statusId;
+    public String getD() {
+        return d;
     }
 
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
+    public void setD(String d) {
+        this.d = d;
     }
 
-    public String getVerifierId() {
-        return verifierId;
+    public String getIssuer() {
+        return issuer;
     }
 
-    public void setVerifierId(String verifierId) {
-        this.verifierId = verifierId;
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
     }
 
-    public String getRandomNumber() {
-        return randomNumber;
+    public String getL() {
+        return l;
     }
 
-    public void setRandomNumber(String randomNumber) {
-        this.randomNumber = randomNumber;
+    public void setL(String l) {
+        this.l = l;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
+    public String getRns() {
+        return rns;
+    }
+
+    public void setRns(String rns) {
+        this.rns = rns;
+    }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    public String getRurl() {
+        return rurl;
+    }
+
+    public void setRurl(String rurl) {
+        this.rurl = rurl;
+    }
+
+    public String getSt() {
+        return st;
+    }
+
+    public void setSt(String st) {
+        this.st = st;
+    }
+
+    public String getUdi() {
+        return udi;
+    }
+
+    public void setUdi(String udi) {
+        this.udi = udi;
     }
 
     public String getCurrent_status() {

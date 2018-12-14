@@ -28,7 +28,7 @@ public class FirstActivity extends AppCompatActivity {
         String Code="CODE";
         String requestID="";
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 String re=result.getData().getRequestId();

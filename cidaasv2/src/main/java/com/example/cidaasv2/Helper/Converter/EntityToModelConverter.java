@@ -46,7 +46,7 @@ public static EntityToModelConverter sharedinstance;
             AccessTokenModel.getShared().setSalt(UUID.randomUUID().toString());
 
             //AccessTokenModel.getShared().setKey(UUID.randomUUID().toString());
-            //Convert Milliseconds int0 seconds
+            //Convert Milliseconds into seconds
             AccessTokenModel.getShared().setSeconds(System.currentTimeMillis()/1000);
 
             //Encrypt the AccessToken

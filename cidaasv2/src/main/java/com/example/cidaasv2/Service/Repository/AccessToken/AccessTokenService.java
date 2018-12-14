@@ -4,12 +4,13 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.GenralHelper;
-import com.example.cidaasv2.Helper.Genral.URLHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
@@ -17,7 +18,6 @@ import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -202,8 +202,10 @@ public class AccessTokenService {
 
 
                             acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,errorMessage, 400,null,null));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            acessTokencallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
+                                    "AccessToken Service Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -351,8 +353,10 @@ public class AccessTokenService {
 
 
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null,null));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                                    "Client Info failure Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                         }
                         Timber.e("response"+response.message());
                     }
@@ -424,8 +428,10 @@ public class AccessTokenService {
 
 
                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null,null));
-                   } catch (IOException e) {
+                   } catch (Exception e) {
                        e.printStackTrace();
+                       callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                               "Client info Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
                    }
                    Timber.e("response"+response.message());
                }

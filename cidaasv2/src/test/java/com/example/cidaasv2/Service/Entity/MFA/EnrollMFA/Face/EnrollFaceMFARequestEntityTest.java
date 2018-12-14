@@ -42,12 +42,6 @@ public class EnrollFaceMFARequestEntityTest {
 //        assertTrue(enrollFaceMFARequestEntity.getImagetoSend().equals("Code"));
     }
 
-    @Test
-    public void setSub()
-    {
-        enrollFaceMFARequestEntity.setSub("Sub");
-        assertTrue(enrollFaceMFARequestEntity.getSub().equals("Sub"));
-    }
 
 
 

@@ -40,9 +40,9 @@ public class SetupVoiceMFAResponseEntityTest {
     public void setData(){
         data=new SetupVoiceMFAResponseDataEntity();
 
-        data.setStatusId("Test");
+        data.setSt("Test");
         setupVoiceMFAResponseEntity.setData(data);
-        Assert.assertEquals("Test",setupVoiceMFAResponseEntity.getData().getStatusId());
+        Assert.assertEquals("Test",setupVoiceMFAResponseEntity.getData().getSt());
 
     }
 

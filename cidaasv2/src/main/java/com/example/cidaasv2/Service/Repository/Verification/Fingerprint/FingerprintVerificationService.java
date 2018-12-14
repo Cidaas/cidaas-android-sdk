@@ -9,9 +9,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Genral.URLHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
@@ -23,7 +22,6 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateF
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
-import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,7 +78,7 @@ public class FingerprintVerificationService {
         return shared;
     }
 
-    public void scannedFingerprint(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedFingerprint(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                    final Result<ScannedResponseEntity> callback)
     {
         String scannedFingerprintUrl="";
@@ -110,9 +108,7 @@ public class FingerprintVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_token",AccessToken);
 
 
 
@@ -120,9 +116,7 @@ public class FingerprintVerificationService {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
-            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
-            scannedRequestEntity.setUsage_pass(usagePass);
-            scannedRequestEntity.setStatusId(statusId);
+
             scannedRequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -158,7 +152,7 @@ public class FingerprintVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -201,7 +195,7 @@ public class FingerprintVerificationService {
 
 
     //setupFingerprintMFA
-    public void setupFingerprint(String baseurl, String accessToken, String codeChallenge, SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupFingerprintMFAResponseEntity> callback)
+    public void setupFingerprint(String baseurl, String accessToken, SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupFingerprintMFAResponseEntity> callback)
     {
         String setupFingerprintMFAUrl="";
         try
@@ -234,11 +228,9 @@ public class FingerprintVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -286,7 +278,7 @@ public class FingerprintVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -359,8 +351,7 @@ public class FingerprintVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("access_token",accessToken);
+             headers.put("access_token",accessToken);
             headers.put("verification_api_version","2");
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -405,7 +396,7 @@ public class FingerprintVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -447,7 +438,7 @@ public class FingerprintVerificationService {
     }
 
     //initiateFingerprintMFA
-    public void initiateFingerprint(String baseurl,String codeChallenge, InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void initiateFingerprint(String baseurl, InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                        final Result<InitiateFingerprintMFAResponseEntity> callback)
     {
         String initiateFingerprintMFAUrl="";
@@ -478,10 +469,8 @@ public class FingerprintVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -525,7 +514,7 @@ public class FingerprintVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -645,7 +634,7 @@ public class FingerprintVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());

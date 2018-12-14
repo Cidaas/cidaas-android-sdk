@@ -37,12 +37,6 @@ public class EnrollTOTPMFARequestEntityTest {
         assertTrue(enrollTOTPMFARequestEntity.getVerifierPassword().equals("Code"));
     }
 
-    @Test
-    public void setSub()
-    {
-        enrollTOTPMFARequestEntity.setSub("Sub");
-        assertTrue(enrollTOTPMFARequestEntity.getSub().equals("Sub"));
-    }
 
 
 

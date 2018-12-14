@@ -10,7 +10,37 @@ public class AuthenticateFIDORequestEntity implements Serializable {
 
     String statusId;
     String code;
+    String userDeviceId;
     DeviceInfoEntity deviceInfo;
+    String usage_pass;
+
+
+    private FidoSignTouchResponse fidoSignTouchResponse;
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
+
+
+    public String getUserDeviceId() {
+        return userDeviceId;
+    }
+
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
+    }
+
+    public FidoSignTouchResponse getFidoSignTouchResponse() {
+        return fidoSignTouchResponse;
+    }
+
+    public void setFidoSignTouchResponse(FidoSignTouchResponse fidoSignTouchResponse) {
+        this.fidoSignTouchResponse = fidoSignTouchResponse;
+    }
 
     public String getStatusId() {
         return statusId;

@@ -46,6 +46,7 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -54,7 +55,7 @@ import java.io.File;
 public interface IOAuthWebLogin {
 
     //Get RequestId
-     void getRequestId(Result<AuthRequestResponseEntity> result);
+     void getRequestId( Result<AuthRequestResponseEntity> result,HashMap<String, String>... extraParams);
      void getRequestId(String DomainUrl,String ClientId,String RedirectURL,String ClientSecret,Result<AuthRequestResponseEntity> result);
      //void getRequestId(Dictionary<String,String> loginproperties,Result<AuthRequestResponseEntity> result);
 

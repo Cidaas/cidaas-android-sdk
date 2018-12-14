@@ -11,7 +11,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Genral.URLHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
@@ -85,7 +85,7 @@ public class FaceVerificationService {
 
 
     //setupFaceMFA
-    public void setupFaceMFA(String baseurl, String accessToken, String codeChallenge, SetupFaceMFARequestEntity setupFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void setupFaceMFA(String baseurl, String accessToken, SetupFaceMFARequestEntity setupFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                              final Result<SetupFaceMFAResponseEntity> callback)
     {
         String setupFaceMFAUrl="";
@@ -119,11 +119,9 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
+
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -171,7 +169,7 @@ public class FaceVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -213,7 +211,7 @@ public class FaceVerificationService {
         }
     }
 
-    public void scannedFace(String baseurl, String usagePass,String statusId,String AccessToken,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedFace(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                             final Result<ScannedResponseEntity> callback)
     {
         String scannedFaceUrl="";
@@ -243,9 +241,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_token",AccessToken);
 
 
 
@@ -253,9 +249,7 @@ public class FaceVerificationService {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
-            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
-            scannedRequestEntity.setUsage_pass(usagePass);
-            scannedRequestEntity.setStatusId(statusId);
+
             scannedRequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -291,7 +285,7 @@ public class FaceVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -378,7 +372,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
            // headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
+
             headers.put("access_token", accessToken);
             headers.put("verification_api_version","2");
 
@@ -388,6 +382,7 @@ public class FaceVerificationService {
 
             faceSetupMap.put("statusId", StringtoRequestBody(enrollFaceMFARequestEntity.getStatusId()));
             //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            faceSetupMap.put("usage_pass",StringtoRequestBody(enrollFaceMFARequestEntity.getUsage_pass()));
             faceSetupMap.put("userDeviceId", StringtoRequestBody(enrollFaceMFARequestEntity.getUserDeviceId()));
             faceSetupMap.put("deviceId", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getDeviceId()));
             faceSetupMap.put("deviceMake", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getDeviceMake()));
@@ -395,87 +390,144 @@ public class FaceVerificationService {
             faceSetupMap.put("deviceVersion", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getDeviceVersion()));
             faceSetupMap.put("pushNotificationId", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getPushNotificationId()));
 
-
-
-
-
-
-
-            Bitmap finalimg = BitmapFactory.decodeFile(enrollFaceMFARequestEntity.getImagetoSend().getAbsolutePath());
-
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollFaceMFARequestEntity.getImagetoSend());
-            MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "cidaas.png", requestFile);
-
-            if (enrollFaceMFARequestEntity.getImagetoSend().exists())
-            {
-               // Toast.makeText(context, "FIle found", Toast.LENGTH_SHORT).show();
-            }
-
-
-
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.enrollFaceMFA(enrollFaceMFAUrl,headers,photo,faceSetupMap).enqueue(new Callback<EnrollFaceMFAResponseEntity>() {
-                @Override
-                public void onResponse(Call<EnrollFaceMFAResponseEntity> call, Response<EnrollFaceMFAResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
+            if(enrollFaceMFARequestEntity.getImagetoSend() != null) {
+
+
+                Bitmap finalimg = BitmapFactory.decodeFile(enrollFaceMFARequestEntity.getImagetoSend().getAbsolutePath());
+
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollFaceMFARequestEntity.getImagetoSend());
+                MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "cidaas.png", requestFile);
+
+                if (enrollFaceMFARequestEntity.getImagetoSend().exists()) {
+                    // Toast.makeText(context, "FIle found", Toast.LENGTH_SHORT).show();
+                }
+
+                cidaasSDKService.enrollFaceMFA(enrollFaceMFAUrl,headers,photo,faceSetupMap).enqueue(new Callback<EnrollFaceMFAResponseEntity>() {
+                    @Override
+                    public void onResponse(Call<EnrollFaceMFAResponseEntity> call, Response<EnrollFaceMFAResponseEntity> response) {
+                        if (response.isSuccessful()) {
+                            if(response.code()==200) {
+                                callback.success(response.body());
+                            }
+                            else {
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                        "Service failure but successful response" , response.code(),null,null));
+                            }
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            assert response.errorBody() != null;
+                            //Todo Check The error if it is not recieved
+                            try {
+
+                                // Handle proper error message
+                                String errorResponse=response.errorBody().source().readByteString().utf8();
+                                final CommonErrorEntity commonErrorEntity;
+                                commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+                                //Todo Handle Access Token Failure Error
+                                String errorMessage="";
+                                ErrorEntity errorEntity=new ErrorEntity();
+                                if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                    errorMessage=commonErrorEntity.getError().toString();
+                                }
+                                else
+                                {
+                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                    errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
+                                    errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                    errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                    errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                    errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                                }
+
+                                //Todo Service call For fetching the Consent details
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                        errorMessage, commonErrorEntity.getStatus(),
+                                        commonErrorEntity.getError(),errorEntity));
+
+                            } catch (Exception e) {
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
+                                Timber.e("response"+response.message()+e.getMessage());
+                            }
+                            Timber.e("response"+response.message());
                         }
                     }
-                    else {
-                        assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
 
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            //Todo Handle Access Token Failure Error
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                    @Override
+                    public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
+                        Timber.e("Failure in Login with credentials service call"+t.getMessage());
+                        LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                     }
-                }
+                });
+            }
+            else
+            {
 
-                @Override
-                public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
-                }
-            });
+                cidaasSDKService.enrollFaceWithoutPhotoMFA(enrollFaceMFAUrl,headers,faceSetupMap).enqueue(new Callback<EnrollFaceMFAResponseEntity>() {
+                    @Override
+                    public void onResponse(Call<EnrollFaceMFAResponseEntity> call, Response<EnrollFaceMFAResponseEntity> response) {
+                        if (response.isSuccessful()) {
+                            if(response.code()==200) {
+                                callback.success(response.body());
+                            }
+                            else {
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                        "Service failure but successful response" , response.code(),null,null));
+                            }
+                        }
+                        else {
+                            assert response.errorBody() != null;
+                            //Todo Check The error if it is not recieved
+                            try {
 
+                                // Handle proper error message
+                                String errorResponse=response.errorBody().source().readByteString().utf8();
+                                final CommonErrorEntity commonErrorEntity;
+                                commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+                                //Todo Handle Access Token Failure Error
+                                String errorMessage="";
+                                ErrorEntity errorEntity=new ErrorEntity();
+                                if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                    errorMessage=commonErrorEntity.getError().toString();
+                                }
+                                else
+                                {
+                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                    errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
+                                    errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                    errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                    errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                    errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                                }
+
+                                //Todo Service call For fetching the Consent details
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                        errorMessage, commonErrorEntity.getStatus(),
+                                        commonErrorEntity.getError(),errorEntity));
+
+                            } catch (Exception e) {
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
+                                Timber.e("response"+response.message()+e.getMessage());
+                            }
+                            Timber.e("response"+response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
+                        Timber.e("Failure in Login with credentials service call"+t.getMessage());
+                        LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    }
+                });
+            }
 
         }
         catch (Exception e)
@@ -531,7 +583,6 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             // headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
             headers.put("access_token", accessToken);
             headers.put("verification_api_version","2");
 
@@ -600,7 +651,7 @@ public class FaceVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -640,7 +691,7 @@ public class FaceVerificationService {
     }
 
     //initiateFaceMFA
-    public void initiateFace(String baseurl, String codeChallenge,InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void initiateFace(String baseurl, InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                 final Result<InitiateFaceMFAResponseEntity> callback){
         String initiateFaceMFAUrl="";
         try
@@ -669,10 +720,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
-            headers.put("access_challenge",codeChallenge);
-            headers.put("access_challenge_method","S256");
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -713,7 +761,7 @@ public class FaceVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
@@ -784,8 +832,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
           //  headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("verification_api_version","2");
+             headers.put("verification_api_version","2");
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -798,6 +845,7 @@ public class FaceVerificationService {
 
             faceSetupMap.put("statusId", StringtoRequestBody(authenticateFaceRequestEntity.getStatusId()));
             //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            faceSetupMap.put("usage_pass",StringtoRequestBody(authenticateFaceRequestEntity.getUsage_pass()));
             faceSetupMap.put("userDeviceId", StringtoRequestBody(authenticateFaceRequestEntity.getUserDeviceId()));
             faceSetupMap.put("deviceId", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceId()));
             faceSetupMap.put("deviceMake", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceMake()));
@@ -805,76 +853,128 @@ public class FaceVerificationService {
             faceSetupMap.put("deviceVersion", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceVersion()));
             faceSetupMap.put("pushNotificationId", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getPushNotificationId()));
 
-
-
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), authenticateFaceRequestEntity.getImagetoSend());
-            MultipartBody.Part photo = MultipartBody.Part.createFormData("photo","cidaas_face.jpg",requestFile);
-
-
-
-
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.authenticateFaceMFA(authenticateFaceMFAUrl,headers,photo, faceSetupMap).enqueue(new Callback<AuthenticateFaceResponseEntity>() {
-                @Override
-                public void onResponse(Call<AuthenticateFaceResponseEntity> call, Response<AuthenticateFaceResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+            if(authenticateFaceRequestEntity.getImagetoSend() != null) {
+
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), authenticateFaceRequestEntity.getImagetoSend());
+                MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "cidaas_face.jpg", requestFile);
+                cidaasSDKService.authenticateFaceMFA(authenticateFaceMFAUrl, headers, photo, faceSetupMap).enqueue(new Callback<AuthenticateFaceResponseEntity>() {
+                    @Override
+                    public void onResponse(Call<AuthenticateFaceResponseEntity> call, Response<AuthenticateFaceResponseEntity> response) {
+                        if (response.isSuccessful()) {
+                            if (response.code() == 200) {
+                                callback.success(response.body());
+                            } else {
+                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                                        "Service failure but successful response", response.code(), null, null));
+                            }
+                        } else {
+                            assert response.errorBody() != null;
+                            //Todo Check The error if it is not recieved
+                            try {
+
+                                // Handle proper error message
+                                String errorResponse = response.errorBody().source().readByteString().utf8();
+                                final CommonErrorEntity commonErrorEntity;
+                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
+
+
+                                String errorMessage = "";
+                                ErrorEntity errorEntity = new ErrorEntity();
+                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
+                                    errorMessage = commonErrorEntity.getError().toString();
+                                } else {
+                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
+                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                                }
+
+                                //Todo Service call For fetching the Consent details
+                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                                        errorMessage, commonErrorEntity.getStatus(),
+                                        commonErrorEntity.getError(), errorEntity));
+
+                            } catch (Exception e) {
+                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, e.getMessage(), 400, null, null));
+                                Timber.e("response" + response.message() + e.getMessage());
+                            }
+                            Timber.e("response" + response.message());
                         }
                     }
-                    else {
-                        assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
 
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                    @Override
+                    public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
+                        Timber.e("Failure in AuthenticateFaceResponseEntity service call" + t.getMessage());
+                        LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure" + t.getMessage());
+                        callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
-                }
+                });
+            }
+            else
+            {
 
-                @Override
-                public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
-                }
-            });
+                cidaasSDKService.authenticateFaceWithoutPhotoMFA(authenticateFaceMFAUrl, headers,  faceSetupMap).enqueue(new Callback<AuthenticateFaceResponseEntity>() {
+                    @Override
+                    public void onResponse(Call<AuthenticateFaceResponseEntity> call, Response<AuthenticateFaceResponseEntity> response) {
+                        if (response.isSuccessful()) {
+                            if (response.code() == 200) {
+                                callback.success(response.body());
+                            } else {
+                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                                        "Service failure but successful response", response.code(), null, null));
+                            }
+                        } else {
+                            assert response.errorBody() != null;
+                            //Todo Check The error if it is not recieved
+                            try {
+
+                                // Handle proper error message
+                                String errorResponse = response.errorBody().source().readByteString().utf8();
+                                final CommonErrorEntity commonErrorEntity;
+                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
+
+
+                                String errorMessage = "";
+                                ErrorEntity errorEntity = new ErrorEntity();
+                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
+                                    errorMessage = commonErrorEntity.getError().toString();
+                                } else {
+                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
+                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                                }
+
+                                //Todo Service call For fetching the Consent details
+                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
+                                        errorMessage, commonErrorEntity.getStatus(),
+                                        commonErrorEntity.getError(), errorEntity));
+
+                            } catch (Exception e) {
+                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, e.getMessage(), 400, null, null));
+                                Timber.e("response" + response.message() + e.getMessage());
+                            }
+                            Timber.e("response" + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
+                        Timber.e("Failure in AuthenticateFaceResponseEntity service call" + t.getMessage());
+                        LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure" + t.getMessage());
+                        callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, t.getMessage(), 400, null, null));
+                    }
+                });
+            }
 
 
         }
@@ -918,8 +1018,7 @@ public class FaceVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             //  headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("verification_api_version","2");
+             headers.put("verification_api_version","2");
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -981,7 +1080,7 @@ public class FaceVerificationService {
                             else
                             {
                                 errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
                                 errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                                 errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                                 errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());

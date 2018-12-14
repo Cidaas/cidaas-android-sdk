@@ -12,6 +12,16 @@ public class AuthenticateFingerprintRequestEntity implements Serializable {
     String verifierPassword;
     DeviceInfoEntity deviceInfo;
     String userDeviceId;
+    String usage_pass;
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
+
 
 
     public String getStatusId() {

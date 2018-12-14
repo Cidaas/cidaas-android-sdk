@@ -8,16 +8,27 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class EnrollFIDOMFARequestEntity implements Serializable{
     String statusId;
-    String verifierPassword;
-    String sub;
+
+    String usage_pass;
+    String userDeviceId;
+    FIDOTouchResponse fidoTouchResponse;
     DeviceInfoEntity deviceInfo;
 
-    public String getSub() {
-        return sub;
+
+    public String getUserDeviceId() {
+        return userDeviceId;
     }
 
-    public void setSub(String sub) {
-        this.sub = sub;
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
+    }
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
     }
 
     public String getStatusId() {
@@ -28,12 +39,12 @@ public class EnrollFIDOMFARequestEntity implements Serializable{
         this.statusId = statusId;
     }
 
-    public String getVerifierPassword() {
-        return verifierPassword;
+    public FIDOTouchResponse getFidoTouchResponse() {
+        return fidoTouchResponse;
     }
 
-    public void setVerifierPassword(String verifierPassword) {
-        this.verifierPassword = verifierPassword;
+    public void setFidoTouchResponse(FIDOTouchResponse fidoTouchResponse) {
+        this.fidoTouchResponse = fidoTouchResponse;
     }
 
     public DeviceInfoEntity getDeviceInfo() {

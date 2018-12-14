@@ -56,7 +56,7 @@ public class Smartpush extends AppCompatActivity {
          }
      });
 
-     cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+     cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
          @Override
          public void success(AuthRequestResponseEntity result) {
 

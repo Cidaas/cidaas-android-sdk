@@ -9,11 +9,11 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class EnrollFaceMFARequestEntity implements Serializable{
-    String statusId;
+    String statusId="";
     File imagetoSend;
     List<File> imagesToSend;
-    private String userDeviceId;
-    String sub;
+    String usage_pass="";
+    private String userDeviceId="";
     DeviceInfoEntity deviceInfo;
 
 
@@ -25,13 +25,15 @@ public class EnrollFaceMFARequestEntity implements Serializable{
         this.imagesToSend = imagesToSend;
     }
 
-    public String getSub() {
-        return sub;
+    public String getUsage_pass() {
+        return usage_pass;
     }
 
-    public void setSub(String sub) {
-        this.sub = sub;
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
     }
+
+
 
     public String getStatusId() {
         return statusId;

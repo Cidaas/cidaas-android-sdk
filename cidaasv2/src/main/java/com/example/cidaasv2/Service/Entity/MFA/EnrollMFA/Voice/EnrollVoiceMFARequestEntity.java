@@ -8,11 +8,19 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class EnrollVoiceMFARequestEntity implements Serializable{
-    String statusId;
-   File audioFile;
-    String sub;
-    String userDeviceId;
+    String statusId="";
+    File audioFile;
+    String userDeviceId="";
+    String usage_pass="";
     DeviceInfoEntity deviceInfo;
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
 
     public String getUserDeviceId() {
         return userDeviceId;
@@ -22,13 +30,6 @@ public class EnrollVoiceMFARequestEntity implements Serializable{
         this.userDeviceId = userDeviceId;
     }
 
-    public String getSub() {
-        return sub;
-    }
-
-    public void setSub(String sub) {
-        this.sub = sub;
-    }
 
     public String getStatusId() {
         return statusId;

@@ -3,6 +3,7 @@ package com.example.cidaasv2.Service.Repository.Verification.Pattern;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
@@ -14,6 +15,7 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Pattern.InitiatePatte
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Pattern.InitiatePatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFAResponseEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -34,6 +36,8 @@ import timber.log.Timber;
 public class PatternVerificationServiceTest {
     Context context;
     PatternVerificationService patternVerificationService;
+    ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+
 
     @Before
     public void setUp() {
@@ -41,6 +45,12 @@ public class PatternVerificationServiceTest {
         patternVerificationService=new PatternVerificationService(context);
         DBHelper.setConfig(context);
         DBHelper.getShared().setFCMToken("FCM");
+
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
     }
 
 
@@ -55,7 +65,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testSetupPatternMFA() throws Exception {
 
-        patternVerificationService.setupPattern("baseurl", "accessToken","code",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
+        patternVerificationService.setupPattern("baseurl", "accessToken",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
             @Override
             public void success(SetupPatternMFAResponseEntity result) {
 
@@ -71,7 +81,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testSetupPatternNullMFA() throws Exception {
 
-        patternVerificationService.setupPattern("", "accessToken","code",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
+        patternVerificationService.setupPattern("", "accessToken",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
             @Override
             public void success(SetupPatternMFAResponseEntity result) {
 
@@ -102,7 +112,7 @@ public class PatternVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-        patternVerificationService.setupPattern("localhost:234235", "accessToken","code",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
+        patternVerificationService.setupPattern("localhost:234235", "accessToken",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
             @Override
             public void success(SetupPatternMFAResponseEntity result) {
 
@@ -121,7 +131,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testScannedPatternMFA() throws Exception {
 
-        patternVerificationService.scannedPattern("baseurl", "Usa","Status","Access",null,new Result<ScannedResponseEntity>() {
+        patternVerificationService.scannedPattern("baseurl", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -136,7 +146,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testScannedPatternNUllMFA() throws Exception {
 
-        patternVerificationService.scannedPattern("", "Usa","Status","accessToken",null,new Result<ScannedResponseEntity>() {
+        patternVerificationService.scannedPattern("", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -168,7 +178,7 @@ public class PatternVerificationServiceTest {
 
 
 
-        patternVerificationService.scannedPattern("localhost:234235", "Usa","StatusId","accessToken",null, new Result<ScannedResponseEntity>() {
+        patternVerificationService.scannedPattern("localhost:234235", scannedRequestEntity,null, new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -252,7 +262,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testInitiatePattern() throws Exception {
 
-        patternVerificationService.initiatePattern("baseurl", "sd",new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
+        patternVerificationService.initiatePattern("baseurl", new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
             @Override
             public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -268,7 +278,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testInitiatePatternNULLMFA() throws Exception {
 
-        patternVerificationService.initiatePattern("", "sd",new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
+        patternVerificationService.initiatePattern("",new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
             @Override
             public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -300,7 +310,7 @@ public class PatternVerificationServiceTest {
 
 
 
-        patternVerificationService.initiatePattern("localhost:234235", "sd",new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
+        patternVerificationService.initiatePattern("localhost:234235", new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
             @Override
             public void success(InitiatePatternMFAResponseEntity result) {
 

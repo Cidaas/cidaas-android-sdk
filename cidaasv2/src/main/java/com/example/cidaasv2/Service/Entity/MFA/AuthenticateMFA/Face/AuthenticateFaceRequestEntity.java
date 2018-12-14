@@ -10,11 +10,20 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticateFaceRequestEntity implements Serializable {
 
-    String statusId;
+    String statusId="";
     File imagetoSend;
     List<File> imagesToSend;
     DeviceInfoEntity deviceInfo;
-    String userDeviceId;
+    String userDeviceId="";
+    String usage_pass="";
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
 
 
     public List<File> getImagesToSend() {

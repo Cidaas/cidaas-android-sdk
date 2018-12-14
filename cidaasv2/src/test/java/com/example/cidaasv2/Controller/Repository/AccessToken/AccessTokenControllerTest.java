@@ -73,10 +73,10 @@ public class AccessTokenControllerTest {
         accessTokenController=new AccessTokenController(context);
 
         AccessTokenModel accessTokenModel=new AccessTokenModel();
-        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setAccess_token("New Access Token");
         accessTokenModel.setUserId("userId");
         accessTokenModel.setEncrypted(true);
-        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setRefresh_token("RefreshToken");
         accessTokenModel.setPlainToken("PlainToken");
 
         dbHelper.setAccessToken(accessTokenModel);
@@ -102,12 +102,12 @@ public class AccessTokenControllerTest {
         accessTokenController=new AccessTokenController(context);
 
         AccessTokenModel accessTokenModel=new AccessTokenModel();
-        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setAccess_token("New Access Token");
         accessTokenModel.setUserId("userId");
         accessTokenModel.setEncrypted(false);
-        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setRefresh_token("RefreshToken");
         accessTokenModel.setPlainToken("PlainToken");
-        accessTokenModel.setExpiresIn(10);
+        accessTokenModel.setExpires_in(10);
         accessTokenModel.setSeconds((System.currentTimeMillis()/1000)+1000);
 
         dbHelper.setAccessToken(accessTokenModel);
@@ -132,12 +132,12 @@ public class AccessTokenControllerTest {
         accessTokenController=new AccessTokenController(context);
 
         AccessTokenModel accessTokenModel=new AccessTokenModel();
-        accessTokenModel.setAccessToken("New Access Token");
+        accessTokenModel.setAccess_token("New Access Token");
         accessTokenModel.setUserId("userId");
         accessTokenModel.setEncrypted(true);
-        accessTokenModel.setRefreshToken("RefreshToken");
+        accessTokenModel.setRefresh_token("RefreshToken");
         accessTokenModel.setPlainToken("PlainToken");
-        accessTokenModel.setExpiresIn(10);
+        accessTokenModel.setExpires_in(10);
         accessTokenModel.setSeconds((System.currentTimeMillis()/1000)+1000);
 
         dbHelper.setAccessToken(accessTokenModel);

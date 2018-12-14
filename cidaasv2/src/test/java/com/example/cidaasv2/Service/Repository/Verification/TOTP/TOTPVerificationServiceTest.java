@@ -3,6 +3,7 @@ package com.example.cidaasv2.Service.Repository.Verification.TOTP;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPRequestEntity;
@@ -21,6 +22,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -58,7 +60,7 @@ public class TOTPVerificationServiceTest {
     @Test
     public void testSetupTOTPMFA() throws Exception {
 
-        totpVerificationService.setupTOTP("baseurl", "accessToken","code",new SetupTOTPMFARequestEntity(),null, new Result<SetupTOTPMFAResponseEntity>() {
+        totpVerificationService.setupTOTP("baseurl", "accessToken",new SetupTOTPMFARequestEntity(),null, new Result<SetupTOTPMFAResponseEntity>() {
             @Override
             public void success(SetupTOTPMFAResponseEntity result) {
 
@@ -74,7 +76,7 @@ public class TOTPVerificationServiceTest {
     @Test
     public void testSetupTOTPNullMFA() throws Exception {
 
-        totpVerificationService.setupTOTP("", "accessToken","code",new SetupTOTPMFARequestEntity(),null, new Result<SetupTOTPMFAResponseEntity>() {
+        totpVerificationService.setupTOTP("", "accessToken",new SetupTOTPMFARequestEntity(),null, new Result<SetupTOTPMFAResponseEntity>() {
             @Override
             public void success(SetupTOTPMFAResponseEntity result) {
 
@@ -105,7 +107,7 @@ public class TOTPVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-        totpVerificationService.setupTOTP("localhost:234235", "accessToken","code",new SetupTOTPMFARequestEntity(),null, new Result<SetupTOTPMFAResponseEntity>() {
+        totpVerificationService.setupTOTP("localhost:234235", "accessToken",new SetupTOTPMFARequestEntity(),null, new Result<SetupTOTPMFAResponseEntity>() {
             @Override
             public void success(SetupTOTPMFAResponseEntity result) {
 
@@ -124,7 +126,13 @@ public class TOTPVerificationServiceTest {
     @Test
     public void testScannedTOTPMFA() throws Exception {
 
-        totpVerificationService.scannedTOTP("baseurl", "Usa","Status","Access",null,new Result<ScannedResponseEntity>() {
+        ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
+        totpVerificationService.scannedTOTP("baseurl", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -139,7 +147,13 @@ public class TOTPVerificationServiceTest {
     @Test
     public void testScannedTOTPNUllMFA() throws Exception {
 
-        totpVerificationService.scannedTOTP("", "Usa","Status","accessToken",null,new Result<ScannedResponseEntity>() {
+        ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
+        totpVerificationService.scannedTOTP("", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -170,8 +184,14 @@ public class TOTPVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
+        ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
 
-        totpVerificationService.scannedTOTP("localhost:234235", "Usa","StatusId","accessToken",null, new Result<ScannedResponseEntity>() {
+
+        totpVerificationService.scannedTOTP("localhost:234235", scannedRequestEntity,null, new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 

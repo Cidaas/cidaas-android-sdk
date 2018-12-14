@@ -15,6 +15,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.Resum
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -40,6 +42,7 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.BackupCode.EnrollBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.BackupCode.EnrollBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFARequestEntity;
@@ -103,6 +106,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
@@ -113,6 +117,7 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCo
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceRequestEntity;
@@ -133,17 +138,23 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
+import timber.log.Timber;
 
 /**
  * Created by widasrnarayanan on 17/1/18.
@@ -171,9 +182,10 @@ public interface ICidaasSDKService {
 
 
     //Todo Add FieldMap Pending
-   // @FormUrlEncoded
+
     @POST
-    Call<AuthRequestResponseEntity> getRequestId(@Url String url, @HeaderMap Map<String,String>headers, @Body AuthRequestEntity authRequestEntity);
+    @FormUrlEncoded
+    Call<AuthRequestResponseEntity> getRequestId(@Url String url, @HeaderMap Map<String,String>headers,  @FieldMap(encoded = true) Map<String, String> params);
 
     //Todo Add FieldMap Pending
    // @FormUrlEncoded
@@ -279,6 +291,13 @@ public interface ICidaasSDKService {
                                                     @Part MultipartBody.Part face,
                                                     @PartMap() HashMap<String, RequestBody> map);
 
+    //Enroll Face with out photo MFA
+
+    @Multipart
+    @POST
+    Call<EnrollFaceMFAResponseEntity> enrollFaceWithoutPhotoMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                    @PartMap() HashMap<String, RequestBody> map);
+
 
     //Inititate Face MFA
     @POST
@@ -291,6 +310,12 @@ public interface ICidaasSDKService {
     Call<AuthenticateFaceResponseEntity> authenticateFaceMFA(@Url String url,
                                                              @HeaderMap Map<String,String>headers,
                                                              @Part MultipartBody.Part face,
+                                                             @PartMap() HashMap<String, RequestBody> map);
+    //Authenticate Face MFA
+    @POST
+    @Multipart
+    Call<AuthenticateFaceResponseEntity> authenticateFaceWithoutPhotoMFA(@Url String url,
+                                                             @HeaderMap Map<String,String>headers,
                                                              @PartMap() HashMap<String, RequestBody> map);
 
 
@@ -307,6 +332,12 @@ public interface ICidaasSDKService {
                                                       @Part MultipartBody.Part audio,
                                                       @PartMap() HashMap<String, RequestBody> map);
 
+    //Enroll Voice MFA
+    @POST
+    @Multipart
+    Call<EnrollVoiceMFAResponseEntity> enrollVoiceWithoutAudioMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                      @PartMap() HashMap<String, RequestBody> map);
+
 
     //Inititate Voice MFA
     @POST
@@ -318,6 +349,12 @@ public interface ICidaasSDKService {
     @POST
     Call<AuthenticateVoiceResponseEntity> authenticateVoiceMFA(@Url String url, @HeaderMap Map<String,String>headers,
                                                                @Part MultipartBody.Part voice,
+                                                               @PartMap() HashMap<String, RequestBody> map);
+
+    //Authenticate Voice MFA
+    @Multipart
+    @POST
+    Call<AuthenticateVoiceResponseEntity> authenticateVoiceWithoutAudioMFA(@Url String url, @HeaderMap Map<String,String>headers,
                                                                @PartMap() HashMap<String, RequestBody> map);
 
 
@@ -472,6 +509,23 @@ public interface ICidaasSDKService {
     Call<DocumentScannerServiceResultEntity> enrollDocument(@Url String url, @Part MultipartBody.Part face);
 
 
+    // Deny Notification
+    @POST
+    Call<DenyNotificationResponseEntity> denyNotificationService(@Url String url, @Header("Content-Type") String content_type,
+                                      @Header("access_token") String access_token, @Body DenyNotificationRequestEntity denyRequest);
+
+
+
+    //Pending Notification
+    @POST
+    Call<NotificationEntity> getPendingNotification(@Url String url, @Header("Content-Type") String content_type,
+                                                    @Header("access_token") String access_token);
+
+
+    @POST
+    Call<Object> updateFCMToken(@Url String url,
+                                @Header("access_token") String access_token,
+                                @Body DeviceInfoEntity deviceInfoEntity);
 
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
@@ -496,7 +550,6 @@ public interface ICidaasSDKService {
     @GET
     Call<UserprofileResponseEntity> getInternalUserProfileInfo(@Url String url, @HeaderMap Map<String,String>headers);
 
-
     //Get Client
     @GET
     Call<ClientInfoEntity> getClientInfo(@Url String url);
@@ -514,6 +567,43 @@ public interface ICidaasSDKService {
     @GET
     Call<ConsentDetailsResultEntity> getConsentStringDetails(@Url String url);
 
+    @GET
+    Call<ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);
+
+    //Construct URL
+    @GET
+    Call<Object> getUrlList(@Url String url);
+
+    //-----------------------------------------------------DELETE Call-----------------------------------------------------------------
+
+    //Delete
+    @DELETE
+    Call<DeleteMFAResponseEntity> delete(@Url String url, @Header("access_token") String accessToken);//Delete
+
+
+
+    //DeleteAll
+    @DELETE
+    Call<DeleteMFAResponseEntity> deleteAll(@Url String url, @Header("access_token") String accessToken);
+
+
+
+
+/*
+
+
+
+
+    @POST
+    Call<FidoEnrollServiceResultEntity> enrollFido(@Url String url, @Header("Content-Type") String content_type,
+                                                   @Header("access_token") String access_token, @Body FidoEnrollServiceEntity fidoRequest
+    );
+
+    @POST
+    Call<FidoAuthenticateServiceResultEntity> authenticateFido(@Url String url,
+                                                               @Header("Content-Type") String content_type,
+                                                               @Header("access_token") String access_token,
+                                                               @Body FidoAuthenticateServiceEntity fidoAuthenticateServiceEntity);*/
 
 
 }

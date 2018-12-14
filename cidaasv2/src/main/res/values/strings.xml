@@ -3,6 +3,7 @@
     <string name="DEFAULT">Error Occured.</string>
     <string name="FILE_NOT_FOUND">Property file is missing.</string>
     <string name="NO_CONTENT_IN_FILE">No content in property file.</string>
+
     <string name="PROPERTY_MISSING">One of the property is missing.</string>
     <string name="DEVICE_VERIFICATION_FAILURE">Device is Failed to Verify</string>
     <string name="REQUEST_ID_MISSING">Request Id is missing.</string>
@@ -13,6 +14,9 @@
     <string name="LOGIN_URL_SERVICE_FAILURE">Login URL is service failure.</string>
     <string name="EMPTY_LOGIN_URL_SERVICE">Login URL is empty.</string>
 
+    <string name="EMPTY_BASE_URL_SERVICE">Base URL is empty.</string>
+    <string name="USER_DEVICE_ID_FAILURE">User device id must not be empty .</string>
+    <string name="DENY_NOTIFICATION_FAILURE">User device id must not be empty .</string>
 
     <string name="MFA_LIST_FAILURE">MFA List Response is empty.</string>
     <string name="EMPTY_REDIRECT_URL">Redirect URL is empty.</string>

@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.Voice;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
@@ -13,6 +14,7 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMF
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFAResponseEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -38,7 +40,7 @@ public class VoiceVerificationServiceTest {
       // enrollVoiceMFARequestEntity.setDeviceInfo(DBHelper.getShared().getDeviceInfo());
        enrollVoiceMFARequestEntity.setAudioFile(null);
        enrollVoiceMFARequestEntity.setStatusId("status id");
-       enrollVoiceMFARequestEntity.setSub("sub");
+
 
        WebAuthError.getShared(context);
 
@@ -53,7 +55,14 @@ public class VoiceVerificationServiceTest {
     @Test
     public void testScannedVoice() throws Exception {
 
-        voiceVerificationService.scannedVoice("baseurl", "usagePass", "statusId", "AccessToken",null, new Result<ScannedResponseEntity>() {
+
+        ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+        scannedRequestEntity.setClient_id("client");
+        scannedRequestEntity.setStatusId("sid");
+        scannedRequestEntity.setUsage_pass("upass");
+        scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
+        voiceVerificationService.scannedVoice("baseurl", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -69,7 +78,7 @@ public class VoiceVerificationServiceTest {
     @Test
     public void testSetupVoiceMFA() throws Exception {
 
-        voiceVerificationService.setupVoiceMFA("baseurl", "accessToken", "codeChallenge", new SetupVoiceMFARequestEntity(), null,new Result<SetupVoiceMFAResponseEntity>() {
+        voiceVerificationService.setupVoiceMFA("baseurl", "accessToken", new SetupVoiceMFARequestEntity(), null,new Result<SetupVoiceMFAResponseEntity>() {
             @Override
             public void success(SetupVoiceMFAResponseEntity result) {
 
@@ -101,7 +110,7 @@ public class VoiceVerificationServiceTest {
     @Test
     public void testInitiateVoice() throws Exception {
 
-        voiceVerificationService.initiateVoice("baseurl", "codeChallenge", new InitiateVoiceMFARequestEntity(), null,new Result<InitiateVoiceMFAResponseEntity>() {
+        voiceVerificationService.initiateVoice("baseurl",  new InitiateVoiceMFARequestEntity(), null,new Result<InitiateVoiceMFAResponseEntity>() {
             @Override
             public void success(InitiateVoiceMFAResponseEntity result) {
 

@@ -32,7 +32,7 @@ public class ForgotPassword extends AppCompatActivity {
     public void intiateResetPassword(View v)
     {
         resetPasswordRequestEntity=new ResetPasswordRequestEntity();
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 resetPasswordRequestEntity.setRequestId(result.getData().getRequestId());
@@ -45,7 +45,7 @@ public class ForgotPassword extends AppCompatActivity {
         });
         resetPasswordRequestEntity.setEmail(email.getText().toString());
         resetPasswordRequestEntity.setResetMedium("email");
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 

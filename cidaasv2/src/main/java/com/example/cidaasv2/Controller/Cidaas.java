@@ -1,20 +1,24 @@
 package com.example.cidaasv2.Controller;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
+import android.nfc.tech.IsoDep;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -25,6 +29,7 @@ import com.example.cidaasv2.Controller.Repository.ChangePassword.ChangePasswordC
 import com.example.cidaasv2.Controller.Repository.Client.ClientController;
 import com.example.cidaasv2.Controller.Repository.Configuration.BackupCode.BackupCodeConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Email.EmailConfigurationController;
+import com.example.cidaasv2.Controller.Repository.Configuration.FIDO.FIDOConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Face.FaceConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Fingerprint.FingerprintConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.IVR.IVRConfigurationController;
@@ -37,12 +42,13 @@ import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
-import com.example.cidaasv2.Controller.Repository.MFASettings.MFAListSettingsController;
+import com.example.cidaasv2.Controller.Repository.MFASettings.VerificationSettingsController;
 import com.example.cidaasv2.Controller.Repository.Registration.RegistrationController;
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordController;
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
 import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
+import com.example.cidaasv2.Helper.CustomTab.Helper.CustomTabHelper;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
@@ -59,6 +65,7 @@ import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
+import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -66,6 +73,16 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResul
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDORequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDOResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.U2F_V2;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -83,15 +100,21 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.Authent
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFARequestEntity;
@@ -118,6 +141,8 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPush
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NFCSignObject;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
@@ -126,6 +151,7 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEnt
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
@@ -137,12 +163,12 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Pattern.PatternVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Voice.VoiceVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.Settings.VerificationSettingsService;
+import com.example.cidaasv2.Service.Scanned.ScannedResponseDataEntity;
+import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -155,6 +181,7 @@ import timber.log.Timber;
 
 import static android.os.Build.MODEL;
 import static android.os.Build.VERSION;
+import static android.support.customtabs.CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -169,6 +196,7 @@ public class Cidaas implements IOAuthWebLogin {
     public static String instanceId = "";
     public static ICustomLoader loader;
     public static String baseurl = "";
+    public static final String FIDO_VERSION = "U2F_V2";
 
     public RegistrationSetupResultDataEntity[] registerFields;
 
@@ -332,8 +360,8 @@ public class Cidaas implements IOAuthWebLogin {
     //Get the remote messages from the Push notification
     public static void setremoteMessage(Map<String, String> instanceIdFromPush) {
         try {
-            if (instanceIdFromPush.get("intermediate_verifiation_id") != null && instanceIdFromPush.get("intermediate_verifiation_id") != "") {
-                instanceId = instanceIdFromPush.get("intermediate_verifiation_id");
+            if (instanceIdFromPush.get("usage_pass") != null && instanceIdFromPush.get("usage_pass") != "") {
+                instanceId = instanceIdFromPush.get("usage_pass");
             } else {
                 instanceId = "";
             }
@@ -374,6 +402,9 @@ public class Cidaas implements IOAuthWebLogin {
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("")
                     && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
 
+                DomainURL=DomainUrl;
+                Cidaas.baseurl=DomainURL;
+
                 FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL,
                         ClientSecret, new Result<Dictionary<String, String>>() {
                             @Override
@@ -386,7 +417,7 @@ public class Cidaas implements IOAuthWebLogin {
                                     public void success(Dictionary<String, String> savedLoginProperties) {
                                         //Call requestIdBy LoginProperties parameter
 
-                                        RequestIdController.getShared(context).getRequestId(savedLoginProperties, result);
+                                        RequestIdController.getShared(context).getRequestId(savedLoginProperties, result,extraParams);
                                     }
 
                                     @Override
@@ -422,9 +453,21 @@ public class Cidaas implements IOAuthWebLogin {
     //Get Request Id without passing any value
 
 
-    public void getRequestId(final Dictionary<String, String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult) {
+    public void getRequestId(final Dictionary<String, String> loginproperties ,final Result<AuthRequestResponseEntity> Primaryresult,
+                             @Nullable HashMap<String, String>... extraParams) {
         try {
-            RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult);
+
+            if(loginproperties!=null && loginproperties.get("DomainURL")!=null && loginproperties.get("DomainURL")!="") {
+
+                DomainURL = loginproperties.get("DomainURL");
+                Cidaas.baseurl = DomainURL;
+
+                RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult, extraParams);
+            }
+            else
+            {
+                Primaryresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
         } catch (Exception e) {
 
             String loggerMessage = "Request-Id  failure : " + "Error Code - "
@@ -436,14 +479,19 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void getRequestId(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, final Result<AuthRequestResponseEntity> Primaryresult) {
+    public void getRequestId(@NonNull final String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL,
+                             @Nullable final HashMap<String, String> extraParams , final Result<AuthRequestResponseEntity> Primaryresult) {
         try {
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("")
                     && RedirectURL != null && !RedirectURL.equals("")) {
               FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, new Result<Dictionary<String, String>>() {
                   @Override
                   public void success(Dictionary<String, String> result) {
-                      RequestIdController.getShared(context).getRequestId(result, Primaryresult);
+
+                      DomainURL=DomainUrl;
+                      Cidaas.baseurl=DomainURL;
+
+                      RequestIdController.getShared(context).getRequestId(result, Primaryresult,extraParams);
                   }
 
                   @Override
@@ -466,49 +514,61 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void getRequestId(final Result<AuthRequestResponseEntity> resulttoReturn) {
+    public void getRequestId( final Result<AuthRequestResponseEntity> resulttoReturn,@Nullable final HashMap<String, String>... extraParams) {
         try {
 
             //Todo Check in saved file
+            saveLoginProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
 
-            if(DomainURL!=null && !DomainURL.equals("")){
+                    DomainURL=result.get("DomainURL");
+                    Cidaas.baseurl=DomainURL;
 
 
-            final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
 
-            if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
-                //check here for already saved properties
-                checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> result) {
-                        RequestIdController.getShared(context).getRequestId(loginProperties, resulttoReturn);
-                    }
+                        final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
 
-                    @Override
-                    public void failure(WebAuthError error) {
-                        resulttoReturn.failure(error);
-                    }
-                });
-            } else {
-                //Read File from asset to get URL
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> savedLoginProperties) {
-                        //Call requestIdBy LoginProperties parameter
-                        RequestIdController.getShared(context).getRequestId(savedLoginProperties, resulttoReturn);
-                    }
+                        if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
+                            //check here for already saved properties
+                            checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
+                                @Override
+                                public void success(Dictionary<String, String> result) {
+                                    RequestIdController.getShared(context).getRequestId(loginProperties, resulttoReturn,extraParams);
+                                }
 
-                    @Override
-                    public void failure(WebAuthError error) {
-                        resulttoReturn.failure(error);
-                    }
-                });
-              }
-            }
-             else
-            {
-                resulttoReturn.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL must not be null",HttpStatusCode.EXPECTATION_FAILED));
-            }
+                                @Override
+                                public void failure(WebAuthError error) {
+
+                                    resulttoReturn.failure(error);
+                                }
+                            });
+                        } else {
+                            //Read File from asset to get URL
+                            readFromFile(new Result<Dictionary<String, String>>() {
+                                @Override
+                                public void success(Dictionary<String, String> savedLoginProperties) {
+                                    //Call requestIdBy LoginProperties parameter
+                                    RequestIdController.getShared(context).getRequestId(savedLoginProperties, resulttoReturn,extraParams);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+
+                                    resulttoReturn.failure(error);
+                                }
+                            });
+                        }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                   resulttoReturn.failure(error);
+                }
+            });
+
+
         } catch (Exception e) {
             //Todo Handle Exception
             Timber.d(e.getMessage());
@@ -553,6 +613,37 @@ public class Cidaas implements IOAuthWebLogin {
 
     // -----------------------------------------------------***** CLIENT INFO *****-------------------------------------------------------------------------
 
+   public void getClientInfo(final Result<ClientInfoEntity> clientInfoEntityResult,final HashMap<String,String>... extraParams)
+   {
+       try
+       {
+           checkSavedProperties(new Result<Dictionary<String, String>>() {
+               @Override
+               public void success(Dictionary<String, String> loginProperties) {
+                   getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                       @Override
+                       public void success(AuthRequestResponseEntity result) {
+                           getClientInfo(result.getData().getRequestId(),clientInfoEntityResult);
+                       }
+
+                       @Override
+                       public void failure(WebAuthError error) {
+                           clientInfoEntityResult.failure(error);
+                       }
+                   },extraParams);
+               }
+
+               @Override
+               public void failure(WebAuthError error) {
+                   clientInfoEntityResult.failure(error);
+               }
+           });
+       }
+       catch (Exception e)
+       {
+
+       }
+   }
 
     @Override
     public void getClientInfo(final String RequestId, final Result<ClientInfoEntity> clientInfoEntityResult) {
@@ -589,6 +680,39 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     // -----------------------------------------------------***** LOGIN WITH CREDENTIALS *****---------------------------------------------------------------
+
+    public void loginWithCredentials(final LoginEntity loginEntity,
+                                     final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            loginWithCredentials(result.getData().getRequestId(),loginEntity,loginresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            loginresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
 
 
     @Override
@@ -741,7 +865,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
                     if (sub != null && sub != "") {
-                        MFAListSettingsController.getShared(context).getmfaList(baseurl, sub, mfaresult);
+                        VerificationSettingsController.getShared(context).getmfaList(baseurl, sub, mfaresult);
                     } else {
                         String errorMessage = "Sub must not be empty";
 
@@ -1359,12 +1483,145 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+
+
+    // ****** DONE Verification *****-------------------------------------------------------------------------------------------------------
+
+
+
+    public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
+    {
+
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+
+                    String oldFCMToken=DBHelper.getShared().getFCMToken();
+
+
+                    if(oldFCMToken.equalsIgnoreCase(FCMToken))
+                    {
+                        //Do nothing
+                    }
+                    else{
+                        DBHelper.getShared().setFCMToken(FCMToken);
+
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity result) {
+                                VerificationSettingsController.getShared(context).updateFCMToken(baseurl, result.getAccess_token(), FCMToken, new Result<Object>() {
+                                    @Override
+                                    public void success(Object result) {
+                                        LogFile.addRecordToLog("Update FCM Token Success");
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        LogFile.addRecordToLog("Update FCM Token Error" + error.getMessage());
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                            }
+                        });
+
+
+                    }
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                }
+            });
+        }
+
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Update FCM Token exception" + e.getMessage());
+            Timber.e("Update FCM Token exception" + e.getMessage());
+        }
+    }
+
+
+    public void scanned(@NonNull final String statusId, @NonNull final String sub,@NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+
+                    if(verificationType.equalsIgnoreCase("PATTERN"))
+                    {
+                        PatternConfigurationController.getShared(context).scannedWithPattern(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("TOUCHID"))
+                    {
+                        FingerprintConfigurationController.getShared(context).scannedWithFingerprint(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("VOICE"))
+                    {
+                        VoiceConfigurationController.getShared(context).scannedWithVoice(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("FACE"))
+                    {
+                        FaceConfigurationController.getShared(context).scannedWithFace(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("TOTP"))
+                    {
+                        TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("PUSH"))
+                    {
+                        SmartPushConfigurationController.getShared(context).scannedWithSmartPush(baseurl,statusId,clientId,scannedResult);
+                    }
+                    else if(verificationType.equalsIgnoreCase("FIDOU2F"))
+                    {
+                        FIDOConfigurationController.getShared(context).scannedWithFIDO(baseurl,statusId,clientId,scannedResult);
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Pattern exception" + e.getMessage());
+        }
+    }
+
+
     // ****** DONE PATTERN *****-------------------------------------------------------------------------------------------------------
 
 
     @Override
     public void configurePatternRecognition(@NonNull final String pattern, @NonNull final String sub,@NonNull final String logoURL,
-                                            final Result<EnrollPatternMFAResponseEntity> enrollresult) {
+                                            final Result<EnrollPatternMFAResponseEntity> enrollresult)
+    {
         try {
 
 
@@ -1399,18 +1656,105 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
+
                     enrollresult.failure(error);
                 }
             });
 
         } catch (Exception e) {
             LogFile.addRecordToLog("Configure Pattern exception" + e.getMessage());
-
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure Pattern exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure Pattern exception" + e.getMessage());
         }
 
 
     }
+
+
+
+
+
+    public void enrollPattern(@NonNull final String patternString, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollPatternMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                    final EnrollPatternMFARequestEntity enrollPatternMFARequestEntity=new EnrollPatternMFARequestEntity();
+                    enrollPatternMFARequestEntity.setVerifierPassword(patternString);
+                    enrollPatternMFARequestEntity.setStatusId(statusId);
+                    enrollPatternMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            PatternConfigurationController.getShared(context).enrollPattern(baseurl,result.getAccess_token(),enrollPatternMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                          enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                   enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll Pattern exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Pattern exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Pattern exception" + e.getMessage());
+        }
+    }
+
+    public void scannedPattern(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+      try
+      {
+
+          checkSavedProperties(new Result<Dictionary<String, String>>() {
+              @Override
+              public void success(Dictionary<String, String> result) {
+
+                  String baseurl = result.get("DomainURL");
+                  String clientId=result.get("ClientId");
+
+
+                  PatternConfigurationController.getShared(context).scannedWithPattern(baseurl,statusId,clientId,scannedResult);
+              }
+
+              @Override
+              public void failure(WebAuthError error) {
+                  scannedResult.failure(error);
+              }
+          });
+
+      }
+      catch (Exception e)
+      {
+          LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
+          scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
+                  HttpStatusCode.EXPECTATION_FAILED));
+          Timber.e("Scanned Pattern exception" + e.getMessage());
+      }
+    }
+
 
 
     //Todo login with pattern by Passing the pattern String Directly
@@ -1501,7 +1845,8 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void verifyPattern(final String patternString, final String statusId, final Result<AuthenticatePatternResponseEntity> result) {
+    public void verifyPattern(final String patternString, final String statusId, final Result<AuthenticatePatternResponseEntity> result)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -1516,7 +1861,9 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticatePatternRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
-                    PatternVerificationService.getShared(context).authenticatePattern(baseurl,authenticatePatternRequestEntity,null,result);
+
+                    PatternConfigurationController.getShared(context).authenticatePattern(baseurl,authenticatePatternRequestEntity,result);
+                   // PatternVerificationService.getShared(context).authenticatePattern(baseurl,authenticatePatternRequestEntity,null,result);
 
                 }
 
@@ -1531,11 +1878,16 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
+
+
+
+
     // ****** TODO LOGIN WITH FACE *****-------------------------------------------------------------------------------------------------------
 
 
     @Override
-    public void configureFaceRecognition(final File photo, final String sub,@NonNull final String logoURL, final Result<EnrollFaceMFAResponseEntity> enrollresult) {
+    public void configureFaceRecognition(final File photo, final String sub,@NonNull final String logoURL, final Result<EnrollFaceMFAResponseEntity> enrollresult)
+    {
         try {
 
 
@@ -1558,7 +1910,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                        FaceConfigurationController.getShared(context).ConfigureFace(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
+                        FaceConfigurationController.getShared(context).configureFace(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
 
 
                     }
@@ -1655,8 +2007,89 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+    public void scannedFace(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
 
-    public void verifyFace(@NonNull final File photo,final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+
+                    FaceConfigurationController.getShared(context).scannedWithFace(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Face exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Face exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Face exception" + e.getMessage());
+        }
+    }
+
+    public void enrollFace(@NonNull final File Face, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFaceMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                    final EnrollFaceMFARequestEntity enrollFaceMFARequestEntity=new EnrollFaceMFARequestEntity();
+                    enrollFaceMFARequestEntity.setImagetoSend(Face);
+                    enrollFaceMFARequestEntity.setStatusId(statusId);
+                    enrollFaceMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            FaceConfigurationController.getShared(context).enrollFace(baseurl,result.getAccess_token(),enrollFaceMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll Face exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Face exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Face exception" + e.getMessage());
+        }
+    }
+
+
+    public void verifyFace(@NonNull final File photo,@NonNull final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -1665,13 +2098,15 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId = lpresult.get("ClientId");
                     //todo call enroll Email
 
+
+
                     AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
                     authenticateFaceRequestEntity.setStatusId(statusId);
                     authenticateFaceRequestEntity.setImagetoSend(photo);
                     authenticateFaceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
-                    FaceVerificationService.getShared(context).authenticateFace(baseurl,authenticateFaceRequestEntity,null,result);
+                    FaceConfigurationController.getShared(context).authenticateFace(baseurl,authenticateFaceRequestEntity,result);
 
 
                 }
@@ -1717,7 +2152,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                        FaceConfigurationController.getShared(context).ConfigureFaces(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
+                      //  FaceConfigurationController.getShared(context).ConfigureFaces(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
 
 
                     }
@@ -1790,9 +2225,9 @@ public class Cidaas implements IOAuthWebLogin {
                         //Todo check for email or sub or mobile
 
 
-                        FaceConfigurationController.getShared(context).LoginWithFaces(photo, baseurl, clientId,
+                      /*  FaceConfigurationController.getShared(context).LoginWithFaces(photo, baseurl, clientId,
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
-                                initiateFaceMFARequestEntity, loginresult);
+                                initiateFaceMFARequestEntity, loginresult);*/
                     } else {
                         String errorMessage = "Image File or RequestId or UsageType must not be empty";
 
@@ -2029,6 +2464,87 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
+    public void scannedFingerprint(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+
+                    FingerprintConfigurationController.getShared(context).scannedWithFingerprint(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Fingerprint exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Fingerprint exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Fingerprint exception" + e.getMessage());
+        }
+    }
+
+    public void enrollFingerprint( @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity=new EnrollFingerprintMFARequestEntity();
+                            enrollFingerprintMFARequestEntity.setStatusId(statusId);
+                            enrollFingerprintMFARequestEntity.setUserDeviceId(userDeviceId);
+
+
+                            FingerprintConfigurationController.getShared(context).enrollFingerprint(baseurl,result.getAccess_token(),enrollFingerprintMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll Fingerprint exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Fingerprint exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Fingerprint exception" + e.getMessage());
+        }
+    }
+
 
     @Override
     public void loginWithFingerprint(final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
@@ -2198,7 +2714,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateFingerprintRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
-                    FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl,authenticateFingerprintRequestEntity,null,callBackresult);
+                    FingerprintConfigurationController.getShared(context).authenticateFingerprint(baseurl,authenticateFingerprintRequestEntity,callBackresult);
 
                 }
 
@@ -2214,11 +2730,384 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+
+    // ****** DONE FIDO *****-------------------------------------------------------------------------------------------------------
+
+
+    public void enrollFIDO(@NonNull final FIDOTouchResponse fidoResponse,  @NonNull final String sub, @NonNull final String statusId, final Result<EnrollFIDOMFAResponseEntity> enrollResult) {
+    try
+    {
+
+
+
+        checkSavedProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> lpresult) {
+                final String baseurl = lpresult.get("DomainURL");
+
+                AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                    @Override
+                    public void success(AccessTokenEntity accessTOkenresult) {
+
+                        EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity=new EnrollFIDOMFARequestEntity();
+                        enrollFIDOMFARequestEntity.setFidoTouchResponse(fidoResponse);
+                        enrollFIDOMFARequestEntity.setStatusId(statusId);
+                        enrollFIDOMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+                        FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,accessTOkenresult.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        enrollResult.failure(error);
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                enrollResult.failure(error);
+            }
+        });
+
+
+    }
+    catch (Exception e)
+     {
+         LogFile.addRecordToLog("enroll FIDO exception" + e.getMessage());
+         enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll FIDO exception"+ e.getMessage(),
+                 HttpStatusCode.EXPECTATION_FAILED));
+         Timber.e("Enroll FIDO exception" + e.getMessage());
+     }
+    }
+    public void configureFIDO(@NonNull final IsoDep isoTag, @NonNull final String sub, @NonNull final String logoURL,
+                                         final Result<EnrollFIDOMFAResponseEntity> enrollresult)
+    {
+        try {
+
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+
+
+                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
+
+                        final String finalBaseurl = baseurl;
+
+
+                        if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
+
+
+
+
+                        SetupFIDOMFARequestEntity setupFIDOMFARequestEntity = new SetupFIDOMFARequestEntity();
+                        setupFIDOMFARequestEntity.setClient_id(result.get("ClientId"));
+                        setupFIDOMFARequestEntity.setLogoUrl(logoURLlocal);
+
+
+                        FIDOConfigurationController.getShared(context).configureFIDO(isoTag,sub, finalBaseurl, setupFIDOMFARequestEntity,
+                                enrollresult);
+
+                    } else {
+                        String errorMessage = "Sub or FIDO or logoURL cannot be null";
+                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
+                                HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+
+                    enrollresult.failure(error);
+                }
+            });
+
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Configure FIDO exception" + e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure FIDO exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Configure FIDO exception" + e.getMessage());
+        }
+
+
+    }
+
+
+
+
+
+   /* public void enrollFIDO(@NonNull final IsoDep isoTag, final ScannedResponseDataEntity scannedResponseDataEntity, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFIDOMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                 // EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity=new EnrollFIDOMFARequestEntity();
+                    *//*enrollFIDOMFARequestEntity.setFidoTouchResponse(FIDO);
+                    enrollFIDOMFARequestEntity.setStatusId(statusId);
+                    enrollFIDOMFARequestEntity.setUserDeviceId(userDeviceId);*//*
+
+
+
+                    //Entity For FIDO
+
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+
+                            if (scannedResponseDataEntity != null && scannedResponseDataEntity.getFidoInitRequest() != null
+                                    && scannedResponseDataEntity.getFidoInitRequest().getRegisterRequests() != null
+                                    && scannedResponseDataEntity.getFidoInitRequest().getRegisterRequests().length > 0) {
+
+
+                                EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity =
+                                        FIDOConfigurationController.getShared(context).generateEnrollEntity(isoTag, scannedResponseDataEntity.getFidoInitRequest().getRegisterRequests()[0].getChallenge(),
+                                                scannedResponseDataEntity.getFidoInitRequest().getAppId(),scannedResponseDataEntity.getFidoInitRequest().getFidoRequestId(),baseurl);
+
+                                enrollFIDOMFARequestEntity.setStatusId(statusId);
+                                enrollFIDOMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                                FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,result.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
+
+
+                            }
+                            else
+                            {
+                                enrollResult.failure(WebAuthError.getShared(context)
+                                        .customException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,"One of the property is missing",HttpStatusCode.EXPECTATION_FAILED));
+                            }
+
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll FIDO exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll FIDO exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll FIDO exception" + e.getMessage());
+        }
+    }*/
+
+    public void scannedFIDO(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+                    FIDOConfigurationController.getShared(context).scannedWithFIDO(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned FIDO exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned FIDO exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned FIDO exception" + e.getMessage());
+        }
+    }
+
+
+
+    //Todo login with FIDO by Passing the FIDO String Directly
+    // 1. Todo Check For Local Variable or Read properties from file
+    // 2. Todo Check For NotNull Values
+    // 3. Todo getAccessToken From Sub
+    // 3. Todo Call configure FIDO From FIDO Controller and return the result
+    // 4. Todo Maintain logs based on flags
+
+    public void loginWithFIDO(@NonNull final IsoDep isoTag, @NonNull final PasswordlessEntity passwordlessEntity,
+                                            final Result<LoginCredentialsResponseEntity> loginresult) {
+
+        try {
+
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+
+                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
+                            && passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
+
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            return;
+                        }
+
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            return;
+                        }
+
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
+
+                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                return;
+                            }
+                        }
+
+                        InitiateFIDOMFARequestEntity initiateFIDOMFARequestEntity = new InitiateFIDOMFARequestEntity();
+                        initiateFIDOMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateFIDOMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateFIDOMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateFIDOMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+                        //Todo check for email or sub or mobile
+
+                        FIDOConfigurationController.getShared(context).LoginWithFIDO(isoTag, baseurl, clientId,
+                                passwordlessEntity.getTrackId(),
+                                passwordlessEntity.getRequestId(), initiateFIDOMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "UsageType or FIDOCode or requestId must not be empty";
+
+                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            });
+
+
+        } catch (Exception e) {
+            LogFile.addRecordToLog("Login with FIDO exception" + e.getMessage());
+            String errorMessage = e.getMessage();
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Login with FIDO exception" + e.getMessage());
+        }
+    }
+
+
+    /*public void verifyFIDO(final IsoDep isoTag, final NFCSignObject signObject, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
+    {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    //todo call verify FIDO
+
+                    AuthenticateFIDORequestEntity
+                            authenticateFIDORequestEntity=FIDOConfigurationController.getShared(context).generateAuthenticateEntity(isoTag,baseurl,signObject);
+                    authenticateFIDORequestEntity.setStatusId(statusId);
+                    authenticateFIDORequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+
+
+
+                    FIDOConfigurationController.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,result);
+                    // FIDOVerificationService.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,null,result);
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+
+    }*/
+
+
+    public void verifyFIDO(final FidoSignTouchResponse fidoSignTouchResponse, final String statusId, final Result<AuthenticateFIDOResponseEntity> result)
+    {
+        try {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    //todo call verify FIDO
+
+                    AuthenticateFIDORequestEntity authenticateFIDORequestEntity=new AuthenticateFIDORequestEntity();
+                    authenticateFIDORequestEntity.setStatusId(statusId);
+                    authenticateFIDORequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                    authenticateFIDORequestEntity.setFidoSignTouchResponse(fidoSignTouchResponse);
+
+
+
+                    FIDOConfigurationController.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,result);
+                    // FIDOVerificationService.getShared(context).authenticateFIDO(baseurl,authenticateFIDORequestEntity,null,result);
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                }
+            });
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+
+    }
+
+
     // ****** TODO LOGIN WITH Smart push *****-------------------------------------------------------------------------------------------------------
 
 
     @Override
-    public void configureSmartPush(final String sub,@NonNull final String logoURL, final Result<EnrollSmartPushMFAResponseEntity> enrollresult) {
+    public void configureSmartPush(final String sub,@NonNull final String logoURL, final Result<EnrollSmartPushMFAResponseEntity> enrollresult)
+    {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -2259,6 +3148,85 @@ public class Cidaas implements IOAuthWebLogin {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
+    }
+
+    public void scannedSmartPush(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+                    SmartPushConfigurationController.getShared(context).scannedWithSmartPush(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned SmartPush exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned SmartPush exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned SmartPush exception" + e.getMessage());
+        }
+    }
+
+    public void enrollSmartPush(@NonNull final String randomNumber, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollSmartPushMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                    final EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity=new EnrollSmartPushMFARequestEntity();
+                    enrollSmartPushMFARequestEntity.setVerifierPassword(randomNumber);
+                    enrollSmartPushMFARequestEntity.setStatusId(statusId);
+                    enrollSmartPushMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            SmartPushConfigurationController.getShared(context).enrollSmartPush(baseurl,result.getAccess_token(),enrollSmartPushMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll SmartPush exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll SmartPush exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll SmartPush exception" + e.getMessage());
+        }
     }
 
 
@@ -2348,7 +3316,8 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-                    SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,null,result);
+                    SmartPushConfigurationController.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,result);
+                    //SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl,authenticateSmartPushRequestEntity,null,result);
 
 
 
@@ -2391,6 +3360,7 @@ public class Cidaas implements IOAuthWebLogin {
                         SetupTOTPMFARequestEntity setupTOTPMFARequestEntity = new SetupTOTPMFARequestEntity();
                         setupTOTPMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupTOTPMFARequestEntity.setLogoUrl(logoURLlocal);
+
                         TOTPConfigurationController.getShared(context).configureTOTP(sub, finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
 
                     } else {
@@ -2464,7 +3434,7 @@ public class Cidaas implements IOAuthWebLogin {
                                 passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
                                 initiateTOTPMFARequestEntity, loginresult);
                     } else {
-                        String errorMessage = "UsageType or TOTPCode or requestId must not be empty";
+                        String errorMessage = "UsageType or requestId must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                 errorMessage, HttpStatusCode.EXPECTATION_FAILED));
@@ -2480,6 +3450,41 @@ public class Cidaas implements IOAuthWebLogin {
             loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
+
+
+    public void scannedTOTP(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+                    TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned TOTP exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned TOTP exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned TOTP exception" + e.getMessage());
+        }
+    }
+
+
 
 
     public void listenTOTP(String sub) {
@@ -2548,7 +3553,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupVoiceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                        VoiceConfigurationController.getShared(context).configureVoice(sub, baseurl, voice, setupVoiceMFARequestEntity, enrollresult);
+                        VoiceConfigurationController.getShared(context).configureVoice(voice,sub, baseurl, setupVoiceMFARequestEntity, enrollresult);
 
 
                     }
@@ -2564,6 +3569,86 @@ public class Cidaas implements IOAuthWebLogin {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
+    }
+
+    public void scannedVoice(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
+
+
+                    VoiceConfigurationController.getShared(context).scannedWithVoice(baseurl,statusId,clientId,scannedResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Scanned Voice exception" + e.getMessage());
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Voice exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned Voice exception" + e.getMessage());
+        }
+    }
+
+    public void enrollVoice(@NonNull final File voice, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollVoiceMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    final String baseurl = result.get("DomainURL");
+                    String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                    final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity=new EnrollVoiceMFARequestEntity();
+                    enrollVoiceMFARequestEntity.setAudioFile(voice);
+                    enrollVoiceMFARequestEntity.setStatusId(statusId);
+                    enrollVoiceMFARequestEntity.setUserDeviceId(userDeviceId);
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity result) {
+                            VoiceConfigurationController.getShared(context).enrollVoice(baseurl,result.getAccess_token(),enrollVoiceMFARequestEntity,enrollResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            enrollResult.failure(error);
+                        }
+                    });
+
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("Enroll Voice exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Voice exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Voice exception" + e.getMessage());
+        }
     }
 
 
@@ -2655,7 +3740,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateVoiceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
 
 
-                    VoiceVerificationService.getShared(context).authenticateVoice(baseurl,authenticateVoiceRequestEntity,null,result);
+                    VoiceConfigurationController.getShared(context).authenticateVoice(baseurl,authenticateVoiceRequestEntity,result);
 
 
 
@@ -2671,6 +3756,309 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+
+
+
+
+
+    //---------------------------------------DELETE CALL-------------------------------------------------------------------------------------------------
+
+
+
+
+    //Delete call
+    public void deleteVerificationByType(@NonNull final String verificationType, @NonNull final String sub, final Result<DeleteMFAResponseEntity> deleteResult)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    String userDeviceId="";
+
+                    String typeOfVerification="";
+
+                    if(verificationType!=null && verificationType!="") {
+
+                         typeOfVerification = verificationType.toUpperCase();
+                    }
+                    else
+                    {
+                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"Verification Type must not be empty",HttpStatusCode.BAD_REQUEST));
+
+                    }
+
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="" && sub!=null && sub!="")
+                    {
+                        userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                        final String finalUserDeviceId = userDeviceId;
+                        final String finalTypeOfVerification = typeOfVerification;
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity result) {
+                                //After getting Access Token
+                                VerificationSettingsController.getShared(context).deleteMFA(baseurl, result.getAccess_token(),finalUserDeviceId, finalTypeOfVerification,deleteResult);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                deleteResult.failure(error);
+                            }
+                        });
+
+
+                    }
+                    else
+                    {
+                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID or Sub must not be empty",HttpStatusCode.BAD_REQUEST));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    deleteResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.e("Faliure in delete service call"+e.getMessage());
+            deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+    //Delete call
+    public void deleteVerificationByDevice( @NonNull final String sub,final Result<DeleteMFAResponseEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    String userDeviceId="";
+
+
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="" && sub!=null && sub!="")
+                    {
+                        userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                        final String finalUserDeviceId = userDeviceId;
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenresult) {
+
+                                VerificationSettingsController.getShared(context).deleteAllMFA(baseurl,accessTokenresult.getAccess_token(), finalUserDeviceId,result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+
+
+                    }
+                    else
+                    {
+                        result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID or sub must not be empty",HttpStatusCode.BAD_REQUEST));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Timber.e("Faliure in delete All service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+
+    //Deny Call
+    public void denyNotification(@NonNull final String sub, @NonNull final String reason, @NonNull final String statusId, final Result<DenyNotificationResponseEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+                    String userDeviceId="";
+
+                    if(sub!=null && sub!="") {
+
+
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenresult) {
+
+                                if (reason != "" && reason != null && statusId != null && statusId != "") {
+
+                                    DenyNotificationRequestEntity denyNotificationRequestEntity = new DenyNotificationRequestEntity();
+                                    denyNotificationRequestEntity.setReject_reason(reason);
+                                    denyNotificationRequestEntity.setStatusId(statusId);
+
+
+                                    VerificationSettingsController.getShared(context).denyNotification(baseurl, accessTokenresult.getAccess_token(), denyNotificationRequestEntity, result);
+                                } else {
+                                    result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
+                                            "Verification Type must not be empty", HttpStatusCode.BAD_REQUEST));
+                                }
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+                    }
+                    else {
+                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+                                "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+            Timber.e("Faliure in delete All service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+
+    //Get Pending Notification
+    public void getPendingNotificationList(@NonNull final String sub,  final Result<NotificationEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
+
+
+                    if(sub!=null && sub!="") {
+
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenresult) {
+
+                                if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="") {
+                                    String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+
+
+                                    if (userDeviceId != "" && userDeviceId != null) {
+
+
+                                        VerificationSettingsController.getShared(context).getPendingNotification(baseurl, accessTokenresult.getAccess_token(), userDeviceId, result);
+                                    } else {
+                                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
+                                                "User Device Id must not be empty", HttpStatusCode.BAD_REQUEST));
+                                    }
+                                }
+                                else
+                                {
+                                    result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                                }
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+                    }
+                    else {
+                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+                                "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+            Timber.e("Faliure in delete All service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+
+    //Get user List Notification
+    public void getConfigurationList(@NonNull final String sub,  final Result<ConfiguredMFAListEntity> result)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    final String baseurl = lpresult.get("DomainURL");
+
+                    if(sub!=null && sub!="") {
+
+                        if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="") {
+
+                            String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+                            VerificationSettingsController.getShared(context).getConfiguredMFAList(baseurl, sub, userDeviceId, result);
+                         }
+                         else
+                         {
+                            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                         }
+
+                       }
+                       else {
+                          result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,
+                            "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                       }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+            Timber.e("Faliure in getConfiguration List  service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+
+        }
+    }
+
+
+
 
 
     //-----------------Scan the ID card----------------------------------------------------------------------------------
@@ -2763,6 +4151,39 @@ public class Cidaas implements IOAuthWebLogin {
     // ****** GET REGISTERATION *****-------------------------------------------------------------------------------------------------------
 
 
+    public void getRegistrationFields( final String locale, final Result<RegistrationSetupResponseEntity> registerFieldsresult,
+                                       final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            getRegistrationFields(result.getData().getRequestId(),locale,registerFieldsresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            registerFieldsresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
     @Override
     public void getRegistrationFields(@NonNull final String requestId, final String locale,
                                       final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
@@ -2824,6 +4245,39 @@ public class Cidaas implements IOAuthWebLogin {
 
             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+    public void registerUser( final RegistrationEntity registrationEntity, final Result<RegisterNewUserResponseEntity> registerFieldsresult,
+                                       final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            registerUser(result.getData().getRequestId(),registrationEntity,registerFieldsresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            registerFieldsresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
         }
     }
 
@@ -3002,6 +4456,40 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+    public void initiateEmailVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                       final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateEmailVerification(result.getData().getRequestId(),sub,Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+
     @Override
     public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
                                           final Result<RegisterUserAccountInitiateResponseEntity> Result) {
@@ -3043,6 +4531,40 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
+    public void initiateSMSVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                           final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateSMSVerification(result.getData().getRequestId(),sub,Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+
     @Override
     public void initiateSMSVerification(@NonNull final String sub, @NonNull final String requestId,
                                         final Result<RegisterUserAccountInitiateResponseEntity> Result) {
@@ -3083,6 +4605,39 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+    public void initiateIVRVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                           final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateIVRVerification(result.getData().getRequestId(),sub,Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
 
     @Override
     public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId,
@@ -3125,6 +4680,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
 
     }
+
 
     @Override
     public void verifyAccount(@NonNull final String code, @NonNull final String accvid, final Result<RegisterUserAccountVerifyResponseEntity> result) {
@@ -3209,6 +4765,41 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+
+    public void loginWithDeduplication(@NonNull final String sub, @NonNull final String password,
+                                     final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            loginWithDeduplication(result.getData().getRequestId(),sub,password,loginresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            loginresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+
     @Override
     public void loginWithDeduplication(final String requestId, @NonNull final String sub, @NonNull final String password,
                                        final Result<LoginCredentialsResponseEntity> deduplicaionResult) {
@@ -3239,6 +4830,38 @@ public class Cidaas implements IOAuthWebLogin {
 
     //----------------------------------------------------------------------------------------------------------------------------------------
 
+    public void initiateResetPasswordByEmail(final String email,
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateResetPasswordByEmail(result.getData().getRequestId(),email,resetPasswordResponseEntityResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            resetPasswordResponseEntityResult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
 
     // Todo change
     @Override
@@ -3275,6 +4898,38 @@ public class Cidaas implements IOAuthWebLogin {
             resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
 
+    }
+    public void initiateResetPasswordBySMS(final String mobileNumber,
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateResetPasswordBySMS(result.getData().getRequestId(),mobileNumber,resetPasswordResponseEntityResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            resetPasswordResponseEntityResult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
     }
 
     @Override
@@ -3399,6 +5054,8 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+
+
     //----------------------------------------------------------------------------------------------------------------------------------------
 
     //Todo change to Sub and Identity id
@@ -3438,26 +5095,26 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType, final Result<AccessTokenEntity> accessTokenCallback)
+    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType,final Result<AccessTokenEntity> accessTokenCallback, final HashMap<String,String>... extraParams)
     {
         try
         {
             DomainURL=DomainUrl;
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(final Dictionary<String, String> lpresult) {
+                public void success(final Dictionary<String, String> loginProperties) {
 
-                    getRequestId(lpresult, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,lpresult,accessTokenCallback);
+                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,loginProperties,accessTokenCallback);
                         }
 
                         @Override
                         public void failure(WebAuthError error) {
                          accessTokenCallback.failure(error);
                         }
-                    });
+                    },extraParams);
 
 
                 }
@@ -3527,39 +5184,149 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-
-    public void loginWithBrowser(@Nullable String color, Result<AccessTokenEntity> callbacktoMain) {
+    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
         try {
 
+           getLoginURL(new Result<String>() {
+                @Override
+                public void success(String result) {
+                    loginURL=result;
+                    logincallback = callbacktoMain;
+                    if (loginURL != null) {
+                        String url = loginURL;
+                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                                             builder.setShowTitle(true);//TO show title
 
-            logincallback = callbacktoMain;
-            if (loginURL != null) {
-                String url = loginURL;
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                      //  CustomTabsClient.getPackageName()
+                    builder.setStartAnimations(activityContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
+                        if (color != null) {
 
-                if (color != null) {
+                            builder.setToolbarColor(Color.parseColor(color));
+                        }
 
-                    builder.setToolbarColor(Color.parseColor(color));
+                        CustomTabsIntent customTabsIntent = builder.build();
+
+                  String packageName= CustomTabHelper.getShared().getPackageNameToUse(context);
+
+                        if(packageName!=null && packageName!="")
+                        {
+                            customTabsIntent.intent.setPackage(packageName);
+                        }
+
+                        customTabsIntent.launchUrl(context, Uri.parse(url));
+                    } else {
+                        //TODo callback Failure
+                        String loggerMessage = "LoginURL failure : " + "Error Code - ";
+                        // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
+                        LogFile.addRecordToLog(loggerMessage);
+                    }
                 }
 
-                CustomTabsIntent customTabsIntent = builder.build();
+                @Override
+                public void failure(WebAuthError error) {
+                    callbacktoMain.failure(error);
+                }
+            });
 
-                customTabsIntent.launchUrl(context, Uri.parse(url));
-            } else {
-                //TODo callback Failure
-                String loggerMessage = "LoginURL failure : " + "Error Code - ";
-                // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-            }
+
         } catch (Exception e) {
             Timber.d(e.getMessage());// TODO: Handle Exception
         }
     }
 
+    public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain, final HashMap<String, String>... extraParams)
+    {
 
-    //Todo sConsult and Create a  new Resume if the loginCallback is null
-    //Get Code By URl
+      checkSavedProperties(new Result<Dictionary<String, String>>() {
+          @Override
+          public void success(Dictionary<String, String> loginProperties) {
+              getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
+                  @Override
+                  public void success(AuthRequestResponseEntity result) {
+                      loginWithSocial(activityContext,result.getData().getRequestId(),provider,color,callbacktoMain);
+                  }
+
+                  @Override
+                  public void failure(WebAuthError error) {
+                      callbacktoMain.failure(error);
+                  }
+              },extraParams);
+          }
+
+          @Override
+          public void failure(WebAuthError error) {
+              callbacktoMain.failure(error);
+          }
+      });
+
+    }
+
+    public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String requestId, @NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+        try {
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    getSocialLoginURL(requestId,provider,new Result<String>() {
+                        @Override
+                        public void success(String socialLoginURL)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {
+                            logincallback = callbacktoMain;
+                            if (socialLoginURL != null) {
+                                String url = socialLoginURL;
+                                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                                builder.setShowTitle(true);//TO show title
+
+                                //  CustomTabsClient.getPackageName()
+                                builder.setStartAnimations(activityContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+
+
+
+                                if (color != null) {
+
+                                    builder.setToolbarColor(Color.parseColor(color));
+                                }
+
+
+                                CustomTabsIntent customTabsIntent = builder.build();
+
+                                String packageName= CustomTabHelper.getShared().getPackageNameToUse(context);
+
+                                if(packageName!=null && packageName!="")
+                                {
+                                    customTabsIntent.intent.setPackage(packageName);
+                                }
+
+                                customTabsIntent.launchUrl(activityContext, Uri.parse(url));
+                            } else {
+                                //TODo callback Failure
+                                String loggerMessage = "LoginURL failure : " + "Error Code - ";
+                                // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
+                                LogFile.addRecordToLog(loggerMessage);
+                            }
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callbacktoMain.failure(error);
+                        }
+                    });
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                  callbacktoMain.failure(error);
+                }
+            });
+
+
+
+        } catch (Exception e) {
+            Timber.d(e.getMessage());// TODO: Handle Exception
+        }
+    }
+
 
     public void getLoginCode(String url, Result<AccessTokenEntity> callback) {
         try {
@@ -3568,7 +5335,7 @@ public class Cidaas implements IOAuthWebLogin {
             if (code != null) {
                 //  hideLoader();
 
-                getAccessTokenByCode(code, callback);
+                AccessTokenController.getShared(context).getAccessTokenByCode(code, callback);
             } else {
                 // hideLoader();
                 String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - ";
@@ -3581,9 +5348,6 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void getAccessTokenByCode(String code, Result<AccessTokenEntity> result) {
-
-    }
 
 
     private void saveLoginProperties(final Result<Dictionary<String, String>> result)
@@ -3615,6 +5379,7 @@ public class Cidaas implements IOAuthWebLogin {
                     result.failure(webAuthError);
                 }
                 Cidaas.baseurl = loginProperties.get("DomainURL");
+                DBHelper.getShared().addLoginProperties(loginProperties);
                 result.success(loginProperties);
 
             }
@@ -3799,60 +5564,131 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    //Get code From URL
-
-
     //Get Login URL without any Argument
-
-    public void getLoginURL(final Result<String> callback) {
+    public void getLoginURL( final Result<String> callback) {
         try {
-            getRequestId(new Result<AuthRequestResponseEntity>() {
+            //Check requestId is not null
+
+                checkSavedProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> result) {
+
+                     //This is to generate the Code Challenge
+
+                        //////////////////This is for testing purpose
+                        Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
+
+                            if(challengeProperties.size()==0) {
+
+                                getRequestId(new Result<AuthRequestResponseEntity>() {
+                                    @Override
+                                    public void success(AuthRequestResponseEntity result) {
+
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+
+                                    }
+                                });
+                            }
+
+
+                        LoginController.getShared(context).getLoginURL(DomainURL,result,null, new Result<String>() {
+                            @Override
+                            public void success(String result) {
+
+                                callback.success(result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                callback.failure(error);
+                                String loggerMessage = "Login URL service failure : " + "Error Code - "
+                                        + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
+                                LogFile.addRecordToLog(loggerMessage);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                          callback.failure(error);
+                    }
+                });
+
+
+        } catch (Exception ex) {
+            //Todo Handle Error
+            Timber.d(ex.getMessage());
+        }
+    }
+
+
+    public void getSocialLoginURL(final String provider, final Result<String> callback, final HashMap<String,String>... extraParams) {
+     try
+     {
+         checkSavedProperties(new Result<Dictionary<String, String>>() {
+             @Override
+             public void success(Dictionary<String, String> loginProperties) {
+                 getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
+                     @Override
+                     public void success(AuthRequestResponseEntity result) {
+                         getSocialLoginURL(result.getData().getRequestId(),provider,callback);
+                     }
+
+                     @Override
+                     public void failure(WebAuthError error) {
+                         callback.failure(error);
+                     }
+                 },extraParams);
+             }
+
+             @Override
+             public void failure(WebAuthError error) {
+
+             }
+         });
+
+     }
+     catch (Exception e)
+     {
+
+     }
+    }
+
+    //Get Social Login URL
+    public void getSocialLoginURL(final String requestId, final String provider, final Result<String> callback) {
+        try {
+            //Check requestId is not null
+
+            checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(AuthRequestResponseEntity result) {
-                    getLoginURL(result.getData().getRequestId().toString(), callback);
+                public void success(Dictionary<String, String> result) {
+                    LoginController.getShared(context).getSocialLoginURL(DomainURL,provider,requestId, new Result<String>() {
+                        @Override
+                        public void success(String result) {
+
+                            callback.success(result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callback.failure(error);
+                            String loggerMessage = "Login URL service failure : " + "Error Code - "
+                                    + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
+                            LogFile.addRecordToLog(loggerMessage);
+                        }
+                    });
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
                     callback.failure(error);
-
                 }
             });
-        } catch (Exception e) {
-            Timber.d(e.getMessage());
-        }
-    }
 
-    //Get Login URL Method by  passing RequestId
 
-    public void getLoginURL(@NonNull String RequestId, final Result<String> callback) {
-        try {
-            //Check requestId is not null
-            if (RequestId != "" && DomainURL!="" && DomainURL!=null) {
-
-                OauthService.getShared(context).getLoginUrl(RequestId,DomainURL, new Result<String>() {
-                    @Override
-                    public void success(String result) {
-                        callback.success(result);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        callback.failure(error);
-                        String loggerMessage = "Login URL service failure : " + "Error Code - "
-                                + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
-                    }
-                });
-            }
-
-            else
-            {
-                callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL or RequestId must not be null",HttpStatusCode.EXPECTATION_FAILED));
-                String loggerMessage = "Login URL service failure : " + "Error Code - "
-                        + WebAuthErrorCode.PROPERTY_MISSING+ ", Error Message -DomainURL or RequestId must not be null , Status Code - " + HttpStatusCode.EXPECTATION_FAILED;
-                LogFile.addRecordToLog(loggerMessage);
-            }
         } catch (Exception ex) {
             //Todo Handle Error
             Timber.d(ex.getMessage());
@@ -3866,13 +5702,13 @@ public class Cidaas implements IOAuthWebLogin {
                             @NonNull String ClientSecret, final Result<String> callback) {
         try {
             //Get Request ID
-            if (ClientId != null && !Objects.equals(ClientId, "") && DomainUrl != null && !Objects.equals(DomainUrl, "")
+            if ( DomainUrl != null && !Objects.equals(DomainUrl, "")
                     && RedirectURL != null && !Objects.equals(RedirectURL, "")) {
                 getRequestId(DomainUrl, ClientId, RedirectURL, ClientSecret, new Result<AuthRequestResponseEntity>() {
                     @Override
                     public void success(AuthRequestResponseEntity result) {
                         // if request ID is valid we call get LoginURl
-                        getLoginURL(result.getData().getRequestId(), callback);
+                        //getLoginURL(result.getData().getRequestId(), callback);
                     }
 
                     @Override
@@ -3887,27 +5723,6 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    //Get LoginURL by Passing Dictionary
-
-    public void getLoginURL(@NonNull Dictionary<String, String> loginproperties, final Result<String> callback) {
-        try {
-            //Get Request ID
-            RequestIdController.getShared(context).getRequestId(loginproperties, new Result<AuthRequestResponseEntity>() {
-                @Override
-                public void success(AuthRequestResponseEntity result) {
-                    //Call Loginurl if requestId is Valid
-                    getLoginURL(result.getData().getRequestId(), callback);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    callback.failure(error);
-                }
-            });
-        } catch (Exception e) {
-            Timber.d(e.getMessage());    //Todo Handle Exception
-        }
-    }
 
     //ReadFromXML File
     private void readFromFile(final Result<Dictionary<String, String>> loginPropertiesResult) {
@@ -3950,11 +5765,15 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     //Resume After open App From Broswer
-    public void resume(String code)/*,Result<AccessTokenEntity>... callbacktoMain*/ {
+    public void resume(String code){   /*,Result<AccessTokenEntity> callbacktoMain*/
+
         if (logincallback != null) {
+
             getLoginCode(code, logincallback);
         }
-      /* else if(callbacktoMain!=null)
+
+
+        /* else if(callbacktoMain!=null)
        {
         *//*logincallback=()callbacktoMain;
         getLoginCode(code,callbacktoMain);*//*
@@ -3962,28 +5781,6 @@ public class Cidaas implements IOAuthWebLogin {
         //Todo Handle Else part and give Exception
 
     }
-
-
-    public void configureFIDO(String sub, final Result<EnrollFIDOMFAResponseEntity> result) {
-        try {
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
-                }
-            });
-        } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
-        }
-
-    }
-
 
     private void checkLoginProperties(final Dictionary<String, String> loginproperties,Result<String> result)
     {
@@ -4034,7 +5831,7 @@ public class Cidaas implements IOAuthWebLogin {
                 Cidaas.baseurl=DomainURL;
 
 
-                if(loginproperties.get("userDeviceId")!=null) {
+                if(loginproperties.get("userDeviceId")!=null && loginproperties.get("userDeviceId")!="") {
                     String userDeviceId = loginproperties.get("userDeviceId");
                     DBHelper.getShared().setUserDeviceId(userDeviceId, DomainURL);
                 }
@@ -4088,16 +5885,22 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void setAccessToken(AccessTokenEntity accessTokenEntity){
+    public void setAccessToken(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result){
         try
         {
 
-            if(accessTokenEntity.getSub()!=null && accessTokenEntity.getSub()!="") {
+            if(accessTokenEntity.getSub()!=null && accessTokenEntity.getSub()!="" &&
+                    accessTokenEntity.getAccess_token()!=null && accessTokenEntity.getAccess_token()!="" &&
+                    accessTokenEntity.getRefresh_token()!=null && accessTokenEntity.getRefresh_token()!="") {
                 EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
                     @Override
                     public void success(AccessTokenModel accessTokenModel) {
                       DBHelper.getShared().setAccessToken(accessTokenModel);
-                      //result.success("Access Token Saved SuccessFully");
+                        LoginCredentialsResponseEntity loginCredentialsResponseEntity=new LoginCredentialsResponseEntity();
+                        loginCredentialsResponseEntity.setData(accessTokenEntity);
+                        loginCredentialsResponseEntity.setStatus(200);
+                        loginCredentialsResponseEntity.setSuccess(true);
+                        result.success(loginCredentialsResponseEntity);
                     }
 
                     @Override
@@ -4105,15 +5908,20 @@ public class Cidaas implements IOAuthWebLogin {
                         String loggerMessage = "Set Access Token : " + " Error Message - "+error.getErrorMessage();
                         LogFile.addRecordToLog(loggerMessage);
 
-                        //result.failure(error);
+                        result.failure(error);
                     }
                 });
+
+
+
+
+
             }
             else
             {
-                String loggerMessage = "Set Access Token : " + " Error Message - Sub must not be null";
+                String loggerMessage = "Set Access Token : " + " Error Message - Sub or accessToken or refreshToken must not be null";
                 LogFile.addRecordToLog(loggerMessage);
-               // result.failure(WebAuthError.getShared(context).customException(417,"Sub must not be null",417));
+                result.failure(WebAuthError.getShared(context).customException(417," Sub or accessToken or refreshToken must not be null",417));
             }
 
         }
@@ -4121,7 +5929,7 @@ public class Cidaas implements IOAuthWebLogin {
 
             String loggerMessage = "Set Access Token : " + " Error Message - " + e.getMessage();
             LogFile.addRecordToLog(loggerMessage);
-            //result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
+            result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
         }
     }
 

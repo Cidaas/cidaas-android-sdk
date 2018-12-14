@@ -6,61 +6,107 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class SetupPatternMFAResponseDataEntity implements Serializable{
- String qrCode="";
- String otpauth="";
- String queryString= "";
- String statusId="";
- String verifierId= "";
- String randomNumber= "";
- String current_status="";
+ String secret="";
+ String t="";
+ String d= "";
+ String issuer="";
+ String l= "";
+ String sub= "";
+ String rns="";
+
+ String cid="";
+ String rurl= "";
+ String st= "";
+ String udi="";
+ String current_status;
 
 
- public String getQrCode() {
-  return qrCode;
+ public String getSecret() {
+  return secret;
  }
 
- public void setQrCode(String qrCode) {
-  this.qrCode = qrCode;
+ public void setSecret(String secret) {
+  this.secret = secret;
  }
 
- public String getOtpauth() {
-  return otpauth;
+ public String getT() {
+  return t;
  }
 
- public void setOtpauth(String otpauth) {
-  this.otpauth = otpauth;
+ public void setT(String t) {
+  this.t = t;
  }
 
- public String getQueryString() {
-  return queryString;
+ public String getD() {
+  return d;
  }
 
- public void setQueryString(String queryString) {
-  this.queryString = queryString;
+ public void setD(String d) {
+  this.d = d;
  }
 
- public String getStatusId() {
-  return statusId;
+ public String getIssuer() {
+  return issuer;
  }
 
- public void setStatusId(String statusId) {
-  this.statusId = statusId;
+ public void setIssuer(String issuer) {
+  this.issuer = issuer;
  }
 
- public String getVerifierId() {
-  return verifierId;
+ public String getL() {
+  return l;
  }
 
- public void setVerifierId(String verifierId) {
-  this.verifierId = verifierId;
+ public void setL(String l) {
+  this.l = l;
  }
 
- public String getRandomNumber() {
-  return randomNumber;
+ public String getSub() {
+  return sub;
  }
 
- public void setRandomNumber(String randomNumber) {
-  this.randomNumber = randomNumber;
+ public void setSub(String sub) {
+  this.sub = sub;
+ }
+
+ public String getRns() {
+  return rns;
+ }
+
+ public void setRns(String rns) {
+  this.rns = rns;
+ }
+
+ public String getCid() {
+  return cid;
+ }
+
+ public void setCid(String cid) {
+  this.cid = cid;
+ }
+
+ public String getRurl() {
+  return rurl;
+ }
+
+ public void setRurl(String rurl) {
+  this.rurl = rurl;
+ }
+
+ public String getSt() {
+  return st;
+ }
+
+ public void setSt(String st) {
+  this.st = st;
+ }
+
+ public String getUdi() {
+  return udi;
+ }
+
+ public void setUdi(String udi) {
+  this.udi = udi;
  }
 
  public String getCurrent_status() {

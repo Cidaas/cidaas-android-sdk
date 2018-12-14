@@ -220,7 +220,7 @@ public class LoginActivity extends AppCompatActivity {
         final PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
         passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 

@@ -19,6 +19,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARespons
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.TOTP.TOTPVerificationService;
+import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
@@ -865,7 +866,7 @@ public class TOTPVerificationServiceCallTest {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"statusId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"st\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
                             "    }\n" +
                             "}");
 
@@ -885,11 +886,11 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
+            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
                 @Override
                 public void success(SetupTOTPMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
 
                     latch.countDown();
 
@@ -928,7 +929,7 @@ public class TOTPVerificationServiceCallTest {
                             "    \"success\": true,\n" +
                             "    \"status\": 200,\n" +
                             "    \"data\": {\n" +
-                            "    \"statusId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                            "    \"st\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
                             "    }\n" +
                             "}");
 
@@ -949,11 +950,11 @@ public class TOTPVerificationServiceCallTest {
 
 
 
-            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupTOTPMFARequestEntity(),null ,new Result<SetupTOTPMFAResponseEntity>() {
+            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken",new SetupTOTPMFARequestEntity(),null ,new Result<SetupTOTPMFAResponseEntity>() {
                 @Override
                 public void success(SetupTOTPMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -1016,11 +1017,11 @@ public class TOTPVerificationServiceCallTest {
 
 
 
-            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
+            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
                 @Override
                 public void success(SetupTOTPMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -1082,11 +1083,11 @@ public class TOTPVerificationServiceCallTest {
 
 
 
-            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
+            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
                 @Override
                 public void success(SetupTOTPMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -1139,11 +1140,11 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
+            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
                 @Override
                 public void success(SetupTOTPMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -1197,11 +1198,11 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken","codeChallenge",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
+            totpVerificationService.setupTOTP(loginProperties.get("DomainURL"),"AccessToken",new SetupTOTPMFARequestEntity(),deviceInfoEntity ,new Result<SetupTOTPMFAResponseEntity>() {
                 @Override
                 public void success(SetupTOTPMFAResponseEntity result) {
 
-                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getStatusId());
+                    Assert.assertEquals("556b95f8-9326-4250-a4ee-0e0d887f7a7d",result.getData().getSt());
                     latch.countDown();
 
                 }
@@ -1262,7 +1263,13 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+            scannedRequestEntity.setClient_id("client");
+            scannedRequestEntity.setStatusId("sid");
+            scannedRequestEntity.setUsage_pass("upass");
+            scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
+            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1326,8 +1333,14 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
+            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+            scannedRequestEntity.setClient_id("client");
+            scannedRequestEntity.setStatusId("sid");
+            scannedRequestEntity.setUsage_pass("upass");
+            scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
 
-            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), "USP","STAID","accs",null ,new Result<ScannedResponseEntity>() {
+
+            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), scannedRequestEntity,null ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1392,9 +1405,14 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
+            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+            scannedRequestEntity.setClient_id("client");
+            scannedRequestEntity.setStatusId("sid");
+            scannedRequestEntity.setUsage_pass("upass");
+            scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
 
 
-            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1459,7 +1477,14 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+            scannedRequestEntity.setClient_id("client");
+            scannedRequestEntity.setStatusId("sid");
+            scannedRequestEntity.setUsage_pass("upass");
+            scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
+
+            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1516,7 +1541,13 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+            scannedRequestEntity.setClient_id("client");
+            scannedRequestEntity.setStatusId("sid");
+            scannedRequestEntity.setUsage_pass("upass");
+            scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
+            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1574,7 +1605,13 @@ public class TOTPVerificationServiceCallTest {
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), "USP","STAID","accs",deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            ScannedRequestEntity scannedRequestEntity=new ScannedRequestEntity();
+            scannedRequestEntity.setClient_id("client");
+            scannedRequestEntity.setStatusId("sid");
+            scannedRequestEntity.setUsage_pass("upass");
+            scannedRequestEntity.setDeviceInfo(new DeviceInfoEntity());
+
+            totpVerificationService.scannedTOTP(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 

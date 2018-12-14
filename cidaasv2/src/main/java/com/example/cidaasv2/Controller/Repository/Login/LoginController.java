@@ -8,12 +8,18 @@ import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.Service.Repository.Login.LoginService;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 import timber.log.Timber;
 
@@ -205,5 +211,111 @@ public class LoginController {
             result.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
+
+
+    //Get login URL for Custom browser
+    public void getLoginURL( @NonNull final String baseurl, Dictionary<String, String> loginProperties,
+                             final Dictionary<String, String> challengePropertiesfromparam, @NonNull final Result<String> callbackResult)
+    {
+        try
+        {
+          LoginService.getShared(context).getURLList(baseurl, new Result<Object>() {
+              @Override
+              public void success(Object result) {
+
+                  LinkedHashMap<String, String> urlList = new LinkedHashMap<>();
+                  urlList = (LinkedHashMap<String, String>) result;
+
+                  Dictionary<String,String> loginProperties= DBHelper.getShared().getLoginProperties(baseurl);
+
+                  //////////////////This is for testing purpose
+                  Dictionary<String,String> challengeProperties=new Hashtable<>();
+
+                  if(challengePropertiesfromparam==null) {
+                      challengeProperties=DBHelper.getShared().getChallengeProperties();
+                  }
+                  else if(challengePropertiesfromparam!=null)
+                  {
+                      challengeProperties=challengePropertiesfromparam;
+                  }
+                  else
+                  {
+                      challengeProperties=new Hashtable<>();
+                  }
+
+
+
+
+                  String authzURL=urlList.get("authorization_endpoint");
+                  String clientId=loginProperties.get("ClientId");
+                  String redirectURL=loginProperties.get("RedirectURL");
+                  String challenge=challengeProperties.get("Challenge");
+
+                  if(clientId!=null && clientId!="" && redirectURL!=null && redirectURL!="" && challenge!=null && challenge!=""  ) {
+
+                     String finalURL= URLHelper.getShared().constructLoginURL(authzURL, clientId, redirectURL, challenge, "login");
+                    if(finalURL!=null && finalURL!="") {
+                        callbackResult.success(finalURL);
+                    }
+                    else
+                    {
+                        callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException());
+                    }
+                  }
+                  else
+                  {
+                      callbackResult.failure(WebAuthError.getShared(context)
+                              .customException(WebAuthErrorCode.PROPERTY_MISSING,"ClientId or RedirectURL of Challenge must not be empty"
+                                      ,HttpStatusCode.EXPECTATION_FAILED));
+                  }
+
+
+
+
+              }
+
+              @Override
+              public void failure(WebAuthError error) {
+                callbackResult.failure(error);
+              }
+          });
+        }
+        catch (Exception e)
+        {
+            callbackResult.failure(WebAuthError.getShared(context)
+                    .customException(WebAuthErrorCode.GET_LOGIN_URL_FAILURE,e.getMessage()
+                            ,HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+
+    //Get login URL for Custom browser
+    public void getSocialLoginURL( @NonNull final String baseurl,String provider,String requestId, @NonNull final Result<String> callbackResult)
+    {
+        try
+        {
+          if(baseurl!=null && baseurl!="" && provider!=null && provider!="" &&  requestId!=null && requestId!="")
+          {
+              String finalURL= URLHelper.getShared().constructSocialURL(baseurl, provider, requestId);
+
+              if(finalURL!=null && finalURL!="") {
+                  callbackResult.success(finalURL);
+              }
+              else
+              {
+                  callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException());
+              }
+
+          }
+        }
+        catch (Exception e)
+        {
+            callbackResult.failure(WebAuthError.getShared(context)
+                    .customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,e.getMessage()
+                            ,HttpStatusCode.EXPECTATION_FAILED));
+        }
+    }
+
+
 
 }

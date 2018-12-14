@@ -8,10 +8,20 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticateVoiceRequestEntity implements Serializable {
-    String statusId;
+    String statusId="";
     DeviceInfoEntity deviceInfo;
-    String userDeviceId;
+    String userDeviceId="";
     File voiceFile;
+    String usage_pass="";
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
+
 
     public File getVoiceFile() {
         return voiceFile;

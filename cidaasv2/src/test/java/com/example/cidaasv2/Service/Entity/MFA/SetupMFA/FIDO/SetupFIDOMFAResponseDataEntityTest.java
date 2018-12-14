@@ -5,59 +5,102 @@ import org.junit.Test;
 
 public class SetupFIDOMFAResponseDataEntityTest {
 
-    SetupFIDOMFAResponseDataEntity setupFIDOResponseDataEntity=new SetupFIDOMFAResponseDataEntity();
+    SetupFIDOMFAResponseDataEntity setupResponseDataEntity=new SetupFIDOMFAResponseDataEntity();
+
+
+
 
 
     @Test
-    public void setQrCode() throws Exception {
+    public void setSecret() throws Exception {
 
-        setupFIDOResponseDataEntity.setQrCode("Test");
+        setupResponseDataEntity.setSecret("Test");
 
-        Assert.assertEquals("Test",setupFIDOResponseDataEntity.getQrCode());
+        Assert.assertEquals("Test",setupResponseDataEntity.getSecret());
     }
 
     @Test
     public void setOtpauth() throws Exception {
 
-        setupFIDOResponseDataEntity.setOtpauth("Test");
+        setupResponseDataEntity.setT("Test");
 
-        Assert.assertEquals("Test",setupFIDOResponseDataEntity.getOtpauth());
+        Assert.assertEquals("Test",setupResponseDataEntity.getT());
     }
     @Test
     public void setQueryString() throws Exception {
 
-        setupFIDOResponseDataEntity.setQueryString("Test");
+        setupResponseDataEntity.setD("Test");
 
-        Assert.assertEquals("Test",setupFIDOResponseDataEntity.getQueryString());
+        Assert.assertEquals("Test",setupResponseDataEntity.getD());
     }
     @Test
-    public void setStatusId() throws Exception {
+    public void setissuer() throws Exception {
 
-        setupFIDOResponseDataEntity.setStatusId("StatusId");
+        setupResponseDataEntity.setIssuer("test");
 
-        Assert.assertEquals("StatusId",setupFIDOResponseDataEntity.getStatusId());
+        Assert.assertEquals("test",setupResponseDataEntity.getIssuer());
     }
     @Test
-    public void setVerifierId() throws Exception {
+    public void setl() throws Exception {
 
-        setupFIDOResponseDataEntity.setVerifierId("VerifierId");
+        setupResponseDataEntity.setL("test");
 
-        Assert.assertEquals("VerifierId",setupFIDOResponseDataEntity.getVerifierId());
+        Assert.assertEquals("test",setupResponseDataEntity.getL());
     }
     @Test
     public void setRandomNumber() throws Exception {
 
-        setupFIDOResponseDataEntity.setRandomNumber("Test");
+        setupResponseDataEntity.setRns("Test");
 
-        Assert.assertEquals("Test",setupFIDOResponseDataEntity.getRandomNumber());
+        Assert.assertEquals("Test",setupResponseDataEntity.getRns());
     }
 
     @Test
     public void setCurrent_status() throws Exception {
 
-        setupFIDOResponseDataEntity.setCurrent_status("Test");
+        setupResponseDataEntity.setCurrent_status("Test");
 
-        Assert.assertEquals("Test",setupFIDOResponseDataEntity.getCurrent_status());
+        Assert.assertEquals("Test",setupResponseDataEntity.getCurrent_status());
+    }
+
+
+
+    @Test
+    public void setSt() throws Exception {
+
+        setupResponseDataEntity.setSt("StatusId");
+
+        Assert.assertEquals("StatusId",setupResponseDataEntity.getSt());
+    }
+
+    @Test
+    public void setUdi() throws Exception {
+
+        setupResponseDataEntity.setUdi("udi");
+
+        Assert.assertEquals("udi",setupResponseDataEntity.getUdi());
+    }
+    @Test
+    public void setRurl() throws Exception {
+
+        setupResponseDataEntity.setRurl("Test");
+
+        Assert.assertEquals("Test",setupResponseDataEntity.getRurl());
+    }
+    @Test
+    public void setCid() throws Exception {
+
+        setupResponseDataEntity.setCid("Test");
+
+        Assert.assertEquals("Test",setupResponseDataEntity.getCid());
+    }
+
+    @Test
+    public void setSub() throws Exception {
+
+        setupResponseDataEntity.setSub("Test");
+
+        Assert.assertEquals("Test",setupResponseDataEntity.getSub());
     }
 }
 
