@@ -372,9 +372,9 @@ public class ClientServiceTestCall {
             };
             server.setDispatcher(dispatcher);
 
-            Cidaas.baseurl="https://"+server.getHostName()+":203406/";
+            Cidaas.baseurl="https://"+server.getHostName()+":203452/";
 
-            clientService.getClientInfo("req","localhost:2006", new Result<ClientInfoEntity>() {
+            clientService.getClientInfo("req","localhost:2007", new Result<ClientInfoEntity>() {
                 @Override
                 public void success(ClientInfoEntity result) {
                     Assert.assertEquals("Raja Developer",result.getData().getClient_name());

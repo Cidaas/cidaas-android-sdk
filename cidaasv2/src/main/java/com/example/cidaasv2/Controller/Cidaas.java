@@ -5900,6 +5900,7 @@ public class Cidaas implements IOAuthWebLogin {
                         loginCredentialsResponseEntity.setData(accessTokenEntity);
                         loginCredentialsResponseEntity.setStatus(200);
                         loginCredentialsResponseEntity.setSuccess(true);
+                        result.success(loginCredentialsResponseEntity);
                     }
 
                     @Override
