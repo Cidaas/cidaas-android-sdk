@@ -5174,7 +5174,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-    public void loginWithBrowser(@Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
         try {
 
            getLoginURL(new Result<String>() {
@@ -5188,7 +5188,7 @@ public class Cidaas implements IOAuthWebLogin {
                                              builder.setShowTitle(true);//TO show title
 
                       //  CustomTabsClient.getPackageName()
-                    builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                    builder.setStartAnimations(activityContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
                         if (color != null) {
 
@@ -5225,7 +5225,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void loginWithSocial(@NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain, final HashMap<String, String>... extraParams)
+    public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain, final HashMap<String, String>... extraParams)
     {
 
       checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -5234,7 +5234,7 @@ public class Cidaas implements IOAuthWebLogin {
               getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
                   @Override
                   public void success(AuthRequestResponseEntity result) {
-                      loginWithSocial(result.getData().getRequestId(),provider,color,callbacktoMain);
+                      loginWithSocial(activityContext,result.getData().getRequestId(),provider,color,callbacktoMain);
                   }
 
                   @Override
@@ -5252,7 +5252,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-    public void loginWithSocial(@NonNull final String requestId, @NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+    public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String requestId, @NonNull final String provider, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
         try {
 
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -5287,7 +5287,7 @@ public class Cidaas implements IOAuthWebLogin {
                                     customTabsIntent.intent.setPackage(packageName);
                                 }
 
-                                customTabsIntent.launchUrl(context, Uri.parse(url));
+                                customTabsIntent.launchUrl(activityContext, Uri.parse(url));
                             } else {
                                 //TODo callback Failure
                                 String loggerMessage = "LoginURL failure : " + "Error Code - ";

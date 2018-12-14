@@ -64,8 +64,11 @@ public class RequestIdServiceTest {
 
     @Test
     public void testGetRequestID() throws Exception {
-
-        requestIdService.getRequestID(null,null,null, new Result<AuthRequestResponseEntity>() {
+        Dictionary<String,String> loginProperties=new Hashtable<>();
+        loginProperties.put("DomainURL","");
+        loginProperties.put("ClientId","");
+        loginProperties.put("RedirectURL","RedirectURL");
+        requestIdService.getRequestID(loginProperties,null,null, new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
