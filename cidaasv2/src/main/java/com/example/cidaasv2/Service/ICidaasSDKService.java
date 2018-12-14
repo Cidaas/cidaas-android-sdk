@@ -291,6 +291,13 @@ public interface ICidaasSDKService {
                                                     @Part MultipartBody.Part face,
                                                     @PartMap() HashMap<String, RequestBody> map);
 
+    //Enroll Face with out photo MFA
+
+    @Multipart
+    @POST
+    Call<EnrollFaceMFAResponseEntity> enrollFaceWithoutPhotoMFA(@Url String url, @HeaderMap Map<String,String>headers,
+                                                    @PartMap() HashMap<String, RequestBody> map);
+
 
     //Inititate Face MFA
     @POST

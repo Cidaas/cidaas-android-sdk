@@ -19,20 +19,18 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
-import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
-import java.util.List;
 
 import timber.log.Timber;
 
@@ -299,12 +297,28 @@ public class FaceConfigurationController {
     {
         try
         {
-
+           File image=null;
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
                 if (enrollFaceMFARequestEntity.getUserDeviceId() != null && !enrollFaceMFARequestEntity.getUserDeviceId().equals("") &&
-                        enrollFaceMFARequestEntity.getStatusId() != null && !enrollFaceMFARequestEntity.getStatusId().equals("") &&
-                        enrollFaceMFARequestEntity.getImagetoSend() != null ) {
+                        enrollFaceMFARequestEntity.getStatusId() != null && !enrollFaceMFARequestEntity.getStatusId().equals("")
+                      ) {
+
+
+                    final EnrollFaceMFARequestEntity enrollFaceMFARequestEntityWithPass=new EnrollFaceMFARequestEntity();
+
+
+
+                    if(enrollFaceMFARequestEntity.getImagetoSend() != null)
+                    {
+                        enrollFaceMFARequestEntityWithPass.setImagetoSend(enrollFaceMFARequestEntity.getImagetoSend());
+                        enrollFaceMFARequestEntity.setImagetoSend(null);
+                    }
+                    else
+                    {
+                        enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    }
 
                     // call Enroll Service
                     FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequestEntity,
@@ -333,13 +347,12 @@ public class FaceConfigurationController {
                                         public void onFinish() {
                                             if (instceID != null && !instceID.equals("")) {
 
-                                                //enroll
-                                                EnrollFaceMFARequestEntity enrollFaceMFARequest = new EnrollFaceMFARequestEntity();
-                                                enrollFaceMFARequest.setUsage_pass(instceID);
-                                                enrollFaceMFARequest.setImagetoSend(enrollFaceMFARequestEntity.getImagetoSend());
+
+                                                enrollFaceMFARequestEntityWithPass.setUsage_pass(instceID);
+
 
                                                 // call Enroll Service
-                                                FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequest,
+                                                FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequestEntityWithPass,
                                                         null, new Result<EnrollFaceMFAResponseEntity>() {
                                                             @Override
                                                             public void success(EnrollFaceMFAResponseEntity serviceresult) {

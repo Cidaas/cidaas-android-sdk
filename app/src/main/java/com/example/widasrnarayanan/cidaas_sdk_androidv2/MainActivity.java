@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             HashMap<String,String> extraParam=new HashMap<>();
             extraParam.put("scope","openid profile email phone offline_access");
             Cidaas.extraParams=extraParam;
-            cidaas.loginWithBrowser("#009900", new Result<AccessTokenEntity>() {
+            cidaas.loginWithBrowser(this,"#009900", new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
@@ -136,10 +136,29 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             extraParam.put("scope","openid profile email phone offline_access");
             Cidaas.extraParams=extraParam;
 
-            cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+
+            cidaas.loginWithSocial(this, "linkedin", null, new Result<AccessTokenEntity>() {
+                @Override
+                public void success(AccessTokenEntity result) {
+                    Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+
+
+                    Intent intent=new Intent(MainActivity.this,SuccessfulLogin.class);
+                    intent.putExtra("sub",result.getSub());
+                    intent.putExtra("accessToken",result.getAccess_token());
+                    startActivity(intent);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+         /*   cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
-                    cidaas.loginWithSocial(result.getData().getRequestId(),"linkedin","#009900", new Result<AccessTokenEntity>() {
+                    cidaas.loginWithSocial(this,"linkedin","#009900", new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
                             Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
@@ -156,13 +175,13 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
                             Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-                }
+                }*/
 
-                @Override
+              /*  @Override
                 public void failure(WebAuthError error) {
 
                 }
-            });
+            });*/
 
         }
         catch (Exception e)

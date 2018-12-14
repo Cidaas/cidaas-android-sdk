@@ -453,13 +453,21 @@ public class Cidaas implements IOAuthWebLogin {
     //Get Request Id without passing any value
 
 
-    public void getRequestId(final Dictionary<String, String> loginproperties ,final Result<AuthRequestResponseEntity> Primaryresult,@Nullable HashMap<String, String>... extraParams) {
+    public void getRequestId(final Dictionary<String, String> loginproperties ,final Result<AuthRequestResponseEntity> Primaryresult,
+                             @Nullable HashMap<String, String>... extraParams) {
         try {
 
-            DomainURL=loginproperties.get("DomainURL");
-            Cidaas.baseurl=DomainURL;
+            if(loginproperties!=null && loginproperties.get("DomainURL")!=null && loginproperties.get("DomainURL")!="") {
 
-            RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult,extraParams);
+                DomainURL = loginproperties.get("DomainURL");
+                Cidaas.baseurl = DomainURL;
+
+                RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult, extraParams);
+            }
+            else
+            {
+                Primaryresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            }
         } catch (Exception e) {
 
             String loggerMessage = "Request-Id  failure : " + "Error Code - "
@@ -5268,7 +5276,7 @@ public class Cidaas implements IOAuthWebLogin {
                                 builder.setShowTitle(true);//TO show title
 
                                 //  CustomTabsClient.getPackageName()
-                                builder.setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                                builder.setStartAnimations(activityContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
 
 
@@ -5875,11 +5883,13 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
-    public void setAccessToken(AccessTokenEntity accessTokenEntity){
+    public void setAccessToken(AccessTokenEntity accessTokenEntity,Result<LoginCredentialsRequestEntity> result){
         try
         {
 
-            if(accessTokenEntity.getSub()!=null && accessTokenEntity.getSub()!="") {
+            if(accessTokenEntity.getSub()!=null && accessTokenEntity.getSub()!="" &&
+                    accessTokenEntity.getAccess_token()!=null && accessTokenEntity.getAccess_token()!="" &&
+                    accessTokenEntity.getRefresh_token()!=null && accessTokenEntity.getRefresh_token()!="") {
                 EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
                     @Override
                     public void success(AccessTokenModel accessTokenModel) {
@@ -5898,9 +5908,9 @@ public class Cidaas implements IOAuthWebLogin {
             }
             else
             {
-                String loggerMessage = "Set Access Token : " + " Error Message - Sub must not be null";
+                String loggerMessage = "Set Access Token : " + " Error Message - Sub or accessToken or refreshToken must not be null";
                 LogFile.addRecordToLog(loggerMessage);
-               // result.failure(WebAuthError.getShared(context).customException(417,"Sub must not be null",417));
+                result.failure(WebAuthError.getShared(context).customException(417," Sub or accessToken or refreshToken must not be null",417));
             }
 
         }
@@ -5908,7 +5918,7 @@ public class Cidaas implements IOAuthWebLogin {
 
             String loggerMessage = "Set Access Token : " + " Error Message - " + e.getMessage();
             LogFile.addRecordToLog(loggerMessage);
-            //result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
+            result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
         }
     }
 
