@@ -14,7 +14,7 @@ cidaas provides numerous options to ensure safe and diverse mechanisms for login
     * [Configuration](#configure-voice-recognition)
     * [Usage](#login-via-voice-recognition)
     <!--te-->
-* [Touch ID](#Fingerprint-verification)
+* [Fingerprint](##fingerprint-verification)
     <!--ts-->
     * [Configuration](#configure-Fingerprint-verification)
     * [Usage](#login-via-Fingerprint-verification)
@@ -716,7 +716,7 @@ cidaas.loginWithPatternRecognition("RED[1,2,3]", PasswordlessEntity passwordless
 }
 ```
 
-#### fingerprint Verification
+#### Fingerprint Verification
 
 You may want to allow users to use their Fingerprint on their mobile devices or computer peripheral to be used for passwordless login.To do this Fingerprint Verification as a passwordless login, you need to configure it first.
 
