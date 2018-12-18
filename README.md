@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.org/Cidaas/cidaas-sdk-android-v2.svg?branch=development)](https://travis-ci.org/Cidaas/cidaas-sdk-android-v2) 
 [![codecov.io](https://codecov.io/gh/Cidaas/cidaas-sdk-android-v2/branch/development/graph/badge.svg)](https://codecov.io/gh/Cidaas/cidaas-sdk-android-v2/branch/development)
+[![jitpack](https://jitpack.io/v/Cidaas/cidaas-sdk-android-v2.svg)](https://jitpack.io/#Cidaas/cidaas-sdk-android-v2)
+[![Platform](https://img.shields.io/badge/Platforms-android-4E4E4E.svg?colorA=28a745)](#installation)
+
 
 The steps here will guide you through setting up and managing authentication and authorization in your apps using cidaas SDK.
 
@@ -51,9 +54,9 @@ dependencies {
  ```
  ## Getting started
  
- Create an asset folder by right click the app module goto new->folder->asset folder and click the finish button
+ Create an asset folder by right click the app module goto new->folder->Assets folder and click the finish button
 
-Create an xml file named as <b>Cidaas.xml</b> and fill all the inputs in key value pair. The inputs are below mentioned.
+Create an xml file named as <b>Cidaas.xml</b> inside the asset folder and fill all the inputs in key value pair. The inputs are below mentioned.
 
 > ##### Note:- The File name must be Cidaas.xml 
 
@@ -114,7 +117,7 @@ You can login using your native browser and redirects to the App once successful
 You can also perform social login using your native browser and redirects to the App once successfully logged in. To perform social login call ****loginWithSocial()****.
 
 ```swift
- cidaas.loginWithSocial(yourContext, yourSocialProvider, "optinalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+ cidaas.loginWithSocial(yourContext, yourSocialProvider, "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
 		//Your Success Code
@@ -142,7 +145,7 @@ if (token != null) {
 }
 ```
 
-If you use universal links, configure your Domain setup and resume the SDK from your activite's **onCreate** method
+If you use app links, configure your Domain setup and resume the SDK from your activite's **onCreate** method
 
 
 ```java
