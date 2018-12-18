@@ -7,7 +7,7 @@ The steps here will guide you through setting up and managing authentication and
 <!--ts-->
 * [Getting RequestId](#getting-request-id)
 * [Getting Tenant Information](#getting-tenant-info)
-* [Getting Client Information](#getting-client-info)
+* [Getting Client Information](#get-client-info)
 * [Login](#login)
     <!--ts-->
     * [Login with credentials](#login-with-credentials)
