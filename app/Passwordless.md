@@ -14,7 +14,7 @@ cidaas provides numerous options to ensure safe and diverse mechanisms for login
     * [Configuration](#configure-voice-recognition)
     * [Usage](#login-via-voice-recognition)
     <!--te-->
-* [Fingerprint](##fingerprint-verification)
+* [Fingerprint](#fingerprint-verification)
     <!--ts-->
     * [Configuration](#configure-Fingerprint-verification)
     * [Usage](#login-via-Fingerprint-verification)
