@@ -36,7 +36,7 @@ The steps here will guide you through setting up and managing authentication and
     * [Handle Reset Password](#handle-reset-password)
     * [Reset Password](#reset-password)
     <!--te-->
-* [Passwordless or Multifactor Authentication](/Example/Readme/Passwordless.md)
+* [Passwordless or Multifactor Authentication](/app/Passwordless.md)
 <!--te-->
 
 
