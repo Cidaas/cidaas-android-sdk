@@ -16,8 +16,8 @@ cidaas provides numerous options to ensure safe and diverse mechanisms for login
     <!--te-->
 * [Fingerprint](#fingerprint-verification)
     <!--ts-->
-    * [Configuration](#configure-Fingerprint-verification)
-    * [Usage](#login-via-Fingerprint-verification)
+    * [Configuration](#configure-fingerprint-verification)
+    * [Usage](#login-via-fingerprint-verification)
     <!--te-->
 * [Pattern](#pattern-recognition)
     <!--ts-->
@@ -57,12 +57,13 @@ cidaas provides numerous options to ensure safe and diverse mechanisms for login
     
 #### Device Verification
     
-For TOTP, Pattern, Touch ID, Smart Push, Face and Voice verification, you need to verify the device to provide more security. For that call **validateDevice()** from your AppDelegate's didReceiveRemoteNotification method.
+For TOTP, Pattern, Touch ID, Smart Push, Face and Voice verification, you need to verify the device to provide more security. For that call **setremoteMessage()** from your MyFirebaseMessagingService's onMessageReceived method.
     
-```swift
-func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-    Cidaas.shared.validateDevice(userInfo: userInfo)
-}
+```java
+ public void onMessageReceived(RemoteMessage remoteMessage) {
+        Cidaas cidaas=Cidaas.getInstance(this);
+        cidaas.setremoteMessage(remoteMessage.getData());
+  }
 ```
 
 #### Email
@@ -76,15 +77,15 @@ To receive a verification code via Email, call **configureEmail()**.
 ```java
 
 cidaas.configureEmail("your sub", new Result < SetupEmailMFAResponseEntity > () {
-@Override
-public void success(SetupEmailMFAResponseEntity result) {
+  @Override
+  public void success(SetupEmailMFAResponseEntity result) {
     //Your success code here
-}
+  }
 
-@Override
-public void failure(WebAuthError error) 
-  //Your failure code here
-}
+  @Override
+  public void failure(WebAuthError error) 
+    //Your failure code here
+  }
 });
 ```
 
@@ -108,15 +109,15 @@ Once you received your verification code via Email, you need to verify that code
 ```java
 cidaas.enrollEmail("your_code","your_status_id", new Result < EnrollEmailMFAResponseEntity > () {
 
-@Override
-public void success(EnrollEmailMFAResponseEntity result) {
-     //Your success code here
-}
+  @Override
+  public void success(EnrollEmailMFAResponseEntity result) {
+      //Your success code here
+  }
 
-@Override
-public void failure(WebAuthError error) {
-    //Your failure code here
-}
+  @Override
+  public void failure(WebAuthError error) {
+     //Your failure code here
+  }
 });
 
 ```
@@ -145,15 +146,15 @@ passwordlessEntity.setSub(sub);
 
 cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
 
-@Override
-public void success(LoginCredentialsResponseEntity result) {
-  //Your success code here
-}
+  @Override
+  public void success(LoginCredentialsResponseEntity result) {
+   //Your success code here
+  }
 
-@Override
-public void failure(WebAuthError error) {
-  //Your failure code here
-}
+  @Override
+  public void failure(WebAuthError error) {
+    //Your failure code here
+  }
 }); 
 
 ```
@@ -175,15 +176,15 @@ Once you received your verification code via Email, you need to verify the code.
 ```java
 
 cidaas.verifyEmail("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
-@Override
-public void success(LoginCredentialsResponseEntity result) {
-  // Your Success code here
-}
+  @Override
+  public void success(LoginCredentialsResponseEntity result) {
+    // Your Success code here
+  }
 
-@Override
-public void failure(WebAuthError error) {
-  // Your failure code here
-}
+  @Override
+  public void failure(WebAuthError error) {
+    // Your failure code here
+  }
 }); 
 ```
 **Response:**
@@ -214,15 +215,15 @@ To receive a verification code via SMS, call **configureSMS()**.
 ```java
 
 cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
- @Override
- public void success(SetupSMSMFAResponseEntity result) {
-  //Your success code here
- }
+  @Override
+  public void success(SetupSMSMFAResponseEntity result) {
+    //Your success code here
+  }
 
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
+  @Override
+  public void failure(WebAuthError error) {
+    //Your failure code here
+  }
 });
     
     
@@ -245,15 +246,15 @@ Once you received your verification code via SMS, you need to verify the code. F
 
 ```java
 cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFAResponseEntity > () {
- @Override
- public void success(EnrollSMSMFAResponseEntity result) {
-  //Your success code here
- }
+  @Override
+  public void success(EnrollSMSMFAResponseEntity result) {
+    //Your success code here
+  }
 
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
+  @Override
+  public void failure(WebAuthError error) {
+    //Your failure code here
+  }
 });
     
 ```
