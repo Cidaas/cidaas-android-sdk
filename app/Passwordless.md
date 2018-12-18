@@ -1,6 +1,69 @@
-#### Passwordless or Multifactor Authentication
+# Passwordless or Multifactor Authentication
 
-cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in cidaas.
+cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in cidaas.    
+
+## Table of Contents
+<!--ts-->
+* [Face](#face-recognition)
+    <!--ts-->
+    * [Configuration](#configure-face-recognition)
+    * [Usage](#login-via-face-recognition)
+    <!--te-->
+* [Voice](#voice-recognition)
+    <!--ts-->
+    * [Configuration](#configure-voice-recognition)
+    * [Usage](#login-via-voice-recognition)
+    <!--te-->
+* [Touch ID](#Fingerprint-verification)
+    <!--ts-->
+    * [Configuration](#configure-Fingerprint-verification)
+    * [Usage](#login-via-Fingerprint-verification)
+    <!--te-->
+* [Pattern](#pattern-recognition)
+    <!--ts-->
+    * [Configuration](#configure-pattern-recognition)
+    * [Usage](#login-via-pattern-recognition)
+    <!--te-->
+* [Smart Push](#smartpush-notification)
+    <!--ts-->
+    * [Configuration](#configure-smartpush-notification)
+    * [Usage](#login-via-smartpush-notification)
+    <!--te-->
+* [TOTP](#totp)
+    <!--ts-->
+    * [Configuration](#configure-totp)
+    * [Usage](#login-via-totp)
+    <!--te-->
+* [Email](#email)
+    <!--ts-->
+    * [Configuration](#configure-email)
+    * [Usage](#login-via-email)
+    <!--te-->
+* [SMS](#sms)
+    <!--ts-->
+    * [Configuration](#configure-sms)
+    * [Usage](#login-via-sms)
+    <!--te-->
+* [IVR](#ivr)
+    <!--ts-->
+    * [Configuration](#configure-ivr)
+    * [Usage](#login-via-ivr)
+    <!--te-->
+* [Backupcode](#backupcode)
+    <!--ts-->
+    * [Configuration](#configure-backupcode)
+    * [Usage](#login-via-backupcode)
+    <!--te--> 
+    
+#### Device Verification
+    
+For TOTP, Pattern, Touch ID, Smart Push, Face and Voice verification, you need to verify the device to provide more security. For that call **validateDevice()** from your AppDelegate's didReceiveRemoteNotification method.
+    
+```swift
+func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+    Cidaas.shared.validateDevice(userInfo: userInfo)
+}
+```
 
 #### Email
 
