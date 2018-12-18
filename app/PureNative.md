@@ -40,7 +40,6 @@ The steps here will guide you through setting up and managing authentication and
      <!--ts-->
     * [Get Consent details](#getting-consent-details)
     * [Login after Consent](#login-after-consent)
-    * [Reset Password](#reset-password)
     <!--te-->
 * [Passwordless or Multifactor Authentication](/app/Passwordless.md)
 <!--te-->
