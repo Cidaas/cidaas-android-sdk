@@ -62,9 +62,9 @@ A sample XML file would look like this :
 ``` 
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-		<item name="DomainURL" type="string">DomainURL</item>
-		<item name="ClientId" type="string">ClientId</item>
-		<item name="RedirectURL">RedirectURL</item>
+	<item name="DomainURL" type="string">DomainURL</item>
+	<item name="ClientId" type="string">ClientId</item>
+	<item name="RedirectURL">RedirectURL</item>
 </resources> 
 
 ```
@@ -100,12 +100,12 @@ You can login using your native browser and redirects to the App once successful
  cidaas.loginWithBrowser(yourContext, "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
-							//Your Success Code
+		//Your Success Code
          }
 
          @Override
          public void failure(WebAuthError error) {
-							//Your Failure Code
+		//Your Failure Code
          }
      });
 ```
@@ -117,12 +117,12 @@ You can also perform social login using your native browser and redirects to the
  cidaas.loginWithSocial(yourContext, yourSocialProvider, "optinalColorParameterInColorCode", new Result<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
-							//Your Success Code
+		//Your Success Code
          }
 
          @Override
          public void failure(WebAuthError error) {
-							//Your Failure Code
+		//Your Failure Code
          }
  });
 ```
@@ -136,10 +136,10 @@ Use [customScheme](https://developer.android.com/training/app-links/deep-linking
 If you use deep link or custom scheme, add intent in manifest and resume the SDK from your activite's **onCreate** method
 
 ```java
- String token = getIntent().getDataString();
-        if (token != null) {
-            cidaas.handleToken(token);
-						}
+String token = getIntent().getDataString();
+if (token != null) {
+	cidaas.handleToken(token);
+}
 ```
 
 If you use universal links, configure your Domain setup and resume the SDK from your activite's **onCreate** method
@@ -147,9 +147,9 @@ If you use universal links, configure your Domain setup and resume the SDK from 
 
 ```java
  String token = getIntent().getDataString();
-        if (token != null) {
-            cidaas.handleToken(token);
-						}
+ if (token != null) {
+ 	cidaas.handleToken(token);
+}
 ```
 
 #### Getting Request Id
