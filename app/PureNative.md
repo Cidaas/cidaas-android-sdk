@@ -36,6 +36,12 @@ The steps here will guide you through setting up and managing authentication and
     * [Handle Reset Password](#handle-reset-password)
     * [Reset Password](#reset-password)
     <!--te-->
+* [Consent](#consent-management)
+     <!--ts-->
+    * [Get Consent details](#getting-consent-details)
+    * [Login after Consent](#login-after-consent)
+    * [Reset Password](#reset-password)
+    <!--te-->
 * [Passwordless or Multifactor Authentication](/app/Passwordless.md)
 <!--te-->
 
@@ -586,6 +592,7 @@ public void failure(WebAuthError error) {
     "status": 200,
     "data": {
         "token_type": "Bearer",
+        "sub": "51701ec8-f2d7-4361-a727-f8df476a711a",
         "expires_in": 86400,
         "access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUxNWYxMGE5LTV",
         "session_state": "CNT7TF6Og-cCNq4Y68",
@@ -849,6 +856,7 @@ cidaas.loginAfterConsent(ConsentEntity consentEntity, new Result < LoginCredenti
     "status": 200,
     "data": {
         "token_type": "Bearer",
+        "sub": "51701ec8-f2d7-4361-a727-f8df476a711a",
         "expires_in": 86400,
         "access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUxNWYxMGE5LTVmNDktNGZlYS04MGNlLTZmYTkzMzk2YjI4NyJ9*****",
         "session_state": "CNT7GGALeoKyTF6Og-cZHAuHUJBQ20M0jLL35oh3UGk.vcNxCNq4Y68",
