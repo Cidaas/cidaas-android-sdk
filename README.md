@@ -5,7 +5,23 @@
 
 The steps here will guide you through setting up and managing authentication and authorization in your apps using cidaas SDK.
 
-https://docs.cidaas.de/
+## Table of Contents
+
+<!--ts-->
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Getting started](#getting-started)
+* [Getting Client Id and urls](#getting-client-id-and-urls)
+* [Initialisation](#initialisation)
+* [Usage](#usage)
+    <!--ts-->
+    * [Native Browser Login](#native-browser-login)
+        <!--ts-->
+        * [Classic Login](#classic-login)
+        * [Social Login](#social-login)
+        <!--te-->
+    * [Native UI Integration](/Example/Readme/PureNativeLogin.md)
+    <!--te-->
 
 ## Requirements
 
@@ -30,7 +46,7 @@ allprojects {
  Add the dependency to app module
  ```java
 dependencies {
- implementation 'com.github.Cidaas:cidaas-v2-sdk-android:1.0.0'
+ implementation 'com.github.Cidaas:cidaas-v2-sdk-android:1.0.2'
 }
  ```
  ## Getting started
@@ -46,9 +62,9 @@ A sample XML file would look like this :
 ``` 
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<item name="DomainURL" type="string">DomainURL</item>
-<item name="ClientId" type="string">ClientId</item>
-<item name="RedirectURL">RedirectURL</item>
+		<item name="DomainURL" type="string">DomainURL</item>
+		<item name="ClientId" type="string">ClientId</item>
+		<item name="RedirectURL">RedirectURL</item>
 </resources> 
 
 ```
@@ -75,6 +91,66 @@ Cidaas cidaas =new Cidaas(getApplicationContext);
 ```
 
 ### Usage
+
+#### Native Browser Login 
+#### Classic Login
+You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
+
+```java
+ cidaas.loginWithBrowser(yourContext, "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+         @Override
+         public void success(AccessTokenEntity result) {
+							//Your Success Code
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+							//Your Failure Code
+         }
+     });
+```
+
+#### Social Login
+You can also perform social login using your native browser and redirects to the App once successfully logged in. To perform social login call ****loginWithSocial()****.
+
+```swift
+ cidaas.loginWithSocial(yourContext, yourSocialProvider, "optinalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+         @Override
+         public void success(AccessTokenEntity result) {
+							//Your Success Code
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+							//Your Failure Code
+         }
+ });
+```
+where social provider may be either facebook, google, linkedin or any other providers
+
+Use [customScheme](https://developer.android.com/training/app-links/deep-linking) or [App Link](https://developer.android.com/studio/write/app-link-indexing) to return back the control from browser to App.
+
+    Note : Don't forget to add the custom scheme url in your App's redirect url section
+
+
+If you use deep link or custom scheme, add intent in manifest and resume the SDK from your activite's **onCreate** method
+
+```java
+ String token = getIntent().getDataString();
+        if (token != null) {
+            cidaas.handleToken(token);
+						}
+```
+
+If you use universal links, configure your Domain setup and resume the SDK from your activite's **onCreate** method
+
+
+```java
+ String token = getIntent().getDataString();
+        if (token != null) {
+            cidaas.handleToken(token);
+						}
+```
 
 #### Getting Request Id
 
