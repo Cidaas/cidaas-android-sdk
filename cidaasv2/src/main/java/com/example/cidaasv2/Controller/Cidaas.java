@@ -230,9 +230,9 @@ public class Cidaas implements IOAuthWebLogin {
     private static Cidaas cidaasInstance;
 
 
-    public static Cidaas getInstance(Context context) {
+    public static Cidaas getInstance(Context YourActivitycontext) {
         if (cidaasInstance == null) {
-            cidaasInstance = new Cidaas(context);
+            cidaasInstance = new Cidaas(YourActivitycontext);
         }
 
         return cidaasInstance;
@@ -263,8 +263,8 @@ public class Cidaas implements IOAuthWebLogin {
     public DeviceInfoEntity deviceInfoEntity;
 
 
-    public Cidaas(Context yourContext) {
-        this.context = yourContext;
+    public Cidaas(Context yourActivityContext) {
+        this.context = yourActivityContext;
 
         //Initialise Shared Preferences
         DBHelper.setConfig(context);
@@ -358,7 +358,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     //Get the remote messages from the Push notification
-    public static void setremoteMessage(Map<String, String> instanceIdFromPush) {
+    public static void validateDevice(Map<String, String> instanceIdFromPush) {
         try {
             if (instanceIdFromPush.get("usage_pass") != null && instanceIdFromPush.get("usage_pass") != "") {
                 instanceId = instanceIdFromPush.get("usage_pass");
@@ -5067,7 +5067,6 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
 
-
                     ChangePasswordController.getShared(context).changePassword(baseurl, changePasswordRequestEntity, result);
                 }
 
@@ -5270,7 +5269,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     getSocialLoginURL(requestId,provider,new Result<String>() {
                         @Override
-                        public void success(String socialLoginURL)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {
+                        public void success(String socialLoginURL){
                             logincallback = callbacktoMain;
                             if (socialLoginURL != null) {
                                 String url = socialLoginURL;
@@ -5765,7 +5764,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     //Resume After open App From Broswer
-    public void resume(String code){   /*,Result<AccessTokenEntity> callbacktoMain*/
+    public void handleToken(String code){   /*,Result<AccessTokenEntity> callbacktoMain*/
 
         if (logincallback != null) {
 

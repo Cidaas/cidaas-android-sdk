@@ -18,15 +18,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public MyFirebaseMessagingService() {
     }
 
+
+
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //super.onMessageReceived(remoteMessage);
         Timber.d("push Message rcvd");
 
             //Toast.makeText(this, "Success"+remoteMessage.getMessageType(), Toast.LENGTH_SHORT).show();
-            Cidaas cidaas=new Cidaas(this);
+            Cidaas cidaas=Cidaas.getInstance(this);
             if(remoteMessage.getData().get("usage_pass")!=null && remoteMessage.getData().get("usage_pass")!="") {
-                cidaas.setremoteMessage(remoteMessage.getData());
+                cidaas.validateDevice(remoteMessage.getData());
 
 
             }

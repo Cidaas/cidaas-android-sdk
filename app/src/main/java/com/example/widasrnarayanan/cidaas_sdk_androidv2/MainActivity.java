@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
          Cidaas.loader=this;
          getFCMToken();
 
-        String url = getIntent().getDataString();
-        if (url != null) {
-            cidaas.resume(url);
+        String token = getIntent().getDataString();
+        if (token != null) {
+            cidaas.handleToken(token);
 
 
             /*, new Result<AccessTokenEntity>() {

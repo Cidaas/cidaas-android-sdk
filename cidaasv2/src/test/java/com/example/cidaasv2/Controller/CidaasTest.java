@@ -164,14 +164,14 @@ public class CidaasTest {
 
     @Test
     public void testSetremoteMessage() throws Exception {
-        Cidaas.setremoteMessage(new HashMap<String, String>() {{
+        Cidaas.validateDevice(new HashMap<String, String>() {{
             put("usage_pass", "usage_pass");
         }});
     }
 
     @Test
     public void testGetremoteMessage() throws Exception {
-        Cidaas.setremoteMessage(new HashMap<String, String>() {{
+        Cidaas.validateDevice(new HashMap<String, String>() {{
             put("usage_pass", "usage_pass");
         }});
 
@@ -983,7 +983,7 @@ public class CidaasTest {
 
             }
         };
-        cidaas.resume("code");
+        cidaas.handleToken("code");
     }
 
 
