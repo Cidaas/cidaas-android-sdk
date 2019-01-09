@@ -51,6 +51,12 @@ public class RegistrationService {
         verificationType="";
         context=contextFromCidaas;
         authenticationType="";
+
+
+        if(service==null) {
+            service=new CidaassdkService();
+        }
+
         //Todo setValue for authenticationType
 
     }
@@ -90,7 +96,8 @@ public class RegistrationService {
 
 
             //Call Service-getRequestId
-            ICidaasSDKService cidaasSDKService = service.getInstance();
+
+            final ICidaasSDKService cidaasSDKService = service.getInstance();
 
             cidaasSDKService.getRegistrationSetup(RegistrationUrl).enqueue(new Callback<RegistrationSetupResponseEntity>() {
                 @Override
