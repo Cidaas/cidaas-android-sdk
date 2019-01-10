@@ -53,42 +53,11 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
             cidaas.handleToken(token);
 
 
-            /*, new Result<AccessTokenEntity>() {
-                @Override
-                public void success(AccessTokenEntity result) {
-                    Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    Toast.makeText(MainActivity.this, "Failure", Toast.LENGTH_SHORT).show();
-                }
-            }
-            */
         }
         else {
         }
     }
 
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-       *//*if(cidaas!=null) {
-            String url = getIntent().getDataString();
-            if (url != null) {
-                cidaas.resume(url);
-
-            }
-            else
-            {
-                Toast.makeText(getApplicationContext(), "URL null", Toast.LENGTH_LONG).show();
-            }
-        }
-       else
-       {
-           Toast.makeText(getApplicationContext(), "OBJECT NULL", Toast.LENGTH_LONG).show();
-       }*//*
-    }*/
 
 
 

@@ -5502,7 +5502,7 @@ public class Cidaas implements IOAuthWebLogin {
         try {
 
             webAuthError = WebAuthError.getShared(context);
-            // Global Checking
+
             //Check all the login Properties are Correct
             if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
                     || !((Hashtable) loginproperties).containsKey("DomainURL")) {
@@ -5574,7 +5574,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                      //This is to generate the Code Challenge
 
-                        //////////////////This is for testing purpose
+                /////This is for testing purpose
                         Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
 
                             if(challengeProperties.size()==0) {
