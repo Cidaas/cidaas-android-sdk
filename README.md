@@ -85,11 +85,11 @@ You can get this by creating your App in App settings section of cidaas Admin po
 The first step of integrating cidaas sdk is the initialisation process.
 ```java
 
-Cidaas cidaas = Cidaas.getInstance(getApplicationContext);
+Cidaas cidaas = Cidaas.getInstance(your Activity Context);
 
 or
 
-Cidaas cidaas =new Cidaas(getApplicationContext); 
+Cidaas cidaas =new Cidaas(your Activity Context); 
 
 ```
 
@@ -100,7 +100,7 @@ Cidaas cidaas =new Cidaas(getApplicationContext);
 You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
 
 ```java
- cidaas.loginWithBrowser(yourContext, "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+ cidaas.loginWithBrowser(yourContext, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
 		//Your Success Code
