@@ -4,19 +4,25 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Color;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
+import com.example.cidaasv2.Interface.ILoader;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -28,14 +34,18 @@ import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
 import timber.log.Timber;
+import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
+import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
 
 
-public class MainActivity extends AppCompatActivity implements ICustomLoader {
+public class MainActivity extends AppCompatActivity implements ILoader {
 
     ProgressDialog progressDialog;
      Cidaas cidaas;
@@ -45,8 +55,13 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
          cidaas = Cidaas.getInstance(this);
-         Cidaas.loader=this;
+         CidaasSDKLayout.loader=this;
          getFCMToken();
+
+
+        cidaasFacebook=new CidaasFacebook(this);
+        cidaasGoogle=new CidaasGoogle(this);
+
 
         String token = getIntent().getDataString();
         if (token != null) {
@@ -242,6 +257,22 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         });
     }
 
+
+    //openWebView
+
+    public void openWebview(View view)
+    {
+
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        startActivity(intent);
+
+
+
+    }
+
+
+
     //Reset Password
     public void ResetPassword(View v)
     {
@@ -359,9 +390,78 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     }
 
 
+
+    public void printhashkey(){
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.example.widasrnarayanan.cidaas_sdk_androidv2",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+
+    }
+
+    CidaasFacebook cidaasFacebook;
+    CidaasGoogle cidaasGoogle;
+
+
+
+    public void nativeFacebook(View view)
+    {
+
+        printhashkey();
+
+
+
+
+        cidaasFacebook.login(new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+                Toast.makeText(MainActivity.this, "Native Facebook Succs"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void nativeGoogle(View view)
+    {
+
+        printhashkey();
+
+
+
+
+        cidaasGoogle.login(new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+                Toast.makeText(MainActivity.this, "Native google Succs"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+       cidaasFacebook.authorize(requestCode,resultCode,data);
+       cidaasGoogle.authorize(requestCode,resultCode,data);
     }
 }

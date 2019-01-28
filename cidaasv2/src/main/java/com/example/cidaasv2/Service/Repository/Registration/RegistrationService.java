@@ -286,7 +286,6 @@ public class RegistrationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
@@ -394,7 +393,6 @@ public class RegistrationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());

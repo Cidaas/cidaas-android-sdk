@@ -21,6 +21,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResul
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsErrorDataEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -129,7 +131,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
 /*
-
                             cidaas.getConsentURL(consentName, consentVersion, new Result<String>() {
                                 @Override
                                 public void success(String result) {
@@ -249,6 +250,46 @@ public class LoginActivity extends AppCompatActivity {
         });
         // Clear the Text Fields
 
+    }
+
+    public void loginWithView(View view)
+    {
+        try
+        {
+
+            Cidaas.getInstance(this).getRequestId(new Result<AuthRequestResponseEntity>() {
+                @Override
+                public void success(AuthRequestResponseEntity result) {
+                    PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+                    passwordlessEntity.setEmail("raja.narayanan@widas.in");
+                    passwordlessEntity.setSub("825ef0f8-4f2d-46ad-831d-08a30561305d");
+                    passwordlessEntity.setRequestId(result.getData().getRequestId());
+                    passwordlessEntity.setMobile("+919787113989");
+                    passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                    cidaas.loginWithEmail(passwordlessEntity, new Result<InitiateEmailMFAResponseEntity>() {
+                        @Override
+                        public void success(InitiateEmailMFAResponseEntity result) {
+                            Toast.makeText(LoginActivity.this, "Success"+result.getData().getStatusId(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Toast.makeText(LoginActivity.this, "Failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+
+        }
     }
 
 }

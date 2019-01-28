@@ -155,18 +155,22 @@ public class FileHelper {
             if(e.getMessage().equalsIgnoreCase("Property Cannot be null"))
             {
                 webAuthError = webAuthError.propertyMissingException();
+                result.failure(webAuthError);
             }
             else if (e instanceof FileNotFoundException)
             {
                 webAuthError = webAuthError.fileNotFoundException();
+                result.failure(webAuthError);
             }
             else if(e instanceof XPathExpressionException || e instanceof NullPointerException)
             {
                 webAuthError=webAuthError.noContentInFileException();
+                result.failure(webAuthError);
             }
             else
             {
                 webAuthError.ErrorMessage=e.getMessage();
+                result.failure(webAuthError);
             }
 
              result.failure(webAuthError);

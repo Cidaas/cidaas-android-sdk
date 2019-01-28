@@ -1,5 +1,20 @@
 <resources>
     <string name="app_name">cidaasv2</string>
+    <string name="tryAgain">Try Again!!</string>
+    <string name="RedirectURI">RedirectURI</string>
+    <string name="ResponseType">ResponseType</string>
+    <string name="ClientId">ClientId</string>
+    <string name="ViewType">ViewType</string>
+    <string name="TokenURL">TokenURL</string>
+    <string name="GrantType">GrantType</string>
+    <string name="UserInfoURL">UserInfoURL</string>
+    <string name="LogoutURL">LogoutURL</string>
+    <string name="AuthorizationURL">AuthorizationURL</string>
+    <string name="SocialURL">SocialURL</string>
+    <string name="DomainURL">DomainURL</string>
+
+
+
     <string name="DEFAULT">Error Occured.</string>
     <string name="FILE_NOT_FOUND">Property file is missing.</string>
     <string name="NO_CONTENT_IN_FILE">No content in property file.</string>
@@ -21,11 +36,16 @@
     <string name="MFA_LIST_FAILURE">MFA List Response is empty.</string>
     <string name="EMPTY_REDIRECT_URL">Redirect URL is empty.</string>
     <string name="USER_CANCELLED_LOGIN">User cancelled.</string>
+    <string name="GOOGLE_SIGNIN_ERROR">Google sign in Error.</string>
+
+
     <string name="CODE_NOT_FOUND">Code not found in URL.</string>
     <string name="ERROR_JSON_PARSING">Error on JSON parsing.</string>
     <string name="USER_INFO_SERVICE_FAILURE">User Info service failure.</string>
     <string name="EMPTY_CALLBACK">Callback is empty.</string>
     <string name="NO_USER_FOUND">No user found.</string>
     <string name="REFRESH_TOKEN_SERVICE_FAILURE">Refresh token service failure.</string>
+
+    <string name="USER_FACEBOOK_CANCEL">USER CANCEL THE FACEBOOK</string>
 
 </resources>

@@ -4467,7 +4467,7 @@ public class Cidaas implements IOAuthWebLogin {
                     getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateEmailVerification(result.getData().getRequestId(),sub,Result);
+                            initiateEmailVerification(sub,result.getData().getRequestId(),Result);
                         }
 
                         @Override
@@ -4542,7 +4542,7 @@ public class Cidaas implements IOAuthWebLogin {
                     getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateSMSVerification(result.getData().getRequestId(),sub,Result);
+                            initiateSMSVerification(sub,result.getData().getRequestId(),Result);
                         }
 
                         @Override
@@ -4566,7 +4566,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void initiateSMSVerification(@NonNull final String sub, @NonNull final String requestId,
+    public void initiateSMSVerification(@NonNull final String sub,@NonNull final String requestId,
                                         final Result<RegisterUserAccountInitiateResponseEntity> Result) {
         try {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
@@ -4616,7 +4616,7 @@ public class Cidaas implements IOAuthWebLogin {
                     getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateIVRVerification(result.getData().getRequestId(),sub,Result);
+                            initiateIVRVerification(sub,result.getData().getRequestId(),Result);
                         }
 
                         @Override
@@ -4695,7 +4695,7 @@ public class Cidaas implements IOAuthWebLogin {
                     if (code != null && !code.equals("") && accvid != null && accvid != "") {
                         RegistrationController.getShared(context).verifyAccountVerificationService(baseurl, code, accvid, result);
                     } else {
-
+                        result.failure(WebAuthError.getShared(context).customException(417,"Verification Code or accvid must not be empty",417));
                     }
 
                 }
@@ -5090,6 +5090,7 @@ public class Cidaas implements IOAuthWebLogin {
             result.failure(WebAuthError.getShared(context).customException(417, errorMessage, 417));
         }
     }
+
 
 
 
@@ -5743,7 +5744,7 @@ public class Cidaas implements IOAuthWebLogin {
                     @Override
                     public void failure(WebAuthError error) {
                         loginPropertiesResult.failure(error);
-                        String loggerMessage = "Request-Id PKCE FLOW readProperties failure : " + "Error Code - " + error.errorCode +
+                        String loggerMessage = "Read From File failure : " + "Error Code - " + error.errorCode +
                                 ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
                         LogFile.addRecordToLog(loggerMessage);
                     }
@@ -5755,7 +5756,7 @@ public class Cidaas implements IOAuthWebLogin {
             @Override
             public void failure(WebAuthError error) {
                 //Return File Reading Error
-                String loggerMessage = "Request-Id readProperties failure : "
+                String loggerMessage = "Read From File failure : "
                         + "Error Code - " + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
                 LogFile.addRecordToLog(loggerMessage);
                 loginPropertiesResult.failure(error);
