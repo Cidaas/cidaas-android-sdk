@@ -95,6 +95,9 @@ Cidaas cidaas =new Cidaas(your Activity Context);
 
 ### Usage
 
+> ##### Note:- If you are going to use Native browser login, you must use getInstance() method to create cidaas instance
+
+
 #### Native Browser Login 
 #### Classic Login
 You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
