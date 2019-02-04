@@ -6,16 +6,24 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Interface.ILoader;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 
-public class Main2Activity extends AppCompatActivity  {
+import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
+import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
+
+public class Main2Activity extends AppCompatActivity  implements ILoader {
 
     RelativeLayout relativeLayout;
-   // CidaasSDKLayout cidaasSDKLayout;
+    CidaasSDKLayout cidaasSDKLayout;
     ProgressDialog progressDialog;
- //   CidaasFacebook cidaasFacebook;
-   // CidaasGoogle cidaasGoogle;
+     CidaasFacebook cidaasFacebook;
+     CidaasGoogle cidaasGoogle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +33,7 @@ public class Main2Activity extends AppCompatActivity  {
 
         relativeLayout=findViewById(R.id.relative_layout_for_webView);
 
-     //   CidaasSDKLayout.loader = this;
+        CidaasSDKLayout.loader = this;
         callMethod();
 
 
@@ -46,7 +54,7 @@ public class Main2Activity extends AppCompatActivity  {
         CidaasSDKLayout cidaasSDKLayout=CidaasSDKLayout.getInstance(this);
 
 
-       /* cidaasSDKLayout= new CidaasSDKLayout(this);
+        cidaasSDKLayout= new CidaasSDKLayout(this);
 
        // cidaasSDKLayout.enableFacebook(this);
         //cidaasSDKLayout.enableGoogle(this);
@@ -54,7 +62,7 @@ public class Main2Activity extends AppCompatActivity  {
 
       cidaasFacebook=new CidaasFacebook(this);
       cidaasGoogle=new CidaasGoogle(this);
-        cidaasSDKLayout.login(relativeLayout, new Result<AccessTokenEntity>() {
+        cidaasSDKLayout.loginWithEmbeddedBrowser(relativeLayout, new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
                 Toast.makeText(Main2Activity.this, "Success"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
@@ -64,10 +72,10 @@ public class Main2Activity extends AppCompatActivity  {
             public void failure(WebAuthError error) {
                 Toast.makeText(Main2Activity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
     }
 
-  /*  @Override
+    @Override
     public void showLoader() {
         progressDialog = new ProgressDialog(Main2Activity.this);
         progressDialog.setMessage("Please wait");
@@ -81,10 +89,10 @@ public class Main2Activity extends AppCompatActivity  {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
-    }*/
+    }
 
 
-    /*@Override
+    @Override
     protected void onStart() {
         super.onStart();
         cidaasGoogle.onStart();
@@ -95,7 +103,6 @@ public class Main2Activity extends AppCompatActivity  {
         super.onStop();
         cidaasGoogle.onStop();
     }
-*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
