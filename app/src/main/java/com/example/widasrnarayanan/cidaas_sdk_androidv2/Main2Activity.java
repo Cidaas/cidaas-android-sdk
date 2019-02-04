@@ -56,8 +56,8 @@ public class Main2Activity extends AppCompatActivity  implements ILoader {
 
         cidaasSDKLayout= new CidaasSDKLayout(this);
 
-       // cidaasSDKLayout.enableFacebook(this);
-        //cidaasSDKLayout.enableGoogle(this);
+        cidaasSDKLayout.enableFacebook(this);
+        cidaasSDKLayout.enableGoogle(this);
 
 
       cidaasFacebook=new CidaasFacebook(this);
