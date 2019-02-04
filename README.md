@@ -23,7 +23,7 @@ The steps here will guide you through setting up and managing authentication and
         * [Classic Login](#classic-login)
         * [Social Login](#social-login)
         <!--te-->
-    *  [Embedded Browser Login](#native-browser-login)
+    *  [Embedded Browser Login](#embedded-browser-login)
     * [Native UI Integration](/app/PureNative.md)
     <!--te-->
 
