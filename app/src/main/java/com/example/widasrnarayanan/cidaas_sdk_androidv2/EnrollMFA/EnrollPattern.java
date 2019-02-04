@@ -54,7 +54,7 @@ public class EnrollPattern extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_pattern);
-        cidaas=new Cidaas(this);
+        cidaas=Cidaas.getInstance(this);
 
         Intent intent=getIntent();
         sub=intent.getStringExtra("sub");
@@ -112,39 +112,18 @@ public void enrollPattern(View view)
 
 
     try{
-        /*cidaas.scannedPattern("fe690559-3c7c-4b24-aab3-50f4050d9f52", "825ef0f8-4f2d-46ad-831d-08a30561305d", new Result<ScannedResponseEntity>() {
-            @Override
-            public void success(ScannedResponseEntity result) {
-                cidaas.enrollPattern("RED[1,2,3,4]", "825ef0f8-4f2d-46ad-831d-08a30561305d", "fe690559-3c7c-4b24-aab3-50f4050d9f52", new Result<EnrollPatternMFAResponseEntity>() {
-                    @Override
-                    public void success(EnrollPatternMFAResponseEntity result) {
-                        Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
-                    }
 
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(EnrollPattern.this, "Failure", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+       cidaas.configurePatternRecognition("RED[1,2,3,4]", sub, "", new Result<EnrollPatternMFAResponseEntity>() {
+           @Override
+           public void success(EnrollPatternMFAResponseEntity result) {
+               Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
+           }
 
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });*/
-
-        cidaas.enrollPattern("RED[1,2,3,4]", "825ef0f8-4f2d-46ad-831d-08a30561305d", "7fb7863a-a2da-4eca-b57b-0cfaaf581d9a", new Result<EnrollPatternMFAResponseEntity>() {
-            @Override
-            public void success(EnrollPatternMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Failure", Toast.LENGTH_SHORT).show();
-            }
-        });
+           @Override
+           public void failure(WebAuthError error) {
+               Toast.makeText(EnrollPattern.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+           }
+       });
     }
     catch (Exception e)
     {
@@ -196,8 +175,10 @@ public void enrollPattern(View view)
 
 
 
-    public void SetupPattern(View view){
-        cidaas.configurePatternRecognition("RED[1,2,3,4]",sub,"",new Result<EnrollPatternMFAResponseEntity>() {
+    public void enrollPatternOnly(View view){
+
+        String statusId="7f359ef4-fae4-4b99-9b34-cc1eac7fee14";
+        cidaas.enrollPattern("RED[1,2,3,4]",sub,statusId,new Result<EnrollPatternMFAResponseEntity>() {
             @Override
             public void success(EnrollPatternMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Success Pattern", Toast.LENGTH_SHORT).show();
@@ -205,7 +186,7 @@ public void enrollPattern(View view)
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Failes Pattern"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EnrollPattern.this, "Fails Pattern"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

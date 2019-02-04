@@ -24,14 +24,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //super.onMessageReceived(remoteMessage);
-        Timber.d("push Message rcvd");
+        Timber.d("FCM push Message rcvd"+remoteMessage.getData());
 
             //Toast.makeText(this, "Success"+remoteMessage.getMessageType(), Toast.LENGTH_SHORT).show();
             Cidaas cidaas=Cidaas.getInstance(this);
             if(remoteMessage.getData().get("usage_pass")!=null && remoteMessage.getData().get("usage_pass")!="") {
                 cidaas.validateDevice(remoteMessage.getData());
 
-
+                //cidaas.setremoteMessage(remoteMessage.getData());
             }
             else {
                 //Toast.makeText(this, "Null Intermediate Id", Toast.LENGTH_SHORT).show();

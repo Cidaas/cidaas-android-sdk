@@ -652,7 +652,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     //Login with WEBVIEW
-    public void login(final RelativeLayout relativeLayout, final Result<AccessTokenEntity> loginResultcallback) {
+    public void loginWithEmbeddedBrowser(final RelativeLayout relativeLayout, final Result<AccessTokenEntity> loginResultcallback) {
         try {
 
             webViewInstance = getWebViewInstance();
@@ -713,7 +713,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                                     GLOBAL_CONTEXT.startActivity(new Intent(Settings.ACTION_SETTINGS));
                                 } else {
                                     relativeLayout.removeAllViews();
-                                    login(relativeLayout, logincallback);
+                                    loginWithEmbeddedBrowser(relativeLayout, logincallback);
                                 }
                             }
                         });
