@@ -106,8 +106,8 @@ public class Main2Activity extends AppCompatActivity  implements ILoader {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-       // cidaasFacebook.authorize(requestCode, resultCode, data);
-     //   cidaasGoogle.authorize(requestCode,resultCode,data);
+      cidaasFacebook.authorize(requestCode, resultCode, data);
+       cidaasGoogle.authorize(requestCode,resultCode,data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 }
