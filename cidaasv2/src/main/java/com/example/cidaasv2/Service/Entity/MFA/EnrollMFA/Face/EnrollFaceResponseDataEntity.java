@@ -25,11 +25,11 @@ public class EnrollFaceResponseDataEntity implements Serializable{
         this.meta = meta;
     }
 
-    public boolean isEnrolled() {
+    public Boolean getEnrolled() {
         return enrolled;
     }
 
-    public void setEnrolled(boolean enrolled) {
+    public void setEnrolled(Boolean enrolled) {
         this.enrolled = enrolled;
     }
 
