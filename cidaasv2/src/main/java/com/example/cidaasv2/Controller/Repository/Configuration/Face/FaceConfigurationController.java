@@ -41,6 +41,7 @@ public class FaceConfigurationController {
     private String authenticationType;
     private String verificationType;
     private Context context;
+    private String statusIdFromSetup,userDeviceIdFromSetup;
 
     public static FaceConfigurationController shared;
 
@@ -97,11 +98,18 @@ public class FaceConfigurationController {
                 @Override
                 public void success(final AccessTokenEntity accessTokenresult) {
 
-                    if(attempt==1) {
+                    if(attempt>1) {
                         setupFace(baseurl, accessTokenresult.getAccess_token(), FaceImageFile, setupFaceMFARequestEntity, enrollresult);
                     }
                     else {
-                       // enrollFace(baseurl,accessTokenresult.getAccess_token(),,enrollresult);
+
+                        EnrollFaceMFARequestEntity enrollFaceMFARequestEntityWithAttempts = new EnrollFaceMFARequestEntity();
+                        enrollFaceMFARequestEntityWithAttempts.setImagetoSend(FaceImageFile);
+                        enrollFaceMFARequestEntityWithAttempts.setStatusId(statusIdFromSetup);
+                        enrollFaceMFARequestEntityWithAttempts.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                        enrollFaceMFARequestEntityWithAttempts.setClient_id(setupFaceMFARequestEntity.getClient_id());
+
+                        enrollFace(baseurl,accessTokenresult.getAccess_token(),enrollFaceMFARequestEntityWithAttempts,enrollresult);
                     }
                 }
 
@@ -163,10 +171,12 @@ public class FaceConfigurationController {
                                                         public void success(final SetupFaceMFAResponseEntity result) {
                                                             DBHelper.getShared().setUserDeviceId(result.getData().getUdi(), baseurl);
 
+
+                                                            statusIdFromSetup=result.getData().getSt();
                                                             //Entity For Face
                                                             EnrollFaceMFARequestEntity enrollFaceMFARequestEntity = new EnrollFaceMFARequestEntity();
                                                             enrollFaceMFARequestEntity.setImagetoSend(FaceImageFile);
-                                                            enrollFaceMFARequestEntity.setStatusId(result.getData().getSt());
+                                                            enrollFaceMFARequestEntity.setStatusId(statusIdFromSetup);
                                                             enrollFaceMFARequestEntity.setUserDeviceId(result.getData().getUdi());
                                                             enrollFaceMFARequestEntity.setClient_id(setupFaceMFARequestEntity.getClient_id());
 

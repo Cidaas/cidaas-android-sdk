@@ -1915,6 +1915,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
+
                         FaceConfigurationController.getShared(context).configureFace(photo, sub, baseurl, attempt,setupFaceMFARequestEntity, enrollresult);
 
 
