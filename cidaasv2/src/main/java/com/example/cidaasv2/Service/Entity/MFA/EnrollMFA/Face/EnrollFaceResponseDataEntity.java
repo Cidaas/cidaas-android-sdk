@@ -12,7 +12,7 @@ public class EnrollFaceResponseDataEntity implements Serializable{
     String usageType="";
     String current_status="";
     String usage_pass="";
-    boolean enrolled;
+    Boolean enrolled=null;
 
     FaceMetadataEntity meta;
 
