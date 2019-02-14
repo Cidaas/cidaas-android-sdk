@@ -494,7 +494,7 @@ public class TOTPConfigurationController {
 
 
     private void setupTOTP(final String baseurl, final String sub, final String accessToken,
-                           SetupTOTPMFARequestEntity setupTOTPMFARequestEntity, final Result<EnrollTOTPMFAResponseEntity> enrollResult)
+                           final SetupTOTPMFARequestEntity setupTOTPMFARequestEntity, final Result<EnrollTOTPMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -557,6 +557,7 @@ public class TOTPConfigurationController {
                                                                 enrollTOTPMFARequestEntity.setVerifierPassword(totp.getTotp_string());
                                                                 enrollTOTPMFARequestEntity.setStatusId(result.getData().getSt());
                                                                 enrollTOTPMFARequestEntity.setUserDeviceId(result.getData().getUdi());
+                                                                enrollTOTPMFARequestEntity.setClient_id(setupTOTPMFARequestEntity.getClient_id());
 
                                                             }
 
@@ -698,6 +699,7 @@ public class TOTPConfigurationController {
 
                 if (enrollTOTPMFARequestEntity.getUserDeviceId() != null && !enrollTOTPMFARequestEntity.getUserDeviceId().equals("") &&
                         enrollTOTPMFARequestEntity.getStatusId() != null && !enrollTOTPMFARequestEntity.getStatusId().equals("") &&
+                        enrollTOTPMFARequestEntity.getClient_id() != null && !enrollTOTPMFARequestEntity.getClient_id().equals("") &&
                         enrollTOTPMFARequestEntity.getVerifierPassword() != null && !enrollTOTPMFARequestEntity.getVerifierPassword().equals("")) {
 
                     // call Enroll Service
@@ -762,7 +764,7 @@ public class TOTPConfigurationController {
                             });
                 } else {
                     enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,
-                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                            "UserdeviceId or Verifierpassword or clientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                 }
             }
             else
@@ -831,7 +833,7 @@ public class TOTPConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+                                        if(instceID!=null && instceID!="" ) {
 
                                             //Todo call initiate
                                             final InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity=new InitiateTOTPMFARequestEntity();
@@ -844,18 +846,20 @@ public class TOTPConfigurationController {
 
                                                         @Override
                                                         public void success(InitiateTOTPMFAResponseEntity result) {
-                                                            if ( serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                            if ( result.getData().getStatusId() != null &&
+                                                                    !result.getData().getStatusId().equals("")) {
 
 
                                                                 AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity = new AuthenticateTOTPRequestEntity();
                                                                 authenticateTOTPRequestEntity.setUserDeviceId(userDeviceId);
-                                                                authenticateTOTPRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                authenticateTOTPRequestEntity.setStatusId(result.getData().getStatusId());
+
 
                                                                 String secretFromDB=DBHelper.getShared().getSecret(initiateTOTPMFARequestEntity.getSub());
                                                                 String totp = generateTOTP(secretFromDB).getTotp_string();
 
                                                                 authenticateTOTPRequestEntity.setVerifierPassword(totp);
+                                                                authenticateTOTPRequestEntity.setClient_id(clientId);
 
 
                                                                 authenticateTOTP(baseurl, authenticateTOTPRequestEntity, new Result<AuthenticateTOTPResponseEntity>() {

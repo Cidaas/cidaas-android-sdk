@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Controller.Repository.Login.LogoutController;
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Helper.CidaasSDKHelper;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
@@ -38,10 +40,13 @@ import com.example.cidaasv2.Interface.ICidaasGoogle;
 import com.example.cidaasv2.Interface.ILoader;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
 
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+
+import javax.microedition.khronos.opengles.GL;
 
 import timber.log.Timber;
 
@@ -398,7 +403,12 @@ public class CidaasSDKLayout extends RelativeLayout {
         @Override
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
-           // Log.d("URL",url);
+            Log.d("URL",url);
+
+            if (url.contains("code=")) {
+                getLoginCode(url);
+
+            }
 
             if (ENABLE_NATIVE_FACEBOOK) {
 
@@ -442,6 +452,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     return;
                 }
             }
+
         }
 
         @Override
@@ -461,6 +472,11 @@ public class CidaasSDKLayout extends RelativeLayout {
             }
             else {
                 view.setVisibility(VISIBLE);
+            }
+
+            if (url.contains("code=")) {
+                getLoginCode(url);
+
             }
         }
 
@@ -1059,6 +1075,137 @@ public class CidaasSDKLayout extends RelativeLayout {
             result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL must not be null", HttpStatusCode.EXPECTATION_FAILED));
         }
 
+    }
+
+    //on Back Pressed
+    public void onBackPressed() {
+        try {
+            if (webViewInstance.canGoBack()) {
+                webViewInstance.goBack();
+            } else {
+                ((Activity) GLOBAL_CONTEXT).finish();
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    //Logout
+    public void logout(final String sub, final String post_logout_redirect_url, final Result<String> response) {
+        try {
+            //StorageHelper.setConfig(context);
+            //CidaasSDK.assetManager = context.getAssets();
+            //CidaasSDK.configurationFileName = StorageHelper.getPropertyFileName();
+            //  CidaasSDKEntity.cidaasSDKEntityInstance.readInputs(context);
+
+            // Get Access Token for service call
+            AccessTokenController.getShared(GLOBAL_CONTEXT).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                @Override
+                public void success(AccessTokenEntity result) {
+                    //Call Logout method
+                    LogoutController.getShared(GLOBAL_CONTEXT).getLogoutURL(Cidaas.baseurl, result.getAccess_token(), post_logout_redirect_url,new Result<String>() {
+                        @Override
+                        public void success(String result) {
+                            //Clear cookies
+
+                            CookieManager cookieManager = CookieManager.getInstance();
+                            cookieManager.removeAllCookie();
+
+
+
+                            //Logoout From Social
+                            if (iCidaasFacebook != null) {
+                                iCidaasFacebook.logout();
+                            }
+                            if (iCidaasGoogle != null) {
+                                iCidaasGoogle.logout();
+                            }
+
+                            //Clear in Shared Preferences
+                            DBHelper.getShared().removeUserInfo(sub);
+
+                            // StorageHelper.sharedInstance.deleteUserDetails(userId);
+
+                            response.success("User Logged out");
+
+                            webViewInstance.loadUrl(result);
+                            hideLoader();
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            CookieManager cookieManager = CookieManager.getInstance();
+                            cookieManager.removeAllCookie();
+
+                            //Logoout From Social
+                            if (iCidaasFacebook != null) {
+                                iCidaasFacebook.logout();
+                            }
+                            if (iCidaasGoogle != null) {
+                                iCidaasGoogle.logout();
+                            }
+
+                            //Clear in Shared Preferences
+                            DBHelper.getShared().removeUserInfo(sub);
+
+                            // StorageHelper.sharedInstance.deleteUserDetails(userId);
+
+                            response.success("User Logged out");
+                            hideLoader();
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    response.failure(error);
+                }
+            });
+
+
+
+          /* LogoutController.getShared(GLOBAL_CONTEXT).logout(Cidaas.baseurl,);
+
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+
+            //Logoout From Social
+            if (iCidaasFacebook != null) {
+                iCidaasFacebook.logout();
+            }
+            if (iCidaasGoogle != null) {
+                iCidaasGoogle.logout();
+            }
+
+            //Clear in Shared Preferences
+            DBHelper.getShared().removeUserInfo(sub);
+
+            // StorageHelper.sharedInstance.deleteUserDetails(userId);
+
+            response.success("User Logged out");*/
+        }
+        catch (Exception e)
+        {
+            response.failure(WebAuthError.getShared(GLOBAL_CONTEXT).customException(WebAuthErrorCode.LOGOUT_ERROR,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+        }
+    }
+
+    public void authorize(int requestCode, int resultCode, Intent data) {
+    try {
+        if(requestCode==9001)
+        {
+            //call google activity result
+        }
+        else {
+            //call facebook activity result
+        }
+    }
+    catch (Exception e)
+    {
+
+    }
     }
 
 }

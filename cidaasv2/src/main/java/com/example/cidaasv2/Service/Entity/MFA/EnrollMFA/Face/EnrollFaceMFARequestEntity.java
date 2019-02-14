@@ -11,11 +11,28 @@ import java.util.List;
 public class EnrollFaceMFARequestEntity implements Serializable{
     String statusId="";
     File imagetoSend;
+    String client_id;
     List<File> imagesToSend;
     String usage_pass="";
     private String userDeviceId="";
     DeviceInfoEntity deviceInfo;
+    int attempt;
 
+    public int getAttempt() {
+        return attempt;
+    }
+
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
+    }
+
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
+    }
 
     public List<File> getImagesToSend() {
         return imagesToSend;

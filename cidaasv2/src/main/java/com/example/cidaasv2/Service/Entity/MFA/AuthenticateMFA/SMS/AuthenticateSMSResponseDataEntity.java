@@ -11,6 +11,7 @@ public class AuthenticateSMSResponseDataEntity implements Serializable {
     String verificationType;
     String usageType;
 
+
     public String getSub() {
         return sub;
     }

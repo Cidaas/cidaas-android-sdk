@@ -10,6 +10,7 @@ public class InitiateSmartPushMFAResponseDataEntity implements Serializable{
     String randomNumber;
 String current_status;
 
+
     public String getCurrent_status() {
         return current_status;
     }

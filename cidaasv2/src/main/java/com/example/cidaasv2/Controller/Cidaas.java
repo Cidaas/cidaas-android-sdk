@@ -1204,6 +1204,7 @@ public class Cidaas implements IOAuthWebLogin {
     // ****** done LOGIN WITH IVR AND VERIFY IVR *****----------------------------------------------------------------------
 
     //done CHANGE TO LOGIN AND VERIFY
+// ****** DONE ENROLL AND LOGIN WITH IVR  *****----------------------------------------------------------------------
 
     @Override
     public void configureIVR(final String sub, final Result<SetupIVRMFAResponseEntity> result) {
@@ -1348,9 +1349,8 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    // ****** todO LOGIN WITH BACKUPCODE AND VERIFY BACKUPCODE *****----------------------------------------------------------------------
+    // ****** DONE ENROLL AND LOGIN WITH Backupcode  *****----------------------------------------------------------------------
 
-    //tODO CHANGE TO LOGIN AND VERIFY
 
     @Override
     public void configureBackupcode(final String sub, final Result<SetupBackupCodeMFAResponseEntity> result) {
@@ -1629,6 +1629,7 @@ public class Cidaas implements IOAuthWebLogin {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
+                    String clientId=result.get("ClientId");
 
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("") &&
@@ -1685,12 +1686,15 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
+                    final String clientId =result.get("ClientId");
+
                     String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollPatternMFARequestEntity enrollPatternMFARequestEntity=new EnrollPatternMFARequestEntity();
                     enrollPatternMFARequestEntity.setVerifierPassword(patternString);
                     enrollPatternMFARequestEntity.setStatusId(statusId);
                     enrollPatternMFARequestEntity.setUserDeviceId(userDeviceId);
+                    enrollPatternMFARequestEntity.setClientId(clientId);
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                         @Override
@@ -1859,6 +1863,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticatePatternRequestEntity.setStatusId(statusId);
                     authenticatePatternRequestEntity.setVerifierPassword(patternString);
                     authenticatePatternRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                    authenticatePatternRequestEntity.setClient_id(clientId);
 
 
 
@@ -1886,7 +1891,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void configureFaceRecognition(final File photo, final String sub,@NonNull final String logoURL, final Result<EnrollFaceMFAResponseEntity> enrollresult)
+    public void configureFaceRecognition(final File photo, final String sub,@NonNull final String logoURL,@NonNull final int attempt, final Result<EnrollFaceMFAResponseEntity> enrollresult)
     {
         try {
 
@@ -1910,7 +1915,7 @@ public class Cidaas implements IOAuthWebLogin {
                         setupFaceMFARequestEntity.setLogoUrl(logoURLlocal);
 
 
-                        FaceConfigurationController.getShared(context).configureFace(photo, sub, baseurl, setupFaceMFARequestEntity, enrollresult);
+                        FaceConfigurationController.getShared(context).configureFace(photo, sub, baseurl, attempt,setupFaceMFARequestEntity, enrollresult);
 
 
                     }
@@ -2040,7 +2045,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void enrollFace(@NonNull final File Face, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFaceMFAResponseEntity> enrollResult)
+    public void enrollFace(@NonNull final File Face, @NonNull final String sub,@NonNull final String statusId,@NonNull final int attempt,  final Result<EnrollFaceMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -2050,12 +2055,15 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
+                    final String clientId= result.get("ClientId");
                     String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollFaceMFARequestEntity enrollFaceMFARequestEntity=new EnrollFaceMFARequestEntity();
                     enrollFaceMFARequestEntity.setImagetoSend(Face);
                     enrollFaceMFARequestEntity.setStatusId(statusId);
                     enrollFaceMFARequestEntity.setUserDeviceId(userDeviceId);
+                    enrollFaceMFARequestEntity.setClient_id(clientId);
+                    enrollFaceMFARequestEntity.setAttempt(attempt);
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                         @Override
@@ -2263,6 +2271,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateFaceRequestEntity.setStatusId(statusId);
                     authenticateFaceRequestEntity.setImagesToSend(photo);
                     authenticateFaceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                    authenticateFaceRequestEntity.setClient_id(clientId);
 
 
                     FaceVerificationService.getShared(context).authenticateFace(baseurl,authenticateFaceRequestEntity,null,result);
@@ -2507,6 +2516,8 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
+                    final String clientId= result.get("ClientId");
+
                     final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
@@ -2712,6 +2723,7 @@ public class Cidaas implements IOAuthWebLogin {
                     AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity=new AuthenticateFingerprintRequestEntity();
                     authenticateFingerprintRequestEntity.setStatusId(statusId);
                     authenticateFingerprintRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                    authenticateFingerprintRequestEntity.setClient_id(clientId);
 
 
                     FingerprintConfigurationController.getShared(context).authenticateFingerprint(baseurl,authenticateFingerprintRequestEntity,callBackresult);
@@ -2731,6 +2743,10 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
+
+
+
+
     // ****** DONE FIDO *****-------------------------------------------------------------------------------------------------------
 
 
@@ -2744,6 +2760,7 @@ public class Cidaas implements IOAuthWebLogin {
             @Override
             public void success(Dictionary<String, String> lpresult) {
                 final String baseurl = lpresult.get("DomainURL");
+                final String clientId= lpresult.get("ClientId");
 
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
@@ -2838,6 +2855,17 @@ public class Cidaas implements IOAuthWebLogin {
 
 
 
+    // ****** TODO Logout for embeddedBrowser *****-------------------------------------------------------------------------------------------------------
+
+
+    /* public void logout(@NonNull )
+     {
+         try
+         {
+
+         }
+         catch (Exception e)
+     }*/
 
 
    /* public void enrollFIDO(@NonNull final IsoDep isoTag, final ScannedResponseDataEntity scannedResponseDataEntity, @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFIDOMFAResponseEntity> enrollResult)
@@ -3082,6 +3110,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateFIDORequestEntity.setStatusId(statusId);
                     authenticateFIDORequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
                     authenticateFIDORequestEntity.setFidoSignTouchResponse(fidoSignTouchResponse);
+                    authenticateFIDORequestEntity.setClient_id(clientId);
 
 
 
@@ -3113,6 +3142,7 @@ public class Cidaas implements IOAuthWebLogin {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
+                    final String clientId= result.get("ClientId");
 
                     if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
@@ -3191,6 +3221,8 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
+                    final String clientId= result.get("ClientId");
+
                     String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity=new EnrollSmartPushMFARequestEntity();
@@ -3273,6 +3305,7 @@ public class Cidaas implements IOAuthWebLogin {
                         initiateSmartPushMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
                         initiateSmartPushMFARequestEntity.setEmail(passwordlessEntity.getEmail());
                         initiateSmartPushMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+                        initiateSmartPushMFARequestEntity.setClient_id(clientId);
 
                         //Todo check for email or sub or mobile
 
@@ -3313,6 +3346,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateSmartPushRequestEntity.setStatusId(statusId);
                     authenticateSmartPushRequestEntity.setVerifierPassword(randomNumber);
                     authenticateSmartPushRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                    authenticateSmartPushRequestEntity.setClient_id(clientId);
 
 
 
@@ -3613,6 +3647,8 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
 
                     final String baseurl = result.get("DomainURL");
+                    final String clientId= result.get("ClientId");
+
                     String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                     final EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity=new EnrollVoiceMFARequestEntity();
@@ -3738,7 +3774,7 @@ public class Cidaas implements IOAuthWebLogin {
                     authenticateVoiceRequestEntity.setStatusId(statusId);
                     authenticateVoiceRequestEntity.setVoiceFile(voice);
                     authenticateVoiceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-
+                    authenticateVoiceRequestEntity.setClient_id(clientId);
 
                     VoiceConfigurationController.getShared(context).authenticateVoice(baseurl,authenticateVoiceRequestEntity,result);
 

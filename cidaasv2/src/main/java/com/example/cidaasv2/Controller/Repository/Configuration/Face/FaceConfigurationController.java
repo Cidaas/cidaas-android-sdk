@@ -80,7 +80,7 @@ public class FaceConfigurationController {
 
 
     //Service call To SetupFaceMFA
-    public void configureFace(@NonNull final File FaceImageFile,@NonNull final String sub, @NonNull final String baseurl,
+    public void configureFace(@NonNull final File FaceImageFile,@NonNull final String sub, @NonNull final String baseurl,@NonNull final int attempt,
                                @NonNull final SetupFaceMFARequestEntity setupFaceMFARequestEntity,
                                @NonNull final Result<EnrollFaceMFAResponseEntity> enrollresult)
     {
@@ -97,7 +97,12 @@ public class FaceConfigurationController {
                 @Override
                 public void success(final AccessTokenEntity accessTokenresult) {
 
-                    setupFace(baseurl,accessTokenresult.getAccess_token(),FaceImageFile,setupFaceMFARequestEntity,enrollresult);
+                    if(attempt==1) {
+                        setupFace(baseurl, accessTokenresult.getAccess_token(), FaceImageFile, setupFaceMFARequestEntity, enrollresult);
+                    }
+                    else {
+                       // enrollFace(baseurl,accessTokenresult.getAccess_token(),,enrollresult);
+                    }
                 }
 
                 @Override
@@ -117,7 +122,7 @@ public class FaceConfigurationController {
 
 
     private void setupFace(final String baseurl, final String accessToken, @NonNull final File FaceImageFile,
-                            SetupFaceMFARequestEntity setupFaceMFARequestEntity,final Result<EnrollFaceMFAResponseEntity> enrollResult)
+                           final SetupFaceMFARequestEntity setupFaceMFARequestEntity, final Result<EnrollFaceMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -163,6 +168,7 @@ public class FaceConfigurationController {
                                                             enrollFaceMFARequestEntity.setImagetoSend(FaceImageFile);
                                                             enrollFaceMFARequestEntity.setStatusId(result.getData().getSt());
                                                             enrollFaceMFARequestEntity.setUserDeviceId(result.getData().getUdi());
+                                                            enrollFaceMFARequestEntity.setClient_id(setupFaceMFARequestEntity.getClient_id());
 
 
                                                             enrollFace(baseurl,accessToken,enrollFaceMFARequestEntity,enrollResult);
@@ -301,6 +307,7 @@ public class FaceConfigurationController {
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
                 if (enrollFaceMFARequestEntity.getUserDeviceId() != null && !enrollFaceMFARequestEntity.getUserDeviceId().equals("") &&
+                        enrollFaceMFARequestEntity.getClient_id() != null && !enrollFaceMFARequestEntity.getClient_id().equals("") &&
                         enrollFaceMFARequestEntity.getStatusId() != null && !enrollFaceMFARequestEntity.getStatusId().equals("")
                       ) {
 
@@ -312,6 +319,8 @@ public class FaceConfigurationController {
                     if(enrollFaceMFARequestEntity.getImagetoSend() != null)
                     {
                         enrollFaceMFARequestEntityWithPass.setImagetoSend(enrollFaceMFARequestEntity.getImagetoSend());
+                        enrollFaceMFARequestEntityWithPass.setClient_id(enrollFaceMFARequestEntity.getClient_id()
+                        );
                         enrollFaceMFARequestEntity.setImagetoSend(null);
                     }
                     else
@@ -368,13 +377,14 @@ public class FaceConfigurationController {
                                                             });
                                                 }
                                                 else {
-                                                    enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
+                                                            "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                                                 }
                                             }
                                             else {
                                                 // return Error Message
-                                                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                                        "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+
                                             }
 
                                         }
@@ -389,7 +399,7 @@ public class FaceConfigurationController {
                             });
                 } else {
                     enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                            "UserdeviceId or Client Id or StatusID  must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                 }
             }
             else
@@ -458,7 +468,7 @@ public class FaceConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+                                        if(instceID!=null && instceID!="") {
 
                                             //Todo call initiate
                                             final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity=new InitiateFaceMFARequestEntity();
@@ -471,14 +481,15 @@ public class FaceConfigurationController {
 
                                                         @Override
                                                         public void success(InitiateFaceMFAResponseEntity result) {
-                                                            if (FaceImageFile != null && serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                            if (FaceImageFile != null && result.getData().getStatusId() != null &&
+                                                                    !result.getData().getStatusId().equals("")) {
 
 
                                                                 AuthenticateFaceRequestEntity authenticateFaceRequestEntity = new AuthenticateFaceRequestEntity();
                                                                 authenticateFaceRequestEntity.setUserDeviceId(userDeviceId);
-                                                                authenticateFaceRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                authenticateFaceRequestEntity.setStatusId(result.getData().getStatusId());
                                                                 authenticateFaceRequestEntity.setImagetoSend(FaceImageFile);
+                                                                authenticateFaceRequestEntity.setClient_id(clientId);
 
 
                                                                 authenticateFace(baseurl, authenticateFaceRequestEntity, new Result<AuthenticateFaceResponseEntity>() {

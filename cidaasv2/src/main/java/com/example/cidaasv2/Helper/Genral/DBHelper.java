@@ -349,7 +349,7 @@ public void setEnableLog(boolean enableLog)
         return userDeviceId;
     }
 
-    //Todo Set Access Token
+    //Done Set Access Token
     public void setAccessToken(AccessTokenModel accessTokenModel)
     {
         boolean result=false;
@@ -365,7 +365,7 @@ public void setEnableLog(boolean enableLog)
         }
 
     }
-    //Todo Get Access Token
+    //Done Get Access Token
     public AccessTokenModel getAccessToken(String userId)
     {
         String jsonString =preferences.getString(user_storage_key+userId,"");
@@ -379,7 +379,7 @@ public void setEnableLog(boolean enableLog)
         }
         return accessTokenModel;
     }
-    //Todo Set UserInfo
+    //done Set UserInfo
     public void setUserInfo(UserInfoModel userInfoModel)
     {
         try {
@@ -394,7 +394,7 @@ public void setEnableLog(boolean enableLog)
         }
 
     }
-    //Todo Get User info
+    //Done Get User info
     public UserInfoModel getUserInfo(String userId)
     {
         String jsonString =preferences.getString(user_storage_info+userId,"DefaultUserinfo");
@@ -408,4 +408,21 @@ public void setEnableLog(boolean enableLog)
         }
         return userInfoModel;
     }
+
+
+    //DeleteUserInfo
+    public boolean removeUserInfo(String userId)
+    {
+        boolean result = false;
+        //Remove Access Token
+        String savedKey = user_storage_key + userId;
+        //Todo Remove User info
+
+
+        //Todo Remove Userdevice Id
+        editor.remove(savedKey);
+        result = editor.commit();
+        return result;
+    }
+
 }

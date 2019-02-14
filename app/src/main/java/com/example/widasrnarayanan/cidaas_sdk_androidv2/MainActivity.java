@@ -13,11 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Interface.ILoader;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -31,29 +34,38 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import timber.log.Timber;
+import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
+import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
 
 
-public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
+public class MainActivity extends AppCompatActivity  implements ILoader{
 
     ProgressDialog progressDialog;
      Cidaas cidaas;
      String requestId;
+    CidaasFacebook cidaasFacebook;
+    CidaasGoogle cidaasGoogle;
+    Button logoutButton;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
          cidaas = Cidaas.getInstance(this);
-      //   CidaasSDKLayout.loader=this;
+         CidaasSDKLayout.loader=this;
          getFCMToken();
 
+         logoutButton=findViewById(R.id.logoutbutton);
+         logoutButton.setVisibility(View.INVISIBLE);
 
-       /* cidaasFacebook=new CidaasFacebook(this);
+        cidaasFacebook=new CidaasFacebook(this);
         cidaasGoogle=new CidaasGoogle(this);
-*/
+
 
         String token = getIntent().getDataString();
         if (token != null) {
-          //  cidaas.handleToken(token);
+           cidaas.handleToken(token);
 
 
         }
@@ -253,6 +265,7 @@ public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
 
 
         Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","Normal");
         startActivity(intent);
 
 
@@ -353,7 +366,7 @@ public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
         });
     }
 
- /*   @Override
+    @Override
     public void showLoader() {
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("Please wait");
@@ -368,7 +381,7 @@ public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
-    }*/
+    }
 
 
     public void documentScanner(View view)
@@ -397,9 +410,44 @@ public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
         }
 
     }
-/*
-    CidaasFacebook cidaasFacebook;
-    CidaasGoogle cidaasGoogle;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        cidaasGoogle.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        cidaasGoogle.onStop();
+    }
+
+
+    public void enableFacebookOnly(View view)
+    {
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","NativeFacebook");
+        startActivity(intent);
+    }
+
+    public void enableGoogleOnly(View view)
+    {
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","NativeGoogle");
+        startActivity(intent);
+    }
+
+    public void enableBoth(View view)
+    {
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","both");
+        startActivity(intent);
+    }
+
 
 
 
@@ -425,6 +473,15 @@ public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
     }
 
 
+
+    public void logout(View view)
+    {
+        cidaasGoogle.logout();
+        logoutButton.setVisibility(View.INVISIBLE);
+      //  cidaasFacebook.logout();
+    }
+
+
     public void nativeGoogle(View view)
     {
 
@@ -436,6 +493,7 @@ public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
         cidaasGoogle.login(new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
+                logoutButton.setVisibility(View.VISIBLE);
                 Toast.makeText(MainActivity.this, "Native google Succs"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
             }
 
@@ -449,7 +507,13 @@ public class MainActivity extends AppCompatActivity  {  /*implements ILoader*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-       cidaasFacebook.authorize(requestCode,resultCode,data);
-       cidaasGoogle.authorize(requestCode,resultCode,data);
-    }*/
+        if(requestCode==9001) {
+            cidaasGoogle.authorize(requestCode, resultCode, data);
+
+        }
+        else {
+            cidaasFacebook.authorize(requestCode, resultCode, data);
+        }
+      // cidaas.authorize(requestCode,resultCode,data)
+    }
 }

@@ -17,6 +17,7 @@ import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseErrorEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
@@ -164,6 +165,130 @@ public class LoginService {
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
+
+
+    //Logout for embedded browser Credentials
+    public void logoutForEmbeddedBrowser(final String baseurl, final String accessToken,final Result<LogoutResponseEntity> callback)
+    {
+        //Local Variables
+
+        String logoutUrl = "";
+        try{
+
+            if(baseurl!=null && baseurl!=""){
+                //Construct URL For RequestId
+                logoutUrl=baseurl+ URLHelper.getShared().getLogoutURLForEmbeddedBrowser();
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
+                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                return;
+            }
+
+
+            Map<String, String> headers = new Hashtable<>();
+            // Get Device Information
+
+
+            /*
+            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            //This is only for testing purpose
+            if(deviceInfoEntityFromparam==null) {
+                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            }
+            else if(deviceInfoEntityFromparam!=null)
+            {
+                deviceInfoEntity=deviceInfoEntityFromparam;
+            }*/
+
+
+
+
+            //Todo - check Construct Headers pending,Null Checking Pending
+            //Add headers
+            headers.put("Content-Type", URLHelper.contentTypeJson);
+
+           /* headers.put("deviceId", deviceInfoEntity.getDeviceId());
+            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
+            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
+            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());*/
+
+
+            //Call Service-getRequestId
+            final ICidaasSDKService cidaasSDKService = service.getInstance();
+
+            cidaasSDKService.logoutFromEmbeddedBrowser(logoutUrl,accessToken, "").enqueue(new Callback<LogoutResponseEntity>() {
+                @Override
+                public void onResponse(Call<LogoutResponseEntity> call, Response<LogoutResponseEntity> response) {
+                    if (response.isSuccessful()) {
+                        if(response.code()==200) {
+                            callback.success(response.body());
+                        }
+                        else {
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
+                                    "Service failure but successful response" , response.code(),null,null));
+                        }
+                    }
+                    else {
+                        assert response.errorBody() != null;
+                        try {
+
+                            // Handle proper error message
+                            String errorResponse=response.errorBody().source().readByteString().utf8();
+                            final CommonErrorEntity commonErrorEntity;
+                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
+
+                            String errorMessage="";
+                            ErrorEntity errorEntity=new ErrorEntity();
+                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
+                                errorMessage=commonErrorEntity.getError().toString();
+                            }
+                            else
+                            {
+                                if(commonErrorEntity.getError_description()!=null && !commonErrorEntity.getError_description().equals(""))
+                                {
+                                    errorMessage=commonErrorEntity.getError_description();
+                                }
+                                else {
+                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
+                                    errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
+                                    errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
+                                    errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                                    errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
+                                    errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                                }
+                            }
+
+
+                            //Todo Service call For fetching the Consent details
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGOUT_ERROR,
+                                    errorMessage, commonErrorEntity.getStatus(),
+                                    commonErrorEntity.getError(),errorEntity));
+
+                        } catch (Exception e) {
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGOUT_ERROR,e.getMessage(), 400,null,null));
+                            // Timber.e("response"+response.message()+e.getMessage());
+                        }
+                        Timber.e("response"+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LogoutResponseEntity> call, Throwable t) {
+                    Timber.e("Failure in Logout from embedded service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGOUT_ERROR,t.getMessage(), 400,null,null));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.addRecordToLog("LOGOUT Service exception"+e.getMessage());
+            Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        }
+    }
+
 
     //Resume Login After MFA
     public void continueMFA(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<ResumeLoginResponseEntity> callback)

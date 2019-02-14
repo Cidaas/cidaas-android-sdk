@@ -221,7 +221,8 @@ public class LoginActivity extends AppCompatActivity {
         final PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
         passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
 
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -234,6 +235,9 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void success(LoginCredentialsResponseEntity result) {
                         Toast.makeText(LoginActivity.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent(LoginActivity.this,SuccessfulLogin.class);
+                        intent.putExtra("sub",result.getData().getSub());
+                        startActivity(intent);
                     }
 
                     @Override
@@ -250,6 +254,50 @@ public class LoginActivity extends AppCompatActivity {
         });
         // Clear the Text Fields
 
+    }
+
+
+    public void loginWithPattern(View view)
+    {
+        try
+        {
+            final PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
+            passwordlessEntity.setEmail("raja.narayanan@widas.in");
+
+            cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+                @Override
+                public void success(AuthRequestResponseEntity result) {
+
+                    passwordlessEntity.setRequestId(result.getData().getRequestId());
+                    passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+                    cidaas.loginWithPatternRecognition("RED[1,2,3,4]",passwordlessEntity , new Result<LoginCredentialsResponseEntity>() {
+                        @Override
+                        public void success(LoginCredentialsResponseEntity result) {
+                            Toast.makeText(LoginActivity.this, "Success Login", Toast.LENGTH_SHORT).show();
+                            Intent intent=new Intent(LoginActivity.this,SuccessfulLogin.class);
+                            intent.putExtra("sub",result.getData().getSub());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Toast.makeText(LoginActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Toast.makeText(LoginActivity.this, "Request ID Faliure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+        catch (Exception e)
+        {
+
+        }
     }
 
     public void loginWithView(View view)

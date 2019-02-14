@@ -440,7 +440,7 @@ public class FingerprintConfigurationController {
 
 
     private void setupFingerprint(final String baseurl, final String accessToken,
-                              SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity,final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
+                                  final SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -485,6 +485,7 @@ public class FingerprintConfigurationController {
                                                             EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity = new EnrollFingerprintMFARequestEntity();
                                                             enrollFingerprintMFARequestEntity.setStatusId(result.getData().getSt());
                                                             enrollFingerprintMFARequestEntity.setUserDeviceId(result.getData().getUdi());
+                                                            enrollFingerprintMFARequestEntity.setClient_id(setupFingerprintMFARequestEntity.getClient_id());
 
 
                                                             enrollFingerprint(baseurl,accessToken,enrollFingerprintMFARequestEntity,enrollResult);
@@ -623,6 +624,7 @@ public class FingerprintConfigurationController {
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
                 if (enrollFingerprintMFARequestEntity.getUserDeviceId() != null && !enrollFingerprintMFARequestEntity.getUserDeviceId().equals("") &&
+                        enrollFingerprintMFARequestEntity.getClient_id() != null && !enrollFingerprintMFARequestEntity.getClient_id().equals("") &&
                         enrollFingerprintMFARequestEntity.getStatusId() != null && !enrollFingerprintMFARequestEntity.getStatusId().equals("") ) {
 
                     // call Enroll Service
@@ -687,7 +689,7 @@ public class FingerprintConfigurationController {
                             });
                 } else {
                     enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
-                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                            "UserdeviceId or ClientID or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                 }
             }
             else
@@ -756,7 +758,7 @@ public class FingerprintConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+                                        if(instceID!=null && instceID!="" ) {
 
                                             //Todo call initiate
                                             final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity=new InitiateFingerprintMFARequestEntity();
@@ -769,13 +771,14 @@ public class FingerprintConfigurationController {
 
                                                         @Override
                                                         public void success(InitiateFingerprintMFAResponseEntity result) {
-                                                            if (serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                            if (result.getData().getStatusId() != null &&
+                                                                    !result.getData().getStatusId().equals("")) {
 
 
                                                                 AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity = new AuthenticateFingerprintRequestEntity();
                                                                 authenticateFingerprintRequestEntity.setUserDeviceId(userDeviceId);
-                                                                authenticateFingerprintRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                authenticateFingerprintRequestEntity.setStatusId(result.getData().getStatusId());
+                                                                authenticateFingerprintRequestEntity.setClient_id(clientId);
 
 
                                                                 authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity, new Result<AuthenticateFingerprintResponseEntity>() {

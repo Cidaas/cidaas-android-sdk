@@ -10,7 +10,15 @@ import java.io.Serializable;
 public class InitiateFIDOMFAResponseDataEntity implements Serializable{
     String statusId;
     NFCSignObject fido_init_request_data;
+    String current_status;
 
+    public String getCurrent_status() {
+        return current_status;
+    }
+
+    public void setCurrent_status(String current_status) {
+        this.current_status = current_status;
+    }
 
     public String getStatusId() {
         return statusId;

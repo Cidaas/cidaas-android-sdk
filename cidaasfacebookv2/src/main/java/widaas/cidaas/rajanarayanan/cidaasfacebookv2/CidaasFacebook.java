@@ -53,6 +53,7 @@ public class CidaasFacebook implements ICidaasFacebook {
 
     @Override
     public void login(Result<AccessTokenEntity> accessTokenEntityResult) {
+        signOut();
          signIn(accessTokenEntityResult);
     }
 

@@ -6,13 +6,32 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class EnrollFaceResponseDataEntity implements Serializable{
-    String sub;
-    String trackingCode;
-    String verificationType;
-    String usageType;
-    String current_status;
-    String usage_pass;
+    String sub="";
+    String trackingCode="";
+    String verificationType="";
+    String usageType="";
+    String current_status="";
+    String usage_pass="";
+    boolean enrolled;
 
+    FaceMetadataEntity meta;
+
+
+    public FaceMetadataEntity getMeta() {
+        return meta;
+    }
+
+    public void setMeta(FaceMetadataEntity meta) {
+        this.meta = meta;
+    }
+
+    public boolean isEnrolled() {
+        return enrolled;
+    }
+
+    public void setEnrolled(boolean enrolled) {
+        this.enrolled = enrolled;
+    }
 
     public String getUsage_pass() {
         return usage_pass;

@@ -303,6 +303,11 @@ public class LoginController {
               }
 
           }
+          else
+          {
+              callbackResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,"BaseURL or provider or requestid must not be null"
+                      ,HttpStatusCode.EXPECTATION_FAILED));
+          }
         }
         catch (Exception e)
         {

@@ -128,7 +128,7 @@ public class PatternConfigurationController {
 
 
     private void setupPattern(final String baseurl, final String accessToken, final String patternString,
-                              SetupPatternMFARequestEntity setupPatternMFARequestEntity,final Result<EnrollPatternMFAResponseEntity> enrollResult)
+                              final SetupPatternMFARequestEntity setupPatternMFARequestEntity, final Result<EnrollPatternMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -174,6 +174,7 @@ public class PatternConfigurationController {
                                                             enrollPatternMFARequestEntity.setVerifierPassword(patternString);
                                                             enrollPatternMFARequestEntity.setStatusId(setupPatternresult.getData().getSt());
                                                             enrollPatternMFARequestEntity.setUserDeviceId(setupPatternresult.getData().getUdi());
+                                                            enrollPatternMFARequestEntity.setClientId(setupPatternMFARequestEntity.getClient_id());
 
 
                                                             enrollPattern(baseurl,accessToken,enrollPatternMFARequestEntity,enrollResult);
@@ -313,6 +314,7 @@ public class PatternConfigurationController {
 
                 if (enrollPatternMFARequestEntity.getUserDeviceId() != null && !enrollPatternMFARequestEntity.getUserDeviceId().equals("") &&
                         enrollPatternMFARequestEntity.getStatusId() != null && !enrollPatternMFARequestEntity.getStatusId().equals("") &&
+                        enrollPatternMFARequestEntity.getClientId() != null && !enrollPatternMFARequestEntity.getClientId().equals("") &&
                         enrollPatternMFARequestEntity.getVerifierPassword() != null && !enrollPatternMFARequestEntity.getVerifierPassword().equals("")) {
 
                     // call Enroll Service
@@ -377,7 +379,7 @@ public class PatternConfigurationController {
                             });
                 } else {
                     enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
-                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                            "UserdeviceId or Verifierpassword or StatusID or Client id must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                 }
             }
             else
@@ -446,27 +448,28 @@ public class PatternConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+                                        if(instceID!=null && instceID!="") {
 
                                             //Todo call initiate
-                                            final InitiatePatternMFARequestEntity initiatePatternMFARequestEntity=new InitiatePatternMFARequestEntity();
-                                            initiatePatternMFARequestEntity.setUsagePass(instceID);
+                                            final InitiatePatternMFARequestEntity initiatePatternMFARequestEntityWithUsagePass=new InitiatePatternMFARequestEntity();
+                                            initiatePatternMFARequestEntityWithUsagePass.setUsagePass(instceID);
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                                            PatternVerificationService.getShared(context).initiatePattern(baseurl,  initiatePatternMFARequestEntity,null,
+                                            PatternVerificationService.getShared(context).initiatePattern(baseurl,  initiatePatternMFARequestEntityWithUsagePass,null,
                                                     new Result<InitiatePatternMFAResponseEntity>() {
 
                                                         @Override
                                                         public void success(InitiatePatternMFAResponseEntity result) {
-                                                            if (patternString != null && !patternString.equals("") && serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                            if (patternString != null && !patternString.equals("") && result.getData().getStatusId() != null &&
+                                                                    !result .getData().getStatusId().equals("")) {
 
 
                                                                 AuthenticatePatternRequestEntity authenticatePatternRequestEntity = new AuthenticatePatternRequestEntity();
                                                                 authenticatePatternRequestEntity.setUserDeviceId(userDeviceId);
-                                                                authenticatePatternRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                authenticatePatternRequestEntity.setStatusId(result.getData().getStatusId());
                                                                 authenticatePatternRequestEntity.setVerifierPassword(patternString);
+                                                                authenticatePatternRequestEntity.setClient_id(initiatePatternMFARequestEntity.getClient_id());
 
 
                                                                 authenticatePattern(baseurl, authenticatePatternRequestEntity, new Result<AuthenticatePatternResponseEntity>() {

@@ -28,6 +28,7 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
@@ -283,11 +284,11 @@ public void enrollPattern(View view)
     }
 
     public void EnrollFace(View view){
-        String userdeviceID="7557f73c-8ea8-4cee-979f-4609878894aa";
+       // String userdeviceID="7557f73c-8ea8-4cee-979f-4609878894aa";
         EnrollFaceMFARequestEntity enrollFaceMFARequestEntity = new EnrollFaceMFARequestEntity();
 try {
 
-    File imgae;// = new File("/home/rajanarayanan/Project/cidaas-sdk-android-v2/app/src/main/res/drawable-v24/raja.jpeg", "cidaas.png");
+    File imgae;//= new File(R.drawable "cidaas.png");
     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 201);
   FileOutputStream out;
 
@@ -315,9 +316,21 @@ try {
     bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);
 
 
-    enrollFaceMFARequestEntity.setUserDeviceId(userdeviceID);
+    //enrollFaceMFARequestEntity.setUserDeviceId(userdeviceID);
     enrollFaceMFARequestEntity.setStatusId("6e32f505-f5d8-4ddb-a2d5-cb239be93eca");
-    enrollFaceMFARequestEntity.setImagetoSend(imgae);
+    //enrollFaceMFARequestEntity.setImagetoSend(imgae);
+
+    cidaas.enrollFace(imgae, sub, "6e32f505-f5d8-4ddb-a2d5-cb239be93eca", 1, new Result<EnrollFaceMFAResponseEntity>() {
+        @Override
+        public void success(EnrollFaceMFAResponseEntity result) {
+            Toast.makeText(EnrollPattern.this, "Success ", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void failure(WebAuthError error) {
+            Toast.makeText(EnrollPattern.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        }
+    });
 
 }
 catch (Exception ec){

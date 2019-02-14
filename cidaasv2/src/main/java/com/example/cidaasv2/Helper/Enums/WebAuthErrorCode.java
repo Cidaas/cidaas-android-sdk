@@ -111,6 +111,8 @@ public class WebAuthErrorCode {
 
   public static final int GOOGLE_ERROR = 10098;
 
+  public static final int LOGOUT_ERROR = 10099;
+
 
 
   /*public static final int DELETE_EMAIL_MFA_FAILURE = 10090;

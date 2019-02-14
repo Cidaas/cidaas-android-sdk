@@ -115,7 +115,7 @@ public class VoiceConfigurationController {
 
 
     private void setupVoice(final String baseurl, final String accessToken, @NonNull final File VoiceImageFile,
-                              SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,final Result<EnrollVoiceMFAResponseEntity> enrollResult)
+                            final SetupVoiceMFARequestEntity setupVoiceMFARequestEntity, final Result<EnrollVoiceMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -161,6 +161,7 @@ public class VoiceConfigurationController {
                                                             enrollVoiceMFARequestEntity.setAudioFile(VoiceImageFile);
                                                             enrollVoiceMFARequestEntity.setStatusId(result.getData().getSt());
                                                             enrollVoiceMFARequestEntity.setUserDeviceId(result.getData().getUdi());
+                                                            enrollVoiceMFARequestEntity.setClient_id(setupVoiceMFARequestEntity.getClient_id());
 
 
                                                             enrollVoice(baseurl,accessToken,enrollVoiceMFARequestEntity,enrollResult);
@@ -303,6 +304,7 @@ public class VoiceConfigurationController {
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
                 if (enrollVoiceMFARequestEntity.getUserDeviceId() != null && !enrollVoiceMFARequestEntity.getUserDeviceId().equals("") &&
+                        enrollVoiceMFARequestEntity.getClient_id() != null && !enrollVoiceMFARequestEntity.getClient_id().equals("") &&
                         enrollVoiceMFARequestEntity.getStatusId() != null && !enrollVoiceMFARequestEntity.getStatusId().equals("")) {
 
 
@@ -393,7 +395,7 @@ public class VoiceConfigurationController {
                             });
                 } else {
                     enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                            "UserdeviceId or Verifierpassword or clientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                 }
             }
             else
@@ -462,7 +464,7 @@ public class VoiceConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+                                        if(instceID!=null && instceID!="" ) {
 
                                             //Todo call initiate
                                             final InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity=new InitiateVoiceMFARequestEntity();
@@ -475,14 +477,15 @@ public class VoiceConfigurationController {
 
                                                         @Override
                                                         public void success(InitiateVoiceMFAResponseEntity result) {
-                                                            if (VoiceImageFile != null && serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                            if (VoiceImageFile != null && result.getData().getStatusId() != null &&
+                                                                    !result.getData().getStatusId().equals("")) {
 
 
                                                                 AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity = new AuthenticateVoiceRequestEntity();
                                                                 authenticateVoiceRequestEntity.setUserDeviceId(userDeviceId);
-                                                                authenticateVoiceRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                                                                authenticateVoiceRequestEntity.setStatusId(result.getData().getStatusId());
                                                                 authenticateVoiceRequestEntity.setVoiceFile(VoiceImageFile);
+                                                                authenticateVoiceRequestEntity.setClient_id(clientId);
 
 
                                                                 authenticateVoice(baseurl, authenticateVoiceRequestEntity, new Result<AuthenticateVoiceResponseEntity>() {
