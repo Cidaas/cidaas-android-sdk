@@ -23,6 +23,7 @@ The steps here will guide you through setting up and managing authentication and
         * [Classic Login](#classic-login)
         * [Social Login](#social-login)
         <!--te-->
+    *  [Embedded Browser Login](#embedded-browser-login)
     * [Native UI Integration](/app/PureNative.md)
     <!--te-->
 
@@ -85,11 +86,11 @@ You can get this by creating your App in App settings section of cidaas Admin po
 The first step of integrating cidaas sdk is the initialisation process.
 ```java
 
-Cidaas cidaas = Cidaas.getInstance(getApplicationContext);
+Cidaas cidaas = Cidaas.getInstance(your Activity Context);
 
 or
 
-Cidaas cidaas =new Cidaas(getApplicationContext); 
+Cidaas cidaas =new Cidaas(your Activity Context); 
 
 ```
 
@@ -97,12 +98,13 @@ Cidaas cidaas =new Cidaas(getApplicationContext);
 
 > ##### Note:- If you are going to use Native browser login, you must use getInstance() method to create cidaas instance
 
+
 #### Native Browser Login 
 #### Classic Login
 You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
 
 ```java
- cidaas.loginWithBrowser(yourContext, "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+ cidaas.loginWithBrowser(yourContext, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
 		//Your Success Code
@@ -157,3 +159,38 @@ If you use app links, configure your Domain setup and resume the SDK from your a
 }
 ```
 
+### Embedded Browser Login
+
+You can use embedded browser to login with cidaas , For this do the following steps
+1. Create an instance for CidaasSDKLayout using the activity context.
+
+```Java
+  CidaasSDKLayout cidaasSDKLayout=CidaasSDKLayout.getInstance(this);
+  
+  or
+  
+  CidaasSDKLayout cidaasSDKLayout= new CidaasSDKLayout(this);
+
+```
+2.Call ****loginWithEmbeddedBrowser()**** .
+
+3.Pass the relative layout as argument
+
+```Java
+ RelativeLayout relativeLayout=findViewById(R.id.relative_layout_for_webView);
+ 
+ cidaasSDKLayout.login(relativeLayout, new Result<AccessTokenEntity>() {
+ @Override
+ public void success(AccessTokenEntity result) {
+      //Your Success Code
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+       //Your Failure Code
+   }
+  }); 
+ 
+ ```
+ 
+ 
