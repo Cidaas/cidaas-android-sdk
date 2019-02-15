@@ -2527,6 +2527,7 @@ public class Cidaas implements IOAuthWebLogin {
                             EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity=new EnrollFingerprintMFARequestEntity();
                             enrollFingerprintMFARequestEntity.setStatusId(statusId);
                             enrollFingerprintMFARequestEntity.setUserDeviceId(userDeviceId);
+                            enrollFingerprintMFARequestEntity.setClient_id(clientId);
 
 
                             FingerprintConfigurationController.getShared(context).enrollFingerprint(baseurl,result.getAccess_token(),enrollFingerprintMFARequestEntity,enrollResult);
@@ -2771,6 +2772,7 @@ public class Cidaas implements IOAuthWebLogin {
                         enrollFIDOMFARequestEntity.setFidoTouchResponse(fidoResponse);
                         enrollFIDOMFARequestEntity.setStatusId(statusId);
                         enrollFIDOMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                        enrollFIDOMFARequestEntity.setClient_id(clientId);
 
                         FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,accessTOkenresult.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
                     }
@@ -3230,6 +3232,7 @@ public class Cidaas implements IOAuthWebLogin {
                     enrollSmartPushMFARequestEntity.setVerifierPassword(randomNumber);
                     enrollSmartPushMFARequestEntity.setStatusId(statusId);
                     enrollSmartPushMFARequestEntity.setUserDeviceId(userDeviceId);
+                    enrollSmartPushMFARequestEntity.setClient_id(clientId);
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                         @Override
@@ -3395,6 +3398,7 @@ public class Cidaas implements IOAuthWebLogin {
                         SetupTOTPMFARequestEntity setupTOTPMFARequestEntity = new SetupTOTPMFARequestEntity();
                         setupTOTPMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupTOTPMFARequestEntity.setLogoUrl(logoURLlocal);
+
 
                         TOTPConfigurationController.getShared(context).configureTOTP(sub, finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
 
