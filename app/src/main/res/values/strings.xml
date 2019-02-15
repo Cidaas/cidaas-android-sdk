@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">cidaas-sdk-androidv2</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="facebook_app_id">610205039401876</string>
 </resources>

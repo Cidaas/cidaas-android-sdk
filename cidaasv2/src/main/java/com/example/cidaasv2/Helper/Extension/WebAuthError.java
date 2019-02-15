@@ -200,4 +200,24 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.ErrorMessage=errorMessage;
         return WebAuthError.shared;
     }
+
+
+    //Facebook oncancel Exception
+    public WebAuthError facebookOnCancelException() {
+
+        WebAuthError.shared.errorCode=WebAuthErrorCode.ON_CANCEL_FACEBOOK;
+        WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
+        WebAuthError.shared.ErrorMessage=context.getString(R.string.USER_CANCELLED_LOGIN);
+        return WebAuthError.shared;
+    }
+
+
+    //Google Error Exception
+    public WebAuthError googleError() {
+
+        WebAuthError.shared.errorCode=WebAuthErrorCode.GOOGLE_ERROR;
+        WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
+        WebAuthError.shared.ErrorMessage=context.getString(R.string.GOOGLE_SIGNIN_ERROR);
+        return WebAuthError.shared;
+    }
 }

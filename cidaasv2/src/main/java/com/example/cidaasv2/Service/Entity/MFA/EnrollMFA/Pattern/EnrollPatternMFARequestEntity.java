@@ -12,8 +12,16 @@ public class EnrollPatternMFARequestEntity implements Serializable{
     String verifierPassword;
     String userDeviceId;
     String usage_pass;
+    String client_id;
     DeviceInfoEntity deviceInfo;
 
+    public String getClientId() {
+        return client_id;
+    }
+
+    public void setClientId(String clientId) {
+        this.client_id = clientId;
+    }
 
     public String getUsage_pass() {
         return usage_pass;

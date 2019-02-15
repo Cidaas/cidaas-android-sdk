@@ -11,6 +11,7 @@ public class RegisterUserAccountInitiateRequestEntity implements Serializable{
     String verificationMedium;
     String processingType;
 
+
     public String getRequestId() {
         return requestId;
     }

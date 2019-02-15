@@ -107,6 +107,8 @@ public class AccessTokenController {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).customException(417,"Exception :AccessToken Controller :getAccessTokenByCode() :- "+e.getMessage(),400));
+
             //Todo Handle Exception
         }
     }
@@ -160,7 +162,8 @@ public class AccessTokenController {
         {
 
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).noUserFoundException());
+            callback.failure(WebAuthError.getShared(context).customException(417,"Exception :AccessToken Controller :getAccessToken() :- "+e.getMessage(),400));
+
             //Todo Handle Exception
         }
     }
@@ -211,8 +214,8 @@ public class AccessTokenController {
          }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.d(e.getMessage()); //Todo Handle Exception
+            callback.failure(WebAuthError.getShared(context).customException(417,"Exception :AccessToken Controller :getAccessTokenByRefreshToken() :- "+e.getMessage(),400));
+            Timber.d(e.getMessage()); //done Handle Exception
         }
     }
 
@@ -246,7 +249,8 @@ public class AccessTokenController {
         }
         catch (Exception e)
         {
-
+            accessTokenEntityResult.failure(WebAuthError.getShared(context).customException(417,"Exception: AccessToken Controller: getAccessTokenBySocial() :- "+e.getMessage(),400));
+            Timber.d(e.getMessage());
         }
     }
 }

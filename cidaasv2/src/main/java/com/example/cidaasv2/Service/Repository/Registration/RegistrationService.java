@@ -51,6 +51,12 @@ public class RegistrationService {
         verificationType="";
         context=contextFromCidaas;
         authenticationType="";
+
+
+        if(service==null) {
+            service=new CidaassdkService();
+        }
+
         //Todo setValue for authenticationType
 
     }
@@ -90,7 +96,8 @@ public class RegistrationService {
 
 
             //Call Service-getRequestId
-            ICidaasSDKService cidaasSDKService = service.getInstance();
+
+            final ICidaasSDKService cidaasSDKService = service.getInstance();
 
             cidaasSDKService.getRegistrationSetup(RegistrationUrl).enqueue(new Callback<RegistrationSetupResponseEntity>() {
                 @Override
@@ -279,7 +286,6 @@ public class RegistrationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
@@ -387,7 +393,6 @@ public class RegistrationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());

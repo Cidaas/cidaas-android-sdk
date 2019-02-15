@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
@@ -67,6 +68,32 @@ public class FirstActivity extends AppCompatActivity {
 
          }
 
+     });
+
+
+     cidaas.loginWithSocial(getApplicationContext(), "linkedin", "optinalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+         @Override
+         public void success(AccessTokenEntity result) {
+
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+
+         }
+     });
+
+
+     cidaas.loginWithBrowser(getApplicationContext(), "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+         @Override
+         public void success(AccessTokenEntity result) {
+
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+
+         }
      });
 
      cidaas.getMFAList("your_sub", new Result<MFAListResponseEntity>() {

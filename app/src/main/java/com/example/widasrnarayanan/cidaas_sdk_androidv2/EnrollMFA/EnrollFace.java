@@ -40,7 +40,6 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
-import com.example.widasrnarayanan.cidaas_sdk_androidv2.FaceUI.FaceOverlayView;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -58,7 +57,7 @@ public class EnrollFace extends AppCompatActivity {
     FileOutputStream out;
     String ssub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
 
-    FaceOverlayView faceOverlayView;
+//    FaceOverlayView faceOverlayView;
     private String cameraId;
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSessions;
@@ -92,7 +91,7 @@ public class EnrollFace extends AppCompatActivity {
             assert textureView != null;
             textureView.setSurfaceTextureListener(textureListener);
 
-            faceOverlayView = new FaceOverlayView(getApplicationContext());
+//            faceOverlayView = new FaceOverlayView(getApplicationContext());
         } catch (Exception e) {
             Timber.d(e.getMessage());
 
@@ -173,7 +172,7 @@ public class EnrollFace extends AppCompatActivity {
     CameraCaptureSession.CaptureCallback mcaptureCallBack = new CameraCaptureSession.CaptureCallback() {
 
         private void process(CaptureResult result) {
-
+/*
                 if (textureView.getBitmap() != null) {
                     faceOverlayView.setBitmap(textureView.getBitmap());
 
@@ -188,7 +187,7 @@ public class EnrollFace extends AppCompatActivity {
                 //Toast.makeText(MainActivity.this, "Photo Saved", Toast.LENGTH_SHORT).show();
 
 
-            }
+            }*/
 
         }
 
@@ -264,7 +263,7 @@ public class EnrollFace extends AppCompatActivity {
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
 
 
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -289,7 +288,7 @@ public class EnrollFace extends AppCompatActivity {
                 });*/
 
 
-               cidaas.configureFaceRecognition(convertImageJpegForFace(bitmap), ssub,"", new Result<EnrollFaceMFAResponseEntity>() {
+               cidaas.configureFaceRecognition(convertImageJpegForFace(bitmap), ssub,"",1, new Result<EnrollFaceMFAResponseEntity>() {
                    @Override
                    public void success(EnrollFaceMFAResponseEntity result) {
                        Toast.makeText(EnrollFace.this, "Face Configured Successfully "+result.getData().getSub(), Toast.LENGTH_SHORT).show();

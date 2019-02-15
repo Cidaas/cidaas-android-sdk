@@ -555,7 +555,7 @@ public class FIDOConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+                                        if(instceID!=null && instceID!="") {
 
                                             //Todo call initiate
                                             final InitiateFIDOMFARequestEntity initiateFIDOMFARequestEntity=new InitiateFIDOMFARequestEntity();
@@ -576,6 +576,7 @@ public class FIDOConfigurationController {
 
                                                                 authenticateFIDORequestEntity.setUserDeviceId(userDeviceId);
                                                                 authenticateFIDORequestEntity.setStatusId(initiateresult.getData().getStatusId());
+                                                                authenticateFIDORequestEntity.setClient_id(clientId);
 
 
                                                                 authenticateFIDO(baseurl, authenticateFIDORequestEntity, new Result<AuthenticateFIDOResponseEntity>() {

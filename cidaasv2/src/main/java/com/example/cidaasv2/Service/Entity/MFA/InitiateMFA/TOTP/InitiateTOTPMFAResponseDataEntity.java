@@ -8,6 +8,17 @@ import java.io.Serializable;
 public class InitiateTOTPMFAResponseDataEntity implements Serializable{
     String statusId;
 
+    String current_status;
+
+    public String getCurrent_status() {
+        return current_status;
+    }
+
+    public void setCurrent_status(String current_status) {
+        this.current_status = current_status;
+    }
+
+
     public String getStatusId() {
         return statusId;
     }

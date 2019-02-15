@@ -37,7 +37,7 @@ public class FaceDetection extends Activity {
 
         File imagefile=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Cidaas-Faces","cidaas.png");
 
-        cidaas.configureFaceRecognition(imagefile, ssub,"", new Result<EnrollFaceMFAResponseEntity>() {
+        cidaas.configureFaceRecognition(imagefile, ssub,"", 1,new Result<EnrollFaceMFAResponseEntity>() {
             @Override
             public void success(EnrollFaceMFAResponseEntity result) {
                 Toast.makeText(FaceDetection.this, "Success Face"+result.getData().getUsageType(), Toast.LENGTH_SHORT).show();

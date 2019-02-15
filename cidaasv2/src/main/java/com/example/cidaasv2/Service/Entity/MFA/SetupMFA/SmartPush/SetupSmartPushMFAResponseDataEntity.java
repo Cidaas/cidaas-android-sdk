@@ -14,6 +14,7 @@ public class SetupSmartPushMFAResponseDataEntity implements Serializable{
     String l= "";
     String sub= "";
     String rns="";
+    String prn="";
 
     String cid="";
     String rurl= "";
@@ -108,6 +109,14 @@ public class SetupSmartPushMFAResponseDataEntity implements Serializable{
 
     public void setUdi(String udi) {
         this.udi = udi;
+    }
+
+    public String getPrn() {
+        return prn;
+    }
+
+    public void setPrn(String prn) {
+        this.prn = prn;
     }
 
     public String getCurrent_status() {

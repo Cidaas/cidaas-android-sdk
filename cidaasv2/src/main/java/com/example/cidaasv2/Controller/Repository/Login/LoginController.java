@@ -213,7 +213,7 @@ public class LoginController {
     }
 
 
-    //Get login URL for Custom browser
+    //Get login URL for Custom browser and Webview
     public void getLoginURL( @NonNull final String baseurl, Dictionary<String, String> loginProperties,
                              final Dictionary<String, String> challengePropertiesfromparam, @NonNull final Result<String> callbackResult)
     {
@@ -265,13 +265,9 @@ public class LoginController {
                   else
                   {
                       callbackResult.failure(WebAuthError.getShared(context)
-                              .customException(WebAuthErrorCode.PROPERTY_MISSING,"ClientId or RedirectURL of Challenge must not be empty"
+                              .customException(WebAuthErrorCode.PROPERTY_MISSING,"ClientId or RedirectURL or Challenge must not be empty"
                                       ,HttpStatusCode.EXPECTATION_FAILED));
                   }
-
-
-
-
               }
 
               @Override
@@ -306,6 +302,11 @@ public class LoginController {
                   callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException());
               }
 
+          }
+          else
+          {
+              callbackResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,"BaseURL or provider or requestid must not be null"
+                      ,HttpStatusCode.EXPECTATION_FAILED));
           }
         }
         catch (Exception e)

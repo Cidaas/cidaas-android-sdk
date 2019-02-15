@@ -50,7 +50,7 @@ public class SmartPushConfigurationController {
 
     }
 
-    String codeVerifier, codeChallenge;
+    String codeVerifier="", codeChallenge="";
     // Generate Code Challenge and Code verifier
     public void generateChallenge(){
         OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
@@ -353,7 +353,7 @@ public class SmartPushConfigurationController {
 
 
     private void setupSmartPush(final String baseurl, final String accessToken,
-                              SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity,final Result<EnrollSmartPushMFAResponseEntity> enrollResult)
+                                final SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity, final Result<EnrollSmartPushMFAResponseEntity> enrollResult)
     {
         try
         {
@@ -385,21 +385,21 @@ public class SmartPushConfigurationController {
                                     public void onFinish() {
                                         if(instceID!=null && !instceID.equals("") ) {
 
-                                            SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntity = new SetupSmartPushMFARequestEntity();
-                                            setupSmartPushMFARequestEntity.setUsage_pass(instceID);
+                                            final SetupSmartPushMFARequestEntity setupSmartPushMFARequestEntityWithUsagePass = new SetupSmartPushMFARequestEntity();
+                                            setupSmartPushMFARequestEntityWithUsagePass.setUsage_pass(instceID);
                                             // call Scanned Service
                                             SmartPushVerificationService.getShared(context).setupSmartPush(baseurl, accessToken,
-                                                    setupSmartPushMFARequestEntity, null, new Result<SetupSmartPushMFAResponseEntity>() {
+                                                    setupSmartPushMFARequestEntityWithUsagePass, null, new Result<SetupSmartPushMFAResponseEntity>() {
                                                         @Override
                                                         public void success(final SetupSmartPushMFAResponseEntity result) {
                                                             DBHelper.getShared().setUserDeviceId(result.getData().getUdi(), baseurl);
 
                                                             //Entity For SmartPush
                                                             EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity = new EnrollSmartPushMFARequestEntity();
-                                                            enrollSmartPushMFARequestEntity.setVerifierPassword(result.getData().getRns());
+                                                            enrollSmartPushMFARequestEntity.setVerifierPassword(result.getData().getPrn());
                                                             enrollSmartPushMFARequestEntity.setStatusId(result.getData().getSt());
                                                             enrollSmartPushMFARequestEntity.setUserDeviceId(result.getData().getUdi());
-
+                                                            enrollSmartPushMFARequestEntity.setClient_id(setupSmartPushMFARequestEntity.getClient_id());
 
                                                             enrollSmartPush(baseurl,accessToken,enrollSmartPushMFARequestEntity,enrollResult);
 
@@ -456,6 +456,7 @@ public class SmartPushConfigurationController {
 
                 if (enrollSmartPushMFARequestEntity.getUserDeviceId() != null && !enrollSmartPushMFARequestEntity.getUserDeviceId().equals("") &&
                         enrollSmartPushMFARequestEntity.getStatusId() != null && !enrollSmartPushMFARequestEntity.getStatusId().equals("") &&
+                        enrollSmartPushMFARequestEntity.getClient_id() != null && !enrollSmartPushMFARequestEntity.getClient_id().equals("") &&
                         enrollSmartPushMFARequestEntity.getVerifierPassword() != null && !enrollSmartPushMFARequestEntity.getVerifierPassword().equals("")) {
 
                     // call Enroll Service
@@ -520,7 +521,7 @@ public class SmartPushConfigurationController {
                             });
                 } else {
                     enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
-                            "UserdeviceId or Verifierpassword or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                            "UserdeviceId or Verifierpassword or clientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                 }
             }
             else
@@ -763,27 +764,29 @@ public class SmartPushConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" && serviceresult.getData().getStatusId()!=null && serviceresult.getData().getStatusId()!="") {
+                                        if(instceID!=null && instceID!="" ) {
 
                                             //Todo call initiate
-                                            final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntity=new InitiateSmartPushMFARequestEntity();
-                                            initiateSmartPushMFARequestEntity.setUsage_pass(instceID);
+                                            final InitiateSmartPushMFARequestEntity initiateSmartPushMFARequestEntityWithUsagePass=new InitiateSmartPushMFARequestEntity();
+                                            initiateSmartPushMFARequestEntityWithUsagePass.setUsage_pass(instceID);
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, initiateSmartPushMFARequestEntity,null,
+                                            SmartPushVerificationService.getShared(context).initiateSmartPush(baseurl, initiateSmartPushMFARequestEntityWithUsagePass,null,
                                                     new Result<InitiateSmartPushMFAResponseEntity>() {
 
                                                         @Override
                                                         public void success(InitiateSmartPushMFAResponseEntity result) {
-                                                            if (serviceresult.getData().getRandomNumber() != null && !serviceresult.getData().getRandomNumber().equals("") && serviceresult.getData().getStatusId() != null &&
-                                                                    !serviceresult.getData().getStatusId().equals("")) {
+                                                            if (result.getData().getRandomNumber() != null && !result.getData().getRandomNumber().equals("") && result.getData().getStatusId() != null &&
+                                                                    !result.getData().getStatusId().equals("")) {
 
 
                                                                 AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity = new AuthenticateSmartPushRequestEntity();
                                                                 authenticateSmartPushRequestEntity.setUserDeviceId(userDeviceId);
-                                                                authenticateSmartPushRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                                                                authenticateSmartPushRequestEntity.setVerifierPassword(serviceresult.getData().getRandomNumber());
+                                                                authenticateSmartPushRequestEntity.setStatusId(result.getData().getStatusId());
+                                                                authenticateSmartPushRequestEntity.setVerifierPassword(result.getData().getRandomNumber());
+                                                                authenticateSmartPushRequestEntity.setClient_id(initiateSmartPushMFARequestEntity.getClient_id());
+
 
 
                                                                 authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity, new Result<AuthenticateSmartPushResponseEntity>() {

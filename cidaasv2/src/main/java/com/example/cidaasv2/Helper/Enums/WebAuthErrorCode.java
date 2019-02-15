@@ -107,6 +107,13 @@ public class WebAuthErrorCode {
   public static final int GET_LOGIN_URL_FAILURE = 10095;
   public static final int GET_SOCIAL_LOGIN_URL_FAILURE = 10096;
 
+  public static final int ON_CANCEL_FACEBOOK = 10097;
+
+  public static final int GOOGLE_ERROR = 10098;
+
+  public static final int LOGOUT_ERROR = 10099;
+
+
 
   /*public static final int DELETE_EMAIL_MFA_FAILURE = 10090;
   public static final int DELETE_BACKUPCODE_MFA_FAILURE = 10091;

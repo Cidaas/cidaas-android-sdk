@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
@@ -25,18 +26,20 @@ public class EmailAccountVerification extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_account_verification);
 
-        verificationCodeTextbox=findViewById(R.id.verificationCode);
-        cidaas=new Cidaas(this);
 
+        cidaas=new Cidaas(this);
+        verificationCodeTextbox=findViewById(R.id.emailaccountverification);
         Intent intent=getIntent();
 
         accvid=intent.getStringExtra("accvid");
+
+        LoginEntity loginEntity=new LoginEntity();
     }
     public void ButtonClickVerifyEmail(View view){
         try {
             String verificationCode = verificationCodeTextbox.getText().toString();
             if (accvid != null && accvid!="") {
-               /* cidaas.verifyAccountVerification(accvid, verificationCode, new Result<RegisterUserAccountVerifyResponseEntity>() {
+                cidaas.verifyAccount( verificationCode, accvid,new Result<RegisterUserAccountVerifyResponseEntity>() {
                     @Override
                     public void success(RegisterUserAccountVerifyResponseEntity result) {
                         Toast.makeText(EmailAccountVerification.this, "Success"+result.getStatus(), Toast.LENGTH_SHORT).show();
@@ -47,7 +50,6 @@ public class EmailAccountVerification extends AppCompatActivity {
                         Toast.makeText(EmailAccountVerification.this, "Error on Verifying"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-            */
             cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {

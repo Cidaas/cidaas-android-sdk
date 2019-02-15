@@ -12,6 +12,7 @@ public class AuthenticatePatternResponseDataEntity implements Serializable {
     String usageType;
     String current_status;
 
+
     public String getCurrent_status() {
         return current_status;
     }

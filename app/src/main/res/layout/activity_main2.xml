@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Main2Activity">
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_for_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <Button
+            android:id="@+id/buttonForWebView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:onClick="logout"
+            android:text="Logout" />
+    </RelativeLayout>
+
+
+
+<RelativeLayout
+    android:id="@+id/relative_layout_for_webView"
+    android:layout_width="match_parent"
+    android:layout_below="@+id/relative_layout_for_button"
+    android:layout_height="wrap_content">
+
+</RelativeLayout>
+
+
+
+
+</RelativeLayout>

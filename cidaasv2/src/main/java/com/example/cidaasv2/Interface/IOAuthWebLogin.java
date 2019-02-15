@@ -100,7 +100,7 @@ public interface IOAuthWebLogin {
     void verifyBackupcode(String code,String StatusId,Result<LoginCredentialsResponseEntity> result);
 
     //FACE
-    void configureFaceRecognition(File photo,String sub, @NonNull final String logoURL,Result<EnrollFaceMFAResponseEntity> result);
+    void configureFaceRecognition(File photo,String sub, @NonNull final String logoURL,int attempts,Result<EnrollFaceMFAResponseEntity> result);
     void loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntity,
                                    final Result<LoginCredentialsResponseEntity> loginresult);
 

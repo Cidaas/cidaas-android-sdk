@@ -28,6 +28,7 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
@@ -54,7 +55,7 @@ public class EnrollPattern extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_pattern);
-        cidaas=new Cidaas(this);
+        cidaas=Cidaas.getInstance(this);
 
         Intent intent=getIntent();
         sub=intent.getStringExtra("sub");
@@ -112,39 +113,18 @@ public void enrollPattern(View view)
 
 
     try{
-        /*cidaas.scannedPattern("fe690559-3c7c-4b24-aab3-50f4050d9f52", "825ef0f8-4f2d-46ad-831d-08a30561305d", new Result<ScannedResponseEntity>() {
-            @Override
-            public void success(ScannedResponseEntity result) {
-                cidaas.enrollPattern("RED[1,2,3,4]", "825ef0f8-4f2d-46ad-831d-08a30561305d", "fe690559-3c7c-4b24-aab3-50f4050d9f52", new Result<EnrollPatternMFAResponseEntity>() {
-                    @Override
-                    public void success(EnrollPatternMFAResponseEntity result) {
-                        Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
-                    }
 
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(EnrollPattern.this, "Failure", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+       cidaas.configurePatternRecognition("RED[1,2,3,4]", sub, "", new Result<EnrollPatternMFAResponseEntity>() {
+           @Override
+           public void success(EnrollPatternMFAResponseEntity result) {
+               Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
+           }
 
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });*/
-
-        cidaas.enrollPattern("RED[1,2,3,4]", "825ef0f8-4f2d-46ad-831d-08a30561305d", "7fb7863a-a2da-4eca-b57b-0cfaaf581d9a", new Result<EnrollPatternMFAResponseEntity>() {
-            @Override
-            public void success(EnrollPatternMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Failure", Toast.LENGTH_SHORT).show();
-            }
-        });
+           @Override
+           public void failure(WebAuthError error) {
+               Toast.makeText(EnrollPattern.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+           }
+       });
     }
     catch (Exception e)
     {
@@ -196,8 +176,10 @@ public void enrollPattern(View view)
 
 
 
-    public void SetupPattern(View view){
-        cidaas.configurePatternRecognition("RED[1,2,3,4]",sub,"",new Result<EnrollPatternMFAResponseEntity>() {
+    public void enrollPatternOnly(View view){
+
+        String statusId="7f359ef4-fae4-4b99-9b34-cc1eac7fee14";
+        cidaas.enrollPattern("RED[1,2,3,4]",sub,statusId,new Result<EnrollPatternMFAResponseEntity>() {
             @Override
             public void success(EnrollPatternMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Success Pattern", Toast.LENGTH_SHORT).show();
@@ -205,7 +187,7 @@ public void enrollPattern(View view)
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Failes Pattern"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EnrollPattern.this, "Fails Pattern"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -302,11 +284,11 @@ public void enrollPattern(View view)
     }
 
     public void EnrollFace(View view){
-        String userdeviceID="7557f73c-8ea8-4cee-979f-4609878894aa";
+       // String userdeviceID="7557f73c-8ea8-4cee-979f-4609878894aa";
         EnrollFaceMFARequestEntity enrollFaceMFARequestEntity = new EnrollFaceMFARequestEntity();
 try {
 
-    File imgae;// = new File("/home/rajanarayanan/Project/cidaas-sdk-android-v2/app/src/main/res/drawable-v24/raja.jpeg", "cidaas.png");
+    File imgae;//= new File(R.drawable "cidaas.png");
     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 201);
   FileOutputStream out;
 
@@ -334,9 +316,21 @@ try {
     bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);
 
 
-    enrollFaceMFARequestEntity.setUserDeviceId(userdeviceID);
+    //enrollFaceMFARequestEntity.setUserDeviceId(userdeviceID);
     enrollFaceMFARequestEntity.setStatusId("6e32f505-f5d8-4ddb-a2d5-cb239be93eca");
-    enrollFaceMFARequestEntity.setImagetoSend(imgae);
+    //enrollFaceMFARequestEntity.setImagetoSend(imgae);
+
+    cidaas.enrollFace(imgae, sub, "6e32f505-f5d8-4ddb-a2d5-cb239be93eca", 1, new Result<EnrollFaceMFAResponseEntity>() {
+        @Override
+        public void success(EnrollFaceMFAResponseEntity result) {
+            Toast.makeText(EnrollPattern.this, "Success ", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void failure(WebAuthError error) {
+            Toast.makeText(EnrollPattern.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        }
+    });
 
 }
 catch (Exception ec){

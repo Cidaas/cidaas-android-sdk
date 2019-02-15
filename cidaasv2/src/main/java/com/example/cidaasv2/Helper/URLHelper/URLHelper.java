@@ -38,6 +38,7 @@ public class URLHelper {
     String  acceptConsent="/consent-management-srv/user/status";
 
     String loginWithCredentials="/login-srv/login/sdk";
+    String logoutURLForEmbeddedBrowser="/session/end_session";
     String registrationSetup="/registration-setup-srv/public/list?acceptlanguage=";
 
     String clientUrl="/public-srv/public/";
@@ -152,6 +153,10 @@ public class URLHelper {
 
     String openIdURL="/.well-known/openid-configuration";
 
+
+    public String getLogoutURLForEmbeddedBrowser() {
+        return logoutURLForEmbeddedBrowser;
+    }
 
     public String getSocialLoginURL() {
         return socialLoginURL;

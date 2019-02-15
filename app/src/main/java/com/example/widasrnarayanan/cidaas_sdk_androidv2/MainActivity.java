@@ -4,91 +4,75 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Enums.Result;
-import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
+import com.example.cidaasv2.Interface.ILoader;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.io.File;
-import java.util.Dictionary;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import timber.log.Timber;
+import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
+import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
 
 
-public class MainActivity extends AppCompatActivity implements ICustomLoader {
+public class MainActivity extends AppCompatActivity  implements ILoader{
 
     ProgressDialog progressDialog;
      Cidaas cidaas;
      String requestId;
+    CidaasFacebook cidaasFacebook;
+    CidaasGoogle cidaasGoogle;
+    Button logoutButton;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
          cidaas = Cidaas.getInstance(this);
-         Cidaas.loader=this;
+         CidaasSDKLayout.loader=this;
          getFCMToken();
 
-        String url = getIntent().getDataString();
-        if (url != null) {
-            cidaas.resume(url);
+         logoutButton=findViewById(R.id.logoutbutton);
+         logoutButton.setVisibility(View.INVISIBLE);
+
+        cidaasFacebook=new CidaasFacebook(this);
+        cidaasGoogle=new CidaasGoogle(this);
 
 
-            /*, new Result<AccessTokenEntity>() {
-                @Override
-                public void success(AccessTokenEntity result) {
-                    Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
-                }
+        String token = getIntent().getDataString();
+        if (token != null) {
+           cidaas.handleToken(token);
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Toast.makeText(MainActivity.this, "Failure", Toast.LENGTH_SHORT).show();
-                }
-            }
-            */
+
         }
         else {
         }
     }
 
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-       *//*if(cidaas!=null) {
-            String url = getIntent().getDataString();
-            if (url != null) {
-                cidaas.resume(url);
-
-            }
-            else
-            {
-                Toast.makeText(getApplicationContext(), "URL null", Toast.LENGTH_LONG).show();
-            }
-        }
-       else
-       {
-           Toast.makeText(getApplicationContext(), "OBJECT NULL", Toast.LENGTH_LONG).show();
-       }*//*
-    }*/
 
 
 
@@ -273,6 +257,23 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
         });
     }
 
+
+    //openWebView
+
+    public void openWebview(View view)
+    {
+
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","Normal");
+        startActivity(intent);
+
+
+
+    }
+
+
+
     //Reset Password
     public void ResetPassword(View v)
     {
@@ -390,9 +391,129 @@ public class MainActivity extends AppCompatActivity implements ICustomLoader {
     }
 
 
+
+    public void printhashkey(){
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.example.widasrnarayanan.cidaas_sdk_androidv2",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        cidaasGoogle.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        cidaasGoogle.onStop();
+    }
+
+
+    public void enableFacebookOnly(View view)
+    {
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","NativeFacebook");
+        startActivity(intent);
+    }
+
+    public void enableGoogleOnly(View view)
+    {
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","NativeGoogle");
+        startActivity(intent);
+    }
+
+    public void enableBoth(View view)
+    {
+
+        Intent intent=new Intent(this,Main2Activity.class);
+        intent.putExtra("key","both");
+        startActivity(intent);
+    }
+
+
+
+
+    public void nativeFacebook(View view)
+    {
+
+        printhashkey();
+
+
+
+
+        cidaasFacebook.login(new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+                Toast.makeText(MainActivity.this, "Native Facebook Succs"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+    public void logout(View view)
+    {
+        cidaasGoogle.logout();
+        logoutButton.setVisibility(View.INVISIBLE);
+      //  cidaasFacebook.logout();
+    }
+
+
+    public void nativeGoogle(View view)
+    {
+
+        printhashkey();
+
+
+
+
+        cidaasGoogle.login(new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity result) {
+                logoutButton.setVisibility(View.VISIBLE);
+                Toast.makeText(MainActivity.this, "Native google Succs"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==9001) {
+            cidaasGoogle.authorize(requestCode, resultCode, data);
 
+        }
+        else {
+            cidaasFacebook.authorize(requestCode, resultCode, data);
+        }
+      // cidaas.authorize(requestCode,resultCode,data)
     }
 }
