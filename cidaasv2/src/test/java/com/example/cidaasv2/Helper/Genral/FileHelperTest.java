@@ -72,7 +72,7 @@ Context context;
     @Test
     public void testCidaasReadProperties() throws Exception {
 
-        fileHelper.readProperties(assetManager, "cidaas.xml", new Result<Dictionary<String, String>>() {
+        fileHelper.readProperties(assetManager, "cidaas123.xml", new Result<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
                 Assert.assertEquals("DomainURL","DomainURL");
