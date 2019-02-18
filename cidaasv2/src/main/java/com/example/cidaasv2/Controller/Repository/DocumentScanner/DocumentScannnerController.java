@@ -3,7 +3,6 @@ package com.example.cidaasv2.Controller.Repository.DocumentScanner;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class DocumentScannnerController {

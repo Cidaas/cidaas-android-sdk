@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Service.Repository.Verification.Settings;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -15,18 +14,18 @@ import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import java.util.LinkedHashMap;
 
+import androidx.annotation.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -210,7 +209,7 @@ public class VerificationSettingsService {
 
 
 
-    public void deleteMFA(String baseurl,  @NonNull final String accessToken,String userDeviceID, String verificationType, DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
+    public void deleteMFA(String baseurl, @NonNull final String accessToken, String userDeviceID, String verificationType, DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
     {
         //Local Variables
         String deleteMFAURL = "";

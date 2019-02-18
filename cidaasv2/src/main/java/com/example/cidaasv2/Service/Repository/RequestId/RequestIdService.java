@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Service.Repository.RequestId;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
@@ -27,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import androidx.annotation.Nullable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

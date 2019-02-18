@@ -2,7 +2,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Voice;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -31,6 +30,7 @@ import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class VoiceConfigurationController {
@@ -78,9 +78,9 @@ public class VoiceConfigurationController {
 
 
     //Service call To SetupVoiceMFA
-    public void configureVoice(@NonNull final File VoiceImageFile,@NonNull final String sub, @NonNull final String baseurl,
-                                 @NonNull final SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,
-                                 @NonNull final Result<EnrollVoiceMFAResponseEntity> enrollresult)
+    public void configureVoice(@NonNull final File VoiceImageFile, @NonNull final String sub, @NonNull final String baseurl,
+                               @NonNull final SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,
+                               @NonNull final Result<EnrollVoiceMFAResponseEntity> enrollresult)
     {
         try{
 
@@ -416,10 +416,10 @@ public class VoiceConfigurationController {
 
 
     //Login with Voice
-    public void LoginWithVoice(@NonNull final File VoiceImageFile,@NonNull final String baseurl, @NonNull final String clientId,
-                                  @NonNull final String trackId, @NonNull final String requestId,
-                                  @NonNull final InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity,
-                                  final Result<LoginCredentialsResponseEntity> loginresult)
+    public void LoginWithVoice(@NonNull final File VoiceImageFile, @NonNull final String baseurl, @NonNull final String clientId,
+                               @NonNull final String trackId, @NonNull final String requestId,
+                               @NonNull final InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity,
+                               final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
 

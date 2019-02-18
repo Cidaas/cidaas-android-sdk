@@ -202,6 +202,17 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 
 
+
+    //Custom Exception
+    public WebAuthError fingerPrintException(String errorMessage) {
+
+        WebAuthError.shared.errorCode=WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED;
+        WebAuthError.shared.statusCode=417;
+        WebAuthError.shared.ErrorMessage=errorMessage;
+        return WebAuthError.shared;
+    }
+
+
     //Facebook oncancel Exception
     public WebAuthError facebookOnCancelException() {
 

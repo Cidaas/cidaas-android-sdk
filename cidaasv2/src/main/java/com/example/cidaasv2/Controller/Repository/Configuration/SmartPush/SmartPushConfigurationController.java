@@ -2,7 +2,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.SmartPush;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -25,12 +24,11 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSma
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SmartPush.InitiateSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
-import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.SmartPush.SmartPushVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class SmartPushConfigurationController {
@@ -447,7 +445,7 @@ public class SmartPushConfigurationController {
 
 
     public void enrollSmartPush(@NonNull final String baseurl, @NonNull final String accessToken,
-                              @NonNull EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity, final Result<EnrollSmartPushMFAResponseEntity> enrollResult)
+                                @NonNull EnrollSmartPushMFARequestEntity enrollSmartPushMFARequestEntity, final Result<EnrollSmartPushMFAResponseEntity> enrollResult)
     {
         try
         {

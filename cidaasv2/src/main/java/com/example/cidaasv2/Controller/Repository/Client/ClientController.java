@@ -1,17 +1,15 @@
 package com.example.cidaasv2.Controller.Repository.Client;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Repository.Client.ClientService;
-import com.example.cidaasv2.Service.Repository.OauthService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class ClientController {
@@ -98,7 +96,7 @@ public class ClientController {
     }*/
 
     //Service call To Get Client Info
-    public void getClientInfo(@NonNull String baseurl,@NonNull String RequestId,final Result<ClientInfoEntity> clientInfoEntityResult){
+    public void getClientInfo(@NonNull String baseurl, @NonNull String RequestId, final Result<ClientInfoEntity> clientInfoEntityResult){
         try{
 
             if (baseurl != null && !baseurl.equals("") && RequestId != null && !RequestId.equals("")) {

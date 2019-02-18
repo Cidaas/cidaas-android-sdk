@@ -2,8 +2,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.TOTP;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -29,14 +27,13 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFAR
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
-import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
-import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.TOTP.TOTPVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.text.DecimalFormat;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class TOTPConfigurationController {
@@ -786,9 +783,9 @@ public class TOTPConfigurationController {
 
     //Login with TOTP
     public void LoginWithTOTP(@NonNull final String baseurl, @NonNull final String clientId,
-                                  @NonNull final String trackId, @NonNull final String requestId,
-                                  @NonNull final InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity,
-                                  final Result<LoginCredentialsResponseEntity> loginresult)
+                              @NonNull final String trackId, @NonNull final String requestId,
+                              @NonNull final InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity,
+                              final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
 

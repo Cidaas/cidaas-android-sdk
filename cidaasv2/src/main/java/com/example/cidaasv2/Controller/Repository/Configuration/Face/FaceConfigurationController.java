@@ -2,7 +2,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Face;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -19,7 +18,6 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFARequestEntity;
@@ -32,6 +30,7 @@ import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class FaceConfigurationController {
@@ -430,10 +429,10 @@ public class FaceConfigurationController {
 
 
     //Login with Face
-    public void LoginWithFace(@NonNull final File FaceImageFile,@NonNull final String baseurl, @NonNull final String clientId,
-                               @NonNull final String trackId, @NonNull final String requestId,
-                               @NonNull final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,
-                               final Result<LoginCredentialsResponseEntity> loginresult)
+    public void LoginWithFace(@NonNull final File FaceImageFile, @NonNull final String baseurl, @NonNull final String clientId,
+                              @NonNull final String trackId, @NonNull final String requestId,
+                              @NonNull final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,
+                              final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
 

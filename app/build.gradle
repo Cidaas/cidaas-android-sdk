@@ -39,6 +39,7 @@ dependencies {
 
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //Google Vision For Camera 2
     //implementation 'com.google.android.gms:play-services-vision:16.0.1'

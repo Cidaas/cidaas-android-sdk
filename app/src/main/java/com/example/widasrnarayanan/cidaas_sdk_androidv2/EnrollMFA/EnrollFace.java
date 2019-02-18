@@ -22,9 +22,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
@@ -49,6 +46,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import timber.log.Timber;
 
 public class EnrollFace extends AppCompatActivity {

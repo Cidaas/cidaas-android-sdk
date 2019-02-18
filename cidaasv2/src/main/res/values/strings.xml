@@ -48,4 +48,8 @@
 
     <string name="USER_FACEBOOK_CANCEL">USER CANCEL THE FACEBOOK</string>
 
+    <string name="biometric_failed">Fingerprint not recognized</string>
+    <string name="cancel">Cancel</string>
+
+
 </resources>

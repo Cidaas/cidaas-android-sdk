@@ -1,20 +1,20 @@
 package com.example.cidaasv2.Controller.Repository.ResetPassword;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
+import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Repository.ResetPassword.ResetPasswordService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class ResetPasswordController {
@@ -130,7 +130,7 @@ public class ResetPasswordController {
 
     //resetNewPasswordService
     public void resetNewPassword(@NonNull String baseurl, ResetPasswordEntity resetPasswordEntity
-            ,final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
+            , final Result<ResetNewPasswordResponseEntity> resetpasswordResult)
     {
         try {
 

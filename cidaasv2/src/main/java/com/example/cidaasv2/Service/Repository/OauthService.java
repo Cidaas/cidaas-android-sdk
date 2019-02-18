@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Service.Repository;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -21,6 +20,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

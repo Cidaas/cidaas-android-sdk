@@ -1,7 +1,6 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +11,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ResetNewPasswordActivty extends AppCompatActivity {
 

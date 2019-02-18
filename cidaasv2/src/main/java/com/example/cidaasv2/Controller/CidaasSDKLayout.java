@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,14 +39,12 @@ import com.example.cidaasv2.Interface.ICidaasGoogle;
 import com.example.cidaasv2.Interface.ILoader;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
 
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import javax.microedition.khronos.opengles.GL;
-
+import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
 public class CidaasSDKLayout extends RelativeLayout {

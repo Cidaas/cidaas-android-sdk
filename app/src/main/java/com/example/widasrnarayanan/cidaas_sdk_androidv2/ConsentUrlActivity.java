@@ -2,7 +2,6 @@ package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +12,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ConsentUrlActivity extends AppCompatActivity {
 

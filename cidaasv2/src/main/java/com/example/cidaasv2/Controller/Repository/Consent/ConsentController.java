@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Controller.Repository.Consent;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -15,6 +14,7 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.Resum
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Repository.Consent.ConsentService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class ConsentController {

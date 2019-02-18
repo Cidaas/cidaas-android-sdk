@@ -2,12 +2,9 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Fingerprint;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
-import com.example.cidaasv2.Controller.Repository.Configuration.Fingerprint.FingerprintConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -15,7 +12,6 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -24,26 +20,15 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.Authe
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
-import com.example.cidaasv2.Service.Repository.OauthService;
-import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
-import java.util.Dictionary;
-
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class FingerprintConfigurationController {
@@ -710,10 +695,10 @@ public class FingerprintConfigurationController {
 
 
     //Login with Fingerprint
-    public void LoginWithFingerprint( @NonNull final String baseurl, @NonNull final String clientId,
-                                  @NonNull final String trackId, @NonNull final String requestId,
-                                  @NonNull final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,
-                                  final Result<LoginCredentialsResponseEntity> loginresult)
+    public void LoginWithFingerprint(@NonNull final String baseurl, @NonNull final String clientId,
+                                     @NonNull final String trackId, @NonNull final String requestId,
+                                     @NonNull final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,
+                                     final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
 

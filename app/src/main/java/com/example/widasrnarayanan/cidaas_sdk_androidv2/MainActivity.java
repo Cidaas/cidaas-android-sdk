@@ -8,8 +8,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -33,12 +31,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
 
 
-public class MainActivity extends AppCompatActivity  implements ILoader{
+public class MainActivity extends AppCompatActivity implements ILoader{
 
     ProgressDialog progressDialog;
      Cidaas cidaas;
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
             }
         });*/
 
-            cidaas.configureFingerprint("sub","", new Result<EnrollFingerprintMFAResponseEntity>() {
+            cidaas.configureFingerprint(MainActivity.this,"sub","",null, new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 

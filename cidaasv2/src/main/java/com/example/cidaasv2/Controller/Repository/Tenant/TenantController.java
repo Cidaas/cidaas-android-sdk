@@ -1,21 +1,14 @@
 package com.example.cidaasv2.Controller.Repository.Tenant;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
-import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
-import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.Tenant.TenantService;
 
-import java.util.Dictionary;
-import java.util.logging.Logger;
-
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class TenantController {

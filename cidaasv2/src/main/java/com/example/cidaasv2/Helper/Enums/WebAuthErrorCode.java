@@ -113,6 +113,10 @@ public class WebAuthErrorCode {
 
   public static final int LOGOUT_ERROR = 10099;
 
+  public static final int FINGERPRINT_AUTHENTICATION_FAILED = 10100;
+
+
+
 
 
   /*public static final int DELETE_EMAIL_MFA_FAILURE = 10090;

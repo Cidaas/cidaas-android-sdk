@@ -1,19 +1,10 @@
 package com.example.cidaasv2.Helper.Logger;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.widget.Toast;
-
-import com.example.cidaasv2.Helper.Genral.FileHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.logging.FileHandler;
 
 import timber.log.Timber;
