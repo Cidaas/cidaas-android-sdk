@@ -103,7 +103,7 @@ public class RegistrationService {
 
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.getRegistrationSetup(RegistrationUrl).enqueue(new Callback<RegistrationSetupResponseEntity>() {
+            cidaasSDKService.getRegistrationSetup(RegistrationUrl,headers).enqueue(new Callback<RegistrationSetupResponseEntity>() {
                 @Override
                 public void onResponse(Call<RegistrationSetupResponseEntity> call, Response<RegistrationSetupResponseEntity> response) {
                     if (response.isSuccessful()) {

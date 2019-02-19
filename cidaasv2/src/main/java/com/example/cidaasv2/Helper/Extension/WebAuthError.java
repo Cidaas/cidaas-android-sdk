@@ -97,6 +97,12 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorCode=WebAuthErrorCode.FILE_NOT_FOUND;
         WebAuthError.shared.statusCode= HttpStatusCode.NOT_FOUND;
         WebAuthError.shared.ErrorMessage= context.getString(R.string.FILE_NOT_FOUND);
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(errorCode+"");
+        errorEntity.setStatus(statusCode);
+        errorEntity.setError(context.getString(R.string.FILE_NOT_FOUND));
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
     }
 //NoContentinFileException
@@ -115,6 +121,14 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorCode=WebAuthErrorCode.PROPERTY_MISSING;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
         WebAuthError.shared.ErrorMessage=context.getString(R.string.PROPERTY_MISSING);
+
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(errorCode+"");
+        errorEntity.setStatus(statusCode);
+        errorEntity.setError(context.getString(R.string.PROPERTY_MISSING));
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
         return WebAuthError.shared;
     }
 //Service FailureException
@@ -189,6 +203,13 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorCode=WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
         WebAuthError.shared.ErrorMessage=context.getString(R.string.DEVICE_VERIFICATION_FAILURE);
+
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE+"");
+        errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
+        errorEntity.setError(context.getString(R.string.DEVICE_VERIFICATION_FAILURE));
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
     }
 
@@ -198,6 +219,14 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorCode=errorCode;
         WebAuthError.shared.statusCode=StatusCode;
         WebAuthError.shared.ErrorMessage=errorMessage;
+
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(errorCode+"");
+        errorEntity.setStatus(statusCode);
+        errorEntity.setError(errorMessage);
+
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
     }
 
@@ -219,6 +248,14 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorCode=ErrorCode;
         WebAuthError.shared.statusCode=417;
         WebAuthError.shared.ErrorMessage=errorMessage;
+
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(errorCode+"");
+        errorEntity.setStatus(statusCode);
+        errorEntity.setError(errorMessage);
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
         return WebAuthError.shared;
     }
 

@@ -482,7 +482,7 @@ catch (Exception e)
 
     public void usageFinger(View view)
     {
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();

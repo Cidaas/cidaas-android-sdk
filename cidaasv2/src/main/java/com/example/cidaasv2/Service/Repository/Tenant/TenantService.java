@@ -90,7 +90,7 @@ public class TenantService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getTenantInfo(TenantUrl).enqueue(new Callback<TenantInfoEntity>() {
+            cidaasSDKService.getTenantInfo(TenantUrl,headers).enqueue(new Callback<TenantInfoEntity>() {
                 @Override
                 public void onResponse(Call<TenantInfoEntity> call, Response<TenantInfoEntity> response) {
                     if (response.isSuccessful()) {

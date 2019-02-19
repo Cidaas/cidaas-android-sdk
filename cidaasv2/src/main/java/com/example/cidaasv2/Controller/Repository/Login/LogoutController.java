@@ -39,6 +39,7 @@ public class LogoutController {
         }
         return shared;
     }
+/*
 
     public void logout(@NonNull String baseurl, String access_token_hint, Result<LogoutResponseEntity> callback){
        try
@@ -47,9 +48,11 @@ public class LogoutController {
        }
        catch (Exception e)
        {
-
+           callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOGOUT_ERROR,
+                   e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
        }
     }
+*/
 
 
     public void getLogoutURL(@NonNull String baseurl, String access_token_hint, String post_logout_redirect_uri, Result<String> result)

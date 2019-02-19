@@ -169,7 +169,7 @@ public class LoginService {
     }
 
 
-    //Logout for embedded browser Credentials
+   /* //Logout for embedded browser Credentials
     public void logoutForEmbeddedBrowser(final String baseurl, final String accessToken,final Result<LogoutResponseEntity> callback)
     {
         //Local Variables
@@ -192,7 +192,7 @@ public class LoginService {
             // Get Device Information
 
 
-            /*
+            *//*
             DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
             //This is only for testing purpose
             if(deviceInfoEntityFromparam==null) {
@@ -201,7 +201,7 @@ public class LoginService {
             else if(deviceInfoEntityFromparam!=null)
             {
                 deviceInfoEntity=deviceInfoEntityFromparam;
-            }*/
+            }*//*
 
 
 
@@ -212,16 +212,16 @@ public class LoginService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-           /* headers.put("deviceId", deviceInfoEntity.getDeviceId());
+           *//* headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());*/
+            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());*//*
 
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.logoutFromEmbeddedBrowser(logoutUrl,accessToken, "").enqueue(new Callback<LogoutResponseEntity>() {
+            cidaasSDKService.logoutFromEmbeddedBrowser(logoutUrl,headersxx,accessToken, "").enqueue(new Callback<LogoutResponseEntity>() {
                 @Override
                 public void onResponse(Call<LogoutResponseEntity> call, Response<LogoutResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -291,7 +291,7 @@ public class LoginService {
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
-    }
+    }*/
 
 
     //Resume Login After MFA
@@ -549,7 +549,7 @@ public class LoginService {
 
                 //Call Service-getURLList
                 final ICidaasSDKService cidaasSDKService = service.getInstance();
-                cidaasSDKService.getUrlList(openIdurl).enqueue(new Callback<Object>() {
+                cidaasSDKService.getUrlList(openIdurl,headers).enqueue(new Callback<Object>() {
                     @Override
                     public void onResponse(Call<Object> call, Response<Object> response) {
                         if (response.isSuccessful()) {

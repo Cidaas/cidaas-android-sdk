@@ -174,7 +174,7 @@ public interface ICidaasSDKService {
 
 
     @GET
-    Call<SocialProviderEntity> getAccessTokenBySocial(@Url String url);
+    Call<SocialProviderEntity> getAccessTokenBySocial(@Url String url,@HeaderMap Map<String,String>headers);
 
 
     //Todo Add FieldMap Pending
@@ -193,7 +193,7 @@ public interface ICidaasSDKService {
     Call<LoginCredentialsResponseEntity> loginWithCredentials(@Url String url,  @HeaderMap Map<String,String>headers, @Body LoginCredentialsRequestEntity loginCredentialsRequestEntity);
 
     //Logout for embedded Browser
-    Call<LogoutResponseEntity> logoutFromEmbeddedBrowser (@Url String url, @Query("access_token_hint") String access_token_hint, @Query("post_logout_redirect_uri") String postlogoutRedirectURL);
+    Call<LogoutResponseEntity> logoutFromEmbeddedBrowser (@Url String url,@HeaderMap Map<String,String>headers, @Query("access_token_hint") String access_token_hint, @Query("post_logout_redirect_uri") String postlogoutRedirectURL);
 
     //Resume Login
     @POST
@@ -505,32 +505,33 @@ public interface ICidaasSDKService {
     //Enroll Face MFA
     @POST
     @Multipart
-    Call<DocumentScannerServiceResultEntity> enrollDocument(@Url String url, @Part MultipartBody.Part face);
+    Call<DocumentScannerServiceResultEntity> enrollDocument(@Url String url,@HeaderMap Map<String,String>headers, @Part MultipartBody.Part face);
 
 
     // Deny Notification
     @POST
     Call<DenyNotificationResponseEntity> denyNotificationService(@Url String url, @Header("Content-Type") String content_type,
-                                      @Header("access_token") String access_token, @Body DenyNotificationRequestEntity denyRequest);
+                                      @Header("access_token") String access_token,@HeaderMap Map<String,String>headers, @Body DenyNotificationRequestEntity denyRequest);
 
 
 
     //Pending Notification
     @POST
     Call<NotificationEntity> getPendingNotification(@Url String url, @Header("Content-Type") String content_type,
-                                                    @Header("access_token") String access_token);
+                                                    @Header("access_token") String access_token,@HeaderMap Map<String,String>headers);
 
 
     @POST
     Call<Object> updateFCMToken(@Url String url,
                                 @Header("access_token") String access_token,
+                                @HeaderMap Map<String,String>headers,
                                 @Body DeviceInfoEntity deviceInfoEntity);
 
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
     //Get Registration Setup
     @GET
-    Call<RegistrationSetupResponseEntity> getRegistrationSetup(@Url String url);
+    Call<RegistrationSetupResponseEntity> getRegistrationSetup(@Url String url,@HeaderMap Map<String,String>headers);
 
     //Get Registration Setup
     //get userinfo
@@ -539,11 +540,11 @@ public interface ICidaasSDKService {
 
     //Get TenantInfo
     @GET
-    Call<TenantInfoEntity> getTenantInfo(@Url String url);
+    Call<TenantInfoEntity> getTenantInfo(@Url String url,@HeaderMap Map<String,String>headers);
 
     //Get TenantInfo
     @GET
-    Call<DeduplicationResponseEntity> getDeduplicationList(@Url String url);
+    Call<DeduplicationResponseEntity> getDeduplicationList(@Url String url,@HeaderMap Map<String,String>headers);
 
     //Get TenantInfo
     @GET
@@ -551,39 +552,39 @@ public interface ICidaasSDKService {
 
     //Get Client
     @GET
-    Call<ClientInfoEntity> getClientInfo(@Url String url);
+    Call<ClientInfoEntity> getClientInfo(@Url String url,@HeaderMap Map<String,String>headers);
 
     //Get MFA list
     @GET
-    Call<MFAListResponseEntity> getmfaList(@Url String url, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId, @Query("common_configs") boolean common_configs);
+    Call<MFAListResponseEntity> getmfaList(@Url String url,@HeaderMap Map<String,String>headers, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId, @Query("common_configs") boolean common_configs);
 
 
     //Get ConsentInfo
     @GET
-    Call<ConsentManagementResponseEntity> getConsentInfo(@Url String url);
+    Call<ConsentManagementResponseEntity> getConsentInfo(@Url String url,@HeaderMap Map<String,String>headers);
 
     //Get Consent String Details
     @GET
-    Call<ConsentDetailsResultEntity> getConsentStringDetails(@Url String url);
+    Call<ConsentDetailsResultEntity> getConsentStringDetails(@Url String url,@HeaderMap Map<String,String>headers);
 
     @GET
-    Call<ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);
+    Call<ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url,@HeaderMap Map<String,String>headers, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);
 
     //Construct URL
     @GET
-    Call<Object> getUrlList(@Url String url);
+    Call<Object> getUrlList(@Url String url,@HeaderMap Map<String,String>headers);
 
     //-----------------------------------------------------DELETE Call-----------------------------------------------------------------
 
     //Delete
     @DELETE
-    Call<DeleteMFAResponseEntity> delete(@Url String url, @Header("access_token") String accessToken);//Delete
+    Call<DeleteMFAResponseEntity> delete(@Url String url,@HeaderMap Map<String,String>headers, @Header("access_token") String accessToken);//Delete
 
 
 
     //DeleteAll
     @DELETE
-    Call<DeleteMFAResponseEntity> deleteAll(@Url String url, @Header("access_token") String accessToken);
+    Call<DeleteMFAResponseEntity> deleteAll(@Url String url, @HeaderMap Map<String,String>headers,@Header("access_token") String accessToken);
 
 
 

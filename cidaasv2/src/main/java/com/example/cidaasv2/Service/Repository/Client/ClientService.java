@@ -93,7 +93,7 @@ public class ClientService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getClientInfo(clienttUrl).enqueue(new Callback<ClientInfoEntity>() {
+            cidaasSDKService.getClientInfo(clienttUrl,headers).enqueue(new Callback<ClientInfoEntity>() {
                 @Override
                 public void onResponse(Call<ClientInfoEntity> call, Response<ClientInfoEntity> response) {
                     if (response.isSuccessful()) {

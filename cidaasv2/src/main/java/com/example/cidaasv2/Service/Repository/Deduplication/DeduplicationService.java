@@ -95,7 +95,7 @@ public class DeduplicationService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getDeduplicationList(DeduplicationUrl).enqueue(new Callback<DeduplicationResponseEntity>() {
+            cidaasSDKService.getDeduplicationList(DeduplicationUrl,headers).enqueue(new Callback<DeduplicationResponseEntity>() {
                 @Override
                 public void onResponse(Call<DeduplicationResponseEntity> call, Response<DeduplicationResponseEntity> response) {
                     if (response.isSuccessful()) {

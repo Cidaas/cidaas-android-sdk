@@ -125,7 +125,7 @@ public class DocumentScannerService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.enrollDocument(DocumentURL,photo).enqueue(new Callback<DocumentScannerServiceResultEntity>() {
+            cidaasSDKService.enrollDocument(DocumentURL,headers,photo).enqueue(new Callback<DocumentScannerServiceResultEntity>() {
                 @Override
                 public void onResponse(Call<DocumentScannerServiceResultEntity> call, Response<DocumentScannerServiceResultEntity> response) {
                     if (response.isSuccessful()) {

@@ -398,7 +398,7 @@ public class AccessTokenService {
            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
            ICidaasSDKService cidaasSDKService = service.getInstance();
-           cidaasSDKService.getAccessTokenBySocial(baseURL).enqueue(new Callback<SocialProviderEntity>() {
+           cidaasSDKService.getAccessTokenBySocial(baseURL,headers).enqueue(new Callback<SocialProviderEntity>() {
 
                @Override
                public void onResponse(Call<SocialProviderEntity> call, Response<SocialProviderEntity> response) {

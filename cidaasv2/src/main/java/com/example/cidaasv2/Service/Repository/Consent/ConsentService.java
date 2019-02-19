@@ -89,7 +89,7 @@ public class ConsentService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getConsentStringDetails(ConsentstringDetailsUrl).enqueue(new Callback<ConsentDetailsResultEntity>() {
+            cidaasSDKService.getConsentStringDetails(ConsentstringDetailsUrl,headers).enqueue(new Callback<ConsentDetailsResultEntity>() {
                 @Override
                 public void onResponse(Call<ConsentDetailsResultEntity> call, Response<ConsentDetailsResultEntity> response) {
                     if(response.isSuccessful()) {

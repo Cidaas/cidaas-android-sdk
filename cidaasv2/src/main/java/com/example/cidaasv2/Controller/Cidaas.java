@@ -6235,7 +6235,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                             @Override
                             public void onAuthenticationFailed() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,"Biometric Authentication  Failed"));
+                               // result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,"Biometric Authentication  Failed"));
                             }
 
                             @Override
