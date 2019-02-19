@@ -6192,75 +6192,83 @@ public class Cidaas implements IOAuthWebLogin {
     {
         try
         {
+            if (Build.VERSION.SDK_INT >= 23) {
 
-            FingerPrintEntity fingerPrintEntityForPassing=new FingerPrintEntity();
-            if(fingerPrintEntity==null)
-            {
-               fingerPrintEntity=fingerPrintEntityForPassing;
+                FingerPrintEntity fingerPrintEntityForPassing = new FingerPrintEntity();
+                if (fingerPrintEntity == null) {
+                    fingerPrintEntity = fingerPrintEntityForPassing;
+                }
+
+                new BiometricManager.BiometricBuilder(context)
+                        .setTitle(fingerPrintEntity.getTitle())
+                        .setSubtitle(fingerPrintEntity.getSubtitle())
+                        .setDescription(fingerPrintEntity.getDescription())
+                        .setNegativeButtonText(fingerPrintEntity.getNegativeButtonString())
+                        .build()
+                        .authenticate(new BiometricCallback() {
+                            @Override
+                            public void onSdkVersionNotSupported() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_SDK_VERSION_NOT_SUPPORTED,"SDK Version Not Supported"));
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationNotSupported() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMETRIC_AUTHENTICATION_NOT_SUPPORTED,"Biometric Authentication  Not Supported"));
+
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationNotAvailable() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_NOT_AVAILABLE,"Biometric Authentication  Not Available"));
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationPermissionNotGranted() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_PERMISSION_NOT_GRANTED,"Biometric Authentication  Permission Not Granted"));
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationInternalError(String error) {
+
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_INTERNAL_ERROR,"Biometric Authentication  Internal Error"));
+                            }
+
+                            @Override
+                            public void onAuthenticationFailed() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,"Biometric Authentication  Failed"));
+                            }
+
+                            @Override
+                            public void onAuthenticationCancelled() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_CANCELLED,"Biometric Authentication  Cancelled"));
+                            }
+
+                            @Override
+                            public void onAuthenticationSuccessful() {
+                                result.success("Success");
+                            }
+
+                            @Override
+                            public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+
+                                String errorMessage = helpString.toString();
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode, errorMessage));
+                            }
+
+                            @Override
+                            public void onAuthenticationError(int errorCode, CharSequence errString) {
+
+                                String errorMessage = errString.toString();
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage));
+                            }
+                        });
             }
+            else
+            {
+                String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
 
-            new BiometricManager.BiometricBuilder(context)
-                    .setTitle(fingerPrintEntity.getTitle())
-                    .setSubtitle(fingerPrintEntity.getSubtitle())
-                    .setDescription(fingerPrintEntity.getDescription())
-                    .setNegativeButtonText(fingerPrintEntity.getNegativeButtonString())
-                    .build()
-                    .authenticate(new BiometricCallback() {
-                        @Override
-                        public void onSdkVersionNotSupported() {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("SDK Version Not Supported"));
-                        }
-
-                        @Override
-                        public void onBiometricAuthenticationNotSupported() {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Not Supported"));
-                        }
-
-                        @Override
-                        public void onBiometricAuthenticationNotAvailable() {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Not Available"));
-                        }
-
-                        @Override
-                        public void onBiometricAuthenticationPermissionNotGranted() {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Permission Not Granted"));
-                        }
-
-                        @Override
-                        public void onBiometricAuthenticationInternalError(String error) {
-
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Internal Error"));
-                        }
-
-                        @Override
-                        public void onAuthenticationFailed() {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Failed"));
-                        }
-
-                        @Override
-                        public void onAuthenticationCancelled() {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Cancelled"));
-                        }
-
-                        @Override
-                        public void onAuthenticationSuccessful() {
-                              result.success("Success");
-                        }
-
-                        @Override
-                        public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-
-                            String errorMessage=helpString.toString();
-                            result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode,errorMessage));
-                        }
-
-                        @Override
-                        public void onAuthenticationError(int errorCode, CharSequence errString) {
-
-                            String errorMessage=errString.toString();
-                            result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode,errorMessage));
-                        }
-                    });
+            }
         }
         catch (Exception e)
         {
