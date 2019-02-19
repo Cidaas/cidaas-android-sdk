@@ -1,6 +1,8 @@
 package com.example.cidaasv2.Controller;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +15,9 @@ import android.nfc.tech.IsoDep;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -43,6 +48,7 @@ import com.example.cidaasv2.Helper.CustomTab.Helper.CustomTabHelper;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
+import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
@@ -59,6 +65,8 @@ import com.example.cidaasv2.Interface.IOAuthWebLogin;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricManager;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
+import com.example.cidaasv2.R;
+import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -183,8 +191,16 @@ import static android.os.Build.VERSION;
 public class Cidaas implements IOAuthWebLogin {
 
     private static final int MY_SCAN_REQUEST_CODE = 3;
-    public Context context;
+    private static final int LOCAL_AUTH_REQUEST_CODE = 303;
+    private static final int LOCAL_REQUEST_CODE = 302;
+    private static final int RESULT_OK = -1;
 
+
+    Result<LocalAuthenticationEntity> localAuthenticationEntityCallback;
+
+
+    public Context context;
+    public Activity activityFromCidaas;
 
     public static String instanceId = "";
     public static ICustomLoader loader;
@@ -336,6 +352,12 @@ public class Cidaas implements IOAuthWebLogin {
                 LogFile.addRecordToLog(loggerMessage);
             }
         });
+
+
+        //Set Context For sdkservice
+
+        //CidaassdkService service=new CidaassdkService();
+      //  service.setContext(context);
 
 
     }
@@ -5956,6 +5978,134 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+    //------------------------------------------------------------------------------------------Local Authentication----------------------------------------
+
+    //Cidaas Set OnActivity Result For Handling Device Authentication
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        try {
+
+            if(activityFromCidaas!=null && localAuthenticationEntityCallback!=null ) {
+                if (requestCode == LOCAL_REQUEST_CODE || requestCode == LOCAL_AUTH_REQUEST_CODE) {
+
+                    if (requestCode == LOCAL_REQUEST_CODE || requestCode == LOCAL_AUTH_REQUEST_CODE) {
+                        switch (requestCode) {
+                            case LOCAL_REQUEST_CODE:
+                                if (resultCode == RESULT_OK) {
+
+                                    //Send Positive callback
+                                    String user = "User Authenticated";
+
+                                    LocalAuthenticationEntity localAuthenticationEntity=new LocalAuthenticationEntity();
+                                    localAuthenticationEntity.setMessage(user);
+                                    localAuthenticationEntity.setRequestCode(LOCAL_REQUEST_CODE);
+                                    localAuthenticationEntity.setResultCode(resultCode);
+                                    localAuthenticationEntityCallback.success(localAuthenticationEntity);
+
+
+                                } else {
+                                    // user did not authenticate so send failure callback
+
+
+                                    String user = "User Cancelled the Authentication";
+
+
+                                    localAuthenticationEntityCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED,user,417));
+
+                                    Timber.d("User" + user);
+
+                                }
+                                break;
+                            case LOCAL_AUTH_REQUEST_CODE:
+                                localAuthentication(activityFromCidaas,localAuthenticationEntityCallback);
+                                break;
+                            default:
+                                //.onActivityResult(requestCode, resultCode, data);
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Call back must not be null", 417));
+            }
+        } catch (Exception e) {
+            localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Local Authentication Exception"+e.getMessage(), 417));
+        }
+    }
+
+    //Show the Alert Dilog Which is go to settings
+    private void showDialogToSetupLock(final Activity activity,Result<LocalAuthenticationEntity> result) {
+
+        try {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+            LayoutInflater inflater = activity.getLayoutInflater();
+            final View dialog = inflater.inflate(R.layout.lock_setting_dialog, null);
+            alertDialogBuilder.setView(dialog);
+            alertDialogBuilder.setCancelable(false);
+            Button btn_ok = dialog.findViewById(R.id.btn_ok);
+            final AlertDialog alertDialog = alertDialogBuilder.create();
+
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (alertDialog != null) {
+                        alertDialog.dismiss();
+                    }
+
+
+                    String manufacturer = "xiaomi";
+                    if (manufacturer.equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
+                        //this will open auto start screen where user can enable permission for your app
+                        activity.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), LOCAL_AUTH_REQUEST_CODE);
+                    } else {
+
+                        activity.startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS), LOCAL_AUTH_REQUEST_CODE);
+                    }
+                }
+            });
+            alertDialog.show();
+        }
+        catch (Exception e)
+        {
+            result.failure(new WebAuthError(context).customException(401, "Bad document or no document", 417));
+        }
+    }
+
+
+
+    //Method for Local Authentocation
+    public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result) {
+        try {
+
+
+            activityFromCidaas=activity;
+            localAuthenticationEntityCallback=result;
+
+            KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Context.KEYGUARD_SERVICE);
+            boolean isSecure = keyguardManager.isKeyguardSecure();
+
+            if (isSecure) {
+
+                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(null, null);
+                activity.startActivityForResult(intent, LOCAL_REQUEST_CODE);
+            } else {
+                // tabPager.setVisibility(View.GONE);
+                // no lock screen set, show the new lock needed screen
+                showDialogToSetupLock(activity,result);
+            }
+        }
+        catch (Exception e)
+        {
+            result.failure(new WebAuthError(context).customException(401, "Bad document or no document", 417));
+        }
+    }
+
+
+
+    //------------------------------------------------------------------------------------------XXXXXXX----------------------------------------
+
     public static String getSDKVersion(){
         String version="";
         try {
@@ -5981,7 +6131,6 @@ public class Cidaas implements IOAuthWebLogin {
             return "";
         }
     }
-
 
 
 
@@ -6078,6 +6227,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                         @Override
                         public void onBiometricAuthenticationInternalError(String error) {
+
                             result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Internal Error"));
                         }
 
@@ -6098,12 +6248,16 @@ public class Cidaas implements IOAuthWebLogin {
 
                         @Override
                         public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Help"));
+
+                            String errorMessage=helpString.toString();
+                            result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode,errorMessage));
                         }
 
                         @Override
                         public void onAuthenticationError(int errorCode, CharSequence errString) {
-                            result.failure(WebAuthError.getShared(context).fingerPrintException("Biometric Authentication  Error"));
+
+                            String errorMessage=errString.toString();
+                            result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode,errorMessage));
                         }
                     });
         }

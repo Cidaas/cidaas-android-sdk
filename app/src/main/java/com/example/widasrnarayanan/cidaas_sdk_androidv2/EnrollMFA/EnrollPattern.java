@@ -465,6 +465,7 @@ catch (Exception e)
     {
 
 
+
         cidaas.configureFingerprint(EnrollPattern.this,sub, "", null,new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {

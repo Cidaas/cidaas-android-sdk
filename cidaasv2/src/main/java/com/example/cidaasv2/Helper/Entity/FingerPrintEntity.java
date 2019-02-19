@@ -1,6 +1,11 @@
 package com.example.cidaasv2.Helper.Entity;
 
-public class FingerPrintEntity {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.io.Serializable;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class FingerPrintEntity implements Serializable {
     String Title="Authenticate";
     String Subtitle="Please Authenticate to continue";
     String Description="";

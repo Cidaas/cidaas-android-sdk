@@ -1,5 +1,6 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Interface.ILoader;
@@ -32,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         cidaasGoogle=new CidaasGoogle(this);
 
 
+        requestLocationPermission();
         String token = getIntent().getDataString();
         if (token != null) {
            cidaas.handleToken(token);
@@ -73,7 +77,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         }
     }
 
-
+    private void requestLocationPermission()
+    {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+            //return;
+        }
+    }
 
 
     public void loginWithBrowser(View view)
@@ -390,6 +400,20 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     }
 
+    public void callLocalAuthentication(View view)
+    {
+        cidaas.localAuthentication(this, new Result<LocalAuthenticationEntity>() {
+            @Override
+            public void success(LocalAuthenticationEntity result) {
+                Toast.makeText(MainActivity.this, ""+result.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     public void printhashkey(){
@@ -514,6 +538,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         else {
             cidaasFacebook.authorize(requestCode, resultCode, data);
         }
-      // cidaas.authorize(requestCode,resultCode,data)
+
+       cidaas.onActivityResult(requestCode,resultCode,data);
     }
 }

@@ -62,7 +62,7 @@ dependencies {
     implementation 'com.scottyab:aescrypt:0.0.1'
 
     //Timber
-    compile 'com.jakewharton.timber:timber:4.6.1'
+    implementation 'com.jakewharton.timber:timber:4.6.1'
 
     // common codec for TOTP Generation
     implementation 'commons-codec:commons-codec:1.10'
@@ -87,7 +87,7 @@ dependencies {
     testImplementation 'com.squareup.okhttp3:mockwebserver:3.8.0'
 
     testImplementation "com.android.support.test:monitor:1.0.2"
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
 
     /*///For ID card Scannner
     compile 'io.card:android-sdk:5.5.1'*/

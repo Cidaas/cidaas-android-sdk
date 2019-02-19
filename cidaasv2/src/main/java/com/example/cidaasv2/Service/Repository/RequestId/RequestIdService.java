@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
@@ -47,6 +48,8 @@ public class RequestIdService {
         context=contextFromCidaas;
         if(service==null) {
             service=new CidaassdkService();
+
+            service.setContext(context);
         }
 
         //Todo setValue for authenticationType
@@ -106,6 +109,8 @@ public class RequestIdService {
                 challengeProperties=challengePropertiesfromparam;
             }
 
+            Timber.d("LAtitude"+LocationDetails.getShared(context).getLatitude());
+            Timber.d("Longitude"+LocationDetails.getShared(context).getLongitude());
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -114,6 +119,8 @@ public class RequestIdService {
             headers.put("device-make", deviceInfoEntity.getDeviceMake());
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
+            headers.put("Lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("Long",LocationDetails.getShared(context).getLongitude());
 
             //Todo Construct URl Checking,Add Parameter(FieldMap) pending
             urlComponents = new URLHelper();

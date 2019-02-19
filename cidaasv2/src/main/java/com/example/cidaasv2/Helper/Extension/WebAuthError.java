@@ -213,6 +213,15 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 
 
+    //Custom Exception
+    public WebAuthError fingerPrintError(int ErrorCode,String errorMessage) {
+
+        WebAuthError.shared.errorCode=ErrorCode;
+        WebAuthError.shared.statusCode=417;
+        WebAuthError.shared.ErrorMessage=errorMessage;
+        return WebAuthError.shared;
+    }
+
     //Facebook oncancel Exception
     public WebAuthError facebookOnCancelException() {
 

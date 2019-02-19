@@ -114,6 +114,8 @@ public class WebAuthErrorCode {
   public static final int LOGOUT_ERROR = 10099;
 
   public static final int FINGERPRINT_AUTHENTICATION_FAILED = 10100;
+  public static final int LOCAL_AUHTHENTICATION_CANCELLED = 10101;
+  public static final int LOCAL_AUHTHENTICATION_FAILED = 10102;
 
 
 

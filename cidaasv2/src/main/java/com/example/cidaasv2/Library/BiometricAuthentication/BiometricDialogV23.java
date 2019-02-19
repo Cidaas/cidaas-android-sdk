@@ -2,6 +2,7 @@ package com.example.cidaasv2.Library.BiometricAuthentication;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import com.example.cidaasv2.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 
 public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClickListener {
@@ -23,13 +25,36 @@ public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClic
     private BiometricCallback biometricCallback;
 
     public BiometricDialogV23(@NonNull Context context) {
-        super(context, R.style.BottomSheetDialogTheme);
+        super(context);
         this.context = context.getApplicationContext();
-        setDialogView();
+        //setDialogView();
+
+        setAlertDialog();
+    }
+
+    private void setAlertDialog() {
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogView = inflater.inflate(R.layout.view_bottom_sheet_2, null);
+
+        btnCancel = findViewById(R.id.btn_cancel);
+        btnCancel.setOnClickListener(this);
+
+        itemTitle = findViewById(R.id.item_title);
+        itemStatus = findViewById(R.id.item_status);
+        itemSubtitle = findViewById(R.id.item_subtitle);
+        itemDescription = findViewById(R.id.item_description);
+
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setCancelable(false);
+
+       AlertDialog mAlertDialog = dialogBuilder.create();
+        mAlertDialog.show();
     }
 
     public BiometricDialogV23(@NonNull Context context, BiometricCallback biometricCallback) {
-        super(context, R.style.BottomSheetDialogTheme);
+        super(context);
         this.context = context.getApplicationContext();
         this.biometricCallback = biometricCallback;
         setDialogView();

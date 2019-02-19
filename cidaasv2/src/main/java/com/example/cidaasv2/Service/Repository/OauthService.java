@@ -9,6 +9,7 @@ import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
@@ -112,7 +113,8 @@ public class OauthService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
+            headers.put("Lat",getLat());
+            headers.put("Long",getLong());
             headers.put("access_token", AccessToken);
             headers.put("device-id", deviceInfoEntity.getDeviceId());
             headers.put("device-make", deviceInfoEntity.getDeviceMake());
@@ -194,5 +196,31 @@ public class OauthService {
             callback.failure(webAuthError);
         }
     }
+
+
+    private String getLat()
+    {
+        String lat="";
+
+            LocationDetails locationDetails = LocationDetails.getShared(context);
+            locationDetails.getLocation();
+            lat=locationDetails.getLatitude();
+
+        Timber.d("Latitude Longitude"+lat);
+        return lat;
+    }
+
+    private String getLong()
+    {
+        String longitude="";
+
+            LocationDetails locationDetails = LocationDetails.getShared(context);
+            locationDetails.getLocation();
+            longitude=locationDetails.getLongitude();
+
+        Timber.d("Latitude Longitude"+longitude);
+        return longitude;
+    }
+
 
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/colorWhite">
+
+    <TextView
+        android:id="@+id/tv_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Information"
+        android:gravity="center"
+        android:textSize="18sp"
+        />
+
+    <View
+        android:id="@+id/view_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tv_heading"
+        android:background="@color/greyish" />
+
+
+    <RelativeLayout
+        android:id="@+id/voice_setup_relative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_heading"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp">
+
+
+        <ImageButton
+            android:id="@+id/voice_setup_imagebutton"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:background="@color/colorWhite"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/vd_settings_app_lock" />
+
+
+    </RelativeLayout>
+
+
+    <TextView
+
+        android:id="@+id/tv_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/voice_setup_relative"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/set_screen_lock"
+        android:textAlignment="gravity" />
+
+    <Button
+
+        android:id="@+id/btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/tv_reason"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:padding="3dp"
+        android:background="@android:color/transparent"
+        android:text="@string/go_to_settings"
+        android:textColor="@color/colorPrimary" />
+
+</RelativeLayout>

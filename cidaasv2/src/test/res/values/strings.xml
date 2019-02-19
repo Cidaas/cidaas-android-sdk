@@ -24,4 +24,10 @@
     <string name="NO_USER_FOUND">No user found.</string>
     <string name="REFRESH_TOKEN_SERVICE_FAILURE">Refresh token service failure.</string>
 
+
+//For Local Authentication
+    <string name="you_cancelled_lock">You cancelled Authentication.</string>
+    <string name="set_screen_lock">Go to the settings of your device and enable device lock</string>
+    <string name="go_to_settings">Go to Settings</string>
+
 </resources>
