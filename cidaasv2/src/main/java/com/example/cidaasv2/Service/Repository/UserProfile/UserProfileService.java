@@ -11,6 +11,7 @@ import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
@@ -100,13 +101,13 @@ public class UserProfileService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
-            /*headers.put("Authorization","Bearer "+AccessToken);*/
             headers.put("access_token",AccessToken);
             headers.put("device-id", deviceInfoEntity.getDeviceId());
             headers.put("device-make", deviceInfoEntity.getDeviceMake());
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();

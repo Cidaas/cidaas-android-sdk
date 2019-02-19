@@ -11,6 +11,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDORequestEntity;
@@ -102,6 +103,8 @@ public class FIDOVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version", "2");
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
@@ -208,7 +211,8 @@ public class FIDOVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version", "2");
             headers.put("access_token", accessToken);
-
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
 
@@ -319,6 +323,8 @@ public class FIDOVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("access_token", accessToken);
             headers.put("verification_api_version", "2");
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -425,6 +431,8 @@ public class FIDOVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version", "2");
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -533,6 +541,8 @@ public class FIDOVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version", "2");
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());

@@ -11,6 +11,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.GenralHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
@@ -140,11 +141,12 @@ public class AccessTokenService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
           //  headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             //Get Properties From DB
@@ -276,11 +278,12 @@ public class AccessTokenService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentType);
-            headers.put("user-agent", "cidaas-android");
             headers.put("device-id", deviceInfoEntity.getDeviceId());
             headers.put("device-make", deviceInfoEntity.getDeviceMake());
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             //Get Properties From DB
@@ -389,6 +392,10 @@ public class AccessTokenService {
 
            baseURL=baseURL+URLHelper.getShared().getPreAuthCode()+requestId;
 
+
+           Map<String, String> headers = new Hashtable<>();
+           headers.put("lat",LocationDetails.getShared(context).getLatitude());
+           headers.put("long",LocationDetails.getShared(context).getLongitude());
 
            ICidaasSDKService cidaasSDKService = service.getInstance();
            cidaasSDKService.getAccessTokenBySocial(baseURL).enqueue(new Callback<SocialProviderEntity>() {

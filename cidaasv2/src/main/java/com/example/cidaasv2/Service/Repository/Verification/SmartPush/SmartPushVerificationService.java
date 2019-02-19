@@ -11,6 +11,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
@@ -107,6 +108,8 @@ public class SmartPushVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -228,6 +231,8 @@ public class SmartPushVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -346,9 +351,10 @@ public class SmartPushVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("access_token",accessToken);
             headers.put("verification_api_version","2");
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 
@@ -468,6 +474,8 @@ public class SmartPushVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
@@ -618,6 +626,8 @@ public class SmartPushVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version","2");
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
 

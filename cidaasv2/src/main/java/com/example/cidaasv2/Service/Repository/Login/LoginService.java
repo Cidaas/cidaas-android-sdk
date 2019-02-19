@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
@@ -106,11 +107,12 @@ public class LoginService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             //Call Service-getRequestId
@@ -207,6 +209,8 @@ public class LoginService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
            /* headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
@@ -327,11 +331,12 @@ public class LoginService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -438,11 +443,12 @@ public class LoginService {
             //Done check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -536,6 +542,10 @@ public class LoginService {
 
                     return;
                 }
+
+                Map<String, String> headers = new Hashtable<>();
+                headers.put("lat",LocationDetails.getShared(context).getLatitude());
+                headers.put("long",LocationDetails.getShared(context).getLongitude());
 
                 //Call Service-getURLList
                 final ICidaasSDKService cidaasSDKService = service.getInstance();

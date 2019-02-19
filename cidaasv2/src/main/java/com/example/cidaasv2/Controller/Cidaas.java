@@ -6010,7 +6010,7 @@ public class Cidaas implements IOAuthWebLogin {
                                     String user = "User Cancelled the Authentication";
 
 
-                                    localAuthenticationEntityCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED,user,417));
+                                    localAuthenticationEntityCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_CANCELLED,user,417));
 
                                     Timber.d("User" + user);
 
@@ -6069,7 +6069,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            result.failure(new WebAuthError(context).customException(401, "Bad document or no document", 417));
+            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
         }
     }
 
@@ -6093,12 +6093,13 @@ public class Cidaas implements IOAuthWebLogin {
             } else {
                 // tabPager.setVisibility(View.GONE);
                 // no lock screen set, show the new lock needed screen
-                showDialogToSetupLock(activity,result);
+                //showDialogToSetupLock(activity,result);
+                result.failure(new WebAuthError(context).customException(WebAuthErrorCode.NO_LOCAL_AUHTHENTICATION_FOUND, "NO LOCAL AUTHENTICATION FOUND", 417));
             }
         }
         catch (Exception e)
         {
-            result.failure(new WebAuthError(context).customException(401, "Bad document or no document", 417));
+            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
         }
     }
 

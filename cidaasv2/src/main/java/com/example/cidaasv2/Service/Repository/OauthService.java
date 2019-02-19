@@ -113,13 +113,13 @@ public class OauthService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentType);
-            headers.put("Lat",getLat());
-            headers.put("Long",getLong());
             headers.put("access_token", AccessToken);
             headers.put("device-id", deviceInfoEntity.getDeviceId());
             headers.put("device-make", deviceInfoEntity.getDeviceMake());
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             //Get Properties From DB
@@ -195,31 +195,6 @@ public class OauthService {
             Timber.d(e.getMessage());
             callback.failure(webAuthError);
         }
-    }
-
-
-    private String getLat()
-    {
-        String lat="";
-
-            LocationDetails locationDetails = LocationDetails.getShared(context);
-            locationDetails.getLocation();
-            lat=locationDetails.getLatitude();
-
-        Timber.d("Latitude Longitude"+lat);
-        return lat;
-    }
-
-    private String getLong()
-    {
-        String longitude="";
-
-            LocationDetails locationDetails = LocationDetails.getShared(context);
-            locationDetails.getLocation();
-            longitude=locationDetails.getLongitude();
-
-        Timber.d("Latitude Longitude"+longitude);
-        return longitude;
     }
 
 

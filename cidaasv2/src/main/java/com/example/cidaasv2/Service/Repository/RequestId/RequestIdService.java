@@ -119,8 +119,8 @@ public class RequestIdService {
             headers.put("device-make", deviceInfoEntity.getDeviceMake());
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("Lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("Long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Todo Construct URl Checking,Add Parameter(FieldMap) pending
             urlComponents = new URLHelper();
