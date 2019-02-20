@@ -49,6 +49,12 @@ public class LocationDetails implements LocationListener {
         getLocation();
     }
 
+    public LocationDetails(Context context,String string) {
+        this.mContext = context;
+        getLocation();
+    }
+
+
 
     //Todo Create Shared instances
     public static LocationDetails getShared(Context contextfromcidaas)
@@ -58,8 +64,16 @@ public class LocationDetails implements LocationListener {
         {
             shared=new LocationDetails(contextfromcidaas);
         }
+        else
+        {
+            new LocationDetails(contextfromcidaas,"String");
+        }
+
+
         return shared;
     }
+
+
 
     @SuppressLint("MissingPermission")
     public Location getLocation() {
