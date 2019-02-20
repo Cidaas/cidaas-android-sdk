@@ -64,11 +64,12 @@ public class BiometricManager extends BiometricManagerV23 {
 
 
     private void displayBiometricDialog(BiometricCallback biometricCallback) {
-        if(BiometricUtils.isBiometricPromptEnabled()) {
+       /* if(BiometricUtils.isBiometricPromptEnabled()) {
             displayBiometricPrompt(biometricCallback);
         } else {
-            displayBiometricPromptV23(biometricCallback);
-        }
+
+        }*/
+        displayBiometricPromptV23(biometricCallback);
     }
 
 
