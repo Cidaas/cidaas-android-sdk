@@ -1,11 +1,16 @@
 package com.example.cidaasv2.Library.BiometricAuthentication;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.cidaasv2.R;
 
@@ -29,7 +34,6 @@ import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 import androidx.core.os.CancellationSignal;
 
 
-
 @TargetApi(Build.VERSION_CODES.M)
 public class BiometricManagerV23 {
 
@@ -47,7 +51,14 @@ public class BiometricManagerV23 {
     protected String subtitle;
     protected String description;
     protected String negativeButtonText;
-    private BiometricDialogV23 biometricDialogV23;
+
+
+
+    private TextView itemTitle, itemDescription, itemSubtitle, itemStatus;
+    Button btnCancel;
+
+    AlertDialog.Builder builder;
+    AlertDialog alertDialog;
 
 
     public void displayBiometricPromptV23(final BiometricCallback biometricCallback) {
@@ -97,27 +108,105 @@ public class BiometricManagerV23 {
 
 
     private void displayBiometricDialog(final BiometricCallback biometricCallback) {
-        biometricDialogV23 = new BiometricDialogV23(context, biometricCallback);
-        biometricDialogV23.setTitle(title);
-        biometricDialogV23.setSubtitle(subtitle);
-        biometricDialogV23.setDescription(description);
-        biometricDialogV23.setButtonText(negativeButtonText);
-        biometricDialogV23.show();
+
+        displayBiometricAlertDialog(biometricCallback);
     }
 
 
 
     private void dismissDialog() {
-        if(biometricDialogV23 != null) {
-            biometricDialogV23.dismiss();
+        if(alertDialog != null) {
+            alertDialog.dismiss();
         }
     }
 
-    private void updateStatus(String status) {
+   /* private void updateStatus(String status) {
         if(biometricDialogV23 != null) {
             biometricDialogV23.updateStatus(status);
         }
+    }*/
+
+
+    private void displayBiometricAlertDialog(final BiometricCallback biometricCallback) {
+
+        builder=new AlertDialog.Builder(context);
+
+        intitaliseElements(biometricCallback);
+
+        builder.setCancelable(false);
+        alertDialog= builder.create();
+
+        alertDialog.show();
+
     }
+
+    private void intitaliseElements(final BiometricCallback biometricCallback) {
+        LayoutInflater inflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogView = inflater.inflate(R.layout.view_bottom_sheet_2, null);
+
+        btnCancel=dialogView.findViewById(R.id.btn_cancel);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissAlertDialog();
+                biometricCallback.onAuthenticationCancelled();
+            }
+        });
+
+
+        itemTitle = dialogView.findViewById(R.id.item_title);
+        itemStatus = dialogView.findViewById(R.id.item_status);
+        itemSubtitle = dialogView.findViewById(R.id.item_subtitle);
+        itemDescription = dialogView.findViewById(R.id.item_description);
+
+        assingnValues();
+
+        if(builder!=null) {
+            builder.setView(dialogView);
+        }
+
+
+    }
+
+    private void assingnValues() {
+        setTitle(title);
+        setSubtitle(subtitle);
+        setDescription(description);
+        setButtonText(negativeButtonText);
+
+    }
+
+    public void setTitle(String title) {
+        itemTitle.setText(title);
+    }
+
+    public void updateStatus(String status) {
+        itemStatus.setText(status);
+    }
+
+    public void setSubtitle(String subtitle) {
+        itemSubtitle.setText(subtitle);
+    }
+
+    public void setDescription(String description) {
+        itemDescription.setText(description);
+    }
+
+    public void setButtonText(String negativeButtonText) {
+        btnCancel.setText(negativeButtonText);
+    }
+
+
+    private void dismissAlertDialog() {
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+        }
+    }
+
+
+
+
 
     private void generateKey() {
         try {

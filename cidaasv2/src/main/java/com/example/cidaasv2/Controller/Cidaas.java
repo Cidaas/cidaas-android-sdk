@@ -6188,7 +6188,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     //------------------------------------------------------------------------------------------CallFingerPrint----------------------------------------
 
-    private void callFingerPrint(final Context context, FingerPrintEntity fingerPrintEntity, final Result<String> result)
+    public void callFingerPrint(final Context context, FingerPrintEntity fingerPrintEntity, final Result<String> result)
     {
         try
         {
