@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
+import timber.log.Timber;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -131,6 +132,7 @@ public class LocationDetails implements LocationListener {
             }
 
         } catch (Exception e) {
+            Timber.e(e.getMessage());
             e.printStackTrace();
         }
 
@@ -152,8 +154,8 @@ public class LocationDetails implements LocationListener {
      */
     public String getLatitude() {
         String Lat="";
-        if (location != null) {
-            latitude = location.getLatitude();
+        if (getLocation() != null) {
+            latitude = getLocation().getLatitude();
             Lat=""+latitude;
         }
 
@@ -166,14 +168,9 @@ public class LocationDetails implements LocationListener {
      */
     public String getLongitude() {
         String Long="";
-        if (location != null) {
-            longitude = location.getLongitude();
-            Long=""+longitude
-
-
-
-
-            ;
+        if (getLocation() != null) {
+            longitude = getLocation().getLongitude();
+            Long=""+longitude;
         }
 
         // return longitude

@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         cidaas = Cidaas.getInstance(this);
+         cidaas = Cidaas.getInstance(getApplicationContext());
          CidaasSDKLayout.loader=this;
          getFCMToken();
 
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     //get Request Id
     public void getRequestIdMethod(View view)
     {
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        MyApp.getCidaasInstance().getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 requestId=result.getData().getRequestId();
