@@ -74,7 +74,10 @@ public class BiometricManagerV23 {
                         @Override
                         public void onAuthenticationError(int errMsgId, CharSequence errString) {
                             super.onAuthenticationError(errMsgId, errString);
-                            updateStatus(String.valueOf(errString));
+
+                            if(errMsgId!=5) {
+                                updateStatus(String.valueOf(errString));
+                            }
                             biometricCallback.onAuthenticationError(errMsgId, errString);
                         }
 
