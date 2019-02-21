@@ -150,6 +150,7 @@ public class BiometricManagerV23 {
             @Override
             public void onClick(View v) {
                 dismissAlertDialog();
+               updateStatus("");
                 biometricCallback.onAuthenticationCancelled();
             }
         });
@@ -182,6 +183,7 @@ public class BiometricManagerV23 {
     }
 
     public void updateStatus(String status) {
+
         itemStatus.setText(status);
     }
 
