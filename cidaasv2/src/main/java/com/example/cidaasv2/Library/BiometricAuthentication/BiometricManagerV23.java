@@ -60,16 +60,17 @@ public class BiometricManagerV23 {
     AlertDialog.Builder builder;
     AlertDialog alertDialog;
 
-
+CancellationSignal cancellationSignal;
     public void displayBiometricPromptV23(final BiometricCallback biometricCallback) {
         generateKey();
 
         if(initCipher()) {
 
+            cancellationSignal=new CancellationSignal();
             cryptoObject = new FingerprintManagerCompat.CryptoObject(cipher);
-            FingerprintManagerCompat fingerprintManagerCompat = FingerprintManagerCompat.from(context);
+            final FingerprintManagerCompat fingerprintManagerCompat = FingerprintManagerCompat.from(context);
 
-            fingerprintManagerCompat.authenticate(cryptoObject, 0, new CancellationSignal(),
+            fingerprintManagerCompat.authenticate(cryptoObject, 0, cancellationSignal,
                     new FingerprintManagerCompat.AuthenticationCallback() {
                         @Override
                         public void onAuthenticationError(int errMsgId, CharSequence errString) {
@@ -77,6 +78,7 @@ public class BiometricManagerV23 {
 
                             if(errMsgId!=5) {
                                 updateStatus(String.valueOf(errString));
+
                             }
                             biometricCallback.onAuthenticationError(errMsgId, errString);
                         }
@@ -153,7 +155,10 @@ public class BiometricManagerV23 {
             @Override
             public void onClick(View v) {
                 dismissAlertDialog();
-               updateStatus("");
+
+                if(cancellationSignal != null && !cancellationSignal.isCanceled()){
+                    cancellationSignal.cancel();
+                }
                 biometricCallback.onAuthenticationCancelled();
             }
         });
