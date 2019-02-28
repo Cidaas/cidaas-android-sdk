@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
@@ -106,11 +107,12 @@ public class LoginService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             //Call Service-getRequestId
@@ -167,7 +169,7 @@ public class LoginService {
     }
 
 
-    //Logout for embedded browser Credentials
+   /* //Logout for embedded browser Credentials
     public void logoutForEmbeddedBrowser(final String baseurl, final String accessToken,final Result<LogoutResponseEntity> callback)
     {
         //Local Variables
@@ -190,7 +192,7 @@ public class LoginService {
             // Get Device Information
 
 
-            /*
+            *//*
             DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
             //This is only for testing purpose
             if(deviceInfoEntityFromparam==null) {
@@ -199,7 +201,7 @@ public class LoginService {
             else if(deviceInfoEntityFromparam!=null)
             {
                 deviceInfoEntity=deviceInfoEntityFromparam;
-            }*/
+            }*//*
 
 
 
@@ -207,17 +209,19 @@ public class LoginService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-           /* headers.put("deviceId", deviceInfoEntity.getDeviceId());
+           *//* headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());*/
+            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());*//*
 
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.logoutFromEmbeddedBrowser(logoutUrl,accessToken, "").enqueue(new Callback<LogoutResponseEntity>() {
+            cidaasSDKService.logoutFromEmbeddedBrowser(logoutUrl,headersxx,accessToken, "").enqueue(new Callback<LogoutResponseEntity>() {
                 @Override
                 public void onResponse(Call<LogoutResponseEntity> call, Response<LogoutResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -287,7 +291,7 @@ public class LoginService {
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
-    }
+    }*/
 
 
     //Resume Login After MFA
@@ -327,11 +331,12 @@ public class LoginService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -438,11 +443,12 @@ public class LoginService {
             //Done check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("deviceId", deviceInfoEntity.getDeviceId());
             headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -537,9 +543,13 @@ public class LoginService {
                     return;
                 }
 
+                Map<String, String> headers = new Hashtable<>();
+                headers.put("lat",LocationDetails.getShared(context).getLatitude());
+                headers.put("long",LocationDetails.getShared(context).getLongitude());
+
                 //Call Service-getURLList
                 final ICidaasSDKService cidaasSDKService = service.getInstance();
-                cidaasSDKService.getUrlList(openIdurl).enqueue(new Callback<Object>() {
+                cidaasSDKService.getUrlList(openIdurl,headers).enqueue(new Callback<Object>() {
                     @Override
                     public void onResponse(Call<Object> call, Response<Object> response) {
                         if (response.isSuccessful()) {

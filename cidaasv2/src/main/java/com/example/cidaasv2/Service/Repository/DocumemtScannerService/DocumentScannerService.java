@@ -10,6 +10,7 @@ import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
@@ -73,7 +74,7 @@ public class DocumentScannerService {
 
 
     //Get Deduplication info
-    public void sendDocuemntToService(String baseurl, File photoDoc, DeviceInfoEntity deviceInfoEntityFromparam,final Result<DocumentScannerServiceResultEntity> callback)
+    public void sendDocuemntToService(String baseurl, File photoDoc, String accessToken,DeviceInfoEntity deviceInfoEntityFromparam,final Result<DocumentScannerServiceResultEntity> callback)
     {
         //Local Variables
         String DocumentURL = "";
@@ -111,19 +112,16 @@ public class DocumentScannerService {
 
 
             //Todo - check Construct Headers pending,Null Checking Pending
-          /*  //Add headers
+
+            //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());*/
-
-
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("access_token",accessToken);
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.enrollDocument(DocumentURL,photo).enqueue(new Callback<DocumentScannerServiceResultEntity>() {
+            cidaasSDKService.enrollDocument(DocumentURL,headers,photo).enqueue(new Callback<DocumentScannerServiceResultEntity>() {
                 @Override
                 public void onResponse(Call<DocumentScannerServiceResultEntity> call, Response<DocumentScannerServiceResultEntity> response) {
                     if (response.isSuccessful()) {
@@ -131,7 +129,7 @@ public class DocumentScannerService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
                                     "Service failure but successful response" , 400,null,null));
                         }
                     }
@@ -164,11 +162,11 @@ public class DocumentScannerService {
                                 errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                             }
 
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
                                     errorMessage, commonErrorEntity.getStatus(),
                                     commonErrorEntity.getError(),errorEntity));
                         } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
                                     "Unexpected Error"+errorResponse, 417,null,null));
                         }
                         Timber.e("response"+response.message());
@@ -178,7 +176,7 @@ public class DocumentScannerService {
                 @Override
                 public void onFailure(Call<DocumentScannerServiceResultEntity> call, Throwable t) {
                     Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
                             t.getMessage(), 400,null,null));
 
                 }

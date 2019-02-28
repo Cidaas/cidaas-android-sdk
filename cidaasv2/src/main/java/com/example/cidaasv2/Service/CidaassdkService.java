@@ -1,8 +1,11 @@
 package com.example.cidaasv2.Service;
 
+import android.content.Context;
+
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +25,15 @@ import timber.log.Timber;
 
 public class CidaassdkService {
 
+
+    private static Context mcontext;
+
+
+    public void setContext(Context context)
+    {
+        mcontext=context;
+    }
+
     public ICidaasSDKService getInstance()
     {
 
@@ -38,6 +50,8 @@ public class CidaassdkService {
         OkHttpClient okHttpClient=null;
 
         final String HEADER_USER_AGENT = "User-Agent";
+     /*   final String HEADER_LOCATION_LATITUDE="Lat";
+        final String HEADER_LOCATION_LONGITUDE="Long";*/
         okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(20, TimeUnit.SECONDS)
                 .connectTimeout(100, TimeUnit.SECONDS)
@@ -47,6 +61,8 @@ public class CidaassdkService {
                         Request originalRequest = chain.request();
                         Request requestWithUserAgent = originalRequest.newBuilder()
                                 .header(HEADER_USER_AGENT, createCustomUserAgent(originalRequest))
+                                 /*.addHeader(HEADER_LOCATION_LATITUDE,getLat())
+                                 .header(HEADER_LOCATION_LONGITUDE,getLong())*/
                                 .build();
                         for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
                             Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
@@ -81,5 +97,35 @@ public class CidaassdkService {
         return ua;
     }
 
+
+
+  /*  private String getLat()
+    {
+        String lat="";
+        if(mcontext!=null) {
+            LocationDetails locationDetails = new LocationDetails(mcontext);
+            locationDetails.getLocation();
+            lat=locationDetails.getLatitude();
+
+        }
+        Timber.d("Location Longitude"+lat);
+        return lat;
+    }
+
+    private String getLong()
+    {
+        String longitude="";
+        if(mcontext!=null) {
+            LocationDetails locationDetails = new LocationDetails(mcontext);
+            locationDetails.getLocation();
+            longitude=locationDetails.getLongitude();
+
+
+
+        }
+        Timber.d("Location Longitude"+longitude);
+        return longitude;
+    }
+*/
 
 }

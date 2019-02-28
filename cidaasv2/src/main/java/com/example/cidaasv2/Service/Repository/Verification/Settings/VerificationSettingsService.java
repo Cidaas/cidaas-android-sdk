@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Service.Repository.Verification.Settings;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -13,20 +12,23 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
+import androidx.annotation.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -129,9 +131,13 @@ public class VerificationSettingsService {
 
             }
 
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
+
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getmfaList(mfalistUrl,sub,userDeviceID,common_configs).enqueue(new Callback<MFAListResponseEntity>() {
+            cidaasSDKService.getmfaList(mfalistUrl,headers,sub,userDeviceID,common_configs).enqueue(new Callback<MFAListResponseEntity>() {
                 @Override
                 public void onResponse(Call<MFAListResponseEntity> call, Response<MFAListResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -210,7 +216,7 @@ public class VerificationSettingsService {
 
 
 
-    public void deleteMFA(String baseurl,  @NonNull final String accessToken,String userDeviceID, String verificationType, DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
+    public void deleteMFA(String baseurl, @NonNull final String accessToken, String userDeviceID, String verificationType, DeviceInfoEntity deviceInfoEntityFromParam, final Result<DeleteMFAResponseEntity> callback)
     {
         //Local Variables
         String deleteMFAURL = "";
@@ -255,9 +261,13 @@ public class VerificationSettingsService {
 
             }
 
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
+
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.delete(deleteMFAURL,accessToken).enqueue(new Callback<DeleteMFAResponseEntity>() {
+            cidaasSDKService.delete(deleteMFAURL,headers,accessToken).enqueue(new Callback<DeleteMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<DeleteMFAResponseEntity> call, Response<DeleteMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -373,10 +383,13 @@ public class VerificationSettingsService {
             else {
 
             }
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.deleteAll(deleteMFAURL,accessToken).enqueue(new Callback<DeleteMFAResponseEntity>() {
+            cidaasSDKService.deleteAll(deleteMFAURL,headers,accessToken).enqueue(new Callback<DeleteMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<DeleteMFAResponseEntity> call, Response<DeleteMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -464,10 +477,13 @@ public class VerificationSettingsService {
                 return;
             }
 
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.denyNotificationService(denyNotificationURL,URLHelper.contentTypeJson,accessToken,denyNotificationRequestEntity).enqueue(new Callback<DenyNotificationResponseEntity>() {
+            cidaasSDKService.denyNotificationService(denyNotificationURL,URLHelper.contentTypeJson,accessToken,headers,denyNotificationRequestEntity).enqueue(new Callback<DenyNotificationResponseEntity>() {
                 @Override
                 public void onResponse(Call<DenyNotificationResponseEntity> call, Response<DenyNotificationResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -555,10 +571,13 @@ public class VerificationSettingsService {
                 return;
             }
 
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getPendingNotification(getPendingNotificationURL,URLHelper.contentTypeJson,accessToken).enqueue(new Callback<NotificationEntity>()
+            cidaasSDKService.getPendingNotification(getPendingNotificationURL,URLHelper.contentTypeJson,accessToken,headers).enqueue(new Callback<NotificationEntity>()
             {
                 @Override
                 public void onResponse(Call<NotificationEntity> call, Response<NotificationEntity> response) {
@@ -668,10 +687,12 @@ public class VerificationSettingsService {
             if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
-
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.updateFCMToken(fcmTokenURL,accessToken,deviceInfoEntity).enqueue(new Callback<Object>()
+            cidaasSDKService.updateFCMToken(fcmTokenURL,accessToken,headers,deviceInfoEntity).enqueue(new Callback<Object>()
             {
                 @Override
                 public void onResponse(Call<Object> call, Response<Object> response) {
@@ -761,10 +782,13 @@ public class VerificationSettingsService {
                 return;
             }
 
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getConfiguredMFAList(ConfiguredMFAListURL,sub,userDeviceId).enqueue(new Callback<ConfiguredMFAListEntity>()
+            cidaasSDKService.getConfiguredMFAList(ConfiguredMFAListURL,headers,sub,userDeviceId).enqueue(new Callback<ConfiguredMFAListEntity>()
             {
                 @Override
                 public void onResponse(Call<ConfiguredMFAListEntity> call, Response<ConfiguredMFAListEntity> response) {

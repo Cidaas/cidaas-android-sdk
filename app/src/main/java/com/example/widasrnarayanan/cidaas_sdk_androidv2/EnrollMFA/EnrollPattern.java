@@ -10,14 +10,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.PhysicalVerificationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -25,24 +22,22 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
-import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 public class EnrollPattern extends AppCompatActivity {
@@ -89,6 +84,7 @@ public class EnrollPattern extends AppCompatActivity {
                             @Override
                             public void success(LoginCredentialsResponseEntity result) {
                                 Toast.makeText(EnrollPattern.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+
                             }
 
                             @Override
@@ -467,7 +463,10 @@ catch (Exception e)
 
     public void enrollFinger(View view)
     {
-        cidaas.configureFingerprint(sub, "", new Result<EnrollFingerprintMFAResponseEntity>() {
+
+
+
+        cidaas.configureFingerprint(EnrollPattern.this,sub, "", null,new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Enroll SuccssFull", Toast.LENGTH_SHORT).show();
@@ -483,7 +482,7 @@ catch (Exception e)
 
     public void usageFinger(View view)
     {
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -493,7 +492,11 @@ catch (Exception e)
                 passwordlessEntity.setTrackId(trackId);
                 passwordlessEntity.setMobile("+919787113989");
 
-                cidaas.loginWithFingerprint(passwordlessEntity, new Result<LoginCredentialsResponseEntity>() {
+                FingerPrintEntity fingerPrintEntity=new FingerPrintEntity();
+                fingerPrintEntity.setTitle("Hi Please AUTHENTICATE");
+                fingerPrintEntity.setSubtitle("A");
+
+                cidaas.loginWithFingerprint(EnrollPattern.this,passwordlessEntity, fingerPrintEntity,new Result<LoginCredentialsResponseEntity>() {
                     @Override
                     public void success(LoginCredentialsResponseEntity result) {
                         Toast.makeText(EnrollPattern.this, "Success Finger"+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();

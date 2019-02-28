@@ -9,6 +9,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
@@ -88,9 +89,13 @@ public class DeduplicationService {
                 return;
             }
 
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat",LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
+
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getDeduplicationList(DeduplicationUrl).enqueue(new Callback<DeduplicationResponseEntity>() {
+            cidaasSDKService.getDeduplicationList(DeduplicationUrl,headers).enqueue(new Callback<DeduplicationResponseEntity>() {
                 @Override
                 public void onResponse(Call<DeduplicationResponseEntity> call, Response<DeduplicationResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -182,7 +187,8 @@ public class DeduplicationService {
             Map<String, String> headers = new Hashtable<>();
 
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
             //Call Service-getRequestId

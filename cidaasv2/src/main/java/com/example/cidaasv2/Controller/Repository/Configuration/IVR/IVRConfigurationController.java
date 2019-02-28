@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Controller.Repository.Configuration.IVR;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
@@ -23,10 +22,9 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAReq
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
-import com.example.cidaasv2.Service.Repository.UserProfile.UserProfileService;
-import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class IVRConfigurationController {

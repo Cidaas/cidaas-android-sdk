@@ -1,5 +1,6 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,8 +9,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Interface.ILoader;
@@ -33,12 +33,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
 
 
-public class MainActivity extends AppCompatActivity  implements ILoader{
+public class MainActivity extends AppCompatActivity implements ILoader{
 
     ProgressDialog progressDialog;
      Cidaas cidaas;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         cidaas = Cidaas.getInstance(this);
+         cidaas = Cidaas.getInstance(getApplicationContext());
          CidaasSDKLayout.loader=this;
          getFCMToken();
 
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
         cidaasGoogle=new CidaasGoogle(this);
 
 
+        requestLocationPermission();
         String token = getIntent().getDataString();
         if (token != null) {
            cidaas.handleToken(token);
@@ -73,8 +77,28 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
         }
     }
 
+    private void requestLocationPermission()
+    {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+            //return;
+        }
+    }
 
+    public void openAlertFinger(View view)
+    {
+        cidaas.callFingerPrint(this, null, new Result<String>() {
+            @Override
+            public void success(String result) {
+                Toast.makeText(MainActivity.this, ""+result, Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     public void loginWithBrowser(View view)
     {
@@ -179,7 +203,7 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
     //get Request Id
     public void getRequestIdMethod(View view)
     {
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        MyApp.getCidaasInstance().getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 requestId=result.getData().getRequestId();
@@ -353,7 +377,7 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
             }
         });*/
 
-            cidaas.configureFingerprint("sub","", new Result<EnrollFingerprintMFAResponseEntity>() {
+            cidaas.configureFingerprint(MainActivity.this,"sub","",null, new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -390,6 +414,20 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
 
     }
 
+    public void callLocalAuthentication(View view)
+    {
+        cidaas.localAuthentication(this, new Result<LocalAuthenticationEntity>() {
+            @Override
+            public void success(LocalAuthenticationEntity result) {
+                Toast.makeText(MainActivity.this, ""+result.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     public void printhashkey(){
@@ -514,6 +552,7 @@ public class MainActivity extends AppCompatActivity  implements ILoader{
         else {
             cidaasFacebook.authorize(requestCode, resultCode, data);
         }
-      // cidaas.authorize(requestCode,resultCode,data)
+
+       cidaas.onActivityResult(requestCode,resultCode,data);
     }
 }

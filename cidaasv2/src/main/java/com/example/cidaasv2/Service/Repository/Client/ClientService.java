@@ -9,13 +9,16 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -84,10 +87,13 @@ public class ClientService {
                 return;
             }
 
+            Map<String, String> headers = new Hashtable<>();
+            headers.put("lat", LocationDetails.getShared(context).getLatitude());
+            headers.put("long",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getClientInfo(clienttUrl).enqueue(new Callback<ClientInfoEntity>() {
+            cidaasSDKService.getClientInfo(clienttUrl,headers).enqueue(new Callback<ClientInfoEntity>() {
                 @Override
                 public void onResponse(Call<ClientInfoEntity> call, Response<ClientInfoEntity> response) {
                     if (response.isSuccessful()) {

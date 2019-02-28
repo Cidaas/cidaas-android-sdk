@@ -3,7 +3,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.FIDO;
 import android.content.Context;
 import android.nfc.tech.IsoDep;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -27,12 +26,9 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchRespon
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.U2F_V2;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.NFC_sign_object;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NFCSignObject;
-import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
-import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.FIDO.FIDOVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
@@ -40,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 import static com.example.cidaasv2.Controller.Cidaas.FIDO_VERSION;
@@ -100,7 +97,7 @@ public class FIDOConfigurationController {
     // 4.  Maintain logs based on flags
 
     //Service call To SetupFIDOMFA
-    public void configureFIDO(@NonNull final IsoDep isoTag,@NonNull final String sub, @NonNull final String baseurl,
+    public void configureFIDO(@NonNull final IsoDep isoTag, @NonNull final String sub, @NonNull final String baseurl,
                               @NonNull final SetupFIDOMFARequestEntity setupFIDOMFARequestEntity,
                               @NonNull final Result<EnrollFIDOMFAResponseEntity> enrollresult)
     {

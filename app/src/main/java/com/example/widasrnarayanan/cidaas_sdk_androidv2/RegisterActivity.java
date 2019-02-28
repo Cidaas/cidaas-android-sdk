@@ -1,7 +1,5 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +23,9 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class RegisterActivity extends AppCompatActivity {
 

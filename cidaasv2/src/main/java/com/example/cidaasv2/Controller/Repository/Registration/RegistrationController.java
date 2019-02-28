@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Controller.Repository.Registration;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -18,6 +17,7 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.Registration.RegistrationService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class RegistrationController {
@@ -210,7 +210,7 @@ public class RegistrationController {
 
 
     //Service call To  register New User Account Verification via Email Setup
-    public void verifyAccountVerificationService(@NonNull String baseurl,@NonNull String code, String accvid,
+    public void verifyAccountVerificationService(@NonNull String baseurl, @NonNull String code, String accvid,
                                                  final Result<RegisterUserAccountVerifyResponseEntity> result)
     {
         try{

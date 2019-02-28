@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Controller.Repository.Deduplication;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
@@ -14,6 +13,7 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Repository.Deduplication.DeduplicationService;
 import com.example.cidaasv2.Service.Repository.Login.LoginService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class DeduplicationController {
@@ -55,7 +55,7 @@ public class DeduplicationController {
         DeduplicationService.getShared(context).registerDeduplication(baseurl,trackId,deduplicaionResult);
     }
 
-    public void loginDeduplication(@NonNull String baseurl,@NonNull String requestId,@NonNull String sub,@NonNull String password,
+    public void loginDeduplication(@NonNull String baseurl, @NonNull String requestId, @NonNull String sub, @NonNull String password,
                                    final Result<LoginCredentialsResponseEntity> deduplicaionResult)
     {
       try

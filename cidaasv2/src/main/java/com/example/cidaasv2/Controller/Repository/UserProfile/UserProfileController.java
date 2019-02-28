@@ -1,21 +1,13 @@
 package com.example.cidaasv2.Controller.Repository.UserProfile;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
-import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
-import com.example.cidaasv2.Service.Repository.UserProfile.UserProfileService;
-
-import java.util.Dictionary;
 
 import timber.log.Timber;
 

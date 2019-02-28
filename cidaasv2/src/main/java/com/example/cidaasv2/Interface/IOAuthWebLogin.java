@@ -1,9 +1,10 @@
 package com.example.cidaasv2.Interface;
 
 
-import android.support.annotation.NonNull;
+import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
+import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
@@ -47,6 +48,8 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 
 import java.io.File;
 import java.util.HashMap;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -100,13 +103,13 @@ public interface IOAuthWebLogin {
     void verifyBackupcode(String code,String StatusId,Result<LoginCredentialsResponseEntity> result);
 
     //FACE
-    void configureFaceRecognition(File photo,String sub, @NonNull final String logoURL,int attempts,Result<EnrollFaceMFAResponseEntity> result);
+    void configureFaceRecognition(File photo, String sub, @NonNull final String logoURL, int attempts, Result<EnrollFaceMFAResponseEntity> result);
     void loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntity,
                                    final Result<LoginCredentialsResponseEntity> loginresult);
 
     //FINGERPRINT
-    void configureFingerprint(String sub,@NonNull final String logoURL,Result<EnrollFingerprintMFAResponseEntity> result);
-    void loginWithFingerprint(PasswordlessEntity passwordlessEntity,final Result<LoginCredentialsResponseEntity> loginresult);
+    void configureFingerprint(Context context,String sub, @NonNull final String logoURL, FingerPrintEntity fingerPrintEntity, Result<EnrollFingerprintMFAResponseEntity> result);
+    void loginWithFingerprint(Context context,PasswordlessEntity passwordlessEntity, FingerPrintEntity fingerPrintEntity, final Result<LoginCredentialsResponseEntity> loginresult);
 
     //PATTERN
     void configurePatternRecognition(@NonNull final String pattern,String sub,String logoURL,Result<EnrollPatternMFAResponseEntity> result);

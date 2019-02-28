@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Controller.Repository.Configuration.SMS;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
@@ -20,10 +19,9 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFARespons
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
-import com.example.cidaasv2.Service.Repository.Verification.SMS.SMSVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.SMS.SMSVerificationService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class SMSConfigurationController {
@@ -276,7 +274,7 @@ public class SMSConfigurationController {
 
 
     //Service call To SetupSMSMFA
-    public void setupSMSMFA(@NonNull String AccessToken,@NonNull String baseurl, @NonNull final Result<SetupSMSMFAResponseEntity> result){
+    public void setupSMSMFA(@NonNull String AccessToken, @NonNull String baseurl, @NonNull final Result<SetupSMSMFAResponseEntity> result){
         try{
 
             if (baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {

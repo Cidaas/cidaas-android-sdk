@@ -1,13 +1,13 @@
 package com.example.cidaasv2.Controller;
 
 import android.Manifest;
-import android.animation.Animator;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
@@ -15,13 +15,9 @@ import android.nfc.tech.IsoDep;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.customtabs.CustomTabsClient;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -51,6 +47,8 @@ import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
 import com.example.cidaasv2.Helper.CustomTab.Helper.CustomTabHelper;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
+import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
+import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
@@ -64,8 +62,11 @@ import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricManager;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.R;
+import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -73,21 +74,14 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResul
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDORequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDOResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.U2F_V2;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDORequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDOResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey.FidoSignTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
@@ -102,7 +96,9 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.Authenticat
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.EnrollFIDOMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.FIDOKey.FIDOTouchResponse;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFARequestEntity;
@@ -119,6 +115,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARes
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
@@ -132,6 +129,7 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMF
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
@@ -141,7 +139,8 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPush
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NFCSignObject;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
@@ -163,12 +162,9 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Repository.Verification.Face.FaceVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.Settings.VerificationSettingsService;
-import com.example.cidaasv2.Service.Scanned.ScannedResponseDataEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -177,11 +173,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 import static android.os.Build.MODEL;
 import static android.os.Build.VERSION;
-import static android.support.customtabs.CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -190,8 +191,16 @@ import static android.support.customtabs.CustomTabsService.ACTION_CUSTOM_TABS_CO
 public class Cidaas implements IOAuthWebLogin {
 
     private static final int MY_SCAN_REQUEST_CODE = 3;
-    public Context context;
+    private static final int LOCAL_AUTH_REQUEST_CODE = 303;
+    private static final int LOCAL_REQUEST_CODE = 302;
+    private static final int RESULT_OK = -1;
 
+
+    Result<LocalAuthenticationEntity> localAuthenticationEntityCallback;
+
+
+    public Context context;
+    public Activity activityFromCidaas;
 
     public static String instanceId = "";
     public static ICustomLoader loader;
@@ -343,6 +352,12 @@ public class Cidaas implements IOAuthWebLogin {
                 LogFile.addRecordToLog(loggerMessage);
             }
         });
+
+
+        //Set Context For sdkservice
+
+        //CidaassdkService service=new CidaassdkService();
+      //  service.setContext(context);
 
 
     }
@@ -2339,13 +2354,19 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     @Override
-    public void configureFingerprint(final String sub,@NonNull final String logoURL, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
+    public void configureFingerprint(final Context context, final String sub, @NonNull final String logoURL, FingerPrintEntity fingerPrintEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    final String baseurl = result.get("DomainURL");
-                    final String clinetId = result.get("ClientId");
+            if (Build.VERSION.SDK_INT >= 23) {
+
+
+                callFingerPrint(context, fingerPrintEntity, new Result<String>() {
+                    @Override
+                    public void success(String result) {
+                        checkSavedProperties(new Result<Dictionary<String, String>>() {
+                            @Override
+                            public void success(Dictionary<String, String> result) {
+                                final String baseurl = result.get("DomainURL");
+                                final String clinetId = result.get("ClientId");
 
 
                  /*   //Done Call the finger print method
@@ -2437,36 +2458,50 @@ public class Cidaas implements IOAuthWebLogin {
 
 */
 
-                    if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
+                                if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
-                        final String finalBaseurl = baseurl;
-
-
-                       // String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+                                    final String finalBaseurl = baseurl;
 
 
-                       if(!logoURL.equals("") && logoURL!=null) {
-                            logoURLlocal=logoURL;
-                        }
+                                    // String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
 
-                        SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity = new SetupFingerprintMFARequestEntity();
-                        setupFingerprintMFARequestEntity.setClient_id(clinetId);
-                        setupFingerprintMFARequestEntity.setLogoUrl(logoURLlocal);
-                        FingerprintConfigurationController.getShared(context).configureFingerprint(sub, finalBaseurl, setupFingerprintMFARequestEntity,
-                                enrollresult);
 
-                    } else {
-                        String errorMessage = "Sub or Pattern cannot be null";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
-                                HttpStatusCode.EXPECTATION_FAILED));
+                                    if (!logoURL.equals("") && logoURL != null) {
+                                        logoURLlocal = logoURL;
+                                    }
+
+                                    SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity = new SetupFingerprintMFARequestEntity();
+                                    setupFingerprintMFARequestEntity.setClient_id(clinetId);
+                                    setupFingerprintMFARequestEntity.setLogoUrl(logoURLlocal);
+                                    FingerprintConfigurationController.getShared(context).configureFingerprint(sub, finalBaseurl, setupFingerprintMFARequestEntity,
+                                            enrollresult);
+
+                                } else {
+                                    String errorMessage = "Sub or Pattern cannot be null";
+                                    enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
+                                            HttpStatusCode.EXPECTATION_FAILED));
+                                }
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                enrollresult.failure(error);
+                            }
+                        });
                     }
-                }
 
-                @Override
-                public void failure(WebAuthError error) {
+                    @Override
+                    public void failure(WebAuthError error) {
                     enrollresult.failure(error);
-                }
-            });
+                    }
+                });
+            }
+            else
+            {
+                String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+            }
 
         } catch (Exception e) {
             enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
@@ -2478,24 +2513,30 @@ public class Cidaas implements IOAuthWebLogin {
     {
         try
         {
+            if (Build.VERSION.SDK_INT >= 23) {
 
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
+                checkSavedProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> result) {
 
-                    String baseurl = result.get("DomainURL");
-                    String clientId=result.get("ClientId");
+                        String baseurl = result.get("DomainURL");
+                        String clientId = result.get("ClientId");
 
 
+                        FingerprintConfigurationController.getShared(context).scannedWithFingerprint(baseurl, statusId, clientId, scannedResult);
+                    }
 
-                    FingerprintConfigurationController.getShared(context).scannedWithFingerprint(baseurl,statusId,clientId,scannedResult);
-                }
+                    @Override
+                    public void failure(WebAuthError error) {
+                        scannedResult.failure(error);
+                    }
+                });
+            }
+            else{
+                String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
 
-                @Override
-                public void failure(WebAuthError error) {
-                    scannedResult.failure(error);
-                }
-            });
+            }
 
         }
         catch (Exception e)
@@ -2507,29 +2548,45 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void enrollFingerprint( @NonNull final String sub,@NonNull final String statusId,  final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
+    public void enrollFingerprint(final Context context, @NonNull final String sub, @NonNull final String statusId, FingerPrintEntity fingerPrintEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
     {
         try
         {
 
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
+            //Todo Call FingerPrintAuthentication
+
+            callFingerPrint(context, fingerPrintEntity, new Result<String>() {
                 @Override
-                public void success(Dictionary<String, String> result) {
-
-                    final String baseurl = result.get("DomainURL");
-                    final String clientId= result.get("ClientId");
-
-                    final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
-
-                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                public void success(String result) {
+                    checkSavedProperties(new Result<Dictionary<String, String>>() {
                         @Override
-                        public void success(AccessTokenEntity result) {
-                            EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity=new EnrollFingerprintMFARequestEntity();
-                            enrollFingerprintMFARequestEntity.setStatusId(statusId);
-                            enrollFingerprintMFARequestEntity.setUserDeviceId(userDeviceId);
+                        public void success(Dictionary<String, String> result) {
+
+                            final String baseurl = result.get("DomainURL");
+                            final String clientId= result.get("ClientId");
+
+                            final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                                @Override
+                                public void success(AccessTokenEntity result) {
+                                    EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity=new EnrollFingerprintMFARequestEntity();
+                                    enrollFingerprintMFARequestEntity.setStatusId(statusId);
+                                    enrollFingerprintMFARequestEntity.setUserDeviceId(userDeviceId);
+                                    enrollFingerprintMFARequestEntity.setClient_id(clientId);
 
 
-                            FingerprintConfigurationController.getShared(context).enrollFingerprint(baseurl,result.getAccess_token(),enrollFingerprintMFARequestEntity,enrollResult);
+                                    FingerprintConfigurationController.getShared(context).enrollFingerprint(baseurl,result.getAccess_token(),enrollFingerprintMFARequestEntity,enrollResult);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    enrollResult.failure(error);
+                                }
+                            });
+
+
+
                         }
 
                         @Override
@@ -2537,16 +2594,15 @@ public class Cidaas implements IOAuthWebLogin {
                             enrollResult.failure(error);
                         }
                     });
-
-
-
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollResult.failure(error);
+                      enrollResult.failure(error);
                 }
             });
+
+
         }
         catch (Exception e)
         {
@@ -2559,63 +2615,68 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     @Override
-    public void loginWithFingerprint(final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
+    public void loginWithFingerprint(final Context context, final PasswordlessEntity passwordlessEntity, FingerPrintEntity fingerPrintEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    final String baseurl = result.get("DomainURL");
-                    final String clientId = result.get("ClientId");
 
 
-                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
-
-                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
-                            String errorMessage = "baseurl or clientId  must not be empty";
-
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                        }
-
-
-                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
-                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
-                            String errorMessage = "sub or email or mobile number must not be empty";
-
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                        }
-
-                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
-                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
-                                String errorMessage = "trackId must not be empty For Multifactor Authentication";
-
-                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                                return;
-                            }
-                        }
-
-                        InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity = new InitiateFingerprintMFARequestEntity();
-                        initiateFingerprintMFARequestEntity.setSub(passwordlessEntity.getSub());
-                        initiateFingerprintMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
-                        initiateFingerprintMFARequestEntity.setEmail(passwordlessEntity.getEmail());
-                        initiateFingerprintMFARequestEntity.setMobile(passwordlessEntity.getMobile());
-
-                        //Todo check for email or sub or mobile
+            callFingerPrint(context, fingerPrintEntity, new Result<String>() {
+                        @Override
+                        public void success(String result) {
+                            checkSavedProperties(new Result<Dictionary<String, String>>() {
+                                @Override
+                                public void success(Dictionary<String, String> result) {
+                                    final String baseurl = result.get("DomainURL");
+                                    final String clientId = result.get("ClientId");
 
 
-                        FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl, clientId,
-                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
-                                initiateFingerprintMFARequestEntity, loginresult);
-                    } else {
-                        String errorMessage = "UsageType or FingerprintCode or requestId must not be empty";
+                                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
+                                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
 
-                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                    }
+                                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                                            String errorMessage = "baseurl or clientId  must not be empty";
+
+                                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                        }
+
+
+                                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                        }
+
+                                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                                String errorMessage = "trackId must not be empty For Multifactor Authentication";
+
+                                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                                return;
+                                            }
+                                        }
+
+                                        InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity = new InitiateFingerprintMFARequestEntity();
+                                        initiateFingerprintMFARequestEntity.setSub(passwordlessEntity.getSub());
+                                        initiateFingerprintMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                                        initiateFingerprintMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                                        initiateFingerprintMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+                                        //Todo check for email or sub or mobile
+
+
+                                        FingerprintConfigurationController.getShared(context).LoginWithFingerprint(baseurl, clientId,
+                                                passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(),
+                                                initiateFingerprintMFARequestEntity, loginresult);
+                                    } else {
+                                        String errorMessage = "UsageType or FingerprintCode or requestId must not be empty";
+
+                                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                    }
 
 
                     /*
@@ -2698,13 +2759,21 @@ public class Cidaas implements IOAuthWebLogin {
 
                     }, null);*/
 
-                }
+                                }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    loginresult.failure(error);
-                }
-            });
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    loginresult.failure(error);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                           loginresult.failure(error);
+                        }
+                    });
+
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
@@ -2712,30 +2781,42 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-    public void verifyFingerprint(final String statusId, final Result<AuthenticateFingerprintResponseEntity> callBackresult) {
+    public void verifyFingerprint(final Context context, final String statusId, FingerPrintEntity fingerPrintEntity, final Result<AuthenticateFingerprintResponseEntity> callBackresult) {
         try {
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
+
+            callFingerPrint(context, fingerPrintEntity, new Result<String>() {
                 @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-                    //todo call enroll Email
+                public void success(String result) {
+                    checkSavedProperties(new Result<Dictionary<String, String>>() {
+                        @Override
+                        public void success(Dictionary<String, String> result) {
+                            String baseurl = result.get("DomainURL");
+                            String clientId = result.get("ClientId");
+                            //todo call enroll Email
 
-                    AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity=new AuthenticateFingerprintRequestEntity();
-                    authenticateFingerprintRequestEntity.setStatusId(statusId);
-                    authenticateFingerprintRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-                    authenticateFingerprintRequestEntity.setClient_id(clientId);
+                            AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity=new AuthenticateFingerprintRequestEntity();
+                            authenticateFingerprintRequestEntity.setStatusId(statusId);
+                            authenticateFingerprintRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                            authenticateFingerprintRequestEntity.setClient_id(clientId);
 
 
-                    FingerprintConfigurationController.getShared(context).authenticateFingerprint(baseurl,authenticateFingerprintRequestEntity,callBackresult);
+                            FingerprintConfigurationController.getShared(context).authenticateFingerprint(baseurl,authenticateFingerprintRequestEntity,callBackresult);
 
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                        }
+                    });
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                     callBackresult.failure(error);
                 }
             });
+
         } catch (Exception e) {
             callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
         }
@@ -2771,6 +2852,7 @@ public class Cidaas implements IOAuthWebLogin {
                         enrollFIDOMFARequestEntity.setFidoTouchResponse(fidoResponse);
                         enrollFIDOMFARequestEntity.setStatusId(statusId);
                         enrollFIDOMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                        enrollFIDOMFARequestEntity.setClient_id(clientId);
 
                         FIDOConfigurationController.getShared(context).enrollFIDO(baseurl,accessTOkenresult.getAccess_token(),enrollFIDOMFARequestEntity,enrollResult);
                     }
@@ -3230,6 +3312,7 @@ public class Cidaas implements IOAuthWebLogin {
                     enrollSmartPushMFARequestEntity.setVerifierPassword(randomNumber);
                     enrollSmartPushMFARequestEntity.setStatusId(statusId);
                     enrollSmartPushMFARequestEntity.setUserDeviceId(userDeviceId);
+                    enrollSmartPushMFARequestEntity.setClient_id(clientId);
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                         @Override
@@ -3395,6 +3478,7 @@ public class Cidaas implements IOAuthWebLogin {
                         SetupTOTPMFARequestEntity setupTOTPMFARequestEntity = new SetupTOTPMFARequestEntity();
                         setupTOTPMFARequestEntity.setClient_id(result.get("ClientId"));
                         setupTOTPMFARequestEntity.setLogoUrl(logoURLlocal);
+
 
                         TOTPConfigurationController.getShared(context).configureTOTP(sub, finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
 
@@ -4152,22 +4236,34 @@ public class Cidaas implements IOAuthWebLogin {
 
     // ****** LOGIN WITH Document *****-------------------------------------------------------------------------------------------------------
 
-    public void VerifyDocument(final File photo, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+    public void VerifyDocument(final File photo, final String sub, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
         try {
 
-            if (photo != null) {
+            if (photo != null && !sub.equals("") && sub!=null) {
 
                 checkSavedProperties(new Result<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> result) {
-                        String baseurl = result.get("DomainURL");
+                        final String baseurl = result.get("DomainURL");
 
                         if (baseurl != null && !baseurl.equals("")) {
 
-                            DocumentScannnerController.getShared(context).sendtoServicecall(baseurl, photo, resultEntityResult);
+                            getAccessToken(sub, new Result<AccessTokenEntity>() {
+                                @Override
+                                public void success(AccessTokenEntity result) {
+                                    DocumentScannnerController.getShared(context).sendtoServicecall(baseurl, photo, result.getAccess_token(),resultEntityResult);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    resultEntityResult.failure(error);
+                                }
+                            });
+
+
 
                         } else {
-                            resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "BaseURL must not be null", 417));
+                            resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "BaseURL must not be null", 417));
                         }
                     }
 
@@ -4178,10 +4274,10 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                 });
             } else {
-                resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "Photo must not be null", 417));
+                resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Photo or sub must not be null", 417));
             }
         } catch (Exception e) {
-            resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "Unexpected Error :" + e.getMessage(), 417));
+            resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Unexpected Error :" + e.getMessage(), 417));
         }
     }
 
@@ -5894,6 +5990,135 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+    //------------------------------------------------------------------------------------------Local Authentication----------------------------------------
+
+    //Cidaas Set OnActivity Result For Handling Device Authentication
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        try {
+
+            if(activityFromCidaas!=null && localAuthenticationEntityCallback!=null ) {
+                if (requestCode == LOCAL_REQUEST_CODE || requestCode == LOCAL_AUTH_REQUEST_CODE) {
+
+                    if (requestCode == LOCAL_REQUEST_CODE || requestCode == LOCAL_AUTH_REQUEST_CODE) {
+                        switch (requestCode) {
+                            case LOCAL_REQUEST_CODE:
+                                if (resultCode == RESULT_OK) {
+
+                                    //Send Positive callback
+                                    String user = "User Authenticated";
+
+                                    LocalAuthenticationEntity localAuthenticationEntity=new LocalAuthenticationEntity();
+                                    localAuthenticationEntity.setMessage(user);
+                                    localAuthenticationEntity.setRequestCode(LOCAL_REQUEST_CODE);
+                                    localAuthenticationEntity.setResultCode(resultCode);
+                                    localAuthenticationEntityCallback.success(localAuthenticationEntity);
+
+
+                                } else {
+                                    // user did not authenticate so send failure callback
+
+
+                                    String user = "User Cancelled the Authentication";
+
+
+                                    localAuthenticationEntityCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_CANCELLED,user,417));
+
+                                    Timber.d("User" + user);
+
+                                }
+                                break;
+                            case LOCAL_AUTH_REQUEST_CODE:
+                                localAuthentication(activityFromCidaas,localAuthenticationEntityCallback);
+                                break;
+                            default:
+                                //.onActivityResult(requestCode, resultCode, data);
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Call back must not be null", 417));
+            }
+        } catch (Exception e) {
+            localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Local Authentication Exception"+e.getMessage(), 417));
+        }
+    }
+
+    //Show the Alert Dilog Which is go to settings
+    private void showDialogToSetupLock(final Activity activity,Result<LocalAuthenticationEntity> result) {
+
+        try {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+            LayoutInflater inflater = activity.getLayoutInflater();
+            final View dialog = inflater.inflate(R.layout.lock_setting_dialog, null);
+            alertDialogBuilder.setView(dialog);
+            alertDialogBuilder.setCancelable(false);
+            Button btn_ok = dialog.findViewById(R.id.btn_ok);
+            final AlertDialog alertDialog = alertDialogBuilder.create();
+
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (alertDialog != null) {
+                        alertDialog.dismiss();
+                    }
+
+
+                    String manufacturer = "xiaomi";
+                    if (manufacturer.equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
+                        //this will open auto start screen where user can enable permission for your app
+                        activity.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), LOCAL_AUTH_REQUEST_CODE);
+                    } else {
+
+                        activity.startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS), LOCAL_AUTH_REQUEST_CODE);
+                    }
+                }
+            });
+            alertDialog.show();
+        }
+        catch (Exception e)
+        {
+            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
+        }
+    }
+
+
+
+    //Method for Local Authentocation
+    public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result) {
+        try {
+
+
+            activityFromCidaas=activity;
+            localAuthenticationEntityCallback=result;
+
+            KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Context.KEYGUARD_SERVICE);
+            boolean isSecure = keyguardManager.isKeyguardSecure();
+
+            if (isSecure) {
+
+                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(null, null);
+                activity.startActivityForResult(intent, LOCAL_REQUEST_CODE);
+            } else {
+                // tabPager.setVisibility(View.GONE);
+                // no lock screen set, show the new lock needed screen
+                //showDialogToSetupLock(activity,result);
+                result.failure(new WebAuthError(context).customException(WebAuthErrorCode.NO_LOCAL_AUHTHENTICATION_FOUND, "NO LOCAL AUTHENTICATION FOUND", 417));
+            }
+        }
+        catch (Exception e)
+        {
+            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
+        }
+    }
+
+
+
+    //------------------------------------------------------------------------------------------XXXXXXX----------------------------------------
+
     public static String getSDKVersion(){
         String version="";
         try {
@@ -5919,7 +6144,6 @@ public class Cidaas implements IOAuthWebLogin {
             return "";
         }
     }
-
 
 
 
@@ -5971,4 +6195,97 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
+
+
+
+    //------------------------------------------------------------------------------------------CallFingerPrint----------------------------------------
+
+    public void callFingerPrint(final Context context, FingerPrintEntity fingerPrintEntity, final Result<String> result)
+    {
+        try
+        {
+            if (Build.VERSION.SDK_INT >= 23) {
+
+                FingerPrintEntity fingerPrintEntityForPassing = new FingerPrintEntity();
+                if (fingerPrintEntity == null) {
+                    fingerPrintEntity = fingerPrintEntityForPassing;
+                }
+
+                new BiometricManager.BiometricBuilder(context)
+                        .setTitle(fingerPrintEntity.getTitle())
+                        .setSubtitle(fingerPrintEntity.getSubtitle())
+                        .setDescription(fingerPrintEntity.getDescription())
+                        .setNegativeButtonText(fingerPrintEntity.getNegativeButtonString())
+                        .build()
+                        .authenticate(new BiometricCallback() {
+                            @Override
+                            public void onSdkVersionNotSupported() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_SDK_VERSION_NOT_SUPPORTED,"SDK Version Not Supported"));
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationNotSupported() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMETRIC_AUTHENTICATION_NOT_SUPPORTED,"Biometric Authentication  Not Supported"));
+
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationNotAvailable() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_NOT_AVAILABLE,"Biometric Authentication  Not Available"));
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationPermissionNotGranted() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_PERMISSION_NOT_GRANTED,"Biometric Authentication  Permission Not Granted"));
+                            }
+
+                            @Override
+                            public void onBiometricAuthenticationInternalError(String error) {
+
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_INTERNAL_ERROR,"Biometric Authentication  Internal Error"));
+                            }
+
+                            @Override
+                            public void onAuthenticationFailed() {
+                               // result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,"Biometric Authentication  Failed"));
+                            }
+
+                            @Override
+                            public void onAuthenticationCancelled() {
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_CANCELLED,"Biometric Authentication  Cancelled"));
+                            }
+
+                            @Override
+                            public void onAuthenticationSuccessful() {
+                                result.success("Success");
+                            }
+
+                            @Override
+                            public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+
+                                String errorMessage = helpString.toString();
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode, errorMessage));
+                            }
+
+                            @Override
+                            public void onAuthenticationError(int errorCode, CharSequence errString) {
+
+                                String errorMessage = errString.toString();
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage));
+                            }
+                        });
+            }
+            else
+            {
+                String ErrorMessage="Fingerprint doesnot Support in your mobile";
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+
+            }
+        }
+        catch (Exception e)
+        {
+           result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,""+e.getMessage(),HttpStatusCode.EXPECTATION_FAILED));
+        }
+
+    }
 }

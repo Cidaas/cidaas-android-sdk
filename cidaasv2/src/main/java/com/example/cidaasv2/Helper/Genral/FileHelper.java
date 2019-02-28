@@ -3,13 +3,8 @@ package com.example.cidaasv2.Helper.Genral;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.widget.Toast;
 
-import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
-import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 
 import org.w3c.dom.Document;
@@ -31,6 +26,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 /**
@@ -196,7 +193,7 @@ public class FileHelper {
     }
 
 //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl,@NonNull String ClientId,@NonNull String RedirectURL,@Nullable String ClientSecret, Result<Dictionary<String,String>> callback)
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @Nullable String ClientSecret, Result<Dictionary<String,String>> callback)
     {
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
@@ -224,7 +221,7 @@ public class FileHelper {
 
 
     //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl,@NonNull String ClientId,@NonNull String RedirectURL, Result<Dictionary<String,String>> callback)
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, Result<Dictionary<String,String>> callback)
     {
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();

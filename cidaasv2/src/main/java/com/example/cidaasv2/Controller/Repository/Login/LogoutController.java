@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Controller.Repository.Login;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -11,6 +10,7 @@ import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
 import com.example.cidaasv2.Service.Repository.Login.LoginService;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class LogoutController {
@@ -39,6 +39,7 @@ public class LogoutController {
         }
         return shared;
     }
+/*
 
     public void logout(@NonNull String baseurl, String access_token_hint, Result<LogoutResponseEntity> callback){
        try
@@ -47,12 +48,14 @@ public class LogoutController {
        }
        catch (Exception e)
        {
-
+           callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOGOUT_ERROR,
+                   e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
        }
     }
+*/
 
 
-    public void getLogoutURL(@NonNull String baseurl, String access_token_hint, String post_logout_redirect_uri,Result<String> result)
+    public void getLogoutURL(@NonNull String baseurl, String access_token_hint, String post_logout_redirect_uri, Result<String> result)
     {
         try
         {

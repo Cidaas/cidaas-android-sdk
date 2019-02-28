@@ -32,6 +32,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    //Timber
+    implementation 'com.jakewharton.timber:timber:4.6.1'
 
     //Cidaas
     implementation project(':cidaasv2')

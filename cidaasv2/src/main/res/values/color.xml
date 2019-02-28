@@ -5,4 +5,13 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorOrange">#FF8A00</color>
     <color name="colorWhite">#FFFFFF</color>
+    <item name="greyish" type="color">#B0BEC5</item>
+
+    <color name="bg_fingerprint">#ff8900</color>
+    <color name="dialog_title">#000000</color>
+    <color name="dialog_subtitle">#7b7b7b</color>
+    <color name="dialog_description">#505050</color>
+    <color name="dialog_status">#fb744a</color>
+    <color name="red">#FE0000</color>
+    <color name="dialog_cancel_btn">#009689</color>
 </resources>

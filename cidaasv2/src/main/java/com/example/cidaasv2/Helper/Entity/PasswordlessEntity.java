@@ -1,7 +1,5 @@
 package com.example.cidaasv2.Helper.Entity;
 
-import android.support.annotation.NonNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;

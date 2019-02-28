@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Controller.Repository.Login;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
@@ -21,6 +20,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class LoginController {
@@ -286,7 +286,7 @@ public class LoginController {
 
 
     //Get login URL for Custom browser
-    public void getSocialLoginURL( @NonNull final String baseurl,String provider,String requestId, @NonNull final Result<String> callbackResult)
+    public void getSocialLoginURL(@NonNull final String baseurl, String provider, String requestId, @NonNull final Result<String> callbackResult)
     {
         try
         {

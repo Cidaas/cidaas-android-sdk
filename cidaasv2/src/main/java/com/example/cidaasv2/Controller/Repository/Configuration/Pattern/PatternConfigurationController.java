@@ -2,8 +2,6 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Pattern;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -26,13 +24,11 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Pattern.InitiatePatte
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Pattern.InitiatePatternMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceResponseEntity;
-import com.example.cidaasv2.Service.Repository.OauthService;
-import com.example.cidaasv2.Service.Repository.Verification.Device.DeviceVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.Pattern.PatternVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class PatternConfigurationController {
@@ -400,7 +396,7 @@ public class PatternConfigurationController {
 
 
         //Login with Pattern
-    public void LoginWithPattern( @NonNull final String patternString,@NonNull final String baseurl, @NonNull final String clientId,
+    public void LoginWithPattern(@NonNull final String patternString, @NonNull final String baseurl, @NonNull final String clientId,
                                  @NonNull final String trackId, @NonNull final String requestId,
                                  @NonNull final InitiatePatternMFARequestEntity initiatePatternMFARequestEntity,
                                  final Result<LoginCredentialsResponseEntity> loginresult)

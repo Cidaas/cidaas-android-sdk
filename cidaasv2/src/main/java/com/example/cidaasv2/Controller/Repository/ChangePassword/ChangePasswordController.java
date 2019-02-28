@@ -1,19 +1,15 @@
 package com.example.cidaasv2.Controller.Repository.ChangePassword;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Repository.ChangePassword.ChangePasswordService;
 
-import java.util.Dictionary;
-
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class ChangePasswordController {
@@ -100,7 +96,7 @@ public class ChangePasswordController {
     }
 */
     //ChangePasswordService
-    public void changePassword(@NonNull String baseurl,@NonNull ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult)
+    public void changePassword(@NonNull String baseurl, @NonNull ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult)
     {
         try {
 
