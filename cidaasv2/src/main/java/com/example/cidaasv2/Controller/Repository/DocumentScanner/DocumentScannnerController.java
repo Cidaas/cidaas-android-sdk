@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Repository.DocumemtScannerService.DocumentScannerService;
@@ -109,15 +110,15 @@ public class DocumentScannnerController {
 
 
 
-    public void sendtoServicecall(String baseurl, File photo, Result<DocumentScannerServiceResultEntity> result)
+    public void sendtoServicecall(String baseurl, File photo, String accessToken,Result<DocumentScannerServiceResultEntity> result)
     {
         try {
 
-            if(baseurl!=null && baseurl!="") {
-                DocumentScannerService.getShared(context).sendDocuemntToService(baseurl, photo, null, result);
+            if(baseurl!=null && baseurl!="" && accessToken!=null && accessToken!="") {
+                DocumentScannerService.getShared(context).sendDocuemntToService(baseurl, photo, accessToken,null, result);
             }
             else {
-                result.failure(WebAuthError.getShared(context).customException(417,"Base URL must not be null",417));
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,"Base URL or AccessToken must not be null",417));
             }
         }
         catch (Exception e)

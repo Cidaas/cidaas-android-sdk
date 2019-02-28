@@ -4236,22 +4236,34 @@ public class Cidaas implements IOAuthWebLogin {
 
     // ****** LOGIN WITH Document *****-------------------------------------------------------------------------------------------------------
 
-    public void VerifyDocument(final File photo, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+    public void VerifyDocument(final File photo, final String sub, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
         try {
 
-            if (photo != null) {
+            if (photo != null && !sub.equals("") && sub!=null) {
 
                 checkSavedProperties(new Result<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> result) {
-                        String baseurl = result.get("DomainURL");
+                        final String baseurl = result.get("DomainURL");
 
                         if (baseurl != null && !baseurl.equals("")) {
 
-                            DocumentScannnerController.getShared(context).sendtoServicecall(baseurl, photo, resultEntityResult);
+                            getAccessToken(sub, new Result<AccessTokenEntity>() {
+                                @Override
+                                public void success(AccessTokenEntity result) {
+                                    DocumentScannnerController.getShared(context).sendtoServicecall(baseurl, photo, result.getAccess_token(),resultEntityResult);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    resultEntityResult.failure(error);
+                                }
+                            });
+
+
 
                         } else {
-                            resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "BaseURL must not be null", 417));
+                            resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "BaseURL must not be null", 417));
                         }
                     }
 
@@ -4262,10 +4274,10 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                 });
             } else {
-                resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "Photo must not be null", 417));
+                resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Photo or sub must not be null", 417));
             }
         } catch (Exception e) {
-            resultEntityResult.failure(WebAuthError.getShared(context).customException(417, "Unexpected Error :" + e.getMessage(), 417));
+            resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Unexpected Error :" + e.getMessage(), 417));
         }
     }
 

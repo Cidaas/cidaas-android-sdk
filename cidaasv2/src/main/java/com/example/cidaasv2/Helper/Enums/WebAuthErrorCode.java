@@ -180,6 +180,8 @@ public class WebAuthErrorCode {
 
 
 
+  public static final int DOCUMENT_VERIFICATION_FAILURE=10111;
+
   //Common Error Codes
   public static final int TOUCHID_NOT_AVAILABLE = 10178;
   public static final int TOUCHID_NOT_ENROLLED = 10179;
