@@ -50,9 +50,18 @@ allprojects {
  Add the dependency to app module
  ```java
 dependencies {
- implementation 'com.github.Cidaas:cidaas-v2-sdk-android:1.0.3'
+ implementation 'com.github.Cidaas:cidaas-v2-sdk-android:1.0.4'
 }
  ```
+ 
+
+> ##### Note:- This Library is developed in AndroidX so AndroidX migration is necessary
+
+To migrate your project into Androidx in android studio goto
+
+Refacter-> Migrate to AndroidX
+
+
  ## Getting started
  
  Create an asset folder by right click the app module goto new->folder->Assets folder and click the finish button
