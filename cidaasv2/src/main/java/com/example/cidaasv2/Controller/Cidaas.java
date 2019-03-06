@@ -1566,7 +1566,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void scanned(@NonNull final String statusId, @NonNull final String sub, @NonNull final String verificationType, final String secret, final Result<ScannedResponseEntity> scannedResult)
+    public void scanned(@NonNull final String statusId, @NonNull final String sub,final String secret, @NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
     {
         try
         {
