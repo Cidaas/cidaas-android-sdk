@@ -1,11 +1,11 @@
-package com.example.cidaasv2.Service.Entity.LocationHistory;
+package com.example.cidaasv2.Service.Entity.UserLoginInfo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LocationHistoryRequestEntity implements Serializable {
+public class UserLoginInfoEntity implements Serializable {
     private String sub;
     private int skip;
     private int take;

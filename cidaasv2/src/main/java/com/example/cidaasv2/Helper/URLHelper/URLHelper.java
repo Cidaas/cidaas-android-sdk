@@ -150,7 +150,7 @@ public class URLHelper {
 
     String documentScanner="/access-control-srv/ocr/validate";
 
-    String locationHistory="/verification-srv/verificationstatus/status/search/sdk";
+    String userLoginInfoURL ="/verification-srv/verificationstatus/status/search/sdk";
 
 
 
@@ -181,8 +181,8 @@ public class URLHelper {
         return deleteMFA+userDeviceId+"/"+verificationType;
     }
 
-    public String getLocationHistory() {
-        return locationHistory;
+    public String getUserLoginInfoURL() {
+        return userLoginInfoURL;
     }
 
     public String getUpdateFCMTokenURL() {

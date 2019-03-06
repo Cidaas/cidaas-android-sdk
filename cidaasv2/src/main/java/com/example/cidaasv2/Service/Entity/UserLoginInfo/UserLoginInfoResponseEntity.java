@@ -1,11 +1,11 @@
-package com.example.cidaasv2.Service.Entity.LocationHistory;
+package com.example.cidaasv2.Service.Entity.UserLoginInfo;
 
 import java.io.Serializable;
 
-public class LocationHistoryResponseEntity implements Serializable {
+public class UserLoginInfoResponseEntity implements Serializable {
     private Boolean success;
     private int status;
-    private LocationHistoryResponseDataEntity data;
+    private UserLoginInfoResponseDataEntity data;
 
 
     public Boolean getSuccess() {
@@ -24,11 +24,11 @@ public class LocationHistoryResponseEntity implements Serializable {
         this.status = status;
     }
 
-    public LocationHistoryResponseDataEntity getData() {
+    public UserLoginInfoResponseDataEntity getData() {
         return data;
     }
 
-    public void setData(LocationHistoryResponseDataEntity data) {
+    public void setData(UserLoginInfoResponseDataEntity data) {
         this.data = data;
     }
 }

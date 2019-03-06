@@ -1,6 +1,5 @@
 package com.example.cidaasv2.Controller;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.nfc.tech.IsoDep;
 import android.os.Build;
@@ -37,7 +35,7 @@ import com.example.cidaasv2.Controller.Repository.Configuration.Voice.VoiceConfi
 import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
-import com.example.cidaasv2.Controller.Repository.LocationHistory.LocationHistoryController;
+import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.MFASettings.VerificationSettingsController;
 import com.example.cidaasv2.Controller.Repository.Registration.RegistrationController;
@@ -67,7 +65,6 @@ import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricManager;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.R;
-import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -76,8 +73,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAc
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
-import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryRequestEntity;
-import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryResponseEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
@@ -178,9 +175,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
@@ -1896,7 +1891,10 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,
+                    e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Configure Face exception" + e.getMessage());
         }
 
     }
@@ -1942,14 +1940,15 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(error);
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
 
 
         } catch (Exception e) {
             LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
-
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,
+                    e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure Face exception" + e.getMessage());
         }
 
@@ -2026,7 +2025,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
         } catch (Exception e) {
             String errorMessage = e.getMessage();
-            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,
                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
     }
@@ -2058,7 +2057,7 @@ public class Cidaas implements IOAuthWebLogin {
         catch (Exception e)
         {
             LogFile.addRecordToLog("Scanned Face exception" + e.getMessage());
-            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Face exception"+ e.getMessage(),
+            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,"Scanned Face exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned Face exception" + e.getMessage());
         }
@@ -2109,7 +2108,7 @@ public class Cidaas implements IOAuthWebLogin {
         catch (Exception e)
         {
             LogFile.addRecordToLog("Enroll Face exception" + e.getMessage());
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Face exception"+ e.getMessage(),
+            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,"Enroll Face exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll Face exception" + e.getMessage());
         }
@@ -2144,8 +2143,9 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
+            LogFile.addRecordToLog("Verify Face exception" + e.getMessage());
             String errorMessage = e.getMessage();
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,
                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
         }
 
@@ -2194,7 +2194,7 @@ public class Cidaas implements IOAuthWebLogin {
 
         } catch (Exception e) {
             LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
-
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,"Configure Face exception" + e.getMessage(),417));
             Timber.e("Configure Face exception" + e.getMessage());
         }
 
@@ -2314,47 +2314,6 @@ public class Cidaas implements IOAuthWebLogin {
 
     // ****** TODO LOGIN WITH Finger *****-------------------------------------------------------------------------------------------------------
 
-    KeyguardManager keyguardManager;
-    FingerprintManager mFingerPrintManager;
-
-    //Get Permission For FingerPrint authentication
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void getPermissionforFingerPrint() {
-        try {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-             //   Toast.makeText(context, "Please enable the fingerprint permission", Toast.LENGTH_SHORT).show();
-
-
-            }
-            if (!mFingerPrintManager.isHardwareDetected()) {
-               // Toast.makeText(context, "Fingerprint doesnot support in your mobile", Toast.LENGTH_SHORT).show();
-
-            }
-
-
-            if (!mFingerPrintManager.hasEnrolledFingerprints()) {
-              //  Toast.makeText(context, "Your Device has no registered Fingerprints! Please register atleast one in your Device settings", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-
-        } catch (Exception e) {
-//            Toast.makeText(context, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
-
-        }
-        //Caught when no finger print isfound
-        catch (NoClassDefFoundError exc) {
-      //      Toast.makeText(context, "Atleast one fingerprint has to be registered", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-    }
 
     @Override
     public void configureFingerprint(final Context context, final String sub, @NonNull final String logoURL, FingerPrintEntity fingerPrintEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
@@ -2371,95 +2330,6 @@ public class Cidaas implements IOAuthWebLogin {
                                 final String baseurl = result.get("DomainURL");
                                 final String clinetId = result.get("ClientId");
 
-
-                 /*   //Done Call the finger print method
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        try {
-                             keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
-                             mFingerPrintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
-                            getPermissionforFingerPrint();
-                            if (!mFingerPrintManager.isHardwareDetected()) {
-                                Toast.makeText(context, "Fingerprint doesnot support", Toast.LENGTH_SHORT).show();
-                                Timber.d("error Touch ID Raja");
-                            }
-                        } catch (Exception e) {
-
-                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        //Caught when no finger print isfound
-                        catch (NoClassDefFoundError exc) {
-                            String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                        }
-
-                    }
-                    else
-                    {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
-
-
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
-
-                    if (!mFingerPrintManager.hasEnrolledFingerprints()) {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                        String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                        enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
-
-                    mFingerPrintManager.authenticate(null, null, 0, new FingerprintManager.AuthenticationCallback() {
-                        @Override
-                        public void onAuthenticationError(int errorCode, CharSequence errString) {
-                            super.onAuthenticationError(errorCode, errString);
-
-                            String ErrorMessage="Fingerprint permission not given in your mobile";
-                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                        }
-
-                        @Override
-                        public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-                            super.onAuthenticationHelp(helpCode, helpString);
-                            String ErrorMessage="Fingerprint permission not given in your mobile";
-                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                        }
-
-                        @Override
-                        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                            super.onAuthenticationSucceeded(result);
-                            //Todo Handle Success of FingerPrint
-                            //save in LOCAL DB
-                            // Ask to set Verification Type or not
-
-
-
-
-                        }
-
-                        @Override
-                        public void onAuthenticationFailed() {
-                            super.onAuthenticationFailed();
-                            String ErrorMessage="Place your Fingerprint on the fingerprint sensor";
-                            enrollresult.failure(WebAuthError.getShared(context).customException(417,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
-                        }
-
-                    },null);
-
-*/
 
                                 if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
 
@@ -2507,7 +2377,11 @@ public class Cidaas implements IOAuthWebLogin {
             }
 
         } catch (Exception e) {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+           // enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Enroll Finger exception" + e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,"Enroll Finger exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll Finger exception" + e.getMessage());
         }
 
     }
@@ -2680,88 +2554,6 @@ public class Cidaas implements IOAuthWebLogin {
                                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                 errorMessage, HttpStatusCode.EXPECTATION_FAILED));
                                     }
-
-
-                    /*
-                    //Done Call the finger print method
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        try {
-                            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
-                            FingerprintManager mFingerPrintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
-                            getPermissionforFingerPrint();
-                            if (!mFingerPrintManager.isHardwareDetected()) {
-                            //    Toast.makeText(context, "Fingerprint doesnot support", Toast.LENGTH_SHORT).show();
-                                Timber.d("error Touch ID Raja");
-                            }
-                        } catch (Exception e) {
-
-                            String ErrorMessage = "Fingerprint doesnot Support in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        //Caught when no finger print isfound
-                        catch (NoClassDefFoundError exc) {
-                            String ErrorMessage = "Fingerprint doesnot Support in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                        }
-
-                    } else {
-                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
-
-
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
-
-                    if (!mFingerPrintManager.hasEnrolledFingerprints()) {
-                        String ErrorMessage = "Fingerprint doesnot Support in your mobile";
-                        loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                    }
-
-                    mFingerPrintManager.authenticate(null, null, 0, new FingerprintManager.AuthenticationCallback() {
-                        @Override
-                        public void onAuthenticationError(int errorCode, CharSequence errString) {
-                            super.onAuthenticationError(errorCode, errString);
-
-                            String ErrorMessage = "Fingerprint permission not given in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                        }
-
-                        @Override
-                        public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-                            super.onAuthenticationHelp(helpCode, helpString);
-                            String ErrorMessage = "Fingerprint permission not given in your mobile";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                        }
-
-                        @Override
-                        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                            super.onAuthenticationSucceeded(result);
-                            //Todo Handle Success of FingerPrint
-                            //save in LOCAL DB
-                            // Ask to set Verification Type or not
-
-
-
-                        }
-
-                        @Override
-                        public void onAuthenticationFailed() {
-                            super.onAuthenticationFailed();
-                            String ErrorMessage = "Place your Fingerprint on the fingerprint sensor";
-                            loginresult.failure(WebAuthError.getShared(context).customException(417, ErrorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                        }
-
-                    }, null);*/
-
                                 }
 
                                 @Override
@@ -2821,7 +2613,11 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            //callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Verify Finger exception" + e.getMessage());
+            callBackresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,"Verify Finger exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Verify Finger exception" + e.getMessage());
         }
 
     }
@@ -2835,7 +2631,8 @@ public class Cidaas implements IOAuthWebLogin {
     // ****** DONE FIDO *****-------------------------------------------------------------------------------------------------------
 
 
-    public void enrollFIDO(@NonNull final FIDOTouchResponse fidoResponse,  @NonNull final String sub, @NonNull final String statusId, final Result<EnrollFIDOMFAResponseEntity> enrollResult) {
+    public void enrollFIDO(@NonNull final FIDOTouchResponse fidoResponse,  @NonNull final String sub, @NonNull final String statusId, final Result<EnrollFIDOMFAResponseEntity> enrollResult)
+    {
     try
     {
 
@@ -3211,7 +3008,12 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+           // result.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Verify FIDO exception" + e.getMessage());
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,"Verify FIDO exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Scanned FIDO exception" + e.getMessage());
+
         }
 
     }
@@ -3261,7 +3063,10 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("configure SmartPush  exception" + e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Configure SmartPush exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Configure smartpush  exception" + e.getMessage());
         }
 
     }
@@ -3283,7 +3088,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    scannedResult.failure(error);
+                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
 
@@ -3415,7 +3220,11 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            //loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            String loggerMessage = "Verify Smartpush : " + " Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,"Something Went wrong please try again"+e.getMessage(),417));
+
         }
     }
 
@@ -3450,7 +3259,10 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            String loggerMessage = "Verify Smartpush : " + " Error Message - " + e.getMessage();
+            LogFile.addRecordToLog(loggerMessage);
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,"Something Went wrong please try again"+e.getMessage(),417));
+
         }
 
     }
@@ -3494,12 +3306,15 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(error);
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
 
         } catch (Exception e) {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Enroll TOTP  exception" + e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Enroll TOTP exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Enroll TOTP exception" + e.getMessage());
         }
 
     }
@@ -3569,7 +3384,10 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Login TOTP exception" + e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Login TOTP exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Login TOTP exception" + e.getMessage());
         }
     }
 
@@ -3592,7 +3410,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    scannedResult.failure(error);
+                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
 
@@ -3683,12 +3501,15 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(error);
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
 
         } catch (Exception e) {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Configure Voice exception" + e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure Voice exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Configure Voice exception" + e.getMessage());
         }
 
     }
@@ -3711,7 +3532,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    scannedResult.failure(error);
+                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
 
@@ -3763,7 +3584,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollResult.failure(error);
+                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
         }
@@ -3845,7 +3666,10 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Login Voice exception" + e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Login Voice exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Login Voice exception" + e.getMessage());
         }
     }
 
@@ -3877,7 +3701,10 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.addRecordToLog("Verify Voice exception" + e.getMessage());
+            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Verify Voice exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Verify Voice exception" + e.getMessage());
         }
 
     }
@@ -3949,7 +3776,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deleteResult.failure(error);
+                    deleteResult.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
         }
@@ -4005,7 +3832,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(error);
+                    result.failure(WebAuthError.getShared(context).propertyMissingException());
                 }
             });
         }
@@ -5274,7 +5101,11 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            //todo handle excep
+            //todo handle excepksdjncksjdc
+            LogFile.addRecordToLog("Access Token exception" + e.getMessage());
+            accessTokenCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,"Access Token exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Access Token exception" + e.getMessage());
         }
     }
 
@@ -6304,21 +6135,21 @@ public class Cidaas implements IOAuthWebLogin {
 
     //----------------------------------LocationHistory------------------------------------------------------------------------------------------------------
    //Todo Add Logs
-    public void getLocationDetails(final LocationHistoryRequestEntity locationHistoryRequestEntity, final Result<LocationHistoryResponseEntity> result)
+    public void getUserLoginInfo(final UserLoginInfoEntity userLoginInfoEntity, final Result<UserLoginInfoResponseEntity> result)
     {
         try
         {
-            if(locationHistoryRequestEntity.getSub()!=null && locationHistoryRequestEntity.getSub()!="") {
+            if(userLoginInfoEntity.getSub()!=null && userLoginInfoEntity.getSub()!="") {
                 checkSavedProperties(new Result<Dictionary<String, String>>() {
                     @Override
                     public void success(final Dictionary<String, String> lpresult) {
                         final String baseurl = lpresult.get("DomainURL");
 
                         //Get AccessToken From Sub
-                        AccessTokenController.getShared(context).getAccessToken(locationHistoryRequestEntity.getSub(), new Result<AccessTokenEntity>() {
+                        AccessTokenController.getShared(context).getAccessToken(userLoginInfoEntity.getSub(), new Result<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
-                                LocationHistoryController.getShared(context).getLocationHistoryDetails(baseurl,accessTokenresult.getAccess_token(),locationHistoryRequestEntity,result);
+                                UserLoginInfoController.getShared(context).getUserLoginInfo(baseurl,accessTokenresult.getAccess_token(), userLoginInfoEntity,result);
                             }
 
                             @Override
@@ -6331,14 +6162,14 @@ public class Cidaas implements IOAuthWebLogin {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        result.failure(error);
+                        result.failure(WebAuthError.getShared(context).propertyMissingException());
                     }
                 });
             }
             else {
                 // handle Faliure
                 result.failure(WebAuthError.getShared(context).
-                        customException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,"Sub must not be empty",
+                        customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,"Sub must not be empty",
                                 HttpStatusCode.EXPECTATION_FAILED));
             }
         }
@@ -6346,7 +6177,7 @@ public class Cidaas implements IOAuthWebLogin {
         {
             // handle Faliure Exception
             result.failure(WebAuthError.getShared(context).
-                    customException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,e.getMessage(),
+                    customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage(),
                             HttpStatusCode.EXPECTATION_FAILED));
         }
     }

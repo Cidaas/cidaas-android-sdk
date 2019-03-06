@@ -1,11 +1,11 @@
-package com.example.cidaasv2.Service.Entity.LocationHistory;
+package com.example.cidaasv2.Service.Entity.UserLoginInfo;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.LocationEntity;
 
 import java.io.Serializable;
 
 
-public class LocationHistoryResponseDataEntity implements Serializable {
+public class UserLoginInfoResponseDataEntity implements Serializable {
     private String currentState;
     private String verificationType;
     private DeviceInfoEntityWithDetailsEntity deviceInfo;

@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Service.Entity.LocationHistory;
+package com.example.cidaasv2.Service.Entity.UserLoginInfo;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.BrowserEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.EngineEntity;

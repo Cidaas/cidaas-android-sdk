@@ -14,8 +14,8 @@ import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryRequestEntity;
-import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryResponseEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,16 +28,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class LocationHistoryService {
+public class UserLoginInfoService {
     CidaassdkService service;
     private ObjectMapper objectMapper=new ObjectMapper();
     //Local variables
 
     private Context context;
 
-    public static LocationHistoryService shared;
+    public static UserLoginInfoService shared;
 
-    public LocationHistoryService(Context contextFromCidaas) {
+    public UserLoginInfoService(Context contextFromCidaas) {
 
         context=contextFromCidaas;
 
@@ -51,12 +51,12 @@ public class LocationHistoryService {
     }
 
 
-    public static LocationHistoryService getShared(Context contextFromCidaas )
+    public static UserLoginInfoService getShared(Context contextFromCidaas )
     {
         try {
 
             if (shared == null) {
-                shared = new LocationHistoryService(contextFromCidaas);
+                shared = new UserLoginInfoService(contextFromCidaas);
             }
 
         }
@@ -67,9 +67,9 @@ public class LocationHistoryService {
         return shared;
     }
 
-    public void getLocationHistoryService(String baseurl, String accessToken, LocationHistoryRequestEntity locationHistoryRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam, final Result<LocationHistoryResponseEntity> callback)
+    public void getUserLoginInfoService(String baseurl, String accessToken, UserLoginInfoEntity userLoginInfoEntity, DeviceInfoEntity deviceInfoEntityFromparam, final Result<UserLoginInfoResponseEntity> callback)
     {
-        String locationHistoryURL = "";
+        String UserLoginInfoURL = "";
         try
         {
 
@@ -77,7 +77,7 @@ public class LocationHistoryService {
                     //Construct URL For RequestId
 
                     //Todo Chnage URL Global wise
-                    locationHistoryURL=baseurl+ URLHelper.getShared().getLocationHistory();
+                    UserLoginInfoURL=baseurl+ URLHelper.getShared().getUserLoginInfoURL();
                 }
                 else {
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
@@ -110,15 +110,15 @@ public class LocationHistoryService {
 
                 //Call Service-getRequestId
                 ICidaasSDKService cidaasSDKService = service.getInstance();
-                cidaasSDKService.getLocationHistoryDetails(locationHistoryURL,headers,locationHistoryRequestEntity).enqueue(new Callback<LocationHistoryResponseEntity>() {
+                cidaasSDKService.getUserLoginInfoService(UserLoginInfoURL,headers, userLoginInfoEntity).enqueue(new Callback<UserLoginInfoResponseEntity>() {
                     @Override
-                    public void onResponse(Call<LocationHistoryResponseEntity> call, Response<LocationHistoryResponseEntity> response) {
+                    public void onResponse(Call<UserLoginInfoResponseEntity> call, Response<UserLoginInfoResponseEntity> response) {
                         if (response.isSuccessful()) {
                             if(response.code()==200) {
                                 callback.success(response.body());
                             }
                             else {
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
                                         "Service failure but successful response" , 400,null,null));
                             }
                         }
@@ -151,11 +151,11 @@ public class LocationHistoryService {
                                     errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                                 }
 
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
                                         errorMessage, commonErrorEntity.getStatus(),
                                         commonErrorEntity.getError(),errorEntity));
                             } catch (Exception e) {
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,
+                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
                                         "Unexpected Error"+errorResponse, 417,null,null));
                             }
                             Timber.e("response"+response.message());
@@ -163,9 +163,9 @@ public class LocationHistoryService {
                     }
 
                     @Override
-                    public void onFailure(Call<LocationHistoryResponseEntity> call, Throwable t) {
+                    public void onFailure(Call<UserLoginInfoResponseEntity> call, Throwable t) {
                         Timber.e("Failure in Request id service call"+t.getMessage());
-                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,
+                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
                                 t.getMessage(), 400,null,null));
 
                     }
@@ -174,7 +174,7 @@ public class LocationHistoryService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,e.getMessage(), HttpStatusCode.BAD_REQUEST));
+            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage(), HttpStatusCode.BAD_REQUEST));
         }
     }
 

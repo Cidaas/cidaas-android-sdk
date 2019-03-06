@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Service.Entity.LocationHistory;
+package com.example.cidaasv2.Service.Entity.UserLoginInfo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

@@ -198,7 +198,7 @@ public class WebAuthErrorCode {
   public static final int NETWORK_TIMEOUT = 10189;
 
 
-  public static final int LOCATION_HISTORY_SERVICE_FAILURE=10190;
+  public static final int USER_LOGIN_INFO_SERVICE_FAILURE =10190;
 
 
 
