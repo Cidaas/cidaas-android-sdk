@@ -10,6 +10,7 @@ public class UserListDataEntity implements Serializable{
     public String _id;
     public String verificationType;
     public String verifierId;
+    public String sub;
 
 
     public String get_id() {
@@ -34,5 +35,13 @@ public class UserListDataEntity implements Serializable{
 
     public void setVerifierId(String verifierId) {
         this.verifierId = verifierId;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
     }
 }
