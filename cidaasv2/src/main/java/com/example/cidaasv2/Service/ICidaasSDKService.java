@@ -15,6 +15,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.Resum
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
+import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryRequestEntity;
+import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
@@ -526,6 +528,12 @@ public interface ICidaasSDKService {
                                 @Header("access_token") String access_token,
                                 @HeaderMap Map<String,String>headers,
                                 @Body DeviceInfoEntity deviceInfoEntity);
+
+    //Location History Service
+    @POST
+    @Multipart
+    Call<LocationHistoryResponseEntity> getLocationHistoryDetails(@Url String url,@HeaderMap Map<String,String>headers,@Body LocationHistoryRequestEntity locationHistoryRequestEntity);
+
 
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------

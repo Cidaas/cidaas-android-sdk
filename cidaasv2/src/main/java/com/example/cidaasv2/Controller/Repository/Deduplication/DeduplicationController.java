@@ -50,7 +50,7 @@ public class DeduplicationController {
 
     }
 
-    public void registerDeduplication(@NonNull String baseurl,@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult)
+    public void registerDeduplication(@NonNull String baseurl, @NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult)
     {
         DeduplicationService.getShared(context).registerDeduplication(baseurl,trackId,deduplicaionResult);
     }

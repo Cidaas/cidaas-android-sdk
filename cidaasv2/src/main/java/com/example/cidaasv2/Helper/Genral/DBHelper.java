@@ -155,7 +155,7 @@ public void setEnableLog(boolean enableLog)
 
     }
 
-    //get Device info
+    //get Secret base on Sub
     public String getSecret(String sub)
     {
         String secret;
@@ -170,6 +170,23 @@ public void setEnableLog(boolean enableLog)
     }
 
 
+    //remove Secret
+    public String removeSecret(String sub)
+    {
+        String secret;
+        try {
+
+            editor.remove(SecretInfo+sub);
+            editor.commit();
+            secret="success";
+        }
+        catch (Exception e)
+        {
+            secret="Fails"+e.getMessage();
+        }
+        return secret;
+
+    }
 
     //Add Secret Based on Sub
     public void setUserAgent(String userAgent){

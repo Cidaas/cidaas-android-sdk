@@ -142,11 +142,23 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorEntity=errorEntity;
         return WebAuthError.shared;
     }
+
+
+ //Location History Failure Exception
+ @Override
+ public WebAuthError locationHistoryException() {
+
+     WebAuthError.shared.errorCode=WebAuthErrorCode.EMPTY_LOGIN_URL;
+     WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
+     WebAuthError.shared.ErrorMessage=context.getString(R.string.LOCATION_HISTORY_FAILURE);
+     return WebAuthError.shared;
+ }
+
 //LoginUrl MissingException
     @Override
     public WebAuthError loginURLMissingException() {
 
-        WebAuthError.shared.errorCode=WebAuthErrorCode.EMPTY_LOGIN_URL;
+        WebAuthError.shared.errorCode=WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
         WebAuthError.shared.ErrorMessage=context.getString(R.string.EMPTY_LOGIN_URL);
         return WebAuthError.shared;

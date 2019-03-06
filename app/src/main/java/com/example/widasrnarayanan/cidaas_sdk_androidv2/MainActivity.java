@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             Cidaas.extraParams=extraParam;
 
 
-            cidaas.loginWithSocial(this, "linkedin", null, new Result<AccessTokenEntity>() {
+            cidaas.loginWithSocial(this, "google", null, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();

@@ -37,6 +37,7 @@ import com.example.cidaasv2.Controller.Repository.Configuration.Voice.VoiceConfi
 import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
+import com.example.cidaasv2.Controller.Repository.LocationHistory.LocationHistoryController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.MFASettings.VerificationSettingsController;
 import com.example.cidaasv2.Controller.Repository.Registration.RegistrationController;
@@ -75,6 +76,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAc
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
+import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryRequestEntity;
+import com.example.cidaasv2.Service.Entity.LocationHistory.LocationHistoryResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
@@ -3922,6 +3925,11 @@ public class Cidaas implements IOAuthWebLogin {
                             @Override
                             public void success(AccessTokenEntity result) {
                                 //After getting Access Token
+                                //Remove Secret from Shared Preference
+
+                                if(verificationType.equalsIgnoreCase("TOTP")) {
+                                    DBHelper.getShared().removeSecret(sub);
+                                }
                                 VerificationSettingsController.getShared(context).deleteMFA(baseurl, result.getAccess_token(),finalUserDeviceId, finalTypeOfVerification,deleteResult);
                             }
 
@@ -3971,6 +3979,9 @@ public class Cidaas implements IOAuthWebLogin {
                         userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
                         final String finalUserDeviceId = userDeviceId;
+
+                            DBHelper.getShared().removeSecret(sub);
+
                         AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
@@ -6287,5 +6298,56 @@ public class Cidaas implements IOAuthWebLogin {
            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,""+e.getMessage(),HttpStatusCode.EXPECTATION_FAILED));
         }
 
+    }
+
+
+
+    //----------------------------------LocationHistory------------------------------------------------------------------------------------------------------
+   //Todo Add Logs
+    public void getLocationDetails(final LocationHistoryRequestEntity locationHistoryRequestEntity, final Result<LocationHistoryResponseEntity> result)
+    {
+        try
+        {
+            if(locationHistoryRequestEntity.getSub()!=null && locationHistoryRequestEntity.getSub()!="") {
+                checkSavedProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(final Dictionary<String, String> lpresult) {
+                        final String baseurl = lpresult.get("DomainURL");
+
+                        //Get AccessToken From Sub
+                        AccessTokenController.getShared(context).getAccessToken(locationHistoryRequestEntity.getSub(), new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenresult) {
+                                LocationHistoryController.getShared(context).getLocationHistoryDetails(baseurl,accessTokenresult.getAccess_token(),locationHistoryRequestEntity,result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                 result.failure(error);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        result.failure(error);
+                    }
+                });
+            }
+            else {
+                // handle Faliure
+                result.failure(WebAuthError.getShared(context).
+                        customException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,"Sub must not be empty",
+                                HttpStatusCode.EXPECTATION_FAILED));
+            }
+        }
+        catch (Exception e)
+        {
+            // handle Faliure Exception
+            result.failure(WebAuthError.getShared(context).
+                    customException(WebAuthErrorCode.LOCATION_HISTORY_SERVICE_FAILURE,e.getMessage(),
+                            HttpStatusCode.EXPECTATION_FAILED));
+        }
     }
 }

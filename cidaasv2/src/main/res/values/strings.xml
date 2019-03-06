@@ -59,4 +59,8 @@
     <string name="go_to_settings">Go to Settings</string>
 
 
+    //For Location History
+    <string name="LOCATION_HISTORY_FAILURE">Location History Failure</string>
+
+
 </resources>
