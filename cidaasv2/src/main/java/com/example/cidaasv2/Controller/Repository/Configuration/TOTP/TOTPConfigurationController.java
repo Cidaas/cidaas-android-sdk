@@ -603,7 +603,7 @@ public class TOTPConfigurationController {
 
 
 
-    public void scannedWithTOTP(final String baseurl,  String statusId, String clientId, final Result<ScannedResponseEntity> scannedResult)
+    public void scannedWithTOTP(final String baseurl,  String statusId,String sub,String secret, String clientId, final Result<ScannedResponseEntity> scannedResult)
     {
         try
         {
@@ -613,6 +613,16 @@ public class TOTPConfigurationController {
                 scannedRequestEntity.setStatusId(statusId);
                 scannedRequestEntity.setClient_id(clientId);
 
+
+                if(secret!=null && !secret.equals(""))
+                {
+                    DBHelper.getShared().addSecret(secret,sub);
+                }
+                else
+                {
+                    String errorMessage="Invalid TOTP Secret";
+                    scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                }
 
                 TOTPVerificationService.getShared(context).scannedTOTP(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
                     @Override
@@ -645,6 +655,7 @@ public class TOTPConfigurationController {
 
                                         @Override
                                         public void success(ScannedResponseEntity result) {
+
                                             DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
                                             scannedResult.success(result);
                                         }

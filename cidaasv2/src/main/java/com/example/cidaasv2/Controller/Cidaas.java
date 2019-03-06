@@ -1566,7 +1566,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void scanned(@NonNull final String statusId, @NonNull final String sub,@NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
+    public void scanned(@NonNull final String statusId, @NonNull final String sub, @NonNull final String verificationType, final String secret, final Result<ScannedResponseEntity> scannedResult)
     {
         try
         {
@@ -1598,7 +1598,7 @@ public class Cidaas implements IOAuthWebLogin {
                     }
                     else if(verificationType.equalsIgnoreCase("TOTP"))
                     {
-                        TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
+                        TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,sub,secret,clientId,scannedResult);
                     }
                     else if(verificationType.equalsIgnoreCase("PUSH"))
                     {
@@ -3392,7 +3392,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
-    public void scannedTOTP(@NonNull final String statusId, @NonNull final String sub, final Result<ScannedResponseEntity> scannedResult)
+    public void scannedTOTP(@NonNull final String statusId, @NonNull final String sub, @NonNull final String secret, final Result<ScannedResponseEntity> scannedResult)
     {
         try
         {
@@ -3405,7 +3405,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId=result.get("ClientId");
 
 
-                    TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,clientId,scannedResult);
+                    TOTPConfigurationController.getShared(context).scannedWithTOTP(baseurl,statusId,sub,secret,clientId,scannedResult);
                 }
 
                 @Override
