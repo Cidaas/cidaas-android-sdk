@@ -10,6 +10,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import androidx.annotation.NonNull;
 import retrofit2.Call;
@@ -788,6 +790,8 @@ public class VerificationSettingsService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
+            final String Sendedurl="ConfiguredMFAListURL :"+ConfiguredMFAListURL+" sub:-"+sub+"  userDeviceId:-"+userDeviceId;
+
             cidaasSDKService.getConfiguredMFAList(ConfiguredMFAListURL,headers,sub,userDeviceId).enqueue(new Callback<ConfiguredMFAListEntity>()
             {
                 @Override
@@ -802,7 +806,12 @@ public class VerificationSettingsService {
 
                             configuredMFAListEntity.setStatus(response.code());
                             configuredMFAListEntity.setSuccess(response.isSuccessful());
+                            configuredMFAListEntity.setSendedURL(Sendedurl);
+
+                            LogFile.addRecordToLog(Sendedurl);
+
                             callback.success(configuredMFAListEntity);
+
                         }
 
                         else {
