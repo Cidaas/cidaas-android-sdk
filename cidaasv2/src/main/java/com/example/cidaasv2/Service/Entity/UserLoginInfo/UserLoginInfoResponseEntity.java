@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class UserLoginInfoResponseEntity implements Serializable {
     private Boolean success;
     private int status;
-    private UserLoginInfoResponseDataEntity data;
+    private UserLoginInfoResponseDataEntity[] data;
 
 
     public Boolean getSuccess() {
@@ -24,11 +24,11 @@ public class UserLoginInfoResponseEntity implements Serializable {
         this.status = status;
     }
 
-    public UserLoginInfoResponseDataEntity getData() {
+    public UserLoginInfoResponseDataEntity[] getData() {
         return data;
     }
 
-    public void setData(UserLoginInfoResponseDataEntity data) {
+    public void setData(UserLoginInfoResponseDataEntity[] data) {
         this.data = data;
     }
 }

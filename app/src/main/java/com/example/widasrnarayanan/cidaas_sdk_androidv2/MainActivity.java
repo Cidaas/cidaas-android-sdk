@@ -26,6 +26,8 @@ import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -99,6 +101,34 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             }
         });
     }
+
+
+    public void getuserLoginInfo(View view)
+    {
+
+        String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
+
+        UserLoginInfoEntity userLoginInfoEntity=new UserLoginInfoEntity();
+        userLoginInfoEntity.setStartDate("02-02-2019");
+        userLoginInfoEntity.setEndDate("02-02-2019");
+        userLoginInfoEntity.setVerificationType("pattern");
+        userLoginInfoEntity.setSub(sub);
+
+        cidaas.getUserLoginInfo(userLoginInfoEntity, new Result<UserLoginInfoResponseEntity>() {
+            @Override
+            public void success(UserLoginInfoResponseEntity result) {
+                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
 
     public void loginWithBrowser(View view)
     {

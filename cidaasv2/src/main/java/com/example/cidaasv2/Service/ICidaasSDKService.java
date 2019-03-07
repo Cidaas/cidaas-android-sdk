@@ -531,7 +531,6 @@ public interface ICidaasSDKService {
 
     //Location History Service
     @POST
-    @Multipart
     Call<UserLoginInfoResponseEntity> getUserLoginInfoService(@Url String url, @HeaderMap Map<String,String>headers, @Body UserLoginInfoEntity userLoginInfoEntity);
 
 
