@@ -1,10 +1,11 @@
 package com.example.cidaasv2.Service.Entity.UserLoginInfo;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.LocationEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserLoginInfoResponseDataEntity implements Serializable {
     private String currentState;
     private String verificationType;
