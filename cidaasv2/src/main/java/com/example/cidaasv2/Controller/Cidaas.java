@@ -3974,21 +3974,33 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     //Get user List Notification
-    public void getConfigurationList(@NonNull final String sub,  final Result<ConfiguredMFAListEntity> result)
+    public void getConfigurationList(@NonNull final String sub,  final Result<ConfiguredMFAListEntity> result,final String... baseURL)
     {
         try
         {
             checkSavedProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    final String baseurl = lpresult.get("DomainURL");
+                    String baseUrltoSend="";
+                    final String baseurlFromShared = lpresult.get("DomainURL");
+
+
+                    if(baseURL!=null && baseURL.length>0 )
+                    {
+                        baseUrltoSend=baseURL[0];
+                    }
+
+                    if(baseUrltoSend==null && baseUrltoSend!="")
+                    {
+                        baseUrltoSend=baseurlFromShared;
+                    }
 
                     if(sub!=null && sub!="") {
 
-                        if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="") {
+                        if(DBHelper.getShared().getUserDeviceId(baseUrltoSend)!=null && DBHelper.getShared().getUserDeviceId(baseUrltoSend)!="") {
 
-                            String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
-                            VerificationSettingsController.getShared(context).getConfiguredMFAList(baseurl, sub, userDeviceId, result);
+                            String userDeviceId = DBHelper.getShared().getUserDeviceId(baseUrltoSend);
+                            VerificationSettingsController.getShared(context).getConfiguredMFAList(baseUrltoSend, sub, userDeviceId, result);
                          }
                          else
                          {
