@@ -109,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
 
         UserLoginInfoEntity userLoginInfoEntity=new UserLoginInfoEntity();
-        userLoginInfoEntity.setStartDate("02-02-2019");
-        userLoginInfoEntity.setEndDate("02-02-2019");
-        userLoginInfoEntity.setVerificationType("pattern");
+        userLoginInfoEntity.setStartDate("2019-03-04T00:00:00.000Z");
+        userLoginInfoEntity.setEndDate("2019-03-11T00:00:00.000Z");
+        userLoginInfoEntity.setVerificationType("TOTP");
         userLoginInfoEntity.setSub(sub);
 
         cidaas.getUserLoginInfo(userLoginInfoEntity, new Result<UserLoginInfoResponseEntity>() {

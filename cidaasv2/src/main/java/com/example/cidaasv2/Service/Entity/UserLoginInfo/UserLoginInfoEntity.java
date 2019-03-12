@@ -7,8 +7,8 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserLoginInfoEntity implements Serializable {
     private String sub;
-    private int skip;
-    private int take;
+    private int skip=0;
+    private int take=10;
     private String startDate;
     private String endDate;
     private String verificationType;
