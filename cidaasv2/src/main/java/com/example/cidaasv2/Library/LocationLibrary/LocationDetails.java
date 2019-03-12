@@ -153,7 +153,9 @@ public class LocationDetails implements LocationListener {
      * Function to get latitude
      */
     public String getLatitude() {
+
         String Lat="";
+
         if (getLocation() != null) {
             latitude = getLocation().getLatitude();
             Lat=""+latitude;

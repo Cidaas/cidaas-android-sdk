@@ -7,12 +7,21 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserLoginInfoResponseDataEntity implements Serializable {
+    private String _id;
     private String currentState;
     private String verificationType;
     private DeviceInfoEntityWithDetailsEntity deviceInfo;
     private LocationEntity address;
     private String time;
 
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
 
     public String getCurrentState() {
         return currentState;
