@@ -69,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
 
         requestLocationPermission();
+
+
+
         String token = getIntent().getDataString();
         if (token != null) {
            cidaas.handleToken(token);
@@ -81,10 +84,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     private void requestLocationPermission()
     {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
             //return;
         }
+
     }
 
     public void openAlertFinger(View view)
@@ -233,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     //get Request Id
     public void getRequestIdMethod(View view)
     {
+        requestStoragePermission();
+        String message=cidaas.enableLog();
+
+        Toast.makeText(this, ""+message, Toast.LENGTH_SHORT).show();
         MyApp.getCidaasInstance().getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
@@ -245,6 +255,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
                 Toast.makeText(MainActivity.this, "Request id Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void requestStoragePermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+            //return;
+        }
     }
 
     //get ClientInfo

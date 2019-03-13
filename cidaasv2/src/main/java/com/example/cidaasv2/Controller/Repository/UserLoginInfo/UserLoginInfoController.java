@@ -44,7 +44,7 @@ public class UserLoginInfoController {
     public void getUserLoginInfo(String baseurl, String accessToken, UserLoginInfoEntity locationHistoryEntity,
                                  Result<UserLoginInfoResponseEntity> locationHistoryResponseEntityResult)
     {
-        if(baseurl!=null && baseurl!="" && accessToken!=null && accessToken!="") {
+        if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
             UserLoginInfoService.getShared(context).getUserLoginInfoService(baseurl, accessToken, locationHistoryEntity,
                     null, locationHistoryResponseEntityResult);
         }

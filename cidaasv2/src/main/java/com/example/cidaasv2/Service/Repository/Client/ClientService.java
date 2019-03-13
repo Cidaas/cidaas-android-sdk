@@ -68,9 +68,9 @@ public class ClientService {
         String clienttUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                if(requestId!=null && requestId!=""){
+                if(requestId!=null && !requestId.equals("")){
                     //Construct URL For RequestId
 
                     clienttUrl=baseurl+ URLHelper.getShared().getClientUrl(requestId);

@@ -1,5 +1,6 @@
 package com.example.cidaasv2.Controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
@@ -35,13 +36,13 @@ import com.example.cidaasv2.Controller.Repository.Configuration.Voice.VoiceConfi
 import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
-import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.MFASettings.VerificationSettingsController;
 import com.example.cidaasv2.Controller.Repository.Registration.RegistrationController;
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordController;
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
+import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoController;
 import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
 import com.example.cidaasv2.Helper.CustomTab.Helper.CustomTabHelper;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
@@ -73,8 +74,6 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAc
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
-import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
-import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeRequestEntity;
@@ -151,6 +150,8 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResponseEn
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
@@ -177,6 +178,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import pub.devrel.easypermissions.EasyPermissions;
 import timber.log.Timber;
 
 import static android.os.Build.MODEL;
@@ -245,29 +247,63 @@ public class Cidaas implements IOAuthWebLogin {
         return cidaasInstance;
     }
 
+    public boolean ENABLE_PKCE;
+    public boolean ENABLE_LOG;
+
+    public DeviceInfoEntity deviceInfoEntity;
+
 
     public boolean isENABLE_PKCE() {
         ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
         return ENABLE_PKCE;
     }
 
-    public void setENABLE_PKCE(boolean ENABLE_PKCE) {
+    public void setENABLE_PKCE(boolean ENABLE_PKCE)
+    {
         this.ENABLE_PKCE = ENABLE_PKCE;
         DBHelper.getShared().setEnablePKCE(ENABLE_PKCE);
     }
 
-    public boolean ENABLE_PKCE;
-    public boolean ENABLE_LOG;
+
+    //enableLog
+
+    public boolean isLogEnable()
+    {
+        ENABLE_LOG = DBHelper.getShared().getEnableLog();
+        return ENABLE_LOG;
+    }
+
+    public String enableLog()
+    {
+        String messsage="";
+        //Check permission For marshmallow and above
+        if (VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                messsage= enableLogWithPermission();
+                return messsage;
+            }
+            else
+            {
+               messsage="Storge permission is not given, please request storage permisson to enable log";
+               return messsage;
+            }
+        }
+        else
+        {
+           messsage= enableLogWithPermission();
+           return messsage;
+        }
+    }
 
 
+    private String enableLogWithPermission()
+    {
+        // Enable Log
+        this.ENABLE_LOG = true;
+        DBHelper.getShared().setEnableLog(ENABLE_LOG);
+        return "Log Successfully Enabled";
+    }
 
- /*   final String[] baseurlArray = new String[1];
-
-    String baseurl=baseurlArray[0];
-    final String[] clientId = new String[1];
-*/
-
-    public DeviceInfoEntity deviceInfoEntity;
 
 
     public Cidaas(Context yourActivityContext) {
@@ -337,7 +373,7 @@ public class Cidaas implements IOAuthWebLogin {
                     public void failure(WebAuthError error) {
                         String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
                                 + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
+                       LogFile.getShared(context).addRecordToLog(loggerMessage);
                     }
                 });
 
@@ -347,7 +383,7 @@ public class Cidaas implements IOAuthWebLogin {
             public void failure(WebAuthError error) {
                 String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
                         + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+               LogFile.getShared(context).addRecordToLog(loggerMessage);
             }
         });
 
@@ -373,21 +409,21 @@ public class Cidaas implements IOAuthWebLogin {
     //Get the remote messages from the Push notification
     public static void validateDevice(Map<String, String> instanceIdFromPush) {
         try {
-            if (instanceIdFromPush.get("usage_pass") != null && instanceIdFromPush.get("usage_pass") != "") {
+            if (instanceIdFromPush.get("usage_pass") != null && !instanceIdFromPush.get("usage_pass").equals("")) {
                 instanceId = instanceIdFromPush.get("usage_pass");
             } else {
                 instanceId = "";
             }
         } catch (Exception e) {
             String loggerMessage = "Set remote Message : " + " Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+            Timber.e(""+loggerMessage);
         }
 
     }
 
     // Get the instance ID
     public String getInstanceId() {
-        if (instanceId != null && instanceId != "") {
+        if (instanceId != null && !instanceId.equals("")) {
             return instanceId;
         } else {
             return null;
@@ -438,7 +474,7 @@ public class Cidaas implements IOAuthWebLogin {
                                         result.failure(error);
                                         String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - "
                                                 + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                                        LogFile.addRecordToLog(loggerMessage);
+                                       LogFile.getShared(context).addRecordToLog(loggerMessage);
                                     }
                                 });
 
@@ -448,7 +484,7 @@ public class Cidaas implements IOAuthWebLogin {
                             public void failure(WebAuthError error) {
                                 String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - "
                                         + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                                LogFile.addRecordToLog(loggerMessage);
+                               LogFile.getShared(context).addRecordToLog(loggerMessage);
                                 result.failure(error);
                             }
                         });
@@ -458,7 +494,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
         } catch (Exception e) {
             String loggerMessage = "Request-Id service Exception :  Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             Timber.d(e.getMessage());
         }
     }
@@ -470,7 +506,7 @@ public class Cidaas implements IOAuthWebLogin {
                              @Nullable HashMap<String, String>... extraParams) {
         try {
 
-            if(loginproperties!=null && loginproperties.get("DomainURL")!=null && loginproperties.get("DomainURL")!="") {
+            if(loginproperties!=null && loginproperties.get("DomainURL")!=null && !loginproperties.get("DomainURL").equals("")) {
 
                 DomainURL = loginproperties.get("DomainURL");
                 Cidaas.baseurl = DomainURL;
@@ -485,7 +521,7 @@ public class Cidaas implements IOAuthWebLogin {
 
             String loggerMessage = "Request-Id  failure : " + "Error Code - "
                     + 400 + ", Error Message - " + e.getMessage() + ", Status Code - " + 400;
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             Timber.e(e.getMessage());
 
         }
@@ -518,7 +554,7 @@ public class Cidaas implements IOAuthWebLogin {
 
             String loggerMessage = "Request-Id  failure : " + "Error Code - "
                     + 400 + ", Error Message - " + e.getMessage() + ", Status Code - " + 400;
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             Timber.e(e.getMessage());
 
         }
@@ -593,7 +629,7 @@ public class Cidaas implements IOAuthWebLogin {
     public void getTenantInfo(final Result<TenantInfoEntity> tenantresult) {
         try {
 
-            if(DomainURL!=null && DomainURL!="") {
+            if(DomainURL!=null && !DomainURL.equals("")) {
 
                 checkSavedProperties(new Result<Dictionary<String, String>>() {
                     @Override
@@ -667,7 +703,7 @@ public class Cidaas implements IOAuthWebLogin {
                     //Todo Check notnull Re   questId
                     String baseurl = result.get("DomainURL");
 
-                    if (RequestId != null && RequestId != "") {
+                    if (RequestId != null && !RequestId.equals("")) {
                         ClientController.getShared(context).getClientInfo(baseurl, RequestId, clientInfoEntityResult);
                     } else {
                         String errorMessage = "RequestId must not be empty";
@@ -743,8 +779,8 @@ public class Cidaas implements IOAuthWebLogin {
                         loginEntity.setUsername_type("email");
                     }
 
-                    if (loginEntity.getPassword() != null && loginEntity.getPassword() != "" &&
-                            loginEntity.getUsername() != null && loginEntity.getUsername() != "") {
+                    if (loginEntity.getPassword() != null && !loginEntity.getPassword().equals("") &&
+                            loginEntity.getUsername() != null && !loginEntity.getUsername().equals("")) {
                         LoginCredentialsRequestEntity loginCredentialsRequestEntity = new LoginCredentialsRequestEntity();
                         loginCredentialsRequestEntity.setUsername(loginEntity.getUsername());
                         loginCredentialsRequestEntity.setUsername_type(loginEntity.getUsername_type());
@@ -877,7 +913,7 @@ public class Cidaas implements IOAuthWebLogin {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
-                    if (sub != null && sub != "") {
+                    if (sub != null && !sub.equals("")) {
                         VerificationSettingsController.getShared(context).getmfaList(baseurl, sub, mfaresult);
                     } else {
                         String errorMessage = "Sub must not be empty";
@@ -1022,7 +1058,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     //Todo call initiate
 
-                    if (code != null && code != "") {
+                    if (code != null && !code.equals("")) {
 
                         AuthenticateEmailRequestEntity authenticateEmailRequestEntity = new AuthenticateEmailRequestEntity();
                         authenticateEmailRequestEntity.setCode(code);
@@ -1089,7 +1125,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
 
-                    if (code != null && code != "") {
+                    if (code != null && !code.equals("")) {
                         SMSConfigurationController.getShared(context).enrollSMSMFA(code, statusId, baseurl, result);
                     } else {
 
@@ -1178,7 +1214,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     //Todo call initiate
 
-                    if (code != null && code != "") {
+                    if (code != null && !code.equals("")) {
 
                         AuthenticateSMSRequestEntity authenticateSMSRequestEntity = new AuthenticateSMSRequestEntity();
                         authenticateSMSRequestEntity.setCode(code);
@@ -1251,7 +1287,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
 
-                    if (code != null && code != "") {
+                    if (code != null && !code.equals("")) {
                         IVRConfigurationController.getShared(context).enrollIVRMFA(code, statusId, baseurl, result);
                     } else {
                         result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,"Code Must not be null",HttpStatusCode.BAD_REQUEST));
@@ -1327,7 +1363,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
 
-                    if (code != null && code != "") {
+                    if (code != null && !code.equals("")) {
 
                         AuthenticateIVRRequestEntity authenticateIVRRequestEntity = new AuthenticateIVRRequestEntity();
                         authenticateIVRRequestEntity.setCode(code);
@@ -1460,7 +1496,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
 
-                    if (code != null && code != "") {
+                    if (code != null && !code.equals("")) {
 
                         AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity = new AuthenticateBackupCodeRequestEntity();
                         authenticateBackupCodeRequestEntity.setVerifierPassword(code);
@@ -1529,19 +1565,19 @@ public class Cidaas implements IOAuthWebLogin {
                                 VerificationSettingsController.getShared(context).updateFCMToken(baseurl, result.getAccess_token(), FCMToken, new Result<Object>() {
                                     @Override
                                     public void success(Object result) {
-                                        LogFile.addRecordToLog("Update FCM Token Success");
+                                        LogFile.getShared(context).addRecordToLog("Update FCM Token Success");
                                     }
 
                                     @Override
                                     public void failure(WebAuthError error) {
-                                        LogFile.addRecordToLog("Update FCM Token Error" + error.getMessage());
+                                        LogFile.getShared(context).addRecordToLog("Update FCM Token Error" + error.getMessage());
                                     }
                                 });
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-                                LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                                LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
                             }
                         });
 
@@ -1553,14 +1589,14 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    LogFile.addRecordToLog("Update FCM Token exception" + error.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
                 }
             });
         }
 
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Update FCM Token exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + e.getMessage());
             Timber.e("Update FCM Token exception" + e.getMessage());
         }
     }
@@ -1620,7 +1656,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned Pattern exception" + e.getMessage());
             scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned Pattern exception" + e.getMessage());
@@ -1676,7 +1712,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Configure Pattern exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Configure Pattern exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure Pattern exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure Pattern exception" + e.getMessage());
@@ -1733,7 +1769,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Enroll Pattern exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Pattern exception" + e.getMessage());
             enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Pattern exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll Pattern exception" + e.getMessage());
@@ -1765,7 +1801,7 @@ public class Cidaas implements IOAuthWebLogin {
       }
       catch (Exception e)
       {
-          LogFile.addRecordToLog("Scanned Pattern exception" + e.getMessage());
+          LogFile.getShared(context).addRecordToLog("Scanned Pattern exception" + e.getMessage());
           scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Pattern exception"+ e.getMessage(),
                   HttpStatusCode.EXPECTATION_FAILED));
           Timber.e("Scanned Pattern exception" + e.getMessage());
@@ -1793,9 +1829,9 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
 
-                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")
                             && pattern != null && !pattern.equals("") && passwordlessEntity.getRequestId() != null &&
-                            passwordlessEntity.getRequestId() != "") {
+                            !passwordlessEntity.getRequestId().equals("")) {
 
                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                             String errorMessage = "baseurl or clientId or mobile number must not be empty";
@@ -1853,7 +1889,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Login with Pattern exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Login with Pattern exception" + e.getMessage());
             String errorMessage = e.getMessage();
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
@@ -1891,7 +1927,7 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Configure Face exception" + e.getMessage());
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,
                     e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure Face exception" + e.getMessage());
@@ -1946,7 +1982,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Configure Face exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,
                     e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure Face exception" + e.getMessage());
@@ -2056,7 +2092,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Scanned Face exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned Face exception" + e.getMessage());
             scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,"Scanned Face exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned Face exception" + e.getMessage());
@@ -2107,7 +2143,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Enroll Face exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Face exception" + e.getMessage());
             enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,"Enroll Face exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll Face exception" + e.getMessage());
@@ -2143,7 +2179,7 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            LogFile.addRecordToLog("Verify Face exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Verify Face exception" + e.getMessage());
             String errorMessage = e.getMessage();
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,
                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
@@ -2193,7 +2229,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Configure Face exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Configure Face exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,"Configure Face exception" + e.getMessage(),417));
             Timber.e("Configure Face exception" + e.getMessage());
         }
@@ -2378,7 +2414,7 @@ public class Cidaas implements IOAuthWebLogin {
 
         } catch (Exception e) {
            // enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
-            LogFile.addRecordToLog("Enroll Finger exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Finger exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,"Enroll Finger exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll Finger exception" + e.getMessage());
@@ -2418,7 +2454,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Scanned Fingerprint exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned Fingerprint exception" + e.getMessage());
             scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Fingerprint exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned Fingerprint exception" + e.getMessage());
@@ -2483,7 +2519,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Enroll Fingerprint exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Fingerprint exception" + e.getMessage());
             enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Fingerprint exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll Fingerprint exception" + e.getMessage());
@@ -2506,8 +2542,8 @@ public class Cidaas implements IOAuthWebLogin {
                                     final String clientId = result.get("ClientId");
 
 
-                                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
+                                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("")) {
 
                                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                                             String errorMessage = "baseurl or clientId  must not be empty";
@@ -2614,7 +2650,7 @@ public class Cidaas implements IOAuthWebLogin {
 
         } catch (Exception e) {
             //callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
-            LogFile.addRecordToLog("Verify Finger exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Verify Finger exception" + e.getMessage());
             callBackresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,"Verify Finger exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Verify Finger exception" + e.getMessage());
@@ -2674,7 +2710,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
     catch (Exception e)
      {
-         LogFile.addRecordToLog("enroll FIDO exception" + e.getMessage());
+         LogFile.getShared(context).addRecordToLog("enroll FIDO exception" + e.getMessage());
          enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll FIDO exception"+ e.getMessage(),
                  HttpStatusCode.EXPECTATION_FAILED));
          Timber.e("Enroll FIDO exception" + e.getMessage());
@@ -2727,7 +2763,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Configure FIDO exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Configure FIDO exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure FIDO exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure FIDO exception" + e.getMessage());
@@ -2818,7 +2854,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Enroll FIDO exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll FIDO exception" + e.getMessage());
             enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll FIDO exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll FIDO exception" + e.getMessage());
@@ -2850,7 +2886,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Scanned FIDO exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned FIDO exception" + e.getMessage());
             scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned FIDO exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned FIDO exception" + e.getMessage());
@@ -2878,8 +2914,8 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
 
-                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != ""
-                            && passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")
+                            && passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("")) {
 
                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                             String errorMessage = "baseurl or clientId or mobile number must not be empty";
@@ -2936,7 +2972,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Login with FIDO exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Login with FIDO exception" + e.getMessage());
             String errorMessage = e.getMessage();
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
@@ -3009,7 +3045,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
         } catch (Exception e) {
            // result.failure(WebAuthError.getShared(context).propertyMissingException());
-            LogFile.addRecordToLog("Verify FIDO exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Verify FIDO exception" + e.getMessage());
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,"Verify FIDO exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned FIDO exception" + e.getMessage());
@@ -3063,7 +3099,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("configure SmartPush  exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("configure SmartPush  exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Configure SmartPush exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure smartpush  exception" + e.getMessage());
@@ -3095,7 +3131,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Scanned SmartPush exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned SmartPush exception" + e.getMessage());
             scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned SmartPush exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned SmartPush exception" + e.getMessage());
@@ -3146,7 +3182,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Enroll SmartPush exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll SmartPush exception" + e.getMessage());
             enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll SmartPush exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll SmartPush exception" + e.getMessage());
@@ -3163,8 +3199,8 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
-                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("")) {
 
                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                             String errorMessage = "baseurl or clientId  must not be empty";
@@ -3222,7 +3258,7 @@ public class Cidaas implements IOAuthWebLogin {
         } catch (Exception e) {
             //loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
             String loggerMessage = "Verify Smartpush : " + " Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,"Something Went wrong please try again"+e.getMessage(),417));
 
         }
@@ -3260,7 +3296,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
         } catch (Exception e) {
             String loggerMessage = "Verify Smartpush : " + " Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,"Something Went wrong please try again"+e.getMessage(),417));
 
         }
@@ -3311,7 +3347,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Enroll TOTP  exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll TOTP  exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Enroll TOTP exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll TOTP exception" + e.getMessage());
@@ -3329,8 +3365,8 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
-                    if (passwordlessEntity.getUsageType() != null && passwordlessEntity.getUsageType() != "" &&
-                            passwordlessEntity.getRequestId() != null && passwordlessEntity.getRequestId() != "") {
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("")) {
 
                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                             String errorMessage = "baseurl or clientId  must not be empty";
@@ -3384,7 +3420,7 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            LogFile.addRecordToLog("Login TOTP exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Login TOTP exception" + e.getMessage());
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Login TOTP exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Login TOTP exception" + e.getMessage());
@@ -3417,7 +3453,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Scanned TOTP exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned TOTP exception" + e.getMessage());
             scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned TOTP exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned TOTP exception" + e.getMessage());
@@ -3506,7 +3542,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Configure Voice exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Configure Voice exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure Voice exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Configure Voice exception" + e.getMessage());
@@ -3539,7 +3575,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Scanned Voice exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned Voice exception" + e.getMessage());
             scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Scanned Voice exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Scanned Voice exception" + e.getMessage());
@@ -3590,7 +3626,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Enroll Voice exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Voice exception" + e.getMessage());
             enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll Voice exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Enroll Voice exception" + e.getMessage());
@@ -3666,7 +3702,7 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            LogFile.addRecordToLog("Login Voice exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Login Voice exception" + e.getMessage());
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Login Voice exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Login Voice exception" + e.getMessage());
@@ -3701,7 +3737,7 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            LogFile.addRecordToLog("Verify Voice exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Verify Voice exception" + e.getMessage());
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Verify Voice exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Verify Voice exception" + e.getMessage());
@@ -3732,7 +3768,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     String typeOfVerification="";
 
-                    if(verificationType!=null && verificationType!="") {
+                    if(verificationType!=null && !verificationType.equals("")) {
 
                          typeOfVerification = verificationType.toUpperCase();
                     }
@@ -3742,7 +3778,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     }
 
-                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="" && sub!=null && sub!="")
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && !DBHelper.getShared().getUserDeviceId(baseurl).equals("") && sub!=null && !sub.equals(""))
                     {
                         userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -3801,7 +3837,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String userDeviceId="";
 
 
-                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="" && sub!=null && sub!="")
+                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && !DBHelper.getShared().getUserDeviceId(baseurl).equals("") && sub!=null && !sub.equals(""))
                     {
                         userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
@@ -3857,14 +3893,14 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId = lpresult.get("ClientId");
                     String userDeviceId="";
 
-                    if(sub!=null && sub!="") {
+                    if(sub!=null && !sub.equals("")) {
 
 
                         AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
 
-                                if (reason != "" && reason != null && statusId != null && statusId != "") {
+                                if (!reason.equals("") && reason != null && statusId != null && !statusId.equals("")) {
 
                                     DenyNotificationRequestEntity denyNotificationRequestEntity = new DenyNotificationRequestEntity();
                                     denyNotificationRequestEntity.setReject_reason(reason);
@@ -3919,17 +3955,17 @@ public class Cidaas implements IOAuthWebLogin {
                     String clientId = lpresult.get("ClientId");
 
 
-                    if(sub!=null && sub!="") {
+                    if(sub!=null && !sub.equals("")) {
 
                         AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
 
-                                if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && DBHelper.getShared().getUserDeviceId(baseurl)!="") {
+                                if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && !DBHelper.getShared().getUserDeviceId(baseurl).equals("")) {
                                     String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
 
-                                    if (userDeviceId != "" && userDeviceId != null) {
+                                    if (!userDeviceId.equals("") && userDeviceId != null) {
 
 
                                         VerificationSettingsController.getShared(context).getPendingNotification(baseurl, accessTokenresult.getAccess_token(), userDeviceId, result);
@@ -3990,14 +4026,14 @@ public class Cidaas implements IOAuthWebLogin {
                         baseUrltoSend=baseURL[0];
                     }
 
-                    if(baseUrltoSend==null && baseUrltoSend!="")
+                    if(baseUrltoSend==null && !baseUrltoSend.equals(""))
                     {
                         baseUrltoSend=baseurlFromShared;
                     }
 
-                    if(sub!=null && sub!="") {
+                    if(sub!=null && !sub.equals("")) {
 
-                        if(DBHelper.getShared().getUserDeviceId(baseUrltoSend)!=null && DBHelper.getShared().getUserDeviceId(baseUrltoSend)!="") {
+                        if(DBHelper.getShared().getUserDeviceId(baseUrltoSend)!=null && !DBHelper.getShared().getUserDeviceId(baseUrltoSend).equals("")) {
 
                             String userDeviceId = DBHelper.getShared().getUserDeviceId(baseUrltoSend);
                             VerificationSettingsController.getShared(context).getConfiguredMFAList(baseUrltoSend, sub, userDeviceId, result);
@@ -4372,7 +4408,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                                     }
 
-                                    if (registrationEntity.getProvider() != null && registrationEntity.getProvider() != "") {
+                                    if (registrationEntity.getProvider() != null && !registrationEntity.getProvider().equals("")) {
 
                                         String errorMessage = "Provider must not be empty";
                                         registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
@@ -4676,7 +4712,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
 
-                    if (code != null && !code.equals("") && accvid != null && accvid != "") {
+                    if (code != null && !code.equals("") && accvid != null && !accvid.equals("")) {
                         RegistrationController.getShared(context).verifyAccountVerificationService(baseurl, code, accvid, result);
                     } else {
                         result.failure(WebAuthError.getShared(context).customException(417,"Verification Code or accvid must not be empty",417));
@@ -4730,7 +4766,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
-                    if (trackId != null && trackId != "") {
+                    if (trackId != null && !trackId.equals("")) {
                         DeduplicationController.getShared(context).registerDeduplication(baseurl, trackId, deduplicaionResult);
                     } else {
                         String errorMessage = "TrackId Must not be null";
@@ -4793,7 +4829,7 @@ public class Cidaas implements IOAuthWebLogin {
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
-                    if (sub != null && sub != "" && password != null && password != "") {
+                    if (sub != null && !sub.equals("") && password != null && !password.equals("")) {
                         DeduplicationController.getShared(context).loginDeduplication(baseurl, requestId, sub, password, deduplicaionResult);
                     } else {
                         String errorMessage = "Sub or requestId or Password Must not be null";
@@ -5114,7 +5150,7 @@ public class Cidaas implements IOAuthWebLogin {
         catch (Exception e)
         {
             //todo handle excepksdjncksjdc
-            LogFile.addRecordToLog("Access Token exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Access Token exception" + e.getMessage());
             accessTokenCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,"Access Token exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
             Timber.e("Access Token exception" + e.getMessage());
@@ -5126,13 +5162,13 @@ public class Cidaas implements IOAuthWebLogin {
     @Override
     public void getUserInfo(String sub, final Result<UserinfoEntity> callback) {
         try {
-            if (sub != null && sub != "") {
+            if (sub != null && !sub.equals("")) {
 
                 getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(AccessTokenEntity result) {
 
-                      if(DomainURL!=null && DomainURL!="") {
+                      if(DomainURL!=null && !DomainURL.equals("")) {
                              OauthService.getShared(context).getUserinfo(result.getAccess_token(), DomainURL, new Result<UserinfoEntity>() {
                                @Override
                               public void success(UserinfoEntity result) {
@@ -5197,7 +5233,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                   String packageName= CustomTabHelper.getShared().getPackageNameToUse(context);
 
-                        if(packageName!=null && packageName!="")
+                        if(packageName!=null && !packageName.equals(""))
                         {
                             customTabsIntent.intent.setPackage(packageName);
                         }
@@ -5207,7 +5243,7 @@ public class Cidaas implements IOAuthWebLogin {
                         //TODo callback Failure
                         String loggerMessage = "LoginURL failure : " + "Error Code - ";
                         // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
+                       LogFile.getShared(context).addRecordToLog(loggerMessage);
                     }
                 }
 
@@ -5280,7 +5316,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                                 String packageName= CustomTabHelper.getShared().getPackageNameToUse(context);
 
-                                if(packageName!=null && packageName!="")
+                                if(packageName!=null && !packageName.equals(""))
                                 {
                                     customTabsIntent.intent.setPackage(packageName);
                                 }
@@ -5290,7 +5326,7 @@ public class Cidaas implements IOAuthWebLogin {
                                 //TODo callback Failure
                                 String loggerMessage = "LoginURL failure : " + "Error Code - ";
                                 // +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
-                                LogFile.addRecordToLog(loggerMessage);
+                               LogFile.getShared(context).addRecordToLog(loggerMessage);
                             }
                         }
 
@@ -5328,7 +5364,7 @@ public class Cidaas implements IOAuthWebLogin {
                 // hideLoader();
                 String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - ";
                 //+error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+               LogFile.getShared(context).addRecordToLog(loggerMessage);
             }
         } catch (Exception e) {
             Timber.d(e.getMessage()); //Todo handle Exception
@@ -5347,7 +5383,7 @@ public class Cidaas implements IOAuthWebLogin {
                     webAuthError = webAuthError.propertyMissingException();
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message -  DomainURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                    LogFile.addRecordToLog(loggerMessage);
+                   LogFile.getShared(context).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
@@ -5355,7 +5391,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - ClientId is missing"
                             + webAuthError.errorCode + ", Error Message -  ClientId is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
-                    LogFile.addRecordToLog(loggerMessage);
+                   LogFile.getShared(context).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
@@ -5363,7 +5399,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - RedirectURL is missing"
                             + webAuthError.errorCode + ", Error Message -  RedirectURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
-                    LogFile.addRecordToLog(loggerMessage);
+                   LogFile.getShared(context).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 Cidaas.baseurl = loginProperties.get("DomainURL");
@@ -5402,7 +5438,7 @@ public class Cidaas implements IOAuthWebLogin {
                     webAuthError = webAuthError.propertyMissingException();
                     String loggerMessage = "Check saved properties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                    LogFile.addRecordToLog(loggerMessage);
+                   LogFile.getShared(context).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                     return;
                 }
@@ -5411,7 +5447,7 @@ public class Cidaas implements IOAuthWebLogin {
                     String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
-                    LogFile.addRecordToLog(loggerMessage);
+                   LogFile.getShared(context).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                     return;
                 }
@@ -5498,7 +5534,7 @@ public class Cidaas implements IOAuthWebLogin {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
                         + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+               LogFile.getShared(context).addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
 
                 return;
@@ -5508,7 +5544,7 @@ public class Cidaas implements IOAuthWebLogin {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+               LogFile.getShared(context).addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
                 return;
             }
@@ -5517,7 +5553,7 @@ public class Cidaas implements IOAuthWebLogin {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Check PKCE Flow  readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+               LogFile.getShared(context).addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
                 return;
             }
@@ -5594,7 +5630,7 @@ public class Cidaas implements IOAuthWebLogin {
                                 callback.failure(error);
                                 String loggerMessage = "Login URL service failure : " + "Error Code - "
                                         + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                                LogFile.addRecordToLog(loggerMessage);
+                               LogFile.getShared(context).addRecordToLog(loggerMessage);
                             }
                         });
                     }
@@ -5665,7 +5701,7 @@ public class Cidaas implements IOAuthWebLogin {
                             callback.failure(error);
                             String loggerMessage = "Login URL service failure : " + "Error Code - "
                                     + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                            LogFile.addRecordToLog(loggerMessage);
+                           LogFile.getShared(context).addRecordToLog(loggerMessage);
                         }
                     });
                 }
@@ -5734,7 +5770,7 @@ public class Cidaas implements IOAuthWebLogin {
                         loginPropertiesResult.failure(error);
                         String loggerMessage = "Read From File failure : " + "Error Code - " + error.errorCode +
                                 ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
+                       LogFile.getShared(context).addRecordToLog(loggerMessage);
                     }
                 });
 
@@ -5746,7 +5782,7 @@ public class Cidaas implements IOAuthWebLogin {
                 //Return File Reading Error
                 String loggerMessage = "Read From File failure : "
                         + "Error Code - " + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(context).addRecordToLog(loggerMessage);
                 loginPropertiesResult.failure(error);
             }
         });
@@ -5783,7 +5819,7 @@ public class Cidaas implements IOAuthWebLogin {
             webAuthError = webAuthError.propertyMissingException();
             String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                     +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             result.failure(webAuthError);
 
             return;
@@ -5793,7 +5829,7 @@ public class Cidaas implements IOAuthWebLogin {
             webAuthError = webAuthError.propertyMissingException();
             String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                     +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             result.failure(webAuthError);
             return;
         }
@@ -5802,7 +5838,7 @@ public class Cidaas implements IOAuthWebLogin {
             webAuthError = webAuthError.propertyMissingException();
             String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                     +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             result.failure(webAuthError);
             return;
         }
@@ -5819,7 +5855,7 @@ public class Cidaas implements IOAuthWebLogin {
                 Cidaas.baseurl=DomainURL;
 
 
-                if(loginproperties.get("userDeviceId")!=null && loginproperties.get("userDeviceId")!="") {
+                if(loginproperties.get("userDeviceId")!=null && !loginproperties.get("userDeviceId").equals("")) {
                     String userDeviceId = loginproperties.get("userDeviceId");
                     DBHelper.getShared().setUserDeviceId(userDeviceId, DomainURL);
                 }
@@ -5831,13 +5867,13 @@ public class Cidaas implements IOAuthWebLogin {
             else
             {
                 String loggerMessage = "SetURL File : " + " Error Message -Login properties in null " ;
-                LogFile.addRecordToLog(loggerMessage);
+               LogFile.getShared(context).addRecordToLog(loggerMessage);
             }
         }
         catch (Exception e)
         {
             String loggerMessage = "SetURL File : " + " Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
 
         }
 
@@ -5994,7 +6030,7 @@ public class Cidaas implements IOAuthWebLogin {
         catch (Exception e)
         {
             String loggerMessage = "get UserAgent : " + " Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             return "";
         }
     }
@@ -6005,9 +6041,9 @@ public class Cidaas implements IOAuthWebLogin {
         try
         {
 
-            if(accessTokenEntity.getSub()!=null && accessTokenEntity.getSub()!="" &&
-                    accessTokenEntity.getAccess_token()!=null && accessTokenEntity.getAccess_token()!="" &&
-                    accessTokenEntity.getRefresh_token()!=null && accessTokenEntity.getRefresh_token()!="") {
+            if(accessTokenEntity.getSub()!=null && !accessTokenEntity.getSub().equals("") &&
+                    accessTokenEntity.getAccess_token()!=null && !accessTokenEntity.getAccess_token().equals("") &&
+                    accessTokenEntity.getRefresh_token()!=null && !accessTokenEntity.getRefresh_token().equals("")) {
                 EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
                     @Override
                     public void success(AccessTokenModel accessTokenModel) {
@@ -6022,7 +6058,7 @@ public class Cidaas implements IOAuthWebLogin {
                     @Override
                     public void failure(WebAuthError error) {
                         String loggerMessage = "Set Access Token : " + " Error Message - "+error.getErrorMessage();
-                        LogFile.addRecordToLog(loggerMessage);
+                       LogFile.getShared(context).addRecordToLog(loggerMessage);
 
                         result.failure(error);
                     }
@@ -6036,7 +6072,7 @@ public class Cidaas implements IOAuthWebLogin {
             else
             {
                 String loggerMessage = "Set Access Token : " + " Error Message - Sub or accessToken or refreshToken must not be null";
-                LogFile.addRecordToLog(loggerMessage);
+               LogFile.getShared(context).addRecordToLog(loggerMessage);
                 result.failure(WebAuthError.getShared(context).customException(417," Sub or accessToken or refreshToken must not be null",417));
             }
 
@@ -6044,7 +6080,7 @@ public class Cidaas implements IOAuthWebLogin {
         catch (Exception e){
 
             String loggerMessage = "Set Access Token : " + " Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+           LogFile.getShared(context).addRecordToLog(loggerMessage);
             result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
         }
     }
@@ -6151,7 +6187,7 @@ public class Cidaas implements IOAuthWebLogin {
     {
         try
         {
-            if(userLoginInfoEntity.getSub()!=null && userLoginInfoEntity.getSub()!="") {
+            if(userLoginInfoEntity.getSub()!=null && !userLoginInfoEntity.getSub().equals("")) {
                 checkSavedProperties(new Result<Dictionary<String, String>>() {
                     @Override
                     public void success(final Dictionary<String, String> lpresult) {

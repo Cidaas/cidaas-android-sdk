@@ -833,7 +833,7 @@ public class TOTPConfigurationController {
                                         instceID= Cidaas.instanceId;
 
                                         Timber.e("");
-                                        if(instceID!=null && instceID!="")
+                                        if(instceID!=null && !instceID.equals(""))
                                         {
                                             this.cancel();
                                             onFinish();
@@ -841,7 +841,7 @@ public class TOTPConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" ) {
+                                        if(instceID!=null && !instceID.equals("")) {
 
                                             //Todo call initiate
                                             final InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity=new InitiateTOTPMFARequestEntity();

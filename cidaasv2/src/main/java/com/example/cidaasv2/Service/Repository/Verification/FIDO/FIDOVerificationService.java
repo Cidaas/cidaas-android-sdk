@@ -81,7 +81,7 @@ public class FIDOVerificationService {
                                    final Result<ScannedResponseEntity> callback) {
         String scannedFIDOUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 scannedFIDOUrl = baseurl + URLHelper.getShared().getScannedFIDOURL();
             } else {
@@ -107,7 +107,7 @@ public class FIDOVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -169,14 +169,14 @@ public class FIDOVerificationService {
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Scanned FIDO service call" + t.getMessage());
-                    LogFile.addRecordToLog("Failure in Scanned FIDO Service Failure" + t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Failure in Scanned FIDO Service Failure" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
                 }
             });
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Failure in Scanned FIDO Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Failure in Scanned FIDO Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("Failure in Scanned FIDO Service exception" + e.getMessage());
         }
@@ -187,7 +187,7 @@ public class FIDOVerificationService {
     public void setupFIDO(String baseurl, String accessToken, SetupFIDOMFARequestEntity setupFIDOMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupFIDOMFAResponseEntity> callback) {
         String setupFIDOMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 setupFIDOMFAUrl = baseurl + URLHelper.getShared().getSetupFIDOMFA();
             } else {
@@ -214,7 +214,7 @@ public class FIDOVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -281,14 +281,14 @@ public class FIDOVerificationService {
                 @Override
                 public void onFailure(Call<SetupFIDOMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure" + t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
                 }
             });
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("acceptConsent Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception" + e.getMessage());
         }
@@ -300,7 +300,7 @@ public class FIDOVerificationService {
                                   final Result<EnrollFIDOMFAResponseEntity> callback) {
         String enrollFIDOMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 enrollFIDOMFAUrl = baseurl + URLHelper.getShared().getEnrollFIDOMFA();
             } else {
@@ -326,7 +326,7 @@ public class FIDOVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -390,14 +390,14 @@ public class FIDOVerificationService {
                 @Override
                 public void onFailure(Call<EnrollFIDOMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure" + t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
                 }
             });
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("acceptConsent Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception" + e.getMessage());
         }
@@ -408,7 +408,7 @@ public class FIDOVerificationService {
                                     final Result<InitiateFIDOMFAResponseEntity> callback) {
         String initiateFIDOMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 initiateFIDOMFAUrl = baseurl + URLHelper.getShared().getInitiateFIDOMFA();
             } else {
@@ -434,7 +434,7 @@ public class FIDOVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -498,14 +498,14 @@ public class FIDOVerificationService {
                 @Override
                 public void onFailure(Call<InitiateFIDOMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateSMSMFAResponseEntityservice call" + t.getMessage());
-                    LogFile.addRecordToLog("InitiateFIDOMFAResponseEntity Service Failure" + t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("InitiateFIDOMFAResponseEntity Service Failure" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
                 }
             });
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("InitiateFIDOMFAResponseEntity Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiateFIDOMFAResponseEntity Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("InitiateFIDOMFAResponseEntity Service exception" + e.getMessage());
         }
@@ -517,7 +517,7 @@ public class FIDOVerificationService {
                                         final Result<AuthenticateFIDOResponseEntity> callback) {
         String authenticateFIDOMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 authenticateFIDOMFAUrl = baseurl + URLHelper.getShared().getAuthenticateFIDOMFA();
             } else {
@@ -544,7 +544,7 @@ public class FIDOVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -609,14 +609,14 @@ public class FIDOVerificationService {
                 @Override
                 public void onFailure(Call<AuthenticateFIDOResponseEntity> call, Throwable t) {
                     Timber.e("Failure in AuthenticateFIDOResponseEntity service call" + t.getMessage());
-                    LogFile.addRecordToLog("AuthenticateFIDOResponseEntity Service Failure" + t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("AuthenticateFIDOResponseEntity Service Failure" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
                 }
             });
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("authenticateFIDOMFA Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateFIDOMFA Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateFIDOMFA Service exception" + e.getMessage());
         }

@@ -1,17 +1,24 @@
 package com.example.cidaasv2.Library.LocationLibrary;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.example.cidaasv2.Helper.Logger.LogFile;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import timber.log.Timber;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -76,9 +83,44 @@ public class LocationDetails implements LocationListener {
 
 
 
-    @SuppressLint("MissingPermission")
     public Location getLocation() {
         try {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getLocationPermissions();
+            }
+            else
+            {
+                getLocationAfterPermission();
+            }
+
+        } catch (Exception e) {
+            Timber.e(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return location;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void getLocationPermissions() {
+        if (mContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                mContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getLocationAfterPermission();
+        }
+
+        else
+        {
+            Timber.i("Location permission Denied");
+            LogFile.getShared(mContext).addRecordToLog("Location Permission Denied");
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getLocationAfterPermission() {
+        try
+        {
+
             locationManager = (LocationManager) mContext
                     .getSystemService(LOCATION_SERVICE);
 
@@ -130,14 +172,13 @@ public class LocationDetails implements LocationListener {
                     }
                 }
             }
-
-        } catch (Exception e) {
-            Timber.e(e.getMessage());
-            e.printStackTrace();
         }
+        catch (Exception e)
+        {
 
-        return location;
+        }
     }
+
 
     /**
      * Stop using GPS listener
@@ -156,11 +197,19 @@ public class LocationDetails implements LocationListener {
 
         String Lat="";
 
-        if (getLocation() != null) {
-            latitude = getLocation().getLatitude();
-            Lat=""+latitude;
-        }
+        if (mContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                mContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
+            if (getLocation() != null) {
+                latitude = getLocation().getLatitude();
+                Lat = "" + latitude;
+            }
+        }
+        else
+        {
+            Timber.i("Location permission Denied");
+            LogFile.getShared(mContext).addRecordToLog("Location Permission Denied");
+        }
         // return latitude
         return Lat;
     }
@@ -168,11 +217,22 @@ public class LocationDetails implements LocationListener {
     /**
      * Function to get longitude
      */
-    public String getLongitude() {
+    public String getLongitude()
+    {
         String Long="";
-        if (getLocation() != null) {
-            longitude = getLocation().getLongitude();
-            Long=""+longitude;
+        if (mContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                mContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            if (getLocation() != null) {
+                longitude = getLocation().getLongitude();
+                Long = "" + longitude;
+            }
+        }
+
+        else
+        {
+         Timber.i("Location permission Denied");
+         LogFile.getShared(mContext).addRecordToLog("Location Permission Denied");
         }
 
         // return longitude

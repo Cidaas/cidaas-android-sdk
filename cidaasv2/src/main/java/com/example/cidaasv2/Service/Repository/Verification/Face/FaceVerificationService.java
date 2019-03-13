@@ -92,7 +92,7 @@ public class FaceVerificationService {
         String setupFaceMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 setupFaceMFAUrl=baseurl+ URLHelper.getShared().getSetupFaceMFA();
             }
@@ -126,7 +126,7 @@ public class FaceVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -197,7 +197,7 @@ public class FaceVerificationService {
                 @Override
                 public void onFailure(Call<SetupFaceMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FACE_MFA_FAILURE,t.getMessage(),
                             400,null,null));
                 }
@@ -207,7 +207,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -219,7 +219,7 @@ public class FaceVerificationService {
         String scannedFaceUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 scannedFaceUrl=baseurl+URLHelper.getShared().getScannedFaceURL();
             }
@@ -249,7 +249,7 @@ public class FaceVerificationService {
 
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -314,7 +314,7 @@ public class FaceVerificationService {
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -323,7 +323,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Face Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Face Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("Face Service exception"+e.getMessage());
         }
@@ -339,7 +339,7 @@ public class FaceVerificationService {
     {
         String enrollFaceMFAUrl="";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 enrollFaceMFAUrl = baseurl + URLHelper.getShared().getEnrollFaceMFA();
             } else {
@@ -364,7 +364,7 @@ public class FaceVerificationService {
             {
                 deviceInfoEntity=deviceInfoEntityFromParam;
             }
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                  deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -383,7 +383,7 @@ public class FaceVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -468,7 +468,7 @@ public class FaceVerificationService {
                     @Override
                     public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
                         Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                        LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                         callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                     }
                 });
@@ -531,7 +531,7 @@ public class FaceVerificationService {
                     @Override
                     public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
                         Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                        LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                         callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                     }
                 });
@@ -540,7 +540,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -554,7 +554,7 @@ public class FaceVerificationService {
     {
         String enrollFaceMFAUrl="";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 enrollFaceMFAUrl = baseurl + URLHelper.getShared().getEnrollFaceMFA();
             } else {
@@ -579,7 +579,7 @@ public class FaceVerificationService {
             {
                 deviceInfoEntity=deviceInfoEntityFromParam;
             }
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -596,7 +596,7 @@ public class FaceVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -685,7 +685,7 @@ public class FaceVerificationService {
                 @Override
                 public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -694,7 +694,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -706,7 +706,7 @@ public class FaceVerificationService {
         String initiateFaceMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateFaceMFAUrl=baseurl+URLHelper.getShared().getInitiateFaceMFA();
             }
@@ -734,7 +734,7 @@ public class FaceVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -798,7 +798,7 @@ public class FaceVerificationService {
                 @Override
                 public void onFailure(Call<InitiateFaceMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.addRecordToLog("InitiateFaceMFAResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("InitiateFaceMFAResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -807,7 +807,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("InitiateFaceMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiateFaceMFAResponseEntity Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("InitiateFaceMFAResponseEntity Service exception"+e.getMessage());
         }
@@ -820,7 +820,7 @@ public class FaceVerificationService {
         String authenticateFaceMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateFaceMFAUrl=baseurl+URLHelper.getShared().getAuthenticateFaceMFA();
             }
@@ -848,7 +848,7 @@ public class FaceVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -925,7 +925,7 @@ public class FaceVerificationService {
                     @Override
                     public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
                         Timber.e("Failure in AuthenticateFaceResponseEntity service call" + t.getMessage());
-                        LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure" + t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure" + t.getMessage());
                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
                 });
@@ -984,7 +984,7 @@ public class FaceVerificationService {
                     @Override
                     public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
                         Timber.e("Failure in AuthenticateFaceResponseEntity service call" + t.getMessage());
-                        LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure" + t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure" + t.getMessage());
                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
                 });
@@ -994,7 +994,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateFaceMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateFaceMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateFaceMFA Service exception"+e.getMessage());
         }
@@ -1008,7 +1008,7 @@ public class FaceVerificationService {
         String authenticateFaceMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateFaceMFAUrl=baseurl+URLHelper.getShared().getAuthenticateFaceMFA();
             }
@@ -1036,7 +1036,7 @@ public class FaceVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -1120,7 +1120,7 @@ public class FaceVerificationService {
                 @Override
                 public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
                     Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -1129,7 +1129,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateFaceMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateFaceMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateFaceMFA Service exception"+e.getMessage());
         }

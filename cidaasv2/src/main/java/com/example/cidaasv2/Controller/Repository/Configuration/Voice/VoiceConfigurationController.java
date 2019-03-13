@@ -456,7 +456,7 @@ public class VoiceConfigurationController {
                                         instceID= Cidaas.instanceId;
 
                                         Timber.e("");
-                                        if(instceID!=null && instceID!="")
+                                        if(instceID!=null && !instceID.equals(""))
                                         {
                                             this.cancel();
                                             onFinish();
@@ -464,7 +464,7 @@ public class VoiceConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" ) {
+                                        if(instceID!=null && !instceID.equals("")) {
 
                                             //Todo call initiate
                                             final InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity=new InitiateVoiceMFARequestEntity();

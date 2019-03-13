@@ -71,7 +71,7 @@ public class TenantService {
         String TenantUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
@@ -150,7 +150,8 @@ public class TenantService {
             });
         }
         catch (Exception e)
-        { String loggerMessage = "TenantService-getTenantInfoException: Error Message - " + e.getMessage();LogFile.addRecordToLog(loggerMessage); Timber.d(e.getMessage());callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        { String loggerMessage = "TenantService-getTenantInfoException: Error Message - " + e.getMessage();
+        LogFile.getShared(context).addRecordToLog(loggerMessage); Timber.d(e.getMessage());callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
     }
 

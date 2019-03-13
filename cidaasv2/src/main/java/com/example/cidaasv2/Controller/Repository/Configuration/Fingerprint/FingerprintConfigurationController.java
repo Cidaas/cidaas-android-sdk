@@ -735,7 +735,7 @@ public class FingerprintConfigurationController {
                                         instceID= Cidaas.instanceId;
 
                                         Timber.e("");
-                                        if(instceID!=null && instceID!="")
+                                        if(instceID!=null && !instceID.equals(""))
                                         {
                                             this.cancel();
                                             onFinish();
@@ -743,7 +743,7 @@ public class FingerprintConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="" ) {
+                                        if(instceID!=null && !instceID.equals("")) {
 
                                             //Todo call initiate
                                             final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity=new InitiateFingerprintMFARequestEntity();

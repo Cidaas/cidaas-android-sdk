@@ -94,7 +94,7 @@ public class SMSConfigurationController {
     {
         try{
 
-            if(Sub!="" && StatusId!="")
+            if(!Sub.equals("") && !StatusId.equals(""))
             {
                 final EnrollSMSMFARequestEntity enrollSMSMFARequestEntity=new EnrollSMSMFARequestEntity();
                 enrollSMSMFARequestEntity.setCode(code);
@@ -214,7 +214,7 @@ public class SMSConfigurationController {
     {
         try{
 
-            if(authenticateSMSRequestEntity.getStatusId()!=null && authenticateSMSRequestEntity.getStatusId()!="") {
+            if(authenticateSMSRequestEntity.getStatusId()!=null && !authenticateSMSRequestEntity.getStatusId().equals("")) {
                 if ( baseurl != null && !baseurl.equals("")) {
                     //Todo Service call
                     SMSVerificationService.getShared(context).authenticateSMSMFA(baseurl, authenticateSMSRequestEntity,null,

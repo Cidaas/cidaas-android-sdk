@@ -544,7 +544,7 @@ public class FIDOConfigurationController {
                                         instceID= Cidaas.instanceId;
 
                                         Timber.e("");
-                                        if(instceID!=null && instceID!="")
+                                        if(instceID!=null && !instceID.equals(""))
                                         {
                                             this.cancel();
                                             onFinish();
@@ -552,7 +552,7 @@ public class FIDOConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="") {
+                                        if(instceID!=null && !instceID.equals("")) {
 
                                             //Todo call initiate
                                             final InitiateFIDOMFARequestEntity initiateFIDOMFARequestEntity=new InitiateFIDOMFARequestEntity();

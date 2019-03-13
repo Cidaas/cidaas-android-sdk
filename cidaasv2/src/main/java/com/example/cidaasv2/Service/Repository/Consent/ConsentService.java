@@ -74,7 +74,7 @@ public class ConsentService {
         String ConsentstringDetailsUrl;
         try {
 
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 ConsentstringDetailsUrl = baseurl +URLHelper.getShared().getConsent_details()+consentName;
             } else {
@@ -164,7 +164,7 @@ public class ConsentService {
         String consentAcceptUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 consentAcceptUrl=baseurl+URLHelper.getShared().getAcceptConsent();
             }
@@ -257,7 +257,7 @@ public class ConsentService {
                 @Override
                 public void onFailure(Call<ConsentManagementAcceptResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -268,7 +268,7 @@ public class ConsentService {
         {
             Timber.e("acceptConsent Service exception"+e.getMessage());
 
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage(), 400,null,null));
 
         }
@@ -282,7 +282,7 @@ public class ConsentService {
         String resumeConsentUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 resumeConsentUrl=baseurl+URLHelper.getShared().getResumeConsentURL()+resumeConsentRequestEntity.getTrack_id();
             }
@@ -380,7 +380,7 @@ public class ConsentService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
             Timber.d(e.getMessage());
             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null,null));
 

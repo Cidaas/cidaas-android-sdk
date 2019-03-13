@@ -185,10 +185,10 @@ public class EmailConfigurationController {
 
             //Todo call Inititate
 
-            if ( initiateEmailMFARequestEntity.getUsageType() != null && initiateEmailMFARequestEntity.getUsageType() != "" &&
-                    initiateEmailMFARequestEntity.getSub() != null && initiateEmailMFARequestEntity.getSub() != "" &&
+            if ( initiateEmailMFARequestEntity.getUsageType() != null && !initiateEmailMFARequestEntity.getUsageType().equals("") &&
+                    initiateEmailMFARequestEntity.getSub() != null && !initiateEmailMFARequestEntity.getSub().equals("") &&
                     /*initiateEmailMFARequestEntity.getUserDeviceId() != null && initiateEmailMFARequestEntity.getUserDeviceId() != "" &&*/
-                    initiateEmailMFARequestEntity.getVerificationType() != null && initiateEmailMFARequestEntity.getVerificationType() != ""&&
+                    initiateEmailMFARequestEntity.getVerificationType() != null && !initiateEmailMFARequestEntity.getVerificationType().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 EmailVerificationService.getShared(context).initiateEmailMFA(baseurl, initiateEmailMFARequestEntity, null,new Result<InitiateEmailMFAResponseEntity>() {
@@ -225,8 +225,8 @@ public class EmailConfigurationController {
 
             authenticateEmailRequestEntity.setStatusId(statusId);
 
-            if (authenticateEmailRequestEntity.getCode() != null && authenticateEmailRequestEntity.getCode() != "" &&
-                    authenticateEmailRequestEntity.getStatusId() != null && authenticateEmailRequestEntity.getStatusId() != "" &&
+            if (authenticateEmailRequestEntity.getCode() != null && !authenticateEmailRequestEntity.getCode().equals("") &&
+                    authenticateEmailRequestEntity.getStatusId() != null && !authenticateEmailRequestEntity.getStatusId().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 EmailVerificationService.getShared(context).authenticateEmailMFA(baseurl, authenticateEmailRequestEntity,null,

@@ -125,7 +125,7 @@ public class RequestIdService {
             //Todo Construct URl Checking,Add Parameter(FieldMap) pending
             urlComponents = new URLHelper();
 
-            if (loginProperties.get("DomainURL") == null || loginProperties.get("DomainURL") == "" || !((Hashtable) loginProperties).containsKey("DomainURL")) {
+            if (loginProperties.get("DomainURL") == null || loginProperties.get("DomainURL").equals("") || !((Hashtable) loginProperties).containsKey("DomainURL")) {
                 //return Null
                 baseUrl = "";
             } else {

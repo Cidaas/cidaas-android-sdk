@@ -60,8 +60,8 @@ public class RegistrationController {
     {
         try{
 
-            if (registrationSetupRequestEntity.getAcceptedLanguage() != null && registrationSetupRequestEntity.getAcceptedLanguage() != "" &&
-                    registrationSetupRequestEntity.getRequestId() != null && registrationSetupRequestEntity.getRequestId() != ""
+            if (registrationSetupRequestEntity.getAcceptedLanguage() != null && !registrationSetupRequestEntity.getAcceptedLanguage().equals("") &&
+                    registrationSetupRequestEntity.getRequestId() != null && !registrationSetupRequestEntity.getRequestId().equals("")
                     && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 RegistrationService.getShared(context).getRegistrationSetup(baseurl, registrationSetupRequestEntity,null,
@@ -127,9 +127,9 @@ public class RegistrationController {
                                            final Result<RegisterNewUserResponseEntity> result){
         try{
 
-            if (registerNewUserRequestEntity.getRequestId() != null && registerNewUserRequestEntity.getRequestId() != "" &&
+            if (registerNewUserRequestEntity.getRequestId() != null && !registerNewUserRequestEntity.getRequestId().equals("") &&
                     registerNewUserRequestEntity.getRegistrationEntity() != null &&
-                    registerNewUserRequestEntity.getRegistrationEntity().getFamily_name() != "" && baseurl != null && !baseurl.equals("")) {
+                    !registerNewUserRequestEntity.getRegistrationEntity().getFamily_name().equals("") && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,null,
                         new Result<RegisterNewUserResponseEntity>() {
@@ -174,10 +174,10 @@ public class RegistrationController {
     {
         try{
 
-            if (registrationEntity.getRequestId() != null && registrationEntity.getRequestId() != "" &&
-                    registrationEntity.getProcessingType() != null && registrationEntity.getProcessingType() != "" &&
-                    registrationEntity.getVerificationMedium() != null && registrationEntity.getVerificationMedium() != "" &&
-                    registrationEntity.getSub() != null && registrationEntity.getSub() != ""
+            if (registrationEntity.getRequestId() != null && !registrationEntity.getRequestId().equals("") &&
+                    registrationEntity.getProcessingType() != null && !registrationEntity.getProcessingType().equals("") &&
+                    registrationEntity.getVerificationMedium() != null && !registrationEntity.getVerificationMedium().equals("") &&
+                    registrationEntity.getSub() != null && !registrationEntity.getSub().equals("")
                     && baseurl != null && !baseurl.equals("")) {
 
                 //Todo Service call
@@ -215,7 +215,7 @@ public class RegistrationController {
     {
         try{
 
-            if (accvid != null && accvid != "" && code != null && code != "" &&
+            if (accvid != null && !accvid.equals("") && code != null && !code.equals("") &&
                     baseurl != null && !baseurl.equals("")) {
 
                 RegisterUserAccountVerifyRequestEntity registrationEntity=new RegisterUserAccountVerifyRequestEntity();

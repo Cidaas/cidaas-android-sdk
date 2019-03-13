@@ -61,7 +61,7 @@ public class LogoutController {
         {
             String LogoutURL="";
             if(access_token_hint!=null && !access_token_hint.equals("")) {
-                if(post_logout_redirect_uri!=null && post_logout_redirect_uri!="") {
+                if(post_logout_redirect_uri!=null && !post_logout_redirect_uri.equals("")) {
                     LogoutURL = baseurl + URLHelper.getShared().getLogoutURLForEmbeddedBrowser() + "?access_token_hint=" + access_token_hint +"&post_logout_redirect_uri="+post_logout_redirect_uri;
                     result.success(LogoutURL);
                 }

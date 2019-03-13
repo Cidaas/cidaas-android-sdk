@@ -78,7 +78,7 @@ public class ChangePasswordService {
         String changePasswordUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For Change Password
                 changePasswordUrl=baseurl+ URLHelper.getShared().getChangePasswordURl();
             }

@@ -92,9 +92,9 @@ public class VerificationSettingsService {
         String mfalistUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                if(sub!=null && sub!=""){
+                if(sub!=null && !sub.equals("")){
                     //Construct URL For RequestId
 
                     //mfalistUrl=baseurl+ URLHelper.getShared().getMfa_URL();
@@ -224,10 +224,10 @@ public class VerificationSettingsService {
         String deleteMFAURL = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
 
                 //Construct URL For RequestId
-                if(userDeviceID!=null && userDeviceID!=""){
+                if(userDeviceID!=null && !userDeviceID.equals("")){
 
                     //Delete MFA
                     deleteMFAURL=baseurl+ URLHelper.getShared().getDeleteMFA(userDeviceID,verificationType);
@@ -347,10 +347,10 @@ public class VerificationSettingsService {
         String deleteMFAURL = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
 
                 //Construct URL For RequestId
-                if(userDeviceID!=null && userDeviceID!=""){
+                if(userDeviceID!=null && !userDeviceID.equals("")){
 
                     //Delete MFA
                     deleteMFAURL=baseurl+ URLHelper.getShared().getDeleteAllMFA()+userDeviceID;
@@ -467,7 +467,7 @@ public class VerificationSettingsService {
         String denyNotificationURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="") {
+            if(baseurl!=null && !baseurl.equals("")) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -561,7 +561,7 @@ public class VerificationSettingsService {
         String getPendingNotificationURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="" ) {
+            if(baseurl!=null && !baseurl.equals("") ) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -664,7 +664,7 @@ public class VerificationSettingsService {
         String fcmTokenURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="") {
+            if(baseurl!=null && !baseurl.equals("")) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -686,7 +686,7 @@ public class VerificationSettingsService {
             {
                 deviceInfoEntity=deviceInfoEntityFromParam;
             }
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
             Map<String, String> headers = new Hashtable<>();
@@ -772,7 +772,7 @@ public class VerificationSettingsService {
         String ConfiguredMFAListURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="") {
+            if(baseurl!=null && !baseurl.equals("")) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -808,7 +808,7 @@ public class VerificationSettingsService {
                             configuredMFAListEntity.setSuccess(response.isSuccessful());
                             configuredMFAListEntity.setSendedURL(Sendedurl);
 
-                            LogFile.addRecordToLog(Sendedurl);
+                            LogFile.getShared(context).addRecordToLog(Sendedurl);
 
                             callback.success(configuredMFAListEntity);
 

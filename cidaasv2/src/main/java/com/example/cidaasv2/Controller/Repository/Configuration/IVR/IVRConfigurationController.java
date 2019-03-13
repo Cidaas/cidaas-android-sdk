@@ -91,7 +91,7 @@ public class IVRConfigurationController {
                             @Override
                             public void success(UserinfoEntity userresult) {
 
-                                if(userresult.getMobile_number()!=null && userresult.getMobile_number()!="") {
+                                if(userresult.getMobile_number()!=null && !userresult.getMobile_number().equals("")) {
 
                                     //Done add phone number
                                     IVRVerificationService.getShared(context).setupIVRMFA(baseurl, accessTokenresult.getAccess_token(), userresult.getMobile_number(), null,
@@ -144,7 +144,7 @@ public class IVRConfigurationController {
     {
         try{
           //Problem may occur due to sub
-            if(Sub!="" && StatusId!="" && Sub!=null && StatusId!=null)
+            if(!Sub.equals("") && !StatusId.equals("") && Sub!=null && StatusId!=null)
             {
                 final EnrollIVRMFARequestEntity enrollIVRMFARequestEntity=new EnrollIVRMFARequestEntity();
                 enrollIVRMFARequestEntity.setCode(code);
@@ -211,9 +211,9 @@ public class IVRConfigurationController {
 
             //Todo call Inititate
 
-            if ( initiateIVRMFARequestEntity.getUsageType() != null && initiateIVRMFARequestEntity.getUsageType() != "" &&
-                    initiateIVRMFARequestEntity.getSub() != null && initiateIVRMFARequestEntity.getSub() != "" &&
-                    initiateIVRMFARequestEntity.getVerificationType() != null && initiateIVRMFARequestEntity.getVerificationType() != ""&&
+            if ( initiateIVRMFARequestEntity.getUsageType() != null && !initiateIVRMFARequestEntity.getUsageType().equals("") &&
+                    initiateIVRMFARequestEntity.getSub() != null && !initiateIVRMFARequestEntity.getSub().equals("") &&
+                    initiateIVRMFARequestEntity.getVerificationType() != null && !initiateIVRMFARequestEntity.getVerificationType().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 IVRVerificationService.getShared(context).initiateIVRMFA(baseurl, initiateIVRMFARequestEntity, null,new Result<InitiateIVRMFAResponseEntity>() {
@@ -249,7 +249,7 @@ public class IVRConfigurationController {
                           final Result<LoginCredentialsResponseEntity> result){
         try{
 
-            if(authenticateIVRRequestEntity.getStatusId()!=null && authenticateIVRRequestEntity.getStatusId()!="") {
+            if(authenticateIVRRequestEntity.getStatusId()!=null && !authenticateIVRRequestEntity.getStatusId().equals("")) {
                 if ( baseurl != null && !baseurl.equals("")) {
                     //Todo Service call
                     IVRVerificationService.getShared(context).authenticateIVRMFA(baseurl, authenticateIVRRequestEntity, null,new Result<AuthenticateIVRResponseEntity>() {

@@ -74,7 +74,7 @@ public class UserProfileService {
         String InternalUserProfileUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!="" && sub!=null && sub!=""){
+            if(baseurl!=null && !baseurl.equals("") && sub!=null && !sub.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise

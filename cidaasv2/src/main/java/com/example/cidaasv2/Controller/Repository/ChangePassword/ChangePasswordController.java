@@ -100,10 +100,10 @@ public class ChangePasswordController {
     {
         try {
 
-            if(changePasswordRequestEntity.getConfirm_password() != null &&changePasswordRequestEntity.getConfirm_password()  != ""
-                    && changePasswordRequestEntity.getNew_password() != null &&changePasswordRequestEntity.getNew_password()  != ""
-                    && changePasswordRequestEntity.getIdentityId() != null &&changePasswordRequestEntity.getIdentityId()  != ""
-                    && changePasswordRequestEntity.getOld_password() != null &&changePasswordRequestEntity.getOld_password()  != ""
+            if(changePasswordRequestEntity.getConfirm_password() != null && !changePasswordRequestEntity.getConfirm_password().equals("")
+                    && changePasswordRequestEntity.getNew_password() != null && !changePasswordRequestEntity.getNew_password().equals("")
+                    && changePasswordRequestEntity.getIdentityId() != null && !changePasswordRequestEntity.getIdentityId().equals("")
+                    && changePasswordRequestEntity.getOld_password() != null && !changePasswordRequestEntity.getOld_password().equals("")
                     && baseurl != null && !baseurl.equals("")){
 
                 ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl,null,
