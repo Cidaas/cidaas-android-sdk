@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -80,7 +81,7 @@ public class DocumentScannerService {
         String DocumentURL = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
@@ -185,7 +186,7 @@ public class DocumentScannerService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
         }
     }
 }

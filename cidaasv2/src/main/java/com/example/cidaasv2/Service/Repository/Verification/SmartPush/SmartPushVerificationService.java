@@ -83,7 +83,7 @@ public class SmartPushVerificationService {
         String scannedSmartPushUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 scannedSmartPushUrl=baseurl+ URLHelper.getShared().getScannedSmartPushURL();
             }
@@ -112,7 +112,7 @@ public class SmartPushVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -178,7 +178,7 @@ public class SmartPushVerificationService {
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -187,7 +187,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -200,7 +200,7 @@ public class SmartPushVerificationService {
         String setupSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 setupSmartPushMFAUrl=baseurl+URLHelper.getShared().getSetupSmartPushMFA();
             }
@@ -235,7 +235,7 @@ public class SmartPushVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -304,7 +304,7 @@ public class SmartPushVerificationService {
                 @Override
                 public void onFailure(Call<SetupSmartPushMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -313,7 +313,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -326,7 +326,7 @@ public class SmartPushVerificationService {
         String enrollSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 enrollSmartPushMFAUrl=baseurl+URLHelper.getShared().getEnrollSmartPushMFA();
             }
@@ -356,7 +356,7 @@ public class SmartPushVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -426,7 +426,7 @@ public class SmartPushVerificationService {
                 @Override
                 public void onFailure(Call<EnrollSmartPushMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -435,7 +435,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -448,7 +448,7 @@ public class SmartPushVerificationService {
         String initiateSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateSmartPushMFAUrl=baseurl+URLHelper.getShared().getInitiateSmartPushMFA();
             }
@@ -478,7 +478,7 @@ public class SmartPushVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -549,7 +549,7 @@ public class SmartPushVerificationService {
                 @Override
                 public void onFailure(Call<InitiateSmartPushMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateSmartPushMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.addRecordToLog("InitiateSmartPushMFAResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("InitiateSmartPushMFAResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -585,7 +585,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("InitiateSmartPushMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiateSmartPushMFAResponseEntity Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("InitiateSmartPushMFAResponseEntity Service exception"+e.getMessage());
         }
@@ -599,7 +599,7 @@ public class SmartPushVerificationService {
         String authenticateSmartPushMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateSmartPushMFAUrl=baseurl+URLHelper.getShared().getAuthenticateSmartPushMFA();
             }
@@ -629,7 +629,7 @@ public class SmartPushVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -700,7 +700,7 @@ public class SmartPushVerificationService {
                 @Override
                 public void onFailure(Call<AuthenticateSmartPushResponseEntity> call, Throwable t) {
                     Timber.e("Failure in AuthenticateSmartPushResponseEntity service call"+t.getMessage());
-                    LogFile.addRecordToLog("AuthenticateSmartPushResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("AuthenticateSmartPushResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -709,7 +709,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateSmartPushMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateSmartPushMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateSmartPushMFA Service exception"+e.getMessage());
         }

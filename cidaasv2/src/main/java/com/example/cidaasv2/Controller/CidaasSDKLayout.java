@@ -135,7 +135,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     public void failure(WebAuthError error) {
                         String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
                                 + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     }
                 });
             }
@@ -144,7 +144,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             public void failure(WebAuthError error) {
                 String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
                         + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
             }
         });
     }
@@ -268,17 +268,17 @@ public class CidaasSDKLayout extends RelativeLayout {
                                         }
                                     });
                                     String loggerMessage = "Success Login Code";
-                                    LogFile.addRecordToLog(loggerMessage);
+                                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                                 } else {
                                     hideLoader();
                                     WebAuthError.getShared(GLOBAL_CONTEXT).customException(400,"Invlaid URL",400);
 
-                                    LogFile.addRecordToLog("Invalid URL");
+                                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Invalid URL");
                                 }
                             } else {
                                 hideLoader();
                                 WebAuthError.getShared(GLOBAL_CONTEXT).customException(400,"Invlaid URL",400);
-                                LogFile.addRecordToLog("Invalid URL");
+                                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Invalid URL");
                             }
                         } else {
                             String removable_string = result.get("DomainURL") + "/user-ui/#/login?code=";
@@ -286,7 +286,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                             String[] com = pre_string.split("&");
                             if (com.length > 0) {
                                 String pre_auth_code = com[0];
-                                if (CidaasSDKLayout.GLOBAL_PRE_AUTH_CODE != "") {
+                                if (!CidaasSDKLayout.GLOBAL_PRE_AUTH_CODE.equals("")) {
                                     CidaasSDKLayout.GLOBAL_PRE_AUTH_CODE = pre_auth_code;
                                 }
                                 CidaasSDKLayout.GLOBAL_INITIAL_CODE_VERIFIER = CidaasSDKLayout.GLOBAL_CODE_VERIFIER;
@@ -308,7 +308,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
                     + e.getLocalizedMessage() + ", Error Message - " + e.getMessage() + ", Status Code - " + e.getCause();
             Timber.e(e.getMessage());
-            LogFile.addRecordToLog(loggerMessage);
+            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
         }
     }
 
@@ -347,7 +347,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                             callback.failure(error);
                             String loggerMessage = "Login URL service failure : " + "Error Code - "
                                     + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                            LogFile.addRecordToLog(loggerMessage);
+                            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                         }
                     });
                 }
@@ -393,7 +393,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             }
             catch (Exception e)
             {
-                LogFile.addRecordToLog(e.getMessage()); return false;
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(e.getMessage()); return false;
             }
         }
 
@@ -526,7 +526,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     }
                     else
                     {
-                        LogFile.addRecordToLog("Callback must not be empty");
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Callback must not be empty");
 
                     }
                 }
@@ -540,10 +540,10 @@ public class CidaasSDKLayout extends RelativeLayout {
                     }
                     else
                     {
-                        LogFile.addRecordToLog("Callback must not be empty");
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Callback must not be empty");
 
                     }
-                    LogFile.addRecordToLog(error.getErrorMessage());
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(error.getErrorMessage());
                 }
 
             });
@@ -558,10 +558,10 @@ public class CidaasSDKLayout extends RelativeLayout {
             }
             else
             {
-                LogFile.addRecordToLog("Callback must not be empty");
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Callback must not be empty");
 
             }
-            LogFile.addRecordToLog("Exception: CidaasSDKLayout: googlesdkflow():- "+e.getMessage());
+            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Exception: CidaasSDKLayout: googlesdkflow():- "+e.getMessage());
         }
     }
 
@@ -583,7 +583,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                    }
                    else
                    {
-                       LogFile.addRecordToLog("Callback must not be empty");
+                       LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Callback must not be empty");
 
                    }
 
@@ -598,10 +598,10 @@ public class CidaasSDKLayout extends RelativeLayout {
                     }
                     else
                     {
-                        LogFile.addRecordToLog("Callback must not be empty");
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Callback must not be empty");
 
                     }
-                    LogFile.addRecordToLog(error.getErrorMessage());
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(error.getErrorMessage());
                 }
             });
 
@@ -616,10 +616,10 @@ public class CidaasSDKLayout extends RelativeLayout {
             }
             else
             {
-                LogFile.addRecordToLog("Callback must not be empty");
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Callback must not be empty");
 
             }
-            LogFile.addRecordToLog("Exception: CidaasSDKLayout: facebooksdkflow():- "+e.getMessage());
+            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Exception: CidaasSDKLayout: facebooksdkflow():- "+e.getMessage());
         }
     }
 
@@ -645,7 +645,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     }
                     settings.setUserAgentString("\"Mozilla/5.0 (Linux; U; Android 2.2.1; en-us; Nexus One Build/FRG83) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1\"");
                     webViewInstance.setWebViewClient(new CidaasWebViewClient());
-                    LogFile.addRecordToLog("Get Login");
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Get Login");
                 }
 
                 @Override
@@ -658,7 +658,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog(e.getMessage());
+            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(e.getMessage());
         }
     }
 
@@ -733,7 +733,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     } else if (lpresult.get("DomainURL") == "") {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("AuthorizationURL is missing");
-                        LogFile.addRecordToLog(textViewInstance.getText().toString());
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(textViewInstance.getText().toString());
                         webViewInstance.setVisibility(GONE);
                         imageViewInstance.setVisibility(VISIBLE);
                         textViewInstance.setVisibility(VISIBLE);
@@ -741,7 +741,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     } else if (lpresult.get("RedirectURL") == "") {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("RedirectURI is missing");
-                        LogFile.addRecordToLog(textViewInstance.getText().toString());
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(textViewInstance.getText().toString());
                         webViewInstance.setVisibility(GONE);
                         imageViewInstance.setVisibility(VISIBLE);
                         textViewInstance.setVisibility(VISIBLE);
@@ -749,7 +749,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     } else if (lpresult.get("ClientId") == "") {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("Client Id is missing");
-                        LogFile.addRecordToLog(textViewInstance.getText().toString());
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(textViewInstance.getText().toString());
                         webViewInstance.setVisibility(GONE);
                         imageViewInstance.setVisibility(VISIBLE);
                         textViewInstance.setVisibility(VISIBLE);
@@ -760,7 +760,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         textViewInstance.setVisibility(GONE);
                         buttonInstance.setVisibility(GONE);
                         login(relativeLayout);
-                        LogFile.addRecordToLog("Login loaded Sucessfully");
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Login loaded Sucessfully");
                         //loginwithNativeBrowser(GLOBAL_CONTEXT.getApplicationContext());
                     }
                 }
@@ -768,7 +768,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 @Override
                 public void failure(WebAuthError error) {
                     loginResultcallback.failure(error);
-                    LogFile.addRecordToLog("Error:Login "+error.getErrorMessage());
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Error:Login "+error.getErrorMessage());
                 }
             });
 
@@ -778,7 +778,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         catch (Exception e)
         {
             loginResultcallback.failure(WebAuthError.getShared(GLOBAL_CONTEXT).customException(400,""+e.getMessage(),417));
-            LogFile.addRecordToLog("Exception: CidaasSDKLayout: WebAuthError "+e.getMessage());
+            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog("Exception: CidaasSDKLayout: WebAuthError "+e.getMessage());
         }
     }
 
@@ -843,7 +843,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog(e.getMessage());
+            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(e.getMessage());
         }
 
     }
@@ -859,7 +859,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog(e.getMessage());
+            LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(e.getMessage());
         }
     }
 
@@ -879,7 +879,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     webAuthError = webAuthError.propertyMissingException();
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message -  DomainURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                    LogFile.addRecordToLog(loggerMessage);
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
@@ -887,7 +887,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - ClientId is missing"
                             + webAuthError.errorCode + ", Error Message -  ClientId is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
-                    LogFile.addRecordToLog(loggerMessage);
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
@@ -895,7 +895,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - RedirectURL is missing"
                             + webAuthError.errorCode + ", Error Message -  RedirectURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
-                    LogFile.addRecordToLog(loggerMessage);
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 Cidaas.baseurl = loginProperties.get("DomainURL");
@@ -934,7 +934,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         loginPropertiesResult.failure(error);
                         String loggerMessage = "Read From File failure : " + "Error Code - " + error.errorCode +
                                 ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                        LogFile.addRecordToLog(loggerMessage);
+                        LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     }
                 });
 
@@ -946,7 +946,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 //Return File Reading Error
                 String loggerMessage = "Read From File failure : "
                         + "Error Code - " + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                 loginPropertiesResult.failure(error);
             }
         });
@@ -966,7 +966,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
                         + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
 
                 return;
@@ -976,7 +976,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
                 return;
             }
@@ -985,7 +985,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Check PKCE Flow  readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                 savedResult.failure(webAuthError);
                 return;
             }
@@ -1035,7 +1035,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     webAuthError = webAuthError.propertyMissingException();
                     String loggerMessage = "Check saved properties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                    LogFile.addRecordToLog(loggerMessage);
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                     return;
                 }
@@ -1044,7 +1044,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
-                    LogFile.addRecordToLog(loggerMessage);
+                    LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                     return;
                 }

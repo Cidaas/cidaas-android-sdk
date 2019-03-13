@@ -1,8 +1,6 @@
 package com.example.cidaasv2.Helper.Extension;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Interface.IOAuthExcepiton;
@@ -142,6 +140,18 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorEntity=errorEntity;
         return WebAuthError.shared;
     }
+
+
+ //Location History Failure Exception
+ @Override
+ public WebAuthError locationHistoryException() {
+
+     WebAuthError.shared.errorCode=WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE;
+     WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
+     WebAuthError.shared.ErrorMessage=context.getString(R.string.LOCATION_HISTORY_FAILURE);
+     return WebAuthError.shared;
+ }
+
 //LoginUrl MissingException
     @Override
     public WebAuthError loginURLMissingException() {

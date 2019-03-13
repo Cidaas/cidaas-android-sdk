@@ -10,6 +10,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import androidx.annotation.NonNull;
 import retrofit2.Call;
@@ -90,9 +92,9 @@ public class VerificationSettingsService {
         String mfalistUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                if(sub!=null && sub!=""){
+                if(sub!=null && !sub.equals("")){
                     //Construct URL For RequestId
 
                     //mfalistUrl=baseurl+ URLHelper.getShared().getMfa_URL();
@@ -222,10 +224,10 @@ public class VerificationSettingsService {
         String deleteMFAURL = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
 
                 //Construct URL For RequestId
-                if(userDeviceID!=null && userDeviceID!=""){
+                if(userDeviceID!=null && !userDeviceID.equals("")){
 
                     //Delete MFA
                     deleteMFAURL=baseurl+ URLHelper.getShared().getDeleteMFA(userDeviceID,verificationType);
@@ -345,10 +347,10 @@ public class VerificationSettingsService {
         String deleteMFAURL = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
 
                 //Construct URL For RequestId
-                if(userDeviceID!=null && userDeviceID!=""){
+                if(userDeviceID!=null && !userDeviceID.equals("")){
 
                     //Delete MFA
                     deleteMFAURL=baseurl+ URLHelper.getShared().getDeleteAllMFA()+userDeviceID;
@@ -465,7 +467,7 @@ public class VerificationSettingsService {
         String denyNotificationURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="") {
+            if(baseurl!=null && !baseurl.equals("")) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -559,7 +561,7 @@ public class VerificationSettingsService {
         String getPendingNotificationURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="" ) {
+            if(baseurl!=null && !baseurl.equals("") ) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -662,7 +664,7 @@ public class VerificationSettingsService {
         String fcmTokenURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="") {
+            if(baseurl!=null && !baseurl.equals("")) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -684,7 +686,7 @@ public class VerificationSettingsService {
             {
                 deviceInfoEntity=deviceInfoEntityFromParam;
             }
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
             Map<String, String> headers = new Hashtable<>();
@@ -770,7 +772,7 @@ public class VerificationSettingsService {
         String ConfiguredMFAListURL = "";
         try{
 
-            if(baseurl!=null && baseurl!="") {
+            if(baseurl!=null && !baseurl.equals("")) {
 
                 //Construct URL For
                 //Deny Notification MFA
@@ -788,6 +790,8 @@ public class VerificationSettingsService {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
+            final String Sendedurl="ConfiguredMFAListURL :"+ConfiguredMFAListURL+" sub:-"+sub+"  userDeviceId:-"+userDeviceId;
+
             cidaasSDKService.getConfiguredMFAList(ConfiguredMFAListURL,headers,sub,userDeviceId).enqueue(new Callback<ConfiguredMFAListEntity>()
             {
                 @Override
@@ -802,7 +806,12 @@ public class VerificationSettingsService {
 
                             configuredMFAListEntity.setStatus(response.code());
                             configuredMFAListEntity.setSuccess(response.isSuccessful());
+                            configuredMFAListEntity.setSendedURL(Sendedurl);
+
+                            LogFile.getShared(context).addRecordToLog(Sendedurl);
+
                             callback.success(configuredMFAListEntity);
+
                         }
 
                         else {

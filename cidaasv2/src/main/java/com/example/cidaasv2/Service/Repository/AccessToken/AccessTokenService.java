@@ -123,7 +123,7 @@ public class AccessTokenService {
             }
 
           //  baseurl=loginProperties.get("DomainURL");
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 getAccessTokenUrl=baseurl+ URLHelper.getShared().getTokenUrl();
             }
@@ -314,7 +314,7 @@ public class AccessTokenService {
             //TOdo Perform Null Check
            // url = querymap.get("TokenURL");
             baseurl=loginProperties.get("DomainURL");
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 url=baseurl+ URLHelper.getShared().getTokenUrl();
             }

@@ -118,7 +118,7 @@ public class AccessTokenController {
     {
         try
         {
-            if(sub!=null&&sub!="")
+            if(sub!=null&& !sub.equals(""))
             {
                 final AccessTokenModel accessTokenModel=DBHelper.getShared().getAccessToken(sub);
                 if(accessTokenModel!=null)

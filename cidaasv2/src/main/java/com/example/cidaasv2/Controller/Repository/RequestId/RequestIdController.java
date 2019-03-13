@@ -88,7 +88,7 @@ public class RequestIdController {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                         +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(context).addRecordToLog(loggerMessage);
                 Primaryresult.failure(webAuthError);
 
                 return;
@@ -98,7 +98,7 @@ public class RequestIdController {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                         +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(context).addRecordToLog(loggerMessage);
                 Primaryresult.failure(webAuthError);return;
             }
             if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
@@ -106,7 +106,7 @@ public class RequestIdController {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                         +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.getShared(context).addRecordToLog(loggerMessage);
                 Primaryresult.failure(webAuthError);return;
             }
 
@@ -130,7 +130,7 @@ public class RequestIdController {
                     Primaryresult.failure(error);
                     String loggerMessage = "Request-Id service failure : " +
                             "Error Code - " +error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
-                    LogFile.addRecordToLog(loggerMessage);
+                    LogFile.getShared(context).addRecordToLog(loggerMessage);
                 }
             },extraParams);
         }
@@ -139,7 +139,7 @@ public class RequestIdController {
             String mess=e.toString();
             Primaryresult.failure(WebAuthError.getShared(context).propertyMissingException());
             String loggerMessage = "Request-Id Controller failure : Error Message - " + e.getMessage();
-            LogFile.addRecordToLog(loggerMessage);
+            LogFile.getShared(context).addRecordToLog(loggerMessage);
         }
     }
 }

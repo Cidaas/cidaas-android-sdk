@@ -76,7 +76,7 @@ public class LoginService {
         String loginUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 loginUrl=baseurl+ URLHelper.getShared().getLoginWithCredentials();
             }
@@ -162,7 +162,7 @@ public class LoginService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
@@ -177,7 +177,7 @@ public class LoginService {
         String logoutUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 logoutUrl=baseurl+ URLHelper.getShared().getLogoutURLForEmbeddedBrowser();
             }
@@ -287,7 +287,7 @@ public class LoginService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("LOGOUT Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("LOGOUT Service exception"+e.getMessage());
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
@@ -302,7 +302,7 @@ public class LoginService {
         String resumeloginUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 resumeloginUrl=baseurl+URLHelper.getShared().getResumeLoginURL()+resumeLoginRequestEntity.getTrack_id();
             }
@@ -401,7 +401,7 @@ public class LoginService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
@@ -415,7 +415,7 @@ public class LoginService {
         String continuePasswordlessUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 continuePasswordlessUrl=baseurl+URLHelper.getShared().getPasswordlessContinueUrl()+resumeLoginRequestEntity.getTrack_id();
             }
@@ -519,7 +519,7 @@ public class LoginService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
         }
@@ -532,7 +532,7 @@ public class LoginService {
             String openIdurl = "";
             try{
 
-                if(baseurl!=null && baseurl!=""){
+                if(baseurl!=null && !baseurl.equals("")){
                     //Construct URL For RequestId
                     openIdurl=baseurl +URLHelper.getShared().getOpenIdURL();
                 }
@@ -615,7 +615,7 @@ public class LoginService {
             }
             catch (Exception e)
             {
-                LogFile.addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
+                LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
                 Timber.d(e.getMessage());
                 callback.failure(WebAuthError.getShared(context).propertyMissingException());
             }

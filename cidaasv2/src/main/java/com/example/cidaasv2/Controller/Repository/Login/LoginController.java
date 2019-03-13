@@ -251,10 +251,10 @@ public class LoginController {
                   String redirectURL=loginProperties.get("RedirectURL");
                   String challenge=challengeProperties.get("Challenge");
 
-                  if(clientId!=null && clientId!="" && redirectURL!=null && redirectURL!="" && challenge!=null && challenge!=""  ) {
+                  if(clientId!=null && !clientId.equals("") && redirectURL!=null && !redirectURL.equals("") && challenge!=null && !challenge.equals("")) {
 
                      String finalURL= URLHelper.getShared().constructLoginURL(authzURL, clientId, redirectURL, challenge, "login");
-                    if(finalURL!=null && finalURL!="") {
+                    if(finalURL!=null && !finalURL.equals("")) {
                         callbackResult.success(finalURL);
                     }
                     else
@@ -290,11 +290,11 @@ public class LoginController {
     {
         try
         {
-          if(baseurl!=null && baseurl!="" && provider!=null && provider!="" &&  requestId!=null && requestId!="")
+          if(baseurl!=null && !baseurl.equals("") && provider!=null && !provider.equals("") &&  requestId!=null && !requestId.equals(""))
           {
               String finalURL= URLHelper.getShared().constructSocialURL(baseurl, provider, requestId);
 
-              if(finalURL!=null && finalURL!="") {
+              if(finalURL!=null && !finalURL.equals("")) {
                   callbackResult.success(finalURL);
               }
               else

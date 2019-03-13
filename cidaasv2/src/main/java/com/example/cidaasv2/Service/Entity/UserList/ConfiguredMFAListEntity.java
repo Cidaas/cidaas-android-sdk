@@ -15,6 +15,16 @@ public class ConfiguredMFAListEntity implements Serializable{
     @JsonProperty("metaData")
     private MetadataSub metaData;
 
+    private String sendedURL;
+
+    public String getSendedURL() {
+        return sendedURL;
+    }
+
+    public void setSendedURL(String sendedURL) {
+        this.sendedURL = sendedURL;
+    }
+
     public boolean isSuccess() {
         return success;
     }

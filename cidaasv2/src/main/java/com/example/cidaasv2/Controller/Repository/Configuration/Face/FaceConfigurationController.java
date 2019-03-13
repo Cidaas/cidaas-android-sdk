@@ -469,7 +469,7 @@ public class FaceConfigurationController {
                                         instceID= Cidaas.instanceId;
 
                                         Timber.e("");
-                                        if(instceID!=null && instceID!="")
+                                        if(instceID!=null && !instceID.equals(""))
                                         {
                                             this.cancel();
                                             onFinish();
@@ -477,7 +477,7 @@ public class FaceConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && instceID!="") {
+                                        if(instceID!=null && !instceID.equals("")) {
 
                                             //Todo call initiate
                                             final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity=new InitiateFaceMFARequestEntity();

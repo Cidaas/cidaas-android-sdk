@@ -114,7 +114,7 @@ public class DocumentScannnerController {
     {
         try {
 
-            if(baseurl!=null && baseurl!="" && accessToken!=null && accessToken!="") {
+            if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
                 DocumentScannerService.getShared(context).sendDocuemntToService(baseurl, photo, accessToken,null, result);
             }
             else {

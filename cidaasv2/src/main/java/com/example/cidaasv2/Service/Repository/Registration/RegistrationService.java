@@ -86,7 +86,7 @@ public class RegistrationService {
         String RegistrationUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 RegistrationUrl=baseurl+ URLHelper.getShared().getRegistrationSetup(registrationSetupRequestEntity.getAcceptedLanguage(),registrationSetupRequestEntity.getRequestId());
             }
@@ -159,7 +159,7 @@ public class RegistrationService {
         String RegisterNewUserUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 RegisterNewUserUrl=baseurl+URLHelper.getShared().getRegisterNewUserurl();
             }
@@ -267,7 +267,7 @@ public class RegistrationService {
         String initiateAccountVerificationUrl = "";
         try{
 
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null || !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountInitiate();
             }
@@ -376,7 +376,7 @@ public class RegistrationService {
         String verifyAccountVerificationUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 verifyAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountVerify();
             }

@@ -91,11 +91,11 @@ public class ConsentController {
 
         //    consentManagementAcceptedRequestEntity.setName(ConsentName);
 
-            if (consentManagementAcceptedRequestEntity.getClient_id() != null && consentManagementAcceptedRequestEntity.getClient_id() != "" &&
+            if (consentManagementAcceptedRequestEntity.getClient_id() != null && !consentManagementAcceptedRequestEntity.getClient_id().equals("") &&
 
-                    consentManagementAcceptedRequestEntity.getSub() != null && consentManagementAcceptedRequestEntity.getSub() != "" &&
-                    consentManagementAcceptedRequestEntity.getName() != null && consentManagementAcceptedRequestEntity.getName() != "" &&
-                    consentManagementAcceptedRequestEntity.getVersion() != null && consentManagementAcceptedRequestEntity.getVersion() != ""
+                    consentManagementAcceptedRequestEntity.getSub() != null && !consentManagementAcceptedRequestEntity.getSub().equals("") &&
+                    consentManagementAcceptedRequestEntity.getName() != null && !consentManagementAcceptedRequestEntity.getName().equals("") &&
+                    consentManagementAcceptedRequestEntity.getVersion() != null && !consentManagementAcceptedRequestEntity.getVersion().equals("")
                     && baseurl != null && !baseurl.equals("")) {
 
                 //Todo Service call

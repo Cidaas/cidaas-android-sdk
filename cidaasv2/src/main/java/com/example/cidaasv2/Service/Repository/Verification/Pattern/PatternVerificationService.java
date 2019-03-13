@@ -86,7 +86,7 @@ public class PatternVerificationService {
                              final Result<SetupPatternMFAResponseEntity> callback) {
         String setupPatternMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 setupPatternMFAUrl = baseurl + URLHelper.getShared().getSetupPatternMFA();
             } else {
@@ -114,7 +114,7 @@ public class PatternVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -181,7 +181,7 @@ public class PatternVerificationService {
                         @Override
                         public void onFailure(Call<SetupPatternMFAResponseEntity> call, Throwable t) {
                             Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                            LogFile.addRecordToLog("acceptConsent Service Failure" + t.getMessage());
+                            LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,
                                     t.getMessage(), 400, null, null));
                         }
@@ -189,7 +189,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("acceptConsent Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE, e.getMessage(), 400, null, null));
             Timber.e("acceptConsent Service exception" + e.getMessage());
         }
@@ -206,7 +206,7 @@ public class PatternVerificationService {
                                final Result<ScannedResponseEntity> callback) {
         String scannedPatternUrl = "";
         try {
-            if (baseurl != null && baseurl != "" ) {  //&& scannedRequestEntity.getClient_id() != null && scannedRequestEntity.getClient_id() != ""
+            if (baseurl != null && !baseurl.equals("")) {  //&& scannedRequestEntity.getClient_id() != null && scannedRequestEntity.getClient_id() != ""
                 //Construct URL For RequestId
                 scannedPatternUrl = baseurl + URLHelper.getShared().getScannedPatternURL();
             } else {
@@ -234,7 +234,7 @@ public class PatternVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -299,7 +299,7 @@ public class PatternVerificationService {
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                    LogFile.addRecordToLog("Pattern verification Service Failure" + t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Pattern verification Service Failure" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
                             t.getMessage(), 400, null, null));
                 }
@@ -307,7 +307,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("Pattern verification Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Pattern verification Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
                     e.getMessage(), 400, null, null));
             Timber.e("Pattern verification Service exception" + e.getMessage());
@@ -326,7 +326,7 @@ public class PatternVerificationService {
                               final Result<EnrollPatternMFAResponseEntity> callback) {
         String enrollPatternMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 enrollPatternMFAUrl = baseurl + URLHelper.getShared().getEnrollPatternMFA();
             } else {
@@ -354,7 +354,7 @@ public class PatternVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -422,7 +422,7 @@ public class PatternVerificationService {
                         @Override
                         public void onFailure(Call<EnrollPatternMFAResponseEntity> call, Throwable t) {
                             Timber.e("Failure in Login with pattern service call" + t.getMessage());
-                            LogFile.addRecordToLog("Login pattern Service Failure" + t.getMessage());
+                            LogFile.getShared(context).addRecordToLog("Login pattern Service Failure" + t.getMessage());
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
                                     t.getMessage(), 400, null, null));
                         }
@@ -430,7 +430,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("pattern Login Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("pattern Login Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
                     e.getMessage(), 400, null, null));
 
@@ -444,7 +444,7 @@ public class PatternVerificationService {
                                 final Result<InitiatePatternMFAResponseEntity> callback) {
         String initiatePatternMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 initiatePatternMFAUrl = baseurl + URLHelper.getShared().getInitiatePatternMFA();
             } else {
@@ -473,7 +473,7 @@ public class PatternVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Done Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -541,7 +541,7 @@ public class PatternVerificationService {
                         @Override
                         public void onFailure(Call<InitiatePatternMFAResponseEntity> call, Throwable t) {
                             Timber.e("Failure in InitiatePatternMFAResponseEntityservice call" + t.getMessage());
-                            LogFile.addRecordToLog("InitiatePatternMFAResponseEntity Service Failure" + t.getMessage());
+                            LogFile.getShared(context).addRecordToLog("InitiatePatternMFAResponseEntity Service Failure" + t.getMessage());
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
                                     t.getMessage(), 400, null, null));
                         }
@@ -549,7 +549,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("InitiatePatternMFAResponseEntity Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiatePatternMFAResponseEntity Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
                     e.getMessage(), 400, null, null));
             Timber.e("InitiatePatternMFAResponseEntity Service exception" + e.getMessage());
@@ -562,7 +562,7 @@ public class PatternVerificationService {
                                     final Result<AuthenticatePatternResponseEntity> callback) {
         String authenticatePatternMFAUrl = "";
         try {
-            if (baseurl != null && baseurl != "") {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 authenticatePatternMFAUrl = baseurl + URLHelper.getShared().getAuthenticatePatternMFA();
             } else {
@@ -591,7 +591,7 @@ public class PatternVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if (DBHelper.getShared().getFCMToken() != null && DBHelper.getShared().getFCMToken() != "") {
+            if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -661,7 +661,7 @@ public class PatternVerificationService {
                         @Override
                         public void onFailure(Call<AuthenticatePatternResponseEntity> call, Throwable t) {
                             Timber.e("Failure in AuthenticatePatternResponseEntity service call" + t.getMessage());
-                            LogFile.addRecordToLog("AuthenticatePatternResponseEntity Service Failure" + t.getMessage());
+                            LogFile.getShared(context).addRecordToLog("AuthenticatePatternResponseEntity Service Failure" + t.getMessage());
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
                                     t.getMessage(), 400, null, null));
                         }
@@ -669,7 +669,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.addRecordToLog("authenticatePatternMFA Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticatePatternMFA Service exception" + e.getMessage());
             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
                     e.getMessage(), 400, null, null));
             Timber.e("authenticatePatternMFA Service exception" + e.getMessage());
@@ -685,7 +685,7 @@ public class PatternVerificationService {
             String deletePatternMFAUrl="";
             try
             {
-                if(baseurl!=null && baseurl!=""){
+                if(baseurl!=null && !baseurl.equals("")){
                     //Construct URL For RequestId
                     deletePatternMFAUrl=baseurl+URLHelper.getShared().getDeletePatternMFA();
                 }
@@ -787,7 +787,7 @@ public class PatternVerificationService {
                             @Override
                             public void onFailure(Call<AuthenticatePatternResponseEntity> call, Throwable t) {
                                 Timber.e("Failure in AuthenticatePatternResponseEntity service call"+t.getMessage());
-                                LogFile.addRecordToLog("AuthenticatePatternResponseEntity Service Failure"+t.getMessage());
+                                LogFile.getShared(context).addRecordToLog("AuthenticatePatternResponseEntity Service Failure"+t.getMessage());
                                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
                                         t.getMessage(), 400,null,null));
                             }
@@ -795,7 +795,7 @@ public class PatternVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Delete Pattern Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Delete Pattern Service exception"+e.getMessage());
             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_PATTERN_MFA_FAILURE,
                     e.getMessage(), HttpStatusCode.BAD_REQUEST,null,null));
             Timber.e("InitiatePatternMFAResponseEntity Service exception"+e.getMessage());

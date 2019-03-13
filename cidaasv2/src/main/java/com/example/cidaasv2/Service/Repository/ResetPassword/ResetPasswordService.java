@@ -77,7 +77,7 @@ public class ResetPasswordService {
         String resetpasswordUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 resetpasswordUrl=baseurl+ URLHelper.getShared().getInitiateResetPassword();
             }
@@ -188,7 +188,7 @@ public class ResetPasswordService {
         String resetpasswordValidateCodeUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 resetpasswordValidateCodeUrl=baseurl+URLHelper.getShared().getResetPasswordValidateCode();
             }
@@ -296,7 +296,7 @@ public class ResetPasswordService {
         String ResetNewPasswordUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For Change Password
                 ResetNewPasswordUrl=baseurl+URLHelper.getShared().getChangePasswordURl();
             }

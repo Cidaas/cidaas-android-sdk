@@ -117,8 +117,8 @@ public class BackupCodeConfigurationController {
 
             //Todo call Inititate
 
-            if ( initiateBackupCodeMFARequestEntity.getUsageType() != null && initiateBackupCodeMFARequestEntity.getUsageType() != "" &&
-                    initiateBackupCodeMFARequestEntity.getVerificationType() != null && initiateBackupCodeMFARequestEntity.getVerificationType() != ""&&
+            if ( initiateBackupCodeMFARequestEntity.getUsageType() != null && !initiateBackupCodeMFARequestEntity.getUsageType().equals("") &&
+                    initiateBackupCodeMFARequestEntity.getVerificationType() != null && !initiateBackupCodeMFARequestEntity.getVerificationType().equals("") &&
                     baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
                 BackupCodeVerificationService.getShared(context).initiateBackupCodeMFA(baseurl, initiateBackupCodeMFARequestEntity, null,new Result<InitiateBackupCodeMFAResponseEntity>() {
@@ -192,7 +192,7 @@ public class BackupCodeConfigurationController {
                                  final Result<LoginCredentialsResponseEntity> result){
         try{
 
-            if(authenticateBackupCodeRequestEntity.getStatusId()!=null && authenticateBackupCodeRequestEntity.getStatusId()!="") {
+            if(authenticateBackupCodeRequestEntity.getStatusId()!=null && !authenticateBackupCodeRequestEntity.getStatusId().equals("")) {
 
                 if ( baseurl != null && !baseurl.equals("")) {
                     //Todo Service call

@@ -88,7 +88,7 @@ public class VoiceVerificationService {
         String scannedVoiceUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null || !baseurl.equals("")){
                 //Construct URL For RequestId
                 scannedVoiceUrl=baseurl+ URLHelper.getShared().getScannedVoiceURL();
             }
@@ -119,7 +119,7 @@ public class VoiceVerificationService {
 
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -186,7 +186,7 @@ public class VoiceVerificationService {
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -195,7 +195,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Voice Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Voice Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("Voice Service exception"+e.getMessage());
         }
@@ -208,7 +208,7 @@ public class VoiceVerificationService {
         String setupVoiceMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null || !baseurl.equals("")){
                 //Construct URL For RequestId
                 setupVoiceMFAUrl=baseurl+URLHelper.getShared().getSetupVoiceMFA();
             }
@@ -241,7 +241,7 @@ public class VoiceVerificationService {
 
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                  deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -309,7 +309,7 @@ public class VoiceVerificationService {
                 @Override
                 public void onFailure(Call<SetupVoiceMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -318,7 +318,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Voice exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Voice exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("Voice Service exception"+e.getMessage());
         }
@@ -335,7 +335,7 @@ public class VoiceVerificationService {
         String enrollVoiceMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 enrollVoiceMFAUrl=baseurl+URLHelper.getShared().getEnrollVoiceMFA();
             }
@@ -369,7 +369,7 @@ public class VoiceVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -452,7 +452,7 @@ public class VoiceVerificationService {
                     @Override
                     public void onFailure(Call<EnrollVoiceMFAResponseEntity> call, Throwable t) {
                         Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                        LogFile.addRecordToLog("acceptConsent Service Failure" + t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
                 });
@@ -514,7 +514,7 @@ public class VoiceVerificationService {
                     @Override
                     public void onFailure(Call<EnrollVoiceMFAResponseEntity> call, Throwable t) {
                         Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                        LogFile.addRecordToLog("acceptConsent Service Failure" + t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
                 });
@@ -523,7 +523,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("Voice Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Voice Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("Voice Service exception"+e.getMessage());
         }
@@ -536,7 +536,7 @@ public class VoiceVerificationService {
         String initiateVoiceMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateVoiceMFAUrl=baseurl+URLHelper.getShared().getInitiateVoiceMFA();
             }
@@ -567,7 +567,7 @@ public class VoiceVerificationService {
 
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -634,7 +634,7 @@ public class VoiceVerificationService {
                 @Override
                 public void onFailure(Call<InitiateVoiceMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.addRecordToLog("InitiateVoiceMFAResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("InitiateVoiceMFAResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -643,7 +643,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("InitiateVoiceMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiateVoiceMFAResponseEntity Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("InitiateVoiceMFAResponseEntity Service exception"+e.getMessage());
         }
@@ -655,7 +655,7 @@ public class VoiceVerificationService {
         String authenticateVoiceMFAUrl="";
         try
         {
-            if(baseurl!=null || baseurl!=""){
+            if(baseurl!=null || !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateVoiceMFAUrl=baseurl+URLHelper.getShared().getAuthenticateVoiceMFA();
             }
@@ -689,7 +689,7 @@ public class VoiceVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Done Change to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -769,7 +769,7 @@ public class VoiceVerificationService {
                     @Override
                     public void onFailure(Call<AuthenticateVoiceResponseEntity> call, Throwable t) {
                         Timber.e("Failure in AuthenticateVoiceResponseEntity service call" + t.getMessage());
-                        LogFile.addRecordToLog("AuthenticateVoiceResponseEntity Service Failure" + t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("AuthenticateVoiceResponseEntity Service Failure" + t.getMessage());
                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
                 });
@@ -827,7 +827,7 @@ public class VoiceVerificationService {
                     @Override
                     public void onFailure(Call<AuthenticateVoiceResponseEntity> call, Throwable t) {
                         Timber.e("Failure in AuthenticateVoiceResponseEntity service call" + t.getMessage());
-                        LogFile.addRecordToLog("AuthenticateVoiceResponseEntity Service Failure" + t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("AuthenticateVoiceResponseEntity Service Failure" + t.getMessage());
                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
                 });
@@ -836,7 +836,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateVoiceMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateVoiceMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateVoiceMFA Service exception"+e.getMessage());
         }

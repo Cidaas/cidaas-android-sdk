@@ -115,7 +115,7 @@ public class TOTPVerificationService {
 
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
             }
 
@@ -183,7 +183,7 @@ public class TOTPVerificationService {
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -192,7 +192,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("SCanned TOTP Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("SCanned TOTP Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("ScannedTOTP Service exception"+e.getMessage());
         }
@@ -205,7 +205,7 @@ public class TOTPVerificationService {
         String setupTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 setupTOTPMFAUrl=baseurl+URLHelper.getShared().getSetupTOTPMFA();
             }
@@ -241,7 +241,7 @@ public class TOTPVerificationService {
 
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                  deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -312,7 +312,7 @@ public class TOTPVerificationService {
                 @Override
                 public void onFailure(Call<SetupTOTPMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -321,7 +321,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("SetupTOTP Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("SetupTOTP Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("SetupTOTP Service exception"+e.getMessage());
         }
@@ -334,7 +334,7 @@ public class TOTPVerificationService {
         String enrollTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 enrollTOTPMFAUrl=baseurl+URLHelper.getShared().getEnrollTOTPMFA();
             }
@@ -427,7 +427,7 @@ public class TOTPVerificationService {
                 @Override
                 public void onFailure(Call<EnrollTOTPMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -436,7 +436,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -449,7 +449,7 @@ public class TOTPVerificationService {
         String initiateTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateTOTPMFAUrl=baseurl+URLHelper.getShared().getInitiateTOTPMFA();
             }
@@ -479,7 +479,7 @@ public class TOTPVerificationService {
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -550,7 +550,7 @@ public class TOTPVerificationService {
                 @Override
                 public void onFailure(Call<InitiateTOTPMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.addRecordToLog("InitiateTOTPMFAResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("InitiateTOTPMFAResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -559,7 +559,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("InitiateTOTPMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiateTOTPMFAResponseEntity Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("InitiateTOTPMFAResponseEntity Service exception"+e.getMessage());
         }
@@ -572,7 +572,7 @@ public class TOTPVerificationService {
         String authenticateTOTPMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateTOTPMFAUrl=baseurl+URLHelper.getShared().getAuthenticateTOTPMFA();
             }
@@ -601,7 +601,7 @@ public class TOTPVerificationService {
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
 
-            if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
+            if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -672,7 +672,7 @@ public class TOTPVerificationService {
                 @Override
                 public void onFailure(Call<AuthenticateTOTPResponseEntity> call, Throwable t) {
                     Timber.e("Failure in AuthenticateTOTPResponseEntity service call"+t.getMessage());
-                    LogFile.addRecordToLog("AuthenticateTOTPResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("AuthenticateTOTPResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_TOTP_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -681,7 +681,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateTOTPMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateTOTPMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateTOTPMFA Service exception"+e.getMessage());
         }

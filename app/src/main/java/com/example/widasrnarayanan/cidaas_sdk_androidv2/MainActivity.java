@@ -26,6 +26,8 @@ import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -67,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
 
         requestLocationPermission();
+
+
+
         String token = getIntent().getDataString();
         if (token != null) {
            cidaas.handleToken(token);
@@ -79,10 +84,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     private void requestLocationPermission()
     {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
             //return;
         }
+
     }
 
     public void openAlertFinger(View view)
@@ -99,6 +107,34 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             }
         });
     }
+
+
+    public void getuserLoginInfo(View view)
+    {
+
+        String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
+
+        UserLoginInfoEntity userLoginInfoEntity=new UserLoginInfoEntity();
+        userLoginInfoEntity.setStartDate("2019-03-04T00:00:00.000Z");
+        userLoginInfoEntity.setEndDate("2019-03-11T00:00:00.000Z");
+        userLoginInfoEntity.setVerificationType("TOTP");
+        userLoginInfoEntity.setSub(sub);
+
+        cidaas.getUserLoginInfo(userLoginInfoEntity, new Result<UserLoginInfoResponseEntity>() {
+            @Override
+            public void success(UserLoginInfoResponseEntity result) {
+                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
 
     public void loginWithBrowser(View view)
     {
@@ -145,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             Cidaas.extraParams=extraParam;
 
 
-            cidaas.loginWithSocial(this, "linkedin", null, new Result<AccessTokenEntity>() {
+            cidaas.loginWithSocial(this, "google", null, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
@@ -203,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     //get Request Id
     public void getRequestIdMethod(View view)
     {
+        requestStoragePermission();
+        String message=cidaas.enableLog();
+
+        Toast.makeText(this, ""+message, Toast.LENGTH_SHORT).show();
         MyApp.getCidaasInstance().getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
@@ -215,6 +255,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
                 Toast.makeText(MainActivity.this, "Request id Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void requestStoragePermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+            //return;
+        }
     }
 
     //get ClientInfo

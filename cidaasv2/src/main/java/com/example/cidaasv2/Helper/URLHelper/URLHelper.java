@@ -150,6 +150,9 @@ public class URLHelper {
 
     String documentScanner="/access-control-srv/ocr/validate";
 
+    String userLoginInfoURL ="/verification-srv/verificationstatus/status/search/sdk";
+
+
 
     String openIdURL="/.well-known/openid-configuration";
 
@@ -176,6 +179,10 @@ public class URLHelper {
 
     public String getDeleteMFA(String userDeviceId, String verificationType) {
         return deleteMFA+userDeviceId+"/"+verificationType;
+    }
+
+    public String getUserLoginInfoURL() {
+        return userLoginInfoURL;
     }
 
     public String getUpdateFCMTokenURL() {

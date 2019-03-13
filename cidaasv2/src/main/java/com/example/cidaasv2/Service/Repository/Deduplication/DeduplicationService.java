@@ -77,7 +77,7 @@ public class DeduplicationService {
         String DeduplicationUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
@@ -170,7 +170,7 @@ public class DeduplicationService {
         String registerDeduplicationUrl = "";
         try{
 
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise

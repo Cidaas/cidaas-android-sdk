@@ -80,7 +80,7 @@ public class EmailVerificationService {
         String setupEmailMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 setupEmailMFAUrl=baseurl+ URLHelper.getShared().getSetupEmailMFA();
             }
@@ -168,7 +168,7 @@ public class EmailVerificationService {
                 @Override
                 public void onFailure(Call<SetupEmailMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -178,7 +178,7 @@ public class EmailVerificationService {
         catch (Exception e)
         {
             Timber.e("acceptConsent Service exception"+e.getMessage());
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
 
         }
@@ -189,7 +189,7 @@ public class EmailVerificationService {
         String enrollEmailMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 enrollEmailMFAUrl=baseurl+URLHelper.getShared().getEnrollEmailMFA();
             }
@@ -279,7 +279,7 @@ public class EmailVerificationService {
                 @Override
                 public void onFailure(Call<EnrollEmailMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -289,7 +289,7 @@ public class EmailVerificationService {
         catch (Exception e)
         {
             Timber.e("acceptConsent Service exception"+e.getMessage());
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
 
         }
@@ -301,7 +301,7 @@ public class EmailVerificationService {
         String initiateEmailMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateEmailMFAUrl=baseurl+URLHelper.getShared().getInitiateemailMFA();
             }
@@ -389,7 +389,7 @@ public class EmailVerificationService {
                 @Override
                 public void onFailure(Call<InitiateEmailMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -398,7 +398,7 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             Timber.e("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
 
@@ -411,7 +411,7 @@ public class EmailVerificationService {
         String authenticateemailMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateemailMFAUrl=baseurl+URLHelper.getShared().getAuthenticateemailMFA();
             }
@@ -499,7 +499,7 @@ public class EmailVerificationService {
                 @Override
                 public void onFailure(Call<AuthenticateEmailResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("authenticateEmailMFA Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("authenticateEmailMFA Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -508,7 +508,7 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateEmailMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateEmailMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateEmailMFA Service exception"+e.getMessage());
         }

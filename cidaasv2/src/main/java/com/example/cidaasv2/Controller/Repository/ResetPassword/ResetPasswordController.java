@@ -57,7 +57,7 @@ public class ResetPasswordController {
     {
         try {
 
-            if(resetPasswordRequestEntity.getRequestId() != null &&resetPasswordRequestEntity.getRequestId()  != ""
+            if(resetPasswordRequestEntity.getRequestId() != null && !resetPasswordRequestEntity.getRequestId().equals("")
                     && baseurl != null && !baseurl.equals("")){
                 ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl,null,
                         new Result<ResetPasswordResponseEntity>() {
@@ -135,7 +135,7 @@ public class ResetPasswordController {
         try {
 
 
-            if(resetPasswordEntity.getPassword() != null &&resetPasswordEntity.getPassword()  != "" &&
+            if(resetPasswordEntity.getPassword() != null && !resetPasswordEntity.getPassword().equals("") &&
                     resetPasswordEntity.getConfirmPassword()!= null && !resetPasswordEntity.getConfirmPassword().equals("")
                     && baseurl != null && !baseurl.equals("")){
 

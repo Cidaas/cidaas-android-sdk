@@ -77,7 +77,7 @@ public class SMSVerificationService {
         String setupSMSMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 setupSMSMFAUrl=baseurl+ URLHelper.getShared().getSetupSMSMFA();
             }
@@ -166,7 +166,7 @@ public class SMSVerificationService {
                 @Override
                 public void onFailure(Call<SetupSMSMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -175,7 +175,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -186,7 +186,7 @@ public class SMSVerificationService {
         String enrollSMSMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 enrollSMSMFAUrl=baseurl+URLHelper.getShared().getEnrollSMSMFA();
             }
@@ -278,7 +278,7 @@ public class SMSVerificationService {
                 @Override
                 public void onFailure(Call<EnrollSMSMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -287,7 +287,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -299,7 +299,7 @@ public class SMSVerificationService {
         String initiateSMSMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateSMSMFAUrl=baseurl+URLHelper.getShared().getInitiateSMSMFA();
             }
@@ -388,7 +388,7 @@ public class SMSVerificationService {
                 @Override
                 public void onFailure(Call<InitiateSMSMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.addRecordToLog("InitiateIVRMFAResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -397,7 +397,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
         }
@@ -409,7 +409,7 @@ public class SMSVerificationService {
         String authenticateSMSMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateSMSMFAUrl=baseurl+URLHelper.getShared().getAuthenticateSMSMFA();
             }
@@ -500,7 +500,7 @@ public class SMSVerificationService {
                 @Override
                 public void onFailure(Call<AuthenticateSMSResponseEntity> call, Throwable t) {
                     Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -509,7 +509,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateSMSMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateSMSMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateSMSMFA Service exception"+e.getMessage());
         }

@@ -83,7 +83,7 @@ public class IVRVerificationService {
         String setupIVRMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 setupIVRMFAUrl=baseurl+ URLHelper.getShared().getSetupIVRMFA();
             }
@@ -178,7 +178,7 @@ public class IVRVerificationService {
                 @Override
                 public void onFailure(Call<SetupIVRMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -187,7 +187,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -198,7 +198,7 @@ public class IVRVerificationService {
         String enrollIVRMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 enrollIVRMFAUrl=baseurl+URLHelper.getShared().getEnrollIVRMFA();
             }
@@ -290,7 +290,7 @@ public class IVRVerificationService {
                 @Override
                 public void onFailure(Call<EnrollIVRMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -299,7 +299,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("acceptConsent Service exception"+e.getMessage());
         }
@@ -310,7 +310,7 @@ public class IVRVerificationService {
             String initiateIVRMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 initiateIVRMFAUrl=baseurl+URLHelper.getShared().getInitiateIVRMFA();
             }
@@ -400,7 +400,7 @@ public class IVRVerificationService {
                 @Override
                 public void onFailure(Call<InitiateIVRMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in InitiateIVRMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.addRecordToLog("InitiateIVRMFAResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -409,7 +409,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
         }
@@ -421,7 +421,7 @@ public class IVRVerificationService {
         String authenticateIVRMFAUrl="";
         try
         {
-            if(baseurl!=null && baseurl!=""){
+            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
                 authenticateIVRMFAUrl=baseurl+URLHelper.getShared().getAuthenticateIVRMFA();
             }
@@ -512,7 +512,7 @@ public class IVRVerificationService {
                 @Override
                 public void onFailure(Call<AuthenticateIVRResponseEntity> call, Throwable t) {
                     Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -521,7 +521,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("authenticateIVRMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("authenticateIVRMFA Service exception"+e.getMessage());
             callback.failure(WebAuthError.getShared(context).propertyMissingException());
             Timber.e("authenticateIVRMFA Service exception"+e.getMessage());
         }
