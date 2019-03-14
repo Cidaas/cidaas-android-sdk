@@ -18,6 +18,7 @@
     <string name="DEFAULT">Error Occured.</string>
     <string name="FILE_NOT_FOUND">Property file is missing.</string>
     <string name="NO_CONTENT_IN_FILE">No content in property file.</string>
+    <string name="SERVICE_EXCEPTION">Some thing is wrong. Please Try again.</string>
 
     <string name="PROPERTY_MISSING">One of the property is missing.</string>
     <string name="DEVICE_VERIFICATION_FAILURE">Device is Failed to Verify</string>

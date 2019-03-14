@@ -142,6 +142,15 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 
 
+    public WebAuthError serviceException(int errorCode)
+    {
+
+        WebAuthError.shared.errorCode=errorCode;
+        WebAuthError.shared.statusCode=HttpStatusCode.BAD_REQUEST;
+        WebAuthError.shared.setErrorMessage(context.getString(R.string.SERVICE_EXCEPTION));
+        return WebAuthError.shared;
+    }
+
  //Location History Failure Exception
  @Override
  public WebAuthError locationHistoryException() {

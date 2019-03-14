@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.Fingerprint;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -139,49 +140,14 @@ public class FingerprintVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Scanned Fingerprint service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Scanned Fingerprint Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -190,9 +156,9 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned Fingerprint Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE));
+            Timber.e("Scanned Fingerprint Service exception"+e.getMessage());
         }
     }
 
@@ -212,9 +178,6 @@ public class FingerprintVerificationService {
                         context.getString(R.string.PROPERTY_MISSING), 400,null,null));
                 return;
             }
-
-
-
 
 
             Map<String, String> headers = new Hashtable<>();
@@ -267,49 +230,14 @@ public class FingerprintVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupFingerprintMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Setup Fingerprint service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Setup Fingerprint Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -319,8 +247,8 @@ public class FingerprintVerificationService {
         catch (Exception e)
         {
             LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE));
+            Timber.e("Setup Fingerprint Service exception"+e.getMessage());
         }
     }
 
@@ -386,50 +314,14 @@ public class FingerprintVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            //Todo Handle Access Token Failure Error
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollFingerprintMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Enroll Fingerprint service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Enroll Fingerprint Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -438,9 +330,9 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Fingerprint Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
+            Timber.e("Enroll Fingerprint Service exception"+e.getMessage());
         }
     }
 
@@ -506,50 +398,14 @@ public class FingerprintVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateFingerprintMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("InitiateFingerprintMFAResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Initiate Fingerprint MFA Service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Initiate Fingerprint MFA Service Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -558,14 +414,14 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("InitiateFingerprintMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("InitiateFingerprintMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate Fingerprint MFA Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE));
+            Timber.e("Initiate Fingerprint MFA Service exception"+e.getMessage());
         }
     }
 
 
-    //authenticateFingerprintMFA
+    //AuthenticateFingerprintMFA
     public void authenticateFingerprint(String baseurl, AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                            final Result<AuthenticateFingerprintResponseEntity> callback)
     {
@@ -627,51 +483,14 @@ public class FingerprintVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateFingerprintResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in AuthenticateFingerprintResponseEntity service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("AuthenticateFingerprintResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Authenticate Fingerprint service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Authenticate Fingerprint Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -680,9 +499,9 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateFingerprintMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateFingerprintMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate Fingerprint MFA Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
+            Timber.e("Authenticate Fingerprint MFA Service exception"+e.getMessage());
         }
     }
 }

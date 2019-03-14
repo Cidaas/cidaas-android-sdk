@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.Settings;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -160,47 +161,13 @@ public class VerificationSettingsService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
-                                    "Delete All Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.MFA_LIST_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<MFAListResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
+                    Timber.e("Faliure in getmfalist service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null,null));
 
                 }
@@ -209,10 +176,7 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-
-
-
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
         }
     }
 
@@ -283,48 +247,14 @@ public class VerificationSettingsService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,
-                                    "Delete  Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DELETE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<DeleteMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null,null));
+                    Timber.e("Faliure in Delete mfa single service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_MFA_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });
@@ -332,10 +262,7 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-
-
-
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DELETE_MFA_FAILURE));
         }
     }
 
@@ -382,9 +309,7 @@ public class VerificationSettingsService {
 
                 userDeviceID=deviceInfoEntity.getDeviceId();
             }
-            else {
 
-            }
             Map<String, String> headers = new Hashtable<>();
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
@@ -405,48 +330,14 @@ public class VerificationSettingsService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,
-                                    "Delete All Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DELETE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<DeleteMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.MFA_LIST_FAILURE,t.getMessage(), 400,null,null));
+                    Timber.e("Faliure in DELETE_MFA_FAILURE List service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_MFA_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });
@@ -454,7 +345,7 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DELETE_MFA_FAILURE));
         }
     }
 
@@ -499,41 +390,7 @@ public class VerificationSettingsService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DENY_NOTIFICATION,
-                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DENY_NOTIFICATION,response));
                     }
                 }
 
@@ -548,7 +405,7 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DENY_NOTIFICATION));
         }
     }
 
@@ -602,48 +459,14 @@ public class VerificationSettingsService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
-                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<NotificationEntity> call, Throwable t) {
-                    Timber.e("Faliure in Deny notification service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,t.getMessage(), 400,null,null));
+                    Timber.e("Faliure in pending notification service call"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });
@@ -651,7 +474,7 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE));
         }
     }
 
@@ -709,47 +532,13 @@ public class VerificationSettingsService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
-                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DENY_NOTIFICATION,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Object> call, Throwable t) {
-                    Timber.e("Faliure in Deny notification service call"+t.getMessage());
+                    Timber.e("Faliure in Update FCM Token service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DENY_NOTIFICATION,t.getMessage(), 400,null,null));
 
                 }
@@ -758,7 +547,7 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DENY_NOTIFICATION));
         }
     }
 
@@ -821,47 +610,13 @@ public class VerificationSettingsService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,
-                                    "Deny Notification Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ConfiguredMFAListEntity> call, Throwable t) {
-                    Timber.e("Faliure in Deny notification service call"+t.getMessage());
+                    Timber.e("Faliure in getConfiguredMFAList service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,t.getMessage(), 400,null,null));
 
                 }
@@ -870,7 +625,7 @@ public class VerificationSettingsService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE));
         }
     }
 

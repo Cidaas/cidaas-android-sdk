@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.IVR;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -129,57 +130,21 @@ public class IVRVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_IVR_MFA_FAILURE,
                                     "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                  commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_IVR_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupIVRMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    Timber.e("Failure in Setup IVR service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Setup IVR Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -187,9 +152,9 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Setup IVR Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_IVR_MFA_FAILURE));
+            Timber.e("Setup IVR Service exception"+e.getMessage());
         }
     }
 
@@ -247,51 +212,14 @@ public class IVRVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            //Todo Handle Access Token Failure Error
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                  commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
-                    }
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,response)); }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollIVRMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    Timber.e("Failure in Enroll IVR service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Enroll IVR Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -299,9 +227,9 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll IVR Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
+            Timber.e("Enroll IVR Service exception"+e.getMessage());
         }
     }
 
@@ -357,50 +285,13 @@ public class IVRVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                  commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
-                    }
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,response)); }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateIVRMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in InitiateIVRMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Initiate IVR MFA service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Initiate IVR MFA Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -409,9 +300,9 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate IVR MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE));
+            Timber.e("Initiate IVR MFA Service exception"+e.getMessage());
         }
     }
 
@@ -469,50 +360,14 @@ public class IVRVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                  commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateIVRResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Authenticate IVR service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Authenticate IVR Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -521,9 +376,9 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateIVRMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateIVRMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate IVR MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
+            Timber.e("Authenticate IVR MFA Service exception"+e.getMessage());
         }
     }
 

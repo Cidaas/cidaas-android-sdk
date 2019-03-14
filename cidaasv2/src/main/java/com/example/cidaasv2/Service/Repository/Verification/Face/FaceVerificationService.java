@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -154,50 +155,14 @@ public class FaceVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") &&
-                                    commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FACE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FACE_MFA_FAILURE,e.getMessage(),
-                                    400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_FACE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupFaceMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Setup Face service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Setup Face Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FACE_MFA_FAILURE,t.getMessage(),
                             400,null,null));
                 }
@@ -207,9 +172,9 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Setup Face Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_FACE_MFA_FAILURE));
+            Timber.e("Setup Face Service exception"+e.getMessage());
         }
     }
 
@@ -273,48 +238,14 @@ public class FaceVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Scanned Face service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Scanned Face Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -323,9 +254,9 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Face Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("Face Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Face scanned Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE));
+            Timber.e("Face Scanned Service exception"+e.getMessage());
         }
     }
 
@@ -490,48 +421,14 @@ public class FaceVerificationService {
                         }
                         else {
                             assert response.errorBody() != null;
-                            //Todo Check The error if it is not recieved
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse=response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                                //Todo Handle Access Token Failure Error
-                                String errorMessage="";
-                                ErrorEntity errorEntity=new ErrorEntity();
-                                if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                    errorMessage=commonErrorEntity.getError().toString();
-                                }
-                                else
-                                {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(),errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                                Timber.e("response"+response.message()+e.getMessage());
-                            }
-                            Timber.e("response"+response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,response));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
-                        Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                        LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                        Timber.e("Failure in Enroll Face service call"+t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("Enroll Face Service Failure"+t.getMessage());
                         callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                     }
                 });
@@ -540,9 +437,9 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Face Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
+            Timber.e("Enroll Face Service exception"+e.getMessage());
         }
     }
 
@@ -644,48 +541,14 @@ public class FaceVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            //Todo Handle Access Token Failure Error
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollFaceMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Enroll Face service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Enroll Face Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -694,9 +557,9 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Face Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
+            Timber.e("Enroll Face Service exception"+e.getMessage());
         }
     }
 
@@ -757,48 +620,14 @@ public class FaceVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateFaceMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("InitiateFaceMFAResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Initiate Face MFA call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Initiate Face MFA Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -807,9 +636,9 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("InitiateFaceMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("InitiateFaceMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate Face MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE));
+            Timber.e("Initiate Face MFA Service exception"+e.getMessage());
         }
     }
 
@@ -886,46 +715,14 @@ public class FaceVerificationService {
                             }
                         } else {
                             assert response.errorBody() != null;
-                            //Todo Check The error if it is not recieved
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse = response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-
-                                String errorMessage = "";
-                                ErrorEntity errorEntity = new ErrorEntity();
-                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
-                                    errorMessage = commonErrorEntity.getError().toString();
-                                } else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(), errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, e.getMessage(), 400, null, null));
-                                Timber.e("response" + response.message() + e.getMessage());
-                            }
-                            Timber.e("response" + response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,response));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
-                        Timber.e("Failure in AuthenticateFaceResponseEntity service call" + t.getMessage());
-                        LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure" + t.getMessage());
+                        Timber.e("Failure in Authenticate Face service call" + t.getMessage());
+                        LogFile.getShared(context).addRecordToLog("Authenticate Face Service Failure" + t.getMessage());
                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, t.getMessage(), 400, null, null));
                     }
                 });
@@ -945,39 +742,7 @@ public class FaceVerificationService {
                             }
                         } else {
                             assert response.errorBody() != null;
-                            //Todo Check The error if it is not recieved
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse = response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-
-                                String errorMessage = "";
-                                ErrorEntity errorEntity = new ErrorEntity();
-                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
-                                    errorMessage = commonErrorEntity.getError().toString();
-                                } else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(), errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE, e.getMessage(), 400, null, null));
-                                Timber.e("response" + response.message() + e.getMessage());
-                            }
-                            Timber.e("response" + response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,response));
                         }
                     }
 
@@ -994,15 +759,15 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateFaceMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateFaceMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate Face MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
+            Timber.e("Authenticate Face MFA Service exception"+e.getMessage());
         }
     }
 
 
 
-    //authenticateFaceMFA
+    //Authenticate Face MFA
     public void authenticateFaces(String baseurl, AuthenticateFaceRequestEntity authenticateFaceRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
                                  final Result<AuthenticateFaceResponseEntity> callback){
         String authenticateFaceMFAUrl="";
@@ -1079,48 +844,14 @@ public class FaceVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateFaceResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Authenticate Face service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Authenticate Face Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -1129,9 +860,9 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateFaceMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateFaceMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate Face MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
+            Timber.e("Authenticate Face MFA Service exception"+e.getMessage());
         }
     }
 

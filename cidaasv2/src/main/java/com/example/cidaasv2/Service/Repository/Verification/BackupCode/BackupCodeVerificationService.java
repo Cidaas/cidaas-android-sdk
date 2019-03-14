@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.BackupCode;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -122,55 +123,21 @@ public class  BackupCodeVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,
                                     "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupBackupCodeMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    Timber.e("Failure in Setup BackupCode service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Setup BackupCode Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -178,9 +145,9 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog("Setup BackupCode Service exception"+e.getMessage());
+            Timber.e("Setup BackupCode Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE));
            }
     }
 
@@ -238,50 +205,14 @@ public class  BackupCodeVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateBackupCodeMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("InitiateBackUpCodeMFAResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Initiate BackUpCode MFA  call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Initiate BackUpCode MFA Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -290,9 +221,9 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("InitiateBackUpCodeMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("InitiateBackUpCodeMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate BackUpCode MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE));
+            Timber.e("Initiate BackUpCode MFA Service exception"+e.getMessage());
         }
     }
 
@@ -350,50 +281,14 @@ public class  BackupCodeVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateBackupCodeResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Authenticate Face service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Authenticate Face Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -402,9 +297,9 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateBackupCodeMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateBackupCodeMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate BackupCode MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE));
+            Timber.e("Authenticate BackupCode MFA Service exception"+e.getMessage());
         }
     }
 }

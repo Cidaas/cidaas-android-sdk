@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.Pattern;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -9,8 +10,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
@@ -139,49 +140,14 @@ public class PatternVerificationService {
                                 }
                             } else {
                                 assert response.errorBody() != null;
-                                //Todo Check The error if it is not recieved
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse = response.errorBody().source().readByteString().utf8();
-                                    final CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-                                    String errorMessage = "";
-                                    ErrorEntity errorEntity = new ErrorEntity();
-                                    if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
-                                            && commonErrorEntity.getError() instanceof String) {
-                                        errorMessage = commonErrorEntity.getError().toString();
-                                    } else {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                        errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                        errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                        errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                        errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                        errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                        errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    //Todo Service call For fetching the Consent details
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),
-                                            commonErrorEntity.getError(), errorEntity));
-
-                                } catch (Exception e) {
-                                    Timber.e("response" + response.message() + e.getMessage());
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,
-                                            e.getMessage(), 400, null, null));
-
-                                }
-                                Timber.e("response" + response.message());
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,response));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<SetupPatternMFAResponseEntity> call, Throwable t) {
-                            Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                            LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
+                            Timber.e("Failure in Setup pattern service call" + t.getMessage());
+                            LogFile.getShared(context).addRecordToLog("Setup pattern Service Failure" + t.getMessage());
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,
                                     t.getMessage(), 400, null, null));
                         }
@@ -189,9 +155,9 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE, e.getMessage(), 400, null, null));
-            Timber.e("acceptConsent Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Setup Pattern Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE));
+            Timber.e("Setup Pattern Service exception" + e.getMessage());
         }
     }
 
@@ -255,50 +221,13 @@ public class PatternVerificationService {
                         }
                     } else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse = response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-                            String errorMessage = "";
-                            ErrorEntity errorEntity = new ErrorEntity();
-                            if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
-                                    && commonErrorEntity.getError() instanceof String) {
-
-                                errorMessage = commonErrorEntity.getError().toString();
-                            } else {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(), errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response" + response.message() + e.getMessage());
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
-                                    e.getMessage(), 400, null, null));
-
-
-                        }
-                        Timber.e("response" + response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call" + t.getMessage());
+                    Timber.e("Failure in Scanned Pattern service call" + t.getMessage());
                     LogFile.getShared(context).addRecordToLog("Pattern verification Service Failure" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
                             t.getMessage(), 400, null, null));
@@ -307,10 +236,9 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Pattern verification Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
-                    e.getMessage(), 400, null, null));
-            Timber.e("Pattern verification Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Pattern Scanned Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE));
+            Timber.e("Pattern Scanned Service exception" + e.getMessage());
         }
     }
 
@@ -379,43 +307,7 @@ public class PatternVerificationService {
                                 }
                             } else {
                                 assert response.errorBody() != null;
-                                //Todo Check The error if it is not recieved
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse = response.errorBody().source().readByteString().utf8();
-                                    final CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-                                    //Todo Handle Access Token Failure Error
-                                    String errorMessage = "";
-                                    ErrorEntity errorEntity = new ErrorEntity();
-                                    if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
-                                            && commonErrorEntity.getError() instanceof String) {
-                                        errorMessage = commonErrorEntity.getError().toString();
-                                    } else {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                        errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                        errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                        errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                        errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                        errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                        errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    //Todo Service call For fetching the Consent details
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),
-                                            commonErrorEntity.getError(), errorEntity));
-
-                                } catch (Exception e) {
-                                    Timber.e("response" + response.message() + e.getMessage());
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
-                                            e.getMessage(), 400, null, null));
-
-                                }
-                                Timber.e("response" + response.message());
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,response));
                             }
                         }
 
@@ -431,8 +323,7 @@ public class PatternVerificationService {
 
         } catch (Exception e) {
             LogFile.getShared(context).addRecordToLog("pattern Login Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
-                    e.getMessage(), 400, null, null));
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
 
             Timber.e("pattern Login Service exception" + e.getMessage());
         }
@@ -498,50 +389,14 @@ public class PatternVerificationService {
                                 }
                             } else {
                                 assert response.errorBody() != null;
-                                //Todo Check The error if it is not recieved
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse = response.errorBody().source().readByteString().utf8();
-                                    final CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-
-                                    String errorMessage = "";
-                                    ErrorEntity errorEntity = new ErrorEntity();
-                                    if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
-                                            && commonErrorEntity.getError() instanceof String) {
-                                        errorMessage = commonErrorEntity.getError().toString();
-                                    } else {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                        errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                        errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                        errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                        errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                        errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                        errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    //Todo Service call For fetching the Consent details
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),
-                                            commonErrorEntity.getError(), errorEntity));
-
-                                } catch (Exception e) {
-
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                                            e.getMessage(), 400, null, null));
-
-                                }
-                                Timber.e("response" + response.message());
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,response));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<InitiatePatternMFAResponseEntity> call, Throwable t) {
-                            Timber.e("Failure in InitiatePatternMFAResponseEntityservice call" + t.getMessage());
-                            LogFile.getShared(context).addRecordToLog("InitiatePatternMFAResponseEntity Service Failure" + t.getMessage());
+                            Timber.e("Failure in Initiate Pattern MFA service call" + t.getMessage());
+                            LogFile.getShared(context).addRecordToLog("Initiate Pattern MFA Service Failure" + t.getMessage());
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
                                     t.getMessage(), 400, null, null));
                         }
@@ -549,10 +404,9 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("InitiatePatternMFAResponseEntity Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,
-                    e.getMessage(), 400, null, null));
-            Timber.e("InitiatePatternMFAResponseEntity Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate Pattern MFA Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE));
+            Timber.e("Initiate Pattern MFA Service exception" + e.getMessage());
         }
     }
 
@@ -586,7 +440,6 @@ public class PatternVerificationService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
             headers.put("verification_api_version", "2");
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("long",LocationDetails.getShared(context).getLongitude());
@@ -596,8 +449,6 @@ public class PatternVerificationService {
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
 
-                //  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
-                //    "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
             }
 
             authenticatePatternRequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -618,50 +469,14 @@ public class PatternVerificationService {
                                 }
                             } else {
                                 assert response.errorBody() != null;
-                                //Todo Check The error if it is not recieved
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse = response.errorBody().source().readByteString().utf8();
-                                    final CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-
-                                    String errorMessage = "";
-                                    ErrorEntity errorEntity = new ErrorEntity();
-                                    if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
-                                            && commonErrorEntity.getError() instanceof String) {
-                                        errorMessage = commonErrorEntity.getError().toString();
-                                    } else {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                        errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                        errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                        errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                        errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                        errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                        errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    //Todo Service call For fetching the Consent details
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),
-                                            commonErrorEntity.getError(), errorEntity));
-
-                                } catch (Exception e) {
-                                    Timber.e("response" + response.message() + e.getMessage());
-                                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
-                                            e.getMessage(), 400, null, null));
-
-                                }
-                                Timber.e("response" + response.message());
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,response));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<AuthenticatePatternResponseEntity> call, Throwable t) {
-                            Timber.e("Failure in AuthenticatePatternResponseEntity service call" + t.getMessage());
-                            LogFile.getShared(context).addRecordToLog("AuthenticatePatternResponseEntity Service Failure" + t.getMessage());
+                            Timber.e("Failure in Authenticate Pattern service call" + t.getMessage());
+                            LogFile.getShared(context).addRecordToLog("Authenticate Pattern Service Failure" + t.getMessage());
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
                                     t.getMessage(), 400, null, null));
                         }
@@ -669,137 +484,9 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("authenticatePatternMFA Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
-                    e.getMessage(), 400, null, null));
-            Timber.e("authenticatePatternMFA Service exception" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate Pattern MFA Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE));
+            Timber.e("Authenticate Pattern MFA Service exception" + e.getMessage());
         }
     }
 }
-
-   /* //Delete Pattern MFA
-    public void deletePattern(String baseurl, String userDeviceID, DeviceInfoEntity deviceInfoEntityFromParam, Result<DeletePatternMFAResponseEntity> callback )
-    {
-        try
-        {
-            String deletePatternMFAUrl="";
-            try
-            {
-                if(baseurl!=null && !baseurl.equals("")){
-                    //Construct URL For RequestId
-                    deletePatternMFAUrl=baseurl+URLHelper.getShared().getDeletePatternMFA();
-                }
-                else {
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                            context.getString(R.string.PROPERTY_MISSING) + "Reason : ", 400,null,null));
-                    return;
-                }
-
-                Map<String, String> headers = new Hashtable<>();
-                // Get Device Information
-                DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-                //This is only for testing purpose
-                if(deviceInfoEntityFromParam==null) {
-                    deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-                }
-                else if(deviceInfoEntityFromParam!=null)
-                {
-                    deviceInfoEntity=deviceInfoEntityFromParam;
-                }
-
-                //Todo - check Construct Headers pending,Null Checking Pending
-                //Add headers
-                headers.put("Content-Type", URLHelper.contentTypeJson);
-                headers.put("user-agent", "cidaas-android");
-                headers.put("verification_api_version","2");
-
-                if(DBHelper.getShared().getFCMToken()!=null && DBHelper.getShared().getFCMToken()!="") {
-
-                    //Todo Chaange to FCM acceptence now it is in Authenticator
-                    deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
-
-                    //  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
-                    //    "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
-                }
-
-                authenticatePatternRequestEntity.setDeviceInfo(deviceInfoEntity);
-
-                //Call Service-getRequestId
-                final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-                cidaasSDKService.authenticatePatternMFA(authenticatePatternMFAUrl,headers, authenticatePatternRequestEntity)
-                        .enqueue(new Callback<AuthenticatePatternResponseEntity>() {
-                            @Override
-                            public void onResponse(Call<AuthenticatePatternResponseEntity> call, Response<AuthenticatePatternResponseEntity> response) {
-                                if (response.isSuccessful()) {
-                                    if(response.code()==200) {
-                                        callback.success(response.body());
-                                    }
-                                    else {
-                                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
-                                                "Service failure but successful response" , response.code(),null,null));
-                                    }
-                                }
-                                else {
-                                    assert response.errorBody() != null;
-                                    //Todo Check The error if it is not recieved
-                                    try {
-
-                                        // Handle proper error message
-                                        String errorResponse=response.errorBody().source().readByteString().utf8();
-                                        final CommonErrorEntity commonErrorEntity;
-                                        commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                                        String errorMessage="";
-                                        ErrorEntity errorEntity=new ErrorEntity();
-                                        if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("")
-                                                && commonErrorEntity.getError() instanceof  String) {
-                                            errorMessage=commonErrorEntity.getError().toString();
-                                        }
-                                        else
-                                        {
-                                            errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                            errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
-                                            errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                            errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                            errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                            errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                            errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                        }
-
-
-                                        //Todo Service call For fetching the Consent details
-                                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
-                                                errorMessage, commonErrorEntity.getStatus(),
-                                                commonErrorEntity.getError(),errorEntity));
-
-                                    } catch (Exception e) {
-                                        Timber.e("response"+response.message()+e.getMessage());
-                                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
-                                                e.getMessage(), 400,null,null));
-
-                                    }
-                                    Timber.e("response"+response.message());
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<AuthenticatePatternResponseEntity> call, Throwable t) {
-                                Timber.e("Failure in AuthenticatePatternResponseEntity service call"+t.getMessage());
-                                LogFile.getShared(context).addRecordToLog("AuthenticatePatternResponseEntity Service Failure"+t.getMessage());
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,
-                                        t.getMessage(), 400,null,null));
-                            }
-                        });
-        }
-        catch (Exception e)
-        {
-            LogFile.getShared(context).addRecordToLog("Delete Pattern Service exception"+e.getMessage());
-            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DELETE_PATTERN_MFA_FAILURE,
-                    e.getMessage(), HttpStatusCode.BAD_REQUEST,null,null));
-            Timber.e("InitiatePatternMFAResponseEntity Service exception"+e.getMessage());
-        }
-    }
-}
-*/

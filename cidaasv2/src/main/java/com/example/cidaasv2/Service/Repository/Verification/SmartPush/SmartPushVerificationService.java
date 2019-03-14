@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.SmartPush;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -136,49 +137,14 @@ public class SmartPushVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Scanned Smartpush service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Scanned Smartpush Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -187,9 +153,9 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Scanned smartpush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE));
+            Timber.e("Scanned Smartpush Service exception"+e.getMessage());
         }
     }
 
@@ -262,49 +228,14 @@ public class SmartPushVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupSmartPushMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in set up Smartpush service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("setup Smartpush Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -313,9 +244,9 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Smartpush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE));
+            Timber.e("Enroll Service exception"+e.getMessage());
         }
     }
 
@@ -384,49 +315,14 @@ public class SmartPushVerificationService {
                     else {
                         assert response.errorBody() != null;
                         //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            //Todo Handle Access Token Failure Error
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollSmartPushMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
+                    Timber.e("Failure in Enroll Smartpush service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Enroll Smartpush Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -435,9 +331,9 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll Smartpush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
+            Timber.e("Enroll Smartpush Service exception"+e.getMessage());
         }
     }
 
@@ -504,90 +400,24 @@ public class SmartPushVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-
-                            ErrorEntity errorEntity=new ErrorEntity();
-
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateSmartPushMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in InitiateSmartPushMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("InitiateSmartPushMFAResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Initiate SmartPush Service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Initiate SmartPush MFA Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
-           /* cidaasSDKService.initiateSmartPushMFARAW(initiateSmartPushMFAUrl,headers,initiateSmartPushMFARequestEntity).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if(response.isSuccessful())
-                    {
-                        Toast.makeText(context, ""+response.body(), Toast.LENGTH_SHORT).show();
-                        InitiateSmartPushMFAResponseEntity initiateSmartPushMFAResponseEntity=new InitiateSmartPushMFAResponseEntity();
-                        initiateSmartPushMFAResponseEntity.setStatus(response.code());
-                        initiateSmartPushMFAResponseEntity.setSuccess(response.isSuccessful());
-
-
-                        InitiateSmartPushMFAResponseDataEntity dataEntity=new InitiateSmartPushMFAResponseDataEntity();
-
-                        initiateSmartPushMFAResponseEntity.setData();
-
-                        callback.success(response.body());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                }
-            });
-*/
-
-
-
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("InitiateSmartPushMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("InitiateSmartPushMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate SmartPush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE));
+            Timber.e("Initiate SmartPush Service exception"+e.getMessage());
         }
     }
 
@@ -633,9 +463,6 @@ public class SmartPushVerificationService {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
-
-                //  deviceInfoEntity.setPushNotificationId("cegfVcqD6xU:APA91bF1UddwL6AoXUwI5g1s9DRKOkz6KEQz6zbcYRHHrcO" +
-                // "34tXkQ8ILe4m38jTuT_MuqIvqC9Z0lZjxvAbGtakhUnCN6sHSbWWr0W10sAM436BCU8-jlEEAB8a_BMPzxGOEDBZIrMWTkdHxtIn_VGxBiOPYia7Zbw");
             }
 
             authenticateSmartPushRequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -657,50 +484,14 @@ public class SmartPushVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateSmartPushResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in AuthenticateSmartPushResponseEntity service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("AuthenticateSmartPushResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Authenticate SmartPush  service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Authenticate SmartPush Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -709,9 +500,9 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateSmartPushMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateSmartPushMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate SmartPush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
+            Timber.e("Authenticate SmartPush Service exception"+e.getMessage());
         }
     }
 

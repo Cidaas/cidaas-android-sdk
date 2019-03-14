@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Verification.SMS;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -103,7 +104,7 @@ public class SMSVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("access_token",accessToken);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 
@@ -118,56 +119,21 @@ public class SMSVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,
+                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,
                                     "Service failure but successful response" , response.code(),null,null));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupSMSMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    Timber.e("Failure in Setup SMS service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Setup SMS Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -175,9 +141,9 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Setup SMS Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE));
+            Timber.e("Setup SMS Service exception"+e.getMessage());
         }
     }
 
@@ -213,7 +179,7 @@ public class SMSVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("access_token",accessToken);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             enrollSMSMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -235,51 +201,15 @@ public class SMSVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            //Todo Handle Access Token Failure Error
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollSMSMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    Timber.e("Failure in Enroll SMS service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Enroll SMS Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
 
@@ -287,9 +217,9 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Enroll SMS Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE));
+            Timber.e("Enroll SMS Service exception"+e.getMessage());
         }
     }
 
@@ -325,7 +255,7 @@ public class SMSVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             initiateSMSMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -346,49 +276,14 @@ public class SMSVerificationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateSMSMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Initiate SMS Service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Initiate SMS MFA Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -397,9 +292,9 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("InitiateIVRMFAResponseEntity Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate SMS Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE));
+            Timber.e("Initiate SMS Service exception"+e.getMessage());
         }
     }
 
@@ -435,7 +330,7 @@ public class SMSVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             authenticateSMSRequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -458,49 +353,14 @@ public class SMSVerificationService {
                     else {
                         assert response.errorBody() != null;
                         //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateSMSResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in AuthenticateFaceResponseEntity service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("AuthenticateFaceResponseEntity Service Failure"+t.getMessage());
+                    Timber.e("Failure in Authenticate SMS service call"+t.getMessage());
+                    LogFile.getShared(context).addRecordToLog("Authenticate SMS Service Failure"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -509,9 +369,9 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateSMSMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateSMSMFA Service exception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authenticate SMS MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
+            Timber.e("Authenticate SMS MFA Service exception"+e.getMessage());
         }
     }
 

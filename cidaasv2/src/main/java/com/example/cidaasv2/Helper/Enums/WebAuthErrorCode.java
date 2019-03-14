@@ -200,7 +200,7 @@ public class WebAuthErrorCode {
 
   public static final int USER_LOGIN_INFO_SERVICE_FAILURE =10190;
 
-
+  public static final int SERVICE_EXCEPTION = 10191;
 
 }
 
