@@ -3,6 +3,7 @@ package com.example.cidaasv2.Controller.Repository.ChangePassword;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
@@ -106,27 +107,15 @@ public class ChangePasswordController {
                     && changePasswordRequestEntity.getOld_password() != null && !changePasswordRequestEntity.getOld_password().equals("")
                     && baseurl != null && !baseurl.equals("")){
 
-                ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl,null,
-                        new Result<ChangePasswordResponseEntity>() {
-
-                            @Override
-                            public void success(ChangePasswordResponseEntity serviceresult) {
-                                resetpasswordResult.success(serviceresult);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-
-                                resetpasswordResult.failure(error);
-                            }
-                        });
+                ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl,null, resetpasswordResult);
             }
             else{
-             resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+             resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Confirm Password or new password or IdentityID or Old password or baseurl must not be null"));
             }
         }
         catch (Exception e)
         {
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE));
             Timber.e(e.getMessage());
         }
     }

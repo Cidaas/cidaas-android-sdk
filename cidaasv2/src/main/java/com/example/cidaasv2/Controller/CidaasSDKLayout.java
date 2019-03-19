@@ -876,14 +876,14 @@ public class CidaasSDKLayout extends RelativeLayout {
             @Override
             public void success(Dictionary<String, String> loginProperties) {
                 if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("Domain URL must not be null");
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message -  DomainURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                     LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("ClientId must not be null");
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - ClientId is missing"
                             + webAuthError.errorCode + ", Error Message -  ClientId is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
@@ -891,7 +891,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("Redirect URL must not be null");
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - RedirectURL is missing"
                             + webAuthError.errorCode + ", Error Message -  RedirectURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
@@ -963,7 +963,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             //Check all the login Properties are Correct
             if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
                     || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("DomainURL must not be null");
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
                         + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
@@ -973,7 +973,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             }
             if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
                     || !((Hashtable) loginproperties).containsKey("ClientId")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("ClientId must not be null");
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
@@ -982,7 +982,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             }
             if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                     || loginproperties.get("RedirectURL").equals("")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("RedirectURL must not be null");
                 String loggerMessage = "Check PKCE Flow  readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                 LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
@@ -999,7 +999,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             if (!ENABLE_PKCE) {
                 if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret") == "" ||
                         !((Hashtable) loginproperties).containsKey("ClientSecret")) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("ClientSecret must not be null");
                     savedResult.failure(webAuthError);
                 } else {
                     loginproperties.put("ClientSecret", loginproperties.get("ClientSecret"));
@@ -1032,7 +1032,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 //check here for already saved properties
 
                 if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("RedirectURL must not be null");
                     String loggerMessage = "Check saved properties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                     LogFile.getShared(GLOBAL_CONTEXT).addRecordToLog(loggerMessage);
@@ -1040,7 +1040,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     return;
                 }
                 if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("ClientId must not be null");
                     String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 

@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -95,7 +96,7 @@ public class FingerprintConfigurationController {
         try{
             //Generate Challenge
             generateChallenge();
-            Cidaas.instanceId="";
+            Cidaas.usagePass="";
 
             AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
             {
@@ -114,7 +115,7 @@ public class FingerprintConfigurationController {
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && instceID!="")
@@ -242,7 +243,7 @@ public class FingerprintConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass="";
 
             if (    initiateFingerprintMFARequestEntity.getUsageType() != null && !initiateFingerprintMFARequestEntity.getUsageType().equals("") &&
                     initiateFingerprintMFARequestEntity.getUserDeviceId() != null && !initiateFingerprintMFARequestEntity.getUserDeviceId().equals("")
@@ -259,7 +260,7 @@ public class FingerprintConfigurationController {
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && instceID!="")
@@ -398,7 +399,7 @@ public class FingerprintConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
 
             AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
             {
@@ -418,7 +419,8 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
+            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
             Timber.e(e.getMessage());
         }
     }
@@ -439,12 +441,12 @@ public class FingerprintConfigurationController {
                             @Override
                             public void success(final SetupFingerprintMFAResponseEntity setupserviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
 
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -504,13 +506,13 @@ public class FingerprintConfigurationController {
             else
             {
 
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl or AccessToken or ClientId must not be null"));
             }
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
-                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
 
         }
     }
@@ -531,14 +533,14 @@ public class FingerprintConfigurationController {
                 FingerprintVerificationService.getShared(context).scannedFingerprint(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
                     @Override
                     public void success(ScannedResponseEntity result) {
-                        Cidaas.instanceId="";
+                        Cidaas.usagePass ="";
 
 
                         new CountDownTimer(5000, 500) {
                             String instceID = "";
 
                             public void onTick(long millisUntilFinished) {
-                                instceID = Cidaas.instanceId;
+                                instceID = Cidaas.usagePass;
 
                                 Timber.e("");
                                 if (instceID != null && !instceID.equals("")) {
@@ -592,8 +594,8 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
-                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE);
+            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE));
 
         }
     }
@@ -619,14 +621,14 @@ public class FingerprintConfigurationController {
                                 @Override
                                 public void success(final EnrollFingerprintMFAResponseEntity serviceresult) {
 
-                                    Cidaas.instanceId = "";
+                                    Cidaas.usagePass = "";
 
                                     //Timer
                                     new CountDownTimer(5000, 500) {
                                         String instceID = "";
 
                                         public void onTick(long millisUntilFinished) {
-                                            instceID = Cidaas.instanceId;
+                                            instceID = Cidaas.usagePass;
 
                                             Timber.e("");
                                             if (instceID != null && !instceID.equals("")) {
@@ -687,9 +689,8 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
-                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-
+            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
         }
     }
 
@@ -706,7 +707,7 @@ public class FingerprintConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
             if(initiateFingerprintMFARequestEntity.getUserDeviceId() != null && !initiateFingerprintMFARequestEntity.getUserDeviceId().equals(""))
             {
                 //Do nothing
@@ -728,11 +729,11 @@ public class FingerprintConfigurationController {
                             @Override
                             public void success(final InitiateFingerprintMFAResponseEntity serviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -836,12 +837,14 @@ public class FingerprintConfigurationController {
             else
             {
 
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or Usage DeviceID or baseurl must not be null"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Login With Fingerprint configration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE);
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
         }
     }
 
@@ -857,14 +860,14 @@ public class FingerprintConfigurationController {
                 public void success(final AuthenticateFingerprintResponseEntity serviceresult) {
 
 
-                    Cidaas.instanceId = "";
+                    Cidaas.usagePass = "";
 
                     //Timer
                     new CountDownTimer(5000, 500) {
                         String instceID = "";
 
                         public void onTick(long millisUntilFinished) {
-                            instceID = Cidaas.instanceId;
+                            instceID = Cidaas.usagePass;
 
                             Timber.e("");
                             if (instceID != null && !instceID.equals("")) {
@@ -908,8 +911,9 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,
-                    "Fingerprint Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Authentication Fingerprint configration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE);
+            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
         }
     }
 

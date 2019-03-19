@@ -5,9 +5,12 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -106,12 +109,14 @@ public class EmailConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or Sub must not be null"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE);
         }
     }
 
@@ -121,7 +126,7 @@ public class EmailConfigurationController {
     {
         try{
 
-            if(Sub!="" && statusId!="")
+            if(!Sub.equals("") && !statusId.equals(""))
             {
                final EnrollEmailMFARequestEntity enrollEmailMFARequestEntity=new EnrollEmailMFARequestEntity();
                enrollEmailMFARequestEntity.setCode(code);
@@ -152,7 +157,7 @@ public class EmailConfigurationController {
                         }
                         else
                         {
-                            result.failure(WebAuthError.getShared(context).propertyMissingException());
+                            result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or AccessToken Must not be null"));
                         }
                     }
 
@@ -168,6 +173,8 @@ public class EmailConfigurationController {
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE);
         }
     }
 
@@ -206,7 +213,7 @@ public class EmailConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Usage Type or Sub or VerificationType must not be null"));
             }
 
 
@@ -214,6 +221,8 @@ public class EmailConfigurationController {
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE);
         }
     }
     public void verifyEmail(@NonNull final String baseurl, @NonNull final String code,
@@ -268,12 +277,13 @@ public class EmailConfigurationController {
             {
 
                 String errorMessage="Status Id Must not be null";
-                result.failure(WebAuthError.getShared(context).customException(417,errorMessage,417));
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE);
         }
     }
 

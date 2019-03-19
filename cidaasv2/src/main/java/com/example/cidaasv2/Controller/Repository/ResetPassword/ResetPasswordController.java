@@ -6,6 +6,7 @@ import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
@@ -60,27 +61,16 @@ public class ResetPasswordController {
             if(resetPasswordRequestEntity.getRequestId() != null && !resetPasswordRequestEntity.getRequestId().equals("")
                     && baseurl != null && !baseurl.equals("")){
                 ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl,null,
-                        new Result<ResetPasswordResponseEntity>() {
-
-                    @Override
-                    public void success(ResetPasswordResponseEntity serviceresult) {
-                        resetpasswordResult.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-
-                        resetpasswordResult.failure(error);
-                    }
-                });
+                        resetpasswordResult);
             }
             else{
 
-                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("RequestId or Baseurl must not be null"));
             }
         }
         catch (Exception e)
         {
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE);
             Timber.e(e.getMessage());
         }
     }
@@ -117,13 +107,13 @@ public class ResetPasswordController {
             }
             else{
 
-                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("RPRQ or verification Code must not be null"));
             }
         }
         catch (Exception e)
         {
-
-            resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE);
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE));
         }
     }
 
@@ -163,6 +153,8 @@ public class ResetPasswordController {
         }
         catch (Exception e)
         {
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE);
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE));
             Timber.e(e.getMessage());
         }
     }

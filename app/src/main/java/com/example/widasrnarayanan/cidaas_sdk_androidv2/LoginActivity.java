@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 @Override
                                 public void failure(WebAuthError error) {
-                                    Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
 

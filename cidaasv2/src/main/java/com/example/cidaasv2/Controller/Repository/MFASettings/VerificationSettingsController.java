@@ -7,6 +7,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
@@ -55,23 +56,10 @@ public class VerificationSettingsController {
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
                 // Change service call to private
 
-               // String userDeviceId="f2188f15-56ee-447a-abab-8a781039fa5f";//Todo Changed to
-                String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+               String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
 
-                    VerificationSettingsService.getShared(context).getmfaList(baseurl, sub, userDeviceId,null, new Result<MFAListResponseEntity>() {
-
-                        @Override
-                        public void success(MFAListResponseEntity serviceresult) {
-                            result.success(serviceresult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-
-                            result.failure(error);
-                        }
-                    });
+                    VerificationSettingsService.getShared(context).getmfaList(baseurl, sub, userDeviceId,null, result);
                 /*}
                 else
                 {
@@ -82,13 +70,14 @@ public class VerificationSettingsController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or Sub must not be null"));
             }
         }
         catch (Exception e)
         {
 
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Get MFA List"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
             Timber.e(e.getMessage());
         }
     }

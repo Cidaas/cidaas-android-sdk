@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Registration;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -9,6 +10,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
@@ -117,7 +119,7 @@ public class RegistrationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
+                     /*   try {
 
                             // Handle proper error message
                             String errorResponse=response.errorBody().source().readByteString().utf8();
@@ -130,7 +132,8 @@ public class RegistrationService {
                             callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null,null));
                             Timber.e("response"+response.message()+e.getMessage());
                         }
-                        Timber.e("response"+response.message());
+                        Timber.e("response"+response.message());*/
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,response));
                     }
                 }
 
@@ -146,7 +149,8 @@ public class RegistrationService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
         }
     }
 
@@ -208,40 +212,7 @@ public class RegistrationService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,response));
                     }
                 }
 
@@ -255,7 +226,8 @@ public class RegistrationService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
         }
     }
 
@@ -316,40 +288,7 @@ public class RegistrationService {
                             }
                             else {
                                 assert response.errorBody() != null;
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                                    CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                                    String errorMessage="";
-                                    ErrorEntity errorEntity=new ErrorEntity();
-                                    if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                        errorMessage=commonErrorEntity.getError().toString();
-                                    }
-                                    else
-                                    {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
-
-                                } catch (Exception e) {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null,null));
-                                    Timber.e("response"+response.message()+e.getMessage());
-                                }
-                                Timber.e("response"+response.message());
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,response));
                             }
                         }
 
@@ -363,7 +302,8 @@ public class RegistrationService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -425,40 +365,7 @@ public class RegistrationService {
                             }
                             else {
                                 assert response.errorBody() != null;
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                                    CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                                    String errorMessage="";
-                                    ErrorEntity errorEntity=new ErrorEntity();
-                                    if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                        errorMessage=commonErrorEntity.getError().toString();
-                                    }
-                                    else
-                                    {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
-
-                                } catch (Exception e) {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null,null));
-                                    Timber.e("response"+response.message()+e.getMessage());
-                                }
-                                Timber.e("response"+response.message());
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,response));
                             }
                         }
 
@@ -472,7 +379,8 @@ public class RegistrationService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE);
         }
     }
 

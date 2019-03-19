@@ -9,6 +9,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
@@ -182,7 +183,8 @@ public class ChangePasswordService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.CHANGE_PASSWORD_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE));
         }
     }
 }

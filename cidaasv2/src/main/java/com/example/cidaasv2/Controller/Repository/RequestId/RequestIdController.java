@@ -3,6 +3,7 @@ package com.example.cidaasv2.Controller.Repository.RequestId;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
@@ -83,9 +84,9 @@ public class RequestIdController {
           webAuthError= WebAuthError.getShared(context);
             // Global Checking
             //Check all the login Properties are Correct
-            if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
+            if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL").equals("")
                     || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("Domain URL must not be null");
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                         +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
                 LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -95,7 +96,7 @@ public class RequestIdController {
             }
             if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
                     || !((Hashtable) loginproperties).containsKey("ClientId")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("ClientId must not be null");
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                         +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
                 LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -103,7 +104,7 @@ public class RequestIdController {
             }
             if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                     || loginproperties.get("RedirectURL").equals("")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("Redirect URL must not be null");
                 String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                         +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
                 LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -137,7 +138,7 @@ public class RequestIdController {
         catch (Exception e)
         {
             String mess=e.toString();
-            Primaryresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            Primaryresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
             String loggerMessage = "Request-Id Controller failure : Error Message - " + e.getMessage();
             LogFile.getShared(context).addRecordToLog(loggerMessage);
         }

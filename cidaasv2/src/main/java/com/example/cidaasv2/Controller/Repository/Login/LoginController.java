@@ -8,6 +8,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
@@ -56,7 +57,7 @@ public class LoginController {
     public void loginwithCredentials(@NonNull String baseurl,@NonNull LoginCredentialsRequestEntity loginEntity,
                                      @NonNull final Result<LoginCredentialsResponseEntity> result) {
         try {
-            if (baseurl!=null) {
+            if (baseurl!=null && !baseurl.equals("")) {
                 //Todo Service call
                 LoginService.getShared(context).loginWithCredentials(baseurl, loginEntity,null, new Result<LoginCredentialsResponseEntity>() {
                     @Override
@@ -88,14 +89,13 @@ public class LoginController {
                 });
             } else {
 
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be null"));
             }
 
         } catch (Exception e) {
             String errorMessage="Login with Credentials Exception"+e.getMessage();
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Login with credentials"+errorMessage+WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
 
         }
     }
@@ -144,15 +144,15 @@ public class LoginController {
             }
             else
             {
-
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Tracking code, verification type or baseurl must not be empty"));
             }
 
         }
         catch (Exception e)
         {
-            Timber.e("Service call Excception");
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            Timber.e("Service call Excception"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Continue MFA Exception:"+e.getMessage()+WebAuthErrorCode.RESUME_LOGIN_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
         }
     }
 
@@ -201,14 +201,15 @@ public class LoginController {
             else
             {
 
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("ClientId , sub , Track code, base url must not be empty"));
             }
 
         }
         catch (Exception e)
         {
             Timber.e("Service call Excception");
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog("Continue Passwordless Exception:"+e.getMessage()+WebAuthErrorCode.RESUME_LOGIN_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
         }
     }
 

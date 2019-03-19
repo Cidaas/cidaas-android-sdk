@@ -168,7 +168,7 @@ public class PatternVerificationService {
     // 4. done  Maintain logs based on flags
 
     //Scanned Pattern
-    public void scannedPattern(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedPattern(final String baseurl, ScannedRequestEntity scannedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                                final Result<ScannedResponseEntity> callback) {
         String scannedPatternUrl = "";
         try {
@@ -214,6 +214,7 @@ public class PatternVerificationService {
                 public void onResponse(Call<ScannedResponseEntity> call, Response<ScannedResponseEntity> response) {
                     if (response.isSuccessful()) {
                         if (response.code() == 200) {
+                            DBHelper.getShared().setUserDeviceId(response.body().getData().getUserDeviceId(),baseurl);
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,

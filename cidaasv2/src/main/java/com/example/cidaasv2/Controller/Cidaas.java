@@ -178,7 +178,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import pub.devrel.easypermissions.EasyPermissions;
 import timber.log.Timber;
 
 import static android.os.Build.MODEL;
@@ -202,7 +201,7 @@ public class Cidaas implements IOAuthWebLogin {
     public Context context;
     public Activity activityFromCidaas;
 
-    public static String instanceId = "";
+    public static String usagePass = "";
     public static ICustomLoader loader;
     public static String baseurl = "";
     public static final String FIDO_VERSION = "U2F_V2";
@@ -410,9 +409,9 @@ public class Cidaas implements IOAuthWebLogin {
     public static void validateDevice(Map<String, String> instanceIdFromPush) {
         try {
             if (instanceIdFromPush.get("usage_pass") != null && !instanceIdFromPush.get("usage_pass").equals("")) {
-                instanceId = instanceIdFromPush.get("usage_pass");
+                usagePass = instanceIdFromPush.get("usage_pass");
             } else {
-                instanceId = "";
+                usagePass = "";
             }
         } catch (Exception e) {
             String loggerMessage = "Set remote Message : " + " Error Message - " + e.getMessage();
@@ -423,8 +422,8 @@ public class Cidaas implements IOAuthWebLogin {
 
     // Get the instance ID
     public String getInstanceId() {
-        if (instanceId != null && !instanceId.equals("")) {
-            return instanceId;
+        if (usagePass != null && !usagePass.equals("")) {
+            return usagePass;
         } else {
             return null;
         }
@@ -490,7 +489,7 @@ public class Cidaas implements IOAuthWebLogin {
                         });
 
             } else {
-                result.failure(webAuthError.propertyMissingException());
+                result.failure(webAuthError.propertyMissingException("ClientId or DomainURL or RedirectURL must not be null "));
             }
         } catch (Exception e) {
             String loggerMessage = "Request-Id service Exception :  Error Message - " + e.getMessage();
@@ -515,7 +514,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
             else
             {
-                Primaryresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                Primaryresult.failure(WebAuthError.getShared(context).propertyMissingException("Domain URL must not be empty"));
             }
         } catch (Exception e) {
 
@@ -957,7 +956,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -989,11 +988,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1031,18 +1030,18 @@ public class Cidaas implements IOAuthWebLogin {
                                 passwordlessEntity.getRequestId(), initiateEmailMFARequestEntity, initiateresult);
                     } else {
 
-                        initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                        initiateresult.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be empty"));
                     }
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    initiateresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            initiateresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1073,7 +1072,7 @@ public class Cidaas implements IOAuthWebLogin {
                               loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
                           }*/
                     } else {
-                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Code must not be empty"));
                     }
 
 
@@ -1081,12 +1080,12 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(error);
+                    WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty");
                 }
             });
 
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -1107,11 +1106,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1135,11 +1134,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1186,18 +1185,18 @@ public class Cidaas implements IOAuthWebLogin {
                                 clientId, passwordlessEntity.getRequestId(), initiateSMSMFARequestEntity, initiateresult);
                     } else {
 
-                        initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                        initiateresult.failure(WebAuthError.getShared(context).propertyMissingException("Sub or usage type must not be null"));
                     }
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    initiateresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            initiateresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1242,11 +1241,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(error);
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -1270,11 +1269,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1339,18 +1338,18 @@ public class Cidaas implements IOAuthWebLogin {
                                 initiateIVRMFARequestEntity, initiateresult);
                     } else {
 
-                        initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                        initiateresult.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be null"));
                     }
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    initiateresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            initiateresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            initiateresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1390,11 +1389,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -1416,11 +1415,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1471,18 +1470,18 @@ public class Cidaas implements IOAuthWebLogin {
                                 initiateBackupCodeMFARequestEntity, loginresult);
                     } else {
 
-                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Sub or usageType or code must not be null"));
                     }
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -1524,11 +1523,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -1923,7 +1922,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -1976,7 +1975,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
 
@@ -2056,7 +2055,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -2175,7 +2174,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -2302,7 +2301,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -2336,7 +2335,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -2394,7 +2393,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                             @Override
                             public void failure(WebAuthError error) {
-                                enrollresult.failure(error);
+                                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                             }
                         });
                     }
@@ -2413,7 +2412,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
 
         } catch (Exception e) {
-           // enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+           // enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
             LogFile.getShared(context).addRecordToLog("Enroll Finger exception" + e.getMessage());
             enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,"Enroll Finger exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
@@ -2637,7 +2636,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                         @Override
                         public void failure(WebAuthError error) {
-                            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                         }
                     });
                 }
@@ -2649,7 +2648,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            //callBackresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            //callBackresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
             LogFile.getShared(context).addRecordToLog("Verify Finger exception" + e.getMessage());
             callBackresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,"Verify Finger exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
@@ -3040,11 +3039,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-           // result.failure(WebAuthError.getShared(context).propertyMissingException());
+           // result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
             LogFile.getShared(context).addRecordToLog("Verify FIDO exception" + e.getMessage());
             result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,"Verify FIDO exception"+ e.getMessage(),
                     HttpStatusCode.EXPECTATION_FAILED));
@@ -3124,7 +3123,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
 
@@ -3252,11 +3251,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            //loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            //loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
             String loggerMessage = "Verify Smartpush : " + " Error Message - " + e.getMessage();
            LogFile.getShared(context).addRecordToLog(loggerMessage);
             loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,"Something Went wrong please try again"+e.getMessage(),417));
@@ -3291,7 +3290,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -3342,7 +3341,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
 
@@ -3416,7 +3415,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -3446,7 +3445,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
 
@@ -3537,7 +3536,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
 
@@ -3568,7 +3567,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
 
@@ -3620,7 +3619,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         }
@@ -3698,7 +3697,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -3733,7 +3732,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -3812,14 +3811,15 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deleteResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    deleteResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         }
         catch (Exception e)
         {
             Timber.e("Faliure in delete service call"+e.getMessage());
-            deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+            LogFile.getShared(context).addRecordToLog("Faliure in delete verification By type service call"+e.getMessage());
+            deleteResult.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
 
         }
     }
@@ -3868,14 +3868,15 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         }
         catch (Exception e)
         {
             Timber.e("Faliure in delete All service call"+e.getMessage());
-            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+             LogFile.getShared(context).addRecordToLog("Faliure in delete verification by device service call"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
+            result.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
 
         }
     }
@@ -3936,8 +3937,9 @@ public class Cidaas implements IOAuthWebLogin {
         catch (Exception e)
         {
 
-            Timber.e("Faliure in delete All service call"+e.getMessage());
-            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+            Timber.e("Faliure in deny Notification service call"+e.getMessage());
+            result.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Faliure in deny Notification service call"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
 
         }
     }
@@ -4001,10 +4003,9 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-
-            Timber.e("Faliure in delete All service call"+e.getMessage());
+            Timber.e("Faliure in get pending Notification List service call"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Faliure in get pending Notification List  service call"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
             result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
-
         }
     }
 
@@ -4059,7 +4060,8 @@ public class Cidaas implements IOAuthWebLogin {
         catch (Exception e)
         {
 
-            Timber.e("Faliure in getConfiguration List  service call"+e.getMessage());
+            Timber.e("Faliure in get Configuration List  service call"+e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Faliure in get Configuration List  service call"+e.getMessage()+WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE);
             result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
 
         }
@@ -4163,7 +4165,8 @@ public class Cidaas implements IOAuthWebLogin {
                 resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Photo or sub must not be null", 417));
             }
         } catch (Exception e) {
-            resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Unexpected Error :" + e.getMessage(), 417));
+            resultEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Unexpected Error :" + e.getMessage()+WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE);
         }
     }
 
@@ -4200,7 +4203,8 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Unexpected Error :" + e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
         }
     }
 
@@ -4257,14 +4261,14 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            String errorMessage = "Custom Exception" + e.getMessage();
+            String errorMessage = "Get Registration Fields Custom Exception" + e.getMessage();
 
-            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            LogFile.getShared(context).addRecordToLog(errorMessage+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
         }
     }
 
@@ -4325,6 +4329,7 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "Email must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
 
 
                                         }
@@ -4336,6 +4341,7 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "given_name must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
                                         }
 
                                     }
@@ -4345,6 +4351,7 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "family_name must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
 
                                         }
 
@@ -4355,6 +4362,7 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "mobile_number must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
 
                                         }
 
@@ -4365,6 +4373,7 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "password must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
 
 
                                         }
@@ -4376,13 +4385,15 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "password_echo must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
 
                                         }
-                                        if (registrationEntity.getPassword().equals(registrationEntity.getPassword_echo())) {
+                                        if (!registrationEntity.getPassword().equals(registrationEntity.getPassword_echo())) {
 
                                             String errorMessage = "Password and password_echo must be same";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
 
                                         }
 
@@ -4393,6 +4404,7 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "username must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                            return;
 
                                         }
 
@@ -4403,7 +4415,7 @@ public class Cidaas implements IOAuthWebLogin {
                                             String errorMessage = "birthdate must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                     errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
+                                            return;
                                         }
 
                                     }
@@ -4413,7 +4425,7 @@ public class Cidaas implements IOAuthWebLogin {
                                         String errorMessage = "Provider must not be empty";
                                         registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                                                 errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
+                                        return;
 
                                     }
 
@@ -4465,14 +4477,14 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
             String errorMessage = "Custom Exception" + e.getMessage();
 
-            registerFieldsresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            LogFile.getShared(context).addRecordToLog(errorMessage);
         }
     }
 
@@ -4542,11 +4554,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    Result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).propertyMissingException());
+            Result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -4617,11 +4629,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    Result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).propertyMissingException());
+            Result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -4692,11 +4704,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    Result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).propertyMissingException());
+            Result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -4722,11 +4734,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -4750,11 +4762,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            deduplicaionResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -4777,11 +4789,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            deduplicaionResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -4809,7 +4821,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(error);
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         }
@@ -4839,11 +4851,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            deduplicaionResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -4873,7 +4885,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(error);
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         }
@@ -4911,11 +4923,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -4942,7 +4954,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(error);
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         }
@@ -4979,11 +4991,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -5003,18 +5015,18 @@ public class Cidaas implements IOAuthWebLogin {
                         ResetPasswordController.getShared(context).resetPasswordValidateCode(baseurl, verificationCode, rprq, resetpasswordResult);
 
                     } else {
-                        resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                        resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification Code or RPRQ must not be empty"));
                     }
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
 
     }
@@ -5060,7 +5072,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
@@ -5092,11 +5104,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
         }
     }
 
@@ -5238,7 +5250,7 @@ public class Cidaas implements IOAuthWebLogin {
                             customTabsIntent.intent.setPackage(packageName);
                         }
 
-                        customTabsIntent.launchUrl(context, Uri.parse(url));
+                        customTabsIntent.launchUrl(activityContext, Uri.parse(url));
                     } else {
                         //TODo callback Failure
                         String loggerMessage = "LoginURL failure : " + "Error Code - ";
@@ -5380,14 +5392,14 @@ public class Cidaas implements IOAuthWebLogin {
             @Override
             public void success(Dictionary<String, String> loginProperties) {
                 if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("DomainURL must not be empty");
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message -  DomainURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                    LogFile.getShared(context).addRecordToLog(loggerMessage);
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("ClientId must not be empty");
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - ClientId is missing"
                             + webAuthError.errorCode + ", Error Message -  ClientId is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
@@ -5395,7 +5407,7 @@ public class Cidaas implements IOAuthWebLogin {
                     result.failure(webAuthError);
                 }
                 if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("RedirectURL must not be empty");
                     String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - RedirectURL is missing"
                             + webAuthError.errorCode + ", Error Message -  RedirectURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
@@ -5435,7 +5447,7 @@ public class Cidaas implements IOAuthWebLogin {
                 //check here for already saved properties
 
                 if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("RedirectURL must not be empty");
                     String loggerMessage = "Check saved properties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                    LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -5443,7 +5455,7 @@ public class Cidaas implements IOAuthWebLogin {
                     return;
                 }
                 if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("ClientId must not be empty");
                     String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
                             + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
 
@@ -5488,11 +5500,11 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE));
         }
     }
 
@@ -5531,7 +5543,7 @@ public class Cidaas implements IOAuthWebLogin {
             //Check all the login Properties are Correct
             if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
                     || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("Domain URL must not be empty");
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
                         + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -5541,7 +5553,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
             if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
                     || !((Hashtable) loginproperties).containsKey("ClientId")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("ClientId must not be empty");
                 String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -5550,7 +5562,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
             if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                     || loginproperties.get("RedirectURL").equals("")) {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("Redirect URL must not be empty");
                 String loggerMessage = "Check PKCE Flow  readProperties failure : " + "Error Code - "
                         + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
                LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -5567,7 +5579,7 @@ public class Cidaas implements IOAuthWebLogin {
             if (!ENABLE_PKCE) {
                 if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret") == "" ||
                         !((Hashtable) loginproperties).containsKey("ClientSecret")) {
-                    webAuthError = webAuthError.propertyMissingException();
+                    webAuthError = webAuthError.propertyMissingException("Client Secret must not be empty");
                     savedResult.failure(webAuthError);
                 } else {
                     loginproperties.put("ClientSecret", loginproperties.get("ClientSecret"));
@@ -5816,7 +5828,7 @@ public class Cidaas implements IOAuthWebLogin {
         //Check all the login Properties are Correct
         if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
                 || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-            webAuthError = webAuthError.propertyMissingException();
+            webAuthError = webAuthError.propertyMissingException("DomainURL must not be null");
             String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                     +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
            LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -5826,7 +5838,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
                 || !((Hashtable) loginproperties).containsKey("ClientId")) {
-            webAuthError = webAuthError.propertyMissingException();
+            webAuthError = webAuthError.propertyMissingException("ClientId must not be null");
             String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                     +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
            LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -5835,7 +5847,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                 || loginproperties.get("RedirectURL").equals("")) {
-            webAuthError = webAuthError.propertyMissingException();
+            webAuthError = webAuthError.propertyMissingException("Redirect URL must not be null");
             String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
                     +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
            LogFile.getShared(context).addRecordToLog(loggerMessage);
@@ -6210,7 +6222,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        result.failure(WebAuthError.getShared(context).propertyMissingException());
+                        result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
                     }
                 });
             }

@@ -164,7 +164,7 @@ public class LoginService {
         {
             LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
         }
     }
 
@@ -403,7 +403,7 @@ public class LoginService {
         {
             LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
         }
     }
 
@@ -521,7 +521,7 @@ public class LoginService {
         {
             LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
         }
     }
 
@@ -617,7 +617,7 @@ public class LoginService {
             {
                 LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
                 Timber.d(e.getMessage());
-                callback.failure(WebAuthError.getShared(context).propertyMissingException());
+                callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
             }
 
     }

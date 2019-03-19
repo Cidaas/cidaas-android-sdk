@@ -8,6 +8,7 @@ import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
@@ -159,7 +160,8 @@ public class DeduplicationService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE));
         }
     }
 
@@ -256,7 +258,8 @@ public class DeduplicationService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE));
         }
     }
 

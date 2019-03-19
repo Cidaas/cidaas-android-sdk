@@ -3,6 +3,7 @@ package com.example.cidaasv2.Service.Repository.RequestId;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
@@ -11,6 +12,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.Service.CidaassdkService;
@@ -142,27 +144,12 @@ public class RequestIdService {
             String codeChallenge="";
             String clientSecret=" ";
 
-if(challengeProperties.get("Challenge")!=null) {
-    codeChallenge = challengeProperties.get("Challenge");
-}
-if(challengeProperties.get("CllientSecret")!=null) {
-    clientSecret = challengeProperties.get("ClientSecret");
-}
-
-
-/*
-
-            //Create Auth Request entity to get Request Id
-            authRequestEntity=new AuthRequestEntity();
-            authRequestEntity.setClient_id(loginProperties.get("ClientId"));
-            authRequestEntity.setRedirect_uri(loginProperties.get("RedirectURL"));
-            authRequestEntity.setResponse_type("code");
-            authRequestEntity.setNonce(UUID.randomUUID().toString());
-            authRequestEntity.setClient_secret(challengeProperties.get("ClientSecret"));
-            authRequestEntity.setCode_challenge(challengeProperties.get("Challenge"));
-            authRequestEntity.setCode_challenge_method("S256");
-            authRequestEntity.setScope("openid profile email phone offline_access");
-*/
+            if(challengeProperties.get("Challenge")!=null) {
+             codeChallenge = challengeProperties.get("Challenge");
+            }
+            if(challengeProperties.get("CllientSecret")!=null) {
+             clientSecret = challengeProperties.get("ClientSecret");
+            }
 
 
             Map<String, String> authRequestEntityMap = new HashMap<>();
@@ -201,46 +188,13 @@ if(challengeProperties.get("CllientSecret")!=null) {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            //Todo Handle proper error message
-                            String errorResponse = response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
-                                    "RequestId Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,response));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthRequestResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
+                    Timber.e("Failure in Request id service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
                 }
             });
@@ -249,7 +203,8 @@ if(challengeProperties.get("CllientSecret")!=null) {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
         }
     }
 

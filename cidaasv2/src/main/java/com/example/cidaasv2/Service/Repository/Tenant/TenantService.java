@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Tenant;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
@@ -104,40 +105,7 @@ public class TenantService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.TENANT_INFO_FAILURE,errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            Timber.e(e);
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.TENANT_INFO_FAILURE,
-                                    "TenantINfo All Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.TENANT_INFO_FAILURE,response));
                     }
                 }
 
@@ -151,7 +119,8 @@ public class TenantService {
         }
         catch (Exception e)
         { String loggerMessage = "TenantService-getTenantInfoException: Error Message - " + e.getMessage();
-        LogFile.getShared(context).addRecordToLog(loggerMessage); Timber.d(e.getMessage());callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        LogFile.getShared(context).addRecordToLog(loggerMessage); Timber.d(e.getMessage());
+         callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.TENANT_INFO_FAILURE));
         }
     }
 

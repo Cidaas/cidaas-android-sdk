@@ -9,6 +9,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
@@ -92,12 +93,13 @@ public class BackupCodeConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("baseURL or Sub must not be null"));
             }
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_BACKUPCODE_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_BACKUPCODE_MFA_FAILURE));
         }
     }
 
@@ -173,14 +175,15 @@ public class BackupCodeConfigurationController {
             }
             else
             {
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or verificationType or baseurl must not be null"));
             }
 
 
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE);
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE));
         }
     }
 
@@ -249,7 +252,9 @@ public class BackupCodeConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE));
+
         }
     }
 

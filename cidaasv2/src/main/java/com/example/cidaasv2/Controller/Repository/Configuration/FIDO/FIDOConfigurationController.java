@@ -13,6 +13,7 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -107,7 +108,7 @@ public class FIDOConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
 
             AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
             {
@@ -127,7 +128,8 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog("FIDO Generate Authenticate Entity Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
+            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE));
             Timber.e(e.getMessage());
         }
     }
@@ -165,6 +167,7 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
+            LogFile.getShared(context).addRecordToLog("FIDO Generate Enroll Entity Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
               return null;
         }
 
@@ -200,6 +203,7 @@ public class FIDOConfigurationController {
 
                 } catch (Exception ex) {
                     Timber.d(ex.getMessage());
+                    LogFile.getShared(context).addRecordToLog("FIDO  Generate Authenticate Entity Exception:" + ex.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
                 }
             }
 
@@ -208,6 +212,7 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
+            LogFile.getShared(context).addRecordToLog("FIDO Generate Authenticate Entity Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
           return null;
         }
     }
@@ -228,12 +233,12 @@ public class FIDOConfigurationController {
                             @Override
                             public void success(final SetupFIDOMFAResponseEntity setupserviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
 
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -308,13 +313,13 @@ public class FIDOConfigurationController {
             else
             {
 
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or AccessToken or ClientId must not be null"));
             }
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,
-                    "FIDO Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
 
         }
     }
@@ -335,14 +340,14 @@ public class FIDOConfigurationController {
                 FIDOVerificationService.getShared(context).scannedFIDO(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
                     @Override
                     public void success(ScannedResponseEntity result) {
-                        Cidaas.instanceId="";
+                        Cidaas.usagePass ="";
 
 
                         new CountDownTimer(5000, 500) {
                             String instceID = "";
 
                             public void onTick(long millisUntilFinished) {
-                                instceID = Cidaas.instanceId;
+                                instceID = Cidaas.usagePass;
 
                                 Timber.e("");
                                 if (instceID != null && !instceID.equals("")) {
@@ -396,8 +401,8 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,
-                    "FIDO Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE);
 
         }
     }
@@ -423,14 +428,14 @@ public class FIDOConfigurationController {
                                 @Override
                                 public void success(final EnrollFIDOMFAResponseEntity serviceresult) {
 
-                                    Cidaas.instanceId = "";
+                                    Cidaas.usagePass = "";
 
                                     //Timer
                                     new CountDownTimer(5000, 500) {
                                         String instceID = "";
 
                                         public void onTick(long millisUntilFinished) {
-                                            instceID = Cidaas.instanceId;
+                                            instceID = Cidaas.usagePass;
 
                                             Timber.e("");
                                             if (instceID != null && !instceID.equals("")) {
@@ -491,8 +496,8 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,
-                    "FIDO Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
 
         }
     }
@@ -515,7 +520,7 @@ public class FIDOConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
             if(initiateFIDOMFARequestEntity.getUserDeviceId() != null && !initiateFIDOMFARequestEntity.getUserDeviceId().equals(""))
             {
                 //Do nothing
@@ -537,11 +542,11 @@ public class FIDOConfigurationController {
                             @Override
                             public void success(final InitiateFIDOMFAResponseEntity serviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -646,12 +651,14 @@ public class FIDOConfigurationController {
             else
             {
 
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or userDeviceId or baseurl must not be null"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE);
         }
     }
 
@@ -659,73 +666,65 @@ public class FIDOConfigurationController {
 
     //Authenticate FIDO
 
-    public void authenticateFIDO(final String baseurl, final AuthenticateFIDORequestEntity authenticateFIDORequestEntity, final Result<AuthenticateFIDOResponseEntity> authResult)
-    {
-        try
-        {
+    public void authenticateFIDO(final String baseurl, final AuthenticateFIDORequestEntity authenticateFIDORequestEntity, final Result<AuthenticateFIDOResponseEntity> authResult) {
+        try {
             FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity,
                     null, new Result<AuthenticateFIDOResponseEntity>() {
-                @Override
-                public void success(final AuthenticateFIDOResponseEntity serviceresult) {
+                        @Override
+                        public void success(final AuthenticateFIDOResponseEntity serviceresult) {
 
 
-                    Cidaas.instanceId = "";
+                            Cidaas.usagePass = "";
 
-                    //Timer
-                    new CountDownTimer(5000, 500) {
-                        String instceID = "";
+                            //Timer
+                            new CountDownTimer(5000, 500) {
+                                String instceID = "";
 
-                        public void onTick(long millisUntilFinished) {
-                            instceID = Cidaas.instanceId;
+                                public void onTick(long millisUntilFinished) {
+                                    instceID = Cidaas.usagePass;
 
-                            Timber.e("");
-                            if (instceID != null && !instceID.equals("")) {
-                                this.cancel();
-                                onFinish();
-                            }
-
-                        }
-
-                        public void onFinish() {
-                            if (instceID != null && !instceID.equals("")) {
-                                AuthenticateFIDORequestEntity authenticateFIDORequestEntity=new AuthenticateFIDORequestEntity();
-                                authenticateFIDORequestEntity.setUsage_pass(instceID);
-
-                                FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity,
-                                        null, new Result<AuthenticateFIDOResponseEntity>() {
-                                    @Override
-                                    public void success(AuthenticateFIDOResponseEntity result) {
-                                        authResult.success(result);
+                                    Timber.e("");
+                                    if (instceID != null && !instceID.equals("")) {
+                                        this.cancel();
+                                        onFinish();
                                     }
 
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        authResult.failure(error);
+                                }
+
+                                public void onFinish() {
+                                    if (instceID != null && !instceID.equals("")) {
+                                        AuthenticateFIDORequestEntity authenticateFIDORequestEntity = new AuthenticateFIDORequestEntity();
+                                        authenticateFIDORequestEntity.setUsage_pass(instceID);
+
+                                        FIDOVerificationService.getShared(context).authenticateFIDO(baseurl, authenticateFIDORequestEntity,
+                                                null, new Result<AuthenticateFIDOResponseEntity>() {
+                                                    @Override
+                                                    public void success(AuthenticateFIDOResponseEntity result) {
+                                                        authResult.success(result);
+                                                    }
+
+                                                    @Override
+                                                    public void failure(WebAuthError error) {
+                                                        authResult.failure(error);
+                                                    }
+                                                });
+                                    } else {
+                                        // return Error Message
+                                        authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
                                     }
-                                });
-                            }
-                            else {
-                                // return Error Message
-                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
-                            }
 
+                                }
+                            }.start();
                         }
-                    }.start();
-                }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    authResult.failure(error);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,
-                    "FIDO Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+                        @Override
+                        public void failure(WebAuthError error) {
+                            authResult.failure(error);
+                        }
+                    });
+        } catch (Exception e) {
+            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE);
         }
     }
-
-
-
 }

@@ -4,11 +4,14 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
@@ -54,20 +57,9 @@ public class SMSConfigurationController {
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
-                        //Todo Service call
+                        // Service call
                         SMSVerificationService.getShared(context).setupSMSMFA(baseurl, accessTokenresult.getAccess_token(),null,
-                                new Result<SetupSMSMFAResponseEntity>()
-                                {
-                                    @Override
-                                    public void success(SetupSMSMFAResponseEntity serviceresult) {
-                                        result.success(serviceresult);
-                                    }
-
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        result.failure(error);
-                                    }
-                                });
+                                result);
                     }
 
                     @Override
@@ -79,11 +71,12 @@ public class SMSConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or Sub must not be null"));
             }
         }
         catch (Exception e)
         {
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
             Timber.e(e.getMessage());
         }
     }
@@ -99,32 +92,22 @@ public class SMSConfigurationController {
                 final EnrollSMSMFARequestEntity enrollSMSMFARequestEntity=new EnrollSMSMFARequestEntity();
                 enrollSMSMFARequestEntity.setCode(code);
                 enrollSMSMFARequestEntity.setStatusId(StatusId);
+                enrollSMSMFARequestEntity.setSub(Sub);
 
                 AccessTokenController.getShared(context).getAccessToken(Sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(AccessTokenEntity accessresult) {
 
-                        if (enrollSMSMFARequestEntity.getSub() != null && enrollSMSMFARequestEntity.getStatusId()  != null &&
-                                baseurl != null && !baseurl.equals("") && accessresult.getAccess_token() != null
+                        if (baseurl != null && !baseurl.equals("") && accessresult.getAccess_token() != null
                                 && !accessresult.getAccess_token().equals(""))
                         {
                             //Done Service call
                             SMSVerificationService.getShared(context).enrollSMSMFA(baseurl, accessresult.getAccess_token(),
-                                    enrollSMSMFARequestEntity, null,new Result<EnrollSMSMFAResponseEntity>() {
-                                        @Override
-                                        public void success(EnrollSMSMFAResponseEntity serviceresult) {
-                                            result.success(serviceresult);
-                                        }
-
-                                        @Override
-                                        public void failure(WebAuthError error) {
-                                            result.failure(error);
-                                        }
-                                    });
+                                    enrollSMSMFARequestEntity, null,result);
                         }
                         else
                         {
-                            result.failure(WebAuthError.getShared(context).propertyMissingException());
+                            result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or accessToken must not be null"));
                         }
                     }
 
@@ -171,29 +154,19 @@ public class SMSConfigurationController {
             RequestId=requestId;
             UsageTypeFromSMS=initiateSMSMFARequestEntity.getUsageType();
 
-            //Todo call Inititate
+            // call Inititate
 
             if ( initiateSMSMFARequestEntity.getUsageType() != null && initiateSMSMFARequestEntity.getUsageType() != "" &&
                     initiateSMSMFARequestEntity.getSub() != null && initiateSMSMFARequestEntity.getSub() != "" &&
                     initiateSMSMFARequestEntity.getVerificationType() != null && initiateSMSMFARequestEntity.getVerificationType() != ""&&
                     baseurl != null && !baseurl.equals("")) {
-                //Todo Service call
+                // Service call
                 SMSVerificationService.getShared(context).initiateSMSMFA(baseurl, initiateSMSMFARequestEntity,null,
-                        new Result<InitiateSMSMFAResponseEntity>() {
-                    @Override
-                    public void success(InitiateSMSMFAResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
+                        result);
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or Sub or Verification Type or BaseURL must not be empty"));
             }
 
 
@@ -201,6 +174,8 @@ public class SMSConfigurationController {
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Login With SMS"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
         }
     }
 
@@ -223,7 +198,10 @@ public class SMSConfigurationController {
                         public void success(AuthenticateSMSResponseEntity serviceresult) {
 
 
-                            //Todo decide to move to MFA or Paswword Less Based on usageType
+                            ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(serviceresult.getData().getSub(),
+                                    serviceresult.getData().getTrackingCode(), AuthenticationType.SMS,UsageTypeFromSMS,clientId,RequestId,TrackId,baseurl,result);
+
+                           /* //Todo decide to move to MFA or Paswword Less Based on usageType
                             ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
                             resumeLoginRequestEntity.setSub(serviceresult.getData().getSub());
                             resumeLoginRequestEntity.setTrack_id(TrackId);
@@ -242,7 +220,7 @@ public class SMSConfigurationController {
 
 
                                 LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, result);
-                            }
+                            }*/
 
                         }
 
@@ -254,12 +232,11 @@ public class SMSConfigurationController {
                 }
                 else
                 {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL must not be null"));
                 }
             }
             else {
                 String errorMessage="StatusId must not be empty";
-
                 result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                         errorMessage, HttpStatusCode.EXPECTATION_FAILED));
             }
@@ -268,7 +245,9 @@ public class SMSConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Verify SMS"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
         }
     }
 
@@ -293,12 +272,15 @@ public class SMSConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or AccessToken must not be empty"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.SETUP_SMS_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE));
+
         }
     }
 }

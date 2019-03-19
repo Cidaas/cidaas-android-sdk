@@ -6,6 +6,7 @@ import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateRequestEntity;
@@ -82,8 +83,7 @@ public class RegistrationController {
             {
                 String errorMessage="RequestId must not be empty";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Accepted Language or requestId must not be null"));
             }
         }
         catch (Exception e)
@@ -91,8 +91,8 @@ public class RegistrationController {
 
             String errorMessage="Exception"+e.getMessage();
 
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Get Registration Fields Exception:"+e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
         }
     }
 
@@ -101,24 +101,22 @@ public class RegistrationController {
         try {
             //Todo Check for Not null
 
-            for (RegistrationSetupResultDataEntity dataEntity:validateRegistrationFilelds.getData()
-                 ) {
-                if(dataEntity.isRequired())
-                {
+            /*if(validateRegistrationFilelds!=null) {
+                for (RegistrationSetupResultDataEntity dataEntity : validateRegistrationFilelds.getData()
+                ) {
+                    if (dataEntity.isRequired()) {
 
+                    }
                 }
-            }
+            }*/
                 registerWithNewUserService(baseurl,registrationEntity,result);
 
 
         }
         catch (Exception e)
         {
-
-            String errorMessage="RequestId must not be empty";
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Register new user Failure"+e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
         }
     }
 
@@ -131,36 +129,21 @@ public class RegistrationController {
                     registerNewUserRequestEntity.getRegistrationEntity() != null &&
                     !registerNewUserRequestEntity.getRegistrationEntity().getFamily_name().equals("") && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,null,
-                        new Result<RegisterNewUserResponseEntity>() {
-                    @Override
-                    public void success(RegisterNewUserResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
+                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,null, result);
             }
             else
             {
 
                 String errorMessage="RequestId must not be empty";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
-
-            String errorMessage="RequestId must not be empty";
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Register new user Service Failure"+e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
         }
     }
 
@@ -199,12 +182,15 @@ public class RegistrationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Verification medium , sub or processing type must not be null"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Initiate Account verification Failure"+e.getMessage()+WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE);
+
         }
     }
 
@@ -224,26 +210,18 @@ public class RegistrationController {
 
                 //Todo Service call
                 RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity,null,
-                        new Result<RegisterUserAccountVerifyResponseEntity>() {
-                    @Override
-                    public void success(RegisterUserAccountVerifyResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
+                        result);
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("ACCVID or CODE or BASEURL must not be null"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Verify Account verification Failure"+e.getMessage()+WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE);
         }
     }
 

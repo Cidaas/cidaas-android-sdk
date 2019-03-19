@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -95,7 +96,7 @@ public class SmartPushConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
 
             AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
             {
@@ -115,7 +116,8 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
             Timber.e(e.getMessage());
         }
     }
@@ -128,7 +130,7 @@ public class SmartPushConfigurationController {
         try{
             //Generate Challenge
             generateChallenge();
-            Cidaas.instanceId="";
+            Cidaas.usagePass="";
 
             AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
             {
@@ -147,7 +149,7 @@ public class SmartPushConfigurationController {
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && instceID!="")
@@ -282,14 +284,14 @@ public class SmartPushConfigurationController {
                 SmartPushVerificationService.getShared(context).scannedSmartPush(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
                     @Override
                     public void success(ScannedResponseEntity result) {
-                        Cidaas.instanceId="";
+                        Cidaas.usagePass ="";
 
 
                         new CountDownTimer(5000, 500) {
                             String instceID = "";
 
                             public void onTick(long millisUntilFinished) {
-                                instceID = Cidaas.instanceId;
+                                instceID = Cidaas.usagePass;
 
                                 Timber.e("");
                                 if (instceID != null && !instceID.equals("")) {
@@ -343,8 +345,9 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,
-                    "Smart Push Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Exception"+e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
+            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
+
 
         }
     }
@@ -365,12 +368,12 @@ public class SmartPushConfigurationController {
                             @Override
                             public void success(final SetupSmartPushMFAResponseEntity setupserviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
 
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -430,13 +433,13 @@ public class SmartPushConfigurationController {
             else
             {
 
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl accessToken or clientId must not be null"));
             }
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
-                    "SmartPush Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Exception"+e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
 
         }
     }
@@ -464,14 +467,14 @@ public class SmartPushConfigurationController {
                                 @Override
                                 public void success(final EnrollSmartPushMFAResponseEntity serviceresult) {
 
-                                    Cidaas.instanceId = "";
+                                    Cidaas.usagePass = "";
 
                                     //Timer
                                     new CountDownTimer(5000, 500) {
                                         String instceID = "";
 
                                         public void onTick(long millisUntilFinished) {
-                                            instceID = Cidaas.instanceId;
+                                            instceID = Cidaas.usagePass;
 
                                             Timber.e("");
                                             if (instceID != null && !instceID.equals("")) {
@@ -532,8 +535,8 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
-                    "SmartPush Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Exception"+e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
 
         }
     }
@@ -551,7 +554,7 @@ public class SmartPushConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass="";
             if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && initiateSmartPushMFARequestEntity.getUserDeviceId() != "" )
             {
                 //Do nothing
@@ -581,7 +584,7 @@ public class SmartPushConfigurationController {
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && instceID!="")
@@ -725,7 +728,7 @@ public class SmartPushConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
             if(initiateSmartPushMFARequestEntity.getUserDeviceId() != null && !initiateSmartPushMFARequestEntity.getUserDeviceId().equals(""))
             {
                 //Do nothing
@@ -747,11 +750,11 @@ public class SmartPushConfigurationController {
                             @Override
                             public void success(final InitiateSmartPushMFAResponseEntity serviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -860,12 +863,14 @@ public class SmartPushConfigurationController {
             else
             {
 
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or usageDeviceId or baseurl must not be null"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE);
         }
     }
 
@@ -881,14 +886,14 @@ public class SmartPushConfigurationController {
                 public void success(final AuthenticateSmartPushResponseEntity serviceresult) {
 
 
-                    Cidaas.instanceId = "";
+                    Cidaas.usagePass = "";
 
                     //Timer
                     new CountDownTimer(5000, 500) {
                         String instceID = "";
 
                         public void onTick(long millisUntilFinished) {
-                            instceID = Cidaas.instanceId;
+                            instceID = Cidaas.usagePass;
 
                             Timber.e("");
                             if (instceID != null && !instceID.equals("")) {
@@ -903,17 +908,7 @@ public class SmartPushConfigurationController {
                                 AuthenticateSmartPushRequestEntity authenticateSmartPushRequestEntity=new AuthenticateSmartPushRequestEntity();
                                 authenticateSmartPushRequestEntity.setUsage_pass(instceID);
 
-                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,null, new Result<AuthenticateSmartPushResponseEntity>() {
-                                    @Override
-                                    public void success(AuthenticateSmartPushResponseEntity result) {
-                                        authResult.success(result);
-                                    }
-
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        authResult.failure(error);
-                                    }
-                                });
+                                SmartPushVerificationService.getShared(context).authenticateSmartPush(baseurl, authenticateSmartPushRequestEntity,null, authResult);
                             }
                             else {
                                 // return Error Message
@@ -932,8 +927,8 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,
-                    "SmartPush Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE);
+            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE));
         }
     }
 

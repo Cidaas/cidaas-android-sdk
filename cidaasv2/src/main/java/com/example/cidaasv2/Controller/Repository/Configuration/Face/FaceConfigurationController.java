@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -90,7 +91,7 @@ public class FaceConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
 
             AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
             {
@@ -122,7 +123,8 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
+            LogFile.getShared(context).addRecordToLog("Enroll Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
+            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
             Timber.e(e.getMessage());
         }
     }
@@ -143,12 +145,12 @@ public class FaceConfigurationController {
                             @Override
                             public void success(final SetupFaceMFAResponseEntity setupserviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
 
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -211,13 +213,13 @@ public class FaceConfigurationController {
             else
             {
 
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException());
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl AcccessToken or clientId must not be null"));
             }
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Enroll Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
 
         }
     }
@@ -238,14 +240,14 @@ public class FaceConfigurationController {
                 FaceVerificationService.getShared(context).scannedFace(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
                     @Override
                     public void success(ScannedResponseEntity result) {
-                        Cidaas.instanceId="";
+                        Cidaas.usagePass ="";
 
 
                         new CountDownTimer(5000, 500) {
                             String instceID = "";
 
                             public void onTick(long millisUntilFinished) {
-                                instceID = Cidaas.instanceId;
+                                instceID = Cidaas.usagePass;
 
                                 Timber.e("");
                                 if (instceID != null && !instceID.equals("")) {
@@ -299,8 +301,8 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,
-                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            LogFile.getShared(context).addRecordToLog("Scanned Face configuration"+e.getMessage()+WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE);
+            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE));
 
         }
     }
@@ -345,14 +347,14 @@ public class FaceConfigurationController {
                                 @Override
                                 public void success(final EnrollFaceMFAResponseEntity serviceresult) {
 
-                                    Cidaas.instanceId = "";
+                                    Cidaas.usagePass = "";
 
                                     //Timer
                                     new CountDownTimer(5000, 500) {
                                         String instceID = "";
 
                                         public void onTick(long millisUntilFinished) {
-                                            instceID = Cidaas.instanceId;
+                                            instceID = Cidaas.usagePass;
 
                                             Timber.e("");
                                             if (instceID != null && !instceID.equals("")) {
@@ -421,9 +423,8 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-
+            LogFile.getShared(context).addRecordToLog("Initiate Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
         }
     }
 
@@ -440,7 +441,7 @@ public class FaceConfigurationController {
                 //Generate Challenge
                 generateChallenge();
             }
-            Cidaas.instanceId="";
+            Cidaas.usagePass ="";
             if(initiateFaceMFARequestEntity.getUserDeviceId() != null && !initiateFaceMFARequestEntity.getUserDeviceId().equals(""))
             {
                 //Do nothing
@@ -462,11 +463,11 @@ public class FaceConfigurationController {
                             @Override
                             public void success(final InitiateFaceMFAResponseEntity serviceresult) {
 
-                                Cidaas.instanceId="";
+                                Cidaas.usagePass ="";
                                 new CountDownTimer(5000, 500) {
                                     String instceID="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.instanceId;
+                                        instceID= Cidaas.usagePass;
 
                                         Timber.e("");
                                         if(instceID!=null && !instceID.equals(""))
@@ -571,12 +572,14 @@ public class FaceConfigurationController {
             else
             {
 
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or userDeviceId or baseurl must not be empty"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Initiate Face configuration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE);
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
         }
     }
 
@@ -615,14 +618,14 @@ public class FaceConfigurationController {
                 public void success(final AuthenticateFaceResponseEntity serviceresult) {
 
 
-                    Cidaas.instanceId = "";
+                    Cidaas.usagePass = "";
 
                     //Timer
                     new CountDownTimer(5000, 500) {
                         String instceID = "";
 
                         public void onTick(long millisUntilFinished) {
-                            instceID = Cidaas.instanceId;
+                            instceID = Cidaas.usagePass;
 
                             Timber.e("");
                             if (instceID != null && !instceID.equals("")) {

@@ -10,7 +10,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 public interface IOAuthExcepiton {
     public WebAuthError fileNotFoundException();
     public WebAuthError noContentInFileException();
-    public WebAuthError propertyMissingException();
+    public WebAuthError propertyMissingException(String errorDetails);
     public WebAuthError serviceFailureException(int errorCode, String errorMessage, int StatusCode, Object error, ErrorEntity errorEntity);
     public WebAuthError loginURLMissingException();
     public WebAuthError redirectURLMissingException();

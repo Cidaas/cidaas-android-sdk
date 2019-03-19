@@ -10,6 +10,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -130,12 +131,14 @@ public class IVRConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or sub must not be null"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE);
         }
     }
 
@@ -174,7 +177,7 @@ public class IVRConfigurationController {
                         }
                         else
                         {
-                            result.failure(WebAuthError.getShared(context).propertyMissingException());
+                            result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or baseurl or accessToken must not be null"));
                         }
                     }
 
@@ -194,6 +197,8 @@ public class IVRConfigurationController {
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE);
         }
     }
 
@@ -230,7 +235,7 @@ public class IVRConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Usage Type or  sub or Verification Type or baseurl must not be null"));
             }
 
 
@@ -238,6 +243,8 @@ public class IVRConfigurationController {
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE);
         }
     }
 
@@ -288,7 +295,7 @@ public class IVRConfigurationController {
                 }
                 else
                 {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException());
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be null"));
                 }
 
             }
@@ -303,7 +310,8 @@ public class IVRConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).propertyMissingException());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE);
         }
     }
 

@@ -19,6 +19,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
    public int statusCode=400;
    private Context context;
    public String ErrorMessage="";
+    public String DetailedErrorMessage="";
    public ErrorEntity errorEntity;
 
     public int getErrorCode() {
@@ -39,6 +40,10 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
     public String getErrorMessage() {
         return ErrorMessage;
+    }
+
+    public String getDetailedErrorMessage() {
+        return DetailedErrorMessage;
     }
 
     public void setErrorMessage(String errorMessage) {
@@ -114,11 +119,12 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //PropertyMissingException
     @Override
-    public WebAuthError propertyMissingException() {
+    public WebAuthError propertyMissingException(String errorDetails) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.PROPERTY_MISSING;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
         WebAuthError.shared.ErrorMessage=context.getString(R.string.PROPERTY_MISSING);
+        WebAuthError.shared.DetailedErrorMessage=errorDetails;
 
         ErrorEntity errorEntity=new ErrorEntity();
         errorEntity.setCode(errorCode+"");

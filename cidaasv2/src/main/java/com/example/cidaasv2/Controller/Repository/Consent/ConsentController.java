@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
@@ -75,10 +77,12 @@ public class ConsentController {
                         });
 
             } else {
-                consentresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                consentresult.failure(WebAuthError.getShared(context).propertyMissingException("Consent Name or baseURL must not be null"));
             }
         } catch (Exception e) {
             Timber.e("Get Consent URL Service" + e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Get Consent URL Service"+e.getMessage()+ WebAuthErrorCode.ACCEPT_CONSENT_FAILURE);
+            consentresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE));
 
         }
     }
@@ -104,6 +108,7 @@ public class ConsentController {
                     @Override
                     public void success(ConsentManagementAcceptResponseEntity serviceresult) {
 
+                        //Todo call Resume service
                         ResumeConsentRequestEntity resumeConsentRequestEntity = new ResumeConsentRequestEntity();
                         resumeConsentRequestEntity.setTrack_id(consentManagementAcceptedRequestEntity.getTrackId());
                         resumeConsentRequestEntity.setSub(consentManagementAcceptedRequestEntity.getSub());
@@ -146,10 +151,12 @@ public class ConsentController {
                 });
             } else {
 
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId,Sub,Name,Version or baseurl must not be null"));
             }
         } catch (Exception e) {
             Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+ WebAuthErrorCode.ACCEPT_CONSENT_FAILURE);
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE));
         }
     }
 
