@@ -102,7 +102,7 @@ public class DeviceVerificationService {
 
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 

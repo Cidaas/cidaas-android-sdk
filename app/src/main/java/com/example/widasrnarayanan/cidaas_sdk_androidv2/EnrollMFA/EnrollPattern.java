@@ -461,20 +461,26 @@ catch (Exception e)
 
 
 
+
     public void enrollFinger(View view)
     {
 
 
+        FingerPrintEntity fingerPrintEntity=new FingerPrintEntity();
+        fingerPrintEntity.setTitle("");
+        fingerPrintEntity.setSubtitle("");
+        fingerPrintEntity.setDescription("");
+        fingerPrintEntity.setNegativeButtonString("Cancel");
 
         cidaas.configureFingerprint(EnrollPattern.this,sub, "", null,new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Enroll SuccssFull", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EnrollPattern.this, "Enroll SuccessFull", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Enroll Fail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EnrollPattern.this, "Enroll Fail"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

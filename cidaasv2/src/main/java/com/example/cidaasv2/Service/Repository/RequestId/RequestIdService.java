@@ -122,7 +122,7 @@ public class RequestIdService {
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Todo Construct URl Checking,Add Parameter(FieldMap) pending
             urlComponents = new URLHelper();

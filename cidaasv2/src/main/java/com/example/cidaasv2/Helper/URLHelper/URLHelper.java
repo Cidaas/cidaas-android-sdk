@@ -142,7 +142,7 @@ public class URLHelper {
     String preAuthCode="&preAuthCode=" ;
 
     String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
-    String deduplicationList="users-srv/deduplication/info/";
+    String deduplicationList="/users-srv/deduplication/info/";
 
     String socialLoginURL="/login-srv/social/login/";
 

@@ -6123,28 +6123,32 @@ public class Cidaas implements IOAuthWebLogin {
                             @Override
                             public void onSdkVersionNotSupported() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_SDK_VERSION_NOT_SUPPORTED,"SDK Version Not Supported"));
+                           return;
                             }
 
                             @Override
                             public void onBiometricAuthenticationNotSupported() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMETRIC_AUTHENTICATION_NOT_SUPPORTED,"Biometric Authentication  Not Supported"));
-
+                                return;
                             }
 
                             @Override
                             public void onBiometricAuthenticationNotAvailable() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_NOT_AVAILABLE,"Biometric Authentication  Not Available"));
+                                return;
                             }
 
                             @Override
                             public void onBiometricAuthenticationPermissionNotGranted() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_PERMISSION_NOT_GRANTED,"Biometric Authentication  Permission Not Granted"));
+                                return;
                             }
 
                             @Override
                             public void onBiometricAuthenticationInternalError(String error) {
 
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_INTERNAL_ERROR,"Biometric Authentication  Internal Error"));
+                                return;
                             }
 
                             @Override
@@ -6155,11 +6159,13 @@ public class Cidaas implements IOAuthWebLogin {
                             @Override
                             public void onAuthenticationCancelled() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_CANCELLED,"Biometric Authentication  Cancelled"));
+                                return;
                             }
 
                             @Override
                             public void onAuthenticationSuccessful() {
                                 result.success("Success");
+                                return;
                             }
 
                             @Override
@@ -6167,6 +6173,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                                 String errorMessage = helpString.toString();
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode, errorMessage));
+                                return;
                             }
 
                             @Override
@@ -6174,6 +6181,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                                 String errorMessage = errString.toString();
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage));
+                                return;
                             }
                         });
             }
@@ -6181,12 +6189,13 @@ public class Cidaas implements IOAuthWebLogin {
             {
                 String ErrorMessage="Fingerprint doesnot Support in your mobile";
                 result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
-
+                return;
             }
         }
         catch (Exception e)
         {
-           result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,""+e.getMessage(),HttpStatusCode.EXPECTATION_FAILED));
+           result.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED));
+           LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED);
         }
 
     }

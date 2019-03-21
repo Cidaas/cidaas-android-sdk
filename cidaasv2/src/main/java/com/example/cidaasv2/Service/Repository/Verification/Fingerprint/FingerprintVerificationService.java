@@ -112,7 +112,7 @@ public class FingerprintVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 
@@ -197,7 +197,7 @@ public class FingerprintVerificationService {
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 
@@ -287,7 +287,7 @@ public class FingerprintVerificationService {
              headers.put("access_token",accessToken);
             headers.put("verification_api_version","2");
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
@@ -370,7 +370,7 @@ public class FingerprintVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
@@ -456,7 +456,7 @@ public class FingerprintVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());

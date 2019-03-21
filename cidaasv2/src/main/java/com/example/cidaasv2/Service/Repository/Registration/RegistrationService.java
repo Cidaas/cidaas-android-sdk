@@ -101,7 +101,7 @@ public class RegistrationService {
             //Call Service-getRequestId
             Map<String, String> headers = new Hashtable<>();
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
@@ -193,7 +193,7 @@ public class RegistrationService {
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
             headers.put("requestId", registerNewUserRequestEntity.getRequestId());
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -213,6 +213,7 @@ public class RegistrationService {
                     else {
                         assert response.errorBody() != null;
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,response));
+
                     }
                 }
 
@@ -268,7 +269,7 @@ public class RegistrationService {
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -345,7 +346,7 @@ public class RegistrationService {
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();

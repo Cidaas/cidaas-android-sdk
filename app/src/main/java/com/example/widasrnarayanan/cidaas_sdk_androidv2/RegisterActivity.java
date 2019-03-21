@@ -15,6 +15,7 @@ import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
@@ -122,13 +123,13 @@ public class RegisterActivity extends AppCompatActivity {
     public void Register(View view){
 
         RegistrationEntity registrationEntity=new RegistrationEntity();
-        registrationEntity.setUsername("RajS1");
-        registrationEntity.setEmail("cidaaswidaas@gmail.com");
-        registrationEntity.setGiven_name("RajaSK");
-        registrationEntity.setFamily_name("RsdfsdfN");
+        registrationEntity.setUsername("Raj");
+        registrationEntity.setEmail("cidaaswidaas12@gmail.com");
+        registrationEntity.setGiven_name("RajaS");
+        registrationEntity.setFamily_name("RsdfsN");
         registrationEntity.setPassword("123456");
         registrationEntity.setPassword_echo("123456");
-        registrationEntity.setMobile_number("+919876553230");
+        registrationEntity.setMobile_number("+919876553231");
        // Date date=new Date();
       //  date.setDate(27/12/1994);
       //  registrationEntity.setBirthdate(date);
@@ -171,6 +172,17 @@ public class RegisterActivity extends AppCompatActivity {
                 if(result.getData().getSuggested_action().equalsIgnoreCase("DEDUPLICATION"))
                 {
                    //cidaas.loginWithCredentials();
+                    cidaas.getDeduplicationDetails(result.getData().getTrackId(), new Result<DeduplicationResponseEntity>() {
+                        @Override
+                        public void success(DeduplicationResponseEntity result) {
+                            Toast.makeText(RegisterActivity.this, ""+result.getData().getEmail(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Toast.makeText(RegisterActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
             }

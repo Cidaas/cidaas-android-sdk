@@ -111,7 +111,7 @@ public class ResetPasswordService {
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -184,7 +184,7 @@ public class ResetPasswordService {
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -260,7 +260,7 @@ public class ResetPasswordService {
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();

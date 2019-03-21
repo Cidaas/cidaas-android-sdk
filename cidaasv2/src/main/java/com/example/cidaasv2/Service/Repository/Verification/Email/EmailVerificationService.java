@@ -106,7 +106,7 @@ public class EmailVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 
@@ -180,7 +180,7 @@ public class EmailVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             enrollEmailMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -257,7 +257,7 @@ public class EmailVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             initiateEmailMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -333,7 +333,7 @@ public class EmailVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
             authenticateEmailRequestEntity.setDeviceInfo(deviceInfoEntity);
 
 

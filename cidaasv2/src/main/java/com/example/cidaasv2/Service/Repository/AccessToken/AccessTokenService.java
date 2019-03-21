@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.AccessToken;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
@@ -10,6 +11,7 @@ import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.GenralHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
@@ -146,7 +148,7 @@ public class AccessTokenService {
             headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
             headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             //Get Properties From DB
@@ -283,7 +285,7 @@ public class AccessTokenService {
             headers.put("device-model", deviceInfoEntity.getDeviceModel());
             headers.put("device-version", deviceInfoEntity.getDeviceVersion());
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             //Get Properties From DB
@@ -337,31 +339,7 @@ public class AccessTokenService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                            }
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null,null));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                    "Client Info failure Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,response));
                     }
                 }
 
@@ -377,6 +355,7 @@ public class AccessTokenService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
         }
     }
 
@@ -395,7 +374,7 @@ public class AccessTokenService {
 
            Map<String, String> headers = new Hashtable<>();
            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-           headers.put("long",LocationDetails.getShared(context).getLongitude());
+           headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
            ICidaasSDKService cidaasSDKService = service.getInstance();
            cidaasSDKService.getAccessTokenBySocial(baseURL,headers).enqueue(new Callback<SocialProviderEntity>() {
@@ -410,44 +389,20 @@ public class AccessTokenService {
                        callback.success(response.body());
                    }
                    else {
-                       callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                       callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
                                "Service failure but successful response" , 400,null,null));
                    }
                }
                     else {
                    assert response.errorBody() != null;
-                   try {
-
-                       //Todo Handle proper error message
-                       String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                       CommonErrorEntity commonErrorEntity;
-                       commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                       String errorMessage="";
-                       if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                           errorMessage=commonErrorEntity.getError().toString();
-                       }
-                       else
-                       {
-                           errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                       }
-
-
-                       callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage, 400,null,null));
-                   } catch (Exception e) {
-                       e.printStackTrace();
-                       callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                               "Client info Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                   }
-                   Timber.e("response"+response.message());
+                       callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,response));
                }
                }
 
                @Override
                public void onFailure(Call<SocialProviderEntity> call, Throwable t) {
                    Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), 400,null,null));
 
                }
            });
@@ -456,7 +411,7 @@ public class AccessTokenService {
        }
        catch (Exception e)
        {
-
+           LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
        }
     }
 

@@ -5,8 +5,10 @@ import android.content.Context;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
@@ -162,9 +164,9 @@ public class AccessTokenController {
         {
 
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).customException(417,"Exception :AccessToken Controller :getAccessToken() :- "+e.getMessage(),400));
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessToken() :- "+e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
 
-            //Todo Handle Exception
         }
     }
 
@@ -214,8 +216,11 @@ public class AccessTokenController {
          }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).customException(417,"Exception :AccessToken Controller :getAccessTokenByRefreshToken() :- "+e.getMessage(),400));
-            Timber.d(e.getMessage()); //done Handle Exception
+
+            Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessTokenByRefreshToken() :- "+e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
+            //done Handle Exception
         }
     }
 
@@ -228,17 +233,7 @@ public class AccessTokenController {
             AccessTokenService.getShared(context).getAccessTokenBySocial(tokenOrCode, provider, givenType, requestId, viewType,loginProperties, new Result<SocialProviderEntity>() {
                 @Override
                 public void success(SocialProviderEntity result) {
-                    getAccessTokenByCode(result.getCode(), new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(AccessTokenEntity result) {
-                            accessTokenEntityResult.success(result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            accessTokenEntityResult.failure(error);
-                        }
-                    });
+                    getAccessTokenByCode(result.getCode(), accessTokenEntityResult);
                 }
 
                 @Override
@@ -249,8 +244,10 @@ public class AccessTokenController {
         }
         catch (Exception e)
         {
-            accessTokenEntityResult.failure(WebAuthError.getShared(context).customException(417,"Exception: AccessToken Controller: getAccessTokenBySocial() :- "+e.getMessage(),400));
             Timber.d(e.getMessage());
+            accessTokenEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessTokenBySocial() :- "+e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
+
         }
     }
 }

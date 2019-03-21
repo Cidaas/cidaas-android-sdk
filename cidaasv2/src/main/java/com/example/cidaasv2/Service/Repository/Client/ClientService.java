@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository.Client;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
@@ -90,7 +91,7 @@ public class ClientService {
 
             Map<String, String> headers = new Hashtable<>();
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -108,41 +109,7 @@ public class ClientService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                    "ClientInfo Failure Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CLIENT_INFO_FAILURE,response));                        Timber.e("response"+response.message());
                     }
                 }
 

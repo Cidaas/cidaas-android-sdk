@@ -111,7 +111,7 @@ public class IVRVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("access_token",accessToken);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             SetupIVRMFARequestEntity setupIVRMFARequestEntity=new SetupIVRMFARequestEntity();
@@ -190,7 +190,7 @@ public class IVRVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("access_token",accessToken);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             enrollIVRMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -264,7 +264,7 @@ public class IVRVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             initiateIVRMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -338,7 +338,7 @@ public class IVRVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             authenticateIVRRequestEntity.setDeviceInfo(deviceInfoEntity);
 
