@@ -965,29 +965,18 @@ public class CidaasTest {
     }
 
 
-    @Test
-    public void testGetLoginCode() throws Exception {
 
-        cidaas.getLoginCode("urlCode=dfjvndfvjnndffv", null);
-    }
-
-
-    @Test
-    public void testGetLoginCodenull() throws Exception {
-
-        cidaas.getLoginCode("url", null);
-    }
 
 
     @Test
     public void testLoginWithFIDO() throws Exception {
-               cidaas.loginWithFIDO("usageType", "email", "sub", "trackId", null);
+               cidaas.loginWithFIDO(null,null, null);
     }
 
     @Test
     public void testGetLoginURL() throws Exception {
 
-        cidaas.getLoginURL(null);
+        cidaas.getLoginURL("");
     }
 
 

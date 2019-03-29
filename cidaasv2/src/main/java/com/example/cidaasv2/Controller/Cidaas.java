@@ -297,13 +297,6 @@ public class Cidaas implements IOAuthWebLogin {
             }
         });
 
-
-        //Set Context For sdkservice
-
-        //CidaassdkService service=new CidaassdkService();
-      //  service.setContext(context);
-
-
     }
 
 
@@ -340,101 +333,10 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-
-    //Get Request Id By passing loginProperties as an Object
-    // 1. Read properties from file
-    // 2. Call request id from dictionary method
-    // 3. Maintain logs based on flags
-
-    // -----------------------------------------------------***** REQUEST ID *****---------------------------------------------------------------
-
-    //Get Request Id By Passing loginProperties as Value in parameters with Client Secret
-    @Override
-    public void getRequestId(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret,
-                             final Result<AuthRequestResponseEntity> result)
-    {
-        try {
-            FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, ClientSecret, new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginproperties) {
-
-                        getRequestId(loginproperties, result,extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) { result.failure(error); }
-            });
-
-        } catch (Exception e) {
-            String loggerMessage = "Request-Id cidaas  Exception :Error Code-"+WebAuthErrorCode.READ_PROPERTIES_ERROR+",Error Message - " + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
-            Timber.d(e.getMessage());
-        }
-    }
-
-
-    //Get Request Id By Passing loginProperties as Value in parameters
-
-    public void getRequestId(@NonNull final String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL,
-                             final Result<AuthRequestResponseEntity> Primaryresult,final HashMap<String, String>... extraParams) {
-        try {
-              FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, new Result<Dictionary<String, String>>() {
-                  @Override
-                  public void success(Dictionary<String, String> loginPropertiesresult) {
-                      getRequestId(loginPropertiesresult, Primaryresult,extraParams);
-                  }
-
-                  @Override
-                  public void failure(WebAuthError error) {
-                      Primaryresult.failure(error);
-                  }
-              });
-
-        } catch (Exception e) {
-            String loggerMessage = "Request-Id cidaas failure : " + "Error Code - " + WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE +
-                    ", Error Message - " + e.getMessage();
-           LogFile.getShared(context).addRecordToLog(loggerMessage);
-           Primaryresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
-           Timber.e(e.getMessage());
-        }
-    }
-
-  //Get Request Id without passing any value
-
-    @Override
-    public void getRequestId( final Result<AuthRequestResponseEntity> resulttoReturn,@Nullable final HashMap<String, String>... extraParams) {
-        try {
-            
-
-            CidaasProperties.getShared(context).saveCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-
-                         getRequestId(loginPropertiesResult,resulttoReturn);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    resulttoReturn.failure(error);
-                }
-            });
-
-        } catch (Exception e) {
-            resulttoReturn.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Request-Id cidaas failure : " + "Error Code - " + WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE +
-                    ", Error Message - " + e.getMessage());
-            Timber.d(e.getMessage());
-        }
-    }
-
-
-
     // -----------------------------------------------------***** REQUEST ID CONTROLLER SENDER *****---------------------------------------------------------------
 
     public void getRequestId(final Dictionary<String, String> loginproperties ,final Result<AuthRequestResponseEntity> Primaryresult,
                              @Nullable HashMap<String, String>... extraParams) {
-
         RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult, extraParams);
     }
 
@@ -447,32 +349,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     // -----------------------------------------------------***** CLIENT INFO *****-------------------------------------------------------------------------
 
-    //Client Id With out Passing RequestId
-   public void getClientInfo(final Result<ClientInfoEntity> clientInfoEntityResult,final HashMap<String,String>... extraParams)
-   {
-       try
-       {
-                   getRequestId( new Result<AuthRequestResponseEntity>() {
-                       @Override
-                       public void success(AuthRequestResponseEntity result) {
-                           getClientInfo(result.getData().getRequestId(),clientInfoEntityResult);
-                       }
-
-                       @Override
-                       public void failure(WebAuthError error) {
-                           clientInfoEntityResult.failure(error);
-                       }
-                   },extraParams);
-       }
-       catch (Exception e)
-       {
-           LogFile.getShared(context).addRecordToLog("Client Info cidaas Exception : " + "Error Code - " + WebAuthErrorCode.CLIENT_INFO_FAILURE +
-                   ", Error Message - " + e.getMessage());
-           clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CLIENT_INFO_FAILURE));
-       }
-   }
-
-   //ClientId With RequestId
+    //ClientId With RequestId
     @Override
     public void getClientInfo(final String requestId, final Result<ClientInfoEntity> clientInfoEntityResult) {
         ClientController.getShared(context).getClientInfo(requestId, clientInfoEntityResult);
@@ -1495,5 +1372,122 @@ public class Cidaas implements IOAuthWebLogin {
             }
         });
     }
+
+//------------------------------------------Methods without requestID and other Suppoertive methods-------------------------------------------------------------------------------
+//Get Request Id By passing loginProperties as an Object
+    // 1. Read properties from file
+    // 2. Call request id from dictionary method
+    // 3. Maintain logs based on flags
+
+    // -----------------------------------------------------***** REQUEST ID *****---------------------------------------------------------------
+
+    //Get Request Id By Passing loginProperties as Value in parameters with Client Secret
+    @Override
+    public void getRequestId(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret,
+                             final Result<AuthRequestResponseEntity> result)
+    {
+        try {
+            FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, ClientSecret, new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginproperties) {
+
+                    getRequestId(loginproperties, result,extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) { result.failure(error); }
+            });
+
+        } catch (Exception e) {
+            String loggerMessage = "Request-Id cidaas  Exception :Error Code-"+WebAuthErrorCode.READ_PROPERTIES_ERROR+",Error Message - " + e.getMessage();
+            LogFile.getShared(context).addRecordToLog(loggerMessage);
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
+            Timber.d(e.getMessage());
+        }
+    }
+
+
+    //Get Request Id By Passing loginProperties as Value in parameters
+
+    public void getRequestId(@NonNull final String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL,
+                             final Result<AuthRequestResponseEntity> Primaryresult,final HashMap<String, String>... extraParams) {
+        try {
+            FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesresult) {
+                    getRequestId(loginPropertiesresult, Primaryresult,extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Primaryresult.failure(error);
+                }
+            });
+
+        } catch (Exception e) {
+            String loggerMessage = "Request-Id cidaas failure : " + "Error Code - " + WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE +
+                    ", Error Message - " + e.getMessage();
+            LogFile.getShared(context).addRecordToLog(loggerMessage);
+            Primaryresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
+            Timber.e(e.getMessage());
+        }
+    }
+
+    //Get Request Id without passing any value
+
+    @Override
+    public void getRequestId( final Result<AuthRequestResponseEntity> resulttoReturn,@Nullable final HashMap<String, String>... extraParams) {
+        try {
+
+
+            CidaasProperties.getShared(context).saveCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+
+                    getRequestId(loginPropertiesResult,resulttoReturn);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resulttoReturn.failure(error);
+                }
+            });
+
+        } catch (Exception e) {
+            resulttoReturn.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Request-Id cidaas failure : " + "Error Code - " + WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE +
+                    ", Error Message - " + e.getMessage());
+            Timber.d(e.getMessage());
+        }
+    }
+
+
+   // -----------------------------------------------------------*******clientID****---------------------------------------
+    //Client Id With out Passing RequestId
+    public void getClientInfo(final Result<ClientInfoEntity> clientInfoEntityResult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            getRequestId( new Result<AuthRequestResponseEntity>() {
+                @Override
+                public void success(AuthRequestResponseEntity result) {
+                    getClientInfo(result.getData().getRequestId(),clientInfoEntityResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    clientInfoEntityResult.failure(error);
+                }
+            },extraParams);
+        }
+        catch (Exception e)
+        {
+            LogFile.getShared(context).addRecordToLog("Client Info cidaas Exception : " + "Error Code - " + WebAuthErrorCode.CLIENT_INFO_FAILURE +
+                    ", Error Message - " + e.getMessage());
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CLIENT_INFO_FAILURE));
+        }
+    }
+
+
+
 }
-//------------------------------------------Methods without requestID-------------------------------------------------------------------------------

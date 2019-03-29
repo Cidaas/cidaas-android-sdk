@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
@@ -653,12 +654,12 @@ public class FingerprintConfigurationController {
                                         if(instceID!=null && !instceID.equals("")) {
 
                                             //Todo call initiate
-                                            final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity=new InitiateFingerprintMFARequestEntity();
-                                            initiateFingerprintMFARequestEntity.setUsagePass(instceID);
+                                            final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntityWithUsagePass=new InitiateFingerprintMFARequestEntity();
+                                            initiateFingerprintMFARequestEntityWithUsagePass.setUsagePass(instceID);
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 
-                                            FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl,  initiateFingerprintMFARequestEntity,null,
+                                            FingerprintVerificationService.getShared(context).initiateFingerprint(baseurl,  initiateFingerprintMFARequestEntityWithUsagePass,null,
                                                     new Result<InitiateFingerprintMFAResponseEntity>() {
 
                                                         @Override
@@ -684,7 +685,7 @@ public class FingerprintConfigurationController {
                                                                         //Todo Check not Null values
                                                                         resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                         resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                        resumeLoginRequestEntity.setVerificationType("FINGERPRINT");
+                                                                        resumeLoginRequestEntity.setVerificationType(AuthenticationType.touch);
                                                                         resumeLoginRequestEntity.setUsageType(initiateFingerprintMFARequestEntity.getUsageType());
                                                                         resumeLoginRequestEntity.setClient_id(clientId);
                                                                         resumeLoginRequestEntity.setRequestId(requestId);

@@ -58,6 +58,8 @@ public class CommonErrorEntity implements Serializable{
         return Error;
     }
 
+
+
     public void setError(Object error) {
         Error = error;
     }

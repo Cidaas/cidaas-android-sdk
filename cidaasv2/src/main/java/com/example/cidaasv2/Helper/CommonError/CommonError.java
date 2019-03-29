@@ -55,13 +55,19 @@ public class CommonError {
 
             ErrorEntity errorEntity = new ErrorEntity();
 
-            if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
+            if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
+                    && commonErrorEntity.getError() instanceof String ) {
                 errorMessage = commonErrorEntity.getError().toString();
+            }
+
+            else if(commonErrorEntity.getError() instanceof Integer){
+                errorMessage=commonErrorEntity.getError_description();
             }
             else {
 
                 //Handle For null using 500 internal servier error by
 
+                //Error is integer
                 //Error Message
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("error").toString().equals("")) {
                     errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
