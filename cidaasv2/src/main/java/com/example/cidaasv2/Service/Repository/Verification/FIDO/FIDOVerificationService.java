@@ -78,8 +78,8 @@ public class FIDOVerificationService {
     }
 
     //Scanned FIDO
-    public void scannedFIDO(String baseurl, ScannedRequestEntity scannedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
-                                   final Result<ScannedResponseEntity> callback) {
+    public void scannedFIDO(final String baseurl, ScannedRequestEntity scannedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
+                            final Result<ScannedResponseEntity> callback) {
         String scannedFIDOUrl = "";
         try {
             if (baseurl != null && !baseurl.equals("")) {
@@ -123,6 +123,7 @@ public class FIDOVerificationService {
                 public void onResponse(Call<ScannedResponseEntity> call, Response<ScannedResponseEntity> response) {
                     if (response.isSuccessful()) {
                         if (response.code() == 200) {
+                            DBHelper.getShared().setUserDeviceId(response.body().getData().getUserDeviceId(),baseurl);
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,

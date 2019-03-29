@@ -78,7 +78,7 @@ public class SmartPushVerificationService {
         return shared;
     }
 
-    public void scannedSmartPush(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedSmartPush(final String baseurl, ScannedRequestEntity scannedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                                  final Result<ScannedResponseEntity>  callback)
     {
         String scannedSmartPushUrl="";
@@ -128,6 +128,7 @@ public class SmartPushVerificationService {
                 public void onResponse(Call<ScannedResponseEntity> call, Response<ScannedResponseEntity> response) {
                     if (response.isSuccessful()) {
                         if(response.code()==200) {
+                            DBHelper.getShared().setUserDeviceId(response.body().getData().getUserDeviceId(), baseurl);
                             callback.success(response.body());
                         }
                         else {

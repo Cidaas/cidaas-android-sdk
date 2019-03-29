@@ -6,15 +6,20 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Repository.DocumemtScannerService.DocumentScannerService;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
@@ -108,9 +113,54 @@ public class DocumentScannnerController {
         return imageFile;
     }
 
+    public void sendtoServicecall(final File photo, final String sub, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+        try {
+
+            if (photo != null && !sub.equals("") && sub!=null) {
+
+                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> result) {
+                        final String baseurl = result.get("DomainURL");
+
+                        if (baseurl != null && !baseurl.equals("")) {
+
+                            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                                @Override
+                                public void success(AccessTokenEntity result) {
+                                    sendtoServicecall(baseurl, photo, result.getAccess_token(),resultEntityResult);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    resultEntityResult.failure(error);
+                                }
+                            });
 
 
-    public void sendtoServicecall(String baseurl, File photo, String accessToken,Result<DocumentScannerServiceResultEntity> result)
+
+                        } else {
+                            resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "BaseURL must not be null", 417));
+                        }
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+
+                        resultEntityResult.failure(error);
+                    }
+                });
+            } else {
+                resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Photo or sub must not be null", 417));
+            }
+        } catch (Exception e) {
+            resultEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Unexpected Error :" + e.getMessage()+WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE);
+        }
+    }
+
+
+        public void sendtoServicecall(String baseurl, File photo, String accessToken,Result<DocumentScannerServiceResultEntity> result)
     {
         try {
 

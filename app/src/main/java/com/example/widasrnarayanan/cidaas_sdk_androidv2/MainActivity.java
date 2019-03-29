@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void openAlertFinger(View view)
     {
-        cidaas.callFingerPrint(this, null, new Result<String>() {
+        /*cidaas.callFingerPrint(this, null, new Result<String>() {
             @Override
             public void success(String result) {
                 Toast.makeText(MainActivity.this, ""+result, Toast.LENGTH_SHORT).show();
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void failure(WebAuthError error) {
                 Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
 

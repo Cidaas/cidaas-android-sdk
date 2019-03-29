@@ -33,7 +33,6 @@ import timber.log.Timber;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
 public class LoginServiceTest {
 
     Context context;
@@ -43,7 +42,7 @@ public class LoginServiceTest {
 
     @Before
     public void setUp() {
-        context= RuntimeEnvironment.application;
+        context= RuntimeEnvironment.application.getApplicationContext();
         loginService=new LoginService(context);
         DBHelper.setConfig(context);
 
@@ -74,7 +73,7 @@ public class LoginServiceTest {
     @Test
     public void testLoginWithCredentials() throws Exception {
 
-        loginService.loginWithCredentials("baseurl", new LoginCredentialsRequestEntity(),null, new Result<LoginCredentialsResponseEntity>() {
+        loginService.loginWithCredentials("baseurl", new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -90,7 +89,7 @@ public class LoginServiceTest {
     @Test
     public void testLoginWithCredentialsnull() throws Exception {
 
-        loginService.loginWithCredentials("", new LoginCredentialsRequestEntity(),null, new Result<LoginCredentialsResponseEntity>() {
+        loginService.loginWithCredentials("", new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -217,7 +216,7 @@ public class LoginServiceTest {
         Cidaas.baseurl=domainURL;
 
 
-        loginService.loginWithCredentials("localhost:234235", new LoginCredentialsRequestEntity(),null, new Result<LoginCredentialsResponseEntity>() {
+        loginService.loginWithCredentials("localhost:234235", new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 

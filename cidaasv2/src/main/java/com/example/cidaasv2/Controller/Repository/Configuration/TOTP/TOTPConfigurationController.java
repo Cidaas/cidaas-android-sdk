@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Controller.Repository.Configuration.TOTP;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.CountDownTimer;
 
 import com.example.cidaasv2.Controller.Cidaas;
@@ -10,6 +11,8 @@ import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPGenerat
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
 import com.example.cidaasv2.Helper.AuthenticationType;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
@@ -35,8 +38,10 @@ import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.text.DecimalFormat;
+import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 public class TOTPConfigurationController {
@@ -44,6 +49,9 @@ public class TOTPConfigurationController {
     private String authenticationType,secretWithValue,secret;
     private String verificationType;
     private Context context;
+    CountDownTimer countDownTimer;
+
+    public static String logoURLlocal="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.cidaas.com/wp-content/uploads/2018/02/logo.png";
 
     public static TOTPConfigurationController shared;
 
@@ -83,335 +91,6 @@ public class TOTPConfigurationController {
 
 
 //Todo Configure TOTP by Passing the setupTOTPRequestEntity
-    // 1.  Check For NotNull Values
-    // 2. Generate Code Challenge
-    // 3.  getAccessToken From Sub
-    // 4.  Call Setup TOTP
-    // 5.  Call Validate TOTP
-    // 3.  Call Scanned TOTP
-    // 3.  Call Enroll TOTP and return the result
-    // 4.  Maintain logs based on flags
-
-/*
-
-    //Service call To SetupTOTPMFA
-    public void configureTOTP(@NonNull final String sub, @NonNull final String baseurl,
-                                 @NonNull final SetupTOTPMFARequestEntity setupTOTPMFARequestEntity,
-                                 @NonNull final Result<EnrollTOTPMFAResponseEntity> enrollresult)
-    {
-        try{
-            //Generate Challenge
-            generateChallenge();
-            Cidaas.usagePass="";
-
-            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
-            {
-                @Override
-                public void success(final AccessTokenEntity accessTokenresult) {
-
-                    if (baseurl != null && !baseurl.equals("") && accessTokenresult.getAccess_token() != null && !accessTokenresult.getAccess_token().equals("") &&
-                            setupTOTPMFARequestEntity.getClient_id()!=null && !setupTOTPMFARequestEntity.getClient_id().equals(""))
-                    {
-                        //Todo Service call
-
-                        TOTPVerificationService.getShared(context).setupTOTP(baseurl, accessTokenresult.getAccess_token(), codeChallenge,setupTOTPMFARequestEntity,null,new Result<SetupTOTPMFAResponseEntity>() {
-                            @Override
-                            public void success(final SetupTOTPMFAResponseEntity setupserviceresult) {
-
-                            //    String queryString=;
-
-                             */
-/*   String [] stringArray = queryString.split("&", 2);
-                                 secretWithValue=stringArray[0];
-                                String [] stringArray1=secretWithValue.split("=",2);*//*
-
-                                secret=setupserviceresult.getData().getSecret();
-
-                                 if(secret!=null && !secret.equals(""))
-                                 {
-                                   DBHelper.getShared().addSecret(secret,sub);
-                                 }
-                                 else
-                                 {
-                                     String errorMessage="Invalid TOTP Secret";
-                                     enrollresult.failure(WebAuthError.getShared(context).customException(417,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                                 }
-
-                                new CountDownTimer(5000, 500) {
-                                    String usagePassFromService="";
-                                    public void onTick(long millisUntilFinished) {
-                                        usagePassFromService= Cidaas.usagePass;
-
-                                        Timber.e("");
-                                        if(usagePassFromService!=null && usagePassFromService!="")
-                                        {
-                                            this.cancel();
-                                            onFinish();
-                                        }
-
-                                    }
-                                    public void onFinish() {
-                                        if(usagePassFromService!=null && usagePassFromService!="" )
-                                        {
-                                            //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl,usagePassFromService,"",codeVerifier
-                                                    ,null, new Result<ValidateDeviceResponseEntity>() {
-                                                        @Override
-                                                        public void success(ValidateDeviceResponseEntity result) {
-                                                            // call Scanned Service
-                                                            TOTPVerificationService.getShared(context).scannedTOTP(baseurl,result.getData().getUsage_pass(),"",
-                                                                    accessTokenresult.getAccess_token(),null,new Result<ScannedResponseEntity>() {
-                                                                        @Override
-                                                                        public void success(final ScannedResponseEntity result) {
-                                                                            DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
-
-                                                                            EnrollTOTPMFARequestEntity enrollTOTPMFARequestEntity = new EnrollTOTPMFARequestEntity();
-                                                                            if(sub != null && !sub.equals("") &&
-                                                                                    result.getData().getUserDeviceId()!=null && !  result.getData().getUserDeviceId().equals("")) {
-
-                                                                                TOTPEntity totp;
-                                                                                if(secret!=null) {
-                                                                                    totp=  generateTOTP(secret);
-
-                                                                                    enrollTOTPMFARequestEntity.setVerifierPassword(totp.getTotp_string());
-                                                                                    enrollTOTPMFARequestEntity.setStatusId("");
-                                                                                    enrollTOTPMFARequestEntity.setUserDeviceId(result.getData().getUserDeviceId());
-                                                                                }
-
-                                                                            }
-                                                                            else {
-                                                                                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
-                                                                            }
-
-                                                                            // call Enroll Service
-                                                                            TOTPVerificationService.getShared(context).enrollTOTP(baseurl, accessTokenresult.getAccess_token(),
-                                                                            enrollTOTPMFARequestEntity,null,new Result<EnrollTOTPMFAResponseEntity>() {
-                                                                                @Override
-                                                                                public void success(EnrollTOTPMFAResponseEntity serviceresult) {
-                                                                                    enrollresult.success(serviceresult);
-                                                                                }
-
-                                                                                @Override
-                                                                                public void failure(WebAuthError error) {
-                                                                                    enrollresult.failure(error);
-                                                                                }
-                                                                            });
-
-                                                                            Timber.i(result.getData().getUserDeviceId()+"User Device id");
-                                                                         //   Toast.makeText(context, result.getData().getUserDeviceId()+"User Device id", Toast.LENGTH_SHORT).show();
-                                                                        }
-
-                                                                        @Override
-                                                                        public void failure(WebAuthError error) {
-                                                                            enrollresult.failure(error);
-                                                                     //       Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                                                        }
-                                                                    });
-                                                        }
-
-                                                        @Override
-                                                        public void failure(WebAuthError error) {
-                                                            enrollresult.failure(error);
-                                                          //  Toast.makeText(context, "Error on validate Device"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-                                        }
-                                        else {
-                                            // return Error Message
-
-                                            enrollresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
-                                        }
-                                    }
-                                }.start();
-
-
-                                // result.success(serviceresult);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                enrollresult.failure(error);
-                            }
-                        });
-                    }
-                    else
-                    {
-
-                        enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
-                    }
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    enrollresult.failure(error);
-                }
-            });
-
-        }
-        catch (Exception e)
-        {
-            enrollresult.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e(e.getMessage());
-        }
-    }
-
-
-
-    //Login with TOTP
-    public void LoginWithTOTP(@NonNull final String baseurl, @NonNull final String clientId, @NonNull final String trackId, @NonNull final String requestId,
-                              @NonNull final InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity,
-                              final Result<LoginCredentialsResponseEntity> loginresult)
-    {
-        try {
-            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
-                //Generate Challenge
-                generateChallenge();
-            }
-            Cidaas.usagePass="";
-
-            if (initiateTOTPMFARequestEntity.getUserDeviceId() != null && initiateTOTPMFARequestEntity.getUserDeviceId() != "") {
-                //Do nothing
-            } else {
-                initiateTOTPMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-            }
-
-            if (initiateTOTPMFARequestEntity.getUsageType() != null && initiateTOTPMFARequestEntity.getUsageType() != "" &&
-                    initiateTOTPMFARequestEntity.getUserDeviceId() != null && initiateTOTPMFARequestEntity.getUserDeviceId() != "" &&
-                    baseurl != null && !baseurl.equals("")) {
-                //Todo Service call
-                TOTPVerificationService.getShared(context).initiateTOTP(baseurl,codeChallenge ,initiateTOTPMFARequestEntity,null,
-                        new Result<InitiateTOTPMFAResponseEntity>() {
-
-                            //Todo Call Validate Device
-
-                            @Override
-                            public void success(final InitiateTOTPMFAResponseEntity serviceresult) {
-
-                                new CountDownTimer(5000, 500) {
-                                    String usagePassFromService = "";
-
-                                    public void onTick(long millisUntilFinished) {
-                                        usagePassFromService = Cidaas.usagePass;
-
-                                        Timber.e("");
-                                        if (usagePassFromService != null && usagePassFromService != "") {
-                                            this.cancel();
-                                            onFinish();
-                                        }
-
-                                    }
-
-                                    public void onFinish() {
-                                        if (usagePassFromService != null && usagePassFromService != "" && serviceresult.getData().getStatusId() != null && serviceresult.getData().getStatusId() != "") {
-                                            //Device Validation Service
-                                            DeviceVerificationService.getShared(context).validateDevice(baseurl, usagePassFromService, serviceresult.getData().getStatusId(), codeVerifier
-                                                  , null , new Result<ValidateDeviceResponseEntity>() {
-
-                                                        @Override
-                                                        public void success(ValidateDeviceResponseEntity result) {
-
-                                                            //Todo call initiate
-                                                            initiateTOTPMFARequestEntity.setUsagePass(result.getData().getUsage_pass());
-                                                            TOTPVerificationService.getShared(context).initiateTOTP(baseurl, codeChallenge, initiateTOTPMFARequestEntity,
-                                                                  null,  new Result<InitiateTOTPMFAResponseEntity>() {
-
-                                                                        @Override
-                                                                        public void success(InitiateTOTPMFAResponseEntity serviceresult) {
-                                                                            if (requestId != null && !requestId.equals("") && serviceresult.getData().getStatusId() != null &&
-                                                                                    !serviceresult.getData().getStatusId().equals("")) {
-
-                                                                                String sub="";
-
-                                                                                AuthenticateTOTPRequestEntity authenticateTOTPRequestEntity = new AuthenticateTOTPRequestEntity();
-                                                                                authenticateTOTPRequestEntity.setUserDeviceId(initiateTOTPMFARequestEntity.getUserDeviceId());
-                                                                                authenticateTOTPRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-
-                                                                                String secretFromDB=DBHelper.getShared().getSecret(sub);
-                                                                                String totp = generateTOTP(secretFromDB).getTotp_string();
-
-                                                                                authenticateTOTPRequestEntity.setVerifierPassword(totp);
-
-
-                                                                                TOTPVerificationService.getShared(context).authenticateTOTP(baseurl, authenticateTOTPRequestEntity, null,new Result<AuthenticateTOTPResponseEntity>() {
-                                                                                    @Override
-                                                                                    public void success(AuthenticateTOTPResponseEntity result) {
-                                                                                        //Todo Call Resume with Login Service
-                                                                                        //  loginresult.success(result);
-                                                                                       // Toast.makeText(context, "Sucess TOTP", Toast.LENGTH_SHORT).show();
-                                                                                        ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
-
-                                                                                        //Todo Check not Null values
-                                                                                        resumeLoginRequestEntity.setSub(result.getData().getSub());
-                                                                                        resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                                        resumeLoginRequestEntity.setUsageType(initiateTOTPMFARequestEntity.getUsageType());
-                                                                                        resumeLoginRequestEntity.setVerificationType("TOTP");
-                                                                                        resumeLoginRequestEntity.setClient_id(clientId);
-                                                                                        resumeLoginRequestEntity.setRequestId(requestId);
-
-                                                                                        if (initiateTOTPMFARequestEntity.getUsageType().equals(UsageType.MFA)) {
-                                                                                            resumeLoginRequestEntity.setTrack_id(trackId);
-                                                                                            LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, loginresult);
-                                                                                        } else if (initiateTOTPMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS)) {
-                                                                                            resumeLoginRequestEntity.setTrack_id("");
-                                                                                            LoginController.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, loginresult);
-
-                                                                                        }
-                                                                                    }
-
-                                                                                    @Override
-                                                                                    public void failure(WebAuthError error) {
-                                                                                        loginresult.failure(error);
-                                                                                    }
-                                                                                });
-                                                                                // result.success(serviceresult);
-                                                                            }
-                                                                            else {
-                                                                                String errorMessage="Status Id Must not be null";
-                                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-                                                                            }
-                                                                        }
-
-
-                                                                        // result.success(serviceresult);
-
-
-                                                                        @Override
-                                                                        public void failure(WebAuthError error) {
-                                                                            loginresult.failure(error);
-                                                                   //         Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                                                        }
-                                                                    });
-
-
-                                                        }
-
-                                                        @Override
-                                                        public void failure(WebAuthError error) {
-                                                            loginresult.failure(error);
-                                                        }
-                                                    });
-                                        } else {
-
-                                            loginresult.failure(WebAuthError.getShared(context).propertyMissingException());
-                                        }
-                                    }
-                                }.start();
-                            }
-                            @Override
-                            public void failure(WebAuthError error) {
-                                loginresult.failure(error);
-                            }
-                        });
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }
-
-*/
 
 
     public TOTPEntity generateTOTP(String secret)
@@ -454,6 +133,51 @@ public class TOTPConfigurationController {
     }
 
 
+    public void configureTOTP(final String sub,@NonNull final String logoURL, final Result<EnrollTOTPMFAResponseEntity> enrollresult) {
+        try {
+        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                String baseurl = result.get("DomainURL");
+                String clientId = result.get("ClientId");
+
+                if (sub != null && !sub.equals("") && baseurl != null && !baseurl.equals("")) {
+
+                    final String finalBaseurl = baseurl;
+
+                    //String logoUrl = "https://docs.cidaas.de/assets/logoss.png";
+
+                    if(!logoURL.equals("") && logoURL!=null) {
+                        logoURLlocal=logoURL;
+                    }
+
+
+                    SetupTOTPMFARequestEntity setupTOTPMFARequestEntity = new SetupTOTPMFARequestEntity();
+                    setupTOTPMFARequestEntity.setClient_id(result.get("ClientId"));
+                    setupTOTPMFARequestEntity.setLogoUrl(logoURLlocal);
+
+
+                    configureTOTP(sub, finalBaseurl, setupTOTPMFARequestEntity, enrollresult);
+
+                } else {
+                    String errorMessage = "Sub or TOTP cannot be null";
+                    enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
+                            HttpStatusCode.EXPECTATION_FAILED));
+                }
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+            }
+        });
+    } catch (Exception e) {
+        LogFile.getShared(context).addRecordToLog("Enroll TOTP  exception" + e.getMessage());
+        enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Enroll TOTP exception"+ e.getMessage(),
+                HttpStatusCode.EXPECTATION_FAILED));
+        Timber.e("Enroll TOTP exception" + e.getMessage());
+    }
+    }
 
     //Service call To SetupTOTPMFA
     public void configureTOTP(@NonNull final String sub, @NonNull final String baseurl,
@@ -617,98 +341,105 @@ public class TOTPConfigurationController {
         }
     }
 
-    public void scannedWithTOTP(final String baseurl,  String statusId,String sub,String secret, String clientId, final Result<ScannedResponseEntity> scannedResult)
+    public void scannedWithTOTP(final String statusId, final String sub, final String secret, final Result<ScannedResponseEntity> scannedResult)
     {
         try
         {
-            if (baseurl != null && !baseurl.equals("")  && statusId!=null && !statusId.equals("") && clientId!=null && !clientId.equals("")) {
 
-                final ScannedRequestEntity scannedRequestEntity = new ScannedRequestEntity();
-                scannedRequestEntity.setStatusId(statusId);
-                scannedRequestEntity.setClient_id(clientId);
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    final String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
+                    if (statusId!=null && !statusId.equals("")) {
 
-                if(secret!=null && !secret.equals(""))
-                {
-                    DBHelper.getShared().addSecret(secret,sub);
-                }
-                else
-                {
-                    String errorMessage="Invalid TOTP Secret";
-                    scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
-                }
-
-                TOTPVerificationService.getShared(context).scannedTOTP(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
-                    @Override
-                    public void success(ScannedResponseEntity result) {
-                        Cidaas.usagePass ="";
+                        final ScannedRequestEntity scannedRequestEntity = new ScannedRequestEntity();
+                        scannedRequestEntity.setStatusId(statusId);
+                        scannedRequestEntity.setClient_id(clientId);
 
 
-                        new CountDownTimer(5000, 500) {
-                            String usagePassFromService = "";
+                        if(secret!=null && !secret.equals(""))
+                        {
+                            DBHelper.getShared().addSecret(secret,sub);
+                        }
+                        else
+                        {
+                            String errorMessage="Invalid TOTP Secret";
+                            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,errorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                            return;
+                        }
 
-                            public void onTick(long millisUntilFinished) {
-                                usagePassFromService = Cidaas.usagePass;
-
-                                Timber.e("");
-                                if (usagePassFromService != null && !usagePassFromService.equals("")) {
-                                    this.cancel();
-                                    onFinish();
-                                }
-
-                            }
-
-                            public void onFinish() {
-
-                                if(usagePassFromService!=null && !usagePassFromService.equals("") ) {
-
-                                    ScannedRequestEntity scannedRequestEntity= new ScannedRequestEntity();
-                                    scannedRequestEntity.setUsage_pass(usagePassFromService);
-
-                                    TOTPVerificationService.getShared(context).scannedTOTP(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
-
-                                        @Override
-                                        public void success(ScannedResponseEntity result) {
-
-                                            DBHelper.getShared().setUserDeviceId(result.getData().getUserDeviceId(),baseurl);
-                                            scannedResult.success(result);
-                                        }
-
-                                        @Override
-                                        public void failure(WebAuthError error) {
-                                            scannedResult.failure(error);
-                                        }
-                                    });
-                                }
-                                else
-                                {
-                                    scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
-                                }
-                            }
-                        }.start();
-
+                        scannedTOTPService(baseurl, scannedRequestEntity,scannedResult);
                     }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        scannedResult.failure(error);
+                    else {
+                        scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE,
+                                "BaseURL or ClientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
                     }
-                });
-            }
-            else {
-                scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE,
-                        "BaseURL or ClientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
-            }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                scannedResult.failure(error);
+                }
+            });
 
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE,
-                    "TOTP Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-
+            LogFile.getShared(context).addRecordToLog("Scanned with TOTP "+e.getMessage()+WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE);
+            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE));
         }
     }
 
+    private void scannedTOTPService(final String baseurl, ScannedRequestEntity scannedRequestEntity, final Result<ScannedResponseEntity> scannedResult) {
+        try {
+            TOTPVerificationService.getShared(context).scannedTOTP(baseurl, scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+                @Override
+                public void success(ScannedResponseEntity result) {
+                    Cidaas.usagePass = "";
+
+                    new CountDownTimer(5000, 500) {
+                        String usagePassFromService = "";
+
+                        public void onTick(long millisUntilFinished) {
+                            usagePassFromService = Cidaas.usagePass;
+
+                            if (usagePassFromService != null && !usagePassFromService.equals("")) {
+                                this.cancel();
+                                onFinish();
+                            }
+
+                        }
+
+                        public void onFinish() {
+
+                            if (usagePassFromService != null && !usagePassFromService.equals("")) {
+
+                                ScannedRequestEntity scannedRequestEntity = new ScannedRequestEntity();
+                                scannedRequestEntity.setUsage_pass(usagePassFromService);
+
+                                TOTPVerificationService.getShared(context).scannedTOTP(baseurl, scannedRequestEntity, null, scannedResult);
+                            } else {
+                                scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                            }
+                        }
+                    }.start();
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    scannedResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            LogFile.getShared(context).addRecordToLog("Scanned with TOTP "+e.getMessage()+WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE);
+            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE));
+        }
+    }
 
 
     public void enrollTOTP(@NonNull final String baseurl, @NonNull final String accessToken,
@@ -795,8 +526,75 @@ public class TOTPConfigurationController {
         }
     }
 
+    public void LoginWithTOTP(final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+                    if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("") &&
+                            passwordlessEntity.getRequestId() != null && !passwordlessEntity.getRequestId().equals("")) {
 
-    //Login with TOTP
+                        if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
+                            String errorMessage = "baseurl or clientId  must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                            String errorMessage = "sub or email or mobile number must not be empty";
+
+                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        }
+
+                        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                            if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                                String errorMessage = "trackId must not be empty";
+
+                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                return;
+                            }
+                        }
+
+                        InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity = new InitiateTOTPMFARequestEntity();
+                        initiateTOTPMFARequestEntity.setSub(passwordlessEntity.getSub());
+                        initiateTOTPMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                        initiateTOTPMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+                        initiateTOTPMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+                        //Todo check for email or sub or mobile
+
+
+                        LoginWithTOTP(baseurl, clientId, passwordlessEntity.getTrackId(), passwordlessEntity.getRequestId(), initiateTOTPMFARequestEntity, loginresult);
+                    } else {
+                        String errorMessage = "UsageType or requestId must not be empty";
+
+                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                }
+            });
+        } catch (Exception e) {
+            LogFile.getShared(context).addRecordToLog("Login TOTP exception" + e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Login TOTP exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Login TOTP exception" + e.getMessage());
+        }
+    }
+
+
+        //Login with TOTP
     public void LoginWithTOTP(@NonNull final String baseurl, @NonNull final String clientId,
                               @NonNull final String trackId, @NonNull final String requestId,
                               @NonNull final InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntity,
@@ -1003,6 +801,43 @@ public class TOTPConfigurationController {
 
         }
     }
+
+    public void ListenTOTP(String sub) {
+        final String secret = DBHelper.getShared().getSecret(sub);
+        final Intent i = new Intent("TOTPListener");
+        if (!secret.equals("") && secret != null) {
+
+            countDownTimer = new CountDownTimer(System.currentTimeMillis(), 1000) {
+                @Override
+                public void onTick(long l) {
+                    final TOTPEntity TOTPString = TOTPConfigurationController.getShared(context).generateTOTP(secret);
+
+
+                    i.putExtra("TOTP", TOTPString);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(i);
+                }
+
+                @Override
+                public void onFinish() {
+
+                    this.cancel();
+
+                }
+            }.start();
+        } else {
+            //Todo Handle Error Message
+            return;
+
+        }
+    }
+
+    public void cancelTOTP() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+
+    }
+
 
 
 

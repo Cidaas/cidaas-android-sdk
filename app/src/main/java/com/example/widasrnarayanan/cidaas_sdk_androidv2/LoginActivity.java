@@ -314,6 +314,7 @@ public class LoginActivity extends AppCompatActivity {
                     passwordlessEntity.setRequestId(result.getData().getRequestId());
                     passwordlessEntity.setMobile("+919787113989");
                     passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+
                     cidaas.loginWithEmail(passwordlessEntity, new Result<InitiateEmailMFAResponseEntity>() {
                         @Override
                         public void success(InitiateEmailMFAResponseEntity result) {

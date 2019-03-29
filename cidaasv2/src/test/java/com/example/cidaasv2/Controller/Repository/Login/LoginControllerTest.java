@@ -3,6 +3,7 @@ package com.example.cidaasv2.Controller.Repository.Login;
 import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
+import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
@@ -18,7 +19,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class LoginControllerTest {
     Context context;
     LoginController shared;
@@ -38,7 +39,9 @@ public class LoginControllerTest {
 
     @Test
     public void testLoginwithCredentials() throws Exception {
-        loginController.loginwithCredentials("baseurl", new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
+
+        LoginEntity loginEntity=new LoginEntity();
+        loginController.loginwithCredentials("requestId", loginEntity, new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 

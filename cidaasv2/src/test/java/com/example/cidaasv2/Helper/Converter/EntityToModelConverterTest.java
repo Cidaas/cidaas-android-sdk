@@ -15,7 +15,6 @@ import org.robolectric.annotation.Config;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
 public class EntityToModelConverterTest {
 
     EntityToModelConverter entityToModelConverter=new EntityToModelConverter();

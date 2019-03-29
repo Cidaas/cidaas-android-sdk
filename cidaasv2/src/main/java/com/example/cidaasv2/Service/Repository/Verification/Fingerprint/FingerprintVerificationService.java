@@ -80,7 +80,7 @@ public class FingerprintVerificationService {
         return shared;
     }
 
-    public void scannedFingerprint(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedFingerprint(final String baseurl, ScannedRequestEntity scannedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                                    final Result<ScannedResponseEntity> callback)
     {
         String scannedFingerprintUrl="";
@@ -131,6 +131,7 @@ public class FingerprintVerificationService {
                 public void onResponse(Call<ScannedResponseEntity> call, Response<ScannedResponseEntity> response) {
                     if (response.isSuccessful()) {
                         if(response.code()==200) {
+                            DBHelper.getShared().setUserDeviceId(response.body().getData().getUserDeviceId(),baseurl);
                             callback.success(response.body());
                         }
                         else {

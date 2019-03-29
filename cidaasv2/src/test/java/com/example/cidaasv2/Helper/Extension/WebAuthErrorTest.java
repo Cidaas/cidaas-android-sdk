@@ -18,7 +18,6 @@ import org.robolectric.annotation.Config;
 import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
 public class WebAuthErrorTest {
 
     Context context;
@@ -57,7 +56,7 @@ public class WebAuthErrorTest {
 
     @Test
     public void testPropertyMissingException() throws Exception {
-        WebAuthError result = webAuthError.propertyMissingException();
+        WebAuthError result = webAuthError.propertyMissingException("WebError Testing");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 

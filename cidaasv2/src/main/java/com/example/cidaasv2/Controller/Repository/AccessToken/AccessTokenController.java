@@ -3,6 +3,7 @@ package com.example.cidaasv2.Controller.Repository.AccessToken;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -62,7 +63,7 @@ public class AccessTokenController {
     {
         try {
 
-            Cidaas.getInstance(context).checkSavedProperties(new Result<Dictionary<String, String> >() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String> >() {
                 @Override
                 public void success(Dictionary<String, String>  result) {
                     String baseurl=result.get("DomainURL");
@@ -176,7 +177,7 @@ public class AccessTokenController {
     {
         try {
 
-            Cidaas.getInstance(context).checkSavedProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result,null,null, new Result<AccessTokenEntity>() {

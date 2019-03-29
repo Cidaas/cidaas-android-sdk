@@ -13,7 +13,7 @@ public class InitiateTOTPMFARequestEntity implements Serializable{
     String client_id;
     String usageType;
     String mobile;
-    String usagePass;
+    String usage_pass;
     DeviceInfoEntity deviceInfo;
 
     String source="MOBILE";
@@ -27,11 +27,11 @@ public class InitiateTOTPMFARequestEntity implements Serializable{
     }
 
     public String getUsagePass() {
-        return usagePass;
+        return usage_pass;
     }
 
     public void setUsagePass(String usagePass) {
-        this.usagePass = usagePass;
+        this.usage_pass = usagePass;
     }
 
     public String getMobile() {

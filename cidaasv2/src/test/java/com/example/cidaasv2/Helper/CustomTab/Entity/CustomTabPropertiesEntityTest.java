@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class CustomTabPropertiesEntityTest {
 
     Parcelable.Creator<CustomTabPropertiesEntity> CREATOR;

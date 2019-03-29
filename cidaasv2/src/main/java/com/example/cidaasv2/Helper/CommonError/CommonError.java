@@ -60,6 +60,8 @@ public class CommonError {
             }
             else {
 
+                //Handle For null using 500 internal servier error by
+
                 //Error Message
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("error").toString().equals("")) {
                     errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();

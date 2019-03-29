@@ -8,6 +8,8 @@ import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenControl
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
 import com.example.cidaasv2.Helper.AuthenticationType;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
@@ -31,6 +33,8 @@ import com.example.cidaasv2.Service.Repository.Verification.Pattern.PatternVerif
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
+import java.util.Dictionary;
+
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
@@ -41,6 +45,8 @@ public class PatternConfigurationController {
 
     private Context context;
     String usagePassFromService="";
+    String logoURLlocal="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.cidaas.com/wp-content/uploads/2018/02/logo.png";
+
 
     public static PatternConfigurationController shared;
 
@@ -87,24 +93,40 @@ public class PatternConfigurationController {
     // 4.  Maintain logs based on flags
 
     //Service call To SetupPatternMFA
-    public void configurePattern(@NonNull final String sub, @NonNull final String baseurl,@NonNull final String patternString,
-                                 @NonNull final SetupPatternMFARequestEntity setupPatternMFARequestEntity,
+    public void configurePattern( @NonNull final String patternString,@NonNull final String sub,@NonNull final String logoURL,
                                  @NonNull final Result<EnrollPatternMFAResponseEntity> enrollresult)
     {
         try{
 
-            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
-                //Generate Challenge
-                generateChallenge();
-             }
-            Cidaas.usagePass ="";
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    final String baseurl=result.get("DomainURL");
 
-            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
+                    if(sub != null && !sub.equals("") && logoURL != null && !logoURL.equals("") && patternString != null && !patternString.equals(""))
+                    {
+                        if(!logoURL.equals("") && logoURL!=null) {
+                            logoURLlocal=logoURL;
+                        }
+                    }
+
+
+                    final SetupPatternMFARequestEntity setupPatternMFARequestEntity = new SetupPatternMFARequestEntity();
+                    setupPatternMFARequestEntity.setClient_id(result.get("ClientId"));
+                    setupPatternMFARequestEntity.setLogoUrl(logoURLlocal);
+
+                    if(codeChallenge.equals("") || codeVerifier.equals("") || codeChallenge==null || codeVerifier==null) {
+                        //Generate Challenge
+                        generateChallenge();
+                    }
+                    Cidaas.usagePass ="";
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>()
                     {
                         @Override
                         public void success(final AccessTokenEntity accessTokenresult) {
 
-                          setupPattern(baseurl,accessTokenresult.getAccess_token(),patternString,setupPatternMFARequestEntity,enrollresult);
+                            setupPattern(baseurl,accessTokenresult.getAccess_token(),patternString,setupPatternMFARequestEntity,enrollresult);
                         }
 
                         @Override
@@ -113,6 +135,13 @@ public class PatternConfigurationController {
                         }
 
                     });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollresult.failure(error);
+                }
+            });
 
             }
         catch (Exception e)
@@ -233,71 +262,145 @@ public class PatternConfigurationController {
       }
     }
 
-    public void scannedWithPattern(final String baseurl,  String statusId, String clientId, final Result<ScannedResponseEntity> scannedResult)
+    public void scannedWithPattern(final String statusId, final Result<ScannedResponseEntity> scannedResult)
     {
         try
         {
-            if (baseurl != null && !baseurl.equals("")  && statusId!=null && !statusId.equals("") && clientId!=null && !clientId.equals("")) {
+            if (statusId!=null && !statusId.equals("")) {
 
-                final ScannedRequestEntity scannedRequestEntity = new ScannedRequestEntity();
-                scannedRequestEntity.setStatusId(statusId);
-                scannedRequestEntity.setClient_id(clientId);
-
-
-                PatternVerificationService.getShared(context).scannedPattern(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override
-                    public void success(ScannedResponseEntity result) {
-                        Cidaas.usagePass ="";
-                        new CountDownTimer(5000, 500) {
-                            String usagePassFromService = "";
+                    public void success(Dictionary<String, String> loginPropertiesresult) {
+                        final String baseurl = loginPropertiesresult.get("DomainURL");
+                        String clientId = loginPropertiesresult.get("ClientId");
 
-                            public void onTick(long millisUntilFinished) {
-                                usagePassFromService = Cidaas.usagePass;
+                        final ScannedRequestEntity scannedRequestEntity = new ScannedRequestEntity();
 
-                                Timber.e("");
-                                if (usagePassFromService != null && !usagePassFromService.equals("")) {
-                                    this.cancel();
-                                    onFinish();
-                                }
+                        scannedRequestEntity.setStatusId(statusId);
+                        scannedRequestEntity.setClient_id(clientId);
+
+
+                        PatternVerificationService.getShared(context).scannedPattern(baseurl,  scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
+                            @Override
+                            public void success(ScannedResponseEntity result) {
+                                Cidaas.usagePass ="";
+                                new CountDownTimer(5000, 500) {
+                                    String usagePassFromService = "";
+
+                                    public void onTick(long millisUntilFinished) {
+                                        usagePassFromService = Cidaas.usagePass;
+
+                                        Timber.e("");
+                                        if (usagePassFromService != null && !usagePassFromService.equals("")) {
+                                            this.cancel();
+                                            onFinish();
+                                        }
+                                    }
+
+                                    public void onFinish() {
+
+                                        if(usagePassFromService!=null && !usagePassFromService.equals("") ) {
+
+                                            ScannedRequestEntity scannedRequestEntityWithUsagePass= new ScannedRequestEntity();
+                                            scannedRequestEntityWithUsagePass.setUsage_pass(usagePassFromService);
+
+                                            PatternVerificationService.getShared(context).scannedPattern(baseurl,  scannedRequestEntityWithUsagePass, null, scannedResult);
+                                        }
+                                        else
+                                        {
+                                            scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            LogFile.getShared(context).addRecordToLog("Scanned Pattern Exception:Device Failed to verify"+ WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
+                                        }
+                                    }
+                                }.start();
+
                             }
 
-                            public void onFinish() {
-
-                                if(usagePassFromService!=null && !usagePassFromService.equals("") ) {
-
-                                    ScannedRequestEntity scannedRequestEntityWithUsagePass= new ScannedRequestEntity();
-                                    scannedRequestEntityWithUsagePass.setUsage_pass(usagePassFromService);
-
-                                    PatternVerificationService.getShared(context).scannedPattern(baseurl,  scannedRequestEntityWithUsagePass, null, scannedResult);
-                                }
-                                else
-                                {
-                                    scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
-                                    LogFile.getShared(context).addRecordToLog("Scanned Pattern Exception:Device Failed to verify"+ WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
-                                }
+                            @Override
+                            public void failure(WebAuthError error) {
+                                scannedResult.failure(error);
                             }
-                        }.start();
-
+                        });
                     }
 
                     @Override
                     public void failure(WebAuthError error) {
                         scannedResult.failure(error);
-                        LogFile.getShared(context).addRecordToLog("Scanned Pattern Error:"+error.getErrorMessage()+ WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
                     }
                 });
+
+
             }
             else {
-                scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,
-                        "BaseURL or ClientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("StatusID must not be empty"));
             }
 
         }
         catch (Exception e)
         {
             scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Scanned Pattern Exception:"+e.getMessage()+ WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
+            LogFile.getShared(context).addRecordToLog("Scanned Pattern Exception:"+e.getMessage()+ WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE);
 
+        }
+    }
+
+
+    public void enrollPattern(@NonNull final String patternString, @NonNull final String sub,@NonNull final String statusId,
+                              final Result<EnrollPatternMFAResponseEntity> enrollResult)
+    {
+        try
+        {
+
+
+                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> result) {
+
+                        final String baseurl = result.get("DomainURL");
+                        final String clientId = result.get("ClientId");
+
+                        String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+
+                        if (patternString != null && !patternString.equals("") && sub != null && !sub.equals("") && statusId != null
+                                && !statusId.equals("") && !userDeviceId.equals("") && userDeviceId!=null) {
+
+
+                            final EnrollPatternMFARequestEntity enrollPatternMFARequestEntity = new EnrollPatternMFARequestEntity();
+                            enrollPatternMFARequestEntity.setVerifierPassword(patternString);
+                            enrollPatternMFARequestEntity.setStatusId(statusId);
+                            enrollPatternMFARequestEntity.setUserDeviceId(userDeviceId);
+                            enrollPatternMFARequestEntity.setClientId(clientId);
+
+
+                            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                                @Override
+                                public void success(AccessTokenEntity result) {
+                                    enrollPattern(baseurl, result.getAccess_token(),enrollPatternMFARequestEntity,enrollResult );
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    enrollResult.failure(error);
+                                }
+                            });
+
+                        } else {
+                            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
+                                    "UserdeviceId or Pattern String or StatusID or Client id must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                        }
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                     enrollResult.failure(error);
+                    }
+                });
+
+        }
+        catch (Exception e)
+        {
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
         }
     }
 
@@ -308,13 +411,6 @@ public class PatternConfigurationController {
     {
         try
         {
-
-            if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
-
-                if (enrollPatternMFARequestEntity.getUserDeviceId() != null && !enrollPatternMFARequestEntity.getUserDeviceId().equals("") &&
-                        enrollPatternMFARequestEntity.getStatusId() != null && !enrollPatternMFARequestEntity.getStatusId().equals("") &&
-                        enrollPatternMFARequestEntity.getClientId() != null && !enrollPatternMFARequestEntity.getClientId().equals("") &&
-                        enrollPatternMFARequestEntity.getVerifierPassword() != null && !enrollPatternMFARequestEntity.getVerifierPassword().equals("")) {
 
                     // call Enroll Service
                     PatternVerificationService.getShared(context).enrollPattern(baseurl, accessToken, enrollPatternMFARequestEntity,
@@ -366,17 +462,6 @@ public class PatternConfigurationController {
                                     //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
-                } else {
-                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
-                            "UserdeviceId or Verifier password or StatusID or Client id must not be empty", HttpStatusCode.EXPECTATION_FAILED));
-                }
-            }
-            else
-            {
-                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,
-                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
-            }
-
 
         }
         catch (Exception e)
@@ -388,78 +473,28 @@ public class PatternConfigurationController {
 
 
         //Login with Pattern
-    public void LoginWithPattern(@NonNull final String patternString, @NonNull final String baseurl, @NonNull final String clientId,
-                                 @NonNull final String trackId, @NonNull final String requestId,
-                                 @NonNull final InitiatePatternMFARequestEntity initiatePatternMFARequestEntity,
+    public void LoginWithPattern(@NonNull final String patternString, final PasswordlessEntity passwordlessEntity,
                                  final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
+
 
             if(codeChallenge.equals("") && codeVerifier.equals("")) {
                 //Generate Challenge
                 generateChallenge();
             }
             Cidaas.usagePass ="";
-            if(initiatePatternMFARequestEntity.getUserDeviceId() != null && !initiatePatternMFARequestEntity.getUserDeviceId().equals(""))
-            {
-                //Do nothing
+
+            if(checkNull(patternString,passwordlessEntity,loginresult)) {
+
+                PatternConfigrationServiceCall(patternString,passwordlessEntity,loginresult);
+
             }
             else
             {
-                initiatePatternMFARequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
+                return;
             }
-            initiatePatternMFARequestEntity.setClient_id(clientId);
 
-
-            if (    initiatePatternMFARequestEntity.getUsageType() != null && !initiatePatternMFARequestEntity.getUsageType().equals("") &&
-                    initiatePatternMFARequestEntity.getUserDeviceId() != null && !initiatePatternMFARequestEntity.getUserDeviceId().equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
-                //Todo Service call
-                PatternVerificationService.getShared(context).initiatePattern(baseurl, initiatePatternMFARequestEntity,null,
-                        new Result<InitiatePatternMFAResponseEntity>() {
-
-                            @Override
-                            public void success(final InitiatePatternMFAResponseEntity serviceresult) {
-
-                               Cidaas.usagePass ="";
-                                new CountDownTimer(5000, 500) {
-                                    String usagePassFromService="";
-                                    public void onTick(long millisUntilFinished) {
-                                        usagePassFromService= Cidaas.usagePass;
-
-                                        Timber.e("");
-                                        if(usagePassFromService!=null && !usagePassFromService.equals(""))
-                                        {
-                                            this.cancel();
-                                            onFinish();
-                                        }
-
-                                    }
-                                    public void onFinish() {
-                                        if(usagePassFromService!=null && !usagePassFromService.equals("")) {
-
-                                            InititePatternAfterDeviceVerification(usagePassFromService,patternString,baseurl,clientId,trackId,requestId,initiatePatternMFARequestEntity.getUsageType(),loginresult);
-                                        }
-
-                                        else {
-                                            // return Error Message
-                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
-                                        }
-                                    }
-                                }.start();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                loginresult.failure(error);
-                            }
-                        });
-            }
-            else
-            {
-
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UserdeviceId or baseurl must not be null"));
-            }
         }
         catch (Exception e)
         {
@@ -470,58 +505,225 @@ public class PatternConfigurationController {
     }
 
 
+    private boolean checkNull(String patternString,PasswordlessEntity passwordlessEntity,Result<LoginCredentialsResponseEntity> loginresult) {
+        if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+
+            String errorMessage = "sub or email or mobile number must not be empty";
+            loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage));
+            return false;
+        }
+
+
+        if (patternString == null && patternString.equals("") && passwordlessEntity.getRequestId() != null &&
+                !passwordlessEntity.getRequestId().equals("")) {
+
+            String errorMessage = "PatternString or requestId must not be empty";
+            loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage));
+            return false;
+        }
+
+
+        if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                    String errorMessage = "trackId must not be empty";
+
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage));
+                    return false;
+                }
+            }
+        return true;
+    }
+
+
+    private InitiatePatternMFARequestEntity  getInitiatePatternEntity(final PasswordlessEntity passwordlessEntity,String clientId,String userDeviceId)
+    {
+      try
+      {
+
+          InitiatePatternMFARequestEntity initiatePatternMFARequestEntity = new InitiatePatternMFARequestEntity();
+
+
+          initiatePatternMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+          initiatePatternMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+
+
+          if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))
+          {
+              initiatePatternMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+          }
+          if(passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals(""))
+          {
+              initiatePatternMFARequestEntity.setSub(passwordlessEntity.getSub());
+          }
+          if (passwordlessEntity.getEmail() != null && !passwordlessEntity.getEmail().equals(""))
+          {
+              initiatePatternMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+          }
+          if(passwordlessEntity.getMobile() != null && !passwordlessEntity.getMobile().equals(""))
+          {
+              initiatePatternMFARequestEntity.setMobile(passwordlessEntity.getSub());
+          }
+
+          initiatePatternMFARequestEntity.setUserDeviceId(userDeviceId);
+          initiatePatternMFARequestEntity.setClient_id(clientId);
+
+         return initiatePatternMFARequestEntity;
+
+      }
+      catch (Exception e)
+      {
+          return null;
+
+      }
+
+    }
+
+    private void PatternConfigrationServiceCall(final String patternString, final PasswordlessEntity passwordlessEntity,final Result<LoginCredentialsResponseEntity> loginresult) {
+
+      try {
+
+
+          CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+              @Override
+              public void success(Dictionary<String, String> result) {
+                  final String baseurl = result.get("DomainURL");
+                  final String clientId = result.get("ClientId");
+                  String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+
+                  InitiatePatternMFARequestEntity initiatePatternMFARequestEntity = null;
+
+                  if(userDeviceId!=null && !userDeviceId.equals(""))
+                  {
+                   initiatePatternMFARequestEntity=getInitiatePatternEntity(passwordlessEntity,clientId,userDeviceId);
+                  }
+
+
+
+                  PatternVerificationService.getShared(context).initiatePattern(baseurl, initiatePatternMFARequestEntity, null,
+                          new Result<InitiatePatternMFAResponseEntity>() {
+
+                              @Override
+                              public void success(final InitiatePatternMFAResponseEntity serviceresult) {
+
+                                  Cidaas.usagePass = "";
+                                  new CountDownTimer(5000, 500) {
+                                      String usagePassFromService = "";
+
+                                      public void onTick(long millisUntilFinished) {
+                                          usagePassFromService = Cidaas.usagePass;
+
+                                          Timber.e("");
+                                          if (usagePassFromService != null && !usagePassFromService.equals("")) {
+                                              this.cancel();
+                                              onFinish();
+                                          }
+
+                                      }
+
+                                      public void onFinish() {
+                                          if (usagePassFromService != null && !usagePassFromService.equals("")) {
+
+                                              InititePatternAfterDeviceVerification(usagePassFromService, patternString, passwordlessEntity, loginresult);
+                                          } else {
+                                              // return Error Message
+                                              loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                          }
+                                      }
+                                  }.start();
+                              }
+
+                              @Override
+                              public void failure(WebAuthError error) {
+                                  loginresult.failure(error);
+                              }
+                          });
+              }
+
+              @Override
+              public void failure(WebAuthError error) {
+
+              }
+          });
+
+
+      }
+      catch (Exception e)
+      {
+          LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE);
+          loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE));
+      }
+    }
+
     //Initiate Patter After Device Verification
-    private void InititePatternAfterDeviceVerification(String usagePassFromService, @NonNull final String patternString, @NonNull final String baseurl, @NonNull final String clientId,
-                                                       @NonNull final String trackId, @NonNull final String requestId, final String usageType,
+    private void InititePatternAfterDeviceVerification(final String usagePassFromService, @NonNull final String patternString, final PasswordlessEntity passwordlessEntity,
                                                        final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
             //Todo call initiate
-            final InitiatePatternMFARequestEntity initiatePatternMFARequestEntityWithUsagePass = new InitiatePatternMFARequestEntity();
-            initiatePatternMFARequestEntityWithUsagePass.setUsagePass(usagePassFromService);
 
-            final String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    final String baseurl = result.get("DomainURL");
+                    final String clientId = result.get("ClientId");
 
-            PatternVerificationService.getShared(context).initiatePattern(baseurl, initiatePatternMFARequestEntityWithUsagePass, null,
-                    new Result<InitiatePatternMFAResponseEntity>() {
+                    final InitiatePatternMFARequestEntity initiatePatternMFARequestEntityWithUsagePass = new InitiatePatternMFARequestEntity();
+                    initiatePatternMFARequestEntityWithUsagePass.setUsagePass(usagePassFromService);
 
-                        @Override
-                        public void success(InitiatePatternMFAResponseEntity result) {
-                            if (patternString != null && !patternString.equals("") && result.getData().getStatusId() != null &&
-                                    !result.getData().getStatusId().equals("")) {
+                    final String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
+                    PatternVerificationService.getShared(context).initiatePattern(baseurl, initiatePatternMFARequestEntityWithUsagePass, null,
+                            new Result<InitiatePatternMFAResponseEntity>() {
 
-                                AuthenticatePatternRequestEntity authenticatePatternRequestEntity = new AuthenticatePatternRequestEntity();
-                                authenticatePatternRequestEntity.setUserDeviceId(userDeviceId);
-                                authenticatePatternRequestEntity.setStatusId(result.getData().getStatusId());
-                                authenticatePatternRequestEntity.setVerifierPassword(patternString);
-                                authenticatePatternRequestEntity.setClient_id(clientId);
+                                @Override
+                                public void success(InitiatePatternMFAResponseEntity result) {
+                                    if (patternString != null && !patternString.equals("") && result.getData().getStatusId() != null &&
+                                            !result.getData().getStatusId().equals("")) {
 
 
-                                authenticatePattern(baseurl, authenticatePatternRequestEntity, new Result<AuthenticatePatternResponseEntity>() {
-                                    @Override
-                                    public void success(AuthenticatePatternResponseEntity result) {
-                                        //Call Resume with Login Service
-                                        ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(result.getData().getSub(), result.getData().getTrackingCode(),
-                                                AuthenticationType.pattern, usageType, clientId, requestId, trackId, baseurl, loginresult);
+                                        AuthenticatePatternRequestEntity authenticatePatternRequestEntity = new AuthenticatePatternRequestEntity();
+                                        authenticatePatternRequestEntity.setUserDeviceId(userDeviceId);
+                                        authenticatePatternRequestEntity.setStatusId(result.getData().getStatusId());
+                                        authenticatePatternRequestEntity.setVerifierPassword(patternString);
+                                        authenticatePatternRequestEntity.setClient_id(clientId);
+
+
+                                        authenticatePattern(baseurl, authenticatePatternRequestEntity, new Result<AuthenticatePatternResponseEntity>() {
+                                            @Override
+                                            public void success(AuthenticatePatternResponseEntity result) {
+                                                //Call Resume with Login Service
+                                                ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(result.getData().getSub(), result.getData().getTrackingCode(),
+                                                        AuthenticationType.pattern, passwordlessEntity, clientId, baseurl, loginresult);
+                                            }
+
+                                            @Override
+                                            public void failure(WebAuthError error) {
+                                                loginresult.failure(error);
+                                            }
+                                        });
+                                    } else {
+                                        String errorMessage = "Status Id or Pattern Must not be null";
+                                        loginresult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+
                                     }
+                                }
 
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        loginresult.failure(error);
-                                    }
-                                });
-                            } else {
-                                String errorMessage = "Status Id or Pattern Must not be null";
-                                loginresult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    loginresult.failure(error);
+                                }
+                            });
+                }
 
-                            }
-                        }
+                @Override
+                public void failure(WebAuthError error) {
 
-                        @Override
-                        public void failure(WebAuthError error) {
-                            loginresult.failure(error);
-                        }
-                    });
+                }
+            });
+
+
+
         }
         catch (Exception e)
         {
@@ -531,6 +733,30 @@ public class PatternConfigurationController {
         }
     }
 
+
+
+
+    public void authenticatePattern(final String patternString, final String statusId, final Result<AuthenticatePatternResponseEntity> loginresult)
+    {
+        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+
+                AuthenticatePatternRequestEntity authenticatePatternRequestEntity=new AuthenticatePatternRequestEntity();
+                authenticatePatternRequestEntity.setStatusId(statusId);
+                authenticatePatternRequestEntity.setVerifierPassword(patternString);
+                authenticatePatternRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(result.get("DomainURL")));
+                authenticatePatternRequestEntity.setClient_id(result.get("ClientId"));
+
+                authenticatePattern(result.get("DomainURL"),authenticatePatternRequestEntity,loginresult);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+             loginresult.failure(error);
+            }
+        });
+    }
     //Authenticate Pattern
 
     public void authenticatePattern(final String baseurl, final AuthenticatePatternRequestEntity authenticatePatternRequestEntity, final Result<AuthenticatePatternResponseEntity> authResult)

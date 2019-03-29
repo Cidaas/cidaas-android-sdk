@@ -2,12 +2,18 @@ package com.example.cidaasv2.Controller.Repository.UserProfile;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
+
+import java.util.Dictionary;
 
 import timber.log.Timber;
 
@@ -116,11 +122,40 @@ public class UserProfileController {
     }
 
 */
-    public void getUserProfile(String accessToken,String domainURL, final Result<UserinfoEntity> callback)
+    public void getUserProfile(String sub, final Result<UserinfoEntity> callback)
     {
         try
         {
-            OauthService.getShared(context).getUserinfo(accessToken,domainURL,callback);
+                if (sub != null && !sub.equals("")) {
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(final AccessTokenEntity accessTokenresult) {
+                            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                                @Override
+                                public void success(Dictionary<String, String> result) {
+                                    OauthService.getShared(context).getUserinfo(accessTokenresult.getAccess_token(),result.get("DomainURL"),callback);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    callback.failure(error);
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callback.failure(error);
+                        }
+                    });
+
+                } else {
+                    String errorMessage = "Sub must not be null";
+                    callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                }
+
         }
         catch (Exception e)
         {

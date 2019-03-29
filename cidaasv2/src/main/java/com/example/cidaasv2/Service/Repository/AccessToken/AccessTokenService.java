@@ -71,8 +71,8 @@ public class AccessTokenService {
     {
         try {
 
+
             //Local Variables
-            String url = "";
             String getAccessTokenUrl = "";
             DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
             //This is only for testing purpose
@@ -186,32 +186,7 @@ public class AccessTokenService {
                     }
                     else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                            }
-
-
-
-                            acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,errorMessage, 400,null,null));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            acessTokencallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
-                                    "AccessToken Service Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        acessTokencallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,response));
                     }
                 }
 
@@ -225,8 +200,8 @@ public class AccessTokenService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-
-            acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage(), 400,null,null));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
+            acessTokencallback.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
         }
     }
 
@@ -280,10 +255,10 @@ public class AccessTokenService {
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
             headers.put("Content-Type", URLHelper.contentType);
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
+            headers.put("deviceId", deviceInfoEntity.getDeviceId());
+            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
+            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
+            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
@@ -328,7 +303,7 @@ public class AccessTokenService {
                 public void onResponse(Call<AccessTokenEntity> call, Response<AccessTokenEntity> response) {
                     if (response.isSuccessful()) {
 
-                        //todo save the accesstoken in Storage helper
+                        //todo save the accessToken in Storage helper
                         if(response.code()==200) {
                             callback.success(response.body());
                         }
@@ -346,7 +321,7 @@ public class AccessTokenService {
                 @Override
                 public void onFailure(Call<AccessTokenEntity> call, Throwable t) {
                     Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), 400,null,null));
 
                 }
             });
@@ -355,6 +330,7 @@ public class AccessTokenService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
             LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
         }
     }
@@ -390,7 +366,7 @@ public class AccessTokenService {
                    }
                    else {
                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
-                               "Service failure but successful response" , 400,null,null));
+                               "Service failure but successful response" , HttpStatusCode.BAD_REQUEST,null,null));
                    }
                }
                     else {
@@ -402,7 +378,7 @@ public class AccessTokenService {
                @Override
                public void onFailure(Call<SocialProviderEntity> call, Throwable t) {
                    Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), HttpStatusCode.BAD_REQUEST,null,null));
 
                }
            });
@@ -411,6 +387,7 @@ public class AccessTokenService {
        }
        catch (Exception e)
        {
+           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
        }
     }

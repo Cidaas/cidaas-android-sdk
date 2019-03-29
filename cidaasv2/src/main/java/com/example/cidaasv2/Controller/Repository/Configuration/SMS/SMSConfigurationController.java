@@ -1,11 +1,14 @@
 package com.example.cidaasv2.Controller.Repository.Configuration.SMS;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
 import com.example.cidaasv2.Helper.AuthenticationType;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
@@ -17,15 +20,24 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.SMS.SMSVerificationService;
+import com.example.cidaasv2.Service.Repository.Verification.SMS.SMSVerificationService;
+
+import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
+
+import static com.example.cidaasv2.Controller.Cidaas.baseurl;
 
 public class SMSConfigurationController {
     private String TrackId,RequestId,UsageTypeFromSMS,Sub;
@@ -48,18 +60,29 @@ public class SMSConfigurationController {
 
 
 
-    public void configureSMS(@NonNull String sub, @NonNull final String baseurl, @NonNull final Result<SetupSMSMFAResponseEntity> result){
+    public void configureSMS(@NonNull String sub, @NonNull final Result<SetupSMSMFAResponseEntity> result){
         try{
 
             Sub=sub;
-            if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
+            if (sub != null && !sub.equals("")) {
 
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
                         // Service call
-                        SMSVerificationService.getShared(context).setupSMSMFA(baseurl, accessTokenresult.getAccess_token(),null,
-                                result);
+                        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                            @Override
+                            public void success(Dictionary<String, String> loginPropertiesResult) {
+                                SMSVerificationService.getShared(context).setupSMSMFA(loginPropertiesResult.get("DomainURL"), accessTokenresult.getAccess_token(),null,
+                                        result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+
                     }
 
                     @Override
@@ -71,23 +94,23 @@ public class SMSConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or Sub must not be null"));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null"));
             }
         }
         catch (Exception e)
         {
             result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
             Timber.e(e.getMessage());
         }
     }
 
     //Service call To enrollSMSMFA
-    public void enrollSMSMFA(@NonNull final String code,String StatusId,@NonNull final String baseurl,
-                             @NonNull final Result<EnrollSMSMFAResponseEntity> result)
+    public void enrollSMSMFA(@NonNull final String code,String StatusId,@NonNull final Result<EnrollSMSMFAResponseEntity> result)
     {
         try{
 
-            if(!Sub.equals("") && !StatusId.equals(""))
+            if(!Sub.equals("") && !StatusId.equals("") && !code.equals("")  && StatusId!=null && code!=null  )
             {
                 final EnrollSMSMFARequestEntity enrollSMSMFARequestEntity=new EnrollSMSMFARequestEntity();
                 enrollSMSMFARequestEntity.setCode(code);
@@ -96,19 +119,20 @@ public class SMSConfigurationController {
 
                 AccessTokenController.getShared(context).getAccessToken(Sub, new Result<AccessTokenEntity>() {
                     @Override
-                    public void success(AccessTokenEntity accessresult) {
+                    public void success(final AccessTokenEntity accessresult) {
 
-                        if (baseurl != null && !baseurl.equals("") && accessresult.getAccess_token() != null
-                                && !accessresult.getAccess_token().equals(""))
-                        {
-                            //Done Service call
-                            SMSVerificationService.getShared(context).enrollSMSMFA(baseurl, accessresult.getAccess_token(),
-                                    enrollSMSMFARequestEntity, null,result);
-                        }
-                        else
-                        {
-                            result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or accessToken must not be null"));
-                        }
+                        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                            @Override
+                            public void success(Dictionary<String, String> loginPropertiesResult) {
+                                SMSVerificationService.getShared(context).enrollSMSMFA(loginPropertiesResult.get("DomainURL"),
+                                        accessresult.getAccess_token(), enrollSMSMFARequestEntity, null,result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                             result.failure(error);
+                            }
+                        });
                     }
 
                     @Override
@@ -122,6 +146,8 @@ public class SMSConfigurationController {
         }
         catch (Exception e)
         {
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE);
             Timber.e(e.getMessage());
         }
     }
@@ -144,30 +170,27 @@ public class SMSConfigurationController {
 
 
 
-    public void loginWithSMS(@NonNull final String baseurl, @NonNull final String trackId, @NonNull final String clientId,
-                               @NonNull final String requestId, @NonNull InitiateSMSMFARequestEntity initiateSMSMFARequestEntity,
-                               final Result<InitiateSMSMFAResponseEntity> result)
+    public void loginWithSMS(@NonNull final PasswordlessEntity passwordlessEntity, final Result<InitiateSMSMFAResponseEntity> result)
     {
         try{
 
-            TrackId=trackId;
-            RequestId=requestId;
-            UsageTypeFromSMS=initiateSMSMFARequestEntity.getUsageType();
+            final InitiateSMSMFARequestEntity initiateSMSMFARequestEntity=getInitiateSMSMFAEntity(passwordlessEntity, result);
 
-            // call Inititate
+            if (initiateSMSMFARequestEntity==null) {
+                return;
+            }
 
-            if ( initiateSMSMFARequestEntity.getUsageType() != null && initiateSMSMFARequestEntity.getUsageType() != "" &&
-                    initiateSMSMFARequestEntity.getSub() != null && initiateSMSMFARequestEntity.getSub() != "" &&
-                    initiateSMSMFARequestEntity.getVerificationType() != null && initiateSMSMFARequestEntity.getVerificationType() != ""&&
-                    baseurl != null && !baseurl.equals("")) {
-                // Service call
-                SMSVerificationService.getShared(context).initiateSMSMFA(baseurl, initiateSMSMFARequestEntity,null,
-                        result);
-            }
-            else
-            {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or Sub or Verification Type or BaseURL must not be empty"));
-            }
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    SMSVerificationService.getShared(context).initiateSMSMFA(loginPropertiesResult.get("DomainURL"), initiateSMSMFARequestEntity,null, result);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
+                }
+            });
 
 
         }
@@ -180,66 +203,86 @@ public class SMSConfigurationController {
     }
 
 
+    private InitiateSMSMFARequestEntity getInitiateSMSMFAEntity(PasswordlessEntity passwordlessEntity, Result<InitiateSMSMFAResponseEntity> result) {
+
+        if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
+                (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
+
+            if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                    String errorMessage = "trackId must not be empty";
+
+                    result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                            errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    return null;
+                }
+            }
+
+            TrackId=passwordlessEntity.getTrackId();
+            RequestId=passwordlessEntity.getRequestId();
+            UsageTypeFromSMS=passwordlessEntity.getUsageType();
+
+            InitiateSMSMFARequestEntity initiateSMSMFARequestEntity = new InitiateSMSMFARequestEntity();
+            initiateSMSMFARequestEntity.setSub(passwordlessEntity.getSub());
+            initiateSMSMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+            initiateSMSMFARequestEntity.setVerificationType("SMS");
+            return initiateSMSMFARequestEntity;
 
 
+        } else {
 
-    public void verifySMS(@NonNull final String baseurl, @NonNull final String clientId,
-                          final AuthenticateSMSRequestEntity authenticateSMSRequestEntity,
-                          final Result<LoginCredentialsResponseEntity> result)
+            result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be empty"));
+            return null;
+        }
+
+    }
+
+
+    public void verifySMS(@NonNull final String code, @NonNull final String statusId,final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
 
-            if(authenticateSMSRequestEntity.getStatusId()!=null && !authenticateSMSRequestEntity.getStatusId().equals("")) {
-                if ( baseurl != null && !baseurl.equals("")) {
-                    //Todo Service call
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(final Dictionary<String, String> result) {
+                    final String baseurl=result.get("DomainURL");
+                    final String clientId=result.get("ClientId");
+
+                    final AuthenticateSMSRequestEntity authenticateSMSRequestEntity = new AuthenticateSMSRequestEntity();
+
+                    if (code != null && !code.equals("") && statusId!=null && !statusId.equals("")) {
+
+                        authenticateSMSRequestEntity.setCode(code);
+                        authenticateSMSRequestEntity.setStatusId(statusId);
+
+                    } else {
+                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Code must not be empty"));
+                    }
+
+
                     SMSVerificationService.getShared(context).authenticateSMSMFA(baseurl, authenticateSMSRequestEntity,null,
                             new Result<AuthenticateSMSResponseEntity>() {
-                        @Override
-                        public void success(AuthenticateSMSResponseEntity serviceresult) {
 
+                                @Override
+                                public void success(AuthenticateSMSResponseEntity serviceresult) {
 
-                            ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(serviceresult.getData().getSub(),
-                                    serviceresult.getData().getTrackingCode(), AuthenticationType.SMS,UsageTypeFromSMS,clientId,RequestId,TrackId,baseurl,result);
+                                    ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(serviceresult.getData().getSub(),
+                                            serviceresult.getData().getTrackingCode(),"SMS",UsageTypeFromSMS,clientId,RequestId,
+                                            TrackId,baseurl,loginresult);
+                                }
 
-                           /* //Todo decide to move to MFA or Paswword Less Based on usageType
-                            ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
-                            resumeLoginRequestEntity.setSub(serviceresult.getData().getSub());
-                            resumeLoginRequestEntity.setTrack_id(TrackId);
-                            resumeLoginRequestEntity.setTrackingCode(serviceresult.getData().getTrackingCode());
-                            resumeLoginRequestEntity.setUsageType(UsageTypeFromSMS);
-                            resumeLoginRequestEntity.setRequestId(RequestId);
-                            resumeLoginRequestEntity.setVerificationType("SMS");
-                            resumeLoginRequestEntity.setClient_id(clientId);
-
-                            if(UsageTypeFromSMS.equals(UsageType.PASSWORDLESS)){
-
-                                LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,result);
-                            }
-
-                            else if(UsageTypeFromSMS.equals(UsageType.MFA)) {
-
-
-                                LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, result);
-                            }*/
-
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            result.failure(error);
-                        }
-                    });
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    loginresult.failure(error);
+                                }
+                            });
                 }
-                else
-                {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL must not be null"));
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
                 }
-            }
-            else {
-                String errorMessage="StatusId must not be empty";
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-            }
+            });
 
 
         }
@@ -247,7 +290,7 @@ public class SMSConfigurationController {
         {
             Timber.e(e.getMessage());
             LogFile.getShared(context).addRecordToLog("Verify SMS"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
         }
     }
 
@@ -258,17 +301,7 @@ public class SMSConfigurationController {
 
             if (baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")) {
                 //Todo Service call
-                SMSVerificationService.getShared(context).setupSMSMFA(baseurl, AccessToken,null, new Result<SetupSMSMFAResponseEntity>() {
-                    @Override
-                    public void success(SetupSMSMFAResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
+                SMSVerificationService.getShared(context).setupSMSMFA(baseurl, AccessToken,null, result);
             }
             else
             {

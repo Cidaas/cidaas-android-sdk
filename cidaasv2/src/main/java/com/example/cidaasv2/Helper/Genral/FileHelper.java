@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -47,7 +48,6 @@ public class FileHelper {
         if(shared==null)
         {
             shared=new FileHelper(context);
-
         }
         return shared;
     }
@@ -201,11 +201,18 @@ public class FileHelper {
     }
 
 //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @Nullable String ClientSecret, Result<Dictionary<String,String>> callback)
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret, Result<Dictionary<String,String>> callback)
     {
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
+
+
+                Cidaas.baseurl=DomainUrl;
+
+                //Disable PKCE Flow
+                DBHelper.getShared().setEnablePKCE(false);
+                Cidaas.ENABLE_PKCE=false;
 
                 loginProperties.put("ClientId", ClientId);
                 loginProperties.put("DomainURL", DomainUrl);
@@ -235,6 +242,8 @@ public class FileHelper {
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") ) {
+
+                Cidaas.baseurl=DomainUrl;
 
                 loginProperties.put("ClientId", ClientId);
                 loginProperties.put("DomainURL", DomainUrl);

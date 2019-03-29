@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.logging.FileHandler;
 
+import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
 /**
@@ -76,7 +77,7 @@ public class LogFile {
                     isExternalStorageAvailable = isExternalStorageWriteable = false;
                 }
 
-                if (mContext.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(mContext,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
 
                     File sddir = Environment.getExternalStorageDirectory();

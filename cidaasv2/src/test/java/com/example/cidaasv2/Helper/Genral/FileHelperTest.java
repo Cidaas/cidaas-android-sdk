@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Dictionary;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
 public class FileHelperTest {
 Context context;
     FileHelper fileHelper;

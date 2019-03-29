@@ -69,8 +69,11 @@ public class LoginService {
         return shared;
     }
 
+
+
+
     //Login With Credentials
-    public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<LoginCredentialsResponseEntity> callback)
+    public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity,final Result<LoginCredentialsResponseEntity> callback)
     {
         //Local Variables
 
@@ -87,23 +90,10 @@ public class LoginService {
                 return;
             }
 
-
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
 
-
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromparam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromparam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromparam;
-            }
-
-
-
+            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -117,49 +107,7 @@ public class LoginService {
 
 
             //Call Service-getRequestId
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.loginWithCredentials(loginUrl,headers, loginCredentialsRequestEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
-                @Override
-                public void onResponse(Call<LoginCredentialsResponseEntity> call, Response<LoginCredentialsResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final LoginCredentialsResponseErrorEntity loginCredentialsResponseErrorEntity;
-                            loginCredentialsResponseErrorEntity=objectMapper.readValue(errorResponse,LoginCredentialsResponseErrorEntity.class);
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
-                                    loginCredentialsResponseErrorEntity.getError().getError(), loginCredentialsResponseErrorEntity.getStatus(),
-                                    loginCredentialsResponseErrorEntity.getError(),null));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage(), 400,null,null));
-                           // Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<LoginCredentialsResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,t.getMessage(), 400,null,null));
-                }
-            });
+            serviceForLoginWithCredentials(loginUrl,loginCredentialsRequestEntity, headers,callback);
         }
         catch (Exception e)
         {
@@ -167,6 +115,58 @@ public class LoginService {
             Timber.d(e.getMessage());
             callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
         }
+    }
+
+    public void serviceForLoginWithCredentials(String loginUrl,LoginCredentialsRequestEntity loginCredentialsRequestEntity,  Map<String, String> headers ,final Result<LoginCredentialsResponseEntity> callback) {
+     try {
+         final ICidaasSDKService cidaasSDKService = service.getInstance();
+
+         cidaasSDKService.loginWithCredentials(loginUrl, headers, loginCredentialsRequestEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
+             @Override
+             public void onResponse(Call<LoginCredentialsResponseEntity> call, Response<LoginCredentialsResponseEntity> response) {
+                 if (response.isSuccessful()) {
+                     if (response.code() == 200) {
+                         callback.success(response.body());
+                     } else {
+                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
+                                 "Service failure but successful response", response.code(), null, null));
+                     }
+                 } else {
+                     assert response.errorBody() != null;
+                     try {
+
+                         // Handle proper error message
+                         String errorResponse = response.errorBody().source().readByteString().utf8();
+                         final LoginCredentialsResponseErrorEntity loginCredentialsResponseErrorEntity;
+                         loginCredentialsResponseErrorEntity = objectMapper.readValue(errorResponse, LoginCredentialsResponseErrorEntity.class);
+
+
+                         //Todo Service call For fetching the Consent details
+                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
+                                 loginCredentialsResponseErrorEntity.getError().getError(), loginCredentialsResponseErrorEntity.getStatus(),
+                                 loginCredentialsResponseErrorEntity.getError(), null));
+
+                     } catch (Exception e) {
+                         callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage(), 400, null, null));
+                         // Timber.e("response"+response.message()+e.getMessage());
+                     }
+                     Timber.e("response" + response.message());
+                 }
+             }
+
+             @Override
+             public void onFailure(Call<LoginCredentialsResponseEntity> call, Throwable t) {
+                 Timber.e("Failure in Login with credentials service call" + t.getMessage());
+                 callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, t.getMessage(), 400, null, null));
+             }
+         });
+     }
+     catch (Exception e)
+     {
+         LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
+         Timber.d(e.getMessage());
+         callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
+     }
     }
 
 

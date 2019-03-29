@@ -124,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         RegistrationEntity registrationEntity=new RegistrationEntity();
         registrationEntity.setUsername("Raj");
-        registrationEntity.setEmail("cidaaswidaas12@gmail.com");
+        registrationEntity.setEmail("cidaaswidaa@gmail.com");
         registrationEntity.setGiven_name("RajaS");
         registrationEntity.setFamily_name("RsdfsN");
         registrationEntity.setPassword("123456");

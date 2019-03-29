@@ -87,13 +87,25 @@ public static EntityToModelConverter sharedinstance;
             AccessTokenEntity accessTokenEntity=new AccessTokenEntity();
 
 
-           accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
-            accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
-            accessTokenEntity.setId_token(accessTokenModel.getId_token());
-            accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
-            accessTokenEntity.setScope(accessTokenModel.getScope());
-            accessTokenEntity.setUserstate(accessTokenModel.getUserState());
+            if(accessTokenModel.getAccess_token()!=null && !accessTokenModel.getAccess_token().equals("")) {
+                accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
+            }
 
+            if(accessTokenModel.getId_token()!=null && !accessTokenModel.getId_token().equals("")) {
+                accessTokenEntity.setId_token(accessTokenModel.getId_token());
+            }
+
+            if(accessTokenModel.getRefresh_token()!=null && !accessTokenModel.getRefresh_token().equals("")) {
+                accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
+            }
+            if(accessTokenModel.getScope()!=null && !accessTokenModel.getScope().equals("")) {
+                accessTokenEntity.setScope(accessTokenModel.getScope());
+            }
+            if(accessTokenModel.getUserState()!=null && !accessTokenModel.getUserState().equals("")) {
+                accessTokenEntity.setUserstate(accessTokenModel.getUserState());
+            }
+
+            accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
 
             //Decrypt the AccessToken
             if(accessTokenModel.isEncrypted()) {
@@ -102,7 +114,7 @@ public static EntityToModelConverter sharedinstance;
             }
             else
             {
-                if(accessTokenModel.getPlainToken()==null || (accessTokenModel.getPlainToken()==""))
+                if(accessTokenModel.getPlainToken()==null || (accessTokenModel.getPlainToken().equals("")))
                 {
                     accessTokenModel.setPlainToken(accessTokenEntity.getAccess_token());
                 }

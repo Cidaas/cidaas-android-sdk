@@ -147,7 +147,7 @@ public class RequestIdService {
             if(challengeProperties.get("Challenge")!=null) {
              codeChallenge = challengeProperties.get("Challenge");
             }
-            if(challengeProperties.get("CllientSecret")!=null) {
+            if(challengeProperties.get("ClientSecret")!=null) {
              clientSecret = challengeProperties.get("ClientSecret");
             }
 

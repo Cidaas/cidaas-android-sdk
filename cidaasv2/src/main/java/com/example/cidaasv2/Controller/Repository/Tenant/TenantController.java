@@ -2,11 +2,17 @@ package com.example.cidaasv2.Controller.Repository.Tenant;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Repository.Tenant.TenantService;
+
+import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
@@ -45,31 +51,30 @@ public class TenantController {
     public void getTenantInfo(@NonNull String baseurl, final Result<TenantInfoEntity> result){
         try{
 
-            if (baseurl != null && !baseurl.equals("")) {
-                // Change service call to private
-                TenantService.getShared(context).getTenantInfo(baseurl, new Result<TenantInfoEntity>() {
+            if(Cidaas.baseurl!=null && !Cidaas.baseurl.equals("")) {
 
+                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override
-                    public void success(TenantInfoEntity serviceresult) {
-                        result.success(serviceresult);
+                    public void success(Dictionary<String, String> stringresult) {
+                        TenantService.getShared(context).getTenantInfo(stringresult.get("DomainURL"),result);
                     }
 
                     @Override
                     public void failure(WebAuthError error) {
-
                         result.failure(error);
                     }
                 });
             }
             else
             {
-                String message="base url must not be empty";
-                result.failure(WebAuthError.getShared(context).customException(417,message, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL Must not be empty"));
             }
         }
         catch (Exception e)
         {
             Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.TENANT_INFO_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Exception getTenantInfo():"+e.getMessage());
         }
     }
 

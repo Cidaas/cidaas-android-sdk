@@ -19,7 +19,7 @@ import org.robolectric.annotation.Config;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class TOTPConfigurationControllerTest {
     Context context;
     TOTPConfigurationController shared;

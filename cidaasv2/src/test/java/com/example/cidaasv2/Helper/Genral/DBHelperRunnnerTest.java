@@ -20,7 +20,6 @@ import java.util.Hashtable;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
 public class DBHelperRunnnerTest {
 
 

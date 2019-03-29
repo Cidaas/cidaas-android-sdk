@@ -33,7 +33,7 @@ import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class AccessTokenServiceTest {
    Context context;
    AccessTokenService accessTokenService;

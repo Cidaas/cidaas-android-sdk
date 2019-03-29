@@ -16,4 +16,5 @@ public class AuthenticationType {
     public static final String EMAIL = "EMAIL";
     public static final String SMS = "SMS";
     public static final String IVR = "IVR";
+    public static final String BACKUPCODE = "BACKUPCODE";
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="DomainURL" type="string"></item>
-    <item name="ClientId" type="string"></item>
-    <item name="RedirectURL"></item>
+    <item name="DomainURL" type="string">https://nightlybuild.cidaas.de</item>
+    <item name="ClientId" type="string">4d1ce9b6-7b1d-4c97-b4f6-118d00ce3d68</item>
+    <item name="RedirectURL">com.cidaas.authenticator://nightlybuild.cidaas.de/user-profile/editprofile</item>
 </resources>

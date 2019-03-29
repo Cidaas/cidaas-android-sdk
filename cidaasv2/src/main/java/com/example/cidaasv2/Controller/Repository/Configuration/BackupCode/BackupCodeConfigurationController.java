@@ -4,6 +4,10 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
+import com.example.cidaasv2.Helper.AuthenticationType;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
@@ -17,14 +21,19 @@ import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.Authen
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.BackupCode.AuthenticateBackupCodeResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.BackupCode.InitiateBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Repository.Verification.BackupCode.BackupCodeVerificationService;
+
+import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class BackupCodeConfigurationController {
-    
+
     private String UsageTypeFromBackupCode,TrackId,RequestId,Sub;
     private Context context;
 
@@ -59,42 +68,43 @@ public class BackupCodeConfigurationController {
     // --------------------------------------------------***** BackupCode MFA *****-----------------------------------------------------------------------------------------------------------------------
 
 
-    public void configureBackupCode(@NonNull String sub, @NonNull final String baseurl, @NonNull final Result<SetupBackupCodeMFAResponseEntity> result){
+    public void configureBackupCode(@NonNull final String sub, @NonNull final Result<SetupBackupCodeMFAResponseEntity> result){
         try{
 
-            Sub=sub;
-            if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl=loginPropertiesResult.get("DomainURL");
+                    Sub=sub;
+                    if (sub != null && !sub.equals("")) {
 
-                AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
-                    @Override
-                    public void success(final AccessTokenEntity accessTokenresult) {
-                        //Todo Service call
-                        BackupCodeVerificationService.getShared(context).setupBackupCodeMFA(baseurl, accessTokenresult.getAccess_token(),null,
-                                new Result<SetupBackupCodeMFAResponseEntity>()
-                                {
-                                    @Override
-                                    public void success(SetupBackupCodeMFAResponseEntity serviceresult) {
-                                        result.success(serviceresult);
-                                    }
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(final AccessTokenEntity accessTokenresult) {
+                                //Todo Service call
+                                BackupCodeVerificationService.getShared(context).setupBackupCodeMFA(baseurl, accessTokenresult.getAccess_token(),null,
+                                        result);
+                            }
 
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        result.failure(error);
-                                    }
-                                });
+                            @Override
+                            public void failure(WebAuthError error) {
+                                result.failure(error);
+                            }
+                        });
+
                     }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
+                    else
+                    {
+                        result.failure(WebAuthError.getShared(context).propertyMissingException("baseURL or Sub must not be null"));
                     }
-                });
+                }
 
-            }
-            else
-            {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("baseURL or Sub must not be null"));
-            }
+                @Override
+                public void failure(WebAuthError error) {
+                  result.failure(error);
+                }
+            });
+
         }
         catch (Exception e)
         {
@@ -103,82 +113,70 @@ public class BackupCodeConfigurationController {
         }
     }
 
-    
 
 
 
-    public void loginWithBackupCode(@NonNull final String code, @NonNull final String baseurl, @NonNull final String trackId, @NonNull final String clientId,
-                                    @NonNull final String requestId, @NonNull final InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity,
-                                    final Result<LoginCredentialsResponseEntity> loginresult)
+
+    public void loginWithBackupCode(@NonNull final String code, final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
 
-            TrackId=trackId;
-            RequestId=requestId;
-            UsageTypeFromBackupCode=initiateBackupCodeMFARequestEntity.getUsageType();
 
-            //Todo call Inititate
+            final InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity=getInitiateBackupCodeMFAEntity(passwordlessEntity, loginresult);
 
-            if ( initiateBackupCodeMFARequestEntity.getUsageType() != null && !initiateBackupCodeMFARequestEntity.getUsageType().equals("") &&
-                    initiateBackupCodeMFARequestEntity.getVerificationType() != null && !initiateBackupCodeMFARequestEntity.getVerificationType().equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
-                //Todo Service call
-                BackupCodeVerificationService.getShared(context).initiateBackupCodeMFA(baseurl, initiateBackupCodeMFARequestEntity, null,new Result<InitiateBackupCodeMFAResponseEntity>() {
-                    @Override
-                    public void success(final InitiateBackupCodeMFAResponseEntity serviceresult) {
+            if (initiateBackupCodeMFARequestEntity==null) {
+                return;
+            }
 
-                        AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity = new AuthenticateBackupCodeRequestEntity();
-                        authenticateBackupCodeRequestEntity.setStatusId(serviceresult.getData().getStatusId());
-                        authenticateBackupCodeRequestEntity.setVerifierPassword(code);
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    final String baseurl=result.get("DomainURL");
+                    final String clientId=result.get("ClinetId");
+
+                    BackupCodeVerificationService.getShared(context).initiateBackupCodeMFA(baseurl, initiateBackupCodeMFARequestEntity, null,new Result<InitiateBackupCodeMFAResponseEntity>() {
+                        @Override
+                        public void success(final InitiateBackupCodeMFAResponseEntity serviceresult) {
+
+                            AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity = new AuthenticateBackupCodeRequestEntity();
+                            authenticateBackupCodeRequestEntity.setStatusId(serviceresult.getData().getStatusId());
+                            authenticateBackupCodeRequestEntity.setVerifierPassword(code);
 
 
-                        BackupCodeVerificationService.getShared(context).authenticateBackupCodeMFA(baseurl, authenticateBackupCodeRequestEntity,null, new Result<AuthenticateBackupCodeResponseEntity>() {
-                            @Override
-                            public void success(AuthenticateBackupCodeResponseEntity result) {
-                                //Todo Call Resume with Login Service
+                            BackupCodeVerificationService.getShared(context).authenticateBackupCodeMFA(baseurl, authenticateBackupCodeRequestEntity,null, new Result<AuthenticateBackupCodeResponseEntity>() {
+                                @Override
+                                public void success(AuthenticateBackupCodeResponseEntity result) {
+                                    //Todo Call Resume with Login Service
 
-                                ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
-
-                                //Todo Check not Null values
-                                resumeLoginRequestEntity.setSub(result.getData().getSub());
-                                resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                resumeLoginRequestEntity.setUsageType(initiateBackupCodeMFARequestEntity.getUsageType());
-                                resumeLoginRequestEntity.setVerificationType("backupcode");
-                                resumeLoginRequestEntity.setClient_id(clientId);
-                                resumeLoginRequestEntity.setRequestId(requestId);
-
-                                if (initiateBackupCodeMFARequestEntity.getUsageType().equals(UsageType.MFA)) {
-                                    resumeLoginRequestEntity.setTrack_id(trackId);
-                                    LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, loginresult);
-                                } else if (initiateBackupCodeMFARequestEntity.getUsageType().equals(UsageType.PASSWORDLESS)) {
-                                    resumeLoginRequestEntity.setTrack_id("");
-                                    LoginController.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, loginresult);
+                                    ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(result.getData().getSub(),
+                                            result.getData().getTrackingCode(), AuthenticationType.BACKUPCODE,
+                                            initiateBackupCodeMFARequestEntity.getUsageType(),clientId,passwordlessEntity.getRequestId()
+                                    ,passwordlessEntity.getTrackId(),baseurl,loginresult);
 
                                 }
-                            }
 
-                            @Override
-                            public void failure(WebAuthError error) {
-                                loginresult.failure(error);
-                            }
-                        });
-
-
-                    }
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    loginresult.failure(error);
+                                }
+                            });
 
 
-                    @Override
-                    public void failure(WebAuthError error) {
-                        loginresult.failure(error);
-                    }
-                });
-            }
-            else
-            {
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or verificationType or baseurl must not be null"));
-            }
+                        }
 
 
+                        @Override
+                        public void failure(WebAuthError error) {
+                            loginresult.failure(error);
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            });
         }
         catch (Exception e)
         {
@@ -189,95 +187,40 @@ public class BackupCodeConfigurationController {
 
 
 
+    private InitiateBackupCodeMFARequestEntity getInitiateBackupCodeMFAEntity(PasswordlessEntity passwordlessEntity, Result<LoginCredentialsResponseEntity> result) {
 
+        if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
+                (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
 
-    public void verifyBackupCode(@NonNull final String baseurl, @NonNull final String clientId, final AuthenticateBackupCodeRequestEntity authenticateBackupCodeRequestEntity,
-                                 final Result<LoginCredentialsResponseEntity> result){
-        try{
-
-            if(authenticateBackupCodeRequestEntity.getStatusId()!=null && !authenticateBackupCodeRequestEntity.getStatusId().equals("")) {
-
-                if ( baseurl != null && !baseurl.equals("")) {
-                    //Todo Service call
-                    BackupCodeVerificationService.getShared(context).authenticateBackupCodeMFA(baseurl, authenticateBackupCodeRequestEntity,null, new Result<AuthenticateBackupCodeResponseEntity>() {
-                        @Override
-                        public void success(AuthenticateBackupCodeResponseEntity serviceresult) {
-
-
-                            //Todo decide to move to MFA or Paswword Less Based on usageType
-                            ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
-                            resumeLoginRequestEntity.setSub(serviceresult.getData().getSub());
-                            resumeLoginRequestEntity.setTrack_id(TrackId);
-                            resumeLoginRequestEntity.setTrackingCode(serviceresult.getData().getTrackingCode());
-                            resumeLoginRequestEntity.setUsageType(UsageTypeFromBackupCode);
-                            resumeLoginRequestEntity.setRequestId(RequestId);
-                            resumeLoginRequestEntity.setVerificationType("BackupCode");
-                            resumeLoginRequestEntity.setClient_id(clientId);
-
-                            if(UsageTypeFromBackupCode.equals(UsageType.PASSWORDLESS)){
-
-                                LoginController.getShared(context).continuePasswordless(baseurl,resumeLoginRequestEntity,result);
-                            }
-
-                            else if(UsageTypeFromBackupCode.equals(UsageType.MFA)) {
-
-
-                                LoginController.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, result);
-                            }
-
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            result.failure(error);
-                        }
-                    });
-                }
-                else
-                {
-                    String errorMessage="Domain url must not be empty";
+            if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                    String errorMessage = "trackId must not be empty";
 
                     result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
                             errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                    return null;
                 }
             }
-            else {
-                String errorMessage="StatusId must not be empty";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-            }
+            TrackId=passwordlessEntity.getTrackId();
+            RequestId=passwordlessEntity.getRequestId();
+            UsageTypeFromBackupCode=passwordlessEntity.getUsageType();
+
+            InitiateBackupCodeMFARequestEntity initiateBackupCodeMFARequestEntity = new InitiateBackupCodeMFARequestEntity();
+            initiateBackupCodeMFARequestEntity.setSub(passwordlessEntity.getSub());
+            initiateBackupCodeMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+            initiateBackupCodeMFARequestEntity.setVerificationType("BACKUPCODE");
+
+            return initiateBackupCodeMFARequestEntity;
 
 
+        } else {
+
+            result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be empty"));
+            return null;
         }
-        catch (Exception e)
-        {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE));
 
-        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
