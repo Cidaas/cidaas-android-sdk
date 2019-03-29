@@ -350,9 +350,7 @@ public class PatternConfigurationController {
     {
         try
         {
-
-
-                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+          CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> result) {
 
