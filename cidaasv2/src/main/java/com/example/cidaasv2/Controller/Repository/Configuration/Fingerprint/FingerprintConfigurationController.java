@@ -120,6 +120,8 @@ public class FingerprintConfigurationController {
                                     setupFingerprintMFARequestEntity.setClient_id(clinetId);
                                     setupFingerprintMFARequestEntity.setLogoUrl(logoURLlocal);
 
+                                    configureFingerprint(sub,baseurl,setupFingerprintMFARequestEntity,enrollresult);
+
 
                                 } else {
                                     String errorMessage = "Sub or Pattern cannot be null";
