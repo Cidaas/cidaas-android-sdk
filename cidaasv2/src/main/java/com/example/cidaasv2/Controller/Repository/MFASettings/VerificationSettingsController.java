@@ -526,25 +526,55 @@ public class VerificationSettingsController {
 
 
     //update FCM TOken
-    public void updateFCMToken(@NonNull final String baseurl, @NonNull final String AccessToken, @NonNull final String FCMToken,final Result<Object> result){
-        try{
+    public void updateFCMToken(@NonNull final String sub, @NonNull final String FCMToken,final Result<Object> Callbackresult){
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success( Dictionary<String, String> result) {
 
-            if (baseurl != null && !baseurl.equals("") && AccessToken != null && !AccessToken.equals("")&& FCMToken != null && !FCMToken.equals("")  ) {
+                    final String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
 
-                VerificationSettingsService.getShared(context).updateFCMToken(baseurl,AccessToken,FCMToken, null, result);
-            }
-            else
-            {
-                String errorMessage="sub or baseURL or UserDeviceId must not be empty ";
+                    String oldFCMToken=DBHelper.getShared().getFCMToken();
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-            }
+
+                    if(oldFCMToken.equalsIgnoreCase(FCMToken))
+                    {
+                        //Do nothing
+                    }
+                    else{
+                        DBHelper.getShared().setFCMToken(FCMToken);
+
+                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity accessTokenEntityresult) {
+                                VerificationSettingsService.getShared(context).updateFCMToken(baseurl,accessTokenEntityresult.getAccess_token()
+                                        ,FCMToken, null, Callbackresult);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
+                            }
+                        });
+
+
+                    }
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
+                }
+            });
         }
+
         catch (Exception e)
         {
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e(e.getMessage());
+            LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + e.getMessage());
+            Timber.e("Update FCM Token exception" + e.getMessage());
         }
     }
 

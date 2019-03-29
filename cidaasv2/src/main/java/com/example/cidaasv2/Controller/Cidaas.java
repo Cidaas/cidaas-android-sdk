@@ -2,20 +2,13 @@ package com.example.cidaasv2.Controller;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
 import android.nfc.tech.IsoDep;
 import android.os.Build;
 import android.provider.Settings;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -35,6 +28,7 @@ import com.example.cidaasv2.Controller.Repository.Configuration.Voice.VoiceConfi
 import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
+import com.example.cidaasv2.Controller.Repository.LocalAuthentication.LocalAuthenticationController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.MFASettings.VerificationSettingsController;
 import com.example.cidaasv2.Controller.Repository.Registration.RegistrationController;
@@ -44,8 +38,6 @@ import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
 import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoController;
 import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
-import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
-import com.example.cidaasv2.Helper.CustomTab.Helper.CustomTabHelper;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
@@ -62,8 +54,6 @@ import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
-import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
-import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -116,19 +106,16 @@ import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRespons
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import com.example.cidaasv2.Service.Repository.OauthService;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 
 import java.io.File;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
 import timber.log.Timber;
 
 import static android.os.Build.MODEL;
@@ -298,34 +285,15 @@ public class Cidaas implements IOAuthWebLogin {
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
 
-        //Read and save file in shared preference
-        saveLoginProperties(new Result<Dictionary<String, String>>() {
+        CidaasProperties.getShared(context).saveCidaasProperties(new Result<Dictionary<String, String>>() {
             @Override
-            public void success(final Dictionary<String, String> loginResult) {
-              //  savedProperties=result;
-                Cidaas.baseurl=loginResult.get("DomainURL");
-
-                checkPKCEFlow(loginResult, new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> result) {
-                        DBHelper.getShared().addLoginProperties(result);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
-                                + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                       LogFile.getShared(context).addRecordToLog(loggerMessage);
-                    }
-                });
-
+            public void success(Dictionary<String, String> result) {
+                Cidaas.baseurl=result.get("DomainURL");
             }
 
             @Override
             public void failure(WebAuthError error) {
-                String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
-                        + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-               LogFile.getShared(context).addRecordToLog(loggerMessage);
+
             }
         });
 
@@ -1262,7 +1230,6 @@ public class Cidaas implements IOAuthWebLogin {
     public void initiateResetPasswordBySMS(final String requestId, final String mobileNumber,
                                            final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, mobileNumber, "sms",resetPasswordResponseEntityResult);
-
     }
 
     @Override
@@ -1278,9 +1245,6 @@ public class Cidaas implements IOAuthWebLogin {
         ResetPasswordController.getShared(context).resetNewPassword(resetPasswordEntity, resetpasswordResult);
 
     }
-
-
-
 
     //----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1317,8 +1281,6 @@ public class Cidaas implements IOAuthWebLogin {
                          accessTokenCallback.failure(error);
                         }
                     },extraParams);
-
-
                 }
 
                 @Override
@@ -1389,204 +1351,6 @@ public class Cidaas implements IOAuthWebLogin {
         LoginController.getShared(context).loginWithSocial(activityContext,requestId,provider,color,callbacktoMain);
     }
 
-
-
-
-
-
-
-    private void saveLoginProperties(final Result<Dictionary<String, String>> result)
-    {
-        readFromFile(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> loginProperties) {
-                if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException("DomainURL must not be empty");
-                    String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - "
-                            + webAuthError.errorCode + ", Error Message -  DomainURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                   LogFile.getShared(context).addRecordToLog(loggerMessage);
-                    result.failure(webAuthError);
-                }
-                if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException("ClientId must not be empty");
-                    String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - ClientId is missing"
-                            + webAuthError.errorCode + ", Error Message -  ClientId is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-
-                   LogFile.getShared(context).addRecordToLog(loggerMessage);
-                    result.failure(webAuthError);
-                }
-                if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException("RedirectURL must not be empty");
-                    String loggerMessage = "SavedLoginProperties readProperties failure : " + "Error Code - RedirectURL is missing"
-                            + webAuthError.errorCode + ", Error Message -  RedirectURL is missing" + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-
-                   LogFile.getShared(context).addRecordToLog(loggerMessage);
-                    result.failure(webAuthError);
-                }
-                Cidaas.baseurl = loginProperties.get("DomainURL");
-                DBHelper.getShared().addLoginProperties(loginProperties);
-                result.success(loginProperties);
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                result.failure(error);
-            }
-        });
-    }
-
-
-    // --------------------------------------------------------------------------------------------------
-
-//Done Configure pattern by Passing the pattern String Directly
-    // 1. Done Check For Local Variable or Read properties from file
-    // 2. Done Check For NotNull Values
-    // 3. Done Call configure Pattern From Pattern Controller and return the result
-    // 4. Done Maintain logs based on flags
-
-    public void checkSavedProperties(final Result<Dictionary<String, String>> result) {
-
-       /* if(DomainURL!=null && !DomainURL.equals("")){
-
-
-            final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
-
-            if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
-                //check here for already saved properties
-
-                if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException("RedirectURL must not be empty");
-                    String loggerMessage = "Check saved properties failure : " + "Error Code - "
-                            + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                   LogFile.getShared(context).addRecordToLog(loggerMessage);
-                    result.failure(webAuthError);
-                    return;
-                }
-                if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
-                    webAuthError = webAuthError.propertyMissingException("ClientId must not be empty");
-                    String loggerMessage = "Accept Consent readProperties failure : " + "Error Code - "
-                            + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-
-                   LogFile.getShared(context).addRecordToLog(loggerMessage);
-                    result.failure(webAuthError);
-                    return;
-                }
-
-
-             result.success(loginProperties);
-            } else {
-                //Read File from asset to get URL
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> savedLoginProperties) {
-                        //Call requestIdBy LoginProperties parameter
-                       result.success(savedLoginProperties);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-        }
-        else
-        {
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"DomainURL must not be null",HttpStatusCode.EXPECTATION_FAILED));
-        }*/
-
-    }
-
-    public void loginWithFIDO(String usageType, String email, String sub, String trackId, final Result<LoginCredentialsResponseEntity> result) {
-        try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
-                }
-            });
-        } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE));
-        }
-    }
-
-
-    // -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-    //Method to check the pkce flow and save it to DB
-    private void checkPKCEFlow(Dictionary<String, String> loginproperties, Result<Dictionary<String, String>> savedResult) {
-        try {
-
-            webAuthError = WebAuthError.getShared(context);
-
-            //Check all the login Properties are Correct
-            if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
-                    || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-                webAuthError = webAuthError.propertyMissingException("Domain URL must not be empty");
-                String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - "
-                        + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-               LogFile.getShared(context).addRecordToLog(loggerMessage);
-                savedResult.failure(webAuthError);
-
-                return;
-            }
-            if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
-                    || !((Hashtable) loginproperties).containsKey("ClientId")) {
-                webAuthError = webAuthError.propertyMissingException("ClientId must not be empty");
-                String loggerMessage = "Check PKCE Flow readProperties failure : " + "Error Code - "
-                        + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-               LogFile.getShared(context).addRecordToLog(loggerMessage);
-                savedResult.failure(webAuthError);
-                return;
-            }
-            if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
-                    || loginproperties.get("RedirectURL").equals("")) {
-                webAuthError = webAuthError.propertyMissingException("Redirect URL must not be empty");
-                String loggerMessage = "Check PKCE Flow  readProperties failure : " + "Error Code - "
-                        + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-               LogFile.getShared(context).addRecordToLog(loggerMessage);
-                savedResult.failure(webAuthError);
-                return;
-            }
-
-
-          //  savedProperties = loginproperties;
-            //Get enable Pkce Flag
-            ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
-
-            // Check Client Secret if the PKCE Flow is Disabled
-            if (!ENABLE_PKCE) {
-                if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret") == "" ||
-                        !((Hashtable) loginproperties).containsKey("ClientSecret")) {
-                    webAuthError = webAuthError.propertyMissingException("Client Secret must not be empty");
-                    savedResult.failure(webAuthError);
-                } else {
-                    loginproperties.put("ClientSecret", loginproperties.get("ClientSecret"));
-                }
-            }/* else {
-                //Create Challenge And Verifier
-                OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-                savedProperties.put("Verifier", generator.getCodeVerifier());
-                savedProperties.put("Challenge", generator.getCodeChallenge(savedProperties.get("Verifier")));
-                savedProperties.put("Method", generator.codeChallengeMethod);
-            }*/
-            DBHelper.getShared().addLoginProperties(loginproperties);
-            savedResult.success(loginproperties);
-        } catch (Exception e) {
-            Timber.e("Check PKCE Flow  service exception : " + e.getMessage());
-            savedResult.failure(webAuthError);
-        }
-    }
-
-
-
     public void getSocialLoginURL(final String provider, final Result<String> callback, final HashMap<String,String>... extraParams) {
      try
      {
@@ -1621,40 +1385,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     //Get Social Login URL
     public void getSocialLoginURL(final String requestId, final String provider, final Result<String> callback) {
-        try {
-            //Check requestId is not null
-
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    LoginController.getShared(context).getSocialLoginURL(Cidaas.baseurl,provider,requestId, new Result<String>() {
-                        @Override
-                        public void success(String result) {
-
-                            callback.success(result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            callback.failure(error);
-                            String loggerMessage = "Login URL service failure : " + "Error Code - "
-                                    + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                           LogFile.getShared(context).addRecordToLog(loggerMessage);
-                        }
-                    });
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    callback.failure(error);
-                }
-            });
-
-
-        } catch (Exception ex) {
-            //Todo Handle Error
-            Timber.d(ex.getMessage());
-        }
+        LoginController.getShared(context).getSocialLoginURL(provider,requestId, callback);
     }
 
 
@@ -1685,47 +1416,6 @@ public class Cidaas implements IOAuthWebLogin {
         }
     }
 
-
-    //ReadFromXML File
-    private void readFromFile(final Result<Dictionary<String, String>> loginPropertiesResult) {
-        FileHelper fileHelper = FileHelper.getShared(context);
-        fileHelper.readProperties(context.getAssets(), "cidaas123.xml", new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(final Dictionary<String, String> loginProperties) {
-
-                //on successfully completion of file reading add it to LocalDB(shared Preference) and call requestIdByloginProperties
-                checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> savedLoginProperties) {
-                        loginPropertiesResult.success(savedLoginProperties);
-                        Cidaas.baseurl=savedLoginProperties.get("DomainURL");
-                        DBHelper.getShared().addLoginProperties(savedLoginProperties);
-
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        loginPropertiesResult.failure(error);
-                        String loggerMessage = "Read From File failure : " + "Error Code - " + error.errorCode +
-                                ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                       LogFile.getShared(context).addRecordToLog(loggerMessage);
-                    }
-                });
-
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                //Return File Reading Error
-                String loggerMessage = "Read From File failure : "
-                        + "Error Code - " + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                LogFile.getShared(context).addRecordToLog(loggerMessage);
-                loginPropertiesResult.failure(error);
-            }
-        });
-    }
-
     //Resume After open App From Broswer
     public void handleToken(String code){   /*,Result<AccessTokenEntity> callbacktoMain*/
 
@@ -1733,203 +1423,28 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-    private void checkLoginProperties(final Dictionary<String, String> loginproperties,Result<String> result)
-    {
-        WebAuthError webAuthError = null;
-
-        //WebError Code instance Creation
-        webAuthError= WebAuthError.getShared(context);
-        // Global Checking
-        //Check all the login Properties are Correct
-        if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
-                || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-            webAuthError = webAuthError.propertyMissingException("DomainURL must not be null");
-            String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
-                    +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-           LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(webAuthError);
-
-            return;
-        }
-        if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
-                || !((Hashtable) loginproperties).containsKey("ClientId")) {
-            webAuthError = webAuthError.propertyMissingException("ClientId must not be null");
-            String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
-                    +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-           LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(webAuthError);
-            return;
-        }
-        if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
-                || loginproperties.get("RedirectURL").equals("")) {
-            webAuthError = webAuthError.propertyMissingException("Redirect URL must not be null");
-            String loggerMessage = "Request-Id readProperties failure : " + "Error Code - "
-                    +webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " +  webAuthError.statusCode;
-           LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(webAuthError);
-            return;
-        }
-
-    }
-
-
     public void setURL(@NonNull final Dictionary<String, String> loginproperties)
     {
-        try
-        {
-            if(loginproperties!=null) {
-
-                Cidaas.baseurl=loginproperties.get("DomainURL");;
-
-
-                if(loginproperties.get("userDeviceId")!=null && !loginproperties.get("userDeviceId").equals("")) {
-                    String userDeviceId = loginproperties.get("userDeviceId");
-                    DBHelper.getShared().setUserDeviceId(userDeviceId, Cidaas.baseurl);
-                }
-
-                DBHelper.getShared().addLoginProperties(loginproperties);
-
-
-            }
-            else
-            {
-                String loggerMessage = "SetURL File : " + " Error Message -Login properties in null " ;
-               LogFile.getShared(context).addRecordToLog(loggerMessage);
-            }
-        }
-        catch (Exception e)
-        {
-            String loggerMessage = "SetURL File : " + " Error Message - " + e.getMessage();
-           LogFile.getShared(context).addRecordToLog(loggerMessage);
-
-        }
-
+        LoginController.getShared(context).setURL(loginproperties);
     }
-
 
     //------------------------------------------------------------------------------------------Local Authentication----------------------------------------
 
     //Cidaas Set OnActivity Result For Handling Device Authentication
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        try {
-
-            if(activityFromCidaas!=null && localAuthenticationEntityCallback!=null ) {
-                if (requestCode == LOCAL_REQUEST_CODE || requestCode == LOCAL_AUTH_REQUEST_CODE) {
-
-                    if (requestCode == LOCAL_REQUEST_CODE || requestCode == LOCAL_AUTH_REQUEST_CODE) {
-                        switch (requestCode) {
-                            case LOCAL_REQUEST_CODE:
-                                if (resultCode == RESULT_OK) {
-
-                                    //Send Positive callback
-                                    String user = "User Authenticated";
-
-                                    LocalAuthenticationEntity localAuthenticationEntity=new LocalAuthenticationEntity();
-                                    localAuthenticationEntity.setMessage(user);
-                                    localAuthenticationEntity.setRequestCode(LOCAL_REQUEST_CODE);
-                                    localAuthenticationEntity.setResultCode(resultCode);
-                                    localAuthenticationEntityCallback.success(localAuthenticationEntity);
-
-
-                                } else {
-                                    // user did not authenticate so send failure callback
-
-
-                                    String user = "User Cancelled the Authentication";
-
-
-                                    localAuthenticationEntityCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_CANCELLED,user,417));
-
-                                    Timber.d("User" + user);
-
-                                }
-                                break;
-                            case LOCAL_AUTH_REQUEST_CODE:
-                                localAuthentication(activityFromCidaas,localAuthenticationEntityCallback);
-                                break;
-                            default:
-                                //.onActivityResult(requestCode, resultCode, data);
-                        }
-                    }
-
-                }
-            }
-            else
-            {
-                localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Call back must not be null", 417));
-            }
-        } catch (Exception e) {
-            localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Local Authentication Exception"+e.getMessage(), 417));
-        }
+      LocalAuthenticationController.getShared(context).onActivityResult(requestCode,resultCode,data);
     }
 
     //Show the Alert Dilog Which is go to settings
     private void showDialogToSetupLock(final Activity activity,Result<LocalAuthenticationEntity> result) {
-
-        try {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-            LayoutInflater inflater = activity.getLayoutInflater();
-            final View dialog = inflater.inflate(R.layout.lock_setting_dialog, null);
-            alertDialogBuilder.setView(dialog);
-            alertDialogBuilder.setCancelable(false);
-            Button btn_ok = dialog.findViewById(R.id.btn_ok);
-            final AlertDialog alertDialog = alertDialogBuilder.create();
-
-            btn_ok.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (alertDialog != null) {
-                        alertDialog.dismiss();
-                    }
-
-
-                    String manufacturer = "xiaomi";
-                    if (manufacturer.equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
-                        //this will open auto start screen where user can enable permission for your app
-                        activity.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), LOCAL_AUTH_REQUEST_CODE);
-                    } else {
-
-                        activity.startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS), LOCAL_AUTH_REQUEST_CODE);
-                    }
-                }
-            });
-            alertDialog.show();
-        }
-        catch (Exception e)
-        {
-            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
-        }
+    LocalAuthenticationController.getShared(context).showDialogToSetupLock(activity,result);
     }
 
 
 
     //Method for Local Authentocation
     public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result) {
-        try {
-
-
-            activityFromCidaas=activity;
-            localAuthenticationEntityCallback=result;
-
-            KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Context.KEYGUARD_SERVICE);
-            boolean isSecure = keyguardManager.isKeyguardSecure();
-
-            if (isSecure) {
-
-                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(null, null);
-                activity.startActivityForResult(intent, LOCAL_REQUEST_CODE);
-            } else {
-                // tabPager.setVisibility(View.GONE);
-                // no lock screen set, show the new lock needed screen
-                //showDialogToSetupLock(activity,result);
-                result.failure(new WebAuthError(context).customException(WebAuthErrorCode.NO_LOCAL_AUHTHENTICATION_FOUND, "NO LOCAL AUTHENTICATION FOUND", 417));
-            }
-        }
-        catch (Exception e)
-        {
-            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
-        }
+        LocalAuthenticationController.getShared(context).localAuthentication(activity,result);
     }
 
 
@@ -1950,187 +1465,35 @@ public class Cidaas implements IOAuthWebLogin {
 
     public String getUserAgent()
     {
-        try
-        {
             return DBHelper.getShared().getUserAgent();
-        }
-        catch (Exception e)
-        {
-            String loggerMessage = "get UserAgent : " + " Error Message - " + e.getMessage();
-           LogFile.getShared(context).addRecordToLog(loggerMessage);
-            return "";
-        }
     }
 
 
 
     public void setAccessToken(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result){
-        try
-        {
-
-            if(accessTokenEntity.getSub()!=null && !accessTokenEntity.getSub().equals("") &&
-                    accessTokenEntity.getAccess_token()!=null && !accessTokenEntity.getAccess_token().equals("") &&
-                    accessTokenEntity.getRefresh_token()!=null && !accessTokenEntity.getRefresh_token().equals("")) {
-                EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
-                    @Override
-                    public void success(AccessTokenModel accessTokenModel) {
-                      DBHelper.getShared().setAccessToken(accessTokenModel);
-                        LoginCredentialsResponseEntity loginCredentialsResponseEntity=new LoginCredentialsResponseEntity();
-                        loginCredentialsResponseEntity.setData(accessTokenEntity);
-                        loginCredentialsResponseEntity.setStatus(200);
-                        loginCredentialsResponseEntity.setSuccess(true);
-                        result.success(loginCredentialsResponseEntity);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        String loggerMessage = "Set Access Token : " + " Error Message - "+error.getErrorMessage();
-                       LogFile.getShared(context).addRecordToLog(loggerMessage);
-
-                        result.failure(error);
-                    }
-                });
-
-
-
-
-
-            }
-            else
-            {
-                String loggerMessage = "Set Access Token : " + " Error Message - Sub or accessToken or refreshToken must not be null";
-               LogFile.getShared(context).addRecordToLog(loggerMessage);
-                result.failure(WebAuthError.getShared(context).customException(417," Sub or accessToken or refreshToken must not be null",417));
-            }
-
-        }
-        catch (Exception e){
-
-            String loggerMessage = "Set Access Token : " + " Error Message - " + e.getMessage();
-           LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
-        }
+      AccessTokenController.getShared(context).setAccessToken(accessTokenEntity,result);
     }
-
-
-
-
-    //------------------------------------------------------------------------------------------CallFingerPrint----------------------------------------
-
-
-
-
 
     //----------------------------------LocationHistory------------------------------------------------------------------------------------------------------
    //Todo Add Logs
     public void getUserLoginInfo(final UserLoginInfoEntity userLoginInfoEntity, final Result<UserLoginInfoResponseEntity> result)
     {
-        try
-        {
-            if(userLoginInfoEntity.getSub()!=null && !userLoginInfoEntity.getSub().equals("")) {
-                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(final Dictionary<String, String> lpresult) {
-                        final String baseurl = lpresult.get("DomainURL");
-
-                        //Get AccessToken From Sub
-                        AccessTokenController.getShared(context).getAccessToken(userLoginInfoEntity.getSub(), new Result<AccessTokenEntity>() {
-                            @Override
-                            public void success(AccessTokenEntity accessTokenresult) {
-                                UserLoginInfoController.getShared(context).getUserLoginInfo(baseurl,accessTokenresult.getAccess_token(), userLoginInfoEntity,result);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                 result.failure(error);
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
-                    }
-                });
-            }
-            else {
-                // handle Faliure
-                result.failure(WebAuthError.getShared(context).
-                        customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,"Sub must not be empty",
-                                HttpStatusCode.EXPECTATION_FAILED));
-            }
-        }
-        catch (Exception e)
-        {
-            // handle Faliure Exception
-            result.failure(WebAuthError.getShared(context).
-                    customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage(),
-                            HttpStatusCode.EXPECTATION_FAILED));
-        }
+        UserLoginInfoController.getShared(context).getUserLoginInfo(userLoginInfoEntity,result);
     }
 
     public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
     {
+        VerificationSettingsController.getShared(context).updateFCMToken(sub ,FCMToken, new Result<Object>() {
+            @Override
+            public void success(Object result) {
+                LogFile.getShared(context).addRecordToLog("Update FCM Token Success");
+            }
 
-        try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-
-                    final String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-
-                    String oldFCMToken=DBHelper.getShared().getFCMToken();
-
-
-                    if(oldFCMToken.equalsIgnoreCase(FCMToken))
-                    {
-                        //Do nothing
-                    }
-                    else{
-                        DBHelper.getShared().setFCMToken(FCMToken);
-
-                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
-                            @Override
-                            public void success(AccessTokenEntity result) {
-                                VerificationSettingsController.getShared(context).updateFCMToken(baseurl, result.getAccess_token(), FCMToken, new Result<Object>() {
-                                    @Override
-                                    public void success(Object result) {
-                                        LogFile.getShared(context).addRecordToLog("Update FCM Token Success");
-                                    }
-
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        LogFile.getShared(context).addRecordToLog("Update FCM Token Error" + error.getMessage());
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
-                            }
-                        });
-
-
-                    }
-
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
-                }
-            });
-        }
-
-        catch (Exception e)
-        {
-            LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + e.getMessage());
-            Timber.e("Update FCM Token exception" + e.getMessage());
-        }
+            @Override
+            public void failure(WebAuthError error) {
+                LogFile.getShared(context).addRecordToLog("Update FCM Token Error" + error.getMessage());
+            }
+        });
     }
-
 }
+//------------------------------------------Methods without requestID-------------------------------------------------------------------------------

@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Repository.AccessToken.AccessTokenService;
 
@@ -249,6 +250,55 @@ public class AccessTokenController {
             accessTokenEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
             LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessTokenBySocial() :- "+e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
 
+        }
+    }
+
+
+    public void setAccessToken(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result){
+        try
+        {
+
+            if(accessTokenEntity.getSub()!=null && !accessTokenEntity.getSub().equals("") &&
+                    accessTokenEntity.getAccess_token()!=null && !accessTokenEntity.getAccess_token().equals("") &&
+                    accessTokenEntity.getRefresh_token()!=null && !accessTokenEntity.getRefresh_token().equals("")) {
+                EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
+                    @Override
+                    public void success(AccessTokenModel accessTokenModel) {
+                        DBHelper.getShared().setAccessToken(accessTokenModel);
+                        LoginCredentialsResponseEntity loginCredentialsResponseEntity=new LoginCredentialsResponseEntity();
+                        loginCredentialsResponseEntity.setData(accessTokenEntity);
+                        loginCredentialsResponseEntity.setStatus(200);
+                        loginCredentialsResponseEntity.setSuccess(true);
+                        result.success(loginCredentialsResponseEntity);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        String loggerMessage = "Set Access Token : " + " Error Message - "+error.getErrorMessage();
+                        LogFile.getShared(context).addRecordToLog(loggerMessage);
+
+                        result.failure(error);
+                    }
+                });
+
+
+
+
+
+            }
+            else
+            {
+                String loggerMessage = "Set Access Token : " + " Error Message - Sub or accessToken or refreshToken must not be null";
+                LogFile.getShared(context).addRecordToLog(loggerMessage);
+                result.failure(WebAuthError.getShared(context).customException(417," Sub or accessToken or refreshToken must not be null",417));
+            }
+
+        }
+        catch (Exception e){
+
+            String loggerMessage = "Set Access Token : " + " Error Message - " + e.getMessage();
+            LogFile.getShared(context).addRecordToLog(loggerMessage);
+            result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
         }
     }
 }

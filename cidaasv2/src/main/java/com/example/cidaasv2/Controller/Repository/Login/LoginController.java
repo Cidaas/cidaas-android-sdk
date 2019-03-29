@@ -323,21 +323,32 @@ public class LoginController {
 
 
     //Get login URL for Custom browser
-    public void getSocialLoginURL(@NonNull final String baseurl, String provider, String requestId, @NonNull final Result<String> callbackResult) {
+    public void getSocialLoginURL(final String provider, final String requestId, @NonNull final Result<String> callbackResult) {
         try {
-            if (baseurl != null && !baseurl.equals("") && provider != null && !provider.equals("") && requestId != null && !requestId.equals("")) {
-                String finalURL = URLHelper.getShared().constructSocialURL(baseurl, provider, requestId);
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    if (provider != null && !provider.equals("") && requestId != null && !requestId.equals("")) {
+                        String finalURL = URLHelper.getShared().constructSocialURL(result.get("DomainURL"), provider, requestId);
 
-                if (finalURL != null && !finalURL.equals("")) {
-                    callbackResult.success(finalURL);
-                } else {
-                    callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException());
+                        if (finalURL != null && !finalURL.equals("")) {
+                            callbackResult.success(finalURL);
+                        } else {
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException());
+                        }
+
+                    } else {
+                        callbackResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, "BaseURL or provider or requestid must not be null"
+                                , HttpStatusCode.EXPECTATION_FAILED));
+                    }
                 }
 
-            } else {
-                callbackResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, "BaseURL or provider or requestid must not be null"
-                        , HttpStatusCode.EXPECTATION_FAILED));
-            }
+                @Override
+                public void failure(WebAuthError error) {
+
+                }
+            });
+
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
                     .customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()
@@ -403,10 +414,8 @@ public class LoginController {
                                 @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    getSocialLoginURL(result.get("DomainURL"),requestId, provider, new Result<String>() {
+
+                    getSocialLoginURL(requestId, provider, new Result<String>() {
                         @Override
                         public void success(String socialLoginURL) {
                             logincallback = callbacktoMain;
@@ -447,15 +456,6 @@ public class LoginController {
                             callbacktoMain.failure(error);
                         }
                     });
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    callbacktoMain.failure(error);
-                }
-            });
-
 
         } catch (Exception e) {
             Timber.d(e.getMessage());// TODO: Handle Exception
@@ -585,6 +585,39 @@ public class LoginController {
             //Todo Handle Error
             Timber.d(ex.getMessage());
         }
+    }
+
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties)
+    {
+        try
+        {
+            if(loginproperties!=null) {
+
+                Cidaas.baseurl=loginproperties.get("DomainURL");;
+
+
+                if(loginproperties.get("userDeviceId")!=null && !loginproperties.get("userDeviceId").equals("")) {
+                    String userDeviceId = loginproperties.get("userDeviceId");
+                    DBHelper.getShared().setUserDeviceId(userDeviceId, Cidaas.baseurl);
+                }
+
+                DBHelper.getShared().addLoginProperties(loginproperties);
+
+
+            }
+            else
+            {
+                String loggerMessage = "SetURL File : " + " Error Message -Login properties in null " ;
+                LogFile.getShared(context).addRecordToLog(loggerMessage);
+            }
+        }
+        catch (Exception e)
+        {
+            String loggerMessage = "SetURL File : " + " Error Message - " + e.getMessage();
+            LogFile.getShared(context).addRecordToLog(loggerMessage);
+
+        }
+
     }
 
 
