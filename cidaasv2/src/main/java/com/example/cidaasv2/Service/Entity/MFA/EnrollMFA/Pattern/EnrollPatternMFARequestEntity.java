@@ -10,17 +10,19 @@ public class EnrollPatternMFARequestEntity implements Serializable{
 
     String statusId;
     String verifierPassword;
+    String sub;
     String userDeviceId;
     String usage_pass;
-    String client_id;
     DeviceInfoEntity deviceInfo;
 
-    public String getClientId() {
+    String client_id;
+
+    public String getClient_id() {
         return client_id;
     }
 
-    public void setClientId(String clientId) {
-        this.client_id = clientId;
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
     }
 
     public String getUsage_pass() {
@@ -39,6 +41,13 @@ public class EnrollPatternMFARequestEntity implements Serializable{
         this.userDeviceId = userDeviceId;
     }
 
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
 
     public String getStatusId() {
         return statusId;
