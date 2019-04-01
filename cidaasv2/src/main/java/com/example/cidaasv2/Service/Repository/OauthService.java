@@ -2,6 +2,7 @@ package com.example.cidaasv2.Service.Repository;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -148,37 +149,13 @@ public class OauthService {
                           callback.success(response.body());
                       }
                       else {
-                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,
                                   "Service failure but successful response" , 400,null,null));
                       }
                   }
                   else {
                       assert response.errorBody() != null;
-                      try {
-
-                          //Todo Handle proper error message
-
-                          String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                          CommonErrorEntity commonErrorEntity;
-                          commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                          String errorMessage="";
-                          if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                              errorMessage=commonErrorEntity.getError().toString();
-                          }
-                          else
-                          {
-                              errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                          }
-
-
-
-                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorResponse, 400,null,null));
-                      } catch (IOException e) {
-                          e.printStackTrace();
-                      }
-                      Timber.e("response"+response.message());
+                      CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,response);
                   }
               }
 

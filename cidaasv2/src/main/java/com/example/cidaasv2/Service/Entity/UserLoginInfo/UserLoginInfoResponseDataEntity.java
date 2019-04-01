@@ -13,7 +13,15 @@ public class UserLoginInfoResponseDataEntity implements Serializable {
     private DeviceInfoEntityWithDetailsEntity deviceInfo;
     private LocationEntity address;
     private String time;
+    private int totalCount=0;
 
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
 
     public String get_id() {
         return _id;
