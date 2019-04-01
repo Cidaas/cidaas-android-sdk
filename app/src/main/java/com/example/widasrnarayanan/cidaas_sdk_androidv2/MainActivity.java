@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     //get ClientInfo
     public void getClientInfo(View view){
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             //cidaas.getRequestId(obj,new Result<String>() {
             @Override
             public void success(AuthRequestResponseEntity requestIdresult) {

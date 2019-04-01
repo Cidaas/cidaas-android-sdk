@@ -1192,7 +1192,7 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
-       LoginController.getShared(context).loginWithBrowser(context,color,callbacktoMain);
+       LoginController.getShared(context).loginWithBrowser(activityContext,color,callbacktoMain);
     }
 
     public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String provider, @Nullable final String color,
