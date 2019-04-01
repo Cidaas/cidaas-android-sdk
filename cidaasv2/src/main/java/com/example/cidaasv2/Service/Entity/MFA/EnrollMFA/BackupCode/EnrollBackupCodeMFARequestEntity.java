@@ -12,14 +12,6 @@ public class EnrollBackupCodeMFARequestEntity implements Serializable{
     String sub;
     DeviceInfoEntity deviceInfo;
 
-    public String getSub() {
-        return sub;
-    }
-
-    public void setSub(String sub) {
-        this.sub = sub;
-    }
-
     public String getStatusId() {
         return statusId;
     }
@@ -34,6 +26,14 @@ public class EnrollBackupCodeMFARequestEntity implements Serializable{
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
     }
 
     public DeviceInfoEntity getDeviceInfo() {

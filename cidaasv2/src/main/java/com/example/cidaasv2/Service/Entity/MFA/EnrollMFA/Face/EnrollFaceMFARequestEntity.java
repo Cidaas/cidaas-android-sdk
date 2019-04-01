@@ -18,12 +18,20 @@ public class EnrollFaceMFARequestEntity implements Serializable{
     DeviceInfoEntity deviceInfo;
     int attempt;
 
-    public int getAttempt() {
-        return attempt;
+    public String getStatusId() {
+        return statusId;
     }
 
-    public void setAttempt(int attempt) {
-        this.attempt = attempt;
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
+
+    public File getImagetoSend() {
+        return imagetoSend;
+    }
+
+    public void setImagetoSend(File imagetoSend) {
+        this.imagetoSend = imagetoSend;
     }
 
     public String getClient_id() {
@@ -50,24 +58,6 @@ public class EnrollFaceMFARequestEntity implements Serializable{
         this.usage_pass = usage_pass;
     }
 
-
-
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
-
-    public File getImagetoSend() {
-        return imagetoSend;
-    }
-
-    public void setImagetoSend(File imagetoSend) {
-        this.imagetoSend = imagetoSend;
-    }
-
     public String getUserDeviceId() {
         return userDeviceId;
     }
@@ -82,5 +72,13 @@ public class EnrollFaceMFARequestEntity implements Serializable{
 
     public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
         this.deviceInfo = deviceInfo;
+    }
+
+    public int getAttempt() {
+        return attempt;
+    }
+
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
     }
 }

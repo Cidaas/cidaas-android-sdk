@@ -655,7 +655,7 @@ public class FingerprintConfigurationController {
 
                                             //Todo call initiate
                                             final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntityWithUsagePass=new InitiateFingerprintMFARequestEntity();
-                                            initiateFingerprintMFARequestEntityWithUsagePass.setUsagePass(instceID);
+                                            initiateFingerprintMFARequestEntityWithUsagePass.setUsage_pass(instceID);
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 

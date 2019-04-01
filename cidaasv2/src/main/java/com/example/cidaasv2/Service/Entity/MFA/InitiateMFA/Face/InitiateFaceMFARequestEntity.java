@@ -17,44 +17,12 @@ public class InitiateFaceMFARequestEntity implements Serializable{
     DeviceInfoEntity deviceInfo;
     String source="MOBILE";
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getUsagePass() {
-        return usage_pass;
-    }
-
-    public void setUsagePass(String usagePass) {
-        this.usage_pass = usagePass;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getClient_id() {
-        return client_id;
-    }
-
-    public void setClient_id(String client_id) {
-        this.client_id = client_id;
     }
 
     public String getSub() {
@@ -65,7 +33,6 @@ public class InitiateFaceMFARequestEntity implements Serializable{
         this.sub = sub;
     }
 
-
     public String getUserDeviceId() {
         return userDeviceId;
     }
@@ -74,7 +41,21 @@ public class InitiateFaceMFARequestEntity implements Serializable{
         this.userDeviceId = userDeviceId;
     }
 
+    public String getClient_id() {
+        return client_id;
+    }
 
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public String getUsageType() {
         return usageType;
@@ -84,11 +65,27 @@ public class InitiateFaceMFARequestEntity implements Serializable{
         this.usageType = usageType;
     }
 
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
+
     public DeviceInfoEntity getDeviceInfo() {
         return deviceInfo;
     }
 
     public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
         this.deviceInfo = deviceInfo;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

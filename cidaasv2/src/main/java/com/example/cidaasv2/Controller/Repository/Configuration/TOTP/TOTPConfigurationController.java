@@ -683,7 +683,7 @@ public class TOTPConfigurationController {
       try {
           //Todo call initiate
           final InitiateTOTPMFARequestEntity initiateTOTPMFARequestEntityWithUsagePass = new InitiateTOTPMFARequestEntity();
-          initiateTOTPMFARequestEntityWithUsagePass.setUsagePass(usagePassFromService);
+          initiateTOTPMFARequestEntityWithUsagePass.setUsage_pass(usagePassFromService);
 
           final String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 

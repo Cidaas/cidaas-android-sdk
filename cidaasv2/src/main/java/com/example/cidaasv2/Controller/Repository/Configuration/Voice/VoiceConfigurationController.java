@@ -665,7 +665,7 @@ public class VoiceConfigurationController {
         try {
             //Todo call initiate
             final InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntityWithUsagePass = new InitiateVoiceMFARequestEntity();
-            initiateVoiceMFARequestEntityWithUsagePass.setUsagePass(usagePassFromService);
+            initiateVoiceMFARequestEntityWithUsagePass.setUsage_pass(usagePassFromService);
 
             final String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 

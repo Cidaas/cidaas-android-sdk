@@ -662,7 +662,7 @@ public class FaceConfigurationController {
 
                                             //Todo call initiate
                                             final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity=new InitiateFaceMFARequestEntity();
-                                            initiateFaceMFARequestEntity.setUsagePass(instceID);
+                                            initiateFaceMFARequestEntity.setUsage_pass(instceID);
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
 

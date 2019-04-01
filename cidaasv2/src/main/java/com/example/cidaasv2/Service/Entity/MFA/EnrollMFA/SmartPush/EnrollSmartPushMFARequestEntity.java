@@ -16,12 +16,20 @@ public class EnrollSmartPushMFARequestEntity implements Serializable{
 
     String client_id;
 
-    public String getClient_id() {
-        return client_id;
+    public String getStatusId() {
+        return statusId;
     }
 
-    public void setClient_id(String client_id) {
-        this.client_id = client_id;
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
+
+    public String getVerifierPassword() {
+        return verifierPassword;
+    }
+
+    public void setVerifierPassword(String verifierPassword) {
+        this.verifierPassword = verifierPassword;
     }
 
     public String getUserDeviceId() {
@@ -40,27 +48,19 @@ public class EnrollSmartPushMFARequestEntity implements Serializable{
         this.usage_pass = usage_pass;
     }
 
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
-
-    public String getVerifierPassword() {
-        return verifierPassword;
-    }
-
-    public void setVerifierPassword(String verifierPassword) {
-        this.verifierPassword = verifierPassword;
-    }
-
     public DeviceInfoEntity getDeviceInfo() {
         return deviceInfo;
     }
 
     public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
         this.deviceInfo = deviceInfo;
+    }
+
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
     }
 }
