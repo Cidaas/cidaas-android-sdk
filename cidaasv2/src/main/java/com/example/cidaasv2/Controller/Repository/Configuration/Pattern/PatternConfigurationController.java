@@ -239,7 +239,7 @@ public class PatternConfigurationController {
                           enrollPatternMFARequestEntity.setVerifierPassword(patternString);
                           enrollPatternMFARequestEntity.setStatusId(setupPatternresult.getData().getSt());
                           enrollPatternMFARequestEntity.setUserDeviceId(setupPatternresult.getData().getUdi());
-                          enrollPatternMFARequestEntity.setClientId(setupPatternMFARequestEntity.getClient_id());
+                          enrollPatternMFARequestEntity.setClient_id(setupPatternMFARequestEntity.getClient_id());
 
 
                           enrollPattern(baseurl, accessToken, enrollPatternMFARequestEntity, enrollResult);
@@ -367,7 +367,7 @@ public class PatternConfigurationController {
                             enrollPatternMFARequestEntity.setVerifierPassword(patternString);
                             enrollPatternMFARequestEntity.setStatusId(statusId);
                             enrollPatternMFARequestEntity.setUserDeviceId(userDeviceId);
-                            enrollPatternMFARequestEntity.setClientId(clientId);
+                            enrollPatternMFARequestEntity.setClient_id(clientId);
 
 
                             AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
@@ -667,7 +667,7 @@ public class PatternConfigurationController {
                     final String clientId = result.get("ClientId");
 
                     final InitiatePatternMFARequestEntity initiatePatternMFARequestEntityWithUsagePass = new InitiatePatternMFARequestEntity();
-                    initiatePatternMFARequestEntityWithUsagePass.setUsagePass(usagePassFromService);
+                    initiatePatternMFARequestEntityWithUsagePass.setUsage_pass(usagePassFromService);
 
                     final String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
 
