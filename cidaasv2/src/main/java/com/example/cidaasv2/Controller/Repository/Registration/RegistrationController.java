@@ -278,15 +278,17 @@ public class RegistrationController {
                                     }
 
 
-                                    if(registrationEntity.getCustomFields().size()>0) {
-                                        for (int i = 0; i < registrationEntity.getCustomFields().size(); i++) {
-                                            if (registrationEntity.getCustomFields().keys().hasMoreElements()) {
+                                    if (registrationEntity.getCustomFields() != null) {
+                                        if (registrationEntity.getCustomFields().size() > 0) {
+                                            for (int i = 0; i < registrationEntity.getCustomFields().size(); i++) {
+                                                if (registrationEntity.getCustomFields().keys().hasMoreElements()) {
 
-                                                // registrationEntity.getCustomFields().get()
+                                                    // registrationEntity.getCustomFields().get()
+                                                }
                                             }
                                         }
-                                    }
 
+                                    }
                                 }
                             } else {
 
