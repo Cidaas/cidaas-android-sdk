@@ -109,6 +109,7 @@ public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListene
 
                 GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
+            googleSettingsEntity.setCode(account.getServerAuthCode());
             if (account != null) {
                 getGoogleAccessToken(googleSettingsEntity, new IGoogleAccessTokenEntity() {
                     @Override
