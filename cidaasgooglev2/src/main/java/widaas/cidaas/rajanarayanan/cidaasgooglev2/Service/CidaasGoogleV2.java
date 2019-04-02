@@ -69,12 +69,14 @@ public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListene
         activity = activityFromCidaas;
         googleSettingsEntity = readFileInputs(activity.getAssets(), "google-service.json");
         initGoogleSettings();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestServerAuthCode(googleSettingsEntity.getClientId())
                 .requestEmail()
                 .build();
 
+
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(activity, signInOptions);
 
 
 
@@ -110,6 +112,7 @@ public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListene
                 GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             googleSettingsEntity.setCode(account.getServerAuthCode());
+
             if (account != null) {
                 getGoogleAccessToken(googleSettingsEntity, new IGoogleAccessTokenEntity() {
                     @Override
@@ -166,10 +169,6 @@ public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListene
                     .build();
             googleSettingsEntity = readFileInputs(activity.getAssets(), "google-service.json");
 
-            signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestServerAuthCode(googleSettingsEntity.getClientId())
-                    .requestEmail()
-                    .build();
 
         } catch (Exception ex) {
            // Timber.d(ex.getMessage());
