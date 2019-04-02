@@ -14,6 +14,7 @@ public class UserLoginInfoResponseDataEntity implements Serializable {
     private LocationEntity address;
     private String time;
     private int totalCount=0;
+    private int sub;
 
     public int getTotalCount() {
         return totalCount;

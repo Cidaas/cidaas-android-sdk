@@ -15,7 +15,25 @@ public class DeviceInfoEntityWithDetailsEntity implements Serializable {
     String deviceMake="";
     String deviceModel="";
     String deviceId="";
+    String pushNotificationId="";
+    String deviceVersion="";
 
+
+    public String getPushNotificationId() {
+        return pushNotificationId;
+    }
+
+    public void setPushNotificationId(String pushNotificationId) {
+        this.pushNotificationId = pushNotificationId;
+    }
+
+    public String getDeviceVersion() {
+        return deviceVersion;
+    }
+
+    public void setDeviceVersion(String deviceVersion) {
+        this.deviceVersion = deviceVersion;
+    }
 
     public String getSub() {
         return sub;
