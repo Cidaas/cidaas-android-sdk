@@ -18,39 +18,6 @@ public class AuthenticateFaceRequestEntity implements Serializable {
     String usage_pass="";
     String client_id;
 
-    public String getClient_id() {
-        return client_id;
-    }
-
-    public void setClient_id(String client_id) {
-        this.client_id = client_id;
-    }
-
-    public String getUsage_pass() {
-        return usage_pass;
-    }
-
-    public void setUsage_pass(String usage_pass) {
-        this.usage_pass = usage_pass;
-    }
-
-
-    public List<File> getImagesToSend() {
-        return imagesToSend;
-    }
-
-    public void setImagesToSend(List<File> imagesToSend) {
-        this.imagesToSend = imagesToSend;
-    }
-
-    public String getUserDeviceId() {
-        return userDeviceId;
-    }
-
-    public void setUserDeviceId(String userDeviceId) {
-        this.userDeviceId = userDeviceId;
-    }
-
     public String getStatusId() {
         return statusId;
     }
@@ -67,11 +34,43 @@ public class AuthenticateFaceRequestEntity implements Serializable {
         this.imagetoSend = imagetoSend;
     }
 
+    public List<File> getImagesToSend() {
+        return imagesToSend;
+    }
+
+    public void setImagesToSend(List<File> imagesToSend) {
+        this.imagesToSend = imagesToSend;
+    }
+
     public DeviceInfoEntity getDeviceInfo() {
         return deviceInfo;
     }
 
     public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
         this.deviceInfo = deviceInfo;
+    }
+
+    public String getUserDeviceId() {
+        return userDeviceId;
+    }
+
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
+    }
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
+
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
     }
 }
