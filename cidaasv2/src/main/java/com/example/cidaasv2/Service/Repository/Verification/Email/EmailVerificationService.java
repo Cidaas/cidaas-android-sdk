@@ -104,7 +104,7 @@ public class EmailVerificationService {
             }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
+          //  headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
             headers.put("lon",LocationDetails.getShared(context).getLongitude());
             headers.put("access_token",accessToken);
