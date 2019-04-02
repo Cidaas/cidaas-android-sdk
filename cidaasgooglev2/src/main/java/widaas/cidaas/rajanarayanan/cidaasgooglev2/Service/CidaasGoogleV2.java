@@ -67,7 +67,7 @@ public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListene
 
     public CidaasGoogleV2(Activity activityFromCidaas) {
         activity = activityFromCidaas;
-
+        googleSettingsEntity = readFileInputs(activity.getAssets(), "google-service.json");
         initGoogleSettings();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
