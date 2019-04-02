@@ -118,6 +118,12 @@ public class UserLoginInfoService {
                             if(response.code()==200) {
                                 callback.success(response.body());
                             }
+                            else if(response.code()==204) {
+                                UserLoginInfoResponseEntity userLoginInfoResponseEntity=new UserLoginInfoResponseEntity();
+                                userLoginInfoResponseEntity.setStatus(response.code());
+                                userLoginInfoResponseEntity.setSuccess(response.isSuccessful());
+                                callback.success(userLoginInfoResponseEntity);
+                            }
                             else {
                                 callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
                                         "Service failure but successful response" , 400,null,null));

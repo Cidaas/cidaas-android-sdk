@@ -127,10 +127,10 @@ public class LocalAuthenticationController {
 
                 }
             }
-            else
+           /* else
             {
                 localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Call back must not be null", 417));
-            }
+            }*/
         } catch (Exception e) {
             localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Local Authentication Exception"+e.getMessage(), 417));
         }
