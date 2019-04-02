@@ -361,40 +361,7 @@ public class FaceVerificationService {
                         else {
                             assert response.errorBody() != null;
                             //Todo Check The error if it is not recieved
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse=response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                                //Todo Handle Access Token Failure Error
-                                String errorMessage="";
-                                ErrorEntity errorEntity=new ErrorEntity();
-                                if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                    errorMessage=commonErrorEntity.getError().toString();
-                                }
-                                else
-                                {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(),errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                                Timber.e("response"+response.message()+e.getMessage());
-                            }
-                            Timber.e("response"+response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,response));
                         }
                     }
 
@@ -501,6 +468,7 @@ public class FaceVerificationService {
 
             faceSetupMap.put("statusId", StringtoRequestBody(enrollFaceMFARequestEntity.getStatusId()));
             //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            faceSetupMap.put("client_id",StringtoRequestBody(enrollFaceMFARequestEntity.getClient_id()));
             faceSetupMap.put("userDeviceId", StringtoRequestBody(enrollFaceMFARequestEntity.getUserDeviceId()));
             faceSetupMap.put("deviceId", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getDeviceId()));
             faceSetupMap.put("deviceMake", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getDeviceMake()));
@@ -690,6 +658,7 @@ public class FaceVerificationService {
 
             faceSetupMap.put("statusId", StringtoRequestBody(authenticateFaceRequestEntity.getStatusId()));
             //faceSetupMap.put("",enrollFaceMFARequestEntity.getSub());
+            faceSetupMap.put("client_id",StringtoRequestBody(authenticateFaceRequestEntity.getClient_id()));
             faceSetupMap.put("usage_pass",StringtoRequestBody(authenticateFaceRequestEntity.getUsage_pass()));
             faceSetupMap.put("userDeviceId", StringtoRequestBody(authenticateFaceRequestEntity.getUserDeviceId()));
             faceSetupMap.put("deviceId", StringtoRequestBody(authenticateFaceRequestEntity.getDeviceInfo().getDeviceId()));

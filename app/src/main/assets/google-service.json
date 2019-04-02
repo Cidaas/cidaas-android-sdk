@@ -1,10 +1,8 @@
-{"web":
-{"client_id":"63730357610-e0sglsn99kliuglg04sdsi5ammmr93ke.apps.googleusercontent.com",
-  "project_id":"my-cidaas",
+{"web":{
+  "client_id":"950865396141-ocnu591ve2qj5cgp11c5lqjdhnd6sh3h.apps.googleusercontent.com",
+  "project_id":"cidaas-android-demo-236405",
   "auth_uri":"https://accounts.google.com/o/oauth2/auth",
   "token_uri":"https://oauth2.googleapis.com/token",
   "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-  "client_secret":"JGpT1PfBO1S4dKnC_CIacvVj",
-  "redirect_uris":["https://apis-cidaas.test.carbookplus.com/oauth2callback"]
-}
-}
+  "client_secret":"7Uwb-i7_vdfgHwE7hyLOp54i",
+  "redirect_uris":["https://nightlybuild.cidaas.de"]}}

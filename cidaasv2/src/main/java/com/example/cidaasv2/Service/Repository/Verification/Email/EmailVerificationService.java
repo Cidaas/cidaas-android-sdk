@@ -107,6 +107,7 @@ public class EmailVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
             headers.put("lon",LocationDetails.getShared(context).getLongitude());
+            headers.put("access_token",accessToken);
 
 
 
@@ -181,6 +182,7 @@ public class EmailVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
             headers.put("lon",LocationDetails.getShared(context).getLongitude());
+            headers.put("access_token",accessToken);
 
 
             enrollEmailMFARequestEntity.setDeviceInfo(deviceInfoEntity);
