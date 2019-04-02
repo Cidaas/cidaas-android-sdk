@@ -212,7 +212,7 @@ public interface ICidaasSDKService {
 
     //Setup Email MFA
     @POST
-    Call<SetupEmailMFAResponseEntity> setupEmailMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfoEntity);
+    Call<SetupEmailMFAResponseEntity> setupEmailMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfo);
 
     //Enroll Email MFA
     @POST
@@ -229,7 +229,7 @@ public interface ICidaasSDKService {
 
     //Setup SMS MFA
     @POST
-    Call<SetupSMSMFAResponseEntity> setupSMSMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfoEntity);
+    Call<SetupSMSMFAResponseEntity> setupSMSMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfo);
 
     //Enroll SMS MFA
     @POST

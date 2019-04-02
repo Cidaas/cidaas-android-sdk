@@ -16,7 +16,7 @@ public class AuthenticateFaceRequestEntity implements Serializable {
     DeviceInfoEntity deviceInfo;
     String userDeviceId="";
     String usage_pass="";
-    String client_id;
+    String client_id="";
 
     public String getStatusId() {
         return statusId;

@@ -13,7 +13,7 @@ public class AuthenticateVoiceRequestEntity implements Serializable {
     String userDeviceId="";
     File voiceFile;
     String usage_pass="";
-    String client_id;
+    String client_id="";
 
     public String getStatusId() {
         return statusId;

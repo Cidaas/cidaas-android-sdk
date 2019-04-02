@@ -13,7 +13,7 @@ public class EnrollVoiceMFARequestEntity implements Serializable{
     String userDeviceId="";
     String usage_pass="";
     DeviceInfoEntity deviceInfo;
-    String client_id;
+    String client_id="";
 
     public String getStatusId() {
         return statusId;

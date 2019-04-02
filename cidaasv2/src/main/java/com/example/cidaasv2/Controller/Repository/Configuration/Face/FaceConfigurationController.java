@@ -817,6 +817,7 @@ public class FaceConfigurationController {
                     if(authenticateFaceRequestEntity.getImagetoSend() != null)
                     {
                         authenticateFaceRequestEntityWithPass.setImagetoSend(authenticateFaceRequestEntity.getImagetoSend());
+                       // authenticateFaceRequestEntityWithPass.setClient_id(authenticateFaceRequestEntity.getClient_id());
                         authenticateFaceRequestEntity.setImagetoSend(null);
                     }
                     else
@@ -858,17 +859,7 @@ public class FaceConfigurationController {
 
                                 if(authenticateFaceRequestEntityWithPass!=null) {
 
-                                    FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntityWithPass, null, new Result<AuthenticateFaceResponseEntity>() {
-                                        @Override
-                                        public void success(AuthenticateFaceResponseEntity result) {
-                                            authResult.success(result);
-                                        }
-
-                                        @Override
-                                        public void failure(WebAuthError error) {
-                                            authResult.failure(error);
-                                        }
-                                    });
+                                    FaceVerificationService.getShared(context).authenticateFace(baseurl, authenticateFaceRequestEntityWithPass, null, authResult);
                                 }
                                 else {
                                     // return Error Message
