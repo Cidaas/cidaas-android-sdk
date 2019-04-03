@@ -21,6 +21,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAReq
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -93,14 +94,14 @@ public class EmailVerificationService {
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            DeviceInfoEntity deviceInfo=new DeviceInfoEntity();
             //This is only for testing purpose
             if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                deviceInfo = DBHelper.getShared().getDeviceInfo();
             }
             else if(deviceInfoEntityFromParam!=null)
             {
-                deviceInfoEntity=deviceInfoEntityFromParam;
+                deviceInfo=deviceInfoEntityFromParam;
             }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
@@ -109,12 +110,15 @@ public class EmailVerificationService {
             headers.put("lon",LocationDetails.getShared(context).getLongitude());
             headers.put("access_token",accessToken);
 
+            SetupEmailMFARequestEntity setupEmailMFARequestEntity =new SetupEmailMFARequestEntity();
+            setupEmailMFARequestEntity.setDeviceInfo(deviceInfo);
+
 
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.setupEmailMFA(setupEmailMFAUrl,headers, deviceInfoEntity).enqueue(new Callback<SetupEmailMFAResponseEntity>() {
+            cidaasSDKService.setupEmailMFA(setupEmailMFAUrl,headers, setupEmailMFARequestEntity).enqueue(new Callback<SetupEmailMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<SetupEmailMFAResponseEntity> call, Response<SetupEmailMFAResponseEntity> response) {
                     if (response.isSuccessful()) {

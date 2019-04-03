@@ -25,6 +25,7 @@ import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
@@ -113,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     {
 
         String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
+
+
 
         UserLoginInfoEntity userLoginInfoEntity=new UserLoginInfoEntity();
         userLoginInfoEntity.setStartDate("2019-03-04T00:00:00.000Z");

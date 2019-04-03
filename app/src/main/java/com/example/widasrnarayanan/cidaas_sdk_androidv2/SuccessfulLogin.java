@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 
@@ -70,10 +71,24 @@ public class SuccessfulLogin extends AppCompatActivity {
 
     public void ConfigIVR(View view){
 
-        Intent intent=new Intent(SuccessfulLogin.this,IVRConfigActivity.class);
+     /*   Intent intent=new Intent(SuccessfulLogin.this,IVRConfigActivity.class);
         intent.putExtra("sub",sub);
         intent.putExtra("accessToken",accessToken);
-        startActivity(intent);
+        startActivity(intent);*/
+
+
+        cidaas.configureEmail(sub, new Result<SetupEmailMFAResponseEntity>() {
+            @Override
+            public void success(SetupEmailMFAResponseEntity result) {
+                Toast.makeText(SuccessfulLogin.this, "Success email", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(SuccessfulLogin.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
     }
 }

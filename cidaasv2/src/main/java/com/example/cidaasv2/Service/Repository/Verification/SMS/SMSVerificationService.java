@@ -3,15 +3,13 @@ package com.example.cidaasv2.Service.Repository.Verification.SMS;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
@@ -21,12 +19,12 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFARequest
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -106,12 +104,13 @@ public class SMSVerificationService {
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
             headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
-
+            SetupSMSMFARequestEntity setupSMSMFARequestEntity=new SetupSMSMFARequestEntity();
+            setupSMSMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.setupSMSMFA(setupSMSMFAUrl,headers, deviceInfoEntity).enqueue(new Callback<SetupSMSMFAResponseEntity>() {
+            cidaasSDKService.setupSMSMFA(setupSMSMFAUrl,headers, setupSMSMFARequestEntity).enqueue(new Callback<SetupSMSMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<SetupSMSMFAResponseEntity> call, Response<SetupSMSMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
