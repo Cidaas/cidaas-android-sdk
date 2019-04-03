@@ -10,7 +10,26 @@ import java.io.Serializable;
 
 public class SetupSMSMFARequestEntity implements Serializable {
     DeviceInfoEntity deviceInfo;
+    String mobile;
+    String usage_pass;
 
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
 
     public DeviceInfoEntity getDeviceInfo() {
         return deviceInfo;

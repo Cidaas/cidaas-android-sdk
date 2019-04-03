@@ -4,8 +4,9 @@ import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 
 public class SetupIVRMFARequestEntity {
     String phone;
-    DeviceInfoEntity deviceInfo;
     String usage_pass;
+    DeviceInfoEntity deviceInfo;
+
 
     public String getUsage_pass() {
         return usage_pass;

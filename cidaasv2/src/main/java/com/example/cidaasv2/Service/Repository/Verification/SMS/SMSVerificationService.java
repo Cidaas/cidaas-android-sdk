@@ -71,7 +71,7 @@ public class SMSVerificationService {
 
 
     //setupSMSMFA
-    public void setupSMSMFA(String baseurl, String accessToken, DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupSMSMFAResponseEntity> callback)
+    public void setupSMSMFA(String baseurl, String accessToken, String mobile,DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupSMSMFAResponseEntity> callback)
     {
         String setupSMSMFAUrl="";
         try
@@ -106,6 +106,7 @@ public class SMSVerificationService {
 
             SetupSMSMFARequestEntity setupSMSMFARequestEntity=new SetupSMSMFARequestEntity();
             setupSMSMFARequestEntity.setDeviceInfo(deviceInfoEntity);
+            setupSMSMFARequestEntity.setMobile(mobile);
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();

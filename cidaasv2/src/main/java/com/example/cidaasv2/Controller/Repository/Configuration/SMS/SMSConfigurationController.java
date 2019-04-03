@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
+import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
@@ -29,6 +30,8 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARes
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.UserinfoEntity;
+import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.SMS.SMSVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.SMS.SMSVerificationService;
 
@@ -60,7 +63,7 @@ public class SMSConfigurationController {
 
 
 
-    public void configureSMS(@NonNull String sub, @NonNull final Result<SetupSMSMFAResponseEntity> result){
+    public void configureSMS(@NonNull final String sub, @NonNull final Result<SetupSMSMFAResponseEntity> result){
         try{
 
             Sub=sub;
@@ -72,9 +75,27 @@ public class SMSConfigurationController {
                         // Service call
                         CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                             @Override
-                            public void success(Dictionary<String, String> loginPropertiesResult) {
-                                SMSVerificationService.getShared(context).setupSMSMFA(loginPropertiesResult.get("DomainURL"), accessTokenresult.getAccess_token(),null,
-                                        result);
+                            public void success(final Dictionary<String, String> loginPropertiesResult) {
+
+                                UserProfileController.getShared(context).getUserProfile(sub, new Result<UserinfoEntity>() {
+                                    @Override
+                                    public void success(UserinfoEntity userresult) {
+
+                                        if (userresult.getMobile_number() != null && !userresult.getMobile_number().equals("")) {
+
+                                            //Done add phone number
+                                            SMSVerificationService.getShared(context).setupSMSMFA(loginPropertiesResult.get("DomainURL"), accessTokenresult.getAccess_token(), userresult.getMobile_number(),null,
+                                                    result);
+                                        } else {
+                                            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, "Mobile number must not be null", HttpStatusCode.EXPECTATION_FAILED));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, "Mobile number must not be null", HttpStatusCode.EXPECTATION_FAILED));
+                                    }
+                                });
                             }
 
                             @Override
@@ -295,7 +316,7 @@ public class SMSConfigurationController {
     }
 
 
-    //Service call To SetupSMSMFA
+    /*//Service call To SetupSMSMFA
     public void setupSMSMFA(@NonNull String AccessToken, @NonNull String baseurl, @NonNull final Result<SetupSMSMFAResponseEntity> result){
         try{
 
@@ -315,5 +336,5 @@ public class SMSConfigurationController {
             result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE));
 
         }
-    }
+    }*/
 }
