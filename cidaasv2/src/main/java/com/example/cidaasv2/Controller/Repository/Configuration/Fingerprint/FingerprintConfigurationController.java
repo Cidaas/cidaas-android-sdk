@@ -831,17 +831,7 @@ public class FingerprintConfigurationController {
                                 AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity=new AuthenticateFingerprintRequestEntity();
                                 authenticateFingerprintRequestEntity.setUsage_pass(instceID);
 
-                                FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity,null, new Result<AuthenticateFingerprintResponseEntity>() {
-                                    @Override
-                                    public void success(AuthenticateFingerprintResponseEntity result) {
-                                        authResult.success(result);
-                                    }
-
-                                    @Override
-                                    public void failure(WebAuthError error) {
-                                        authResult.failure(error);
-                                    }
-                                });
+                                FingerprintVerificationService.getShared(context).authenticateFingerprint(baseurl, authenticateFingerprintRequestEntity,null, authResult);
                             }
                             else {
                                 // return Error Message

@@ -531,8 +531,8 @@ public class SmartPushConfigurationController {
 
                     AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                         @Override
-                        public void success(AccessTokenEntity result) {
-
+                        public void success(AccessTokenEntity accessTokenResult) {
+                           enrollSmartPush(baseurl,accessTokenResult.getAccess_token(),enrollSmartPushMFARequestEntity,enrollResult);
                         }
 
                         @Override

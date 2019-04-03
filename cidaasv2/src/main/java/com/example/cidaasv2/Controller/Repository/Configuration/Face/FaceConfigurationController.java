@@ -391,8 +391,8 @@ public class FaceConfigurationController {
 
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
-                    public void success(AccessTokenEntity result) {
-
+                    public void success(AccessTokenEntity accessTokenResult) {
+                         enrollFace(baseurl,accessTokenResult.getAccess_token(),enrollFaceMFARequestEntity,enrollResult);
                     }
 
                     @Override
