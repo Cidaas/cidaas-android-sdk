@@ -75,12 +75,10 @@ public class AccessTokenController {
                                     callback.failure(error);
                                 }
                             });
-
                         }
 
                         @Override
                         public void failure(WebAuthError error) {
-
                             callback.failure(error);
                         }
                     });
@@ -97,9 +95,8 @@ public class AccessTokenController {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).customException(417,"Exception :AccessToken Controller :getAccessTokenByCode() :- "+e.getMessage(),400));
-
-            //Todo Handle Exception
+            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessTokenByCode() :- "+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
         }
     }
     // Get Access Token by userId
