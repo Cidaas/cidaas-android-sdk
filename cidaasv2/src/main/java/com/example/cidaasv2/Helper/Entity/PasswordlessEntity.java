@@ -6,9 +6,9 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PasswordlessEntity implements Serializable {
-     String email;
-      String mobile;
-      String sub;
+     String email="";
+      String mobile="";
+      String sub="";
      String requestId;
      String trackId;
      String usageType;

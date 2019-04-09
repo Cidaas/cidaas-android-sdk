@@ -135,6 +135,26 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
         return WebAuthError.shared;
     }
+
+ //Access Token Exception
+ //PropertyMissingException
+ @Override
+ public WebAuthError accessTokenException(String errorDetails) {
+
+     WebAuthError.shared.errorCode=WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE;
+     WebAuthError.shared.statusCode=HttpStatusCode.INTERNAL_SERVER_ERROR;
+     WebAuthError.shared.ErrorMessage=context.getString(R.string.ACCESS_TOKEN_SERVICE_FAILURE);
+     WebAuthError.shared.DetailedErrorMessage=errorDetails;
+
+     ErrorEntity errorEntity=new ErrorEntity();
+     errorEntity.setCode(errorCode+"");
+     errorEntity.setStatus(statusCode);
+     errorEntity.setError(context.getString(R.string.ACCESS_TOKEN_SERVICE_FAILURE));
+
+     WebAuthError.shared.setErrorEntity(errorEntity);
+
+     return WebAuthError.shared;
+ }
 //Service FailureException
     @Override
     public WebAuthError serviceFailureException(int errorCode, String errorMessage, int StatusCode,Object error,ErrorEntity errorEntity) {

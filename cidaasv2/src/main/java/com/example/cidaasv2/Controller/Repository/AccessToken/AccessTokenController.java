@@ -22,24 +22,14 @@ import timber.log.Timber;
 
 public class AccessTokenController {
 
-    //Local variables
-    private String statusId;
-    private String authenticationType;
-    private String sub;
-    private String verificationType;
+
     private Context context;
 
     //saved Properties for Global Access
        public static AccessTokenController shared;
 
     public AccessTokenController(Context contextFromCidaas) {
-        sub="";
-        statusId="";
-        verificationType="";
         context=contextFromCidaas;
-        authenticationType="";
-        //Todo setValue for authenticationType
-
     }
 
 
@@ -74,19 +64,15 @@ public class AccessTokenController {
                         @Override
                         public void success(final AccessTokenEntity result) {
 
-                            EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
+                            EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
                                 @Override
                                 public void success(AccessTokenModel modelresult) {
-                                    DBHelper.getShared().setAccessToken(modelresult);
                                     callback.success(result);
-                                    //Toast.makeText(context, "Access Token Saved", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
                                 public void failure(WebAuthError error) {
-                                    WebAuthError error1=new WebAuthError(context);
-                                    error1.setErrorMessage("Access Token Failed");
-                                    callback.failure(error1);
+                                    callback.failure(error);
                                 }
                             });
 
@@ -132,20 +118,7 @@ public class AccessTokenController {
                     long timeToExpire=accessTokenModel.getExpires_in()+accessTokenModel.getSeconds()-10;
                     if(timeToExpire>currentSeconds)
                     {
-                        EntityToModelConverter.getShared().accessTokenModelToAccessTokenEntity(accessTokenModel, sub, new Result<AccessTokenEntity>() {
-                            @Override
-                            public void success(AccessTokenEntity accessTokenEntity) {
-
-                                callback.success(accessTokenEntity);
-
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-
-                                callback.failure(error);
-                            }
-                        });
+                        EntityToModelConverter.getShared(context).accessTokenModelToAccessTokenEntity(accessTokenModel, sub, callback);
                     }
                     else
                     {
@@ -184,7 +157,7 @@ public class AccessTokenController {
                     AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result,null,null, new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
-                            EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
+                            EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
                                 @Override
                                 public void success(AccessTokenModel result) {
                                     DBHelper.getShared().setAccessToken(result);
@@ -261,7 +234,7 @@ public class AccessTokenController {
             if(accessTokenEntity.getSub()!=null && !accessTokenEntity.getSub().equals("") &&
                     accessTokenEntity.getAccess_token()!=null && !accessTokenEntity.getAccess_token().equals("") &&
                     accessTokenEntity.getRefresh_token()!=null && !accessTokenEntity.getRefresh_token().equals("")) {
-                EntityToModelConverter.getShared().accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
+                EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
                     @Override
                     public void success(AccessTokenModel accessTokenModel) {
                         DBHelper.getShared().setAccessToken(accessTokenModel);

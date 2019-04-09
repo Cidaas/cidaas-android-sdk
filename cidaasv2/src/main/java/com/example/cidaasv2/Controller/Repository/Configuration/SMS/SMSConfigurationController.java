@@ -226,8 +226,17 @@ public class SMSConfigurationController {
 
     private InitiateSMSMFARequestEntity getInitiateSMSMFAEntity(PasswordlessEntity passwordlessEntity, Result<InitiateSMSMFAResponseEntity> result) {
 
-        if (passwordlessEntity.getSub() != null && !passwordlessEntity.getSub().equals("") &&
-                (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals(""))) {
+        if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")) {
+
+            if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                    (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                    (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                String errorMessage = "sub or email or mobile number must not be empty";
+
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
+                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                return null;
+            }
 
             if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
                 if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
@@ -245,8 +254,11 @@ public class SMSConfigurationController {
 
             InitiateSMSMFARequestEntity initiateSMSMFARequestEntity = new InitiateSMSMFARequestEntity();
             initiateSMSMFARequestEntity.setSub(passwordlessEntity.getSub());
+            initiateSMSMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+            initiateSMSMFARequestEntity.setMobile(passwordlessEntity.getMobile());
             initiateSMSMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
             initiateSMSMFARequestEntity.setVerificationType("SMS");
+
             return initiateSMSMFARequestEntity;
 
 

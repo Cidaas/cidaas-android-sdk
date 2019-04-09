@@ -248,9 +248,6 @@ public class Cidaas implements IOAuthWebLogin {
         //Default Log Value
         ENABLE_LOG = false;
 
-
-
-
         //Add Device info
         deviceInfoEntity = new DeviceInfoEntity();
         deviceInfoEntity.setDeviceId(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
@@ -356,33 +353,6 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
     // -----------------------------------------------------***** LOGIN WITH CREDENTIALS *****---------------------------------------------------------------
-
-    public void loginWithCredentials(final LoginEntity loginEntity,
-                                     final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-                    getRequestId(new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            loginWithCredentials(result.getData().getRequestId(),loginEntity,loginresult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            loginresult.failure(error);
-                        }
-                    },extraParams);
-        }
-        catch (Exception e)
-        {
-            LogFile.getShared(context).addRecordToLog("Login With Credentials cidaas Exception : " + "Error Code - " + WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE +
-                    ", Error Message - " + e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
-        }
-    }
-
-
     @Override
     public void loginWithCredentials(final String requestId, final LoginEntity loginEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
         LoginController.getShared(context).loginwithCredentials(requestId, loginEntity, loginresult);
@@ -488,41 +458,6 @@ public class Cidaas implements IOAuthWebLogin {
     @Override
     public void loginWithBackupcode(final String code, final PasswordlessEntity passwordlessEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
         BackupCodeConfigurationController.getShared(context).loginWithBackupCode(code, passwordlessEntity, loginresult);
-    }
-
-    // ****** DONE Verification *****-------------------------------------------------------------------------------------------------------
-
-
-    public void scanned(@NonNull final String statusId, @NonNull final String sub,final String secret, @NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
-    {
-                if(verificationType.equalsIgnoreCase("PATTERN"))
-                    {
-                       scannedPattern(statusId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("TOUCHID"))
-                    {
-                        scannedFingerprint(statusId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("VOICE"))
-                    {
-                        scannedVoice(statusId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("FACE"))
-                    {
-                        scannedFace(statusId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("TOTP"))
-                    {
-                        scannedTOTP(statusId,sub,secret,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("PUSH"))
-                    {
-                       scannedSmartPush(statusId,scannedResult);
-                    }
-                    else if(verificationType.equalsIgnoreCase("FIDOU2F"))
-                    {
-                        scannedFIDO(statusId,scannedResult);
-                    }
     }
 
 
@@ -729,6 +664,7 @@ public class Cidaas implements IOAuthWebLogin {
     public void verifyVoice(final File voice, final String statusId, final Result<AuthenticateVoiceResponseEntity> result) {
         VoiceConfigurationController.getShared(context).authenticateVoice(voice,statusId,result);
     }
+
     //---------------------------------------DELETE CALL-------------------------------------------------------------------------------------------------
     //Delete call
     public void deleteVerificationByType(@NonNull final String verificationType, @NonNull final String sub, final Result<DeleteMFAResponseEntity> deleteResult)
@@ -767,79 +703,10 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     // ****** GET REGISTERATION *****-------------------------------------------------------------------------------------------------------
-
-    public void getRegistrationFields( final String locale, final Result<RegistrationSetupResponseEntity> registerFieldsresult,
-                                       final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            getRegistrationFields(result.getData().getRequestId(),locale,registerFieldsresult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            registerFieldsresult.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    registerFieldsresult.failure(error);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Unexpected Error :" + e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
-        }
-    }
-
     @Override
     public void getRegistrationFields(@NonNull final String requestId, final String locale, final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
         RegistrationController.getShared(context).getRegisterationFields(requestId, locale,registerFieldsresult);
     }
-
-    public void registerUser( final RegistrationEntity registrationEntity, final Result<RegisterNewUserResponseEntity> registerFieldsresult,
-                                       final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            registerUser(result.getData().getRequestId(),registrationEntity,registerFieldsresult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            registerFieldsresult.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    registerFieldsresult.failure(error);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-
-        }
-    }
-
 
     @Override
     public void registerUser(@NonNull final String requestId, final RegistrationEntity registrationEntity,
@@ -847,77 +714,10 @@ public class Cidaas implements IOAuthWebLogin {
         RegistrationController.getShared(context).registerNewUser(requestId, registrationEntity,registerFieldsresult);
     }
 
-    public void initiateEmailVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
-                                       final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateEmailVerification(sub,result.getData().getRequestId(),Result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            Result.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    Result.failure(error);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-
-        }
-    }
-
-
     @Override
     public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
                                           final Result<RegisterUserAccountInitiateResponseEntity> Result) {
         RegistrationController.getShared(context).initiateAccountVerificationService(sub, requestId,"email", Result);
-    }
-
-    public void initiateSMSVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
-                                           final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateSMSVerification(sub,result.getData().getRequestId(),Result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            Result.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    Result.failure(error);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-
-        }
     }
 
     @Override
@@ -925,40 +725,6 @@ public class Cidaas implements IOAuthWebLogin {
                                         final Result<RegisterUserAccountInitiateResponseEntity> Result) {
         RegistrationController.getShared(context).initiateAccountVerificationService(sub, requestId,"sms", Result);
     }
-
-    public void initiateIVRVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
-                                           final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateIVRVerification(sub,result.getData().getRequestId(),Result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            Result.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    Result.failure(error);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-
-        }
-    }
-
 
     @Override
     public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId, final Result<RegisterUserAccountInitiateResponseEntity> Result) {
@@ -984,82 +750,11 @@ public class Cidaas implements IOAuthWebLogin {
         DeduplicationController.getShared(context).registerDeduplication(baseurl, trackId, deduplicaionResult);
     }
 
-
-    public void loginWithDeduplication(@NonNull final String sub, @NonNull final String password,
-                                     final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            loginWithDeduplication(result.getData().getRequestId(),sub,password,loginresult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            loginresult.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
-                }
-            });
-        }
-        catch (Exception e)
-        {
-
-        }
-    }
-
-
     @Override
     public void loginWithDeduplication(final String requestId, @NonNull final String sub, @NonNull final String password,
                                        final Result<LoginCredentialsResponseEntity> deduplicaionResult) {
         DeduplicationController.getShared(context).loginDeduplication( requestId, sub, password, deduplicaionResult);
 
-    }
-
-
-    //----------------------------------------------------------------------------------------------------------------------------------------
-
-    public void initiateResetPasswordByEmail(final String email,
-                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateResetPasswordByEmail(result.getData().getRequestId(),email,resetPasswordResponseEntityResult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            resetPasswordResponseEntityResult.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
-                }
-            });
-        }
-        catch (Exception e)
-        {
-
-        }
     }
 
     // Todo change
@@ -1069,38 +764,6 @@ public class Cidaas implements IOAuthWebLogin {
         ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, email, "email",resetPasswordResponseEntityResult);
 
 
-    }
-    public void initiateResetPasswordBySMS(final String mobileNumber,
-                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateResetPasswordBySMS(result.getData().getRequestId(),mobileNumber,resetPasswordResponseEntityResult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            resetPasswordResponseEntityResult.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
-                }
-            });
-        }
-        catch (Exception e)
-        {
-
-        }
     }
 
     @Override
@@ -1130,134 +793,29 @@ public class Cidaas implements IOAuthWebLogin {
         ChangePasswordController.getShared(context).changePassword(changePasswordRequestEntity, result);
     }
 
-
     @Override
     public void getAccessToken(String sub, Result<AccessTokenEntity> result) {
         AccessTokenController.getShared(context).getAccessToken(sub, result);
     }
 
-
-    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType,
-                                       final Result<AccessTokenEntity> accessTokenCallback, final HashMap<String,String>... extraParams)
-    {
-        try
-        {
-            Cidaas.baseurl=DomainUrl;
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(final Dictionary<String, String> loginProperties) {
-
-                    getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,loginProperties,accessTokenCallback);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                         accessTokenCallback.failure(error);
-                        }
-                    },extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    accessTokenCallback.failure(error);
-                }
-            });
-
-
-        }
-        catch (Exception e)
-        {
-            //todo handle excepksdjncksjdc
-            LogFile.getShared(context).addRecordToLog("Access Token exception" + e.getMessage());
-            accessTokenCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,"Access Token exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Access Token exception" + e.getMessage());
-        }
-    }
-
-
     //Get userinfo Based on Access Token
     @Override
     public void getUserInfo(String sub, final Result<UserinfoEntity> callback) {
         UserProfileController.getShared(context).getUserProfile(sub,callback);
-
     }
 
     @Override
     public void renewToken(String refershtoken, Result<AccessTokenEntity> result) {
-
+        //TODO
     }
 
     public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
        LoginController.getShared(context).loginWithBrowser(activityContext,color,callbacktoMain);
     }
 
-    public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String provider, @Nullable final String color,
-                                final Result<AccessTokenEntity> callbacktoMain, final HashMap<String, String>... extraParams)
-    {
-
-      CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-          @Override
-          public void success(Dictionary<String, String> loginProperties) {
-              getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
-                  @Override
-                  public void success(AuthRequestResponseEntity result) {
-                      loginWithSocial(activityContext,result.getData().getRequestId(),provider,color,callbacktoMain);
-                  }
-
-                  @Override
-                  public void failure(WebAuthError error) {
-                      callbacktoMain.failure(error);
-                  }
-              },extraParams);
-          }
-
-          @Override
-          public void failure(WebAuthError error) {
-              callbacktoMain.failure(error);
-          }
-      });
-
-    }
-
     public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String requestId, @NonNull final String provider,
                                 @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
         LoginController.getShared(context).loginWithSocial(activityContext,requestId,provider,color,callbacktoMain);
-    }
-
-    public void getSocialLoginURL(final String provider, final Result<String> callback, final HashMap<String,String>... extraParams) {
-     try
-     {
-         CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-             @Override
-             public void success(Dictionary<String, String> loginProperties) {
-                 getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
-                     @Override
-                     public void success(AuthRequestResponseEntity result) {
-                         getSocialLoginURL(result.getData().getRequestId(),provider,callback);
-                     }
-
-                     @Override
-                     public void failure(WebAuthError error) {
-                         callback.failure(error);
-                     }
-                 },extraParams);
-             }
-
-             @Override
-             public void failure(WebAuthError error) {
-
-             }
-         });
-
-     }
-     catch (Exception e)
-     {
-
-     }
     }
 
     //Get Social Login URL
@@ -1489,5 +1047,428 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+    public void loginWithCredentials(final LoginEntity loginEntity,
+                                     final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            getRequestId(new Result<AuthRequestResponseEntity>() {
+                @Override
+                public void success(AuthRequestResponseEntity result) {
+                    loginWithCredentials(result.getData().getRequestId(),loginEntity,loginresult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(error);
+                }
+            },extraParams);
+        }
+        catch (Exception e)
+        {
+            LogFile.getShared(context).addRecordToLog("Login With Credentials cidaas Exception : " + "Error Code - " + WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE +
+                    ", Error Message - " + e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
+        }
+    }
+
+
+    public void getRegistrationFields( final String locale, final Result<RegistrationSetupResponseEntity> registerFieldsresult,
+                                       final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            getRegistrationFields(result.getData().getRequestId(),locale,registerFieldsresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            registerFieldsresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            LogFile.getShared(context).addRecordToLog("Unexpected Error :" + e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+        }
+    }
+
+    // ****** DONE Verification *****-------------------------------------------------------------------------------------------------------
+
+
+    public void scanned(@NonNull final String statusId, @NonNull final String sub,final String secret, @NonNull final String verificationType, final Result<ScannedResponseEntity> scannedResult)
+    {
+        if(verificationType.equalsIgnoreCase("PATTERN"))
+        {
+            scannedPattern(statusId,scannedResult);
+        }
+        else if(verificationType.equalsIgnoreCase("TOUCHID"))
+        {
+            scannedFingerprint(statusId,scannedResult);
+        }
+        else if(verificationType.equalsIgnoreCase("VOICE"))
+        {
+            scannedVoice(statusId,scannedResult);
+        }
+        else if(verificationType.equalsIgnoreCase("FACE"))
+        {
+            scannedFace(statusId,scannedResult);
+        }
+        else if(verificationType.equalsIgnoreCase("TOTP"))
+        {
+            scannedTOTP(statusId,sub,secret,scannedResult);
+        }
+        else if(verificationType.equalsIgnoreCase("PUSH"))
+        {
+            scannedSmartPush(statusId,scannedResult);
+        }
+        else if(verificationType.equalsIgnoreCase("FIDOU2F"))
+        {
+            scannedFIDO(statusId,scannedResult);
+        }
+    }
+
+    public void registerUser( final RegistrationEntity registrationEntity, final Result<RegisterNewUserResponseEntity> registerFieldsresult,
+                              final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            registerUser(result.getData().getRequestId(),registrationEntity,registerFieldsresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            registerFieldsresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    public void initiateEmailVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                           final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateEmailVerification(sub,result.getData().getRequestId(),Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    public void initiateSMSVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+                                         final HashMap<String,String>... extraParams) {
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateSMSVerification(sub, result.getData().getRequestId(), Result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Result.failure(error);
+                        }
+                    }, extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(error);
+                }
+            });
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void initiateIVRVerification( @NonNull final String sub,  final Result<RegisterUserAccountInitiateResponseEntity> Result,
+        final HashMap<String,String>... extraParams)
+        {
+            try
+            {
+                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> loginProperties) {
+                        getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                            @Override
+                            public void success(AuthRequestResponseEntity result) {
+                                initiateIVRVerification(sub,result.getData().getRequestId(),Result);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                Result.failure(error);
+                            }
+                        },extraParams);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Result.failure(error);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+    public void loginWithDeduplication(@NonNull final String sub, @NonNull final String password,
+                                       final Result<LoginCredentialsResponseEntity> loginresult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            loginWithDeduplication(result.getData().getRequestId(),sub,password,loginresult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            loginresult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------
+    public void initiateResetPasswordByEmail(final String email,
+                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateResetPasswordByEmail(result.getData().getRequestId(),email,resetPasswordResponseEntityResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            resetPasswordResponseEntityResult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    public void initiateResetPasswordBySMS(final String mobileNumber,
+                                           final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult,final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            initiateResetPasswordBySMS(result.getData().getRequestId(),mobileNumber,resetPasswordResponseEntityResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            resetPasswordResponseEntityResult.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType,
+                                       final Result<AccessTokenEntity> accessTokenCallback, final HashMap<String,String>... extraParams)
+    {
+        try
+        {
+            Cidaas.baseurl=DomainUrl;
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(final Dictionary<String, String> loginProperties) {
+
+                    getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,loginProperties,accessTokenCallback);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            accessTokenCallback.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    accessTokenCallback.failure(error);
+                }
+            });
+
+
+        }
+        catch (Exception e)
+        {
+            //todo handle excepksdjncksjdc
+            LogFile.getShared(context).addRecordToLog("Access Token exception" + e.getMessage());
+            accessTokenCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,"Access Token exception"+ e.getMessage(),
+                    HttpStatusCode.EXPECTATION_FAILED));
+            Timber.e("Access Token exception" + e.getMessage());
+        }
+    }
+
+    public void loginWithSocial(@NonNull final Context activityContext,@NonNull final String provider, @Nullable final String color,
+                                final Result<AccessTokenEntity> callbacktoMain, final HashMap<String, String>... extraParams)
+    {
+
+        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> loginProperties) {
+                getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
+                    @Override
+                    public void success(AuthRequestResponseEntity result) {
+                        loginWithSocial(activityContext,result.getData().getRequestId(),provider,color,callbacktoMain);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        callbacktoMain.failure(error);
+                    }
+                },extraParams);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                callbacktoMain.failure(error);
+            }
+        });
+
+    }
+
+    public void getSocialLoginURL(final String provider, final Result<String> callback, final HashMap<String,String>... extraParams) {
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginProperties) {
+                    getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
+                        @Override
+                        public void success(AuthRequestResponseEntity result) {
+                            getSocialLoginURL(result.getData().getRequestId(),provider,callback);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callback.failure(error);
+                        }
+                    },extraParams);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
 
 }

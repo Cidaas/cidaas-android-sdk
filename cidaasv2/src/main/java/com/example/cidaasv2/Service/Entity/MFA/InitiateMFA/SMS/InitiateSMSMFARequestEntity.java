@@ -8,11 +8,30 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InitiateSMSMFARequestEntity implements Serializable{
     String sub;
+    String email;
+    String mobile;
     String physicalVerificationId;
     String userDeviceId;
     String verificationType;
     String usageType;
     DeviceInfoEntity deviceInfo;
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public String getSub() {
         return sub;

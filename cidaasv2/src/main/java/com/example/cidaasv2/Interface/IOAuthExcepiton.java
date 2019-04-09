@@ -19,4 +19,5 @@ public interface IOAuthExcepiton {
     public WebAuthError emptyCallbackException();
     public  WebAuthError noUserFoundException();
     public WebAuthError locationHistoryException();
+    public WebAuthError accessTokenException(String errorDetails);
 }

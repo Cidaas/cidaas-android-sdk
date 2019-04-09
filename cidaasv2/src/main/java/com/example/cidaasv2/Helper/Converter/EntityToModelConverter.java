@@ -1,11 +1,14 @@
 package com.example.cidaasv2.Helper.Converter;
 
+import android.content.Context;
+
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
-import com.example.cidaasv2.Models.DBModel.UserInfoModel;
 import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.util.UUID;
@@ -16,12 +19,18 @@ import java.util.UUID;
 
 public class EntityToModelConverter {
 //Convert AccessTokenEntity to Model
+    Context context;
 public static EntityToModelConverter sharedinstance;
-    public static EntityToModelConverter getShared()
+
+    public EntityToModelConverter(Context contextFromCidaas) {
+       context = contextFromCidaas;
+    }
+
+    public static EntityToModelConverter getShared(Context contextFromCidaas)
     {
         if(sharedinstance==null)
         {
-            sharedinstance=new EntityToModelConverter();
+            sharedinstance=new EntityToModelConverter(contextFromCidaas);
         }
         return sharedinstance;
     }
@@ -67,12 +76,15 @@ public static EntityToModelConverter sharedinstance;
                 AccessTokenModel.getShared().setEncrypted(false);
                 AccessTokenModel.getShared().setPlainToken(accessTokenEntity.getAccess_token());
             }
-         callback.success(AccessTokenModel.getShared());
+            DBHelper.getShared().setAccessToken(AccessTokenModel.getShared());
+           callback.success(AccessTokenModel.getShared());
+
         }
         catch (Exception e)
         {
             //TODO Handle Error
-            callback.failure(null);
+            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage()));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 
@@ -125,7 +137,8 @@ public static EntityToModelConverter sharedinstance;
         catch (Exception e)
         {
             //TODO Handle Error
-          callback.failure(null);
+            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage()));
+            LogFile.getShared(context).addRecordToLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 
