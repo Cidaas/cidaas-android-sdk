@@ -173,10 +173,10 @@ public class FileHelper {
             {
                 //webAuthError.ErrorMessage=e.getMessage();
                 LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
-                result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
+                result.failure(WebAuthError.getShared(context).serviceException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
             }
 
-             result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
+             result.failure(WebAuthError.getShared(context).serviceException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
 
     }
@@ -229,9 +229,7 @@ public class FileHelper {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR);
-            callback.failure(webAuthError.serviceException(WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR));
+            callback.failure(webAuthError.serviceException("Exception :FileHelper :paramsToDictionaryConverter()",WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
         }
     }
 
@@ -258,9 +256,7 @@ public class FileHelper {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR);
-            callback.failure(webAuthError.serviceException(WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR));
+            callback.failure(webAuthError.serviceException("Exception :FileHelper :paramsToDictionaryConverter()",WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
         }
     }
 }

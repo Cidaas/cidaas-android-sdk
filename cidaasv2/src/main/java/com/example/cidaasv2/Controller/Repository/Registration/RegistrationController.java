@@ -105,10 +105,8 @@ public class RegistrationController {
                 }
             });
         } catch (Exception e) {
-            String errorMessage = "Get Registration Fields Custom Exception" + e.getMessage();
 
-            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
-            LogFile.getShared(context).addRecordToLog(errorMessage + WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :getRegisterationFields()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -146,11 +144,7 @@ public class RegistrationController {
         }
         catch (Exception e)
         {
-
-            String errorMessage="Exception"+e.getMessage();
-
-            LogFile.getShared(context).addRecordToLog("Get Registration Fields Exception:"+e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :getRegisterationFields()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -322,10 +316,7 @@ public class RegistrationController {
                 }
             });
         } catch (Exception e) {
-            String errorMessage = "Custom Exception" + e.getMessage();
-
-            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
-            LogFile.getShared(context).addRecordToLog(errorMessage);
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :registerNewUser()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -348,8 +339,7 @@ public class RegistrationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Register new user Failure"+e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :registerNewUser()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -374,9 +364,7 @@ public class RegistrationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Register new user Service Failure"+e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :registerWithNewUserService()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -406,7 +394,7 @@ public class RegistrationController {
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
+            Result.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :initiateAccountVerificationService()",WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
@@ -447,10 +435,7 @@ public class RegistrationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Initiate Account verification Failure"+e.getMessage()+WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE);
-
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :initiateAccountVerificationService()",WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
@@ -476,7 +461,7 @@ public class RegistrationController {
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :verifyAccountVerificationService()",WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
@@ -504,9 +489,7 @@ public class RegistrationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Verify Account verification Failure"+e.getMessage()+WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :verifyAccountVerificationService()",WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 

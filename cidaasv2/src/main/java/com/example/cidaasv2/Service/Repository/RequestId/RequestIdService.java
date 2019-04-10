@@ -37,8 +37,6 @@ import timber.log.Timber;
 
 public class RequestIdService {
 
-
-
     private Context context;
 
     public static RequestIdService shared;
@@ -48,9 +46,9 @@ public class RequestIdService {
 
     public RequestIdService(Context contextFromCidaas) {
         context=contextFromCidaas;
+
         if(service==null) {
             service=new CidaassdkService();
-
             service.setContext(context);
         }
 
@@ -204,7 +202,7 @@ public class RequestIdService {
         {
             Timber.d(e.getMessage());
             LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :RequestIdService :getRequestID()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
         }
     }
 

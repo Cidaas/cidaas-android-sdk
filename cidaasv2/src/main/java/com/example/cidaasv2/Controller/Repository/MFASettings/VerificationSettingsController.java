@@ -83,10 +83,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Get MFA List"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getmfaList()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
 
@@ -153,10 +150,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-            Timber.e("Faliure in delete service call"+e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Faliure in delete verification By type service call"+e.getMessage());
-            deleteResult.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
-
+           deleteResult.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteMFA()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
 
@@ -193,7 +187,7 @@ public class VerificationSettingsController {
         catch (Exception e)
         {
 
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteMFA()", WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
             Timber.e(e.getMessage());
         }
     }
@@ -247,9 +241,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-            Timber.e("Faliure in delete All service call"+e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Faliure in delete verification by device service call"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
-            result.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
+            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteAllMFA()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
 
         }
     }
@@ -270,9 +262,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteAll",WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -329,10 +319,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-
-            Timber.e("Faliure in deny Notification service call"+e.getMessage());
-            result.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Faliure in deny Notification service call"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
+            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :denyNotification()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
 
         }
     }
@@ -355,8 +342,7 @@ public class VerificationSettingsController {
         catch (Exception e)
         {
 
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController : denyNotification", WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage()));
         }
     }
 
@@ -417,9 +403,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-            Timber.e("Faliure in get pending Notification List service call"+e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Faliure in get pending Notification List  service call"+e.getMessage()+WebAuthErrorCode.MFA_LIST_FAILURE);
-            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getPendingNotification",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
         //To deny notification Service
@@ -440,8 +424,8 @@ public class VerificationSettingsController {
         catch (Exception e)
         {
 
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getPendingNotification", WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -494,10 +478,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-
-            Timber.e("Faliure in get Configuration List  service call"+e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Faliure in get Configuration List  service call"+e.getMessage()+WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE);
-            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getConfiguredMFAList", WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -518,9 +499,7 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getConfiguredMFAList",WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage()));
         }
     }
 

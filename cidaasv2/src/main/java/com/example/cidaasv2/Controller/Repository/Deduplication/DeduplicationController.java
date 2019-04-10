@@ -129,9 +129,7 @@ public class DeduplicationController {
       }
       catch (Exception e)
       {
-          String errorMessage="Error:"+e.getMessage();
-          deduplicaionResult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
+          deduplicaionResult.failure(WebAuthError.getShared(context).serviceException("Exception :DeduplicationController :setAccessToken()",WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
       }
     }
 }

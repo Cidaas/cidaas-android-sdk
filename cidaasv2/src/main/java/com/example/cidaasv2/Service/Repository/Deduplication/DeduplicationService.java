@@ -126,9 +126,7 @@ public class DeduplicationService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE));
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :DeduplicationService :getDeduplicationList()",WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
         }
     }
 
@@ -193,7 +191,7 @@ public class DeduplicationService {
         {
             Timber.d(e.getMessage());
             LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :DeduplicationService :registerDeduplication()",WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
         }
     }
 

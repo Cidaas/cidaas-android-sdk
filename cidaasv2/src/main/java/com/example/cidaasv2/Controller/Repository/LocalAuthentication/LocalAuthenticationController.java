@@ -75,7 +75,7 @@ public class LocalAuthenticationController {
         }
         catch (Exception e)
         {
-            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
+            result.failure(new WebAuthError(context).serviceException("Exception :LocalAuthenticationController :setAccessToken()",WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
         }
     }
 
@@ -132,7 +132,7 @@ public class LocalAuthenticationController {
                 localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Call back must not be null", 417));
             }*/
         } catch (Exception e) {
-            localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Local Authentication Exception"+e.getMessage(), 417));
+            localAuthenticationEntityCallback.failure(new WebAuthError(context).serviceException("Exception :LocalAuthenticationController :onActivityResult()",WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED,e.getMessage()));
         }
     }
 
@@ -170,7 +170,7 @@ public class LocalAuthenticationController {
         }
         catch (Exception e)
         {
-            result.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Bad document or no document", 417));
+            result.failure(new WebAuthError(context).serviceException("Exception :LocalAuthenticationController :showDialogToSetupLock()",WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
         }
     }
 }

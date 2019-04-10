@@ -116,9 +116,8 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :getClientInfo()"
+                    ,WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -165,9 +164,7 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :enrollEmailMFA()",WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -201,9 +198,8 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :loginWithEmail()"
+                    ,WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -242,8 +238,6 @@ public class EmailConfigurationController {
                 initiateEmailMFARequestEntity.setEmail(passwordlessEntity.getEmail());
                 initiateEmailMFARequestEntity.setMobile(passwordlessEntity.getMobile());
                 return initiateEmailMFARequestEntity;
-
-
 
 
         } else {
@@ -303,13 +297,9 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE);
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :verifyEmail()"
+                    ,WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
-
-
-
-
 }
 

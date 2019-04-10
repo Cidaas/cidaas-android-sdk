@@ -957,10 +957,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            String loggerMessage = "Request-Id cidaas  Exception :Error Code-"+WebAuthErrorCode.READ_PROPERTIES_ERROR+",Error Message - " + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
-            Timber.d(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
@@ -983,11 +980,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            String loggerMessage = "Request-Id cidaas failure : " + "Error Code - " + WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE +
-                    ", Error Message - " + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
-            Primaryresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
-            Timber.e(e.getMessage());
+          Primaryresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
@@ -1012,10 +1005,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            resulttoReturn.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Request-Id cidaas failure : " + "Error Code - " + WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE +
-                    ", Error Message - " + e.getMessage());
-            Timber.d(e.getMessage());
+            resulttoReturn.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
@@ -1040,9 +1030,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Client Info cidaas Exception : " + "Error Code - " + WebAuthErrorCode.CLIENT_INFO_FAILURE +
-                    ", Error Message - " + e.getMessage());
-            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CLIENT_INFO_FAILURE));
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getClientInfo()",WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
         }
     }
 
@@ -1066,9 +1054,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Login With Credentials cidaas Exception : " + "Error Code - " + WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE +
-                    ", Error Message - " + e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :loginWithCredentials()",WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
         }
     }
 
@@ -1102,8 +1088,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Unexpected Error :" + e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRegistrationFields()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -1171,7 +1156,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-
+            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas : registerUser()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -1204,7 +1189,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-
+              Result.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :initiateEmailVerification()",WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -1233,7 +1218,7 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-
+            Result.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :initiateSMSVerification()",WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -1266,7 +1251,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
             catch (Exception e)
             {
-
+                Result.failure(WebAuthError.getShared(context).serviceException("initiateIVRVerification",WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage()));
             }
         }
 

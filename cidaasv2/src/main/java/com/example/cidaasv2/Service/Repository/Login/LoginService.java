@@ -111,9 +111,7 @@ public class LoginService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :LoginService :loginWithCredentials()",WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
         }
     }
 
@@ -163,9 +161,7 @@ public class LoginService {
      }
      catch (Exception e)
      {
-         LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-         Timber.d(e.getMessage());
-         callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
+        callback.failure(WebAuthError.getShared(context).serviceException("Exception :LoginService :serviceForLoginWithCredentials()",WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
      }
     }
 
@@ -369,9 +365,7 @@ public class LoginService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :LoginService :continueMFA()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 
@@ -448,9 +442,7 @@ public class LoginService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :LoginService :continuePasswordless()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 
@@ -505,9 +497,7 @@ public class LoginService {
             }
             catch (Exception e)
             {
-                LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-                Timber.d(e.getMessage());
-                callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
+                callback.failure(WebAuthError.getShared(context).serviceException("Exception :LoginService :getURLList()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
             }
 
     }

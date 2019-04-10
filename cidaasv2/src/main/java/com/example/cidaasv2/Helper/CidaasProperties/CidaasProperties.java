@@ -73,9 +73,7 @@ public class CidaasProperties {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
-            LogFile.getShared(context).addRecordToLog("Cidaas Properties checkCidaasProperties() Exception:"+e.getMessage()
-                    +WebAuthErrorCode.READ_PROPERTIES_ERROR);
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :CidaasProperties :checkCidaasProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
@@ -104,10 +102,7 @@ public class CidaasProperties {
         }
         catch (Exception e)
         {
-          loginPropertiesResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
-            String loggerMessage = "Read From File failure : Error Code - " + WebAuthErrorCode.READ_PROPERTIES_ERROR +
-                    ", Error Message -" + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
+          loginPropertiesResult.failure(WebAuthError.getShared(context).serviceException("Exception :CidaasProperties :readFromFile()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
@@ -127,9 +122,7 @@ public class CidaasProperties {
             }
 
         } catch (Exception e) {
-            Timber.e("Check PKCE Flow  service exception : " + e.getMessage());
-            savedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.READ_PROPERTIES_ERROR));
-            LogFile.getShared(context).addRecordToLog("Check PKCE Flow  service exception : " + e.getMessage());
+            savedResult.failure(WebAuthError.getShared(context).serviceException("Exception :CidaasProperties :checkPKCEFlow()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
@@ -170,7 +163,6 @@ public class CidaasProperties {
 
         return false;
     }
-
 }
 
 

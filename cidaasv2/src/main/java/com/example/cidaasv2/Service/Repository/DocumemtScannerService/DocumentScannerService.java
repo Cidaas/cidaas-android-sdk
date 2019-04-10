@@ -46,16 +46,10 @@ public class DocumentScannerService {
 
         context=contextFromCidaas;
 
-
         if(service==null) {
             service=new CidaassdkService();
         }
-
-        //Todo setValue for authenticationType
-
     }
-
-
 
     public static DocumentScannerService getShared(Context contextFromCidaas )
     {
@@ -152,8 +146,7 @@ public class DocumentScannerService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :DocumentScannerService :sendDocuemntToService()",WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 }

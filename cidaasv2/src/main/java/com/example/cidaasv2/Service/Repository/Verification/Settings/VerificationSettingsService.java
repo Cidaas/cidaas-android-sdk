@@ -175,8 +175,7 @@ public class VerificationSettingsService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.MFA_LIST_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsService :getmfaList()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
 
@@ -261,8 +260,7 @@ public class VerificationSettingsService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DELETE_MFA_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsService :deleteMFA()",WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -344,8 +342,7 @@ public class VerificationSettingsService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DELETE_MFA_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsService :deleteAllMFA()",WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -404,8 +401,7 @@ public class VerificationSettingsService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DENY_NOTIFICATION));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsService :denyNotification()",WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage()));
         }
     }
 
@@ -473,8 +469,7 @@ public class VerificationSettingsService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsService :getPendingNotification()",WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage()));
         }
     }
 
@@ -546,8 +541,7 @@ public class VerificationSettingsService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DENY_NOTIFICATION));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsService :updateFCMToken()",WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage()));
         }
     }
 
@@ -624,8 +618,7 @@ public class VerificationSettingsService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsService :getConfiguredMFAList()",WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage()));
         }
     }
 

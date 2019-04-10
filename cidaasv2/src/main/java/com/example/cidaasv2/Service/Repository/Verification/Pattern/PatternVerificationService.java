@@ -155,9 +155,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Setup Pattern Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE));
-            Timber.e("Setup Pattern Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :PatternVerificationService :setAccessToken()",WebAuthErrorCode.SETUP_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -237,9 +235,8 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Pattern Scanned Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE));
-            Timber.e("Pattern Scanned Service exception" + e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :PatternVerificationService :scannedPattern()",WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -323,10 +320,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("pattern Login Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
-
-            Timber.e("pattern Login Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :PatternVerificationService :enrollPattern()",WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -405,9 +399,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Initiate Pattern MFA Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE));
-            Timber.e("Initiate Pattern MFA Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :PatternVerificationService :initiatePattern()",WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -485,9 +477,7 @@ public class PatternVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Authenticate Pattern MFA Service exception" + e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE));
-            Timber.e("Authenticate Pattern MFA Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :PatternVerificationService :authenticatePattern()",WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 }

@@ -159,7 +159,7 @@ public class UserProfileController {
         }
         catch (Exception e)
         {
-          callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+          callback.failure(WebAuthError.getShared(context).serviceException("Exception :UserProfileController :getUserProfile()",WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,e.getMessage()));
         }
     }
 

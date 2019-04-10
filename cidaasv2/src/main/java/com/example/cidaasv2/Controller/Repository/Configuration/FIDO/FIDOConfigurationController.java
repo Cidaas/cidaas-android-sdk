@@ -139,10 +139,9 @@ public class FIDOConfigurationController {
             });
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Configure FIDO exception" + e.getMessage());
-            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure FIDO exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Configure FIDO exception" + e.getMessage());
+
+
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :configureFIDO()",WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE, e.getMessage()));
         }
     }
 
@@ -187,9 +186,7 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("FIDO Generate Authenticate Entity Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE));
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :configureFIDO()",WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -377,9 +374,7 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
-
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :setupFIDO()",WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -422,9 +417,7 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE);
-
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :scannedWithFIDO()",WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -513,10 +506,8 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("enroll FIDO exception" + e.getMessage());
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll FIDO exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Enroll FIDO exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :enrollFIDO()",WebAuthErrorCode.PROPERTY_MISSING,e.getMessage()));
+            
         }
     }
 
@@ -607,9 +598,7 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE);
-
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :enrollFIDO()",WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -684,11 +673,10 @@ public class FIDOConfigurationController {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Login with FIDO exception" + e.getMessage());
-            String errorMessage = e.getMessage();
-            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Login with FIDO exception" + e.getMessage());
+          
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :LoginWithFIDO()",WebAuthErrorCode.PROPERTY_MISSING,
+                    e.getMessage()));
+           
         }
     }
 
@@ -840,9 +828,8 @@ public class FIDOConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE);
+          
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :LoginWithFIDO()",WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -872,12 +859,7 @@ public class FIDOConfigurationController {
                 }
             });
         } catch (Exception e) {
-            // result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Verify FIDO exception" + e.getMessage());
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,"Verify FIDO exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Scanned FIDO exception" + e.getMessage());
-
+          result.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :authenticateFIDO()",WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -941,8 +923,7 @@ public class FIDOConfigurationController {
                         }
                     });
         } catch (Exception e) {
-            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("FIDO Exception:" + e.getMessage() + WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE);
+            authResult.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOConfigurationController :authenticateFIDO()",WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 }

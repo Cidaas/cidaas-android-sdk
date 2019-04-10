@@ -145,10 +145,8 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Setup BackupCode Service exception"+e.getMessage());
-            Timber.e("Setup BackupCode Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE));
-           }
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :BackupCodeVerificationService :setupBackupCodeMFA()",WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,e.getMessage()));
+        }
     }
 
 
@@ -221,9 +219,7 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate BackUpCode MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE));
-            Timber.e("Initiate BackUpCode MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :BackupCodeVerificationService :initiateBackupCodeMFA()",WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -297,9 +293,7 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate BackupCode MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE));
-            Timber.e("Authenticate BackupCode MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :BackupCodeVerificationService :authenticateBackupCodeMFA()",WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage()));
         }
     }
 }

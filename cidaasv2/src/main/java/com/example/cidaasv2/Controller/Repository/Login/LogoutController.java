@@ -79,8 +79,8 @@ public class LogoutController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOGOUT_ERROR,
-                   e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :LogoutController :getLogoutURL()",WebAuthErrorCode.LOGOUT_ERROR,
+                   e.getMessage()));
         }
     }
 

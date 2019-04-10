@@ -154,9 +154,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Scanned smartpush Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE));
-            Timber.e("Scanned Smartpush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :scannedSmartPush()",WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -245,9 +243,8 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Smartpush Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE));
-            Timber.e("Enroll Service exception"+e.getMessage());
+             callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :setupSmartPush()",WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -332,9 +329,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Smartpush Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
-            Timber.e("Enroll Smartpush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :enrollSmartPush()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -416,9 +411,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate SmartPush Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE));
-            Timber.e("Initiate SmartPush Service exception"+e.getMessage());
+             callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :initiateSmartPush()",WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -501,9 +494,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate SmartPush Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
-            Timber.e("Authenticate SmartPush Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :authenticateSmartPush()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 

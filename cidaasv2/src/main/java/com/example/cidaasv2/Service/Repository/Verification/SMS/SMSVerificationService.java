@@ -141,9 +141,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Setup SMS Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE));
-            Timber.e("Setup SMS Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :setupSMSMFA()",WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -217,9 +215,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll SMS Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE));
-            Timber.e("Enroll SMS Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :enrollSMSMFA()",WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -292,9 +288,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate SMS Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE));
-            Timber.e("Initiate SMS Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :initiateSMSMFA()",WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -369,9 +363,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate SMS MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
-            Timber.e("Authenticate SMS MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :authenticateSMSMFA()",WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 

@@ -172,9 +172,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Setup Face Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_FACE_MFA_FAILURE));
-            Timber.e("Setup Face Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FaceVerificationService :setupFaceMFA()",WebAuthErrorCode.SETUP_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -256,9 +254,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Face scanned Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE));
-            Timber.e("Face Scanned Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FaceVerificationService :scannedFace()",WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -406,9 +402,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Face Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
-            Timber.e("Enroll Face Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FaceVerificationService :enrollFace()",WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -477,11 +471,6 @@ public class FaceVerificationService {
             faceSetupMap.put("pushNotificationId", StringtoRequestBody(enrollFaceMFARequestEntity.getDeviceInfo().getPushNotificationId()));
 
 
-
-
-
-
-
             Bitmap finalimg = BitmapFactory.decodeFile(enrollFaceMFARequestEntity.getImagetoSend().getAbsolutePath());
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollFaceMFARequestEntity.getImagetoSend());
@@ -491,8 +480,6 @@ public class FaceVerificationService {
             {
                 // Toast.makeText(context, "FIle found", Toast.LENGTH_SHORT).show();
             }
-
-
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -527,9 +514,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Face Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
-            Timber.e("Enroll Face Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FaceVerificationService :enrollFaces()",WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -606,9 +591,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate Face MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE));
-            Timber.e("Initiate Face MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FaceVerificationService :initiateFace()",WebAuthErrorCode.INITIATE_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -730,9 +713,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate Face MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
-            Timber.e("Authenticate Face MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FaceVerificationService :authenticateFace()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -831,9 +812,7 @@ public class FaceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate Face MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
-            Timber.e("Authenticate Face MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FaceVerificationService :authenticateFaces()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 

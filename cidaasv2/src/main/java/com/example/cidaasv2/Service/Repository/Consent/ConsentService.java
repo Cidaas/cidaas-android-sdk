@@ -153,7 +153,7 @@ public class ConsentService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage(), 400, null,null));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :Consent Service  :getConsentDetails()",WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
 
         }
     }
@@ -267,11 +267,7 @@ public class ConsentService {
         }
         catch (Exception e)
         {
-            Timber.e("acceptConsent Service exception"+e.getMessage());
-
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage(), 400,null,null));
-
+           callback.failure( WebAuthError.getShared(context).serviceException("Exception :Consent Service :acceptConsent()",WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage()));
         }
     }
 
@@ -348,10 +344,7 @@ public class ConsentService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null,null));
-
+            callback.failure( WebAuthError.getShared(context).serviceException("Exception :Consent Service :resumeConsent()",WebAuthErrorCode.RESUME_CONSENT_FAILURE,e.getMessage()));
         }
     }
 }

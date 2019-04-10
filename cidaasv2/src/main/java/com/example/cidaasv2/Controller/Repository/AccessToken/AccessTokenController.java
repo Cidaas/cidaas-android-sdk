@@ -26,12 +26,10 @@ public class AccessTokenController {
     private Context context;
 
     //saved Properties for Global Access
-       public static AccessTokenController shared;
-
+    public static AccessTokenController shared;
     public AccessTokenController(Context contextFromCidaas) {
         context=contextFromCidaas;
     }
-
 
     public static AccessTokenController getShared(Context contextFromCidaas )
     {
@@ -49,7 +47,6 @@ public class AccessTokenController {
     }
 
     //Get AccessToken By Code
-
     public void getAccessTokenByCode(final String code, final Result<AccessTokenEntity> callback)
     {
         try {
@@ -59,22 +56,12 @@ public class AccessTokenController {
                 public void success(Dictionary<String, String>  result) {
                     String baseurl=result.get("DomainURL");
                     //todo Check notnull
-                    AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, null,null,null,new Result<AccessTokenEntity>()
+                    AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code,
+                            null,null,null,new Result<AccessTokenEntity>()
                     {
                         @Override
                         public void success(final AccessTokenEntity result) {
-
-                            EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
-                                @Override
-                                public void success(AccessTokenModel modelresult) {
-                                    callback.success(result);
-                                }
-
-                                @Override
-                                public void failure(WebAuthError error) {
-                                    callback.failure(error);
-                                }
-                            });
+                            accessTokenConversion(result,callback);
                         }
 
                         @Override
@@ -86,7 +73,6 @@ public class AccessTokenController {
 
                 @Override
                 public void failure(WebAuthError error) {
-
                     callback.failure(error);
                 }
             });
@@ -94,13 +80,26 @@ public class AccessTokenController {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessTokenByCode() :- "+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :AccessToken Controller :getAccessTokenByCode()",
+                    WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
         }
     }
-    // Get Access Token by userId
 
+    private void accessTokenConversion(final AccessTokenEntity result,final Result<AccessTokenEntity> callback) {
+        EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
+            @Override
+            public void success(AccessTokenModel modelresult) {
+                callback.success(result);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                callback.failure(error);
+            }
+        });
+    }
+
+    // Get Access Token by userId
     public void getAccessToken(String sub, final Result<AccessTokenEntity> callback)
     {
         try
@@ -124,79 +123,49 @@ public class AccessTokenController {
                 }
                 else
                 {
-                    //todo log error
-
                     callback.failure(WebAuthError.getShared(context).noUserFoundException());
                 }
-
             }
 
         }
         catch (Exception e)
         {
-
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessToken() :- "+e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
-
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :AccessToken Controller :getAccessToken()",
+                    WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
     //Get Access Token by Refresh Token
-
-    public void getAccessTokenByRefreshToken(final String refreshToken, final Result<AccessTokenEntity> callback)
-    {
+    public void getAccessTokenByRefreshToken(final String refreshToken, final Result<AccessTokenEntity> callback) {
         try {
 
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken,result,null,null, new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(AccessTokenEntity result) {
-                            EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(result, result.getSub(), new Result<AccessTokenModel>() {
+                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken, result,
+                            null, null, new Result<AccessTokenEntity>() {
                                 @Override
-                                public void success(AccessTokenModel result) {
-                                    DBHelper.getShared().setAccessToken(result);
+                                public void success(AccessTokenEntity result) {
+                                    accessTokenConversion(result, callback);
                                 }
 
                                 @Override
                                 public void failure(WebAuthError error) {
-                                     //Todo Handle Error
+                                    callback.failure(error);
                                 }
                             });
-                            callback.success(result);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-
-                            callback.failure(error);
-                        }
-                    });
-
                 }
 
                 @Override
-                public void failure(WebAuthError error)
-                {
+                public void failure(WebAuthError error) {
                     callback.failure(error);
                 }
             });
-
-
-         }
-        catch (Exception e)
-        {
-
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessTokenByRefreshToken() :- "+e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
-            //done Handle Exception
+        } catch (Exception e) {
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :AccessToken Controller :getAccessTokenByRefreshToken() "
+                    , WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
-
-
     //Get access Token by Social
     public void getAccessTokenBySocial(String tokenOrCode, String provider, String givenType, String requestId, String viewType,Dictionary<String,String> loginProperties, final Result<AccessTokenEntity> accessTokenEntityResult)
     {
@@ -216,13 +185,10 @@ public class AccessTokenController {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            accessTokenEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Exception :AccessToken Controller :getAccessTokenBySocial() :- "+e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
-
+            accessTokenEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :AccessToken Controller :getAccessTokenBySocial()",
+                    WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
         }
     }
-
 
     public void setAccessToken(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result){
         try
@@ -246,29 +212,17 @@ public class AccessTokenController {
                     public void failure(WebAuthError error) {
                         String loggerMessage = "Set Access Token : " + " Error Message - "+error.getErrorMessage();
                         LogFile.getShared(context).addRecordToLog(loggerMessage);
-
                         result.failure(error);
                     }
                 });
-
-
-
-
-
             }
             else
             {
-                String loggerMessage = "Set Access Token : " + " Error Message - Sub or accessToken or refreshToken must not be null";
-                LogFile.getShared(context).addRecordToLog(loggerMessage);
-                result.failure(WebAuthError.getShared(context).customException(417," Sub or accessToken or refreshToken must not be null",417));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or accessToken or refreshToken must not be null"));
             }
-
         }
         catch (Exception e){
-
-            String loggerMessage = "Set Access Token : " + " Error Message - " + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(WebAuthError.getShared(context).customException(417,"Something Went wrong please try again",417));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :AccessToken Controller :setAccessToken()",WebAuthErrorCode.SET_ACCESS_TOKEN,e.getMessage()));
         }
     }
 }

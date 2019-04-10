@@ -119,8 +119,8 @@ public class TenantService {
         }
         catch (Exception e)
         { String loggerMessage = "TenantService-getTenantInfoException: Error Message - " + e.getMessage();
-        LogFile.getShared(context).addRecordToLog(loggerMessage); Timber.d(e.getMessage());
-         callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.TENANT_INFO_FAILURE));
+          LogFile.getShared(context).addRecordToLog(loggerMessage); Timber.d(e.getMessage());
+         callback.failure(WebAuthError.getShared(context).serviceException("Exception :TenantService :getTenantInfo()",WebAuthErrorCode.TENANT_INFO_FAILURE,e.getMessage()));
         }
     }
 

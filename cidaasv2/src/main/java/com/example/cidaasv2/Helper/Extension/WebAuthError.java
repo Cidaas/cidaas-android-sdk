@@ -3,6 +3,7 @@ package com.example.cidaasv2.Helper.Extension;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthExcepiton;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -168,13 +169,23 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 
 
-    public WebAuthError serviceException(int errorCode)
+    public WebAuthError serviceException(String title, int errorCode, String errorMessage)
     {
 
         WebAuthError.shared.errorCode=errorCode;
         WebAuthError.shared.statusCode=HttpStatusCode.BAD_REQUEST;
         WebAuthError.shared.setErrorMessage(context.getString(R.string.SERVICE_EXCEPTION));
+
+
+
+        String loggerMessage = title+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage;
+        LogFile.getShared(context).addRecordToLog(loggerMessage);
+
+        Timber.d(loggerMessage);
+
         return WebAuthError.shared;
+
+
     }
 
  //Location History Failure Exception

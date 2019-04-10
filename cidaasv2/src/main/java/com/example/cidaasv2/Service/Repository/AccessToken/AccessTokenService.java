@@ -199,9 +199,8 @@ public class AccessTokenService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
-            acessTokencallback.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
+           acessTokencallback.failure( WebAuthError.getShared(context).serviceException("Access Token Service :-getAccessTokenByCode()",
+                   WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
@@ -329,9 +328,8 @@ public class AccessTokenService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException("Access Token Service :-getAccessTokenBySocial()",
+                    WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
@@ -383,12 +381,11 @@ public class AccessTokenService {
                }
            });
 
-
        }
        catch (Exception e)
        {
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE));
-           LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE);
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :AccessToken service :-getAccessTokenBySocial()",
+                   WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
        }
     }
 

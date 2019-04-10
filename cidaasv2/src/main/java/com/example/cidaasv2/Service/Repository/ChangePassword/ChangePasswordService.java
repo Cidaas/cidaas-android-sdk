@@ -153,9 +153,7 @@ public class ChangePasswordService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.CHANGE_PASSWORD_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :ChangePassword Service :changePassword()",WebAuthErrorCode.CHANGE_PASSWORD_FAILURE,e.getMessage()));
         }
     }
 }

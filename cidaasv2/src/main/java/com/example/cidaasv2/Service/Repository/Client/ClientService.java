@@ -43,6 +43,12 @@ public class ClientService {
             service=new CidaassdkService();
         }
         context=contextFromCidaas;
+        if(service==null) {
+            service=new CidaassdkService();
+
+            service.setContext(context);
+        }
+
 
         //Todo setValue for authenticationType
 
@@ -126,7 +132,7 @@ public class ClientService {
 
             Timber.d(e.getMessage());
             LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.CLIENT_INFO_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CLIENT_INFO_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :ClientService :getClientInfo()",WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
         }
     }
 

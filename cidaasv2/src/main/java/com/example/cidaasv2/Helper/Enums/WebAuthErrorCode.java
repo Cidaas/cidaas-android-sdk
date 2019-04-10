@@ -28,6 +28,7 @@ public class WebAuthErrorCode {
   public static final int NO_USER_FOUND = 10016;
   public static final int REFRESH_TOKEN_SERVICE_FAILURE = 10017;
   public static final int ACCESS_TOKEN_CONVERSION_FAILURE = 10193;
+    public static final int SET_ACCESS_TOKEN = 10194;
 
   //Basic calls
     public  static  final  int EMPTY_TENANT_INFO_SERVICE=10018;

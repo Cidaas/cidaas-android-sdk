@@ -86,9 +86,8 @@ public class UserLoginInfoController {
         catch (Exception e)
         {
             // handle Faliure Exception
-            result.failure(WebAuthError.getShared(context).
-                    customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage(),
-                            HttpStatusCode.EXPECTATION_FAILED));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :UserLoginInfoController :getUserLoginInfo()"
+                    ,WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
@@ -106,9 +105,4 @@ public class UserLoginInfoController {
         }
 
     }
-
-
-
-
-
 }

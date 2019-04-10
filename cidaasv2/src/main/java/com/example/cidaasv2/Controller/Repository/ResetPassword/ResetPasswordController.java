@@ -83,11 +83,11 @@ public class ResetPasswordController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    resetPasswordResponseEntityResult.failure(error);
                 }
             });
         } catch (Exception e) {
-            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :initiateresetPasswordService()",WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
@@ -110,8 +110,7 @@ public class ResetPasswordController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE);
-            Timber.e(e.getMessage());
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :initiateresetPasswordService()",WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
@@ -149,22 +148,20 @@ public class ResetPasswordController {
                                 });
                     }
                     else{
-
                         resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("RPRQ or verification Code must not be null"));
                     }
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-
+                    resetpasswordResult.failure(error);
                 }
             });
 
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE);
-            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE));
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :resetPasswordValidateCode()",WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,e.getMessage()));
         }
     }
 
@@ -210,12 +207,8 @@ public class ResetPasswordController {
                 }
             });
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-
-            resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-
-
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :resetNewPassword",WebAuthErrorCode.PROPERTY_MISSING,
+                    e.getMessage()));
         }
     }
 
@@ -255,9 +248,7 @@ public class ResetPasswordController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE);
-            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE));
-            Timber.e(e.getMessage());
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationController :resetNewPassword()",WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,e.getMessage()));
         }
     }
 

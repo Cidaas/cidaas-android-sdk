@@ -148,9 +148,7 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            Timber.e("Setup email MFA Service exception"+e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Setup email MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_EMAIL_MFA_FAILURE));
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :EmailVerificationService :setupEmailMFA()",WebAuthErrorCode.SETUP_EMAIL_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -227,7 +225,7 @@ public class EmailVerificationService {
         {
             Timber.e("Enroll email MFA Service exception"+e.getMessage());
             LogFile.getShared(context).addRecordToLog("Enroll email MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :EmailVerificationService :enrollEmailMFA()",WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -301,9 +299,7 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate email MFA Service exception"+e.getMessage());
-            Timber.e("Initiate email MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :EmailVerificationService :initiateEmailMFA()",WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -376,9 +372,7 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate Email MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE));
-            Timber.e("Authenticate Email MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :EmailVerificationService :authenticateEmailMFA()",WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 

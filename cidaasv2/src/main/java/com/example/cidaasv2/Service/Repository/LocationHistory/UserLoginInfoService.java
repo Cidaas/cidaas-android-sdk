@@ -147,7 +147,7 @@ public class UserLoginInfoService {
         catch (Exception e)
         {
             Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage(), HttpStatusCode.BAD_REQUEST));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :UserLoginInfoService :getUserLoginInfoService()",WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage()));
         }
     }
 

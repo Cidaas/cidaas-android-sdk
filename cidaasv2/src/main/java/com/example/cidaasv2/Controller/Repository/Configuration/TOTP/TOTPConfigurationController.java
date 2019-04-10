@@ -209,9 +209,7 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Configure TOTP "+e.getMessage()+WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE);
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :configureTOTP()",WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -290,9 +288,7 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE));
-
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :setupTOTP()",WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -335,9 +331,7 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Setup After Device Verification"+e.getMessage()+WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE));
-
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :setUpTOTPAfterDeviceVerification()",WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -387,8 +381,7 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Scanned with TOTP "+e.getMessage()+WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE);
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE));
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :scannedWithTOTP()",WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -436,8 +429,7 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Scanned with TOTP "+e.getMessage()+WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE);
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE));
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :scannedTOTPService()",WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -520,8 +512,7 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :enrollTOTP()",WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -586,10 +577,8 @@ public class TOTPConfigurationController {
                 }
             });
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Login TOTP exception" + e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Login TOTP exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Login TOTP exception" + e.getMessage());
+           loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :LoginWithTOTP()",WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
+
         }
     }
 
@@ -672,9 +661,9 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE);
+
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :LoginWithTOTP()",WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -739,9 +728,7 @@ public class TOTPConfigurationController {
       }
       catch (Exception e)
       {
-          Timber.e(e.getMessage());
-          loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE));
-          LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE);
+          loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :inititateTOTPAfterDeviceVerification()",WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE,e.getMessage()));
       }
     }
 
@@ -797,7 +784,7 @@ public class TOTPConfigurationController {
         }
         catch (Exception e)
         {
-            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_TOTP_MFA_FAILURE));
+            authResult.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPConfigurationController :authenticateTOTP()",WebAuthErrorCode.AUTHENTICATE_TOTP_MFA_FAILURE,e.getMessage()));
 
         }
     }

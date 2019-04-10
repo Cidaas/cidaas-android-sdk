@@ -157,9 +157,7 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Scanned Fingerprint Service exception"+e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE));
-            Timber.e("Scanned Fingerprint Service exception"+e.getMessage());
+             callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :scannedFingerprint()",WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -247,9 +245,7 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE));
-            Timber.e("Setup Fingerprint Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :setupFingerprint()",WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -331,9 +327,7 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Fingerprint Service exception"+e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
-            Timber.e("Enroll Fingerprint Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -415,9 +409,7 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate Fingerprint MFA Service exception"+e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE));
-            Timber.e("Initiate Fingerprint MFA Service exception"+e.getMessage());
+             callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :initiateFingerprint()",WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -500,9 +492,7 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate Fingerprint MFA Service exception"+e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
-            Timber.e("Authenticate Fingerprint MFA Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 }

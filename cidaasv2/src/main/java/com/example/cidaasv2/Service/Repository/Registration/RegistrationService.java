@@ -148,9 +148,7 @@ public class RegistrationService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationService :getRegistrationSetup()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -226,9 +224,7 @@ public class RegistrationService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.REGISTRATION_SETUP_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationService :registerNewUser()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -302,9 +298,7 @@ public class RegistrationService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationService :initiateAccountVerification()",WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
@@ -379,9 +373,7 @@ public class RegistrationService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE);
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :RegistrationService :verifyAccountVerification()",WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 

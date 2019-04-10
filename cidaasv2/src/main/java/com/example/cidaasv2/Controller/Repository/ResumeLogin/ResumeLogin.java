@@ -76,9 +76,7 @@ public class ResumeLogin {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Failure in Resume Login Service exception" + e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
-            Timber.e("Failure in Resume Login Service exception" + e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :ResumeLogin Controller :resumeLoginAfterSuccessfullAuthentication()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
 
     }
@@ -138,7 +136,7 @@ public class ResumeLogin {
         }
         catch (Exception e)
         {
-
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :ResumeLogin Controller :resumeLoginAfterConsent()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 }

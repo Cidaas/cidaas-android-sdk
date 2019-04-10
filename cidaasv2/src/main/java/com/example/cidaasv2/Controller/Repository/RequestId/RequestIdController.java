@@ -108,7 +108,7 @@ public class RequestIdController {
         }
         catch (Exception e)
         {
-            Primaryresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE));
+            Primaryresult.failure(WebAuthError.getShared(context).serviceException("Exception :RequestIdController :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
             String loggerMessage = "Request-Id Controller getRequestId() Exception : Error Message - " + e.getMessage();
             LogFile.getShared(context).addRecordToLog(loggerMessage);
         }

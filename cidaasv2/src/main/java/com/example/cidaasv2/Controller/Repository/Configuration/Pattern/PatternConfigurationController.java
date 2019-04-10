@@ -146,9 +146,7 @@ public class PatternConfigurationController {
             }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Configure Pattern Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :configurePattern()",WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -216,8 +214,7 @@ public class PatternConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Setup Pattern Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :setupPattern()",WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -257,8 +254,7 @@ public class PatternConfigurationController {
       }
       catch (Exception e)
       {
-          LogFile.getShared(context).addRecordToLog("Setup After Device Pattern Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
-          enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
+          enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :setupAfterDeviceVerification()",WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,e.getMessage()));
       }
     }
 
@@ -338,9 +334,7 @@ public class PatternConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Scanned Pattern Exception:"+e.getMessage()+ WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE);
-
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :scannedWithPattern()",WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -397,8 +391,7 @@ public class PatternConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :enrollPattern()",WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -464,8 +457,7 @@ public class PatternConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Enroll Pattern Exception:"+e.getMessage()+ WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :enrollPattern()",WebAuthErrorCode.ENROLL_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -496,9 +488,7 @@ public class PatternConfigurationController {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Initiate Pattern Exception:"+e.getMessage()+ WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE);
-            Timber.e(e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :LoginWithPattern()",WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -573,7 +563,7 @@ public class PatternConfigurationController {
       catch (Exception e)
       {
           return null;
-
+//todo
       }
 
     }
@@ -641,7 +631,8 @@ public class PatternConfigurationController {
 
               @Override
               public void failure(WebAuthError error) {
-
+//todo
+                loginresult.failure(error);
               }
           });
 
@@ -649,8 +640,7 @@ public class PatternConfigurationController {
       }
       catch (Exception e)
       {
-          LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE);
-          loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE));
+          loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :PatternConfigrationServiceCall()",WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,e.getMessage()));
       }
     }
 
@@ -716,7 +706,7 @@ public class PatternConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-
+               loginresult.failure(error);
                 }
             });
 
@@ -725,9 +715,8 @@ public class PatternConfigurationController {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Initiate Pattern Exception:"+e.getMessage()+ WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE);
-            Timber.e(e.getMessage());
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :InititePatternAfterDeviceVerification()",WebAuthErrorCode.INITIATE_PATTERN_MFA_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -806,9 +795,7 @@ public class PatternConfigurationController {
       }
       catch (Exception e)
       {
-          authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE));
-          LogFile.getShared(context).addRecordToLog("Authenticate Pattern Exception:"+e.getMessage()+ WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE);
-          Timber.e(e.getMessage());
+          authResult.failure(WebAuthError.getShared(context).serviceException("Exception :PatternConfigurationController :authenticatePattern()",WebAuthErrorCode.AUTHENTICATE_PATTERN_MFA_FAILURE,e.getMessage()));
       }
     }
 }

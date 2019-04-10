@@ -122,13 +122,11 @@ public class FaceConfigurationController {
                 }
             });
 
-
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",
+                    WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -178,9 +176,8 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",
+                    WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -274,7 +271,7 @@ public class FaceConfigurationController {
         catch (Exception e)
         {
             LogFile.getShared(context).addRecordToLog("Enroll Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -314,7 +311,7 @@ public class FaceConfigurationController {
         catch (Exception e)
         {
             LogFile.getShared(context).addRecordToLog("Scanned Face configuration"+e.getMessage()+WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE);
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE));
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -366,7 +363,8 @@ public class FaceConfigurationController {
      catch (Exception e)
      {
          LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE);
-         scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE));
+         scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",
+                 WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,e.getMessage()));
      }
 
     }
@@ -415,7 +413,7 @@ public class FaceConfigurationController {
     {
         Timber.e(e.getMessage());
         LogFile.getShared(context).addRecordToLog("Initiate Face configuration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE);
-        enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
+        enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
     }
     }
 
@@ -534,8 +532,7 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -759,7 +756,7 @@ public class FaceConfigurationController {
         {
             Timber.e(e.getMessage());
             LogFile.getShared(context).addRecordToLog("Initiate Face configuration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE);
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -793,7 +790,7 @@ public class FaceConfigurationController {
             });
         } catch (Exception e) {
             LogFile.getShared(context).addRecordToLog("Authenticate Face configuration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
 
     }

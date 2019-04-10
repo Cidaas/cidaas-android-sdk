@@ -154,8 +154,8 @@ public class DocumentScannnerController {
                 resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Photo or sub must not be null", 417));
             }
         } catch (Exception e) {
-            resultEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Unexpected Error :" + e.getMessage()+WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE);
+            resultEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :DocumentScannnerController :sendtoServicecall()",WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -173,6 +173,7 @@ public class DocumentScannnerController {
         }
         catch (Exception e)
         {
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :DocumentScannnerController :sendtoServicecall()",WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage()));
 
         }
     }

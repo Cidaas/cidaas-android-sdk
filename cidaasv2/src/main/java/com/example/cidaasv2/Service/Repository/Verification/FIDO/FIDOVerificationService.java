@@ -145,9 +145,7 @@ public class FIDOVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Failure in Scanned FIDO Service exception" + e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE));
-            Timber.e("Failure in Scanned FIDO Service exception" + e.getMessage());
+          callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :scannedFIDO()",WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -224,9 +222,7 @@ public class FIDOVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Setup FIDO Service exception" + e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE));
-            Timber.e("Setup FIDO Service exception" + e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :setupFIDO()",WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -299,9 +295,7 @@ public class FIDOVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Enroll FIDO Service exception" + e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE));
-            Timber.e("Enroll FIDO Service exception" + e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :enrollFIDO()",WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -373,9 +367,7 @@ public class FIDOVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Initiate FIDO MFA Service exception" + e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE));
-            Timber.e("Initiate FIDO MFA Service exception" + e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :initiateFIDO()",WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -448,9 +440,7 @@ public class FIDOVerificationService {
 
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Authenticate FIDO MFA Service exception" + e.getMessage());
-           callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE));
-            Timber.e("Authenticate FIDO MFA Service exception" + e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :authenticateFIDO()",WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 }

@@ -57,48 +57,6 @@ public class ChangePasswordController {
         return shared;
     }
 
-   /* //ChangePassword
-    public void changePassword(@NonNull ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
-        try {
-            String baseurl="";
-            if(savedProperties==null){
-
-                savedProperties= DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        resetpasswordResult.failure(error);
-                    }
-                });
-            }
-
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Authenticate change password MFA readProperties failure : " + "Error Code - " +
-                        webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                resetpasswordResult.failure(webAuthError);
-            } else {
-                baseurl = savedProperties.get("DomainURL");
-                changePasswordService(baseurl,changePasswordRequestEntity,resetpasswordResult);
-
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
-        }
-    }
-*/
     //ChangePasswordService
     public void changePassword(@NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult)
     {
@@ -122,7 +80,7 @@ public class ChangePasswordController {
 
                 @Override
                 public void failure(WebAuthError error) {
-
+                   resetpasswordResult.failure(error);
                 }
             });
 
@@ -130,7 +88,8 @@ public class ChangePasswordController {
         }
         catch (Exception e)
         {
-            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE));
+            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException("Exception :ChangePassword Controller :changePassword()",
+                    WebAuthErrorCode.CHANGE_PASSWORD_FAILURE,e.getMessage()));
             Timber.e(e.getMessage());
         }
     }

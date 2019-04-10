@@ -160,9 +160,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Voice Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE));
-            Timber.e("Voice Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceVerificationService :scannedVoice()",WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -249,9 +247,8 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Voice exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE));
-            Timber.e("Voice Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceVerificationService :setupVoiceMFA()",WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -383,9 +380,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Voice Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE));
-            Timber.e("Voice Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceVerificationService :enrollVoice()",WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -469,9 +464,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate Voice MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE));
-            Timber.e("Initiate Voice MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceVerificationService :initiateVoice()",WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -601,9 +594,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate Voice MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE));
-            Timber.e("Authenticate Voice MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception: Voice Verification Service:-authenticateVoice()",WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 

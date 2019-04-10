@@ -94,9 +94,8 @@ public class ClientController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CLIENT_INFO_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Exception getClientInfo():"+e.getMessage());
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :Client Controller :getClientInfo() without requestId",
+                    WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
         }
     }
 
@@ -128,9 +127,8 @@ public class ClientController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CLIENT_INFO_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Exception getClientInfo():"+e.getMessage());
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :Client Controller :getClientInfo()",
+                    WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
         }
     }
 

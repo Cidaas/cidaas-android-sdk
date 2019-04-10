@@ -153,7 +153,7 @@ public class DeviceVerificationService {
         catch (Exception e)
         {
             LogFile.getShared(context).addRecordToLog("Validate Device Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :DeviceVerificationService :validateDevice()",WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,e.getMessage()));
             Timber.e("Validate Device Service exception"+e.getMessage());
         }
     }

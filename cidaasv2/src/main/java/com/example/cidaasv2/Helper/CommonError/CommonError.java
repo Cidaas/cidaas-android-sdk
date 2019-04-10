@@ -111,7 +111,7 @@ public class CommonError {
         catch (Exception e) {
             Timber.e("Exception:-"+webAuthErrorCode+"Response Message:-" + response.message()+"Exception message:-" + e.getMessage());
             LogFile.getShared(context).addRecordToLog("Exception:-"+webAuthErrorCode+"Response Message:-" + response.message()+"Exception message:-" + e.getMessage());
-            return WebAuthError.getShared(context).serviceException(webAuthErrorCode);
+            return WebAuthError.getShared(context).serviceException("Exception :CommonError :generateCommonErrorEntity()",webAuthErrorCode,e.getMessage());
 
         }
     }

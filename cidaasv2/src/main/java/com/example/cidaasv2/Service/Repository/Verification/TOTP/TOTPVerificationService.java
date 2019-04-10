@@ -158,9 +158,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Scanned TOTP Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE));
-            Timber.e("ScannedTOTP Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPVerificationService :scannedTOTP()",WebAuthErrorCode.SCANNED_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -249,9 +247,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Setup TOTP Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE));
-            Timber.e("Setup TOTP Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPVerificationService :setupTOTP()",WebAuthErrorCode.SETUP_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -328,9 +324,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll TOTP MFAService exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE));
-            Timber.e("Enroll TOTP MFA  Service exception"+e.getMessage());
+           callback.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPVerificationService :enrollTOTP()",WebAuthErrorCode.ENROLL_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -413,9 +407,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate TOTP MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE));
-            Timber.e("Initiate TOTP MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPVerificationService :initiateTOTP()",WebAuthErrorCode.INITIATE_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -498,9 +490,7 @@ public class TOTPVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate TOTP MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_TOTP_MFA_FAILURE));
-            Timber.e("Authenticate TOTP MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :TOTPVerificationService :authenticateTOTP()",WebAuthErrorCode.AUTHENTICATE_TOTP_MFA_FAILURE,e.getMessage()));
         }
     }
 

@@ -114,10 +114,7 @@ public class VoiceConfigurationController {
             });
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Configure Voice exception" + e.getMessage());
-            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Configure Voice exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Configure Voice exception" + e.getMessage());
+           enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :configureVoice()",WebAuthErrorCode.PROPERTY_MISSING, e.getMessage()));
         }
     }
 
@@ -164,10 +161,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Configure Voice Exception"+e.getMessage()+WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE);
-
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :configureVoice()",WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -225,9 +219,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Setup voice exception"+e.getMessage()+WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE);
-
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :setupVoice()",WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -264,8 +256,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Setup voice After device verification exception"+e.getMessage()+WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :setupVoiceAfterDeviceVerification()",WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -351,9 +342,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Scanned voice exception"+e.getMessage()+WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE);
-
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :scannedWithVoice()",WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -396,10 +385,7 @@ public class VoiceConfigurationController {
                 }
             });
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Enroll Voice exception" + e.getMessage());
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, "Enroll Voice exception" + e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Enroll Voice exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :scannedWithVoice()",WebAuthErrorCode.PROPERTY_MISSING, "Enroll Voice exception" + e.getMessage()));
         }
     }
 
@@ -498,8 +484,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Enroll voice exception"+e.getMessage()+WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE);
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :enrollVoice()",WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -571,10 +556,7 @@ public class VoiceConfigurationController {
                 }
             });
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Login Voice exception" + e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Login Voice exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Login Voice exception" + e.getMessage());
+           loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :initiateVoice()",WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
         }
     }
 
@@ -653,8 +635,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Login voice exception"+e.getMessage()+WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE);
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :initiateVoice()",WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -714,8 +695,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Initiate voice After device verification exception"+e.getMessage()+WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE);
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :initiateVoiceAfterDeviceVerification()",WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -750,8 +730,7 @@ public class VoiceConfigurationController {
             });
         } catch (Exception e) {
             LogFile.getShared(context).addRecordToLog("Verify Voice exception" + e.getMessage());
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Verify Voice exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :authenticateVoice()", WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
             Timber.e("Verify Voice exception" + e.getMessage());
         }
     }
@@ -848,8 +827,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Authenticate voice exception"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE);
+            authResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :authenticateVoice()",WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 

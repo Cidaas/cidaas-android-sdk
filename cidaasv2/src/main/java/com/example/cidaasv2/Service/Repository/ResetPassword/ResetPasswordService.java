@@ -54,6 +54,11 @@ public class ResetPasswordService {
         context=contextFromCidaas;
         authenticationType="";
         //Todo setValue for authenticationType
+        if(service==null) {
+            service=new CidaassdkService();
+
+            service.setContext(context);
+        }
 
     }
 
@@ -65,6 +70,7 @@ public class ResetPasswordService {
             if (shared == null) {
                 shared = new  ResetPasswordService(contextFromCidaas);
             }
+
         }
         catch (Exception e)
         {
@@ -144,9 +150,7 @@ public class ResetPasswordService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :ResetPasswordService :initiateresetPassword()",WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,e.getMessage()));
         }
     }
 
@@ -218,9 +222,7 @@ public class ResetPasswordService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-             LogFile.getShared(context).addRecordToLog(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :ResetPasswordService :resetPasswordValidateCode()",WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,e.getMessage()));
         }
     }
 
@@ -294,9 +296,7 @@ public class ResetPasswordService {
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :ResetPasswordService :resetNewPassword()",WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,e.getMessage()));
         }
     }
 

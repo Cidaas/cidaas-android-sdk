@@ -90,7 +90,7 @@ public class ConsentController {
         } catch (Exception e) {
             Timber.e("Get Consent URL Controller" + e.getMessage());
             LogFile.getShared(context).addRecordToLog("Get Consent URL Service"+e.getMessage()+ WebAuthErrorCode.CONSENT_URL_FAILURE);
-            consentresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.CONSENT_URL_FAILURE));
+            consentresult.failure(WebAuthError.getShared(context).serviceException("Exception :ConsentController :getConsentDetails()",WebAuthErrorCode.CONSENT_URL_FAILURE,e.getMessage()));
         }
     }
 
@@ -139,7 +139,7 @@ public class ConsentController {
         } catch (Exception e) {
             Timber.e(e.getMessage());
             LogFile.getShared(context).addRecordToLog(e.getMessage()+ WebAuthErrorCode.ACCEPT_CONSENT_FAILURE);
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE));
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :ConsentController :acceptConsent()",WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage()));
         }
     }
 

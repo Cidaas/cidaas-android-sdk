@@ -72,9 +72,7 @@ public class TenantController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.TENANT_INFO_FAILURE));
-            LogFile.getShared(context).addRecordToLog("Exception getTenantInfo():"+e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :TenantController :getTenantInfo()",WebAuthErrorCode.TENANT_INFO_FAILURE,e.getMessage()));
         }
     }
 

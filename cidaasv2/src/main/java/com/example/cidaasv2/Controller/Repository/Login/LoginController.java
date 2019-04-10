@@ -90,9 +90,7 @@ public class LoginController {
                                 result.failure(error);
                             }
                         });
-                    } else {
-                        result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
-                    }
+                    } 
                 }
 
 
@@ -104,9 +102,7 @@ public class LoginController {
 
 
         } catch (Exception e) {
-            String errorMessage = "Login with Credentials Exception" + e.getMessage();
-            LogFile.getShared(context).addRecordToLog("Login with credentials" + errorMessage + WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :LoginController :loginwithCredentials()",WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
 
         }
     }
@@ -207,7 +203,7 @@ public class LoginController {
         } catch (Exception e) {
             Timber.e("Service call Excception" + e.getMessage());
             LogFile.getShared(context).addRecordToLog("Continue MFA Exception:" + e.getMessage() + WebAuthErrorCode.RESUME_LOGIN_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :LoginController :continueMFA()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 
@@ -257,9 +253,7 @@ public class LoginController {
             }
 
         } catch (Exception e) {
-            Timber.e("Service call Excception");
-            LogFile.getShared(context).addRecordToLog("Continue Passwordless Exception:" + e.getMessage() + WebAuthErrorCode.RESUME_LOGIN_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.RESUME_LOGIN_FAILURE));
+           result.failure(WebAuthError.getShared(context).serviceException("Exception :LoginController :continuePasswordless()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 
@@ -316,8 +310,7 @@ public class LoginController {
             });
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
-                    .customException(WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()
-                            , HttpStatusCode.EXPECTATION_FAILED));
+                    .serviceException("Exception :LoginController :getLoginURL()", WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
@@ -351,8 +344,7 @@ public class LoginController {
 
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
-                    .customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()
-                            , HttpStatusCode.EXPECTATION_FAILED));
+                    .serviceException("Exception :LoginController :getSocialLoginURL ",WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
@@ -404,7 +396,10 @@ public class LoginController {
 
 
         } catch (Exception e) {
-            Timber.d(e.getMessage());// TODO: Handle Exception
+           // TODO: Handle Exception
+
+            callbacktoMain.failure(WebAuthError.getShared(context)
+                    .serviceException("Exception :LoginController :loginWithBrowser()" ,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
         }
 
 
@@ -458,7 +453,9 @@ public class LoginController {
                     });
 
         } catch (Exception e) {
-            Timber.d(e.getMessage());// TODO: Handle Exception
+           // TODO: Handle Exception
+            callbacktoMain.failure( WebAuthError.getShared(context)
+                    .serviceException("Exception :LoginController :loginWithSocial() ",WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
         }
 
 
@@ -483,9 +480,10 @@ public class LoginController {
             }
             return code;
         } catch (Exception e) {
-            Timber.d(e.getMessage());
+           
+            logincallback.failure(WebAuthError.getShared(context).serviceException("Exception :LoginController :getCodeFromUrl() " ,
+                    WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
             return null;
-            //Todo Handle Exception
         }
     }
 
@@ -506,7 +504,11 @@ public class LoginController {
                 LogFile.getShared(context).addRecordToLog(loggerMessage);
             }
         } catch (Exception e) {
-            Timber.d(e.getMessage()); //Todo handle Exception
+           
+            callback.failure( WebAuthError.getShared(context)
+                    .serviceException("Exception :LoginController :getCodeFromUrl ",WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
+
+            //Todo handle Exception
         }
     }
 
@@ -581,9 +583,10 @@ public class LoginController {
             });
 
 
-        } catch (Exception ex) {
+        } catch (Exception e) {
             //Todo Handle Error
-            Timber.d(ex.getMessage());
+            callback.failure(WebAuthError.getShared(context)
+                    .serviceException("Exception :LoginController :getLoginURL() " ,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
@@ -593,7 +596,7 @@ public class LoginController {
         {
             if(loginproperties!=null) {
 
-                Cidaas.baseurl=loginproperties.get("DomainURL");;
+                Cidaas.baseurl=loginproperties.get("DomainURL");
 
 
                 if(loginproperties.get("userDeviceId")!=null && !loginproperties.get("userDeviceId").equals("")) {
@@ -685,7 +688,7 @@ public class LoginController {
 
 
         } catch (Exception e) {
-            Timber.d(e.getMessage());// TODO: Handle Exception
+           // TODO: Handle Exception
         }
     }
 */

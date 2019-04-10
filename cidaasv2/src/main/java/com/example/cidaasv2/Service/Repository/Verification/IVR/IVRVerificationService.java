@@ -152,9 +152,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Setup IVR Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_IVR_MFA_FAILURE));
-            Timber.e("Setup IVR Service exception"+e.getMessage());
+             callback.failure(WebAuthError.getShared(context).serviceException("Exception :IVRVerificationService:setupIVRMFA()",WebAuthErrorCode.SETUP_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -227,9 +225,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll IVR Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
-            Timber.e("Enroll IVR Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :IVRVerificationService:enrollIVRMFA()",WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -300,9 +296,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Initiate IVR MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE));
-            Timber.e("Initiate IVR MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :IVRVerificationService:initiateIVRMFA()",WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -376,9 +370,7 @@ public class IVRVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Authenticate IVR MFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
-            Timber.e("Authenticate IVR MFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :IVRVerificationService:authenticateIVRMFA()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 

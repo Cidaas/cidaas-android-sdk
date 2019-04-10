@@ -151,9 +151,7 @@ public class IVRConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :configureIVR()",WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -196,9 +194,7 @@ public class IVRConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :enrollIVRMFA()",WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -222,7 +218,7 @@ public class IVRConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
+                    result.failure(error);
                 }
             });
 
@@ -232,7 +228,7 @@ public class IVRConfigurationController {
         {
             Timber.e(e.getMessage());
             LogFile.getShared(context).addRecordToLog("Login With IVR"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :loginWithIVR()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -331,9 +327,7 @@ public class IVRConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Verify IVR"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE);
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE));
+             loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :verifyIVR()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 

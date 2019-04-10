@@ -153,9 +153,8 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :configureFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+           
         }
     }
 
@@ -190,9 +189,8 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :configureFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+           
         }
     }
 
@@ -282,8 +280,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :setupFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -367,8 +364,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE);
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE));
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :scannedWithFingerprint()",WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -423,12 +419,11 @@ public class FingerprintConfigurationController {
     }
     catch (Exception e)
     {
-        LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
-        enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
+        enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
     }
     }
 
-        public void enrollFingerprint(@NonNull final String baseurl, @NonNull final String accessToken,
+    public void enrollFingerprint(@NonNull final String baseurl, @NonNull final String accessToken,
                               @NonNull EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
     {
         try
@@ -515,8 +510,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(  "Fingerprint Exception:"+ e.getMessage()+WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -597,13 +591,11 @@ public class FingerprintConfigurationController {
    }
    catch (Exception e)
    {
-       Timber.e(e.getMessage());
-       LogFile.getShared(context).addRecordToLog("Login With Fingerprint configration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE);
-       loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
+       loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :LoginWithFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
    }
     }
 
-        public void LoginWithFingerprint(@NonNull final String baseurl, @NonNull final String clientId,
+    public void LoginWithFingerprint(@NonNull final String baseurl, @NonNull final String clientId,
                                      @NonNull final String trackId, @NonNull final String requestId,
                                      @NonNull final InitiateFingerprintMFARequestEntity initiateFingerprintMFARequestEntity,
                                      final Result<LoginCredentialsResponseEntity> loginresult)
@@ -749,9 +741,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Login With Fingerprint configration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE);
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :LoginWithFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -792,9 +782,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Authentication Fingerprint configration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE);
-            callBackresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
+            callBackresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -850,9 +838,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Authentication Fingerprint configration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE);
-            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE));
+            authResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -952,12 +938,9 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure( WebAuthError.getShared(context).serviceException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED);
+            result.failure( WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :callFingerPrint()",WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,e.getMessage()));
+           
         }
 
     }
-
-
-
 }

@@ -120,9 +120,7 @@ public class SMSConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :SMSConfigurationController :configureSMS()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -167,9 +165,8 @@ public class SMSConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE);
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :SMSConfigurationController :enrollSMSMFA()",WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,e.getMessage()));
+           
         }
     }
 
@@ -209,7 +206,7 @@ public class SMSConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
+                    result.failure(error);
                 }
             });
 
@@ -217,9 +214,7 @@ public class SMSConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Login With SMS"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :SMSConfigurationController :loginWithSMS()",WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -321,9 +316,7 @@ public class SMSConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Verify SMS"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE);
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE));
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :SMSConfigurationController :verifySMS()",WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -345,7 +338,7 @@ public class SMSConfigurationController {
         {
             Timber.e(e.getMessage());
             LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.SETUP_SMS_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE));
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :SMSConfigurationController :setAccessToken()",WebAuthErrorCode.SETUP_SMS_MFA_FAILURE));
 
         }
     }*/

@@ -122,10 +122,7 @@ public class SmartPushConfigurationController {
             });
 
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("configure SmartPush  exception" + e.getMessage());
-            enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,"Configure SmartPush exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Configure smartpush  exception" + e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :configureSmartPush()",WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
         }
 
     }
@@ -172,9 +169,8 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
-            Timber.e(e.getMessage());
+            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :configureSmartPush()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -359,8 +355,7 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Exception"+e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
-            scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
+            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :scannedWithSmartPush()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -409,9 +404,7 @@ public class SmartPushConfigurationController {
           });
       }
       catch (Exception e){
-          LogFile.getShared(context).addRecordToLog("Scanned smartpush Controller exception"+e.getMessage());
-          scannedResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE));
-          Timber.e("Scanned Smartpush Controller exception"+e.getMessage());
+          scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :SmartpushScannedCall()",WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,e.getMessage()));
       }
     }
 
@@ -501,9 +494,7 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Exception"+e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
-
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :setupSmartPush()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -553,10 +544,7 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll SmartPush exception" + e.getMessage());
-            enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,"Enroll SmartPush exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Enroll SmartPush exception" + e.getMessage());
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :enrollSmartPush()",WebAuthErrorCode.PROPERTY_MISSING,e.getMessage()));
         }
     }
 
@@ -648,8 +636,7 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Exception"+e.getMessage()+WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE));
+            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :enrollSmartPush()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -887,10 +874,7 @@ public class SmartPushConfigurationController {
                 }
             });
         } catch (Exception e) {
-            //loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE));
-            String loggerMessage = "Verify Smartpush : " + " Error Message - " + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
-            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,"Something Went wrong please try again"+e.getMessage(),417));
+            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :LoginWithSmartPush()",WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -1048,9 +1032,7 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            loginresult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE);
+           loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :LoginWithSmartPush()",WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -1085,10 +1067,7 @@ public class SmartPushConfigurationController {
                 }
             });
         } catch (Exception e) {
-            String loggerMessage = "Verify Smartpush : " + " Error Message - " + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,"Something Went wrong please try again"+e.getMessage(),417));
-
+            result.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :authenticateSmartPush()",WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -1144,8 +1123,7 @@ public class SmartPushConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE);
-            authResult.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE));
+            authResult.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushConfigurationController :authenticateSmartPush()",WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 

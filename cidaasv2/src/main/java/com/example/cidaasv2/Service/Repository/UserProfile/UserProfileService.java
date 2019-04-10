@@ -50,6 +50,12 @@ public class UserProfileService {
         authenticationType="";
         //Todo setValue for authenticationType
 
+        if(service==null) {
+            service=new CidaassdkService();
+
+            service.setContext(context);
+        }
+
     }
 
 
@@ -143,11 +149,9 @@ public class UserProfileService {
         {
             Timber.d(e.getMessage());
             LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE));
+            callback.failure(WebAuthError.getShared(context).serviceException("Exception :UserProfileService :getInternalUserProfileInfo()",WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,e.getMessage()));
         }
     }
 
     //get user info
-
-
 }
