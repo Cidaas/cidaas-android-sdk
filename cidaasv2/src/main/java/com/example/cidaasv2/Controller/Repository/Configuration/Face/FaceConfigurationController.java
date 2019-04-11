@@ -151,7 +151,7 @@ public class FaceConfigurationController {
                 @Override
                 public void success(final AccessTokenEntity accessTokenresult) {
 
-                    if(attempt>1) {
+                    if(attempt==1) {
                         setupFace(baseurl, accessTokenresult.getAccess_token(), FaceImageFile, setupFaceMFARequestEntity, enrollresult);
                     }
                     else {
