@@ -161,6 +161,7 @@ public class FaceConfigurationController {
                         enrollFaceMFARequestEntityWithAttempts.setStatusId(statusIdFromSetup);
                         enrollFaceMFARequestEntityWithAttempts.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
                         enrollFaceMFARequestEntityWithAttempts.setClient_id(setupFaceMFARequestEntity.getClient_id());
+                        enrollFaceMFARequestEntityWithAttempts.setAttempt(attempt);
 
                         enrollFace(baseurl,accessTokenresult.getAccess_token(),enrollFaceMFARequestEntityWithAttempts,enrollresult);
                     }

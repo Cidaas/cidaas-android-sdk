@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DecimalFormat;
 import java.util.logging.FileHandler;
 
 import androidx.core.content.ContextCompat;
@@ -53,6 +54,30 @@ public class LogFile {
         }
         return shared;
     }
+
+
+    public static boolean size(long size) {
+        String hrSize = "";
+        double m = size / 1024.0;
+        boolean moreThanOneMB = false;
+        DecimalFormat dec = new DecimalFormat("0.00");
+
+        if (m > 1) {
+            hrSize = dec.format(m).concat(" MB");
+            moreThanOneMB = true;
+        } else {
+            moreThanOneMB = false;
+            hrSize = dec.format(size).concat(" KB");
+        }
+        Timber.d("Size : " + hrSize);
+        return moreThanOneMB;
+    }
+
+
+
+
+
+
 
 
 
@@ -99,6 +124,16 @@ public class LogFile {
                                 Timber.d(e.getMessage());
                                 e.printStackTrace();
                             }
+                        }
+                        else
+                        {
+                            if (logFile.exists()) {
+                                if (size(logFile.length())) {
+                                    Timber.d("File deleted !");
+                                    logFile.delete();
+                                }
+                            }
+
                         }
                         try {
                             //BufferedWriter for performance, true to set append to file flag
