@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Service.Entity;
+package com.example.cidaasv2.Service.Entity.AccessToken;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

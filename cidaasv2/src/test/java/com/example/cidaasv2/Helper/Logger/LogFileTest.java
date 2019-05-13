@@ -7,9 +7,6 @@ import android.content.pm.PackageManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 
 import java.util.logging.FileHandler;
 
@@ -43,7 +40,7 @@ public class LogFileTest {
 
     @Test
     public void testAddRecordToLog() throws Exception {
-        LogFile.getShared(context).addRecordToLog("message");
+        LogFile.getShared(context).addFailureLog("message");
     }
 }
 

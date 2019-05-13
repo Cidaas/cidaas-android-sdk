@@ -21,6 +21,7 @@
     <string name="SERVICE_EXCEPTION">Some thing is wrong. Please Try again.</string>
 
     <string name="PROPERTY_MISSING">One of the property is missing.</string>
+    <string name="CIDAAS_PROPERTY_MISSING">DomainURL or ClientId or Redirect is missing.</string>
     <string name="ACCESS_TOKEN_CONVERSION_FAILURE">Access Token Failure.</string>
     <string name="DEVICE_VERIFICATION_FAILURE">Device is Failed to Verify</string>
     <string name="REQUEST_ID_MISSING">Request Id is missing.</string>

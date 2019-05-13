@@ -47,89 +47,132 @@ public class DeduplicationController {
         return shared;
     }
 
+    //-------------------------------------------------getDeduplicationList-------------------------------------------------------------
 
     public void getDeduplicationList( final String trackId, final Result<DeduplicationResponseEntity> deduplicaionResult)
     {
-        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> result) {
-                String baseurl = result.get("DomainURL");
-                DeduplicationService.getShared(context).getDeduplicationList(baseurl,trackId,deduplicaionResult);
-            }
+        String methodName="DeduplicationController:getDeduplicationList()";
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    DeduplicationService.getShared(context).getDeduplicationList(baseurl, trackId, deduplicaionResult);
+                }
 
-            @Override
-            public void failure(WebAuthError error) {
-             deduplicaionResult.failure(error);
-            }
-        });
-
-
+                @Override
+                public void failure(WebAuthError error) {
+                    deduplicaionResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception:"+methodName,WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE
+                    ,e.getMessage()));
+        }
     }
 
+    //-------------------------------------------------registerDeduplication-------------------------------------------------------------
     public void registerDeduplication(@NonNull String baseurl, @NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult)
     {
-        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> result) {
-                String baseurl = result.get("DomainURL");
-                String clientId = result.get("ClientId");
-                if (trackId != null && !trackId.equals("")) {
-                    DeduplicationService.getShared(context).registerDeduplication(baseurl,trackId,deduplicaionResult);
-                } else {
-                    String errorMessage = "TrackId Must not be null";
-                    deduplicaionResult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+        final String methodName="DeduplicationController:registerDeduplication()";
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+                    if (trackId != null && !trackId.equals("")) {
+                        DeduplicationService.getShared(context).registerDeduplication(baseurl, trackId, deduplicaionResult);
+                    } else {
+                        String errorMessage = "TrackId Must not be null";
+                        deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
 
+                    }
                 }
-            }
 
-            @Override
-            public void failure(WebAuthError error) {
-                deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
-            }
-        });
+                @Override
+                public void failure(WebAuthError error) {
+                    deduplicaionResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception:"+methodName,WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE
+                    ,e.getMessage()));
+        }
 
     }
 
+    //-------------------------------------------------registerDeduplication-------------------------------------------------------------
+
+    //todo Log
     public void loginDeduplication(@NonNull final String requestId, @NonNull final String sub, @NonNull final String password,
                                    final Result<LoginCredentialsResponseEntity> deduplicaionResult)
     {
+        final String methodName="DeduplicationController:loginDeduplication()";
       try
       {
               CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                   @Override
                   public void success(Dictionary<String, String> result) {
-                      String baseurl = result.get("DomainURL");
-                      String clientId = result.get("ClientId");
-                      if (sub != null && !sub.equals("") && password != null && !password.equals("")) {
-                          LoginEntity loginEntity=new LoginEntity();
-                          loginEntity.setUsername(sub);
-                          loginEntity.setUsername_type("sub");
-                          loginEntity.setPassword(password);
 
+                      LoginEntity loginEntity = new LoginEntity();
+                      loginEntity.setUsername(sub);
+                      loginEntity.setUsername_type("sub");
+                      loginEntity.setPassword(password);
 
-                          LoginCredentialsRequestEntity loginCredentialsRequestEntity=new LoginCredentialsRequestEntity();
-                          loginCredentialsRequestEntity.setUsername(sub);
-                          loginCredentialsRequestEntity.setPassword(password);
-                          loginCredentialsRequestEntity.setUsername_type("sub");
-                          loginCredentialsRequestEntity.setRequestId(requestId);
-
-                          LoginService.getShared(context).loginWithCredentials(baseurl,loginCredentialsRequestEntity,deduplicaionResult);
-
-                      } else {
-                          String errorMessage = "Sub or requestId or Password Must not be null";
-                          deduplicaionResult.failure(WebAuthError.getShared(context).customException(417, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                      }
+                      loginCredenditalsWithSub(result,loginEntity,requestId,deduplicaionResult);
                   }
+
+
 
                   @Override
                   public void failure(WebAuthError error) {
-                      deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                      deduplicaionResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
                   }
               });
       }
       catch (Exception e)
       {
-          deduplicaionResult.failure(WebAuthError.getShared(context).serviceException("Exception :DeduplicationController :setAccessToken()",WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
+          deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,
+                  WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
       }
+    }
+
+    //-------------------------------------------------registerDeduplication-------------------------------------------------------------
+
+    private void loginCredenditalsWithSub(Dictionary<String, String> result,LoginEntity loginEntity,String requestId,
+                                          final Result<LoginCredentialsResponseEntity> deduplicaionResult)
+    {
+        String methodName="DeduplicationController :loginCredenditalsWithSub()";
+        try {
+            String baseurl = result.get("DomainURL");
+            String clientId = result.get("ClientId");
+            if (loginEntity.getUsername() != null && !loginEntity.getUsername().equals("") && loginEntity.getPassword() != null &&
+                    !loginEntity.getPassword().equals("")) {
+
+
+
+                LoginCredentialsRequestEntity loginCredentialsRequestEntity = new LoginCredentialsRequestEntity();
+                loginCredentialsRequestEntity.setUsername(loginEntity.getUsername());
+                loginCredentialsRequestEntity.setPassword(loginEntity.getPassword());
+                loginCredentialsRequestEntity.setUsername_type("sub");
+                loginCredentialsRequestEntity.setRequestId(requestId);
+
+                LoginService.getShared(context).loginWithCredentials(baseurl, loginCredentialsRequestEntity, deduplicaionResult);
+
+            } else {
+                String errorMessage = "Sub or requestId or Password Must not be null";
+                deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+            }
+        }
+        catch (Exception e)
+        {
+            deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception:"+methodName,WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                    e.getMessage()));
+        }
     }
 }

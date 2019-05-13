@@ -3,9 +3,7 @@ package com.example.cidaasv2.Service.Repository.Verification.SmartPush;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -29,7 +27,6 @@ import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -89,8 +86,7 @@ public class SmartPushVerificationService {
                 scannedSmartPushUrl=baseurl+ URLHelper.getShared().getScannedSmartPushURL();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :SmartPushVerificationService :scannedSmartPush()"));
                 return;
             }
 
@@ -132,21 +128,21 @@ public class SmartPushVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,
+                                    response.code(),"Error :SmartPushVerificationService :scannedSmartPush()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,response
+                                ,"Error :SmartPushVerificationService :scannedSmartPush()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Scanned Smartpush service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Scanned Smartpush Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,
+                            t.getMessage(), "Error :SmartPushVerificationService :scannedSmartPush()"));
                 }
             });
 
@@ -154,7 +150,8 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :scannedSmartPush()",WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :SmartPushVerificationService :scannedSmartPush()",
+                    WebAuthErrorCode.SCANNED_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -170,8 +167,7 @@ public class SmartPushVerificationService {
                 setupSmartPushMFAUrl=baseurl+URLHelper.getShared().getSetupSmartPushMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :SmartPushVerificationService :enrollSmartPush()"));
                 return;
             }
 
@@ -221,21 +217,23 @@ public class SmartPushVerificationService {
 
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,
+                                    response.code(),"Error :SmartPushVerificationService :enrollSmartPush()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,response,
+                                "Error :SmartPushVerificationService :enrollSmartPush()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupSmartPushMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in set up Smartpush service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("setup Smartpush Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    LogFile.getShared(context).addFailureLog("callSetup Smartpush Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(
+                            WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,t.getMessage(), "Error :SmartPushVerificationService :enrollSmartPush()"));
                 }
             });
 
@@ -243,7 +241,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-             callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :setupSmartPush()",WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,e.getMessage()));
+             callback.failure(WebAuthError.getShared(context).methodException("Exception :SmartPushVerificationService :setupSmartPush()",WebAuthErrorCode.SETUP_SMARTPUSH_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -260,8 +258,8 @@ public class SmartPushVerificationService {
                 enrollSmartPushMFAUrl=baseurl+URLHelper.getShared().getEnrollSmartPushMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.PROPERTY_MISSING,
+                        context.getString(R.string.PROPERTY_MISSING), "Error :SmartPushVerificationService :enrollSmartPush()"));
                 return;
             }
 
@@ -306,22 +304,24 @@ public class SmartPushVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
+                                    response.code(),"Error :SmartPushVerificationService :enrollSmartPush()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
                         //Todo Check The error if it is not recieved
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
+                                response,"Error :SmartPushVerificationService :enrollSmartPush()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollSmartPushMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Enroll Smartpush service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Enroll Smartpush Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    LogFile.getShared(context).addFailureLog("Enroll Smartpush Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,
+                            t.getMessage(), "Error :SmartPushVerificationService :enrollSmartPush()"));
                 }
             });
 
@@ -329,7 +329,7 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :enrollSmartPush()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :SmartPushVerificationService :enrollSmartPush()",WebAuthErrorCode.ENROLL_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -345,8 +345,7 @@ public class SmartPushVerificationService {
                 initiateSmartPushMFAUrl=baseurl+URLHelper.getShared().getInitiateSmartPushMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :SmartPushVerificationService :initiateSmartPush()"));
                 return;
             }
 
@@ -390,28 +389,30 @@ public class SmartPushVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,
+                                    response.code(),"Error :SmartPushVerificationService :initiateSmartPush()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,
+                                response,"Error :SmartPushVerificationService :initiateSmartPush()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateSmartPushMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Initiate SmartPush Service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Initiate SmartPush MFA Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    LogFile.getShared(context).addFailureLog("Initiate SmartPush MFA Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,t.getMessage(),
+                            "Error :SmartPushVerificationService :initiateSmartPush()"));
                 }
             });
 
         }
         catch (Exception e)
         {
-             callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :initiateSmartPush()",WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,e.getMessage()));
+             callback.failure(WebAuthError.getShared(context).methodException("Exception :SmartPushVerificationService :initiateSmartPush()",WebAuthErrorCode.INITIATE_SMARTPUSH_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -428,8 +429,7 @@ public class SmartPushVerificationService {
                 authenticateSmartPushMFAUrl=baseurl+URLHelper.getShared().getAuthenticateSmartPushMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :SmartPushVerificationService :authenticateSmartPush()"));
                 return;
             }
 
@@ -472,21 +472,21 @@ public class SmartPushVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,
+                                    response.code(),"Error :SmartPushVerificationService :authenticateSmartPush()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,response
+                        ,"Error :SmartPushVerificationService :authenticateSmartPush()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateSmartPushResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Authenticate SmartPush  service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Authenticate SmartPush Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_SMARTPUSH_MFA_FAILURE,t.getMessage(),
+                            "Error :SmartPushVerificationService :authenticateSmartPush()"));
                 }
             });
 
@@ -494,7 +494,8 @@ public class SmartPushVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SmartPushVerificationService :authenticateSmartPush()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :SmartPushVerificationService :authenticateSmartPush()",
+                    WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 

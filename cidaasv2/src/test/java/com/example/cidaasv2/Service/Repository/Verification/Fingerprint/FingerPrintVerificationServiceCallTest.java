@@ -92,7 +92,7 @@ public class FingerPrintVerificationServiceCallTest {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/verification-srv/backupcode/setup");
+            server.url("/verification-srv/backupcode/callSetup");
 
 
 
@@ -509,7 +509,7 @@ public class FingerPrintVerificationServiceCallTest {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/verification-srv/backupcode/setup");
+            server.url("/verification-srv/backupcode/callSetup");
 
 
 
@@ -881,7 +881,7 @@ public class FingerPrintVerificationServiceCallTest {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/verification-srv/backupcode/setup");
+            server.url("/verification-srv/backupcode/callSetup");
 
 
 
@@ -1258,7 +1258,7 @@ public class FingerPrintVerificationServiceCallTest {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/verification-srv/backupcode/setup");
+            server.url("/verification-srv/backupcode/callSetup");
 
 
 
@@ -1635,7 +1635,7 @@ public class FingerPrintVerificationServiceCallTest {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/verification-srv/backupcode/setup");
+            server.url("/verification-srv/backupcode/callSetup");
 
 
 
@@ -2074,7 +2074,7 @@ public class FingerPrintVerificationServiceCallTest {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/verification-srv/backupcode/setup");
+            server.url("/verification-srv/backupcode/callSetup");
 
 
 

@@ -9,16 +9,14 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Repository.Consent.ConsentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import timber.log.Timber;
 
 public class ResumeLogin {
 
@@ -47,9 +45,12 @@ public class ResumeLogin {
         return shared;
     }
 
+    //--------------------------------------------------------resumeLoginAfterSuccessfullAuthentication--------------------------------------------------
+
     public void resumeLoginAfterSuccessfullAuthentication(String sub, String trackingCode, String verificationType, String usageType,
                                                           String clientId,String requestId,String trackId, String baseURL,
-                                                          Result<LoginCredentialsResponseEntity> loginresult) {
+                                                          Result<LoginCredentialsResponseEntity> loginresult)
+    {String methodName="ResumeLogin Controller :resumeLoginAfterSuccessfullAuthentication()";
         try {
 
             ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
@@ -76,35 +77,37 @@ public class ResumeLogin {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :ResumeLogin Controller :resumeLoginAfterSuccessfullAuthentication()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
+        loginresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
 
     }
 
-
+    //--------------------------------------------------------resumeLoginAfterSuccessfullAuthentication--------------------------------------------------
     public void resumeLoginAfterSuccessfullAuthentication(String sub, String trackingCode, String verificationType, PasswordlessEntity passwordlessEntity,
                                                           String clientId, String baseURL,
                                                           Result<LoginCredentialsResponseEntity> loginresult) {
-        resumeLoginAfterSuccessfullAuthentication(sub,trackingCode,verificationType,passwordlessEntity.getUsageType(),clientId,passwordlessEntity.getRequestId()
-        ,passwordlessEntity.getTrackId(),baseURL,loginresult);
+        resumeLoginAfterSuccessfullAuthentication(sub,trackingCode,verificationType,passwordlessEntity.getUsageType(),clientId,
+                passwordlessEntity.getRequestId(),passwordlessEntity.getTrackId(),baseURL,loginresult);
 
     }
 
-
-    public void resumeLoginAfterConsent(String baseurl,String sub,String trackId,String consentName,String consentVersion,String clientId,final Result<LoginCredentialsResponseEntity> loginresult)
+    //-----------------------------------------------------------resumeLoginAfterConsent------------------------------------------------------------------
+    public void resumeLoginAfterConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentEntity,
+                                        final Result<LoginCredentialsResponseEntity> loginresult)
     {
+        String methodName="ResumeLogin Controller :resumeLoginAfterConsent()";
         try
         {
             ResumeConsentRequestEntity resumeConsentRequestEntity = new ResumeConsentRequestEntity();
 
-            resumeConsentRequestEntity.setTrack_id(trackId);
-            resumeConsentRequestEntity.setSub(sub);
-            resumeConsentRequestEntity.setName(consentName);
-            resumeConsentRequestEntity.setVersion(consentVersion);
-            resumeConsentRequestEntity.setClient_id(clientId);
+            resumeConsentRequestEntity.setTrack_id(consentEntity.getTrackId());
+            resumeConsentRequestEntity.setSub(consentEntity.getSub());
+            resumeConsentRequestEntity.setName(consentEntity.getName());
+            resumeConsentRequestEntity.setVersion(consentEntity.getVersion());
+            resumeConsentRequestEntity.setClient_id(consentEntity.getClient_id());
 
 
-            ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity, null, new Result<ResumeConsentResponseEntity>() {
+            ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity,new Result<ResumeConsentResponseEntity>() {
                 @Override
                 public void success(ResumeConsentResponseEntity result) {
 
@@ -136,7 +139,7 @@ public class ResumeLogin {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :ResumeLogin Controller :resumeLoginAfterConsent()",WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
+         loginresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 }

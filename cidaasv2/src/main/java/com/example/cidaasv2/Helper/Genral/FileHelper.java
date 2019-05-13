@@ -30,8 +30,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import timber.log.Timber;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -62,6 +60,7 @@ public class FileHelper {
     //Read Properties
     public void readProperties(AssetManager assetManager,String fileNameFromBase,Result<Dictionary<String,String>> result)
     {
+        String methodName="FileHelper: readProperties()";
         InputStream inputStream;
         AssetManager asstManager= assetManager;
         String fileName=fileNameFromBase;
@@ -136,7 +135,7 @@ public class FileHelper {
                 }*/
                 else
                 {
-                   webAuthError.propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty");
+                   webAuthError.propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty","Error"+methodName);
                    result.failure(webAuthError);
                 }
             }
@@ -153,30 +152,30 @@ public class FileHelper {
 
             if(e.getMessage().equalsIgnoreCase("Property Cannot be null"))
             {
-                webAuthError = webAuthError.propertyMissingException("Property cannot be null");
-                LogFile.getShared(context).addRecordToLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
+                webAuthError = webAuthError.propertyMissingException("Property cannot be null","Error"+methodName);
+                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
                 result.failure(webAuthError);
             }
             else if (e instanceof FileNotFoundException)
             {
-                webAuthError = webAuthError.fileNotFoundException();
-                LogFile.getShared(context).addRecordToLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
+                webAuthError = webAuthError.fileNotFoundException(methodName);
+                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
                 result.failure(webAuthError);
             }
             else if(e instanceof XPathExpressionException || e instanceof NullPointerException)
             {
-                webAuthError=webAuthError.noContentInFileException();
-                LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
+                webAuthError=webAuthError.noContentInFileException(methodName);
+                LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
                 result.failure(webAuthError);
             }
             else
             {
                 //webAuthError.ErrorMessage=e.getMessage();
-                LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
-                result.failure(WebAuthError.getShared(context).serviceException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+                LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
+                result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
             }
 
-             result.failure(WebAuthError.getShared(context).serviceException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+             result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
 
     }
@@ -194,7 +193,7 @@ public class FileHelper {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.PARSE_XML);
+            LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.PARSE_XML);
             return null;
 
         }
@@ -224,12 +223,12 @@ public class FileHelper {
                 callback.success(loginProperties);
             } else {
                 //T handle Error
-                callback.failure(webAuthError.propertyMissingException("ClientId or DomainURL or RedirectURL must not be empty"));
+                callback.failure(webAuthError.CidaaspropertyMissingException("","Error:-FileHelper :paramsToDictionaryConverter()"));
             }
         }
         catch (Exception e)
         {
-            callback.failure(webAuthError.serviceException("Exception :FileHelper :paramsToDictionaryConverter()",WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
+            callback.failure(webAuthError.methodException("Exception :FileHelper :paramsToDictionaryConverter()",WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
         }
     }
 
@@ -237,6 +236,7 @@ public class FileHelper {
     //Convert parameter into a Dictionary Object
     public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, Result<Dictionary<String,String>> callback)
     {
+        String methodName="FileHelper :paramsToDictionaryConverter()";
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") ) {
@@ -251,12 +251,12 @@ public class FileHelper {
                 callback.success(loginProperties);
             } else {
                 //T handle Error
-                callback.failure(webAuthError.propertyMissingException("ClientId or DomainURL or RedirectURL must not be empty"));
+                callback.failure(webAuthError.propertyMissingException("ClientId or DomainURL or RedirectURL must not be empty","Error:"+methodName));
             }
         }
         catch (Exception e)
         {
-            callback.failure(webAuthError.serviceException("Exception :FileHelper :paramsToDictionaryConverter()",WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
+            callback.failure(webAuthError.methodException("Exception :"+methodName,WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
         }
     }
 }

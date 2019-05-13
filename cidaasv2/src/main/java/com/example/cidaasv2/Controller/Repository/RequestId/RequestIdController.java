@@ -87,8 +87,7 @@ public class RequestIdController {
     //Service call for RequestID
     public void getRequestId(final Dictionary<String,String> loginproperties,  final Result<AuthRequestResponseEntity> Primaryresult,@Nullable HashMap<String, String>... extraParams )
     {
-
-
+        String methodName="RequestIdController :getRequestId()";
         try {
 
             //Check all the login Properties are Correct
@@ -103,35 +102,31 @@ public class RequestIdController {
 
             DBHelper.getShared().addLoginProperties(loginproperties);
 
-            RequestIdService.getShared(context).getRequestID(loginproperties, null,null,
-                   Primaryresult,extraParams);
+            RequestIdService.getShared(context).getRequestID(loginproperties, Primaryresult,extraParams);
         }
         catch (Exception e)
         {
-            Primaryresult.failure(WebAuthError.getShared(context).serviceException("Exception :RequestIdController :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
-            String loggerMessage = "Request-Id Controller getRequestId() Exception : Error Message - " + e.getMessage();
-            LogFile.getShared(context).addRecordToLog(loggerMessage);
+            Primaryresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
+                    e.getMessage()));
         }
     }
 
-    private boolean checkNotnull(Dictionary<String, String> loginproperties, Result<AuthRequestResponseEntity> Primaryresult) {
-
+    private boolean checkNotnull(Dictionary<String, String> loginproperties, Result<AuthRequestResponseEntity> Primaryresult)
+    {
+     String methodName="RequestIdController:checkNotnull() ";
         if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL").equals("")
                 || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("DomainURL must not be null",
-                    "Request-Id readProperties failure :"));
+            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("DomainURL must not be null","Error:"+methodName));
             return true;
         }
         if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
                 || !((Hashtable) loginproperties).containsKey("ClientId")) {
-            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("ClientId must not be null",
-                    "Request-Id readProperties failure :"));
+            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("ClientId must not be null","Error:"+methodName));
             return true;
         }
         if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
                 || loginproperties.get("RedirectURL").equals("")) {
-            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("RedirectURL must not be null",
-                    "Request-Id readProperties failure :"));
+            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("RedirectURL must not be null","Error:"+methodName));
             return true;
         }
 
@@ -140,7 +135,7 @@ public class RequestIdController {
             if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret").equals("") || loginproperties == null
                     || !((Hashtable) loginproperties).containsKey("ClientSecret")) {
                 Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("PKCE flow is disabled ,ClientSecret must not be null",
-                        "Request-Id readProperties failure :"));
+                        "Error:"+methodName));
                 return true;
             }
             else

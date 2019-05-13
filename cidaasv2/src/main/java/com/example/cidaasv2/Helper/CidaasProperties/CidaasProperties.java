@@ -3,20 +3,15 @@ package com.example.cidaasv2.Helper.CidaasProperties;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-
-import timber.log.Timber;
 
 import static com.example.cidaasv2.Controller.Cidaas.ENABLE_PKCE;
 
@@ -73,7 +68,7 @@ public class CidaasProperties {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :CidaasProperties :checkCidaasProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :CidaasProperties :checkCidaasProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
@@ -94,15 +89,15 @@ public class CidaasProperties {
                 public void failure(WebAuthError error) {
                     //Return File Reading Error
                     String loggerMessage = "Read From File failure : "
-                            + "Error Code - " + error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " + error.statusCode;
-                    LogFile.getShared(context).addRecordToLog(loggerMessage);
+                            + "Error Code - " + error.getErrorCode() + ", Error Message - " + error.getErrorMessage() + ", Status Code - " + error.getStatusCode();
+                    LogFile.getShared(context).addFailureLog(loggerMessage);
                     loginPropertiesResult.failure(error);
                 }
             });
         }
         catch (Exception e)
         {
-          loginPropertiesResult.failure(WebAuthError.getShared(context).serviceException("Exception :CidaasProperties :readFromFile()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+          loginPropertiesResult.failure(WebAuthError.getShared(context).methodException("Exception :CidaasProperties :readFromFile()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
@@ -122,15 +117,15 @@ public class CidaasProperties {
             }
 
         } catch (Exception e) {
-            savedResult.failure(WebAuthError.getShared(context).serviceException("Exception :CidaasProperties :checkPKCEFlow()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+            savedResult.failure(WebAuthError.getShared(context).methodException("Exception :CidaasProperties :checkPKCEFlow()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
     //Get WebAuth error
-    public WebAuthError getAuthError(String errorMessage, String title) {
-        String loggerMessage = title + "Error Code - " + WebAuthErrorCode.READ_PROPERTIES_ERROR + ", Error Message - " + errorMessage;
-        LogFile.getShared(context).addRecordToLog(loggerMessage);
-        return WebAuthError.getShared(context).propertyMissingException(errorMessage);
+    public WebAuthError getAuthError(String errorMessage, String methodName) {
+        String loggerMessage = methodName + "Error Code - " + WebAuthErrorCode.READ_PROPERTIES_ERROR + ", Error Message - " + errorMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        return WebAuthError.getShared(context).propertyMissingException(errorMessage,methodName);
     }
 
 

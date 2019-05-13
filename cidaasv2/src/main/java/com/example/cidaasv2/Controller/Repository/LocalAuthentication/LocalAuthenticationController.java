@@ -52,10 +52,10 @@ public class LocalAuthenticationController {
         return shared;
     }
 
-    public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result) {
+    public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result)
+    {
+        String methodName="LocalAuthenticationController :localAuthentication()";
         try {
-
-
             activityFromCidaas=activity;
             localAuthenticationEntityCallback=result;
 
@@ -67,22 +67,22 @@ public class LocalAuthenticationController {
                 Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(null, null);
                 activity.startActivityForResult(intent, LOCAL_REQUEST_CODE);
             } else {
-                // tabPager.setVisibility(View.GONE);
-                // no lock screen set, show the new lock needed screen
-                //showDialogToSetupLock(activity,result);
-                result.failure(new WebAuthError(context).customException(WebAuthErrorCode.NO_LOCAL_AUHTHENTICATION_FOUND, "NO LOCAL AUTHENTICATION FOUND", 417));
+               result.failure(new WebAuthError(context).customException(WebAuthErrorCode.NO_LOCAL_AUHTHENTICATION_FOUND, "NO LOCAL AUTHENTICATION FOUND",
+                       "Error"+methodName));
             }
         }
         catch (Exception e)
         {
-            result.failure(new WebAuthError(context).serviceException("Exception :LocalAuthenticationController :setAccessToken()",WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
+            result.failure(new WebAuthError(context).methodException("Exception :"+methodName,WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
         }
     }
 
     //------------------------------------------------------------------------------------------Local Authentication----------------------------------------
 
     //Cidaas Set OnActivity Result For Handling Device Authentication
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        String methodName="LocalAuthenticationController :onActivityResult()";
 
         try {
 
@@ -106,14 +106,10 @@ public class LocalAuthenticationController {
 
                                 } else {
                                     // user did not authenticate so send failure callback
-
-
                                     String user = "User Cancelled the Authentication";
 
-
-                                    localAuthenticationEntityCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_CANCELLED,user,417));
-
-                                    Timber.d("User" + user);
+                                    localAuthenticationEntityCallback.failure(WebAuthError.getShared(context).customException(
+                                            WebAuthErrorCode.LOCAL_AUHTHENTICATION_CANCELLED,user,methodName));
 
                                 }
                                 break;
@@ -129,10 +125,12 @@ public class LocalAuthenticationController {
             }
            /* else
             {
-                localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, "Call back must not be null", 417));
+                localAuthenticationEntityCallback.failure(new WebAuthError(context).customException(WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED,
+                "Call back must not be null", 417));
             }*/
         } catch (Exception e) {
-            localAuthenticationEntityCallback.failure(new WebAuthError(context).serviceException("Exception :LocalAuthenticationController :onActivityResult()",WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED,e.getMessage()));
+            localAuthenticationEntityCallback.failure(new WebAuthError(context).methodException("Exception :"+methodName,
+                    WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED,e.getMessage()));
         }
     }
 
@@ -170,7 +168,8 @@ public class LocalAuthenticationController {
         }
         catch (Exception e)
         {
-            result.failure(new WebAuthError(context).serviceException("Exception :LocalAuthenticationController :showDialogToSetupLock()",WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
+            result.failure(new WebAuthError(context).methodException("Exception :LocalAuthenticationController :showDialogToSetupLock()",
+                    WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
         }
     }
 }

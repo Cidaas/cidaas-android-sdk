@@ -8,7 +8,7 @@ import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.Repository.LocationHistory.UserLoginInfoService;
@@ -47,6 +47,7 @@ public class UserLoginInfoController {
 
     public void getUserLoginInfo(final UserLoginInfoEntity userLoginInfoEntity, final Result<UserLoginInfoResponseEntity> result)
     {
+        final String methodName="UserLoginInfoController :getUserLoginInfo()";
         try
         {
             if(userLoginInfoEntity.getSub()!=null && !userLoginInfoEntity.getSub().equals("")) {
@@ -72,36 +73,32 @@ public class UserLoginInfoController {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                        result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(error.getErrorMessage(), "Error:"+methodName));
                     }
                 });
             }
             else {
                 // handle Faliure
-                result.failure(WebAuthError.getShared(context).
-                        customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,"Sub must not be empty",
-                                HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be empty","Error:"+methodName));
             }
         }
         catch (Exception e)
         {
             // handle Faliure Exception
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :UserLoginInfoController :getUserLoginInfo()"
-                    ,WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage()));
+          result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
     public void getUserLoginInfo(String baseurl, String accessToken, UserLoginInfoEntity locationHistoryEntity,
                                  Result<UserLoginInfoResponseEntity> locationHistoryResponseEntityResult)
     {
+        String methodName="UserLoginInfoController :getUserLoginInfo()";
         if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
-            UserLoginInfoService.getShared(context).getUserLoginInfoService(baseurl, accessToken, locationHistoryEntity,
-                    null, locationHistoryResponseEntityResult);
+            UserLoginInfoService.getShared(context).getUserLoginInfoService(baseurl, accessToken, locationHistoryEntity, locationHistoryResponseEntityResult);
         }
         else {
-            locationHistoryResponseEntityResult.failure(WebAuthError.getShared(context).
-                    customException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,"Base URL and Access Token must not be empty",
-                            HttpStatusCode.EXPECTATION_FAILED));
+            locationHistoryResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("Base URL and Access Token must not be empty",
+                    "Error"+methodName));
         }
 
     }

@@ -8,7 +8,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.util.UUID;
@@ -40,6 +40,7 @@ public static EntityToModelConverter sharedinstance;
 // convert accessTokenEntity To AccessTokenModel
     public void accessTokenEntityToAccessTokenModel(AccessTokenEntity accessTokenEntity, String userId, Result<AccessTokenModel> callback)
     {
+        String methodName="accessTokenEntityToAccessTokenModel";
         try
         {
             String EncryptedToken="";
@@ -83,8 +84,8 @@ public static EntityToModelConverter sharedinstance;
         catch (Exception e)
         {
             //TODO Handle Error
-            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage()));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
+            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(),methodName));
+            LogFile.getShared(context).addFailureLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 
@@ -137,8 +138,8 @@ public static EntityToModelConverter sharedinstance;
         catch (Exception e)
         {
             //TODO Handle Error
-            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage()));
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
+            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(),"Methodname"));
+            LogFile.getShared(context).addFailureLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 

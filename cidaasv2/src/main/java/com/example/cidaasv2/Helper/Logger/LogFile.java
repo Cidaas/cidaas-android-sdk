@@ -13,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.logging.FileHandler;
 
 import androidx.core.content.ContextCompat;
@@ -25,8 +26,9 @@ import timber.log.Timber;
 public class LogFile {
 
     public static FileHandler logger = null;
-    private static String filename = "cidaassdklogfile";
-
+    private static String failure_log_filename = "cidaas_sdk_failure_log";
+    private static String success_log_filename = "cidaas_sdk_success_log";
+    private static String info_log_filename = "cidaas_sdk_info_log";
     private final Context mContext;
 
   //Variables to Check permission
@@ -74,19 +76,28 @@ public class LogFile {
     }
 
 
+    /*public String getTime()
+    {
+        try
+        {
+            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa");
+            String datetime = dateformat.format(c.getTime());
+            System.out.println(datetime);
+
+            return  datetime;
+        }
+        catch (Exception e)
+        {
+            return "";
+        }
+    }*/
 
 
 
-
-
-
-
-
-    //Add records to a log file
-    @TargetApi(Build.VERSION_CODES.M)
-    public void addRecordToLog(String message) {
-        try {
-
+    public void addRecordTolog(String filename,String message)
+    {
+        try
+        {
             if(DBHelper.getShared().getEnableLog()) {
 
                 if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -140,7 +151,7 @@ public class LogFile {
                             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
 
 
-                            buf.write(message + "\r\n");
+                          //  buf.write(getTime()+" "+message + "\r\n");
                             //buf.append(message);
                             buf.newLine();
                             buf.flush();
@@ -158,6 +169,62 @@ public class LogFile {
             {
                 Timber.i("Log is not enabled");
             }
+        }
+        catch (Exception e)
+        {
+            Timber.d("Add record to log"+e.getMessage());
+        }
+    }
+
+
+
+
+
+
+    //Add records to a log file
+    @TargetApi(Build.VERSION_CODES.M)
+    public void addFailureLog(String message) {
+        try {
+
+             addRecordTolog(failure_log_filename,message);
+
+        }
+        catch (Exception e)
+        {
+
+            Timber.d(e.getMessage());   //todo Handle Exception
+        }
+    }
+
+
+
+
+    //Add records to a log file
+    @TargetApi(Build.VERSION_CODES.M)
+    public void addSuccessLog(String methodName,String message) {
+        try {
+
+            String loggerMessage = "S:- "+methodName+ "Success Message:- " +message;
+
+            addRecordTolog(success_log_filename,loggerMessage);
+
+        }
+        catch (Exception e)
+        {
+
+            Timber.d(e.getMessage());   //todo Handle Exception
+        }
+    }
+
+
+    //Add records to a log file
+    @TargetApi(Build.VERSION_CODES.M)
+    public void addInfoLog(String methodName,String message) {
+        try {
+
+            String loggerMessage = "S:- "+methodName+ "Info Message:- " +message;
+
+            addRecordTolog(info_log_filename,loggerMessage);
 
         }
         catch (Exception e)

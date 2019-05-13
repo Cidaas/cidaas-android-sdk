@@ -11,8 +11,7 @@ import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
 import com.example.cidaasv2.Service.Repository.DocumemtScannerService.DocumentScannerService;
 
@@ -106,14 +105,16 @@ public class DocumentScannnerController {
                 if (out != null) {
                     out.close();
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.d("Raja io", e.getLocalizedMessage());
             }
         }
         return imageFile;
     }
 
-    public void sendtoServicecall(final File photo, final String sub, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+    public void sendtoServicecall(final File photo, final String sub, final Result<DocumentScannerServiceResultEntity> resultEntityResult)
+    {
+        final String methodName="DocumentScannnerController :sendtoServicecall()";
         try {
 
             if (photo != null && !sub.equals("") && sub!=null) {
@@ -140,7 +141,7 @@ public class DocumentScannnerController {
 
 
                         } else {
-                            resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "BaseURL must not be null", 417));
+                            resultEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL must not be null", "Error"+methodName));
                         }
                     }
 
@@ -151,29 +152,29 @@ public class DocumentScannnerController {
                     }
                 });
             } else {
-                resultEntityResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, "Photo or sub must not be null", 417));
+                resultEntityResult.failure(WebAuthError.getShared(context).propertyMissingException( "Photo or sub must not be null", "Error"+methodName));
             }
         } catch (Exception e) {
-            resultEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :DocumentScannnerController :sendtoServicecall()",WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage()));
+            resultEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage()));
 
         }
     }
 
 
-        public void sendtoServicecall(String baseurl, File photo, String accessToken,Result<DocumentScannerServiceResultEntity> result)
-    {
+    public void sendtoServicecall(String baseurl, File photo, String accessToken,Result<DocumentScannerServiceResultEntity> result)
+    {String methodName="DocumentScannnerController :sendtoServicecall()";
         try {
 
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
-                DocumentScannerService.getShared(context).sendDocuemntToService(baseurl, photo, accessToken,null, result);
+                DocumentScannerService.getShared(context).sendDocumentToService(baseurl, photo, accessToken,null, result);
             }
             else {
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,"Base URL or AccessToken must not be null",417));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Base URL or AccessToken must not be null","Error"+methodName));
             }
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :DocumentScannnerController :sendtoServicecall()",WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage()));
 
         }
     }

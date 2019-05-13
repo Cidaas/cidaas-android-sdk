@@ -11,7 +11,6 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
-import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSResponseEntity;
@@ -81,8 +80,7 @@ public class SMSVerificationService {
                 setupSMSMFAUrl=baseurl+ URLHelper.getShared().getSetupSMSMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :SMSVerificationService :setupSMSMFA()"));
                 return;
             }
 
@@ -119,21 +117,22 @@ public class SMSVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,
+                                    response.code(),"Error :SMSVerificationService :setupSMSMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,response,"Error :SMSVerificationService :setupSMSMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupSMSMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Setup SMS service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Setup SMS Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    LogFile.getShared(context).addFailureLog("Setup SMS Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,t.getMessage(),
+                            "Error :SMSVerificationService :setupSMSMFA()"));
                 }
             });
 
@@ -141,7 +140,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :setupSMSMFA()",WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :SMSVerificationService :setupSMSMFA()",WebAuthErrorCode.SETUP_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -155,8 +154,7 @@ public class SMSVerificationService {
                 enrollSMSMFAUrl=baseurl+URLHelper.getShared().getEnrollSMSMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :SMSVerificationService :enrollSMSMFA()"));
                 return;
             }
 
@@ -193,21 +191,23 @@ public class SMSVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,
+                                    response.code(),"Error :SMSVerificationService :enrollSMSMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,response
+                                ,"Error :SMSVerificationService :enrollSMSMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollSMSMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Enroll SMS service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Enroll SMS Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    LogFile.getShared(context).addFailureLog("Enroll SMS Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,t.getMessage(),
+                            "Error :SMSVerificationService :enrollSMSMFA()"));
                 }
             });
 
@@ -215,7 +215,7 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :enrollSMSMFA()",WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :SMSVerificationService :enrollSMSMFA()",WebAuthErrorCode.ENROLL_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -230,8 +230,7 @@ public class SMSVerificationService {
                 initiateSMSMFAUrl=baseurl+URLHelper.getShared().getInitiateSMSMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :SMSVerificationService :initiateSMSMFA()"));
                 return;
             }
 
@@ -266,21 +265,23 @@ public class SMSVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,
+                                    response.code(),"Error :SMSVerificationService :initiateSMSMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,response,
+                                "Error :SMSVerificationService :initiateSMSMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateSMSMFAResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Initiate SMS Service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Initiate SMS MFA Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    LogFile.getShared(context).addFailureLog("Initiate SMS MFA Service Failure"+t.getMessage());
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,t.getMessage(),
+                            "Error :SMSVerificationService :initiateSMSMFA()"));
                 }
             });
 
@@ -288,7 +289,8 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :initiateSMSMFA()",WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :SMSVerificationService :initiateSMSMFA()",
+                    WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -303,8 +305,8 @@ public class SMSVerificationService {
                 authenticateSMSMFAUrl=baseurl+URLHelper.getShared().getAuthenticateSMSMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty",
+                        "Error :SMSVerificationService :authenticateSMSMFA()"));
                 return;
             }
 
@@ -340,22 +342,22 @@ public class SMSVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,
+                                    response.code(),"Error :SMSVerificationService :authenticateSMSMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
                         //Todo Check The error if it is not recieved
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,response,
+                                "Error :SMSVerificationService :authenticateSMSMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateSMSResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Authenticate SMS service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Authenticate SMS Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,t.getMessage(),
+                            "Error :SMSVerificationService :authenticateSMSMFA()"));
                 }
             });
 
@@ -363,7 +365,8 @@ public class SMSVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :SMSVerificationService :authenticateSMSMFA()",WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :SMSVerificationService :authenticateSMSMFA()",
+                    WebAuthErrorCode.AUTHENTICATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 

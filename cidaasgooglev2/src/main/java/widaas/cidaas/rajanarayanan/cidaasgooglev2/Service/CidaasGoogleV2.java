@@ -10,7 +10,7 @@ import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Interface.ICidaasGoogle;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -25,20 +25,16 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasService;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.Entity.GoogleSettingsEntity;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.GoogleAccessTokenEntity;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.Interface.IGoogleAccessTokenEntity;
-import widaas.cidaas.rajanarayanan.cidaasgooglev2.R;
 
 public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks ,ICidaasGoogle{
 

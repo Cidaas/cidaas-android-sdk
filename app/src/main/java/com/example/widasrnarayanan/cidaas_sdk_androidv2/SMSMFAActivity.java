@@ -72,7 +72,7 @@ public class SMSMFAActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(SMSMFAActivity.this, "Result Failure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SMSMFAActivity.this, "Result Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();

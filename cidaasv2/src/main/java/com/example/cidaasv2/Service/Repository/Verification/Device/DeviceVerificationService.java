@@ -3,15 +3,12 @@ package com.example.cidaasv2.Service.Repository.Verification.Device;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
@@ -21,7 +18,6 @@ import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -80,8 +76,7 @@ public class DeviceVerificationService {
                 validateDeviceUrl=baseurl+ URLHelper.getShared().getValidateDeviceURL();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),"Error :DeviceVerificationService :validateDevice()"));
                 return;
             }
 
@@ -130,21 +125,21 @@ public class DeviceVerificationService {
 
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,
+                                    response.code(),"Error :DeviceVerificationService :validateDevice()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,response
+                                ,"Error :DeviceVerificationService :validateDevice()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ValidateDeviceResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Validate Device service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Validate Device Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,t.getMessage(),
+                            "Error :DeviceVerificationService :validateDevice()"));
                 }
             });
 
@@ -152,9 +147,9 @@ public class DeviceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Validate Device Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :DeviceVerificationService :validateDevice()",WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,e.getMessage()));
-            Timber.e("Validate Device Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :DeviceVerificationService :validateDevice()",
+                    WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE,e.getMessage()));
+
         }
     }
 

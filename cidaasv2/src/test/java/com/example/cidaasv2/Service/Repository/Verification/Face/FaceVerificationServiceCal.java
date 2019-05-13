@@ -81,7 +81,7 @@ public class FaceVerificationServiceCal {
 
             MockWebServer server = new MockWebServer();
             String domainURL= server.url("").toString();
-            server.url("/verification-srv/backupcode/setup");
+            server.url("/verification-srv/backupcode/callSetup");
 
 
 

@@ -105,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(RegisterActivity.this,"Get Registration Setup Fails "+ error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this,"Get Registration Setup Fails "+ error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -189,7 +189,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(RegisterActivity.this, "Register Failed"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Register Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

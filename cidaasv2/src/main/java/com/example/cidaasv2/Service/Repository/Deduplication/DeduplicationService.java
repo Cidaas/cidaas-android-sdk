@@ -3,24 +3,18 @@ package com.example.cidaasv2.Service.Repository.Deduplication;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -72,247 +66,140 @@ public class DeduplicationService {
     }
 
 
-    //Get Deduplication info
+    //todo log
+    //----------------------------------------------------Get Deduplication info--------------------------------------------------
     public void getDeduplicationList(String baseurl,String trackId, final Result<DeduplicationResponseEntity> callback)
     {
         //Local Variables
-        String DeduplicationUrl = "";
+        String methodName = "DeduplicationService :getDeduplicationList()";
         try{
 
-            if(baseurl!=null && !baseurl.equals("")){
+            if(baseurl!=null && !baseurl.equals(""))
+            {
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
-                DeduplicationUrl=baseurl+ URLHelper.getShared().getDeduplicationList()+trackId;
+               String DeduplicationUrl=baseurl+ URLHelper.getShared().getDeduplicationList()+trackId;
+
+               //Header Generation
+               Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
+
+               //Service call For DeduplicationList
+               serviceCallForDeduplicationList(callback, DeduplicationUrl, headers);
+
             }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
-                return;
+            else
+            {
+              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),"Error :"+methodName));
+              return;
             }
-
-            Map<String, String> headers = new Hashtable<>();
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
-            //Call Service-getRequestId
-            ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getDeduplicationList(DeduplicationUrl,headers).enqueue(new Callback<DeduplicationResponseEntity>() {
-                @Override
-                public void onResponse(Call<DeduplicationResponseEntity> call, Response<DeduplicationResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,response));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<DeduplicationResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                            t.getMessage(), 400,null,null));
-
-                }
-            });
         }
         catch (Exception e)
         {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :DeduplicationService :getDeduplicationList()",WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
         }
     }
 
-    //Register Deduplication info
+    private void serviceCallForDeduplicationList(final Result<DeduplicationResponseEntity> callback, String deduplicationUrl, Map<String, String> headers)
+    {
+     final String methodName="DeduplicationService :serviceCallForDeduplicationList()";
+        try {
+           //Call Service-getRequestId
+           ICidaasSDKService cidaasSDKService = service.getInstance();
+           cidaasSDKService.getDeduplicationList(deduplicationUrl, headers).enqueue(new Callback<DeduplicationResponseEntity>() {
+               @Override
+               public void onResponse(Call<DeduplicationResponseEntity> call, Response<DeduplicationResponseEntity> response) {
+                   if (response.isSuccessful()) {
+                       if (response.code() == 200) {
+                           callback.success(response.body());
+                       } else {
+                           callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                                  response.code(), "Error :"+methodName));
+                       }
+                   } else {
+                       callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, response
+                               , "Error :"));
+                   }
+               }
+
+               @Override
+               public void onFailure(Call<DeduplicationResponseEntity> call, Throwable t) {
+                   callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                           t.getMessage(), "Error :"+methodName));
+
+               }
+           });
+       }
+       catch (Exception e)
+       {
+          callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
+       }
+    }
+
+    //--------------------------------------------------Register Deduplication info------------------------------------------------
     public void registerDeduplication(String baseurl,String trackId, final Result<RegisterDeduplicationEntity> callback)
     {
         //Local Variables
-        String registerDeduplicationUrl = "";
+        String methodName = "DeduplicationService :registerDeduplication()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
-                registerDeduplicationUrl=baseurl+ URLHelper.getShared().getRegisterdeduplication()+trackId;
+                String registerDeduplicationUrl=baseurl+ URLHelper.getShared().getRegisterdeduplication()+trackId;
+
+                //Header Generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+
+                //ServiceCall
+                serviceCallForRegisterDeduplication(registerDeduplicationUrl, headers, callback);
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),"Error :"+methodName));
                 return;
             }
+        }
+        catch (Exception e)
+        {
+         callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
+        }
+    }
 
-
-
-            Map<String, String> headers = new Hashtable<>();
-
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
-
+    private void serviceCallForRegisterDeduplication(String registerDeduplicationUrl,Map<String, String> headers,final Result<RegisterDeduplicationEntity> callback)
+    {
+        final String methodName = "";
+        try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.registerDeduplication(registerDeduplicationUrl,headers).enqueue(new Callback<RegisterDeduplicationEntity>() {
+            cidaasSDKService.registerDeduplication(registerDeduplicationUrl, headers).enqueue(new Callback<RegisterDeduplicationEntity>() {
                 @Override
                 public void onResponse(Call<RegisterDeduplicationEntity> call, Response<RegisterDeduplicationEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                                    response.code(), "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,response));
+                    } else {
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                                response, "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RegisterDeduplicationEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                            t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+                            t.getMessage(), "Error :"+methodName));
 
                 }
             });
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :DeduplicationService :registerDeduplication()",WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
+         callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,e.getMessage()));
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   /* //Login Deduplication
-    public void loginDeduplication(final String baseurl, LoginEntity loginEntity, final Result<LoginCredentialsResponseEntity> callback)
-    {
-
-        String loginUrl = "";
-        try{
-
-            if(baseurl!=null || baseurl!=""){
-                //Construct URL For RequestId
-                loginUrl=baseurl+ URLHelper.getShared().getLoginWithCredentials();
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
-                return;
-            }
-
-
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-
-
-            //Call Service-getRequestId
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.logindeDuplicatopm(loginUrl,headers, loginEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
-                @Override
-                public void onResponse(Call<LoginCredentialsResponseEntity> call, Response<LoginCredentialsResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("")
-                                    && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<LoginCredentialsResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,t.getMessage(), 400,null,null));
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            LogFile.addRecordToLog("LoginDeduplicationResponseEntity Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-        }
-    }*/
-
-
-
-    //Get deduplication details
-    //Deduplication Login
-    //Register deduplication
 }

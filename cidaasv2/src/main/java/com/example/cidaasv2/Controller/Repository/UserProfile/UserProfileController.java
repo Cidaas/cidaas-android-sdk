@@ -2,14 +2,13 @@ package com.example.cidaasv2.Controller.Repository.UserProfile;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Repository.OauthService;
 
@@ -47,7 +46,64 @@ public class UserProfileController {
         return shared;
     }
 
-    /*//Get Internal userProfile
+
+    public void getUserProfile(String sub, final Result<UserinfoEntity> callback)
+    {String methodName="UserProfileController :getUserProfile()";
+        try
+        {
+                if (sub != null && !sub.equals("")) {
+
+                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(final AccessTokenEntity accessTokenresult) {
+                            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                                @Override
+                                public void success(Dictionary<String, String> result) {
+                                    OauthService.getShared(context).getUserinfo(accessTokenresult.getAccess_token(),result.get("DomainURL"),callback);
+                                }
+
+                                @Override
+                                public void failure(WebAuthError error) {
+                                    callback.failure(error);
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callback.failure(error);
+                        }
+                    });
+
+                } else {
+                    String errorMessage = "Sub must not be null";
+                    callback.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error:"+methodName));
+                }
+
+        }
+        catch (Exception e)
+        {
+       callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,e.getMessage()));
+        }
+    }
+
+
+    public void getUserConfigurationList()
+    {
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+}
+
+   /*//Get Internal userProfile
     public void getInternalUserProfile(@NonNull String AccessToken, @NonNull String sub, @NonNull final Result<UserprofileResponseEntity> result){
         try {
             String baseurl="";
@@ -74,7 +130,7 @@ public class UserProfileController {
                 webAuthError = webAuthError.propertyMissingException();
                 String loggerMessage = "Verify Email MFA readProperties failure : " + "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
                         + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
+                LogFile.addFailureLog(loggerMessage);
                 result.failure(webAuthError);
             } else {
                 baseurl = savedProperties.get("DomainURL");
@@ -84,7 +140,7 @@ public class UserProfileController {
         }
         catch (Exception e)
         {
-            LogFile.addRecordToLog("acceptConsent exception"+e.getMessage());
+            LogFile.addFailureLog("acceptConsent exception"+e.getMessage());
             Timber.e("acceptConsent exception"+e.getMessage());
         }
     }
@@ -122,58 +178,3 @@ public class UserProfileController {
     }
 
 */
-    public void getUserProfile(String sub, final Result<UserinfoEntity> callback)
-    {
-        try
-        {
-                if (sub != null && !sub.equals("")) {
-
-                    AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(final AccessTokenEntity accessTokenresult) {
-                            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                                @Override
-                                public void success(Dictionary<String, String> result) {
-                                    OauthService.getShared(context).getUserinfo(accessTokenresult.getAccess_token(),result.get("DomainURL"),callback);
-                                }
-
-                                @Override
-                                public void failure(WebAuthError error) {
-                                    callback.failure(error);
-                                }
-                            });
-
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            callback.failure(error);
-                        }
-                    });
-
-                } else {
-                    String errorMessage = "Sub must not be null";
-                    callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                }
-
-        }
-        catch (Exception e)
-        {
-          callback.failure(WebAuthError.getShared(context).serviceException("Exception :UserProfileController :getUserProfile()",WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,e.getMessage()));
-        }
-    }
-
-
-    public void getUserConfigurationList()
-    {
-        try
-        {
-
-        }
-        catch (Exception e)
-        {
-
-        }
-    }
-
-}

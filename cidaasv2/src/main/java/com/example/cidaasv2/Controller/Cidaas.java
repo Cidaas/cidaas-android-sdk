@@ -45,7 +45,7 @@ import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
+import com.example.cidaasv2.Helper.Entity.SocialAccessTokenEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -54,7 +54,7 @@ import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
@@ -107,6 +107,15 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollRequestEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -921,12 +930,12 @@ public class Cidaas implements IOAuthWebLogin {
         VerificationSettingsController.getShared(context).updateFCMToken(sub ,FCMToken, new Result<Object>() {
             @Override
             public void success(Object result) {
-                LogFile.getShared(context).addRecordToLog("Update FCM Token Success");
+                LogFile.getShared(context).addFailureLog("Update FCM Token Success");
             }
 
             @Override
             public void failure(WebAuthError error) {
-                LogFile.getShared(context).addRecordToLog("Update FCM Token Error" + error.getMessage());
+                LogFile.getShared(context).addFailureLog("Update FCM Token Error" + error.getMessage());
             }
         });
     }
@@ -957,7 +966,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
     }
 
@@ -980,7 +989,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-          Primaryresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
+          Primaryresult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
@@ -1005,7 +1014,7 @@ public class Cidaas implements IOAuthWebLogin {
             });
 
         } catch (Exception e) {
-            resulttoReturn.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
+            resulttoReturn.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getRequestId()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
         }
     }
 
@@ -1030,7 +1039,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            clientInfoEntityResult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getClientInfo()",WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getClientInfo()",WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
         }
     }
 
@@ -1054,7 +1063,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :loginWithCredentials()",WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
+            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :loginWithCredentials()",WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
         }
     }
 
@@ -1088,7 +1097,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :getRegistrationFields()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getRegistrationFields()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -1125,7 +1134,24 @@ public class Cidaas implements IOAuthWebLogin {
         {
             scannedFIDO(statusId,scannedResult);
         }
+
     }
+
+    public void setupv2(@NonNull final SetupEntity setupEntity, final Result<SetupResponse> setupResponseResult)
+    {
+        SetupController.getShared(context).setupVerification(setupEntity,setupResponseResult);
+    }
+
+    public void scannedv2(@NonNull final ScannedEntity scannedEntity, final Result<ScannedResponse> scannedResult)
+    {
+        ScannedController.getShared(context).scannedVerification(scannedEntity,scannedResult);
+    }
+
+    public void enrollv2(@NonNull final EnrollRequestEntity enrollRequestEntity, final Result<EnrollResponseEntity> enrollResponseResult)
+    {
+        EnrollController.getShared(context).enrollVerification(enrollRequestEntity,enrollResponseResult);
+    }
+
 
     public void registerUser( final RegistrationEntity registrationEntity, final Result<RegisterNewUserResponseEntity> registerFieldsresult,
                               final HashMap<String,String>... extraParams)
@@ -1156,7 +1182,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-            registerFieldsresult.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas : registerUser()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas : registerUser()",WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
@@ -1189,7 +1215,7 @@ public class Cidaas implements IOAuthWebLogin {
         }
         catch (Exception e)
         {
-              Result.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :initiateEmailVerification()",WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage()));
+              Result.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateEmailVerification()",WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -1218,7 +1244,7 @@ public class Cidaas implements IOAuthWebLogin {
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).serviceException("Exception :Cidaas :initiateSMSVerification()",WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage()));
+            Result.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateSMSVerification()",WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -1251,7 +1277,7 @@ public class Cidaas implements IOAuthWebLogin {
             }
             catch (Exception e)
             {
-                Result.failure(WebAuthError.getShared(context).serviceException("initiateIVRVerification",WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage()));
+                Result.failure(WebAuthError.getShared(context).methodException("initiateIVRVerification",WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE,e.getMessage()));
             }
         }
 
@@ -1278,7 +1304,7 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty","Error :Cidaas :loginWithDeduplication()"));
                 }
             });
         }
@@ -1312,13 +1338,13 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty","Error :Cidaas :initiateResetPasswordByEmail()"));
                 }
             });
         }
         catch (Exception e)
         {
-
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateResetPasswordByEmail()",WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,e.getMessage()));
         }
     }
 
@@ -1345,37 +1371,49 @@ public class Cidaas implements IOAuthWebLogin {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty","Exception :Cidaas :initiateResetPasswordBySMS()"));
                 }
             });
         }
         catch (Exception e)
         {
-
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateResetPasswordBySMS()",WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,e.getMessage()));
         }
     }
 
-    public void getAccessTokenBySocial(final String token, final String provider, String DomainUrl, final String viewType,
-                                       final Result<AccessTokenEntity> accessTokenCallback, final HashMap<String,String>... extraParams)
+    public void getAccessTokenBySocial(final SocialAccessTokenEntity socialAccessTokenEntity, final Result<AccessTokenEntity> accessTokenCallback,
+                                       final HashMap<String,String>... extraParams)
     {
         try
         {
-            Cidaas.baseurl=DomainUrl;
+           // Cidaas.baseurl=socialAccessTokenEntity.getDomainURL();
+
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(final Dictionary<String, String> loginProperties) {
+                public void success(final Dictionary<String, String> loginProperties)
+                {
 
-                    getRequestId(loginProperties,new Result<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            AccessTokenController.getShared(context).getAccessTokenBySocial(token,provider,"token",result.getData().getRequestId(),viewType,loginProperties,accessTokenCallback);
-                        }
+                    if(socialAccessTokenEntity.getRequestId().equalsIgnoreCase("")|| socialAccessTokenEntity.getRequestId()==null)
+                    {
 
-                        @Override
-                        public void failure(WebAuthError error) {
-                            accessTokenCallback.failure(error);
+                        getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                            @Override
+                            public void success(AuthRequestResponseEntity result) {
+                                socialAccessTokenEntity.setRequestId(result.getData().getRequestId());
+                                AccessTokenController.getShared(context).getAccessTokenBySocial(socialAccessTokenEntity, accessTokenCallback);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                accessTokenCallback.failure(error);
+                            }
+                        }, extraParams);
+
+                    }
+                    else
+                        {
+                            AccessTokenController.getShared(context).getAccessTokenBySocial(socialAccessTokenEntity, accessTokenCallback);
                         }
-                    },extraParams);
                 }
 
                 @Override
@@ -1383,16 +1421,10 @@ public class Cidaas implements IOAuthWebLogin {
                     accessTokenCallback.failure(error);
                 }
             });
-
-
         }
         catch (Exception e)
         {
-            //todo handle excepksdjncksjdc
-            LogFile.getShared(context).addRecordToLog("Access Token exception" + e.getMessage());
-            accessTokenCallback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,"Access Token exception"+ e.getMessage(),
-                    HttpStatusCode.EXPECTATION_FAILED));
-            Timber.e("Access Token exception" + e.getMessage());
+            accessTokenCallback.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getAccessTokenBySocial()",WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,"Access Token exception"+ e.getMessage()));
         }
     }
 

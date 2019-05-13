@@ -3,7 +3,6 @@ package com.example.cidaasv2.Service.Repository;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -16,10 +15,8 @@ import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -80,7 +77,7 @@ public class OauthService {
            Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
 
            if (loginProperties == null) {
-               callback.failure(webAuthError.loginURLMissingException());
+               callback.failure(webAuthError.loginURLMissingException("getLoginUrl"));
            }
 
 
@@ -99,7 +96,9 @@ public class OauthService {
     }
 
 
-    public void getUserinfo(String AccessToken,String DomainURL, final Result<UserinfoEntity> callback) {
+    public void getUserinfo(String AccessToken,String DomainURL, final Result<UserinfoEntity> callback)
+    {
+        final String methodName="OauthService:-getUserinfo()";
         try {
             //Local Variables
             String url = "";
@@ -127,7 +126,7 @@ public class OauthService {
 
             Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(DomainURL);
             if (loginProperties == null) {
-                callback.failure(webAuthError.loginURLMissingException());
+                callback.failure(WebAuthError.getShared(context).loginURLMissingException(methodName));
             }
 
 
@@ -149,20 +148,20 @@ public class OauthService {
                           callback.success(response.body());
                       }
                       else {
-                          callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,
-                                  "Service failure but successful response" , 400,null,null));
+                          callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,
+                                 response.code(),methodName));
                       }
                   }
                   else {
                       assert response.errorBody() != null;
-                      CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,response);
+                      CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,response,methodName);
                   }
               }
 
               @Override
               public void onFailure(Call<UserinfoEntity> call, Throwable t) {
                   Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                  callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+                  callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(),methodName));
 
               }
           });

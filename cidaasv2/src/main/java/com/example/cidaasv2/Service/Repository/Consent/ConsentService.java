@@ -3,17 +3,10 @@ package com.example.cidaasv2.Service.Repository.Consent;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
@@ -21,11 +14,10 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAc
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -70,387 +62,216 @@ public class ConsentService {
     }
 
 
-    //get Consent String Details
-    public void getConsentDetails(final String baseurl,String consentName,final Result<ConsentDetailsResultEntity> callback) {
-        String ConsentstringDetailsUrl;
+    //---------------------------------------------------------------get Consent String Details--------------------------------------------------------
+    public void getConsentDetails(final String baseurl,String consentName,final Result<ConsentDetailsResultEntity> callback)
+    {
+        String methodName="Consent Service  :getConsentDetails()";
         try {
 
             if (baseurl != null && !baseurl.equals("")) {
+
                 //Construct URL For RequestId
-                ConsentstringDetailsUrl = baseurl +URLHelper.getShared().getConsent_details()+consentName;
+                String consentStringDetailsUrl = baseurl +URLHelper.getShared().getConsent_details()+consentName;
+
+                //Headers generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
+
+                //service call For consent details
+                serviceCallForGetConsentDetails(consentStringDetailsUrl, headers, callback);
+
             } else {
-                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400, null,null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
+                        ,"Error :"+methodName));
                 return;
             }
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
+        }
+    }
 
-            Map<String, String> headers = new Hashtable<>();
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
+    private void serviceCallForGetConsentDetails(String consentstringDetailsUrl, Map<String, String> headers, final Result<ConsentDetailsResultEntity> callback)
+    {
+       final String methodName="Consent Service  :serviceCallForGetConsentDetails()";
+        try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getConsentStringDetails(ConsentstringDetailsUrl,headers).enqueue(new Callback<ConsentDetailsResultEntity>() {
+            cidaasSDKService.getConsentStringDetails(consentstringDetailsUrl, headers).enqueue(new Callback<ConsentDetailsResultEntity>() {
                 @Override
                 public void onResponse(Call<ConsentDetailsResultEntity> call, Response<ConsentDetailsResultEntity> response) {
-                    if(response.isSuccessful()) {
-
-                        if(response.code()==200) {
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.CONSENT_STRING_FAILURE, response.code(),
+                                    "Error :"+methodName));
                         }
                     }
                     else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse = response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, errorMessage, commonErrorEntity.getStatus()
-                                    , commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CONSENT_STRING_FAILURE,
-                                    "Consent String Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response" + response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CONSENT_STRING_FAILURE, response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ConsentDetailsResultEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call" + t.getMessage());
-                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, t.getMessage(), 400, null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
 
                 }
             });
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :Consent Service  :getConsentDetails()",WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
-
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
         }
     }
 
 
-    //AcceptConsent
-    public void acceptConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<ConsentManagementAcceptResponseEntity> callback)
+    //---------------------------------------------------------------------AcceptConsent----------------------------------------------------------------
+    public void acceptConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
+                              final Result<ConsentManagementAcceptResponseEntity> callback)
     {
-        String consentAcceptUrl="";
+        String methodName="Consent Service :acceptConsent()";
         try
         {
             if(baseurl!=null && !baseurl.equals("")){
+
                 //Construct URL For RequestId
-                consentAcceptUrl=baseurl+URLHelper.getShared().getAcceptConsent();
+                String consentAcceptUrl=baseurl+URLHelper.getShared().getAcceptConsent();
+
+                //Header Generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
+
+                //Service call to accept consent
+                serviceCallForAcceptConsent(consentAcceptUrl, consentManagementAcceptedRequestEntity, headers, callback);
+
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
+                        ,"Error :"+methodName));
                 return;
             }
-
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromParam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromParam;
-            }
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
-
-            //Call Service-getRequestId
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.acceptConsent(consentAcceptUrl,headers, consentManagementAcceptedRequestEntity).enqueue(new Callback<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void onResponse(Call<ConsentManagementAcceptResponseEntity> call, Response<ConsentManagementAcceptResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";      ErrorEntity errorEntity=new ErrorEntity();
-
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage(), 400,null,null));
-                           // Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ConsentManagementAcceptResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,t.getMessage(), 400,null,null));
-                }
-            });
-
 
         }
         catch (Exception e)
         {
-           callback.failure( WebAuthError.getShared(context).serviceException("Exception :Consent Service :acceptConsent()",WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage()));
+           callback.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName,
+                   WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage()));
         }
     }
 
-    //Resume Consent
-    public void resumeConsent(final String baseurl, final ResumeConsentRequestEntity resumeConsentRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<ResumeConsentResponseEntity> callback)
+    private void serviceCallForAcceptConsent(String consentAcceptUrl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
+                                             Map<String, String> headers, final Result<ConsentManagementAcceptResponseEntity> callback)
+    {
+    final String methodName="Consent Service :serviceCallForAcceptConsent()";
+      try {
+          //Call Service-getRequestId
+          final ICidaasSDKService cidaasSDKService = service.getInstance();
+
+          cidaasSDKService.acceptConsent(consentAcceptUrl, headers, consentManagementAcceptedRequestEntity).enqueue(
+                  new Callback<ConsentManagementAcceptResponseEntity>() {
+              @Override
+              public void onResponse(Call<ConsentManagementAcceptResponseEntity> call, Response<ConsentManagementAcceptResponseEntity> response)
+              {
+                  if (response.isSuccessful()) {
+                      if (response.code() == 200) {
+                          callback.success(response.body());
+                      } else {
+                          callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response.code(),
+                                  "Error :"+methodName));
+                      }
+                  }
+                  else {
+                      callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response,
+                              "Error :"+methodName));
+                  }
+              }
+
+              @Override
+              public void onFailure(Call<ConsentManagementAcceptResponseEntity> call, Throwable t) {
+                  callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, t.getMessage(),
+                          "Error :"+methodName));
+              }
+          });
+      }
+      catch (Exception e)
+      {
+          callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, e.getMessage()));
+      }
+    }
+
+    //------------------------------------------------------------------------Resume Consent-------------------------------------------------------------
+    public void resumeConsent(final String baseurl, final ResumeConsentRequestEntity resumeConsentRequestEntity, final Result<ResumeConsentResponseEntity> callback)
     {
         //Local Variables
-
-        String resumeConsentUrl = "";
+        String methodName = "Consent Service :resumeConsent()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
+
                 //Construct URL For RequestId
-                resumeConsentUrl=baseurl+URLHelper.getShared().getResumeConsentURL()+resumeConsentRequestEntity.getTrack_id();
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
-                return;
-            }
+                String resumeConsentUrl=baseurl+URLHelper.getShared().getResumeConsentURL()+resumeConsentRequestEntity.getTrack_id();
 
+                //Header generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                //service call resume consent
+                serviceCallForResumeConsent(resumeConsentRequestEntity,  resumeConsentUrl, headers,callback);
             }
-            else if(deviceInfoEntityFromParam!=null)
+            else
             {
-                deviceInfoEntity=deviceInfoEntityFromParam;
+              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :"+methodName));
+              return;
             }
 
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("user-agent", "cidaas-android");
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
+        }
+        catch (Exception e)
+        {
+            callback.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE,e.getMessage()));
+        }
+    }
 
+    //----------------------------------------------------------------ServiceCallForResumeConsent--------------------------------------------------------
+    private void serviceCallForResumeConsent(ResumeConsentRequestEntity resumeConsentRequestEntity,  String resumeConsentUrl, Map<String, String> headers,
+                                             final Result<ResumeConsentResponseEntity> callback)
+    {
+        final String methodName="Consent Service :serviceCallForResumeConsent()";
+        try {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.resumeConsent(resumeConsentUrl,headers,resumeConsentRequestEntity).enqueue(new Callback<ResumeConsentResponseEntity>() {
+            cidaasSDKService.resumeConsent(resumeConsentUrl, headers, resumeConsentRequestEntity).enqueue(new Callback<ResumeConsentResponseEntity>() {
                 @Override
                 public void onResponse(Call<ResumeConsentResponseEntity> call, Response<ResumeConsentResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.RESUME_CONSENT_FAILURE,
+                                    response.code(),  "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_CONSENT_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,response));
+                    } else {
+                       callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_CONSENT_FAILURE, response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResumeConsentResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_CONSENT_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
                 }
             });
         }
         catch (Exception e)
         {
-            callback.failure( WebAuthError.getShared(context).serviceException("Exception :Consent Service :resumeConsent()",WebAuthErrorCode.RESUME_CONSENT_FAILURE,e.getMessage()));
+            callback.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE,e.getMessage()));
         }
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- /* //get ConsentUrl
-    public void getConsentUrl(final String baseurl,String consentName,String consentVersion,final Result<String> callback) {
-        String ConsentcallUrl;
-        try {
-
-            if (baseurl != null || baseurl != "") {
-                //Construct URL For RequestId
-                ConsentcallUrl = baseurl + URLHelper.getShared().getConsent_url(consentName,consentVersion);
-            } else {
-                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400, null));
-                return;
-            }
-
-            //Call Service-getRequestId
-            ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getConsentInfo(ConsentcallUrl).enqueue(new Callback<ConsentManagementResponseEntity>() {
-                @Override
-                public void onResponse(Call<ConsentManagementResponseEntity> call, Response<ConsentManagementResponseEntity> response) {
-                    if(response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body().getData());
-                        }
-                        else if(response.code()==204)
-                        {
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_URL_FAILURE, "No data found", response.code(), null));
-                        }
-                        else
-                        {
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_URL_FAILURE,
-                                    "Service failure but successful response", response.code(), null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse = response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_URL_FAILURE, errorMessage, commonErrorEntity.getStatus()
-                                    , commonErrorEntity.getError()));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Timber.e("response" + response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ConsentManagementResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call" + t.getMessage());
-                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_URL_FAILURE, t.getMessage(), 400, null));
-
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CONSENT_URL_FAILURE, e.getMessage(), 400, null));
-
-        }
-    }
-
-*/
 
 
 

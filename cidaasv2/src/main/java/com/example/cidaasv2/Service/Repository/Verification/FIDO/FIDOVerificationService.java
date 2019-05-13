@@ -3,9 +3,7 @@ package com.example.cidaasv2.Service.Repository.Verification.FIDO;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -29,7 +27,6 @@ import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -81,13 +78,14 @@ public class FIDOVerificationService {
     public void scannedFIDO(final String baseurl, ScannedRequestEntity scannedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                             final Result<ScannedResponseEntity> callback) {
         String scannedFIDOUrl = "";
+        final String methodName="FIDOVerificationService :scannedFIDO()";
         try {
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 scannedFIDOUrl = baseurl + URLHelper.getShared().getScannedFIDOURL();
             } else {
-                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400, null, null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :"+methodName));
                 return;
             }
 
@@ -126,40 +124,45 @@ public class FIDOVerificationService {
                             DBHelper.getShared().setUserDeviceId(response.body().getData().getUserDeviceId(),baseurl);
                             callback.success(response.body());
                         } else {
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,
-                                    "Service failure but successful response", response.code(), null, null));
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,
+                                   response.code(),"Error :"+methodName));
                         }
                     } else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
                     Timber.e("Failure in Scanned FIDO service call" + t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Failure in Scanned FIDO Service Failure" + t.getMessage());
-                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
+                    LogFile.getShared(context).addFailureLog("Failure in Scanned FIDO Service Failure" + t.getMessage());
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,
+                            t.getMessage(),"Error :"+methodName));
                 }
             });
 
 
         } catch (Exception e) {
-          callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :scannedFIDO()",WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,e.getMessage()));
+          callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.SCANNED_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
 
     //setupFIDOMFA
-    public void setupFIDO(String baseurl, String accessToken, SetupFIDOMFARequestEntity setupFIDOMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupFIDOMFAResponseEntity> callback) {
+    public void setupFIDO(String baseurl, String accessToken, SetupFIDOMFARequestEntity setupFIDOMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
+                          final Result<SetupFIDOMFAResponseEntity> callback)
+    {
+        final String methodName="FIDOVerificationService :setupFIDO()";
         String setupFIDOMFAUrl = "";
         try {
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 setupFIDOMFAUrl = baseurl + URLHelper.getShared().getSetupFIDOMFA();
             } else {
-                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400, null, null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :FIDOVerificationService :setupFIDO()"));
                 return;
             }
 
@@ -203,26 +206,25 @@ public class FIDOVerificationService {
                             //Todo Listen For The Push notification to recieve
 
                         } else {
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,
-                                    "Service failure but successful response", response.code(), null, null));
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,
+                                    response.code(),"Error :"+methodName));
                         }
                     } else {
-                        assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,response,
+                                "Error :FIDOVerificationService :setupFIDO()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupFIDOMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Setup FIDO service call" + t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Setup FIDO Service Failure" + t.getMessage());
-                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,
+                            t.getMessage(),"Error :"+methodName));
                 }
             });
 
 
         } catch (Exception e) {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :setupFIDO()",WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,e.getMessage()));
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.SETUP_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -230,14 +232,15 @@ public class FIDOVerificationService {
     //enrollFIDOMFA
     public void enrollFIDO(String baseurl, String accessToken, EnrollFIDOMFARequestEntity enrollFIDOMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                                   final Result<EnrollFIDOMFAResponseEntity> callback) {
+        final String methodName="FIDOVerificationService :initiateFIDO()";
         String enrollFIDOMFAUrl = "";
         try {
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 enrollFIDOMFAUrl = baseurl + URLHelper.getShared().getEnrollFIDOMFA();
             } else {
-                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400, null, null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :FIDOVerificationService :initiateFIDO()"));
                 return;
             }
 
@@ -276,26 +279,26 @@ public class FIDOVerificationService {
                         if (response.code() == 200) {
                             callback.success(response.body());
                         } else {
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,
-                                    "Service failure but successful response", response.code(), null, null));
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,
+                                   response.code(),"Error :"));
                         }
                     } else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,response
+                                ,"Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollFIDOMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Enroll FIDO service call" + t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Enroll FIDO Service Failure" + t.getMessage());
-                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,
+                            t.getMessage(),"Error :"+methodName));
                 }
             });
 
 
         } catch (Exception e) {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :enrollFIDO()",WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,e.getMessage()));
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.ENROLL_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -303,13 +306,14 @@ public class FIDOVerificationService {
     public void initiateFIDO(String baseurl, InitiateFIDOMFARequestEntity initiateFIDOMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                                     final Result<InitiateFIDOMFAResponseEntity> callback) {
         String initiateFIDOMFAUrl = "";
+        final String methodName="FIDOVerificationService :initiateFIDO()";
         try {
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 initiateFIDOMFAUrl = baseurl + URLHelper.getShared().getInitiateFIDOMFA();
             } else {
-                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400, null, null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(
+                        context.getString(R.string.PROPERTY_MISSING), "Error :"+methodName));
                 return;
             }
 
@@ -348,26 +352,26 @@ public class FIDOVerificationService {
                         if (response.code() == 200) {
                             callback.success(response.body());
                         } else {
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE,
-                                    "Service failure but successful response", response.code(), null, null));
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE,
+                                    response.code(),"Error :"+methodName));
                         }
                     } else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE, response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE,
+                                response,"Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateFIDOMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Initiate FIDO MFA Service call" + t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Initiate FIDO MFA Service Failure" + t.getMessage());
-                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE,
+                            t.getMessage(),"Error :"+methodName));
                 }
             });
 
 
         } catch (Exception e) {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :initiateFIDO()",WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE,e.getMessage()));
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.INITIATE_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -376,13 +380,14 @@ public class FIDOVerificationService {
     public void authenticateFIDO(String baseurl, AuthenticateFIDORequestEntity authenticateFIDORequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                                         final Result<AuthenticateFIDOResponseEntity> callback) {
         String authenticateFIDOMFAUrl = "";
+        final String methodName="FIDOVerificationService :authenticateFIDO()";
         try {
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 authenticateFIDOMFAUrl = baseurl + URLHelper.getShared().getAuthenticateFIDOMFA();
             } else {
-                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400, null, null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :"+methodName));
                 return;
             }
 
@@ -421,26 +426,26 @@ public class FIDOVerificationService {
                         if (response.code() == 200) {
                             callback.success(response.body());
                         } else {
-                            callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,
-                                    "Service failure but successful response", response.code(), null, null));
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,
+                                    response.code(),"Error :"+methodName));
                         }
                     } else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,response
+                                ,"Error :"+methodName ));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateFIDOResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Authenticate FIDO service call" + t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Authenticate FIDO Service Failure" + t.getMessage());
-                    callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE, t.getMessage(), 400, null, null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,
+                            t.getMessage(), "Error :"+methodName));
                 }
             });
 
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :FIDOVerificationService :authenticateFIDO()",WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.AUTHENTICATE_FIDO_MFA_FAILURE,e.getMessage()));
         }
     }
 }

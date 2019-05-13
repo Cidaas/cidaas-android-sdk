@@ -3,37 +3,26 @@ package com.example.cidaasv2.Controller.Repository.Configuration.IVR;
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
-import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
 import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRRequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
-import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
-import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 import com.example.cidaasv2.Service.Repository.Verification.IVR.IVRVerificationService;
 
 import java.util.Dictionary;
@@ -81,25 +70,29 @@ public class IVRConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.i(e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("IVRConfigurationController instance Creation Exception:-"+e.getMessage());
         }
         return shared;
     }
 
-    // --------------------------------------------------***** IVR MFA *****-----------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------***** IVR MFA *****--------------------------------------------------------------------------------------
 
 
 
     public void configureIVR(@NonNull final String sub, @NonNull final Result<SetupIVRMFAResponseEntity> result){
         try{
-
+            LogFile.getShared(context).addInfoLog("Info of IVRConfiguration Controller :configureIVR()", " Info Sub:-"+sub);
 
             if ( sub != null && !sub.equals("")) {
                 Sub=sub;
                 AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
-                        //Todo Service call
+                        //done Service call
+                        LogFile.getShared(context).addSuccessLog("Success :IVR Configuration Controller :configureIVR()",
+                                "AccessToken"+accessTokenresult.getAccess_token()+"RefreshToken"+accessTokenresult.getRefresh_token()+
+                                        "ExpiresIn"+accessTokenresult.getExpires_in());
+
                         CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                             @Override
                             public void success(Dictionary<String, String> loginPropertiesresult) {
@@ -112,12 +105,13 @@ public class IVRConfigurationController {
                                         if(userresult.getMobile_number()!=null && !userresult.getMobile_number().equals("")) {
 
                                             //Done add phone number
-                                            IVRVerificationService.getShared(context).setupIVRMFA(baseurl, accessTokenresult.getAccess_token(), userresult.getMobile_number(), null,
-                                                   result);
+                                            IVRVerificationService.getShared(context).setupIVRMFA(baseurl, accessTokenresult.getAccess_token(),
+                                                    userresult.getMobile_number(), null, result);
                                         }
                                         else
                                         {
-                                            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE,"Mobile number must not be null",HttpStatusCode.EXPECTATION_FAILED));
+                                            result.failure(WebAuthError.getShared(context).propertyMissingException("Mobile number must not be null",
+                                                    "Error :IVRConfigurationController :configureIVR()"));
                                         }
                                     }
 
@@ -146,12 +140,14 @@ public class IVRConfigurationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or sub must not be null"));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or sub must not be null",
+                        "Error :IVRConfigurationController :configureIVR()"));
             }
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :configureIVR()",WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :IVRConfigurationController :configureIVR()",
+                    WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -159,6 +155,8 @@ public class IVRConfigurationController {
     public void enrollIVRMFA(@NonNull final String code,String StatusId, @NonNull final Result<EnrollIVRMFAResponseEntity> result)
     {
         try{
+            LogFile.getShared(context).addInfoLog("Info of IVRConfiguration Controller :enrollIVRMFA()",
+                    " Info code:-"+code+"statusId:-"+StatusId+"Sub:-"+Sub);
 
             if(!Sub.equals("") && !StatusId.equals("") && !code.equals("")  && StatusId!=null && code!=null  )
             {
@@ -174,6 +172,9 @@ public class IVRConfigurationController {
                         CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                             @Override
                             public void success(Dictionary<String, String> loginPropertiesResult) {
+                                LogFile.getShared(context).addInfoLog("Info of IVRConfiguration Controller :enrollIVRMFA()",
+                                        " Info AccessToken"+accessresult.getAccess_token());
+
                                 IVRVerificationService.getShared(context).enrollIVRMFA(loginPropertiesResult.get("DomainURL"),
                                         accessresult.getAccess_token(), enrollIVRMFARequestEntity, null,result);
                             }
@@ -194,7 +195,8 @@ public class IVRConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :enrollIVRMFA()",WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :IVRConfigurationController :enrollIVRMFA()",
+                    WebAuthErrorCode.ENROLL_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -227,59 +229,70 @@ public class IVRConfigurationController {
         catch (Exception e)
         {
             Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Login With IVR"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :loginWithIVR()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
+            LogFile.getShared(context).addFailureLog("Login With IVR"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE);
+            result.failure(WebAuthError.getShared(context).methodException("Exception :IVRConfigurationController :loginWithIVR()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 
 
     private InitiateIVRMFARequestEntity getInitiateIVRMFAEntity(PasswordlessEntity passwordlessEntity, Result<InitiateIVRMFAResponseEntity> result) {
+        try {
+            if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")) {
 
-        if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")) {
+                if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                        (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                        (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                    String errorMessage = "sub or email or mobile number must not be empty";
 
-            if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                    (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
-                    (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
-                String errorMessage = "sub or email or mobile number must not be empty";
+                    result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :IVRConfigurationController :getInitiateIVRMFAEntity()"));
+                    return null;
+                }
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                    if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                        String errorMessage = "trackId must not be empty";
+
+                        result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,"Error :IVRConfigurationController :getInitiateIVRMFAEntity()"));
+                        return null;
+                    }
+                }
+
+                LogFile.getShared(context).addInfoLog("Info :IVR configuration Controller :getInitiateIVRMFAEntity()",
+                        "UsageType:-" + passwordlessEntity.getUsageType() + " Sub:- " + passwordlessEntity.getSub() + " Email" + passwordlessEntity.getEmail() +
+                                " Mobile" + passwordlessEntity.getMobile() + " RequestId:-" + passwordlessEntity.getRequestId() +
+                                " TrackId:-" + passwordlessEntity.getTrackId());
+
+                TrackId = passwordlessEntity.getTrackId();
+                RequestId = passwordlessEntity.getRequestId();
+                UsageTypeFromIVR = passwordlessEntity.getUsageType();
+
+                InitiateIVRMFARequestEntity initiateIVRMFARequestEntity = new InitiateIVRMFARequestEntity();
+                initiateIVRMFARequestEntity.setSub(passwordlessEntity.getSub());
+                initiateIVRMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+                initiateIVRMFARequestEntity.setVerificationType("IVR");
+                return initiateIVRMFARequestEntity;
+
+
+            } else {
+
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be empty",
+                        "Error :IVRConfigurationController :getInitiateIVRMFAEntity()"));
                 return null;
             }
 
-            if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
-                if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
-                    String errorMessage = "trackId must not be empty";
-
-                    result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                            errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                    return null;
-                }
-            }
-
-            TrackId=passwordlessEntity.getTrackId();
-            RequestId=passwordlessEntity.getRequestId();
-            UsageTypeFromIVR=passwordlessEntity.getUsageType();
-
-            InitiateIVRMFARequestEntity initiateIVRMFARequestEntity = new InitiateIVRMFARequestEntity();
-            initiateIVRMFARequestEntity.setSub(passwordlessEntity.getSub());
-            initiateIVRMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
-            initiateIVRMFARequestEntity.setVerificationType("IVR");
-            return initiateIVRMFARequestEntity;
-
-
-        } else {
-
-            result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be empty"));
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).methodException("Exception :IVRConfigurationController :getInitiateIVRMFAEntity()",
+                    WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
             return null;
         }
-
     }
 
 
     public void verifyIVR(@NonNull final String code, @NonNull final String statusId,final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
+            LogFile.getShared(context).addInfoLog("Info :IVR configuration Controller :verifyIVR()",
+                    "Code:-"+code+"statusId:-"+statusId);
 
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -295,7 +308,8 @@ public class IVRConfigurationController {
                         authenticateIVRRequestEntity.setStatusId(statusId);
 
                     } else {
-                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Code must not be empty"));
+                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Code must not be empty",
+                                "Error :IVRConfigurationController :verifyIVR()"));
                     }
 
 
@@ -304,6 +318,8 @@ public class IVRConfigurationController {
 
                                 @Override
                                 public void success(AuthenticateIVRResponseEntity serviceresult) {
+                                    LogFile.getShared(context).addSuccessLog("Success :IVR configuration Controller :verifyIVR()",
+                                            "Sub:-"+serviceresult.getData().getSub()+"TrackingCode"+serviceresult.getData().getTrackingCode());
 
                                     ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(serviceresult.getData().getSub(),
                                             serviceresult.getData().getTrackingCode(),"IVR",UsageTypeFromIVR,clientId,RequestId,
@@ -327,7 +343,8 @@ public class IVRConfigurationController {
         }
         catch (Exception e)
         {
-             loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :IVRConfigurationController :verifyIVR()",WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
+             loginresult.failure(WebAuthError.getShared(context).methodException("Exception :IVRConfigurationController :verifyIVR()",
+                     WebAuthErrorCode.AUTHENTICATE_IVR_MFA_FAILURE,e.getMessage()));
         }
     }
 

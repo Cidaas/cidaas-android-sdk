@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedHashMap;
 
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class CommonError {
 
@@ -41,10 +39,14 @@ public class CommonError {
         return shared;
     }
 
+
+
     //Method to get Error Entity
-    public WebAuthError generateCommonErrorEntity(int webAuthErrorCode, Response response)
+    public WebAuthError generateCommonErrorEntity(int webAuthErrorCode, Response response,String methodName)
     {
         try {
+
+            assert response.errorBody() != null;
 
             // Handle proper error message
             String errorResponse = response.errorBody().source().readByteString().utf8();
@@ -81,37 +83,38 @@ public class CommonError {
 
                 //More Info
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString().equals("")) {
-                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
+                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
                 }
 
                 //Reference Number
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString().equals("")) {
-                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
+                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
                 }
 
 
                 //Status
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("status").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("status").toString().equals("")) {
-                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("status").toString());
+                    errorEntity.setStatus((Integer)((LinkedHashMap) commonErrorEntity.getError()).get("status"));
                 }
 
                 //Type
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("type").toString().equals("")) {
-                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
                 }
 
             }
 
+            LogFile.getShared(context).addFailureLog("Exception:- WebAuthErrorCode: "+webAuthErrorCode+"Response Message:-" + response.message()+
+                    " ErrorCode:- "+errorEntity.getCode()+ "error message:-" + errorMessage);
 
-            //Todo Service call For fetching the Consent details
-            return  WebAuthError.getShared(context).serviceFailureException(webAuthErrorCode, errorMessage, commonErrorEntity.getStatus(),
-                    commonErrorEntity.getError(), errorEntity);
+
+            return  WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, errorMessage, commonErrorEntity.getStatus(),
+                    errorEntity,errorResponse,methodName);
 
         }
         catch (Exception e) {
-            Timber.e("Exception:-"+webAuthErrorCode+"Response Message:-" + response.message()+"Exception message:-" + e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Exception:-"+webAuthErrorCode+"Response Message:-" + response.message()+"Exception message:-" + e.getMessage());
-            return WebAuthError.getShared(context).serviceException("Exception :CommonError :generateCommonErrorEntity()",webAuthErrorCode,e.getMessage());
+
+            return WebAuthError.getShared(context).methodException("Exception :CommonError :generateCommonErrorEntity()",webAuthErrorCode,e.getMessage());
 
         }
     }

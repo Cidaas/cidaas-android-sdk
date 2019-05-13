@@ -3,22 +3,18 @@ package com.example.cidaasv2.Controller.Repository.Configuration.Email;
 import android.content.Context;
 
 
-import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
-import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFARequestEntity;
@@ -31,7 +27,6 @@ import com.example.cidaasv2.Service.Repository.Verification.Email.EmailVerificat
 import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
-import timber.log.Timber;
 
 public class EmailConfigurationController {
 
@@ -74,7 +69,7 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.i(e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("EmailConfigurationController instance Creation Exception:-"+e.getMessage());
         }
         return shared;
     }
@@ -84,6 +79,7 @@ public class EmailConfigurationController {
         try{
 
             Sub=sub;
+            LogFile.getShared(context).addInfoLog("Info of EmailConfiguration Controller :configureEmail()", " Info Sub:-"+sub);
 
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -95,7 +91,11 @@ public class EmailConfigurationController {
                         AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                             @Override
                             public void success(final AccessTokenEntity accessTokenresult) {
-                                //Todo Service call
+                                //done Service call
+                                LogFile.getShared(context).addSuccessLog("Success :Email Configuration Controller :configureEmail()",
+                                        "AccessToken"+accessTokenresult.getAccess_token()+"RefreshToken"+accessTokenresult.getRefresh_token()+
+                                                "ExpiresIn"+accessTokenresult.getExpires_in());
+
                                 EmailVerificationService.getShared(context).setupEmailMFA(baseurl, accessTokenresult.getAccess_token(),null, result);
                             }
 
@@ -110,13 +110,14 @@ public class EmailConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-
+                  result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(error.getErrorMessage(),
+                          "Exception :Email configuration Controller :getClientInfo()"));
                 }
             });
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :getClientInfo()"
+            result.failure(WebAuthError.getShared(context).methodException("Exception :Email configuration Controller :getClientInfo()"
                     ,WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
@@ -125,6 +126,8 @@ public class EmailConfigurationController {
     public void enrollEmailMFA(@NonNull final String code,@NonNull final String statusId, @NonNull final Result<EnrollEmailMFAResponseEntity> result)
     {
         try{
+            LogFile.getShared(context).addInfoLog("Info of EmailConfiguration Controller :enrollEmailMFA()",
+                    " Info code:-"+code+"statusId:-"+statusId+"Sub:-"+Sub);
 
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -140,7 +143,8 @@ public class EmailConfigurationController {
                         AccessTokenController.getShared(context).getAccessToken(Sub, new Result<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessresult) {
-
+                                LogFile.getShared(context).addInfoLog("Info of EmailConfiguration Controller :enrollEmailMFA()",
+                                        " Info AccessToken"+accessresult.getAccess_token());
 
                                     //Done Service call
                                     EmailVerificationService.getShared(context).enrollEmailMFA(baseurl, accessresult.getAccess_token(),
@@ -164,7 +168,8 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :enrollEmailMFA()",WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :Email configuration Controller :enrollEmailMFA()",
+                    WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -198,59 +203,72 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :loginWithEmail()"
+            result.failure(WebAuthError.getShared(context).methodException("Exception :Email configuration Controller :loginWithEmail()"
                     ,WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 
     private InitiateEmailMFARequestEntity getInitiateEmailMFAEntity(PasswordlessEntity passwordlessEntity, Result<InitiateEmailMFAResponseEntity> result) {
 
-        if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")) {
+     try {
+         if (passwordlessEntity.getUsageType() != null && !passwordlessEntity.getUsageType().equals("")) {
 
-            if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
-                    (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
-                    (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
-                String errorMessage = "sub or email or mobile number must not be empty";
+             if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
+                     (passwordlessEntity.getEmail() == null || passwordlessEntity.getEmail().equals("")) &&
+                     (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
+                 String errorMessage = "sub or email or mobile number must not be empty";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                return null;
-            }
+                 result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,
+                         "Error :Email configuration Controller :getInitiateEmailMFAEntity()"));
+                 return null;
+             }
 
-            if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
-                if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
-                    String errorMessage = "trackId must not be empty";
+             if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
+                 if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
+                     String errorMessage = "trackId must not be empty";
 
-                    result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                            errorMessage, HttpStatusCode.EXPECTATION_FAILED));
-                    return null;
-                }
-            }
+                     result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,"" +
+                             "Error :Email configuration Controller :getInitiateEmailMFAEntity()"));
+                     return null;
+                 }
+             }
+        LogFile.getShared(context).addInfoLog("Info :Email configuration Controller :getInitiateEmailMFAEntity()",
+        "UsageType:-"+passwordlessEntity.getUsageType()+" Sub:- "+passwordlessEntity.getSub()+" Email"+passwordlessEntity.getEmail()+
+                " Mobile"+passwordlessEntity.getMobile()+" RequestId:-"+passwordlessEntity.getRequestId()+" TrackId:-"+passwordlessEntity.getTrackId());
 
-                TrackId=passwordlessEntity.getTrackId();
-                RequestId=passwordlessEntity.getRequestId();
-                UsageTypefromEmail=passwordlessEntity.getUsageType();
+             TrackId = passwordlessEntity.getTrackId();
+             RequestId = passwordlessEntity.getRequestId();
+             UsageTypefromEmail = passwordlessEntity.getUsageType();
 
-                InitiateEmailMFARequestEntity initiateEmailMFARequestEntity = new InitiateEmailMFARequestEntity();
-                initiateEmailMFARequestEntity.setSub(passwordlessEntity.getSub());
-                initiateEmailMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
-                initiateEmailMFARequestEntity.setVerificationType("email");
-                initiateEmailMFARequestEntity.setEmail(passwordlessEntity.getEmail());
-                initiateEmailMFARequestEntity.setMobile(passwordlessEntity.getMobile());
-                return initiateEmailMFARequestEntity;
+             InitiateEmailMFARequestEntity initiateEmailMFARequestEntity = new InitiateEmailMFARequestEntity();
+             initiateEmailMFARequestEntity.setSub(passwordlessEntity.getSub());
+             initiateEmailMFARequestEntity.setUsageType(passwordlessEntity.getUsageType());
+             initiateEmailMFARequestEntity.setVerificationType("email");
+             initiateEmailMFARequestEntity.setEmail(passwordlessEntity.getEmail());
+             initiateEmailMFARequestEntity.setMobile(passwordlessEntity.getMobile());
+             return initiateEmailMFARequestEntity;
 
 
-        } else {
+         } else {
 
-            result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be empty"));
-            return null;
-        }
-
+             result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or Usage Type must not be empty",
+                     "Error :Email configuration Controller :getInitiateEmailMFAEntity()"));
+             return null;
+         }
+     }
+     catch (Exception e)
+     {
+         result.failure(WebAuthError.getShared(context).methodException("Exception :Email configuration Controller :getInitiateEmailMFAEntity()"
+                 ,WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage()));
+         return null;
+     }
     }
 
     public void verifyEmail(@NonNull final String code,@NonNull final String statusId, final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
+            LogFile.getShared(context).addInfoLog("Info :Email configuration Controller :verifyEmail()",
+                    "Code:-"+code+"statusId:-"+statusId);
 
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -266,7 +284,8 @@ public class EmailConfigurationController {
                         authenticateEmailRequestEntity.setStatusId(statusId);
 
                     } else {
-                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Code must not be empty"));
+                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Code must not be empty",
+                                "Error :Email configuration Controller :verifyEmail()"));
                     }
 
 
@@ -275,6 +294,8 @@ public class EmailConfigurationController {
 
                                 @Override
                                 public void success(AuthenticateEmailResponseEntity serviceresult) {
+                                    LogFile.getShared(context).addSuccessLog("Success :Email configuration Controller :verifyEmail()",
+                                            "Sub:-"+serviceresult.getData().getSub()+"TrackingCode"+serviceresult.getData().getTrackingCode());
 
                                     ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(serviceresult.getData().getSub(),
                                             serviceresult.getData().getTrackingCode(),"email",UsageTypefromEmail,clientId,RequestId,
@@ -297,7 +318,7 @@ public class EmailConfigurationController {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :verifyEmail()"
+            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :Email configuration Controller :verifyEmail()"
                     ,WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }

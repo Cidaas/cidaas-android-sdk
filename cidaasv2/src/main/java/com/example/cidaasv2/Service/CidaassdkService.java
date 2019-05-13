@@ -97,35 +97,4 @@ public class CidaassdkService {
         return ua;
     }
 
-
-
-  /*  private String getLat()
-    {
-        String lat="";
-        if(mcontext!=null) {
-            LocationDetails locationDetails = new LocationDetails(mcontext);
-            locationDetails.getLocation();
-            lat=locationDetails.getLatitude();
-
-        }
-        Timber.d("Location Longitude"+lat);
-        return lat;
-    }
-
-    private String getLong()
-    {
-        String longitude="";
-        if(mcontext!=null) {
-            LocationDetails locationDetails = new LocationDetails(mcontext);
-            locationDetails.getLocation();
-            longitude=locationDetails.getLongitude();
-
-
-
-        }
-        Timber.d("Location Longitude"+longitude);
-        return longitude;
-    }
-*/
-
 }

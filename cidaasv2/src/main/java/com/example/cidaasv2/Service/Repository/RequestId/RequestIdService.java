@@ -4,28 +4,21 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
+import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URLEncoder;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -72,72 +65,24 @@ public class RequestIdService {
     }
 
 
-    //Get Request ID From Service
-    public void getRequestID( Dictionary<String,String> loginProperties, DeviceInfoEntity deviceInfoEntityFromparam, Dictionary<String,String> challengePropertiesfromparam,
-                              final Result<AuthRequestResponseEntity> callback,@Nullable HashMap<String, String>... extraParams)
+    //----------------------------------------------------------Get Request ID From Service--------------------------------------------------------------
+    public void getRequestID( Dictionary<String,String> loginProperties, final Result<AuthRequestResponseEntity> callback,
+                              @Nullable HashMap<String, String>... extraParams)
     {
-        try {
-            //Local Variables
-            String baseUrl = "";
-            String requestidURL="";
-            final AuthRequestEntity authRequestEntity;
+        String methodName="RequestIdService :getRequestID()";
+        try
+        {
 
-            URLHelper urlComponents;
-            Map<String, String> headers = new Hashtable<>();
+            if (loginProperties.get("DomainURL") != null && !loginProperties.get("DomainURL").equals("")) {
+
+            //Header Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,URLHelper.contentType);
+
             // Get Device Information
+            Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
 
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromparam==null) {
-               deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromparam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromparam;
-            }
-
-
-
-            //////////////////This is for testing purpose
-            Dictionary<String,String> challengeProperties=new Hashtable<>();
-
-            if(challengePropertiesfromparam==null) {
-                challengeProperties=DBHelper.getShared().getChallengeProperties();
-            }
-            else if(challengePropertiesfromparam!=null)
-            {
-                challengeProperties=challengePropertiesfromparam;
-            }
-
-            Timber.d("LAtitude"+LocationDetails.getShared(context).getLatitude());
-            Timber.d("Longitude"+LocationDetails.getShared(context).getLongitude());
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentType);
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
-            //Todo Construct URl Checking,Add Parameter(FieldMap) pending
-            urlComponents = new URLHelper();
-
-            if (loginProperties.get("DomainURL") == null || loginProperties.get("DomainURL").equals("") || !((Hashtable) loginProperties).containsKey("DomainURL")) {
-                //return Null
-                baseUrl = "";
-            } else {
-                // baseUrl = urlComponents.constructURL(loginProperties.get("DomainURL"));
-
-                baseUrl=loginProperties.get("DomainURL");
-
-                //Construct URL For RequestId
-                requestidURL=baseUrl+URLHelper.getShared().getRequest_id_url();
-            }
-
-
+            //Construct URL For RequestId
+            String requestidURL=loginProperties.get("DomainURL") +URLHelper.getShared().getRequest_id_url();
 
             String codeChallenge="";
             String clientSecret=" ";
@@ -163,46 +108,59 @@ public class RequestIdService {
             for(Map.Entry<String,String> entry : Cidaas.extraParams.entrySet()) {
                 authRequestEntityMap.put(entry.getKey(),URLEncoder.encode(entry.getValue(),"utf-8"));
             }
+            serviceForGetRequestId(requestidURL, authRequestEntityMap, headers, callback);
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :"+methodName));
+            }
 
 
+        }
+        catch (Exception e)
+        {
+      callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
+        }
+    }
 
+    public void serviceForGetRequestId(String requestidURL, Map<String, String> authRequestEntityMap, Map<String, String> headers,
+                                       final Result<AuthRequestResponseEntity> callback)
+    {
+        final String methodName="RequestIdService :getRequestID()";
+        try {
             //Todo add codeChallenge and codeChallengeMethod and clientSecret
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
 
 
             //Service call
-            cidaasSDKService.getRequestId(requestidURL,headers,authRequestEntityMap).enqueue(new Callback<AuthRequestResponseEntity>() {
+            cidaasSDKService.getRequestId(requestidURL, headers, authRequestEntityMap).enqueue(new Callback<AuthRequestResponseEntity>() {
                 @Override
                 public void onResponse(Call<AuthRequestResponseEntity> call, Response<AuthRequestResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
+                                    response.code(), "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
-                        }
-                    }
-                    else {
+                    } else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, response
+                                , "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthRequestResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, t.getMessage(),
+                             "Exception :"+methodName));
                 }
             });
-
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE);
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :RequestIdService :getRequestID()",WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
+      callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,e.getMessage()));
         }
     }
 

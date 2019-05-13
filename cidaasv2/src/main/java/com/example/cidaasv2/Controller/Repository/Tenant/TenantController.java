@@ -4,11 +4,9 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Repository.Tenant.TenantService;
 
@@ -48,7 +46,8 @@ public class TenantController {
     }
 
     //Service call To get Tenant Info
-    public void getTenantInfo(@NonNull String baseurl, final Result<TenantInfoEntity> result){
+    public void getTenantInfo(@NonNull String baseurl, final Result<TenantInfoEntity> result)
+    {String methodName="TenantController :getTenantInfo()";
         try{
 
             if(Cidaas.baseurl!=null && !Cidaas.baseurl.equals("")) {
@@ -67,12 +66,12 @@ public class TenantController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL Must not be empty"));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL Must not be empty","Error:"+methodName));
             }
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :TenantController :getTenantInfo()",WebAuthErrorCode.TENANT_INFO_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.TENANT_INFO_FAILURE,e.getMessage()));
         }
     }
 

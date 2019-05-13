@@ -8,7 +8,6 @@ import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenControl
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -16,7 +15,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
@@ -78,7 +77,7 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            Timber.i(e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("FaceConfigurationController instance Creation Exception:-"+e.getMessage());
         }
         return shared;
     }
@@ -90,6 +89,9 @@ public class FaceConfigurationController {
     {
         try
         {
+            LogFile.getShared(context).addInfoLog("Exception :FaceConfigurationController :configureFace()",
+                    "FaceImageFile:-"+FaceImageFile.getAbsolutePath() +"sub"+sub);
+            
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
@@ -118,14 +120,15 @@ public class FaceConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                            "Exception :Face configuration Controller :configureFace()"));
                 }
             });
 
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",
+            enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :configureFace()",
                     WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
@@ -139,8 +142,10 @@ public class FaceConfigurationController {
     {
 
         try{
+            LogFile.getShared(context).addInfoLog("Exception :FaceConfigurationController :configureFace()","FaceImage"+FaceImageFile.getAbsolutePath()
+                    +"sub"+sub);
 
-            if(codeChallenge=="" || codeVerifier=="" || codeChallenge==null || codeVerifier==null) {
+            if(codeChallenge.equals("") || codeVerifier.equals("") || codeChallenge==null || codeVerifier==null) {
                 //Generate Challenge
                 generateChallenge();
             }
@@ -177,7 +182,7 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",
+            enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :configureFace()",
                     WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
@@ -188,6 +193,10 @@ public class FaceConfigurationController {
     {
         try
         {
+            //Log
+            LogFile.getShared(context).addInfoLog("Info :FaceConfigurationController :setupFace()",
+                    "AccessToken:-"+accessToken+"Baseurl:-"+ baseurl+"FileName:"+FaceImageFile.getAbsolutePath());
+
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") &&
                     setupFaceMFARequestEntity.getClient_id()!=null && !setupFaceMFARequestEntity.getClient_id().equals(""))
             {
@@ -248,7 +257,7 @@ public class FaceConfigurationController {
                                         }
 
                                         else {
-                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :Face configuration Controller :setupFace()"));
                                         }
                                     }
 
@@ -265,14 +274,14 @@ public class FaceConfigurationController {
             }
             else
             {
-
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl AcccessToken or clientId must not be null"));
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl or AccessToken or clientId must not be null",
+                        "Exception :Face configuration Controller :setupFace()"));
             }
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Enroll Face configuration"+e.getMessage()+WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE);
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :setupFace()",
+                    WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -282,6 +291,7 @@ public class FaceConfigurationController {
     public void scannedWithFace(final String statusId, final Result<ScannedResponseEntity> scannedResult)
     {
         try {
+            LogFile.getShared(context).addInfoLog("Info :FaceConfigurationController :scannedWithFace()","StatusId:-"+statusId);
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
@@ -297,8 +307,8 @@ public class FaceConfigurationController {
 
                         FaceScannedService(baseurl, scannedRequestEntity,scannedResult);
                     } else {
-                        scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,
-                                "BaseURL or ClientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                        scannedResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                "BaseURL or ClientId or StatusID must not be empty", "Error :Face configuration Controller :scannedWithFace()"));
                     }
 
                 }
@@ -311,14 +321,17 @@ public class FaceConfigurationController {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Scanned Face configuration"+e.getMessage()+WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE);
-            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,e.getMessage()));
+            scannedResult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :scannedWithFace()",
+                    WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,e.getMessage()));
 
         }
     }
 
     private void FaceScannedService(final String baseurl, ScannedRequestEntity scannedRequestEntity, final Result<ScannedResponseEntity> scannedResult) {
      try {
+         LogFile.getShared(context).addInfoLog("Info :FaceConfigurationController :FaceScannedService()","Baseurl:-"+baseurl
+         +" StatusId:-"+scannedRequestEntity.getStatusId()+"ClientId"+scannedRequestEntity.getClient_id());
+
          FaceVerificationService.getShared(context).scannedFace(baseurl, scannedRequestEntity, null, new Result<ScannedResponseEntity>() {
              @Override
              public void success(ScannedResponseEntity result) {
@@ -348,7 +361,7 @@ public class FaceConfigurationController {
 
                              FaceVerificationService.getShared(context).scannedFace(baseurl, scannedRequestEntity, null, scannedResult);
                          } else {
-                             scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                             scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :Face configuration Controller :FaceScannedService()"));
                          }
                      }
                  }.start();
@@ -363,9 +376,8 @@ public class FaceConfigurationController {
      }
      catch (Exception e)
      {
-         LogFile.getShared(context).addRecordToLog(e.getMessage()+WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE);
-         scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",
-                 WebAuthErrorCode.SCANNED_PATTERN_MFA_FAILURE,e.getMessage()));
+         scannedResult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :FaceScannedService()",
+                 WebAuthErrorCode.SCANNED_FACE_MFA_FAILURE,e.getMessage()));
      }
 
     }
@@ -373,6 +385,12 @@ public class FaceConfigurationController {
     public void enrollFace(@NonNull final File Face, @NonNull final String sub,@NonNull final String statusId,@NonNull final int attempt,  final Result<EnrollFaceMFAResponseEntity> enrollResult) {
     try
     {
+
+        //Log
+        LogFile.getShared(context).addInfoLog("Info :Face configuration Controller :enrollFace()",
+                " Sub:-"+ sub +" StatusId:-"+statusId
+                        +" ATTEMPT:-"+attempt+" Face:-"+Face.getAbsolutePath());
+
         CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
@@ -399,9 +417,6 @@ public class FaceConfigurationController {
                         enrollResult.failure(error);
                     }
                 });
-
-
-
             }
 
             @Override
@@ -412,18 +427,18 @@ public class FaceConfigurationController {
     }
     catch (Exception e)
     {
-        Timber.e(e.getMessage());
-        LogFile.getShared(context).addRecordToLog("Initiate Face configuration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE);
-        enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
+         enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :configureFace()",
+                 WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
     }
     }
 
 
-        public void enrollFace(@NonNull final String baseurl, @NonNull final String accessToken,
+    public void enrollFace(@NonNull final String baseurl, @NonNull final String accessToken,
                            @NonNull final EnrollFaceMFARequestEntity enrollFaceMFARequestEntity, final Result<EnrollFaceMFAResponseEntity> enrollResult)
     {
         try
         {
+
 
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
@@ -447,8 +462,17 @@ public class FaceConfigurationController {
                     else
                     {
                         enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                "Image must not be empty", "Error :Face configuration Controller :enrollFace()"));
                     }
+
+
+                    //Log
+                    LogFile.getShared(context).addInfoLog("Info :Face configuration Controller :enrollFace()",
+                            " Baseurl:-"+baseurl+" AccessToken:-"+ accessToken+" ClientId:-"+enrollFaceMFARequestEntity.getClient_id()
+                                    +" StatusId:-"+enrollFaceMFARequestEntity.getStatusId()
+                                    +" userDeviceId:-"+enrollFaceMFARequestEntity.getUserDeviceId()+" ImageFile:-"+enrollFaceMFARequestEntity.getImagetoSend().getAbsolutePath());
+
+
 
                     // call Enroll Service
                     FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequestEntity,
@@ -461,13 +485,13 @@ public class FaceConfigurationController {
 
                                     //Timer
                                     new CountDownTimer(5000, 500) {
-                                        String instceID = "";
+                                        String usage_pass = "";
 
                                         public void onTick(long millisUntilFinished) {
-                                            instceID = Cidaas.usagePass;
+                                            usage_pass = Cidaas.usagePass;
 
                                             Timber.e("");
-                                            if (instceID != null && !instceID.equals("")) {
+                                            if (usage_pass != null && !usage_pass.equals("")) {
                                                 this.cancel();
                                                 onFinish();
                                             }
@@ -475,36 +499,29 @@ public class FaceConfigurationController {
                                         }
 
                                         public void onFinish() {
-                                            if (instceID != null && !instceID.equals("")) {
+                                            if (usage_pass != null && !usage_pass.equals("")) {
 
 
-                                                enrollFaceMFARequestEntityWithPass.setUsage_pass(instceID);
+
+                                                enrollFaceMFARequestEntityWithPass.setUsage_pass(usage_pass);
 
                                                 if(enrollFaceMFARequestEntityWithPass.getImagetoSend() != null) {
 
-
+                                                    //Log
+                                                    LogFile.getShared(context).addInfoLog("Info :Face configuration Controller :enrollFace()",
+                                                            " UsagePass:-"+ usage_pass+" Baseurl:-"+baseurl);
                                                     // call Enroll Service
                                                     FaceVerificationService.getShared(context).enrollFace(baseurl, accessToken, enrollFaceMFARequestEntityWithPass,
-                                                            null, new Result<EnrollFaceMFAResponseEntity>() {
-                                                                @Override
-                                                                public void success(EnrollFaceMFAResponseEntity serviceresult) {
-                                                                    enrollResult.success(serviceresult);
-                                                                }
-
-                                                                @Override
-                                                                public void failure(WebAuthError error) {
-                                                                    enrollResult.failure(error);
-                                                                }
-                                                            });
+                                                            null, enrollResult);
                                                 }
                                                 else {
-                                                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                                                            "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Image must not be empty",
+                                                            "Error :Face configuration Controller :enrollFace()"));
                                                 }
                                             }
                                             else {
                                                 // return Error Message
-                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :Face configuration Controller :enrollFace()"));
 
                                             }
 
@@ -515,31 +532,37 @@ public class FaceConfigurationController {
                                 @Override
                                 public void failure(WebAuthError error) {
                                     enrollResult.failure(error);
-                                    //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 } else {
-                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                            "UserdeviceId or Client Id or StatusID  must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                            "UserdeviceId or Client Id or StatusID  must not be empty","Error :Face configuration Controller :enrollFace()"));
                 }
             }
             else
             {
-                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,
-                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                        "BaseURL or accessToken must not be empty","Error :Face configuration Controller :enrollFace()"));
             }
 
 
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :enrollFace()",
+                    WebAuthErrorCode.ENROLL_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
     public void LoginWithFace(@NonNull final File photo, @NonNull final PasswordlessEntity passwordlessEntity,
                               final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
+
+            LogFile.getShared(context).addInfoLog("Info :FaceConfigurationController :LoginWithFace()",
+                    "Info FaceImageFile:- "+photo.getAbsolutePath() +"UsageType:-"+passwordlessEntity.getUsageType()+" Sub:- "+passwordlessEntity.getSub()+
+                            " Email"+passwordlessEntity.getEmail()+ " Mobile"+passwordlessEntity.getMobile()+" RequestId:-"+passwordlessEntity.getRequestId()+
+                            " TrackId:-"+passwordlessEntity.getTrackId());
+
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
@@ -554,8 +577,8 @@ public class FaceConfigurationController {
                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                             String errorMessage = "baseurl or clientId must not be empty";
 
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                    errorMessage,  "Error :Face configuration Controller :LoginWithFace()"));
                         }
 
                         if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
@@ -563,16 +586,16 @@ public class FaceConfigurationController {
                                 (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
                             String errorMessage = "sub or email or mobile number must not be empty";
 
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                    errorMessage, "Error :Face configuration Controller :LoginWithFace()"));
                         }
 
                         if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
                             if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
                                 String errorMessage = "trackId must not be empty";
 
-                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                        errorMessage,  "Error :Face configuration Controller :LoginWithFace()"));
                                 return;
                             }
                         }
@@ -589,31 +612,35 @@ public class FaceConfigurationController {
 
                     } else {
                         String errorMessage = "Image File or RequestId or UsageType must not be empty";
-
-                        loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                        loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,"Error :Face configuration Controller :LoginWithFace()"));
                     }
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    loginresult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                            "Error :Face configuration Controller :LoginWithFace()"));
                 }
             });
 
         } catch (Exception e) {
-
+            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :LoginWithFace()",
+                    WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
     //Login with Face
-    public void LoginWithFace(@NonNull final File FaceImageFile, @NonNull final String baseurl, @NonNull final String clientId,
+    private void LoginWithFace(@NonNull final File FaceImageFile, @NonNull final String baseurl, @NonNull final String clientId,
                               @NonNull final String trackId, @NonNull final String requestId,
                               @NonNull final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity,
                               final Result<LoginCredentialsResponseEntity> loginresult)
     {
         try{
+            LogFile.getShared(context).addInfoLog("Info :FaceConfigurationController :LoginWithFace()",
+                    "Info FaceImageFile:- "+FaceImageFile.getAbsolutePath() +"UsageType:-"+initiateFaceMFARequestEntity.getUsageType()+
+                            " Sub:- "+initiateFaceMFARequestEntity.getSub()+ " Email"+initiateFaceMFARequestEntity.getEmail()+
+                            " Mobile"+initiateFaceMFARequestEntity.getMobile()+" RequestId:-"+requestId+ " TrackId:-"+trackId+" baseURL"+baseurl+" ClientId"+clientId);
 
             if(codeChallenge.equals("") && codeVerifier.equals("")) {
                 //Generate Challenge
@@ -643,12 +670,12 @@ public class FaceConfigurationController {
 
                                 Cidaas.usagePass ="";
                                 new CountDownTimer(5000, 500) {
-                                    String instceID="";
+                                    String usage_pass ="";
                                     public void onTick(long millisUntilFinished) {
-                                        instceID= Cidaas.usagePass;
+                                        usage_pass = Cidaas.usagePass;
 
                                         Timber.e("");
-                                        if(instceID!=null && !instceID.equals(""))
+                                        if(usage_pass !=null && !usage_pass.equals(""))
                                         {
                                             this.cancel();
                                             onFinish();
@@ -656,13 +683,17 @@ public class FaceConfigurationController {
 
                                     }
                                     public void onFinish() {
-                                        if(instceID!=null && !instceID.equals("")) {
+                                        if(usage_pass !=null && !usage_pass.equals("")) {
 
                                             //Todo call initiate
                                             final InitiateFaceMFARequestEntity initiateFaceMFARequestEntity=new InitiateFaceMFARequestEntity();
-                                            initiateFaceMFARequestEntity.setUsage_pass(instceID);
+                                            initiateFaceMFARequestEntity.setUsage_pass(usage_pass);
 
                                             final String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
+
+                                            //Log
+                                            LogFile.getShared(context).addInfoLog("Info :Face configuration Controller :LoginWithFace()",
+                                                    " UserDeviceId:-"+userDeviceId+" UsagePass:-"+ usage_pass+" Baseurl:-"+baseurl);
 
                                             FaceVerificationService.getShared(context).initiateFace(baseurl, initiateFaceMFARequestEntity,null,
                                                     new Result<InitiateFaceMFAResponseEntity>() {
@@ -683,6 +714,9 @@ public class FaceConfigurationController {
                                                                 authenticateFace(baseurl, authenticateFaceRequestEntity, new Result<AuthenticateFaceResponseEntity>() {
                                                                     @Override
                                                                     public void success(AuthenticateFaceResponseEntity result) {
+
+                                                                        LogFile.getShared(context).addSuccessLog("Success :Face configuration Controller :LoginWithFace()",
+                                                                                "Sub:-"+result.getData().getSub()+"TrackingCode"+result.getData().getTrackingCode());
 
                                                                         //Todo Call Resume with Login Service
 
@@ -711,22 +745,18 @@ public class FaceConfigurationController {
                                                                         loginresult.failure(error);
                                                                     }
                                                                 });
-
-
-
                                                             }
                                                             else {
                                                                 String errorMessage="Status Id or Face Must not be null";
-                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                                                loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,
+                                                                        "Error :Face configuration Controller :LoginWithFace()"));
 
                                                             }
-
                                                         }
 
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             loginresult.failure(error);
-                                                            //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -734,7 +764,7 @@ public class FaceConfigurationController {
                                         else {
                                             // return Error Message
 
-                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException( "Error :Face configuration Controller :LoginWithFace()"));
                                         }
                                     }
                                 }.start();
@@ -749,36 +779,34 @@ public class FaceConfigurationController {
             }
             else
             {
-
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or userDeviceId or baseurl must not be empty"));
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or userDeviceId or baseurl must not be empty",
+                        "Error :Face configuration Controller :LoginWithFace()"));
             }
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            LogFile.getShared(context).addRecordToLog("Initiate Face configuration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE);
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
+            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :LoginWithFace()",
+                    WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 
 
     public void authenticateFace(@NonNull final File photo,@NonNull final String statusId, final Result<AuthenticateFaceResponseEntity> result) {
         try {
+            LogFile.getShared(context).addInfoLog("Info :FaceConfigurationController :authenticateFace()",
+                    " FileName:- "+photo.getAbsolutePath()+" StatusId:-"+statusId);
+
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
-                    //todo call enroll Email
-
-
+                    //todo call enroll Face
 
                     AuthenticateFaceRequestEntity authenticateFaceRequestEntity=new AuthenticateFaceRequestEntity();
                     authenticateFaceRequestEntity.setStatusId(statusId);
                     authenticateFaceRequestEntity.setImagetoSend(photo);
                     authenticateFaceRequestEntity.setUserDeviceId(DBHelper.getShared().getUserDeviceId(baseurl));
-
-
 
                  authenticateFace(baseurl,authenticateFaceRequestEntity,result);
 
@@ -786,21 +814,28 @@ public class FaceConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                            "Exception :Face configuration Controller :configureFace()"));
                 }
             });
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Authenticate Face configuration"+e.getMessage()+WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE);
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :Email configuration Controller :configureFace()",WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
+           result.failure(WebAuthError.getShared(context).methodException("Exception :Face configuration Controller :configureFace()",
+                   WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
 
     }
 
     //Authenticate Face
-    public void authenticateFace(final String baseurl, final AuthenticateFaceRequestEntity authenticateFaceRequestEntity, final Result<AuthenticateFaceResponseEntity> authResult)
+    private void authenticateFace(final String baseurl, final AuthenticateFaceRequestEntity authenticateFaceRequestEntity,
+                                  final Result<AuthenticateFaceResponseEntity> authResult)
     {
         try
         {
+            LogFile.getShared(context).addInfoLog( "Info :FaceConfigurationController :authenticateFace()",
+                    " baseurl:-"+baseurl+" ClientId"+authenticateFaceRequestEntity.getClient_id()+" UsagePass"+authenticateFaceRequestEntity.getUsage_pass()+
+                            " StatusId:-" +authenticateFaceRequestEntity.getStatusId()+" ImageFile:-"+authenticateFaceRequestEntity.getImagetoSend()+
+                            "User device id"+authenticateFaceRequestEntity.getUserDeviceId());
+
             if(baseurl!=null && !baseurl.equals("")) {
 
                 if (authenticateFaceRequestEntity.getUserDeviceId() != null && !authenticateFaceRequestEntity.getUserDeviceId().equals("") &&
@@ -820,8 +855,8 @@ public class FaceConfigurationController {
                     }
                     else
                     {
-                        authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                                "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                        authResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                "Image must not be empty",  "Error :FaceConfigurationController :authenticateFace()"));
                     }
 
 
@@ -835,13 +870,13 @@ public class FaceConfigurationController {
 
                     //Timer
                     new CountDownTimer(5000, 500) {
-                        String instceID = "";
+                        String usage_pass = "";
 
                         public void onTick(long millisUntilFinished) {
-                            instceID = Cidaas.usagePass;
+                            usage_pass = Cidaas.usagePass;
 
                             Timber.e("");
-                            if (instceID != null && !instceID.equals("")) {
+                            if (usage_pass != null && !usage_pass.equals("")) {
                                 this.cancel();
                                 onFinish();
                             }
@@ -849,11 +884,11 @@ public class FaceConfigurationController {
                         }
 
                         public void onFinish() {
-                            if (instceID != null && !instceID.equals("")) {
+                            if (usage_pass != null && !usage_pass.equals("")) {
 
-
-                                authenticateFaceRequestEntityWithPass.setUsage_pass(instceID);
-
+                                authenticateFaceRequestEntityWithPass.setUsage_pass(usage_pass);
+                                LogFile.getShared(context).addSuccessLog( "Success :FaceConfigurationController :authenticateFace()",
+                                        "UsagePass:-"+usage_pass);
 
                                 if(authenticateFaceRequestEntityWithPass!=null) {
 
@@ -861,13 +896,13 @@ public class FaceConfigurationController {
                                 }
                                 else {
                                     // return Error Message
-                                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                                            "Image must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                    authResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                            "Image must not be empty",  "Error :FaceConfigurationController :authenticateFace()"));
                                 }
                             }
                             else {
                                 // return Error Message
-                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException( "Error :FaceConfigurationController :authenticateFace()"));
                             }
 
                         }
@@ -880,21 +915,21 @@ public class FaceConfigurationController {
                 }
             });
                 } else {
-                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                            "UserdeviceId or  StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    authResult.failure(WebAuthError.getShared(context).propertyMissingException("UserdeviceId or  StatusID must not be empty" ,
+                            "Error :FaceConfigurationController :authenticateFace()"));
                 }
             }
             else
             {
-                authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                        "BaseURL  must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                authResult.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL  must not be empty",
+                        "Error :FaceConfigurationController :authenticateFace()"));
             }
 
         }
         catch (Exception e)
         {
-            authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,
-                    "Face Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            authResult.failure(WebAuthError.getShared(context).methodException("Exception :FaceConfigurationController :authenticateFace()",
+                    WebAuthErrorCode.AUTHENTICATE_FACE_MFA_FAILURE,e.getMessage()));
         }
     }
 

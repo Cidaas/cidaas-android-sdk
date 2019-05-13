@@ -21,11 +21,10 @@ import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Interface.ILoader;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
@@ -284,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, "clientInfo Faliure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "clientInfo Faliure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -292,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(getApplicationContext(), error.ErrorMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), error.getErrorMessage(), Toast.LENGTH_LONG).show();
 
             }
         });
@@ -326,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

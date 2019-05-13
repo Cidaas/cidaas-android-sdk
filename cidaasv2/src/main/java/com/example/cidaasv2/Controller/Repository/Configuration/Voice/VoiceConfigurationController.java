@@ -9,15 +9,13 @@ import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
@@ -109,12 +107,13 @@ public class VoiceConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                            "Error :VoiceConfigurationController :configureVoice()"));
                 }
             });
 
         } catch (Exception e) {
-           enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :configureVoice()",WebAuthErrorCode.PROPERTY_MISSING, e.getMessage()));
+           enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :configureVoice()",WebAuthErrorCode.PROPERTY_MISSING, e.getMessage()));
         }
     }
 
@@ -155,13 +154,14 @@ public class VoiceConfigurationController {
             else
             {
 
-                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or ClientId must not be null"));
+                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or ClientId must not be null",
+                        "Error :VoiceConfigurationController :configureVoice()"));
             }
 
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :configureVoice()",WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
+            enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :configureVoice()",WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -200,7 +200,7 @@ public class VoiceConfigurationController {
                                         }
 
                                         else {
-                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Exception :VoiceConfigurationController :setupVoice()"));
                                         }
                                     }
                                 }.start();
@@ -214,12 +214,12 @@ public class VoiceConfigurationController {
             else
             {
 
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Access Token must not be empty"));
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Access Token must not be empty","Error :VoiceConfigurationController :setupVoice()"));
             }
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :setupVoice()",WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :setupVoice()",WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -256,7 +256,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :setupVoiceAfterDeviceVerification()",WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :setupVoiceAfterDeviceVerification()",WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -311,7 +311,7 @@ public class VoiceConfigurationController {
                                                 }
                                                 else
                                                 {
-                                                    scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                                    scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :VoiceConfigurationController :scannedWithVoice()"));
                                                 }
                                             }
                                         }.start();
@@ -326,7 +326,7 @@ public class VoiceConfigurationController {
                     }
                     else {
                         scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,
-                                "StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                "StatusID must not be empty","Error :VoiceConfigurationController :scannedWithVoice()"));
                     }
 
 
@@ -342,7 +342,7 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :scannedWithVoice()",WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,e.getMessage()));
+            scannedResult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :scannedWithVoice()",WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -381,11 +381,13 @@ public class VoiceConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                            "Error :VoiceConfigurationController :scannedWithVoice()"));
                 }
             });
         } catch (Exception e) {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :scannedWithVoice()",WebAuthErrorCode.PROPERTY_MISSING, "Enroll Voice exception" + e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :scannedWithVoice()",
+                    WebAuthErrorCode.PROPERTY_MISSING, "Enroll Voice exception" + e.getMessage()));
         }
     }
 
@@ -411,8 +413,8 @@ public class VoiceConfigurationController {
                     }
                     else
                     {
-                        enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                                "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                        enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                "Voice must not be empty", "Error :VoiceConfigurationController :enrollVoice()"));
                     }
 
 
@@ -452,13 +454,13 @@ public class VoiceConfigurationController {
                                                 else
                                                 {
                                                     // return Error Message
-                                                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                                                            "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                                            "Voice must not be empty", "Error :VoiceConfigurationController :enrollVoice()"));
                                                 }
                                             }
                                             else {
                                                 // return Error Message
-                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :VoiceConfigurationController :enrollVoice()"));
                                             }
 
                                         }
@@ -472,19 +474,20 @@ public class VoiceConfigurationController {
                                 }
                             });
                 } else {
-                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                            "UserdeviceId or Verifier password or clientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                            "UserdeviceId or Verifier password or clientId or StatusID must not be empty", "Error :VoiceConfigurationController :enrollVoice()"));
                 }
             }
             else
             {
-                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                        "BaseURL or accessToken must not be empty", "Error :VoiceConfigurationController :enrollVoice()"));
             }
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :enrollVoice()",WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :enrollVoice()",
+                    WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -504,8 +507,8 @@ public class VoiceConfigurationController {
                         if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                             String errorMessage = "baseurl or clientId must not be empty";
 
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                    errorMessage, "Error :VoiceConfigurationController :initiateVoice()"));
                         }
 
                         if (((passwordlessEntity.getSub() == null || passwordlessEntity.getSub().equals("")) &&
@@ -513,8 +516,8 @@ public class VoiceConfigurationController {
                                 (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
                             String errorMessage = "sub or email or mobile number must not be empty";
 
-                            loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                            loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                    errorMessage, "Error :VoiceConfigurationController :initiateVoice()"));
                         }
 
                         if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
@@ -522,8 +525,8 @@ public class VoiceConfigurationController {
                                 String errorMessage = "trackId must not be empty";
 
 
-                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                        errorMessage, "Error :VoiceConfigurationController :initiateVoice()"));
                                 return;
                             }
                         }
@@ -544,7 +547,7 @@ public class VoiceConfigurationController {
                         String errorMessage = "Image File or RequestId or UsageType must not be empty";
 
                         loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                errorMessage,"Error :VoiceConfigurationController :initiateVoice()"));
                     }
 
 
@@ -552,11 +555,13 @@ public class VoiceConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                            "Error :VoiceConfigurationController :initiateVoice()"));
                 }
             });
         } catch (Exception e) {
-           loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :initiateVoice()",WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
+           loginresult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :initiateVoice()",
+                   WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
         }
     }
 
@@ -615,7 +620,7 @@ public class VoiceConfigurationController {
 
                                         else {
                                             // return Error Message
-                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :VoiceConfigurationController :initiateVoice()"));
                                         }
                                     }
                                 }.start();
@@ -630,17 +635,20 @@ public class VoiceConfigurationController {
             }
             else
             {
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Usage Type or UserdeviceId or baseurl must not be empty"));
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Usage Type or UserdeviceId or baseurl must not be empty",
+                        "Error :VoiceConfigurationController :initiateVoice()"));
             }
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :initiateVoice()",WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
+            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :initiateVoice()",
+                    WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
     //Initiate service after DeviceVerification
-    private void initiateVoiceAfterDeviceVerification(String usagePassFromService, @NonNull final File VoiceImageFile, @NonNull final String baseurl, @NonNull final String clientId,
+    private void initiateVoiceAfterDeviceVerification(String usagePassFromService, @NonNull final File VoiceImageFile, @NonNull final String baseurl,
+                                                      @NonNull final String clientId,
                                                       @NonNull final String trackId, @NonNull final String requestId, final String usageType,
                                                       final Result<LoginCredentialsResponseEntity> loginresult) {
         try {
@@ -670,7 +678,7 @@ public class VoiceConfigurationController {
                                     @Override
                                     public void success(AuthenticateVoiceResponseEntity result) {
                                         ResumeLogin.getShared(context).resumeLoginAfterSuccessfullAuthentication(result.getData().getSub(), result.getData().getTrackingCode(),
-                                                AuthenticationType.voice, usageType, clientId, requestId, trackId, baseurl, loginresult);
+                                                AuthenticationType.VOICE, usageType, clientId, requestId, trackId, baseurl, loginresult);
 
                                     }
 
@@ -681,7 +689,8 @@ public class VoiceConfigurationController {
                                 });
                             } else {
                                 String errorMessage = "Status Id or Voice Must not be null";
-                                loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE, errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,
+                                        "Error :VoiceConfigurationController :initiateVoiceAfterDeviceVerification()"));
 
                             }
                         }
@@ -695,7 +704,8 @@ public class VoiceConfigurationController {
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :initiateVoiceAfterDeviceVerification()",WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
+            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :initiateVoiceAfterDeviceVerification()",
+                    WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -725,13 +735,14 @@ public class VoiceConfigurationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                            "Error :VoiceConfigurationController :authenticateVoice()"));
                 }
             });
         } catch (Exception e) {
-            LogFile.getShared(context).addRecordToLog("Verify Voice exception" + e.getMessage());
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :authenticateVoice()", WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
-            Timber.e("Verify Voice exception" + e.getMessage());
+            result.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :authenticateVoice()",
+                    WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage()));
+
         }
     }
 
@@ -756,8 +767,8 @@ public class VoiceConfigurationController {
                     }
                     else
                     {
-                        authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                                "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                        authResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                "Voice must not be empty", "Error :VoiceConfigurationController :authenticateVoice()"));
                     }
 
 
@@ -795,13 +806,13 @@ public class VoiceConfigurationController {
                                 }
                                 else
                                 {
-                                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                                            "Voice must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                                    authResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                            "Voice must not be empty", "Error :VoiceConfigurationController :authenticateVoice()"));
                                 }
                             }
                             else {
                                 // return Error Message
-                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :VoiceConfigurationController :authenticateVoice()"));
                             }
 
                         }
@@ -814,20 +825,21 @@ public class VoiceConfigurationController {
                 }
             });
                 } else {
-                    authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                            "UserdeviceId or Verifier password or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    authResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                            "UserdeviceId or Verifier password or StatusID must not be empty","Error :VoiceConfigurationController :authenticateVoice()"));
                 }
             }
             else
             {
-                authResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                authResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                        "BaseURL or accessToken must not be empty","Error :VoiceConfigurationController :authenticateVoice()"));
             }
 
         }
         catch (Exception e)
         {
-            authResult.failure(WebAuthError.getShared(context).serviceException("Exception :VoiceConfigurationController :authenticateVoice()",WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,e.getMessage()));
+            authResult.failure(WebAuthError.getShared(context).methodException("Exception :VoiceConfigurationController :authenticateVoice()",
+                    WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 

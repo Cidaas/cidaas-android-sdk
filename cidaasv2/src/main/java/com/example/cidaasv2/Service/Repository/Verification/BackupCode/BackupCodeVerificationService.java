@@ -3,15 +3,12 @@ package com.example.cidaasv2.Service.Repository.Verification.BackupCode;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
@@ -25,7 +22,6 @@ import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -84,8 +80,8 @@ public class  BackupCodeVerificationService {
                 setupBackupCodeMFAUrl=baseurl+ URLHelper.getShared().getSetupBackupCodeMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                 return;
             }
 
@@ -123,21 +119,21 @@ public class  BackupCodeVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,
+                                    response.code(),"Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,
+                                response,"Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupBackupCodeMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Setup BackupCode service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Setup BackupCode Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,
+                            t.getMessage(), "Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                 }
             });
 
@@ -145,7 +141,8 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :BackupCodeVerificationService :setupBackupCodeMFA()",WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Error :BackupCodeVerificationService :setupBackupCodeMFA()",
+                    WebAuthErrorCode.SETUP_BACKUPCODE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -161,8 +158,8 @@ public class  BackupCodeVerificationService {
                 initiateBackupCodeMFAUrl=baseurl+URLHelper.getShared().getInitiateBackupCodeMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                 return;
             }
 
@@ -197,21 +194,21 @@ public class  BackupCodeVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
+                                    response.code(),"Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,
+                                response,"Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateBackupCodeMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Initiate BackUpCode MFA  call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Initiate BackUpCode MFA Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,t.getMessage(),
+                            "Error :BackupCodeVerificationService :initiateBackupCodeMFA()"));
                 }
             });
 
@@ -219,7 +216,8 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :BackupCodeVerificationService :initiateBackupCodeMFA()",WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :BackupCodeVerificationService :initiateBackupCodeMFA()",
+                    WebAuthErrorCode.INITIATE_BACKUPCODE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -236,8 +234,8 @@ public class  BackupCodeVerificationService {
                 authenticateBackupCodeMFAUrl=baseurl+URLHelper.getShared().getAuthenticateBackupCodeMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :BackupCodeVerificationService :authenticateBackupCodeMFA()");
                 return;
             }
 
@@ -271,21 +269,21 @@ public class  BackupCodeVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,
+                                    response.code(),"Error :BackupCodeVerificationService :authenticateBackupCodeMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,response
+                                ,"Error :BackupCodeVerificationService :authenticateBackupCodeMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateBackupCodeResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Authenticate Face service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Authenticate Face Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,
+                            t.getMessage(), "Error :BackupCodeVerificationService :authenticateBackupCodeMFA()"));
                 }
             });
 
@@ -293,7 +291,7 @@ public class  BackupCodeVerificationService {
         }
         catch (Exception e)
         {
-            callback.failure(WebAuthError.getShared(context).serviceException("Exception :BackupCodeVerificationService :authenticateBackupCodeMFA()",WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :BackupCodeVerificationService :authenticateBackupCodeMFA()",WebAuthErrorCode.AUTHENTICATE_BACKUPCODE_MFA_FAILURE,e.getMessage()));
         }
     }
 }

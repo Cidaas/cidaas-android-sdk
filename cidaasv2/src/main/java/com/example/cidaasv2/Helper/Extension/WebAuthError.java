@@ -16,12 +16,14 @@ import timber.log.Timber;
  */
 
 public class  WebAuthError extends Error implements IOAuthExcepiton{
-   public int errorCode=WebAuthErrorCode.DEFAULT;
-   public int statusCode=400;
+
+   private int errorCode=WebAuthErrorCode.DEFAULT;
+   private int statusCode=400;
    private Context context;
-   public String ErrorMessage="";
-    public String DetailedErrorMessage="";
-   public ErrorEntity errorEntity;
+   private String ErrorMessage="";
+   private String DetailedErrorMessage="";
+   private ErrorEntity errorEntity;
+    private String jsonMessage="";
 
     public int getErrorCode() {
         return errorCode;
@@ -33,6 +35,15 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
     public int getStatusCode() {
         return statusCode;
+    }
+
+
+    public String getJsonMessage() {
+        return jsonMessage;
+    }
+
+    public void setJsonMessage(String jsonMessage) {
+        this.jsonMessage = jsonMessage;
     }
 
     public void setStatusCode(int statusCode) {
@@ -68,7 +79,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 
     public Object error;
-   public static WebAuthError shared;
+   private static WebAuthError shared;
 
 
 
@@ -96,7 +107,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
    //File NotFound Exception
     @Override
-    public WebAuthError fileNotFoundException() {
+    public WebAuthError fileNotFoundException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.FILE_NOT_FOUND;
         WebAuthError.shared.statusCode= HttpStatusCode.NOT_FOUND;
@@ -111,7 +122,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //NoContentinFileException
     @Override
-    public WebAuthError noContentInFileException() {
+    public WebAuthError noContentInFileException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.NO_CONTENT_IN_FILE;
         WebAuthError.shared.statusCode=HttpStatusCode.NO_CONTENT;
@@ -120,7 +131,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //PropertyMissingException
     @Override
-    public WebAuthError propertyMissingException(String errorDetails) {
+    public WebAuthError propertyMissingException(String errorDetails,String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.PROPERTY_MISSING;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
@@ -132,15 +143,38 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(statusCode);
         errorEntity.setError(context.getString(R.string.PROPERTY_MISSING));
 
+        String loggerMessage = "Property Missing Error :-"+methodName+"ErrorCode :- "+ WebAuthError.shared.errorCode+" Error Message:- " +errorDetails;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
+        return WebAuthError.shared;
+    }
+
+    //CidaasPropertyMissingException
+    public WebAuthError CidaaspropertyMissingException(String errorDetails,String methodName) {
+
+        WebAuthError.shared.errorCode=WebAuthErrorCode.CIDAAS_PROPERTY_MISSING;
+        WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
+        WebAuthError.shared.ErrorMessage=context.getString(R.string.CIDAAS_PROPERTY_MISSING);
+        WebAuthError.shared.DetailedErrorMessage=errorDetails;
+
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(errorCode+"");
+        errorEntity.setStatus(statusCode);
+        errorEntity.setError(context.getString(R.string.CIDAAS_PROPERTY_MISSING));
+
+        String loggerMessage = "Property Missing Error :-"+methodName+"ErrorCode :- "+ WebAuthError.shared.errorCode+" Error Message:- " +errorDetails;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         return WebAuthError.shared;
     }
 
  //Access Token Exception
- //PropertyMissingException
  @Override
- public WebAuthError accessTokenException(String errorDetails) {
+ public WebAuthError accessTokenException(String errorDetails,String methodName) {
 
      WebAuthError.shared.errorCode=WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE;
      WebAuthError.shared.statusCode=HttpStatusCode.INTERNAL_SERVER_ERROR;
@@ -158,18 +192,111 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
  }
 //Service FailureException
     @Override
-    public WebAuthError serviceFailureException(int errorCode, String errorMessage, int StatusCode,Object error,ErrorEntity errorEntity) {
+    public WebAuthError serviceCallFailureException(int errorCode, String errorMessage, String methodName) {
 
         WebAuthError.shared.errorCode=errorCode;
-        WebAuthError.shared.statusCode=StatusCode;
+        WebAuthError.shared.statusCode=400;
         WebAuthError.shared.ErrorMessage=errorMessage;
-        WebAuthError.shared.error=error;
-        WebAuthError.shared.errorEntity=errorEntity;
+
+
+
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage+"StatusCode:- "+statusCode;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        Timber.d(loggerMessage);
+
+
         return WebAuthError.shared;
+
+
     }
 
 
-    public WebAuthError serviceException(String title, int errorCode, String errorMessage)
+    //Service FailureException
+
+    public WebAuthError serviceCallException(int errorCode, String errorMessage,int statusCode,ErrorEntity errorEntity,String errorResponse, String methodName) {
+
+        WebAuthError.shared.errorCode=errorCode;
+        WebAuthError.shared.statusCode=statusCode;
+        WebAuthError.shared.ErrorMessage=errorMessage;
+        WebAuthError.shared.jsonMessage=errorResponse;
+
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage+"StatusCode:- "+statusCode+
+                "ErrorResponse From Server:"+jsonMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        Timber.d(loggerMessage);
+
+
+        return WebAuthError.shared;
+
+
+    }
+
+
+
+    public WebAuthError loginFailureException(int errorCode,String errorMessage,int statusCode,Object error,String methodName) {
+
+        WebAuthError.shared.errorCode=errorCode;
+        WebAuthError.shared.statusCode=statusCode;
+        WebAuthError.shared.ErrorMessage=errorMessage;
+        WebAuthError.shared.error=error;
+
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(errorCode+"");
+        errorEntity.setStatus(statusCode);
+        errorEntity.setError(errorMessage);
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
+
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage+"StatusCode:- "+statusCode;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        Timber.d(loggerMessage);
+
+
+        return WebAuthError.shared;
+
+
+    }
+
+
+
+    public WebAuthError emptyResponseException(int errorCode, int statusCode, String methodName) {
+
+        WebAuthError.shared.errorCode=errorCode;
+        WebAuthError.shared.statusCode=statusCode;
+        WebAuthError.shared.ErrorMessage="Empty response";
+
+
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +" Empty response"+"StatusCode:- "+statusCode;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        Timber.d(loggerMessage);
+
+
+        return WebAuthError.shared;
+
+    }
+
+
+    public WebAuthError loginWithBrowserFailureException(int errorCode, String errorMessage, String methodName) {
+
+        WebAuthError.shared.errorCode=errorCode;
+        WebAuthError.shared.statusCode=HttpStatusCode.BAD_REQUEST;
+        WebAuthError.shared.ErrorMessage=errorMessage;
+
+
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +" Empty response"+"StatusCode:- "+statusCode;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        Timber.d(loggerMessage);
+
+
+        return WebAuthError.shared;
+
+    }
+
+    public WebAuthError methodException(String methodName, int errorCode, String errorMessage)
     {
 
         WebAuthError.shared.errorCode=errorCode;
@@ -178,8 +305,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
 
 
-        String loggerMessage = title+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage;
-        LogFile.getShared(context).addRecordToLog(loggerMessage);
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         Timber.d(loggerMessage);
 
@@ -190,7 +317,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
  //Location History Failure Exception
  @Override
- public WebAuthError locationHistoryException() {
+ public WebAuthError locationHistoryException(String methodName) {
 
      WebAuthError.shared.errorCode=WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE;
      WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
@@ -200,7 +327,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
 //LoginUrl MissingException
     @Override
-    public WebAuthError loginURLMissingException() {
+    public WebAuthError loginURLMissingException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.EMPTY_LOGIN_URL;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
@@ -209,7 +336,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //RedirectUrl Missing Exception
     @Override
-    public WebAuthError redirectURLMissingException() {
+    public WebAuthError redirectURLMissingException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.EMPTY_REDIRECT_URL;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
@@ -218,7 +345,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //Usercancelled Exception
     @Override
-    public WebAuthError userCancelledException() {
+    public WebAuthError userCancelledException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.USER_CANCELLED_LOGIN;
         WebAuthError.shared.statusCode=HttpStatusCode.CANCEL_REQUEST;
@@ -227,7 +354,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //CodenotFoundException
     @Override
-    public WebAuthError codeNotFoundException() {
+    public WebAuthError codeNotFoundException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.CODE_NOT_FOUND;
         WebAuthError.shared.statusCode=HttpStatusCode.NO_CONTENT;
@@ -236,7 +363,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //EmptyCallbackException
     @Override
-    public WebAuthError emptyCallbackException() {
+    public WebAuthError emptyCallbackException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.EMPTY_CALLBACK;
         WebAuthError.shared.statusCode=HttpStatusCode.BAD_REQUEST;
@@ -245,7 +372,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 //NouserFoundException
     @Override
-    public WebAuthError noUserFoundException() {
+    public WebAuthError noUserFoundException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.NO_USER_FOUND;
         WebAuthError.shared.statusCode=HttpStatusCode.NOT_FOUND;
@@ -254,7 +381,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
     }
 
     //Device Failed to Verify
-    public WebAuthError deviceVerificationFailureException() {
+    public WebAuthError deviceVerificationFailureException(String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
@@ -265,15 +392,19 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.DEVICE_VERIFICATION_FAILURE));
 
+        String loggerMessage = "Device Verification Failure Exception:-"+methodName+" ErrorCode :- "+ WebAuthError.shared.errorCode
+                +" Error Message:- " +errorEntity.getError();
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
         WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
     }
 
     //Custom Exception
-    public WebAuthError customException(int errorCode, String errorMessage, int StatusCode) {
+    public WebAuthError customException(int errorCode, String errorMessage, String methodName) {
 
         WebAuthError.shared.errorCode=errorCode;
-        WebAuthError.shared.statusCode=StatusCode;
+        WebAuthError.shared.statusCode=HttpStatusCode.BAD_REQUEST;
         WebAuthError.shared.ErrorMessage=errorMessage;
 
         ErrorEntity errorEntity=new ErrorEntity();
@@ -281,25 +412,30 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(statusCode);
         errorEntity.setError(errorMessage);
 
-
         WebAuthError.shared.setErrorEntity(errorEntity);
+
+        String loggerMessage = "CustomException:-"+methodName+" ErrorCode :- "+errorCode+" "+ "Error Message:- " +errorMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
         return WebAuthError.shared;
     }
 
-
-
     //Custom Exception
-    public WebAuthError fingerPrintException(String errorMessage) {
+    public WebAuthError fingerPrintException(String errorMessage,String methodName) {
 
         WebAuthError.shared.errorCode=WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED;
         WebAuthError.shared.statusCode=417;
         WebAuthError.shared.ErrorMessage=errorMessage;
+
+        String loggerMessage = "Finger print Exception:-"+methodName+" ErrorCode :- "+WebAuthError.shared.errorCode+" Error Message:- " +errorMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
         return WebAuthError.shared;
     }
 
 
     //Custom Exception
-    public WebAuthError fingerPrintError(int ErrorCode,String errorMessage) {
+    public WebAuthError fingerPrintError(int ErrorCode,String errorMessage,String methodName) {
 
         WebAuthError.shared.errorCode=ErrorCode;
         WebAuthError.shared.statusCode=417;
@@ -312,6 +448,9 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
         WebAuthError.shared.setErrorEntity(errorEntity);
 
+        String loggerMessage = "Finger print Error:-"+methodName+" ErrorCode :- "+ErrorCode+" "+ "Error Message:- " +errorMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
         return WebAuthError.shared;
     }
 
@@ -321,6 +460,10 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorCode=WebAuthErrorCode.ON_CANCEL_FACEBOOK;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
         WebAuthError.shared.ErrorMessage=context.getString(R.string.USER_CANCELLED_LOGIN);
+
+        String loggerMessage = "Facebook OnCancel Exception :- ErrorCode :- "+errorCode+" Error Message:- " + WebAuthError.shared.ErrorMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
         return WebAuthError.shared;
     }
 
@@ -331,6 +474,10 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.errorCode=WebAuthErrorCode.GOOGLE_ERROR;
         WebAuthError.shared.statusCode=HttpStatusCode.EXPECTATION_FAILED;
         WebAuthError.shared.ErrorMessage=context.getString(R.string.GOOGLE_SIGNIN_ERROR);
+
+        String loggerMessage = "Google Signin error:- ErrorCode :- "+errorCode+" Error Message:- " + WebAuthError.shared.ErrorMessage;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+
         return WebAuthError.shared;
     }
 }

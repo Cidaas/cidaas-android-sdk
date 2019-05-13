@@ -8,16 +8,16 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
  */
 
 public interface IOAuthExcepiton {
-    public WebAuthError fileNotFoundException();
-    public WebAuthError noContentInFileException();
-    public WebAuthError propertyMissingException(String errorDetails);
-    public WebAuthError serviceFailureException(int errorCode, String errorMessage, int StatusCode, Object error, ErrorEntity errorEntity);
-    public WebAuthError loginURLMissingException();
-    public WebAuthError redirectURLMissingException();
-    public WebAuthError userCancelledException();
-    public WebAuthError codeNotFoundException();
-    public WebAuthError emptyCallbackException();
-    public  WebAuthError noUserFoundException();
-    public WebAuthError locationHistoryException();
-    public WebAuthError accessTokenException(String errorDetails);
+    public WebAuthError fileNotFoundException(String methodName);
+    public WebAuthError noContentInFileException(String methodName);
+    public WebAuthError propertyMissingException(String errorDetails,String methodName);
+    public WebAuthError serviceCallFailureException(int errorCode, String errorMessage, String methodName);
+    public WebAuthError loginURLMissingException(String methodName);
+    public WebAuthError redirectURLMissingException(String methodName);
+    public WebAuthError userCancelledException(String methodName);
+    public WebAuthError codeNotFoundException(String methodName);
+    public WebAuthError emptyCallbackException(String methodName);
+    public  WebAuthError noUserFoundException(String methodName);
+    public WebAuthError locationHistoryException(String methodName);
+    public WebAuthError accessTokenException(String errorDetails,String methodName);
 }

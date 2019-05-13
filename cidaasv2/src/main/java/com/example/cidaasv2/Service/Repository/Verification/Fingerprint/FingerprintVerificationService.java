@@ -3,17 +3,13 @@ package com.example.cidaasv2.Service.Repository.Verification.Fingerprint;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
-import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintResponseEntity;
@@ -29,7 +25,6 @@ import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -91,8 +86,8 @@ public class FingerprintVerificationService {
                 scannedFingerprintUrl=baseurl+ URLHelper.getShared().getScannedFingerprintURL();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty",
+                        "Error :FingerprintVerificationService :scannedFingerprint()"));
                 return;
             }
 
@@ -135,21 +130,21 @@ public class FingerprintVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
+                                    response.code(),"Error :FingerprintVerificationService :scannedFingerprint()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,response,
+                                "Error :FingerprintVerificationService :scannedFingerprint()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Scanned Fingerprint service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Scanned Fingerprint Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
+                            t.getMessage(), "Error :FingerprintVerificationService :scannedFingerprint()"));
                 }
             });
 
@@ -157,13 +152,15 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-             callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :scannedFingerprint()",WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+             callback.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintVerificationService :scannedFingerprint()",
+                     WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
 
     //setupFingerprintMFA
-    public void setupFingerprint(String baseurl, String accessToken, SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupFingerprintMFAResponseEntity> callback)
+    public void setupFingerprint(String baseurl, String accessToken, SetupFingerprintMFARequestEntity setupFingerprintMFARequestEntity,
+                                 DeviceInfoEntity deviceInfoEntityFromParam,final Result<SetupFingerprintMFAResponseEntity> callback)
     {
         String setupFingerprintMFAUrl="";
         try
@@ -173,8 +170,8 @@ public class FingerprintVerificationService {
                 setupFingerprintMFAUrl=baseurl+URLHelper.getShared().getSetupFingerprintMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty",
+                        "Error :FingerprintVerificationService :setupFingerprint()"));
                 return;
             }
 
@@ -204,15 +201,14 @@ public class FingerprintVerificationService {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                  deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
-
-               // deviceInfoEntity.setPushNotificationId("eEpg_hEUumQ:APA91bG23jgQk-0BOzdE-CpQfcao86c6SBdu600X8WsihKm5rtO58Bbq9-T3T7_kleYkIs6Mr1mdbZBYaE-h583cucUYOd8ok5lljmaeT15QQqgZl9S6MTIHlqoS-TNYilEoXy17mcJco7iDiYlDzjwlrZHtp4O6VQ");
             }
             setupFingerprintMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.setupFingerprintMFA(setupFingerprintMFAUrl,headers, setupFingerprintMFARequestEntity).enqueue(new Callback<SetupFingerprintMFAResponseEntity>() {
+            cidaasSDKService.setupFingerprintMFA(setupFingerprintMFAUrl,headers, setupFingerprintMFARequestEntity).enqueue(
+                    new Callback<SetupFingerprintMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<SetupFingerprintMFAResponseEntity> call, Response<SetupFingerprintMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -223,21 +219,21 @@ public class FingerprintVerificationService {
 
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,
+                                    response.code(),"Error :FingerprintVerificationService :setupFingerprint()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,response,
+                                "Error :FingerprintVerificationService :setupFingerprint()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupFingerprintMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Setup Fingerprint service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Setup Fingerprint Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
+                  callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,
+                          t.getMessage(), "Error :FingerprintVerificationService :setupFingerprint()"));
                 }
             });
 
@@ -245,14 +241,15 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :setupFingerprint()",WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintVerificationService :setupFingerprint()",
+                   WebAuthErrorCode.SETUP_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
 
     //enrollFingerprintMFA
-    public void enrollFingerprint(String baseurl, String accessToken, EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
-                                     final Result<EnrollFingerprintMFAResponseEntity> callback)
+    public void enrollFingerprint(String baseurl, String accessToken, EnrollFingerprintMFARequestEntity enrollFingerprintMFARequestEntity,
+                                  DeviceInfoEntity deviceInfoEntityFromParam, final Result<EnrollFingerprintMFAResponseEntity> callback)
     {
         String enrollFingerprintMFAUrl="";
         try
@@ -262,8 +259,8 @@ public class FingerprintVerificationService {
                 enrollFingerprintMFAUrl=baseurl+URLHelper.getShared().getEnrollFingerprintMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty",
+                        "Error :FingerprintVerificationService :enrollFingerprint()"));
                 return;
             }
 
@@ -297,7 +294,8 @@ public class FingerprintVerificationService {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.enrollFingerprintMFA(enrollFingerprintMFAUrl,headers, enrollFingerprintMFARequestEntity).enqueue(new Callback<EnrollFingerprintMFAResponseEntity>() {
+            cidaasSDKService.enrollFingerprintMFA(enrollFingerprintMFAUrl,headers, enrollFingerprintMFARequestEntity).enqueue(
+                    new Callback<EnrollFingerprintMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<EnrollFingerprintMFAResponseEntity> call, Response<EnrollFingerprintMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -305,21 +303,21 @@ public class FingerprintVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
+                                    response.code(),"Error :FingerprintVerificationService :enrollFingerprint()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,response,
+                                "Error :FingerprintVerificationService :enrollFingerprint()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollFingerprintMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Enroll Fingerprint service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Enroll Fingerprint Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
+                            t.getMessage(), "Error :FingerprintVerificationService :enrollFingerprint()"));
                 }
             });
 
@@ -327,7 +325,8 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintVerificationService :enrollFingerprint()",
+                   WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -343,8 +342,8 @@ public class FingerprintVerificationService {
                 initiateFingerprintMFAUrl=baseurl+URLHelper.getShared().getInitiateFingerprintMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty",
+                        "Error :FingerprintVerificationService :initiateFingerprint()"));
                 return;
             }
 
@@ -379,7 +378,8 @@ public class FingerprintVerificationService {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.initiateFingerprintMFA(initiateFingerprintMFAUrl,headers, initiateFingerprintMFARequestEntity).enqueue(new Callback<InitiateFingerprintMFAResponseEntity>() {
+            cidaasSDKService.initiateFingerprintMFA(initiateFingerprintMFAUrl,headers, initiateFingerprintMFARequestEntity).enqueue(
+                    new Callback<InitiateFingerprintMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<InitiateFingerprintMFAResponseEntity> call, Response<InitiateFingerprintMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -387,21 +387,22 @@ public class FingerprintVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,
+                                    response.code(),
+                                    "Error :FingerprintVerificationService :initiateFingerprint()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,response,
+                                "Error :FingerprintVerificationService :initiateFingerprint()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateFingerprintMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Initiate Fingerprint MFA Service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Initiate Fingerprint MFA Service Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,
+                            t.getMessage(), "Error :FingerprintVerificationService :initiateFingerprint()"));
                 }
             });
 
@@ -409,14 +410,15 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-             callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :initiateFingerprint()",WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+             callback.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintVerificationService :initiateFingerprint()",
+                     WebAuthErrorCode.INITIATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
 
     //AuthenticateFingerprintMFA
-    public void authenticateFingerprint(String baseurl, AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
-                                           final Result<AuthenticateFingerprintResponseEntity> callback)
+    public void authenticateFingerprint(String baseurl, AuthenticateFingerprintRequestEntity authenticateFingerprintRequestEntity,
+                                        DeviceInfoEntity deviceInfoEntityFromParam, final Result<AuthenticateFingerprintResponseEntity> callback)
     {
         String authenticateFingerprintMFAUrl="";
         try
@@ -426,8 +428,8 @@ public class FingerprintVerificationService {
                 authenticateFingerprintMFAUrl=baseurl+URLHelper.getShared().getAuthenticateFingerprintMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("baseUrl must not be empty",
+                        "Error :FingerprintVerificationService :authenticateFingerprint()"));
                 return;
             }
 
@@ -462,7 +464,8 @@ public class FingerprintVerificationService {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.authenticateFingerprintMFA(authenticateFingerprintMFAUrl,headers, authenticateFingerprintRequestEntity).enqueue(new Callback<AuthenticateFingerprintResponseEntity>() {
+            cidaasSDKService.authenticateFingerprintMFA(authenticateFingerprintMFAUrl,headers, authenticateFingerprintRequestEntity).enqueue(
+                    new Callback<AuthenticateFingerprintResponseEntity>() {
                 @Override
                 public void onResponse(Call<AuthenticateFingerprintResponseEntity> call, Response<AuthenticateFingerprintResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -470,21 +473,22 @@ public class FingerprintVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,
+                                    response.code(),
+                                    "Error :FingerprintVerificationService :authenticateFingerprint()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,response
+                        ,"Error :FingerprintVerificationService :authenticateFingerprint()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateFingerprintResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Authenticate Fingerprint service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("Authenticate Fingerprint Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,
+                            t.getMessage(), "Error :FingerprintVerificationService :authenticateFingerprint()"));
                 }
             });
 
@@ -492,7 +496,8 @@ public class FingerprintVerificationService {
         }
         catch (Exception e)
         {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintVerificationService :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintVerificationService :authenticateFingerprint()",
+                   WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 }

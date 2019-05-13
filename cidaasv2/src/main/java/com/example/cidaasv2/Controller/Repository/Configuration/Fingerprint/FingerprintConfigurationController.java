@@ -11,7 +11,6 @@ import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -21,7 +20,7 @@ import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricManager;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
@@ -92,6 +91,9 @@ public class FingerprintConfigurationController {
 
     public void configureFingerprint(final Context context, final String sub, @NonNull final String logoURL, FingerPrintEntity fingerPrintEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
         try{
+            LogFile.getShared(context).addInfoLog("Exception :PatternConfigurationController :configurePattern()",
+                    "Sub"+sub);
+
             if (Build.VERSION.SDK_INT >= 23) {
 
 
@@ -126,14 +128,14 @@ public class FingerprintConfigurationController {
 
                                 } else {
                                     String errorMessage = "Sub or Pattern cannot be null";
-                                    enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING, errorMessage,
-                                            HttpStatusCode.EXPECTATION_FAILED));
+                                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,"Exception :FingerprintConfigurationController :configureFingerprint()"));
                                 }
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-                                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
+                                        "Error :FingerprintConfigurationController :configureFingerprint()"));
                             }
                         });
                     }
@@ -147,13 +149,13 @@ public class FingerprintConfigurationController {
             else
             {
                 String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,"Error :FingerprintConfigurationController :configureFingerprint()"));
 
             }
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :configureFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :configureFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
            
         }
     }
@@ -189,7 +191,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :configureFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :configureFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
            
         }
     }
@@ -200,6 +202,9 @@ public class FingerprintConfigurationController {
     {
         try
         {
+            //Log
+            LogFile.getShared(context).addInfoLog("Info :PatternConfigurationController :setupPattern()", "AccessToken:-"+accessToken+"Baseurl:-"+ baseurl);
+
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") &&
                     setupFingerprintMFARequestEntity.getClient_id()!=null && !setupFingerprintMFARequestEntity.getClient_id().equals(""))
             {
@@ -257,7 +262,7 @@ public class FingerprintConfigurationController {
                                         }
 
                                         else {
-                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :FingerprintConfigurationController :setupFingerprint()"));
                                         }
                                     }
 
@@ -275,12 +280,13 @@ public class FingerprintConfigurationController {
             else
             {
 
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl or AccessToken or ClientId must not be null"));
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl or AccessToken or ClientId must not be null",
+                        "Error :FingerprintConfigurationController :setupFingerprint()"));
             }
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :setupFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :setupFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -291,6 +297,7 @@ public class FingerprintConfigurationController {
     {
         try
         {
+            LogFile.getShared(context).addInfoLog("Info :PatternConfigurationController :scannedWithFingerprint()","StatusId:-"+statusId);
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
@@ -335,7 +342,7 @@ public class FingerprintConfigurationController {
                                         }
                                         else
                                         {
-                                            scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            scannedResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :FingerprintConfigurationController :scannedWithFingerprint()"));
                                         }
                                     }
                                 }.start();
@@ -349,8 +356,8 @@ public class FingerprintConfigurationController {
                         });
                     }
                     else {
-                        scannedResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,
-                                "BaseURL or ClientId or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                        scannedResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                "BaseURL or ClientId or StatusID must not be empty", "Error :FingerprintConfigurationController :scannedWithFingerprint()"));
                     }
                 }
 
@@ -364,7 +371,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            scannedResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :scannedWithFingerprint()",WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            scannedResult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :scannedWithFingerprint()",WebAuthErrorCode.SCANNED_FINGERPRINT_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -372,6 +379,9 @@ public class FingerprintConfigurationController {
 
     public void enrollFingerprint(final Context context, @NonNull final String sub, @NonNull final String statusId, FingerPrintEntity fingerPrintEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollResult) {
     try{
+
+        LogFile.getShared(context).addInfoLog("Info :PatternConfigurationController :enrollPattern()", "Sub:-"+sub+"statusId:-"+statusId);
+
         callFingerPrint(context, fingerPrintEntity, new Result<String>() {
             @Override
             public void success(String result) {
@@ -419,7 +429,7 @@ public class FingerprintConfigurationController {
     }
     catch (Exception e)
     {
-        enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+        enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
     }
     }
 
@@ -428,6 +438,11 @@ public class FingerprintConfigurationController {
     {
         try
         {
+            //Log
+            LogFile.getShared(context).addInfoLog("Info :Face configuration Controller :enrollFingerprint()",
+                    " Baseurl:-"+baseurl+" AccessToken:-"+ accessToken+" ClientId:-"+enrollFingerprintMFARequestEntity.getClient_id()
+                            +" StatusId:-"+enrollFingerprintMFARequestEntity.getStatusId()+" AccessToken:-"+accessToken
+                            +" userDeviceId:-"+enrollFingerprintMFARequestEntity.getUserDeviceId()+" VerifierPass:-"+enrollFingerprintMFARequestEntity.getVerifierPassword());
 
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
@@ -482,7 +497,7 @@ public class FingerprintConfigurationController {
                                             }
                                             else {
                                                 // return Error Message
-                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                                enrollResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :FingerprintConfigurationController :enrollFingerprint()"));
                                             }
 
                                         }
@@ -496,26 +511,30 @@ public class FingerprintConfigurationController {
                                 }
                             });
                 } else {
-                    enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
-                            "UserdeviceId or ClientID or StatusID must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                            "UserdeviceId or ClientID or StatusID must not be empty","Error :FingerprintConfigurationController :enrollFingerprint()"));
                 }
             }
             else
             {
-                enrollResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
-                        "BaseURL or accessToken must not be empty", HttpStatusCode.EXPECTATION_FAILED));
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                        "BaseURL or accessToken must not be empty", "Error :FingerprintConfigurationController :enrollFingerprint()"));
             }
 
 
         }
         catch (Exception e)
         {
-            enrollResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :enrollFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
     public void LoginWithFingerprint(final Context context, final PasswordlessEntity passwordlessEntity, FingerPrintEntity fingerPrintEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
    try{
+       LogFile.getShared(context).addInfoLog("Info :PatternConfigurationController :LoginWithPattern()",
+               "Info UsageType:-"+passwordlessEntity.getUsageType()+" Sub:- "+passwordlessEntity.getSub()+ " Email"+passwordlessEntity.getEmail()+
+                       " Mobile"+passwordlessEntity.getMobile()+" RequestId:-"+passwordlessEntity.getRequestId()+ " TrackId:-"+passwordlessEntity.getTrackId());
+
        callFingerPrint(context, fingerPrintEntity, new Result<String>() {
            @Override
            public void success(String result) {
@@ -532,8 +551,8 @@ public class FingerprintConfigurationController {
                            if (baseurl == null || baseurl.equals("") && clientId == null || clientId.equals("")) {
                                String errorMessage = "baseurl or clientId  must not be empty";
 
-                               loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                       errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                               loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                       errorMessage,"Error :FingerprintConfigurationController :LoginWithFingerprint()"));
                            }
 
 
@@ -542,16 +561,16 @@ public class FingerprintConfigurationController {
                                    (passwordlessEntity.getMobile() == null || passwordlessEntity.getMobile().equals("")))) {
                                String errorMessage = "sub or email or mobile number must not be empty";
 
-                               loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                       errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                               loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                       errorMessage, "Error :FingerprintConfigurationController :LoginWithFingerprint()"));
                            }
 
                            if (passwordlessEntity.getUsageType().equals(UsageType.MFA)) {
                                if (passwordlessEntity.getTrackId() == null || passwordlessEntity.getTrackId() == "") {
                                    String errorMessage = "trackId must not be empty For Multifactor Authentication";
 
-                                   loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                           errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                   loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,
+                                           "Error :FingerprintConfigurationController :LoginWithFingerprint()"));
                                    return;
                                }
                            }
@@ -571,8 +590,8 @@ public class FingerprintConfigurationController {
                        } else {
                            String errorMessage = "UsageType or FingerprintCode or requestId must not be empty";
 
-                           loginresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                                   errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                           loginresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,
+                                   "Error :FingerprintConfigurationController :LoginWithFingerprint()"));
                        }
                    }
 
@@ -591,7 +610,8 @@ public class FingerprintConfigurationController {
    }
    catch (Exception e)
    {
-       loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :LoginWithFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+       loginresult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :LoginWithFingerprint()",
+               WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
    }
     }
 
@@ -677,7 +697,7 @@ public class FingerprintConfigurationController {
                                                                         //Todo Check not Null values
                                                                         resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                         resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                        resumeLoginRequestEntity.setVerificationType(AuthenticationType.touch);
+                                                                        resumeLoginRequestEntity.setVerificationType(AuthenticationType.TOUCHID);
                                                                         resumeLoginRequestEntity.setUsageType(initiateFingerprintMFARequestEntity.getUsageType());
                                                                         resumeLoginRequestEntity.setClient_id(clientId);
                                                                         resumeLoginRequestEntity.setRequestId(requestId);
@@ -703,7 +723,8 @@ public class FingerprintConfigurationController {
                                                             }
                                                             else {
                                                                 String errorMessage="Status Id or Fingerprint Must not be null";
-                                                                loginresult.failure(WebAuthError.getShared(context).customException(417,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                                                                loginresult.failure(WebAuthError.getShared(context).propertyMissingException(
+                                                                        errorMessage, "Error :FingerprintConfigurationController :callFingerPrint()"));
 
                                                             }
 
@@ -712,7 +733,6 @@ public class FingerprintConfigurationController {
                                                         @Override
                                                         public void failure(WebAuthError error) {
                                                             loginresult.failure(error);
-                                                            //  Toast.makeText(context, "Error on validate Device" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -720,7 +740,7 @@ public class FingerprintConfigurationController {
                                         else {
                                             // return Error Message
 
-                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                            loginresult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :FingerprintConfigurationController :callFingerPrint()"));
                                         }
                                     }
                                 }.start();
@@ -736,12 +756,13 @@ public class FingerprintConfigurationController {
             else
             {
 
-                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or Usage DeviceID or baseurl must not be null"));
+                loginresult.failure(WebAuthError.getShared(context).propertyMissingException("UsageType or Usage DeviceID or baseurl must not be null",
+                        "Error :FingerprintConfigurationController :callFingerPrint()"));
             }
         }
         catch (Exception e)
         {
-            loginresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :LoginWithFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :LoginWithFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -769,7 +790,8 @@ public class FingerprintConfigurationController {
 
                         @Override
                         public void failure(WebAuthError error) {
-                            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"
+                            ,"Error :FingerprintConfigurationController :callFingerPrint()"));
                         }
                     });
                 }
@@ -782,7 +804,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            callBackresult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            callBackresult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -823,7 +845,7 @@ public class FingerprintConfigurationController {
                             }
                             else {
                                 // return Error Message
-                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException());
+                                authResult.failure(WebAuthError.getShared(context).deviceVerificationFailureException("Error :FingerprintConfigurationController :callFingerPrint()"));
                             }
 
                         }
@@ -838,7 +860,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            authResult.failure(WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            authResult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -862,27 +884,29 @@ public class FingerprintConfigurationController {
                         .authenticate(new BiometricCallback() {
                             @Override
                             public void onSdkVersionNotSupported() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_SDK_VERSION_NOT_SUPPORTED,"SDK Version Not Supported"));
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_SDK_VERSION_NOT_SUPPORTED,
+                                        "SDK Version Not Supported","Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
 
                             @Override
                             public void onBiometricAuthenticationNotSupported() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMETRIC_AUTHENTICATION_NOT_SUPPORTED,"Biometric Authentication  Not Supported"));
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMETRIC_AUTHENTICATION_NOT_SUPPORTED,
+                                        "Biometric Authentication  Not Supported","Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
 
                             @Override
                             public void onBiometricAuthenticationNotAvailable() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_NOT_AVAILABLE,
-                                        "Biometric Authentication  Not Available"));
+                                        "Biometric Authentication  Not Available","Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
 
                             @Override
                             public void onBiometricAuthenticationPermissionNotGranted() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_PERMISSION_NOT_GRANTED,
-                                        "Biometric Authentication  Permission Not Granted"));
+                                        "Biometric Authentication  Permission Not Granted","Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
 
@@ -890,7 +914,7 @@ public class FingerprintConfigurationController {
                             public void onBiometricAuthenticationInternalError(String error) {
 
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_INTERNAL_ERROR,
-                                        "Biometric Authentication  Internal Error"));
+                                        "Biometric Authentication  Internal Error","Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
 
@@ -902,7 +926,7 @@ public class FingerprintConfigurationController {
                             @Override
                             public void onAuthenticationCancelled() {
                                 result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_CANCELLED,
-                                        "Biometric Authentication  Cancelled"));
+                                        "Biometric Authentication  Cancelled","Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
 
@@ -916,7 +940,7 @@ public class FingerprintConfigurationController {
                             public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
 
                                 String errorMessage = helpString.toString();
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode, errorMessage));
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode, errorMessage,"Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
 
@@ -924,7 +948,7 @@ public class FingerprintConfigurationController {
                             public void onAuthenticationError(int errorCode, CharSequence errString) {
 
                                 String errorMessage = errString.toString();
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage));
+                                result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage,"Error :FingerprintConfigurationController :callFingerPrint()"));
                                 return;
                             }
                         });
@@ -932,13 +956,14 @@ public class FingerprintConfigurationController {
             else
             {
                 String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,
+                        "Error :FingerprintConfigurationController :callFingerPrint()"));
                 return;
             }
         }
         catch (Exception e)
         {
-            result.failure( WebAuthError.getShared(context).serviceException("Exception :FingerprintConfigurationController :callFingerPrint()",WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,e.getMessage()));
+            result.failure( WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :callFingerPrint()",WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,e.getMessage()));
            
         }
 

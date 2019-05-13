@@ -6,6 +6,7 @@ import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
@@ -50,7 +51,7 @@ public class ChangePasswordController {
                 shared = new ChangePasswordController(contextFromCidaas);
             }
         } catch (Exception e) {
-            Timber.i(e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("ChangePasswordController instance Creation Exception:-"+e.getMessage());
         }
         return shared;
     }
@@ -73,13 +74,14 @@ public class ChangePasswordController {
 
 
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException("Exception :ChangePassword Controller :changePassword()",
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :ChangePassword Controller :changePassword()",
                     WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
         }
     }
 
     private void checkandChangePasswordService(String baseurl, @NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
         try {
+
             if (changePasswordRequestEntity.getConfirm_password() != null && !changePasswordRequestEntity.getConfirm_password().equals("")
                     && changePasswordRequestEntity.getNew_password() != null && !changePasswordRequestEntity.getNew_password().equals("")
                     && changePasswordRequestEntity.getIdentityId() != null && !changePasswordRequestEntity.getIdentityId().equals("")
@@ -88,10 +90,11 @@ public class ChangePasswordController {
 
                 ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl, null, resetpasswordResult);
             } else {
-                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Confirm Password or new password or IdentityID or Old password or baseurl must not be null"));
+                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Confirm Password or new password or IdentityID or Old password or baseurl must not be null"
+                ,"Error :ChangePassword Controller :checkandChangePasswordService()"));
             }
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).serviceException("Exception :ChangePassword Controller :checkandChangePasswordService()",
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :ChangePassword Controller :checkandChangePasswordService()",
                     WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
         }
     }

@@ -18,7 +18,6 @@ import com.example.cidaasv2.Helper.Logger.LogFile;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
@@ -113,7 +112,7 @@ public class LocationDetails implements LocationListener {
         else
         {
             Timber.i("Location permission Denied");
-            LogFile.getShared(mContext).addRecordToLog("Location Permission Denied");
+            LogFile.getShared(mContext).addFailureLog("Location Permission Denied");
         }
     }
 
@@ -209,7 +208,7 @@ public class LocationDetails implements LocationListener {
         else
         {
             Timber.i("Location permission Denied");
-            LogFile.getShared(mContext).addRecordToLog("Location Permission Denied");
+            LogFile.getShared(mContext).addFailureLog("Location Permission Denied");
         }
         // return latitude
         return Lat;
@@ -233,7 +232,7 @@ public class LocationDetails implements LocationListener {
         else
         {
          Timber.i("Location permission Denied");
-         LogFile.getShared(mContext).addRecordToLog("Location Permission Denied");
+         LogFile.getShared(mContext).addFailureLog("Location Permission Denied");
         }
 
         // return longitude

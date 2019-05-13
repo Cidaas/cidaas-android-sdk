@@ -4,13 +4,12 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
@@ -55,7 +54,9 @@ public class VerificationSettingsController {
     }
 
     //Service call To Get MFA list
-    public void getmfaList(@NonNull final String sub, final Result<MFAListResponseEntity> result){
+    public void getmfaList(@NonNull final String sub, final Result<MFAListResponseEntity> result)
+    {
+        final String methodName="VerificationSettingsController :getmfaList()";
         try{
 
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -66,12 +67,13 @@ public class VerificationSettingsController {
                         // Change service call to private
 
                         String userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
-                        VerificationSettingsService.getShared(context).getmfaList(baseurl, sub, userDeviceId,null, result);
+                        VerificationSettingsService.getShared(context).getmfaList(baseurl, sub, userDeviceId, result);
 
                     }
                     else
                     {
-                        result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or Sub must not be null"));
+                        result.failure(WebAuthError.getShared(context).propertyMissingException("BaseURL or Sub must not be null",
+                                "Error :"+methodName));
                     }
                 }
 
@@ -83,88 +85,88 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getmfaList()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
 
     public void deleteMFA(@NonNull final String verificationType, @NonNull final String sub, final Result<DeleteMFAResponseEntity> deleteResult)
     {
+        final String methodName="VerificationSettingsController :deleteMFA()";
         try
         {
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    final String baseurl = lpresult.get("DomainURL");
-                    String clientId = lpresult.get("ClientId");
-                    String userDeviceId="";
-
-                    String typeOfVerification="";
-
-                    if(verificationType!=null && !verificationType.equals("")) {
-
-                        typeOfVerification = verificationType.toUpperCase();
-                    }
-                    else
-                    {
-                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"Verification Type must not be empty",HttpStatusCode.BAD_REQUEST));
-
-                    }
-
-                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && !DBHelper.getShared().getUserDeviceId(baseurl).equals("") && sub!=null && !sub.equals(""))
-                    {
-                        userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
-
-                        final String finalUserDeviceId = userDeviceId;
-                        final String finalTypeOfVerification = typeOfVerification;
-                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
-                            @Override
-                            public void success(AccessTokenEntity result) {
-                                //After getting Access Token
-                                //Remove Secret from Shared Preference
-
-                                if(verificationType.equalsIgnoreCase("TOTP")) {
-                                    DBHelper.getShared().removeSecret(sub);
-                                }
-                                deleteMFA(baseurl, result.getAccess_token(),finalUserDeviceId, finalTypeOfVerification,deleteResult);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                deleteResult.failure(error);
-                            }
-                        });
-
-
-                    }
-                    else
-                    {
-                        deleteResult.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID or Sub must not be empty",HttpStatusCode.BAD_REQUEST));
-                    }
+                    successForDeleteMFA(verificationType,sub,lpresult,deleteResult);
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deleteResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    deleteResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :"+methodName));
                 }
             });
         }
         catch (Exception e)
         {
-           deleteResult.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteMFA()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
+           deleteResult.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
+        }
+    }
+
+
+    public void successForDeleteMFA(final String verificationType, @NonNull final String sub, Dictionary<String, String> lpresult,
+                                    final Result<DeleteMFAResponseEntity> deleteResult)
+    {
+        String methodName="VerificationSettingsController :deleteMFA()";
+        try {
+            final String baseurl = lpresult.get("DomainURL");
+            String clientId = lpresult.get("ClientId");
+
+            if (DBHelper.getShared().getUserDeviceId(baseurl) != null && !DBHelper.getShared().getUserDeviceId(baseurl).equals("") &&
+                    sub != null && !sub.equals("") && verificationType != null && !verificationType.equals(""))
+            {
+
+                final String userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+
+                AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                    @Override
+                    public void success(AccessTokenEntity result) {
+                        //After getting Access Token
+                        //Remove Secret from Shared Preference
+
+                        if (verificationType.equalsIgnoreCase("TOTP")) {
+                            DBHelper.getShared().removeSecret(sub);
+                        }
+                        deleteMFA(baseurl, result.getAccess_token(), userDeviceId, verificationType.toUpperCase(), deleteResult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        deleteResult.failure(error);
+                    }
+                });
+
+            } else {
+                String errorMessage = "User deviceID or Sub must not be empty";
+                deleteResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :" + methodName));
+            }
+        }
+        catch (Exception e)
+        {
+            deleteResult.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
 
 
     //Service call To delete MFA list
-    public void deleteMFA(@NonNull final String baseurl,@NonNull final String accessToken, @NonNull String userDeviceId, @NonNull String verificationType, final Result<DeleteMFAResponseEntity> result){
+    public void deleteMFA(@NonNull final String baseurl,@NonNull final String accessToken, @NonNull String userDeviceId, @NonNull String verificationType,
+                          final Result<DeleteMFAResponseEntity> result)
+    {String methodName="VerificationSettingsController :deleteMFA()";
         try{
 
-            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") && userDeviceId != null && !userDeviceId.equals("")
-                    && verificationType != null && !verificationType.equals("")) {
+            if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")) {
 
-                VerificationSettingsService.getShared(context).deleteMFA(baseurl, accessToken,userDeviceId,verificationType,null,
-                        new Result<DeleteMFAResponseEntity>() {
-
+             VerificationSettingsService.getShared(context).deleteMFA(baseurl,accessToken,userDeviceId,verificationType,new Result<DeleteMFAResponseEntity>()
+             {
                     @Override
                     public void success(DeleteMFAResponseEntity serviceresult) {
                         result.success(serviceresult);
@@ -179,21 +181,20 @@ public class VerificationSettingsController {
             }
             else
             {
-                String errorMessage="UserDeviceID or AccessToken or VerificationType or baseURL must not be empty ";
-
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                String errorMessage="AccessToken or baseURL must not be empty ";
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,"Error :"+methodName));
             }
         }
         catch (Exception e)
         {
-
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteMFA()", WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
-            Timber.e(e.getMessage());
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
         }
     }
 
+    //Service call To delete MFA list
     public void deleteAllMFA( @NonNull final String sub,final Result<DeleteMFAResponseEntity> result)
     {
+        final String methodName="VerificationSettingsController :deleteAllMFA()";
         try
         {
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -201,52 +202,57 @@ public class VerificationSettingsController {
                 public void success(Dictionary<String, String> lpresult) {
                     final String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
-                    String userDeviceId="";
-
-
-                    if(DBHelper.getShared().getUserDeviceId(baseurl)!=null && !DBHelper.getShared().getUserDeviceId(baseurl).equals("") && sub!=null && !sub.equals(""))
-                    {
-                        userDeviceId=DBHelper.getShared().getUserDeviceId(baseurl);
-
-                        final String finalUserDeviceId = userDeviceId;
-
-                        DBHelper.getShared().removeSecret(sub);
-
-                        AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
-                            @Override
-                            public void success(AccessTokenEntity accessTokenresult) {
-
-                                deleteAllMFA(baseurl,accessTokenresult.getAccess_token(), finalUserDeviceId,result);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                result.failure(error);
-                            }
-                        });
-
-
-                    }
-                    else
-                    {
-                        result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID or sub must not be empty",HttpStatusCode.BAD_REQUEST));
-                    }
+                    //service
+                    successForDeleteAllMFA(baseurl,sub,result);
                 }
+
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"));
+                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :"+methodName));
                 }
             });
         }
         catch (Exception e)
         {
-            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteAllMFA()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
-
+            result.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
+
+    public void successForDeleteAllMFA(final String baseurl,final String sub,final Result<DeleteMFAResponseEntity> result)
+    {String methodName="VerificationSettingsController :successForDeleteAllMFA()";
+        try {
+            if (DBHelper.getShared().getUserDeviceId(baseurl) != null && !DBHelper.getShared().getUserDeviceId(baseurl).equals("") &&
+                    sub != null && !sub.equals("")) {
+
+                final String  userDeviceId = DBHelper.getShared().getUserDeviceId(baseurl);
+                DBHelper.getShared().removeSecret(sub);
+
+                AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                    @Override
+                    public void success(AccessTokenEntity accessTokenresult) {
+                        deleteAllMFA(baseurl, accessTokenresult.getAccess_token(), userDeviceId, result);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        result.failure(error);
+                    }
+                });
+            } else {
+                result.failure(WebAuthError.getShared(context).propertyMissingException("User deviceID or sub must not be empty", "Error :" + methodName));
+            }
+        }
+        catch (Exception e)
+        {
+            result.failure(WebAuthError.getShared(context).methodException("Exception: :" + methodName,WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
+        }
+    }
+
     //To delete MFA list
-    public void deleteAllMFA(@NonNull final String baseurl, @NonNull final String accessToken, @NonNull String userDeviceId, final Result<DeleteMFAResponseEntity> result){
+    public void deleteAllMFA(@NonNull final String baseurl, @NonNull final String accessToken, @NonNull String userDeviceId,
+                             final Result<DeleteMFAResponseEntity> result)
+    {String methodName="VerificationSettingsController :deleteAll()";
         try{
 
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("") && userDeviceId != null && !userDeviceId.equals("") ) {
@@ -256,18 +262,19 @@ public class VerificationSettingsController {
             else
             {
                 String errorMessage="UserDeviceID or baseURL must not be empty ";
-
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :"+methodName));
             }
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :deleteAll",WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.DELETE_MFA_FAILURE,e.getMessage()));
         }
     }
 
-    public void denyNotification(@NonNull final String sub, @NonNull final String reason, @NonNull final String statusId, final Result<DenyNotificationResponseEntity> result)
+    public void denyNotification(@NonNull final String sub, @NonNull final String reason, @NonNull final String statusId,
+                                 final Result<DenyNotificationResponseEntity> result)
     {
+        final String methodName="VerificationSettingsController :denyNotification()";
         try
         {
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -275,27 +282,17 @@ public class VerificationSettingsController {
                 public void success(Dictionary<String, String> lpresult) {
                     final String baseurl = lpresult.get("DomainURL");
                     String clientId = lpresult.get("ClientId");
-                    String userDeviceId="";
 
-                    if(sub!=null && !sub.equals("")) {
+                    getAccessTokenAndService(baseurl);
+                }
 
+                public void getAccessTokenAndService(final String baseurl) {
+                    if (sub != null && !sub.equals("")) {
 
                         AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
-
-                                if (!reason.equals("") && reason != null && statusId != null && !statusId.equals("")) {
-
-                                    DenyNotificationRequestEntity denyNotificationRequestEntity = new DenyNotificationRequestEntity();
-                                    denyNotificationRequestEntity.setReject_reason(reason);
-                                    denyNotificationRequestEntity.setStatusId(statusId);
-
-
-                                    denyNotification(baseurl, accessTokenresult.getAccess_token(), denyNotificationRequestEntity, result);
-                                } else {
-                                    result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
-                                            "Verification Type must not be empty", HttpStatusCode.BAD_REQUEST));
-                                }
+                                accessTokenAndServiceCall(baseurl,accessTokenresult.getAccess_token(),reason,statusId,result);
                             }
 
                             @Override
@@ -303,12 +300,9 @@ public class VerificationSettingsController {
                                 result.failure(error);
                             }
                         });
+                    } else {
+                        result.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be empty", "Error :"+methodName));
                     }
-                    else {
-                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
-                                "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
-                    }
-
                 }
 
                 @Override
@@ -319,10 +313,36 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :denyNotification()",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
-
+            result.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage()));
         }
     }
+
+    //SERVICE
+    public void accessTokenAndServiceCall(final String baseurl,@NonNull final String accessToken, @NonNull final String reason, @NonNull final String statusId,
+                                          final Result<DenyNotificationResponseEntity> result)
+    {
+        final String methodName="VerificationSettingsController :denyNotification()";
+        try {
+
+            if (!reason.equals("") && reason != null && statusId != null && !statusId.equals("")) {
+
+                DenyNotificationRequestEntity denyNotificationRequestEntity = new DenyNotificationRequestEntity();
+                denyNotificationRequestEntity.setReject_reason(reason);
+                denyNotificationRequestEntity.setStatusId(statusId);
+
+                denyNotification(baseurl, accessToken, denyNotificationRequestEntity, result);
+            }
+            else
+            {
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Verification Type must not be empty", "Error :"+methodName));
+            }
+        }
+        catch (Exception e)
+        {
+            result.failure(WebAuthError.getShared(context).methodException(e.getMessage(), WebAuthErrorCode.DENY_NOTIFICATION,"Error :"+methodName));
+        }
+    }
+
 
     //To get pending notification Service
     public void denyNotification(@NonNull final String baseurl, @NonNull final String accessToken, DenyNotificationRequestEntity denyNotificationRequestEntity,final Result<DenyNotificationResponseEntity> result){
@@ -330,19 +350,21 @@ public class VerificationSettingsController {
 
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")  ) {
 
-                VerificationSettingsService.getShared(context).denyNotification(baseurl,accessToken,denyNotificationRequestEntity, null, result);
+                VerificationSettingsService.getShared(context).denyNotification(baseurl,accessToken,denyNotificationRequestEntity, result);
             }
             else
             {
                 String errorMessage="AccessToken or baseURL must not be empty ";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DENY_NOTIFICATION,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,
+                        "Error :VerificationSettingsController :getPendingNotification()"));
             }
         }
         catch (Exception e)
         {
 
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController : denyNotification", WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :VerificationSettingsController : denyNotification",
+                    WebAuthErrorCode.DENY_NOTIFICATION,e.getMessage()));
         }
     }
 
@@ -372,13 +394,14 @@ public class VerificationSettingsController {
 
                                         getPendingNotification(baseurl, accessTokenresult.getAccess_token(), userDeviceId, result);
                                     } else {
-                                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,
-                                                "User Device Id must not be empty", HttpStatusCode.BAD_REQUEST));
+                                        result.failure(WebAuthError.getShared(context).propertyMissingException(
+                                                "User Device Id must not be empty", "Error :VerificationSettingsController :getPendingNotification()"));
                                     }
                                 }
                                 else
                                 {
-                                    result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.MFA_LIST_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                                    result.failure( WebAuthError.getShared(context).propertyMissingException(
+                                            "User deviceID must not be empty","Error :VerificationSettingsController :getPendingNotification()"));
                                 }
                             }
 
@@ -389,8 +412,8 @@ public class VerificationSettingsController {
                         });
                     }
                     else {
-                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
-                                "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                        result.failure(WebAuthError.getShared(context).propertyMissingException(
+                                "Sub must not be empty","Exception :VerificationSettingsController :getPendingNotification()"));
                     }
 
                 }
@@ -403,7 +426,8 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getPendingNotification",WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
+            result.failure( WebAuthError.getShared(context).methodException("Exception :VerificationSettingsController :getPendingNotification()",
+                    WebAuthErrorCode.MFA_LIST_FAILURE,e.getMessage()));
         }
     }
         //To deny notification Service
@@ -412,19 +436,20 @@ public class VerificationSettingsController {
 
             if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")&& userDeviceId != null && !userDeviceId.equals("")  ) {
 
-                VerificationSettingsService.getShared(context).getPendingNotification(baseurl,accessToken,userDeviceId, null, result);
+                VerificationSettingsService.getShared(context).getPendingNotification(baseurl,accessToken,userDeviceId,  result);
             }
             else
             {
                 String errorMessage="AccessToken or baseURL or UserDeviceId must not be empty ";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :VerificationSettingsController :getPendingNotification"));
             }
         }
         catch (Exception e)
         {
 
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getPendingNotification", WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :VerificationSettingsController :getPendingNotification",
+                    WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage()));
 
         }
     }
@@ -460,13 +485,14 @@ public class VerificationSettingsController {
                         }
                         else
                         {
-                            result.failure( WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,"User deviceID must not be empty",HttpStatusCode.BAD_REQUEST));
+                            result.failure(WebAuthError.getShared(context).propertyMissingException(
+                                    "User deviceID must not be empty","Error :VerificationSettingsController :getConfiguredMFAList"));
                         }
 
                     }
                     else {
-                        result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,
-                                "Sub must not be empty", HttpStatusCode.BAD_REQUEST));
+                        result.failure(WebAuthError.getShared(context).propertyMissingException(
+                                "Sub must not be empty", "Error :VerificationSettingsController :getConfiguredMFAList"));
                     }
                 }
 
@@ -478,7 +504,8 @@ public class VerificationSettingsController {
         }
         catch (Exception e)
         {
-            result.failure( WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getConfiguredMFAList", WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage()));
+            result.failure( WebAuthError.getShared(context).methodException("Exception :VerificationSettingsController :getConfiguredMFAList",
+                    WebAuthErrorCode.CONFIGURED_LIST_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -488,19 +515,21 @@ public class VerificationSettingsController {
 
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")&& userDeviceId != null && !userDeviceId.equals("")  ) {
 
-                VerificationSettingsService.getShared(context).getConfiguredMFAList(baseurl,sub,userDeviceId, null, result);
+                VerificationSettingsService.getShared(context).getConfiguredMFAList(baseurl,sub,userDeviceId,  result);
             }
             else
             {
                 String errorMessage="sub or baseURL or UserDeviceId must not be empty ";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :VerificationSettingsController :getConfiguredMFAList"));
             }
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :VerificationSettingsController :getConfiguredMFAList",WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :VerificationSettingsController :getConfiguredMFAList",
+                    WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,e.getMessage()));
         }
+
     }
 
 
@@ -528,12 +557,13 @@ public class VerificationSettingsController {
                             @Override
                             public void success(AccessTokenEntity accessTokenEntityresult) {
                                 VerificationSettingsService.getShared(context).updateFCMToken(baseurl,accessTokenEntityresult.getAccess_token()
-                                        ,FCMToken, null, Callbackresult);
+                                        ,FCMToken,  Callbackresult);
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-                                LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
+                                Callbackresult.failure(error);
+                                LogFile.getShared(context).addFailureLog("Update FCM Token exception" + error.getMessage());
                             }
                         });
 
@@ -545,15 +575,16 @@ public class VerificationSettingsController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + error.getMessage());
+                    Callbackresult.failure(error);
+                    LogFile.getShared(context).addFailureLog("Update FCM Token exception" + error.getMessage());
                 }
             });
         }
 
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Update FCM Token exception" + e.getMessage());
-            Timber.e("Update FCM Token exception" + e.getMessage());
+            Callbackresult.failure(WebAuthError.getShared(context).methodException("Exception :VerificationSettingsController :updateFCMToken()",
+                    WebAuthErrorCode.UPDATE_FCM_TOKEN,e.getMessage()));
         }
     }
 

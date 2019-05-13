@@ -34,7 +34,9 @@ public class CidaasService {
         globalContext=context;
     }
 
-    public void getGoogleAccessToken(GoogleSettingsEntity googleSettingsEntity, final IGoogleAccessTokenEntity iGoogleAccessTokenEntity) {
+    public void getGoogleAccessToken(GoogleSettingsEntity googleSettingsEntity, final IGoogleAccessTokenEntity iGoogleAccessTokenEntity)
+    {
+        final String methodName="CidaasService:getGoogleAccessToken";
         ICidaasGoogleService iCidaasGoogleService = cidaasGoogleService.getAPIInstance();
         Map<String, String> queryMap = new HashMap<>();
 
@@ -57,13 +59,13 @@ public class CidaasService {
                 }
                 else
                 {
-                    WebAuthError.getShared(globalContext).customException(WebAuthErrorCode.GOOGLE_ERROR,"Service failed:Bad response", HttpStatusCode.EXPECTATION_FAILED);
+                    WebAuthError.getShared(globalContext).customException(WebAuthErrorCode.GOOGLE_ERROR,"Service failed:Bad response", methodName);
                 }
             }
 
             @Override
             public void onFailure(Call<GoogleAccessTokenEntity> call, Throwable t) {
-                WebAuthError.getShared(globalContext).customException(WebAuthErrorCode.GOOGLE_ERROR,t.getMessage(), HttpStatusCode.EXPECTATION_FAILED);
+                WebAuthError.getShared(globalContext).customException(WebAuthErrorCode.GOOGLE_ERROR,t.getMessage(), methodName);
 
             }
         });

@@ -6,11 +6,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -91,5 +94,25 @@ public class SuccessfulLogin extends AppCompatActivity {
         });
 
 
+    }
+
+
+    public void setupPatternV2(View view)
+    {
+        SetupEntity setupEntity=new SetupEntity();
+        setupEntity.setSub(sub);
+        setupEntity.setVerificationType(AuthenticationType.PATTERN);
+
+        cidaas.setupv2(setupEntity, new Result<SetupResponse>() {
+            @Override
+            public void success(SetupResponse result) {
+                Toast.makeText(SuccessfulLogin.this, "Success"+result.getData().getAuthenticator_client_id(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(SuccessfulLogin.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

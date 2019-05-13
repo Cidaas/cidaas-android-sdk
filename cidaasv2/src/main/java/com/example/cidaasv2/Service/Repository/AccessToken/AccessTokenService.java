@@ -3,27 +3,23 @@ package com.example.cidaasv2.Service.Repository.AccessToken;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
+import com.example.cidaasv2.Helper.Entity.SocialAccessTokenEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.GenralHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -39,394 +35,267 @@ public class AccessTokenService {
     public static AccessTokenService shared;
 
     CidaassdkService service;
-    public ObjectMapper objectMapper=new ObjectMapper();
+    public ObjectMapper objectMapper = new ObjectMapper();
 
     public AccessTokenService(Context contextFromCidaas) {
-        context=contextFromCidaas;
-        if(service==null) {
-            service=new CidaassdkService();
+        context = contextFromCidaas;
+        if (service == null) {
+            service = new CidaassdkService();
         }
 
         //Todo setValue for authenticationType
 
     }
 
-    public static AccessTokenService getShared(Context contextFromCidaas )
-    {
+    public static AccessTokenService getShared(Context contextFromCidaas) {
         try {
 
             if (shared == null) {
                 shared = new AccessTokenService(contextFromCidaas);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Timber.i(e.getMessage());
         }
         return shared;
     }
 
     //Get Access Token by code
-    public void getAccessTokenByCode(String baseurl,String Code, DeviceInfoEntity deviceInfoEntityFromParam, Dictionary<String, String> loginPropertiesfromParam, Dictionary<String, String> challengePropertiesfromparam,final Result<AccessTokenEntity> acessTokencallback)
+    public void getAccessTokenByCode(String baseurl, String Code, final Result<AccessTokenEntity> acessTokencallback)
     {
+        String methodName = "AccessToken service :-getAccessTokenByCode()";
         try {
 
+            if (baseurl != null && !baseurl.equals("")) {
 
-            //Local Variables
-            String getAccessTokenUrl = "";
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromParam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromParam;
-            }
-            else
-            {
-                // deviceInfoEntity=new DeviceInfoEntity();
-            }
-
-
-            //////////////////This is for testing purpose
-            Dictionary<String,String> challengeProperties=new Hashtable<>();
-
-            if(challengePropertiesfromparam==null) {
-                challengeProperties=DBHelper.getShared().getChallengeProperties();
-            }
-            else if(challengePropertiesfromparam!=null)
-            {
-                challengeProperties=challengePropertiesfromparam;
-            }
-            else
-            {
-                // challengeProperties=new Hashtable<>();
-            }
-
-            //////////////////This is for testing purpose
-            Dictionary<String,String> loginProperties=new Hashtable<>();
-
-            if(loginPropertiesfromParam==null) {
-                loginProperties=DBHelper.getShared().getLoginProperties(baseurl);
-            }
-            else if(loginPropertiesfromParam!=null)
-            {
-                loginProperties=loginPropertiesfromParam;
-            }
-            else
-            {
-                // challengeProperties=new Hashtable<>();
-            }
-
-
-            if (loginProperties == null) {
-                // callback.failure(.loginURLMissingException());
-            }
-
-          //  baseurl=loginProperties.get("DomainURL");
-            if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                getAccessTokenUrl=baseurl+ URLHelper.getShared().getTokenUrl();
-            }
-            else {
-                acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                String getAccessTokenUrl = baseurl + URLHelper.getShared().getTokenUrl();
+
+                //Header Generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, null);
+
+                //Get Verifier and loginProperties
+                Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
+                Dictionary<String, String> loginProperties =DBHelper.getShared().getLoginProperties(baseurl);
+
+
+                Map<String, String> querymap = new Hashtable<>();
+
+                //Get Properties From DB
+
+
+                //Add Body Parameter
+                //TODO generate Body Parameter
+                querymap.put("grant_type", "authorization_code");
+                querymap.put("code", Code);
+                querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
+                querymap.put("client_id", loginProperties.get("ClientId"));
+                querymap.put("code_verifier", challengeProperties.get("Verifier"));
+
+                //Service call
+                serviceForGetAccessTokenByCode(getAccessTokenUrl, headers, querymap, acessTokencallback);
+
+            } else {
+                acessTokencallback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :" + methodName));
                 return;
             }
 
-            Map<String, String> headers = new Hashtable<>();
-            Map<String, String> querymap = new Hashtable<>();
+        } catch (Exception e) {
+            acessTokencallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
+                    e.getMessage()));
+        }
+    }
 
-
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-          //  headers.put("Content-Type", URLHelper.contentType);
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
-
-            //Get Properties From DB
-
-
-
-
-            //Add Body Parameter
-            //TODO generate Body Parameter
-            querymap.put("grant_type", "authorization_code");
-            querymap.put("code", Code);
-            querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
-            querymap.put("client_id", loginProperties.get("ClientId"));
-            querymap.put("code_verifier", challengeProperties.get("Verifier"));
-
-
-            //Assign Url
-            //TOdo Perform Null Check
-            //  url = loginProperties.get("TokenURL");
-
-
+    private void serviceForGetAccessTokenByCode(String getAccessTokenUrl, Map<String, String> headers, Map<String, String> querymap,
+                                                final Result<AccessTokenEntity> acessTokencallback)
+    {
+        final String methodName = "AccessToken service :-serviceForGetAccessTokenByCode()";
+        try {
             //call service
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getAccessTokenByCode(getAccessTokenUrl,headers,querymap).enqueue(new Callback<AccessTokenEntity>() {
+            cidaasSDKService.getAccessTokenByCode(getAccessTokenUrl, headers, querymap).enqueue(new Callback<AccessTokenEntity>() {
                 @Override
                 public void onResponse(Call<AccessTokenEntity> call, Response<AccessTokenEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             acessTokencallback.success(response.body());
+                        } else {
+                            acessTokencallback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE
+                                    , response.code(), "Error :"+methodName));
                         }
-                        else {
-                            acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        acessTokencallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,response));
+                    } else {
+                        acessTokencallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AccessTokenEntity> call, Throwable t) {
-                    Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                    acessTokencallback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+                    acessTokencallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
                 }
             });
-        }
-        catch (Exception e)
-        {
-           acessTokencallback.failure( WebAuthError.getShared(context).serviceException("Access Token Service :-getAccessTokenByCode()",
-                   WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
+        } catch (Exception e) {
+            acessTokencallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
+                    e.getMessage()));
         }
     }
 
-
     //Get Access Token by Clientid and Client Secret
-    public void getAccessTokenByIdAndSecret(String ClientId,String ClientSecret,Result<AccessTokenEntity> callback)
-    {
+    public void getAccessTokenByIdAndSecret(String ClientId, String ClientSecret, Result<AccessTokenEntity> callback) {
         //Todo Perform Callback
     }
 
-
-    public void getAccessTokenByRefreshToken(String refreshToken,Dictionary<String, String> loginProperties,DeviceInfoEntity deviceInfoEntityFromparam, Dictionary<String, String> challengePropertiesfromparam,final Result<AccessTokenEntity> callback)
+    //--------------------------------------------------------Get AccessToken by Refresh Token-----------------------------------------------------------
+    public void getAccessTokenByRefreshToken(String refreshToken, Dictionary<String, String> loginProperties,final Result<AccessTokenEntity> callback)
     {
-        try {
+       String methodName="AccessToken service :-getAccessTokenByRefreshToken()";
+       try {
             //Local Variables
-            String url = "";
-            String baseurl = "";
+            String baseurl = loginProperties.get("DomainURL");
+            if (baseurl != null && !baseurl.equals("")) {
 
-            Map<String, String> headers = new Hashtable<>();
-            Map<String, String> querymap = new Hashtable<>();
-
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromparam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                //url Value assign
+                String url = baseurl + URLHelper.getShared().getTokenUrl();
+                
+                //Header generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,URLHelper.contentType);
+                
+                //Challenge Generation
+                Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
+                
+                //Get Properties From DB
+                if (loginProperties == null) {
+                    callback.failure(WebAuthError.getShared(context).loginURLMissingException("Error :"+methodName));
+                    return;
+                }
+            
+                //Check Verifier,If null set it as empty String
+                if (challengeProperties.get("Verifier") == null) {
+                     challengeProperties.put("Verifier", "");
+                }
+            
+                //Add Body Parameter
+                Map<String, String> querymap = new Hashtable<>();
+                querymap.put("grant_type", "refresh_token");
+                querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
+                querymap.put("client_id", loginProperties.get("ClientId"));
+                querymap.put("code_verifier", challengeProperties.get("Verifier"));
+                querymap.put("refresh_token", refreshToken);
+            
+                //Service call
+                serviceForAccessTokenService(url,headers,querymap,callback);
             }
-            else if(deviceInfoEntityFromparam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromparam;
-            }
-            else
-            {
-                // deviceInfoEntity=new DeviceInfoEntity();
-            }
+       } 
+       catch (Exception e) {
+        callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+       }
+    }
 
-
-            //////////////////This is for testing purpose
-            Dictionary<String,String> challengeProperties=new Hashtable<>();
-
-            if(challengePropertiesfromparam==null) {
-                challengeProperties=DBHelper.getShared().getChallengeProperties();
-            }
-            else if(challengePropertiesfromparam!=null)
-            {
-                challengeProperties=challengePropertiesfromparam;
-            }
-            else
-            {
-                // challengeProperties=new Hashtable<>();
-            }
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentType);
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
-
-            //Get Properties From DB
-
-
-            if (loginProperties == null) {
-                callback.failure(WebAuthError.getShared(context).loginURLMissingException());
-                return;
-            }
-
-
-            if(challengeProperties.get("Verifier")==null)
-            {
-                challengeProperties.put("Verifier","");
-            }
-
-
-            //Add Body Parameter
-            //TODO generate Body Parameter
-            querymap.put("grant_type", "refresh_token");
-            querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
-            querymap.put("client_id", loginProperties.get("ClientId"));
-            querymap.put("code_verifier", challengeProperties.get("Verifier"));
-            querymap.put("refresh_token", refreshToken);
-
-
-            //Assign Url
-            //TOdo Perform Null Check
-           // url = querymap.get("TokenURL");
-            baseurl=loginProperties.get("DomainURL");
-            if(baseurl!=null && !baseurl.equals("")){
-                //Construct URL For RequestId
-                url=baseurl+ URLHelper.getShared().getTokenUrl();
-            }
-
+    private void serviceForAccessTokenService(String url,Map<String, String> headers,Map<String, String> querymap,final Result<AccessTokenEntity> callback)
+    {
+       final String methodName="AccessToken service :-getAccessTokenByRefreshToken()";
+       try {
             //call service
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getAccessTokenByRefreshToken(url,headers,querymap).enqueue(new Callback<AccessTokenEntity>() {
+            cidaasSDKService.getAccessTokenByRefreshToken(url, headers, querymap).enqueue(new Callback<AccessTokenEntity>() {
                 @Override
                 public void onResponse(Call<AccessTokenEntity> call, Response<AccessTokenEntity> response) {
                     if (response.isSuccessful()) {
-
-                        //todo save the accessToken in Storage helper
-                        if(response.code()==200) {
+                        
+                        // save the accessToken in Storage helper
+                        if (response.code() == 200) {
                             callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response.code(),
+                                    "Error :"+methodName));
                         }
                     }
                     else {
-                        assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,response));
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AccessTokenEntity> call, Throwable t) {
-                    Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
 
                 }
             });
-
-        }
-        catch (Exception e)
-        {
-            callback.failure(WebAuthError.getShared(context).serviceException("Access Token Service :-getAccessTokenBySocial()",
-                    WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
-        }
-    }
-
-
-    //get Access Token by Social
-    public void getAccessTokenBySocial(String tokenOrCode, String provider, String givenType, String requestId, String viewType,Dictionary<String,String> loginProperties, final Result<SocialProviderEntity> callback)
-    {
-       try
-       {
-           String baseURL;
-           baseURL= GenralHelper.getShared().constructSocialServiceURl(tokenOrCode,provider,givenType,loginProperties,viewType);
-
-
-           baseURL=baseURL+URLHelper.getShared().getPreAuthCode()+requestId;
-
-
-           Map<String, String> headers = new Hashtable<>();
-           headers.put("lat",LocationDetails.getShared(context).getLatitude());
-           headers.put("lon",LocationDetails.getShared(context).getLongitude());
-
-           ICidaasSDKService cidaasSDKService = service.getInstance();
-           cidaasSDKService.getAccessTokenBySocial(baseURL,headers).enqueue(new Callback<SocialProviderEntity>() {
-
-               @Override
-               public void onResponse(Call<SocialProviderEntity> call, Response<SocialProviderEntity> response) {
-
-                   if (response.isSuccessful()) {
-
-                   //todo save the accesstoken in Storage helper
-                   if(response.code()==200) {
-                       callback.success(response.body());
-                   }
-                   else {
-                       callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
-                               "Service failure but successful response" , HttpStatusCode.BAD_REQUEST,null,null));
-                   }
-               }
-                    else {
-                   assert response.errorBody() != null;
-                       callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,response));
-               }
-               }
-
-               @Override
-               public void onFailure(Call<SocialProviderEntity> call, Throwable t) {
-                   Timber.e("Faliure in getAccessTokenByCode id call"+t.getMessage());
-                   callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,t.getMessage(), HttpStatusCode.BAD_REQUEST,null,null));
-
-               }
-           });
-
        }
        catch (Exception e)
        {
-           callback.failure(WebAuthError.getShared(context).serviceException("Exception :AccessToken service :-getAccessTokenBySocial()",
-                   WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,e.getMessage()));
+         callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage())); 
        }
     }
 
 
-    /*public void getAccessTokenBySocial(String tokenOrCode, String provider, String givenType) {
+    //----------------------------------------------------------get Access Token by Social---------------------------------------------------------------
+    public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, Dictionary<String, String> loginProperties,
+                                       final Result<SocialProviderEntity> callback)
+    {
+      String methodName="AccessToken service :-getAccessTokenBySocial()";
+      try {
+
+          //URL Generation
+            String getAccessTokenBySocialURL = GenralHelper.getShared().constructSocialServiceURl(socialAccessTokenEntity, "token", loginProperties);
+            getAccessTokenBySocialURL = getAccessTokenBySocialURL + URLHelper.getShared().getPreAuthCode() + socialAccessTokenEntity.getRequestId();
+
+          //Headers Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
+
+            //Service call
+            serviceForGetAccessTokenBySocial( getAccessTokenBySocialURL, headers,callback);
+
+      }
+      catch (Exception e) {
+        callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+      }
+    }
+
+
+    private void serviceForGetAccessTokenBySocial( String baseURL, Map<String, String> headers,final Result<SocialProviderEntity> callback)
+    {
+        final String methodName="AccessToken service :-serviceForGetAccessTokenBySocial()";
         try {
-            showLoader();
-            CidaasSDKEntity.cidaasSDKEntityInstance.readInputs(GLOBAL_ACTIVITY.getApplicationContext());
-            new ErrorEntity();
-            String url = CidaasSDKHelper.constructSocialServiceURl(tokenOrCode, provider, givenType);
-            if (GLOBAL_PRE_AUTH_CODE != "") {
-                url = url + "&preAuthCode=" + GLOBAL_PRE_AUTH_CODE;
-            } else {
-                GLOBAL_INITIAL_CODE_VERIFIER = this.getCodeVerifier();
-                GLOBAL_CODE_CHALLENGE = this.getCodeChallenge(GLOBAL_INITIAL_CODE_VERIFIER);
-                url = url + "&code_challenge=" + GLOBAL_CODE_CHALLENGE + "&code_challenge_method=" + CidaasSDKHelper.codeChallengeMethod;
-            }
+            ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.getAccessTokenBySocial(baseURL, headers).enqueue(new Callback<SocialProviderEntity>() {
 
-            CidaasSDKService service = new CidaasSDKService();
-            service.getAccessTokenBySocial(url, new ISocialEntity() {
-                public void onSuccess(SocialProviderEntity socialEntity) {
-                    if (socialEntity.getRedirectUrl() != null && socialEntity.getRedirectUrl() != "") {
-                        CidaasSDK.this.webViewInstance.setVisibility(0);
-                        CidaasSDK.this.webViewInstance.loadUrl(socialEntity.getRedirectUrl());
+                @Override
+                public void onResponse(Call<SocialProviderEntity> call, Response<SocialProviderEntity> response) {
+
+                    if (response.isSuccessful()) {
+
+                        //todo save the accesstoken in Storage helper
+                        if (response.code() == 200) {
+                            callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response.code(),
+                                    "Error :"+methodName));
+                        }
                     } else {
-                        CidaasSDK.getAccessTokenByCode(socialEntity.getCode(), CidaasSDK.GLOBAL_CODE_VERIFIER);
-                    }
 
-                    CidaasLog.addRecordToSuccessLog("Successfully get access token by Social", CidaasSDK.ENABLE_LOG);
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response,
+                                "Error :"+methodName));
+                    }
                 }
 
-                public void onError(ErrorEntity errorEntity) {
-                    CidaasSDK.hideLoader();
-                    CidaasSDK.iAccessTokenEntity.onError(errorEntity);
-                    CidaasLog.addRecordToErrorLog(errorEntity.getMessage(), CidaasSDK.ENABLE_LOG);
+                @Override
+                public void onFailure(Call<SocialProviderEntity> call, Throwable t) {
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
+
                 }
             });
-        } catch (Exception var7) {
-            CidaasLog.addRecordToErrorLog(var7.getMessage(), ENABLE_LOG);
         }
-*/
+        catch (Exception e)
+        { callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+        }
     }
+
+
+}
 
 

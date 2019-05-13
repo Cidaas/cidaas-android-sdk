@@ -111,7 +111,7 @@ public class TOTPMFA extends AppCompatActivity {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(TOTPMFA.this, "Result Failure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TOTPMFA.this, "Result Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

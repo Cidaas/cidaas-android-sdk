@@ -7,8 +7,6 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
-import com.example.cidaasv2.Service.Repository.Login.LoginService;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
@@ -74,12 +72,12 @@ public class LogoutController {
             else
             {
                 result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOGOUT_ERROR,
-                        "AccessToken must not be null", HttpStatusCode.EXPECTATION_FAILED));
+                        "AccessToken must not be null", "Error :LogoutController :getLogoutURL()"));
             }
         }
         catch (Exception e)
         {
-            result.failure(WebAuthError.getShared(context).serviceException("Exception :LogoutController :getLogoutURL()",WebAuthErrorCode.LOGOUT_ERROR,
+            result.failure(WebAuthError.getShared(context).methodException("Exception :LogoutController :getLogoutURL()",WebAuthErrorCode.LOGOUT_ERROR,
                    e.getMessage()));
         }
     }

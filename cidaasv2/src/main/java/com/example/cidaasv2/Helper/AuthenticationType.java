@@ -5,14 +5,14 @@ package com.example.cidaasv2.Helper;
  */
 
 public class AuthenticationType {
-    public static final String pattern = "PATTERN";
-    public static final String touch = "TOUCHID";
-    public static final String voice = "VOICE";
-    public static final String face = "FACE";
-    public static final String iris = "IRIS";
-    public static final String totp = "TOTP";
-    public static final String push = "PUSH";
-    public static final String fido = "FIDOU2F";
+    public static final String PATTERN = "PATTERN";
+    public static final String TOUCHID = "TOUCHID";
+    public static final String VOICE = "VOICE";
+    public static final String FACE = "FACE";
+    public static final String IRIS = "IRIS";
+    public static final String TOTP = "TOTP";
+    public static final String PUSH = "PUSH";
+    public static final String FIDO = "FIDOU2F";
     public static final String EMAIL = "EMAIL";
     public static final String SMS = "SMS";
     public static final String IVR = "IVR";
