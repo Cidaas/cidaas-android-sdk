@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class ScannedResponse implements Serializable {
     boolean success;
     int status;
-    ScannedResponseDataEntity data;
+    ScannedResponseData data;
 
     public boolean isSuccess() {
         return success;
@@ -27,12 +27,11 @@ public class ScannedResponse implements Serializable {
         this.status = status;
     }
 
-    public ScannedResponseDataEntity getData() {
+    public ScannedResponseData getData() {
         return data;
     }
 
-    public void setData(ScannedResponseDataEntity data) {
+    public void setData(ScannedResponseData data) {
         this.data = data;
     }
-
 }
