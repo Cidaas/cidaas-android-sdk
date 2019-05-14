@@ -2,7 +2,7 @@ package com.example.cidaasv2.VerificationV2.data.Service;
 
 
 
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollRequestEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
@@ -31,6 +31,6 @@ public interface ICidaasSDK_V2_Services {
 
     //Enroll
     @POST
-    Call<EnrollResponseEntity> enroll(@Url String url, @HeaderMap Map<String,String> headers, @Body EnrollRequestEntity enrollRequestEntity);
+    Call<EnrollResponseEntity> enroll(@Url String url, @HeaderMap Map<String,String> headers, @Body EnrollEntity enrollEntity);
 
 }

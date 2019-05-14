@@ -9,7 +9,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollRequestEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Service.CidaasSDK_V2_Service;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
@@ -52,7 +52,7 @@ public class EnrollService {
     }
 
     //call enroll Service
-    public void callEnrollService(@NonNull String enrollURL, Map<String, String> headers, EnrollRequestEntity enrollEntity,
+    public void callEnrollService(@NonNull String enrollURL, Map<String, String> headers, EnrollEntity enrollEntity,
                                   final Result<EnrollResponseEntity> enrollCallback)
     {
         final String methodName = "EnrollService:-callEnrollService()";

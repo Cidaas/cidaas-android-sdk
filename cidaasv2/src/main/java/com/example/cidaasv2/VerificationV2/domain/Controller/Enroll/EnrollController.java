@@ -11,7 +11,7 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollRequestEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollResponseEntity;
 import com.example.cidaasv2.VerificationV2.domain.Service.Enroll.EnrollService;
 
@@ -44,14 +44,14 @@ public class EnrollController {
 
 
     //--------------------------------------------Enroll--------------------------------------------------------------
-    public void enrollVerification(final EnrollRequestEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
+    public void enrollVerification(final EnrollEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
     {
         checkEnrollEntity(enrollEntity,enrollResult);
     }
 
 
     //-------------------------------------checkEnrollEntity-----------------------------------------------------------
-    private void checkEnrollEntity(final EnrollRequestEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
+    private void checkEnrollEntity(final EnrollEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
     {
         String methodName = "EnrollController:-checkEnrollEntity()";
         try {
@@ -85,7 +85,7 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final EnrollRequestEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
+    private void addProperties(final EnrollEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
     {
         String methodName = "EnrollController:-addProperties()";
         try {
@@ -103,7 +103,7 @@ public class EnrollController {
     }
 
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
-    private void callEnroll(final EnrollRequestEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
+    private void callEnroll(final EnrollEntity enrollEntity, final Result<EnrollResponseEntity> enrollResult)
     {
         String methodName = "EnrollController:-enroll()";
         try

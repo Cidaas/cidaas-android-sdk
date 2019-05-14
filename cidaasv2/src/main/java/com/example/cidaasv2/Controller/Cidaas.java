@@ -107,7 +107,7 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollRequestEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
@@ -1147,9 +1147,9 @@ public class Cidaas implements IOAuthWebLogin {
         ScannedController.getShared(context).scannedVerification(scannedEntity,scannedResult);
     }
 
-    public void enrollv2(@NonNull final EnrollRequestEntity enrollRequestEntity, final Result<EnrollResponseEntity> enrollResponseResult)
+    public void enrollv2(@NonNull final EnrollEntity enrollEntity, final Result<EnrollResponseEntity> enrollResponseResult)
     {
-        EnrollController.getShared(context).enrollVerification(enrollRequestEntity,enrollResponseResult);
+        EnrollController.getShared(context).enrollVerification(enrollEntity,enrollResponseResult);
     }
 
 

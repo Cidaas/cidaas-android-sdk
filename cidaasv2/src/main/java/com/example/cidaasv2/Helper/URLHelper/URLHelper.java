@@ -159,9 +159,9 @@ public class URLHelper {
     String openIdURL="/.well-known/openid-configuration";
 
     //V2-Verification
-    String setupURL="/verification-srv/v2/callSetup/initiate/";
-    String scannedURL="/verification-srv/v2/callSetup/scan/";
-    String enrollURL="/verification-srv/v2/callSetup/enroll/";
+    String setupURL="/verification-srv/v2/setup/initiate/";
+    String scannedURL="/verification-srv/v2/setup/scan/";
+    String enrollURL="/verification-srv/v2/setup/enroll/";
 
 
     public String getSetupURL(String baseurl,String verificationType) {

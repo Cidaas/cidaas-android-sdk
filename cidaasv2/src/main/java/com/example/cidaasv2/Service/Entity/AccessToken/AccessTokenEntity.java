@@ -9,6 +9,17 @@ import java.io.Serializable;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccessTokenEntity implements Serializable {
+
+    public AccessTokenEntity(String access_token, String refresh_token, int expires_in, String sub) {
+        this.access_token = access_token;
+        this.refresh_token = refresh_token;
+        this.expires_in = expires_in;
+        this.sub = sub;
+    }
+
+    public AccessTokenEntity() {
+    }
+
     //Getters and Setters
     public String getAccess_token() {
         return access_token;
