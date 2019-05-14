@@ -56,7 +56,7 @@ public class CommonError {
 
             if(errorResponse.contains("<!DOCTYPE html>"))
             {
-                WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND,methodName);
+               return WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND,methodName);
             }
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
