@@ -264,6 +264,10 @@ public class Cidaas implements IOAuthWebLogin {
         deviceInfoEntity.setDeviceVersion(String.valueOf(VERSION.RELEASE));
         deviceInfoEntity.setDeviceMake(Build.MANUFACTURER);
 
+        if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
+            deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
+        }
+
 
         Cidaas.baseurl="";
 

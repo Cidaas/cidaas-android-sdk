@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
 import com.example.cidaasv2.Helper.Entity.ErrorEntity;
+import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,8 +49,15 @@ public class CommonError {
 
             assert response.errorBody() != null;
 
+            response.message().toLowerCase();
+
             // Handle proper error message
             String errorResponse = response.errorBody().source().readByteString().utf8();
+
+            if(errorResponse.contains("<!DOCTYPE html>"))
+            {
+                WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND,methodName);
+            }
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
 

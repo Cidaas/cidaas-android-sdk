@@ -315,6 +315,13 @@ public void setEnableLog(boolean enableLog)
         try {
             editor.putString(FCMTokenInfo,fcmToken);
             editor.commit();
+
+            //Add fcm token
+            DeviceInfoEntity deviceInfoEntity=getDeviceInfo();
+            deviceInfoEntity.setPushNotificationId(fcmToken);
+
+            //add it in db
+            addDeviceInfo(deviceInfoEntity);
         }
         catch (Exception e)
         {
