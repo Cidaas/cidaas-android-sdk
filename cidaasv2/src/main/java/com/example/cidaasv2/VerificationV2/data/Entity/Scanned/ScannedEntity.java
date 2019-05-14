@@ -14,6 +14,18 @@ public class ScannedEntity implements Serializable {
     private String push_id="";
     private String verificationType="";
 
+    //Constructors
+    public ScannedEntity() {
+    }
+
+    public ScannedEntity(String sub, String exchange_id, String client_id, String verificationType) {
+        this.sub = sub;
+        this.exchange_id = exchange_id;
+        this.client_id = client_id;
+        this.verificationType = verificationType;
+    }
+
+
     public String getSub() {
         return sub;
     }

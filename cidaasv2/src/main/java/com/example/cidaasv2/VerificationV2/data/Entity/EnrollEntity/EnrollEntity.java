@@ -14,6 +14,25 @@ public class EnrollEntity implements Serializable {
     private String pass_code="";
     private String verificationType="";
 
+    //Constructors
+    public EnrollEntity(String exchange_id, String client_id, String verificationType) {
+        this.exchange_id = exchange_id;
+        this.client_id = client_id;
+        this.verificationType = verificationType;
+    }
+
+    public EnrollEntity() {
+    }
+
+    public EnrollEntity(String exchange_id, String device_id, String client_id, String push_id, String pass_code, String verificationType) {
+        this.exchange_id = exchange_id;
+        this.device_id = device_id;
+        this.client_id = client_id;
+        this.push_id = push_id;
+        this.pass_code = pass_code;
+        this.verificationType = verificationType;
+    }
+
     public EnrollEntity(String exchange_id, String client_id, String pass_code, String verificationType) {
         this.exchange_id = exchange_id;
         this.client_id = client_id;

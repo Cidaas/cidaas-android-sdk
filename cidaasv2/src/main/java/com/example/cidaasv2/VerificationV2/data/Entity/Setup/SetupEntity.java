@@ -10,6 +10,17 @@ public class SetupEntity implements Serializable {
     String sub="";
     String verificationType="";
 
+    //Constructors
+    public SetupEntity() {
+    }
+
+    public SetupEntity(String sub, String verificationType) {
+        this.sub = sub;
+        this.verificationType = verificationType;
+    }
+
+
+
     public String getSub() {
         return sub;
     }

@@ -165,15 +165,15 @@ public class URLHelper {
 
 
     public String getSetupURL(String baseurl,String verificationType) {
-        return baseurl+setupURL+verificationType;
+        return baseurl+setupURL+(verificationType.toLowerCase());
     }
 
     public String getScannedURL(String baseurl,String verificationType) {
-        return baseurl+scannedURL+verificationType;
+        return baseurl+scannedURL+(verificationType.toLowerCase());
     }
 
     public String getEnrollURL(String baseurl,String verificationType) {
-        return baseurl+enrollURL+verificationType;
+        return baseurl+enrollURL+(verificationType.toLowerCase());
     }
 
 

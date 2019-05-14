@@ -10,6 +10,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccessTokenEntity implements Serializable {
 
+    //Constructors
     public AccessTokenEntity(String access_token, String refresh_token, int expires_in, String sub) {
         this.access_token = access_token;
         this.refresh_token = refresh_token;
@@ -18,6 +19,22 @@ public class AccessTokenEntity implements Serializable {
     }
 
     public AccessTokenEntity() {
+    }
+
+    public AccessTokenEntity(String access_token, String userstate, String refresh_token, String id_token, String scope, int expires_in, String sub,
+                             String token_type, String session_state, String viewtype, String grant_type, String code) {
+        this.access_token = access_token;
+        this.userstate = userstate;
+        this.refresh_token = refresh_token;
+        this.id_token = id_token;
+        this.scope = scope;
+        this.expires_in = expires_in;
+        this.sub = sub;
+        this.token_type = token_type;
+        this.session_state = session_state;
+        this.viewtype = viewtype;
+        this.grant_type = grant_type;
+        this.code = code;
     }
 
     //Getters and Setters
