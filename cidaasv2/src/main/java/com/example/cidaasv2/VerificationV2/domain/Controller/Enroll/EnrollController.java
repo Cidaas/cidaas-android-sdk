@@ -11,8 +11,8 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponseEntity;
 import com.example.cidaasv2.VerificationV2.domain.Service.Enroll.EnrollService;
 
 import java.util.Dictionary;

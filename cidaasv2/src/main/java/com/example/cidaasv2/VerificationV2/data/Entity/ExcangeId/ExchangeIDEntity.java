@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.data.Entity.ExcangeIdEntity;
+package com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

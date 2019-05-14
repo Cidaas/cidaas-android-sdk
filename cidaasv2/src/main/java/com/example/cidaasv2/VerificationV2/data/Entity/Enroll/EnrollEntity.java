@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity;
+package com.example.cidaasv2.VerificationV2.data.Entity.Enroll;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,14 +15,16 @@ public class EnrollEntity implements Serializable {
     private String verificationType="";
 
     //Constructors
+    public EnrollEntity() {
+    }
+
     public EnrollEntity(String exchange_id, String client_id, String verificationType) {
         this.exchange_id = exchange_id;
         this.client_id = client_id;
         this.verificationType = verificationType;
     }
 
-    public EnrollEntity() {
-    }
+
 
     public EnrollEntity(String exchange_id, String device_id, String client_id, String push_id, String pass_code, String verificationType) {
         this.exchange_id = exchange_id;

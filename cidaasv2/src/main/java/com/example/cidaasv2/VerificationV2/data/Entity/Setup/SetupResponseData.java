@@ -1,6 +1,6 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Setup;
 
-import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeIdEntity.ExchangeIDEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId.ExchangeIDEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;

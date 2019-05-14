@@ -2,8 +2,8 @@ package com.example.cidaasv2.VerificationV2.data.Service;
 
 
 
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity.EnrollResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;

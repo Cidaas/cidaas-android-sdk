@@ -1,15 +1,15 @@
-package com.example.cidaasv2.VerificationV2.data.Entity.EnrollEntity;
+package com.example.cidaasv2.VerificationV2.data.Entity.Authenticate;
 
-import com.example.cidaasv2.Service.Scanned.ScannedResponseDataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EnrollResponseEntity implements Serializable {
+public class AuthenticateResponse implements Serializable {
+
     boolean success;
     int status;
-    EnrollResponseDataEntity data;
+    AuthenticateResponseDataEntity data;
 
     public boolean isSuccess() {
         return success;
@@ -27,11 +27,11 @@ public class EnrollResponseEntity implements Serializable {
         this.status = status;
     }
 
-    public EnrollResponseDataEntity getData() {
+    public AuthenticateResponseDataEntity getData() {
         return data;
     }
 
-    public void setData(EnrollResponseDataEntity data) {
+    public void setData(AuthenticateResponseDataEntity data) {
         this.data = data;
     }
 }

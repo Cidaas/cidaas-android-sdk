@@ -59,7 +59,7 @@ public class Headers {
                 headers.put("Content-Type",contentType);
             }
 
-            if(requestId!=null && !requestId[0].equals(""))
+            if(requestId!=null && requestId[0]!=null && !requestId[0].equals(""))
             {
                 headers.put("requestId",requestId[0]);
             }

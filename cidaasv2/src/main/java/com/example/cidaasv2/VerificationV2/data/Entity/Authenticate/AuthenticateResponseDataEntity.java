@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.data.Entity.Scanned;
+package com.example.cidaasv2.VerificationV2.data.Entity.Authenticate;
 
 import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId.ExchangeIDEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScannedResponseData implements Serializable {
+public class AuthenticateResponseDataEntity implements Serializable {
+
     private ExchangeIDEntity exchange_id;
     private String sub="";
     private String status_id="";
-
 
     public ExchangeIDEntity getExchange_id() {
         return exchange_id;
