@@ -57,13 +57,13 @@ public class SetupController {
         {
             if (setupEntity.getSub() != null && !setupEntity.getSub().equals("") && setupEntity.getVerificationType() != null &&
                     !setupEntity.getVerificationType().equals("")) {
-                setupResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub must not be null",
-                        "Error:"+methodName));
-                return;
+                addProperties(setupEntity, setupResult);
             }
             else
             {
-                addProperties(setupEntity, setupResult);
+                setupResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub must not be null",
+                        "Error:"+methodName));
+                return;
             }
 
         }

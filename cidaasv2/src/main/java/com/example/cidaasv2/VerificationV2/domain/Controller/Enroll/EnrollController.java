@@ -55,20 +55,27 @@ public class EnrollController {
     {
         String methodName = "EnrollController:-checkEnrollEntity()";
         try {
-            if (enrollEntity.getPass_code() != null && !enrollEntity.getPass_code().equals("") ) {
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Pass_code must not be null",
-                        "Error:"+methodName));
-                return;
-            }
-            if(enrollEntity.getClient_id() != null && !enrollEntity.getClient_id().equals("") &&
-                    enrollEntity.getExchange_id() != null && !enrollEntity.getExchange_id().equals(""))
-            {
-                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
-                        "Error:"+methodName));
-                return;
-            }
+            if (enrollEntity.getPass_code() != null && !enrollEntity.getPass_code().equals("") && enrollEntity.getVerificationType() != null &&
+                    !enrollEntity.getVerificationType().equals("")) {
+                if(enrollEntity.getClient_id() != null && !enrollEntity.getClient_id().equals("") &&
+                        enrollEntity.getExchange_id() != null && !enrollEntity.getExchange_id().equals(""))
+                {
+                    addProperties(enrollEntity,enrollResult);
+                }
+                else
+                {
+                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
+                            "Error:"+methodName));
+                    return;
+                }
 
-            addProperties(enrollEntity,enrollResult);
+            }
+            else
+            {
+                enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Pass_code or Verification type must not be null",
+                        "Error:"+methodName));
+                return;
+            }
 
         }
         catch (Exception e) {

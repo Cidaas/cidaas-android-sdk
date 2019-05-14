@@ -58,19 +58,25 @@ public class ScannedController {
         try {
             if (scannedEntity.getVerificationType() != null && !scannedEntity.getVerificationType().equals("") && scannedEntity.getSub() != null &&
                     !scannedEntity.getSub().equals("")) {
+
+                if(scannedEntity.getClient_id() != null && !scannedEntity.getClient_id().equals("") &&
+                        scannedEntity.getExchange_id() != null && !scannedEntity.getExchange_id().equals(""))
+                {
+                    addProperties(scannedEntity,scannedResult);
+                }
+                else
+                {
+                    scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
+                            "Error:"+methodName));
+                    return;
+                }
+            }
+            else
+            {
                 scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub must not be null",
                         "Error:"+methodName));
                 return;
             }
-            if(scannedEntity.getClient_id() != null && !scannedEntity.getClient_id().equals("") &&
-                    scannedEntity.getExchange_id() != null && !scannedEntity.getExchange_id().equals(""))
-            {
-                scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
-                        "Error:"+methodName));
-                return;
-            }
-
-            addProperties(scannedEntity,scannedResult);
 
         }
         catch (Exception e) {
