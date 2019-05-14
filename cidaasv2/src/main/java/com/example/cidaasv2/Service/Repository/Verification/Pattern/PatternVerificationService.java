@@ -170,7 +170,7 @@ public class PatternVerificationService {
                 scannedPatternUrl = baseurl + URLHelper.getShared().getScannedPatternURL();
 
                 // Get Device Information
-                DeviceInfoEntity deviceInfoEntity = new DeviceInfoEntity();
+                DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
                 scannedRequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -246,7 +246,7 @@ public class PatternVerificationService {
                 enrollPatternMFAUrl = baseurl + URLHelper.getShared().getEnrollPatternMFA();
 
                 // Get Device Information
-                DeviceInfoEntity deviceInfoEntity = new DeviceInfoEntity();
+                DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
                 enrollPatternMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -320,7 +320,7 @@ public class PatternVerificationService {
                 initiatePatternMFAUrl = baseurl + URLHelper.getShared().getInitiatePatternMFA();
 
                 // Get Device Information
-                DeviceInfoEntity deviceInfoEntity = new DeviceInfoEntity();
+                DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
                 deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
                 initiatePatternMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -390,7 +390,7 @@ public class PatternVerificationService {
                 String authenticatePatternMFAUrl = baseurl + URLHelper.getShared().getAuthenticatePatternMFA();
 
                 // Get Device Information
-                DeviceInfoEntity deviceInfoEntity = new DeviceInfoEntity();
+                DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
 
 
             Map<String, String> headers = Headers.getShared(context).getHeaders(null,verification_api_version,URLHelper.contentTypeJson);

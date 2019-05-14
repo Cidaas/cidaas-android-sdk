@@ -97,7 +97,7 @@ public class VerificationSettingsService {
                if(userDeviceID.equals(""))
                {
 
-                DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+                DeviceInfoEntity deviceInfoEntity=DBHelper.getShared().getDeviceInfo();
                 userDeviceID=deviceInfoEntity.getDeviceId();
                }
                else
@@ -176,7 +176,7 @@ public class VerificationSettingsService {
                 String deleteMFAURL="";
                 if(userDeviceID.equals("") && userDeviceID==null) {
 
-                DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+                DeviceInfoEntity deviceInfoEntity=DBHelper.getShared().getDeviceInfo();
                 userDeviceID=deviceInfoEntity.getDeviceId();
 
                 }
@@ -251,7 +251,7 @@ public class VerificationSettingsService {
 
             if(userDeviceID.equals("")) {
 
-                DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+                DeviceInfoEntity deviceInfoEntity=DBHelper.getShared().getDeviceInfo();
 
                 userDeviceID=deviceInfoEntity.getDeviceId();
             }
@@ -473,7 +473,7 @@ public class VerificationSettingsService {
                String fcmTokenURL = baseurl + URLHelper.getShared().getUpdateFCMTokenURL();
 
                //DeviceInfoEntity
-               DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+               DeviceInfoEntity deviceInfoEntity=DBHelper.getShared().getDeviceInfo();
                deviceInfoEntity.setPushNotificationId(FCMToken);
 
                //Headers Generation
