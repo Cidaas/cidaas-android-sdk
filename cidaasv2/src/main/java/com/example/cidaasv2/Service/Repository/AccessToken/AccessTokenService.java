@@ -71,7 +71,7 @@ public class AccessTokenService {
                 String getAccessTokenUrl = baseurl + URLHelper.getShared().getTokenUrl();
 
                 //Header Generation
-                Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, null);
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
 
                 //Get Verifier and loginProperties
                 Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
