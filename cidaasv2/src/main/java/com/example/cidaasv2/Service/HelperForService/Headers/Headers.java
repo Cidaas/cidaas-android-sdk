@@ -59,12 +59,6 @@ public class Headers {
                 headers.put("Content-Type",contentType);
             }
 
-            if(requestId!=null && requestId[0]!=null && !requestId[0].equals(""))
-            {
-                headers.put("requestId",requestId[0]);
-            }
-
-
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
             headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
@@ -76,6 +70,15 @@ public class Headers {
                 headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
                 headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
             }
+
+
+            if(requestId!=null && requestId.length>0)
+            {
+                headers.put("requestId",requestId[0]);
+            }
+
+
+
             return headers;
         }
         catch (Exception e)
