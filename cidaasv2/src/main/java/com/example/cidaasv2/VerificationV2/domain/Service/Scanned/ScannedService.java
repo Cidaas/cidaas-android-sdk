@@ -16,12 +16,10 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
-import com.example.cidaasv2.VerificationV2.domain.Interactor.CommonResponseHandler;
 
 public class ScannedService {
     private Context context;
@@ -72,19 +70,19 @@ public class ScannedService {
                     }
                     else
                     {
-                        scannedCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FAILURE,
+                        scannedCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                                 response,"Error:- "+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponse> call, Throwable t) {
-                    scannedCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_FAILURE,
+                    scannedCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                             t.getMessage(),"Error:- "+methodName));
                 }
             });
         } catch (Exception e) {
-            scannedCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SCANNED_FAILURE,
+            scannedCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

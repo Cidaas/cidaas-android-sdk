@@ -1,5 +1,6 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Enroll;
 
+import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -13,6 +14,8 @@ public class EnrollEntity implements Serializable {
     private String push_id="";
     private String pass_code="";
     private String verificationType="";
+
+    private FingerPrintEntity fingerPrintEntity;
 
     //Constructors
     public EnrollEntity() {
@@ -42,6 +45,30 @@ public class EnrollEntity implements Serializable {
         this.verificationType = verificationType;
     }
 
+    public EnrollEntity(String exchange_id, String client_id, String verificationType, FingerPrintEntity fingerPrintEntity) {
+        this.exchange_id = exchange_id;
+        this.client_id = client_id;
+        this.verificationType = verificationType;
+        this.fingerPrintEntity = fingerPrintEntity;
+    }
+
+
+    public EnrollEntity(String exchange_id, String device_id, String client_id, String push_id, String verificationType, FingerPrintEntity fingerPrintEntity) {
+        this.exchange_id = exchange_id;
+        this.device_id = device_id;
+        this.client_id = client_id;
+        this.push_id = push_id;
+        this.verificationType = verificationType;
+        this.fingerPrintEntity = fingerPrintEntity;
+    }
+
+    public FingerPrintEntity getFingerPrintEntity() {
+        return fingerPrintEntity;
+    }
+
+    public void setFingerPrintEntity(FingerPrintEntity fingerPrintEntity) {
+        this.fingerPrintEntity = fingerPrintEntity;
+    }
 
     public String getVerificationType() {
         return verificationType;

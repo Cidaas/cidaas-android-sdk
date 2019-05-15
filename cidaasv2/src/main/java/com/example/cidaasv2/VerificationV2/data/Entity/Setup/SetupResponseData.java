@@ -11,6 +11,7 @@ public class SetupResponseData implements Serializable {
     private String sub="";
     private String status_id="";
     private String authenticator_client_id;
+    private String push_selected_number="";
 
     public ExchangeIDEntity getExchange_id() {
         return exchange_id;
@@ -42,5 +43,13 @@ public class SetupResponseData implements Serializable {
 
     public void setAuthenticator_client_id(String authenticator_client_id) {
         this.authenticator_client_id = authenticator_client_id;
+    }
+
+    public String getPush_selected_number() {
+        return push_selected_number;
+    }
+
+    public void setPush_selected_number(String push_selected_number) {
+        this.push_selected_number = push_selected_number;
     }
 }

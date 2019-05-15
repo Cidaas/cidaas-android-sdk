@@ -13,6 +13,7 @@ import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
+import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
 import com.example.cidaasv2.VerificationV2.domain.Service.Setup.SetupService;
 
 import java.util.Dictionary;
@@ -68,7 +69,8 @@ public class SetupController {
 
         }
         catch (Exception e) {
-         setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_FAILURE, e.getMessage()));
+         setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
+                 e.getMessage()));
         }
     }
 
@@ -95,7 +97,8 @@ public class SetupController {
         }
         catch (Exception e)
         {
-          setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_FAILURE, e.getMessage()));
+          setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
+                  e.getMessage()));
         }
     }
 
@@ -111,7 +114,7 @@ public class SetupController {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
 
                     //get url
-                    String setupUrl= URLHelper.getShared().getSetupURL(baseurl,setupEntity.getVerificationType());
+                    String setupUrl= VerificationURLHelper.getShared().getSetupURL(baseurl,setupEntity.getVerificationType());
 
                     //headers Generation
                     Map<String,String> headers= Headers.getShared(context).getHeaders(accessToken,false,URLHelper.contentTypeJson);
@@ -127,7 +130,8 @@ public class SetupController {
         }
         catch (Exception e)
         {
-         setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_FAILURE, e.getMessage()));
+         setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
+                 e.getMessage()));
         }
     }
 

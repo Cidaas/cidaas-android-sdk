@@ -180,9 +180,20 @@ public class WebAuthErrorCode {
   public static final int FINGERPRINT_AUTHENTICATION_FAILED = 10109;
   public static final int FINGERPRINT_AUTHENTICATION_CANCELLED = 10110;
 
-
-
   public static final int DOCUMENT_VERIFICATION_FAILURE=10111;
+
+  //V2-Verification Error Codes
+  public static final int SETUP_VERIFICATION_FAILURE = 10112;
+  public static final int SCANNED_VERIFICATION_FAILURE = 10113;
+  public static final int ENROLL_VERIFICATION_FAILURE = 10114;
+
+  public static final int INITIATE_VERIFICATION_FAILURE = 10115;
+  public static final int PUSH_ACKNOWLEDGE_FAILURE = 10116;
+  public static final int PUSH_ALLOW_FAILURE = 10117;
+  public static final int PUSH_REJECT_FAILURE = 10118;
+  public static final int AUTHENTICATE_VERIFICATION_FAILURE = 10119;
+
+
 
 
   //Common Error Codes
@@ -210,7 +221,8 @@ public class WebAuthErrorCode {
   public static final int DEDUPLICATION_LOGIN_FAILURE=10195;
   public static final int LOGINWITH_BROWSER_FAILURE = 10196;
   public static final int SAVE_LOGIN_PROPERTIES = 10197;
-    public static final int SCANNED_FAILURE = 10087;
+
+
 
 }
 

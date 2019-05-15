@@ -158,24 +158,6 @@ public class URLHelper {
 
     String openIdURL="/.well-known/openid-configuration";
 
-    //V2-Verification
-    String setupURL="/verification-srv/v2/setup/initiate/";
-    String scannedURL="/verification-srv/v2/setup/scan/";
-    String enrollURL="/verification-srv/v2/setup/enroll/";
-
-
-    public String getSetupURL(String baseurl,String verificationType) {
-        return baseurl+setupURL+(verificationType.toLowerCase());
-    }
-
-    public String getScannedURL(String baseurl,String verificationType) {
-        return baseurl+scannedURL+(verificationType.toLowerCase());
-    }
-
-    public String getEnrollURL(String baseurl,String verificationType) {
-        return baseurl+enrollURL+(verificationType.toLowerCase());
-    }
-
 
 
     public String getLogoutURLForEmbeddedBrowser() {

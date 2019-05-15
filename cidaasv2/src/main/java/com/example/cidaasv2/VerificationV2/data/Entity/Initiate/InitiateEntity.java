@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InititateRequestEntity implements Serializable {
+public class InitiateEntity implements Serializable {
 
     private String sub="";
     private String request_id="";
@@ -13,12 +13,21 @@ public class InititateRequestEntity implements Serializable {
     private String usage_type="";
     private String device_id="";
     private String push_id="";
+    private String verificationType="";
+
 
     //Constructor
-    public InititateRequestEntity() {
+    public InitiateEntity() {
     }
 
-    public InititateRequestEntity(String sub, String request_id, String medium_id, String usage_type) {
+
+    public InitiateEntity(String sub, String medium_id, String usage_type) {
+        this.sub = sub;
+        this.medium_id = medium_id;
+        this.usage_type = usage_type;
+    }
+
+    public InitiateEntity(String sub, String request_id, String medium_id, String usage_type) {
         this.sub = sub;
         this.request_id = request_id;
         this.medium_id = medium_id;
@@ -26,19 +35,21 @@ public class InititateRequestEntity implements Serializable {
     }
 
 
-    public InititateRequestEntity(String sub, String medium_id, String usage_type) {
-        this.sub = sub;
-        this.medium_id = medium_id;
-        this.usage_type = usage_type;
-    }
-
-    public InititateRequestEntity(String sub, String request_id, String medium_id, String usage_type, String device_id, String push_id) {
+    public InitiateEntity(String sub, String request_id, String medium_id, String usage_type, String device_id, String push_id) {
         this.sub = sub;
         this.request_id = request_id;
         this.medium_id = medium_id;
         this.usage_type = usage_type;
         this.device_id = device_id;
         this.push_id = push_id;
+    }
+
+    public String getVerificationType() {
+        return verificationType;
+    }
+
+    public void setVerificationType(String verificationType) {
+        this.verificationType = verificationType;
     }
 
     public String getSub() {

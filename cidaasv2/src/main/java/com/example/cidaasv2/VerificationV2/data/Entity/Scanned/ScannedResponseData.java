@@ -10,6 +10,7 @@ public class ScannedResponseData implements Serializable {
     private ExchangeIDEntity exchange_id;
     private String sub="";
     private String status_id="";
+    private String[] push_random_numbers;
 
 
     public ExchangeIDEntity getExchange_id() {
@@ -34,5 +35,13 @@ public class ScannedResponseData implements Serializable {
 
     public void setStatus_id(String status_id) {
         this.status_id = status_id;
+    }
+
+    public String[] getPush_random_numbers() {
+        return push_random_numbers;
+    }
+
+    public void setPush_random_numbers(String[] push_random_numbers) {
+        this.push_random_numbers = push_random_numbers;
     }
 }

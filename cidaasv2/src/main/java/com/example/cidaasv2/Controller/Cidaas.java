@@ -108,7 +108,7 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
@@ -140,6 +140,7 @@ public class Cidaas implements IOAuthWebLogin {
     private static final int LOCAL_AUTH_REQUEST_CODE = 303;
     private static final int LOCAL_REQUEST_CODE = 302;
     private static final int RESULT_OK = -1;
+
 
 
     Result<LocalAuthenticationEntity> localAuthenticationEntityCallback;
@@ -176,6 +177,19 @@ public class Cidaas implements IOAuthWebLogin {
 //Create a Shared Instance
 
     private static Cidaas cidaasInstance;
+
+    public  static SetupController verification;
+   // =SetupController.getShared()
+
+
+
+    public static SetupController getVerification(Context YourActivitycontext) {
+        if (verification == null) {
+            verification = new SetupController(YourActivitycontext);
+        }
+
+        return verification;
+    }
 
 
     public static Cidaas getInstance(Context YourActivitycontext) {
@@ -1151,7 +1165,7 @@ public class Cidaas implements IOAuthWebLogin {
         ScannedController.getShared(context).scannedVerification(scannedEntity,scannedResult);
     }
 
-    public void enrollv2(@NonNull final EnrollEntity enrollEntity, final Result<EnrollResponseEntity> enrollResponseResult)
+    public void enrollv2(@NonNull final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResponseResult)
     {
         EnrollController.getShared(context).enrollVerification(enrollEntity,enrollResponseResult);
     }

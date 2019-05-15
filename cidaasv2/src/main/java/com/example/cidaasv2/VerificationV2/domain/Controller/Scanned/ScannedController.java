@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
+import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
 import com.example.cidaasv2.VerificationV2.domain.Service.Scanned.ScannedService;
 
 import java.util.Dictionary;
@@ -80,7 +81,8 @@ public class ScannedController {
 
         }
         catch (Exception e) {
-       scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_FAILURE, e.getMessage()));
+       scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+               e.getMessage()));
         }
     }
 
@@ -99,7 +101,8 @@ public class ScannedController {
             callScanned(scannedEntity,scannedResult);
         }
         catch (Exception e) {
-      scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_FAILURE, e.getMessage()));
+      scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+              e.getMessage()));
         }
     }
 
@@ -114,7 +117,7 @@ public class ScannedController {
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
 
-                    String scannedUrl= URLHelper.getShared().getScannedURL(baseurl,scannedEntity.getVerificationType());
+                    String scannedUrl= VerificationURLHelper.getShared().getScannedURL(baseurl,scannedEntity.getVerificationType());
 
                     //headers Generation
                     Map<String,String> headers=Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
@@ -129,7 +132,8 @@ public class ScannedController {
             });
         }
         catch (Exception e) {
-      scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,WebAuthErrorCode.SCANNED_FAILURE, e.getMessage()));
+      scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+              e.getMessage()));
         }
     }
 

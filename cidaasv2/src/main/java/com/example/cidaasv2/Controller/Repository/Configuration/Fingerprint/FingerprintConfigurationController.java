@@ -34,6 +34,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerp
 import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
+import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
 
 import java.util.Dictionary;
 
@@ -89,15 +90,17 @@ public class FingerprintConfigurationController {
     }
 
 
-    public void configureFingerprint(final Context context, final String sub, @NonNull final String logoURL, FingerPrintEntity fingerPrintEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollresult) {
+    public void configureFingerprint(final Context context, final String sub, @NonNull final String logoURL, FingerPrintEntity fingerPrintEntity,
+                                     final Result<EnrollFingerprintMFAResponseEntity> enrollresult)
+    {
+        final String methodName="PatternConfigurationController :configurePattern()";
         try{
-            LogFile.getShared(context).addInfoLog("Exception :PatternConfigurationController :configurePattern()",
-                    "Sub"+sub);
+            LogFile.getShared(context).addInfoLog("Info :"+methodName, "Sub"+sub);
 
             if (Build.VERSION.SDK_INT >= 23) {
 
 
-                callFingerPrint(context, fingerPrintEntity, new Result<String>() {
+                BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity,methodName, new Result<String>() {
                     @Override
                     public void success(String result) {
                         CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -128,14 +131,13 @@ public class FingerprintConfigurationController {
 
                                 } else {
                                     String errorMessage = "Sub or Pattern cannot be null";
-                                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,"Exception :FingerprintConfigurationController :configureFingerprint()"));
+                                    enrollresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,"Error :"+methodName));
                                 }
                             }
 
                             @Override
                             public void failure(WebAuthError error) {
-                                enrollresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty",
-                                        "Error :FingerprintConfigurationController :configureFingerprint()"));
+                                enrollresult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :"+methodName));
                             }
                         });
                     }
@@ -149,13 +151,15 @@ public class FingerprintConfigurationController {
             else
             {
                 String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,"Error :FingerprintConfigurationController :configureFingerprint()"));
+                enrollresult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,
+                        "Error :"+methodName));
 
             }
         }
         catch (Exception e)
         {
-            enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :configureFingerprint()",WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            enrollresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.ENROLL_FINGERPRINT_MFA_FAILURE,
+                    e.getMessage()));
            
         }
     }
@@ -377,12 +381,15 @@ public class FingerprintConfigurationController {
     }
 
 
-    public void enrollFingerprint(final Context context, @NonNull final String sub, @NonNull final String statusId, FingerPrintEntity fingerPrintEntity, final Result<EnrollFingerprintMFAResponseEntity> enrollResult) {
+    public void enrollFingerprint(final Context context, @NonNull final String sub, @NonNull final String statusId, FingerPrintEntity fingerPrintEntity,
+                                  final Result<EnrollFingerprintMFAResponseEntity> enrollResult)
+    {
+        String methodName="PatternConfigurationController :enrollPattern()";
     try{
 
-        LogFile.getShared(context).addInfoLog("Info :PatternConfigurationController :enrollPattern()", "Sub:-"+sub+"statusId:-"+statusId);
+        LogFile.getShared(context).addInfoLog("Info :"+methodName, "Sub:-"+sub+"statusId:-"+statusId);
 
-        callFingerPrint(context, fingerPrintEntity, new Result<String>() {
+        BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity,methodName ,new Result<String>() {
             @Override
             public void success(String result) {
                 CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -529,13 +536,16 @@ public class FingerprintConfigurationController {
         }
     }
 
-    public void LoginWithFingerprint(final Context context, final PasswordlessEntity passwordlessEntity, FingerPrintEntity fingerPrintEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
+    public void LoginWithFingerprint(final Context context, final PasswordlessEntity passwordlessEntity, FingerPrintEntity fingerPrintEntity,
+                                     final Result<LoginCredentialsResponseEntity> loginresult)
+    {
+        String methodName="FingerprintConfigurationController :LoginWithFingerprint()";
    try{
        LogFile.getShared(context).addInfoLog("Info :PatternConfigurationController :LoginWithPattern()",
                "Info UsageType:-"+passwordlessEntity.getUsageType()+" Sub:- "+passwordlessEntity.getSub()+ " Email"+passwordlessEntity.getEmail()+
                        " Mobile"+passwordlessEntity.getMobile()+" RequestId:-"+passwordlessEntity.getRequestId()+ " TrackId:-"+passwordlessEntity.getTrackId());
 
-       callFingerPrint(context, fingerPrintEntity, new Result<String>() {
+       BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity, methodName,new Result<String>() {
            @Override
            public void success(String result) {
                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -766,9 +776,11 @@ public class FingerprintConfigurationController {
         }
     }
 
-    public void authenticateFingerprint(final Context context, final String statusId, FingerPrintEntity fingerPrintEntity, final Result<AuthenticateFingerprintResponseEntity> callBackresult) {
+    public void authenticateFingerprint(final Context context, final String statusId, FingerPrintEntity fingerPrintEntity, final Result<AuthenticateFingerprintResponseEntity> callBackresult)
+    {  final String methodName="FingerprintConfigurationController :authenticateFingerprint()";
         try {
-            callFingerPrint(context, fingerPrintEntity, new Result<String>() {
+
+            BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity,methodName ,new Result<String>() {
                 @Override
                 public void success(String result) {
                     CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -785,13 +797,11 @@ public class FingerprintConfigurationController {
 
                             authenticateFingerprint(baseurl,authenticateFingerprintRequestEntity,callBackresult);
 
-
                         }
 
                         @Override
                         public void failure(WebAuthError error) {
-                            callBackresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty"
-                            ,"Error :FingerprintConfigurationController :callFingerPrint()"));
+                            callBackresult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("","Error :"+methodName));
                         }
                     });
                 }
@@ -804,7 +814,7 @@ public class FingerprintConfigurationController {
         }
         catch (Exception e)
         {
-            callBackresult.failure(WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :authenticateFingerprint()",WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
+            callBackresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.AUTHENTICATE_FINGERPRINT_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -864,108 +874,4 @@ public class FingerprintConfigurationController {
         }
     }
 
-    public void callFingerPrint(final Context context, FingerPrintEntity fingerPrintEntity, final Result<String> result)
-    {
-        try
-        {
-            if (Build.VERSION.SDK_INT >= 23) {
-
-                FingerPrintEntity fingerPrintEntityForPassing = new FingerPrintEntity();
-                if (fingerPrintEntity == null) {
-                    fingerPrintEntity = fingerPrintEntityForPassing;
-                }
-
-                new BiometricManager.BiometricBuilder(context)
-                        .setTitle(fingerPrintEntity.getTitle())
-                        .setSubtitle(fingerPrintEntity.getSubtitle())
-                        .setDescription(fingerPrintEntity.getDescription())
-                        .setNegativeButtonText(fingerPrintEntity.getNegativeButtonString())
-                        .build()
-                        .authenticate(new BiometricCallback() {
-                            @Override
-                            public void onSdkVersionNotSupported() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_SDK_VERSION_NOT_SUPPORTED,
-                                        "SDK Version Not Supported","Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-
-                            @Override
-                            public void onBiometricAuthenticationNotSupported() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMETRIC_AUTHENTICATION_NOT_SUPPORTED,
-                                        "Biometric Authentication  Not Supported","Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-
-                            @Override
-                            public void onBiometricAuthenticationNotAvailable() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_NOT_AVAILABLE,
-                                        "Biometric Authentication  Not Available","Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-
-                            @Override
-                            public void onBiometricAuthenticationPermissionNotGranted() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_PERMISSION_NOT_GRANTED,
-                                        "Biometric Authentication  Permission Not Granted","Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-
-                            @Override
-                            public void onBiometricAuthenticationInternalError(String error) {
-
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_BIOMERTIC_AUTHENTICATION_INTERNAL_ERROR,
-                                        "Biometric Authentication  Internal Error","Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-
-                            @Override
-                            public void onAuthenticationFailed() {
-                                // result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,"Biometric Authentication  Failed"));
-                            }
-
-                            @Override
-                            public void onAuthenticationCancelled() {
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_CANCELLED,
-                                        "Biometric Authentication  Cancelled","Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-
-                            @Override
-                            public void onAuthenticationSuccessful() {
-                                result.success("Success");
-                                return;
-                            }
-
-                            @Override
-                            public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-
-                                String errorMessage = helpString.toString();
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(helpCode, errorMessage,"Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-
-                            @Override
-                            public void onAuthenticationError(int errorCode, CharSequence errString) {
-
-                                String errorMessage = errString.toString();
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage,"Error :FingerprintConfigurationController :callFingerPrint()"));
-                                return;
-                            }
-                        });
-            }
-            else
-            {
-                String ErrorMessage="Fingerprint doesnot Support in your mobile";
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,ErrorMessage,
-                        "Error :FingerprintConfigurationController :callFingerPrint()"));
-                return;
-            }
-        }
-        catch (Exception e)
-        {
-            result.failure( WebAuthError.getShared(context).methodException("Exception :FingerprintConfigurationController :callFingerPrint()",WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,e.getMessage()));
-           
-        }
-
-    }
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InititateResponse implements Serializable {
+public class InitiateResponse implements Serializable {
 
   InitiateResponseDataEntity dataEntity;
 

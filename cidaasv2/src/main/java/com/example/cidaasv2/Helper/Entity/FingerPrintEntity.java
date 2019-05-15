@@ -11,6 +11,28 @@ public class FingerPrintEntity implements Serializable {
     String Description="";
     String NegativeButtonString="Cancel";
 
+    public FingerPrintEntity() {
+    }
+
+    public FingerPrintEntity(String title, String subtitle, String description, String negativeButtonString) {
+        Title = title;
+        Subtitle = subtitle;
+        Description = description;
+        NegativeButtonString = negativeButtonString;
+    }
+
+    public FingerPrintEntity(String title, String description, String negativeButtonString) {
+        Title = title;
+        Description = description;
+        NegativeButtonString = negativeButtonString;
+    }
+
+    public FingerPrintEntity(String title, String description) {
+        Title = title;
+        Description = description;
+    }
+
+
 
     public String getTitle() {
         return Title;

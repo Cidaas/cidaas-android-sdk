@@ -13,14 +13,12 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.data.Service.CidaasSDK_V2_Service;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
-import com.example.cidaasv2.VerificationV2.domain.Service.Setup.SetupService;
 
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class SetupService {
     private Context context;
@@ -70,19 +68,19 @@ public class SetupService {
                     }
                     else
                     {
-                        setupCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_FAILURE,
+                        setupCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
                                 response,"Error:- "+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupResponse> call, Throwable t) {
-                    setupCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_FAILURE,
+                    setupCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
                             t.getMessage(),"Error:- "+methodName));
                 }
             });
         } catch (Exception e) {
-            setupCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SCANNED_FAILURE,
+            setupCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
