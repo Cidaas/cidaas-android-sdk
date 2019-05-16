@@ -2,6 +2,7 @@ package com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -14,6 +15,7 @@ import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
+import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
 import com.example.cidaasv2.VerificationV2.domain.Service.Authenticate.AuthenticateService;
 
 import java.util.Dictionary;
@@ -56,29 +58,20 @@ public class AuthenticateController {
     {
         String methodName = "AuthenticateController:-checkAuthenticateEntity()";
         try {
-            if (authenticateEntity.getPass_code() != null && !authenticateEntity.getPass_code().equals("") &&
-                    authenticateEntity.getVerificationType() != null && !authenticateEntity.getVerificationType().equals(""))
-            {
-                if(authenticateEntity.getClient_id() != null && !authenticateEntity.getClient_id().equals("") &&
+
+                if( authenticateEntity.getVerificationType() != null && !authenticateEntity.getVerificationType().equals("")&&
+                        authenticateEntity.getClient_id() != null && !authenticateEntity.getClient_id().equals("") &&
                         authenticateEntity.getExchange_id() != null && !authenticateEntity.getExchange_id().equals(""))
                 {
                     // Todo Check For Face and Voice
-                    addProperties(authenticateEntity,authenticateResult);
+                    handleVerificationTypes(authenticateEntity,authenticateResult);
                 }
                 else
                 {
-                    authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
-                            "Error:"+methodName));
+                    authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                            "ClientId or ExchangeId or Verification Type must not be null", "Error:"+methodName));
                     return;
                 }
-
-            }
-            else
-            {
-                authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException("Pass_code or Verification type must not be null",
-                        "Error:"+methodName));
-                return;
-            }
 
         }
         catch (Exception e) {
@@ -86,6 +79,62 @@ public class AuthenticateController {
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
+
+
+    //-----------------------------------------------handleVerificationTypes---------------------------------------------------------------
+    private void handleVerificationTypes(AuthenticateEntity authenticateEntity, Result<AuthenticateResponse> authenticateResult)
+    {
+        String methodName = "AuthenticateController:-handleVerificationTypes()";
+        try {
+            if (authenticateEntity.getPass_code() != null && !authenticateEntity.getPass_code().equals("")) {
+
+                addProperties(authenticateEntity, authenticateResult);
+            }
+            else {
+                if (authenticateEntity.getVerificationType().equalsIgnoreCase(AuthenticationType.TOUCHID)) {
+                    //FingerPrint
+                    callFingerPrintAuthentication(authenticateEntity, authenticateResult);
+                }
+                else {
+                    authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
+                    return;
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+    //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
+    private void callFingerPrintAuthentication(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult)
+    {
+        String methodName = "AuthenticateController:-callFingerPrintAuthentication()";
+        try {
+            BiometricHandler.getShared(context).callFingerPrint(authenticateEntity.getFingerPrintEntity(), methodName, new Result<String>() {
+                @Override
+                public void success(String result) {
+                    //call authenticate call
+                    authenticateEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
+                    addProperties(authenticateEntity,authenticateResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    authenticateResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e) {
+            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------

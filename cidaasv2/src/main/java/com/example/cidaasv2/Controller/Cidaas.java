@@ -116,6 +116,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
+import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -178,14 +179,14 @@ public class Cidaas implements IOAuthWebLogin {
 
     private static Cidaas cidaasInstance;
 
-    public  static SetupController verification;
+    public  static CidaasVerification verification;
    // =SetupController.getShared()
 
 
 
-    public static SetupController getVerification(Context YourActivitycontext) {
+    public static CidaasVerification getVerification(Context YourActivitycontext) {
         if (verification == null) {
-            verification = new SetupController(YourActivitycontext);
+            verification = new CidaasVerification(YourActivitycontext);
         }
 
         return verification;

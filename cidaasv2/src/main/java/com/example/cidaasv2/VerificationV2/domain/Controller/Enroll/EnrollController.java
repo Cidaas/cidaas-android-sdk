@@ -114,7 +114,8 @@ public class EnrollController {
             BiometricHandler.getShared(context).callFingerPrint(enrollEntity.getFingerPrintEntity(), methodName, new Result<String>() {
                 @Override
                 public void success(String result) {
-                    //call enroll call
+                    //set pass code as device id and call enroll call
+                    enrollEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
                     addProperties(enrollEntity,enrollResult);
                 }
 
