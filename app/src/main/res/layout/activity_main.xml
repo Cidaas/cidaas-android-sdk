@@ -109,10 +109,10 @@
         android:text="Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.123"
+        app:layout_constraintHorizontal_bias="0.026"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.778" />
+        app:layout_constraintVertical_bias="0.638" />
 
     <Button
         android:id="@+id/button26"
@@ -137,7 +137,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="44dp"
         android:backgroundTint="@android:color/holo_green_dark"
         android:onClick="loginWithBrowser"
         android:text="Login With Browser"
@@ -330,6 +330,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.391" />
+
+    <Button
+        android:id="@+id/finger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onFinger"
+        android:text="finger"
+        tools:layout_editor_absoluteX="29dp"
+        tools:layout_editor_absoluteY="544dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

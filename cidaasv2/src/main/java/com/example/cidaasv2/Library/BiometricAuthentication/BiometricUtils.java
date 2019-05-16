@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 
 import androidx.core.app.ActivityCompat;
@@ -41,9 +42,14 @@ public class BiometricUtils {
      *
      * */
     public static boolean isHardwareSupported(Context context) {
-        FingerprintManagerCompat fingerprintManager = FingerprintManagerCompat.from(context);
-        return fingerprintManager.isHardwareDetected();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED &&
+                    context.getSystemService(FingerprintManager.class).isHardwareDetected();
+        } else {
+            return FingerprintManagerCompat.from(context).isHardwareDetected();
+        }
     }
+
 
 
 
@@ -54,8 +60,12 @@ public class BiometricUtils {
      *
      * */
     public static boolean isFingerprintAvailable(Context context) {
-        FingerprintManagerCompat fingerprintManager = FingerprintManagerCompat.from(context);
-        return fingerprintManager.hasEnrolledFingerprints();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED &&
+                    context.getSystemService(FingerprintManager.class).hasEnrolledFingerprints();
+        } else {
+            return FingerprintManagerCompat.from(context).hasEnrolledFingerprints();
+        }
     }
 
 

@@ -3,6 +3,7 @@ package com.example.cidaasv2.Library.BiometricAuthentication;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
@@ -43,6 +44,7 @@ public class BiometricManagerV23 {
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
     private FingerprintManagerCompat.CryptoObject cryptoObject;
+    private FingerprintManager.CryptoObject cryptoObjectManger;
 
 
     protected Context context;
@@ -111,6 +113,51 @@ CancellationSignal cancellationSignal;
     }
 
 
+    public void displayBiometricPromptV23Manger(final BiometricCallback biometricCallback) {
+        generateKey();
+
+        if(initCipher()) {
+
+            cryptoObjectManger = new FingerprintManager.CryptoObject(cipher);
+
+            FingerprintManager fingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
+
+            fingerprintManager.authenticate(cryptoObjectManger, new android.os.CancellationSignal(), 0, new FingerprintManager.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationError(int errorCode, CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+                    if(errorCode!=5) {
+                        updateStatus(String.valueOf(errString));
+                    }
+
+                    biometricCallback.onAuthenticationError(errorCode, errString);
+                }
+
+                @Override
+                public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                    super.onAuthenticationHelp(helpCode, helpString);
+                    updateStatus(String.valueOf(helpString));
+                    biometricCallback.onAuthenticationHelp(helpCode, helpString);
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+                    dismissDialog();
+                    biometricCallback.onAuthenticationSuccessful();
+                }
+
+                @Override
+                public void onAuthenticationFailed() {
+                    super.onAuthenticationFailed();
+                    updateStatus(context.getString(R.string.biometric_failed));
+                    biometricCallback.onAuthenticationFailed();
+                }
+            },null);
+
+            displayBiometricDialog(biometricCallback);
+        }
+    }
 
     private void displayBiometricDialog(final BiometricCallback biometricCallback) {
 

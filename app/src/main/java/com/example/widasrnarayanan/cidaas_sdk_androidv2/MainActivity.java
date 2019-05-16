@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -28,6 +29,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFinge
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
+import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -171,6 +173,23 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         }
     }
 
+    public void onFinger(View view)
+    {
+        Toast.makeText(this, "merthpsodjsd", Toast.LENGTH_SHORT).show();
+
+        FingerPrintEntity fingerPrintEntity=new FingerPrintEntity("Sample","Description");
+        BiometricHandler.getShared(this).callFingerPrint(fingerPrintEntity, "Sdsdfsdf", new Result<String>() {
+            @Override
+            public void success(String result) {
+                Toast.makeText(MainActivity.this, "FingerSuccesss", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     public void loginWithSocial(View view)

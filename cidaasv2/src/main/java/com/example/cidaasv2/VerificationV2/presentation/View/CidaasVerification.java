@@ -17,5 +17,7 @@ public class CidaasVerification {
 
     public CidaasVerification(Context yourActivityContext) {
         this.context = yourActivityContext;
+
+        //1.
     }
 }
