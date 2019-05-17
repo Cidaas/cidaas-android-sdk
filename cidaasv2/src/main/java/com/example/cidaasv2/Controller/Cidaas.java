@@ -107,13 +107,25 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAcknowledge.PushAcknowledgeController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAllow.PushAllowController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.PushRejectController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
@@ -1169,6 +1181,27 @@ public class Cidaas implements IOAuthWebLogin {
     public void enrollv2(@NonNull final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResponseResult)
     {
         EnrollController.getShared(context).enrollVerification(enrollEntity,enrollResponseResult);
+    }
+
+
+    public void pushAcknowledgev2(PushAcknowledgeEntity pushAcknowledgeEntity, Result<PushAcknowledgeResponse> pushAcknowledgeResult)
+    {
+        PushAcknowledgeController.getShared(context).pushAcknowledgeVerification(pushAcknowledgeEntity,pushAcknowledgeResult);
+    }
+
+    public void pushAllowv2(PushAllowEntity pushAllowEntity, Result<PushAllowResponse> pushAllowResponseResult)
+    {
+        PushAllowController.getShared(context).pushAllowVerification(pushAllowEntity,pushAllowResponseResult);
+    }
+
+    public void pushRejectv2(PushRejectEntity pushRejectEntity, Result<PushRejectResponse> pushRejectResponseResult)
+    {
+        PushRejectController.getShared(context).pushRejectVerification(pushRejectEntity,pushRejectResponseResult);
+    }
+
+    public void authenticatev2(AuthenticateEntity authenticateEntity, Result<AuthenticateResponse> authenticateResponseResult)
+    {
+        AuthenticateController.getShared(context).authenticateVerification(authenticateEntity,authenticateResponseResult);
     }
 
 
