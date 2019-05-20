@@ -49,6 +49,7 @@ import com.example.cidaasv2.Helper.Entity.SocialAccessTokenEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
@@ -171,8 +172,7 @@ public class Cidaas implements IOAuthWebLogin {
 
 
     public static String logoURLlocal="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.cidaas.com/wp-content/uploads/2018/02/logo.png";
-    public static String APP_NAME = "cidaas";
-    public static String APP_VERSION = "";
+
 
 
 
@@ -213,21 +213,23 @@ public class Cidaas implements IOAuthWebLogin {
         return cidaasInstance;
     }
 
-    public static boolean ENABLE_PKCE;
-    public boolean ENABLE_LOG;
+    //Constructor
+    public Cidaas(Context yourActivityContext) {
+        this.context = yourActivityContext;
+        CidaasHelper.getShared(yourActivityContext).initialiseObject();
+    }
 
-    public DeviceInfoEntity deviceInfoEntity;
+
+    //-----------------------------------------_Common For Cidaas Instances-------------------------------------------------------------------------
 
 
     public boolean isENABLE_PKCE() {
-        ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
-        return ENABLE_PKCE;
+       return CidaasHelper.getShared(context).isENABLE_PKCE();
     }
 
     public void setENABLE_PKCE(boolean ENABLE_PKCE)
     {
-        this.ENABLE_PKCE = ENABLE_PKCE;
-        DBHelper.getShared().setEnablePKCE(ENABLE_PKCE);
+        CidaasHelper.getShared(context).setENABLE_PKCE(ENABLE_PKCE);
     }
 
 
@@ -235,116 +237,24 @@ public class Cidaas implements IOAuthWebLogin {
 
     public boolean isLogEnable()
     {
-        ENABLE_LOG = DBHelper.getShared().getEnableLog();
-        return ENABLE_LOG;
+        return CidaasHelper.getShared(context).isLogEnable();
     }
 
     public String enableLog()
     {
-        String messsage="";
-        //Check permission For marshmallow and above
-        if (VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                messsage= enableLogWithPermission();
-                return messsage;
-            }
-            else
-            {
-               messsage="Storge permission is not given, please request storage permisson to enable log";
-               return messsage;
-            }
-        }
-        else
-        {
-           messsage= enableLogWithPermission();
-           return messsage;
-        }
+        return CidaasHelper.getShared(context).enableLog();
     }
-
-
-    private String enableLogWithPermission()
-    {
-        // Enable Log
-        this.ENABLE_LOG = true;
-        DBHelper.getShared().setEnableLog(ENABLE_LOG);
-        return "Log Successfully Enabled";
-    }
-
-
-
-    public Cidaas(Context yourActivityContext) {
-        this.context = yourActivityContext;
-
-        //Initialise Shared Preferences
-        DBHelper.setConfig(context);
-
-        //Default Value;
-        ENABLE_PKCE = true;
-
-        //Default Log Value
-        ENABLE_LOG = false;
-
-        //Add Device info
-        deviceInfoEntity = new DeviceInfoEntity();
-        deviceInfoEntity.setDeviceId(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
-        deviceInfoEntity.setDeviceModel(MODEL);
-        deviceInfoEntity.setDeviceVersion(String.valueOf(VERSION.RELEASE));
-        deviceInfoEntity.setDeviceMake(Build.MANUFACTURER);
-
-        if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
-            deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
-        }
-
-
-        Cidaas.baseurl="";
-
-
-        PackageManager packageManager = context.getPackageManager();
-        ApplicationInfo applicationInfo = null;
-
-        try {
-            applicationInfo = packageManager.getApplicationInfo(context.getApplicationInfo().packageName, 0);
-           APP_VERSION= context.getPackageManager().getPackageInfo(context.getApplicationInfo().packageName, 0).versionName;
-        } catch (final PackageManager.NameNotFoundException e) {
-        }
-
-        if(applicationInfo!=null) {
-
-            APP_NAME = packageManager.getApplicationLabel(applicationInfo).toString();
-        }
-        else
-        {
-            APP_NAME="UNKNOWN";
-        }
-
-
-
-        //Store Device info for Later Purposes
-        DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
-
-        CidaasProperties.getShared(context).saveCidaasProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> result) {
-                Cidaas.baseurl=result.get("DomainURL");
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-
-    }
-
 
 
     //Set FCM Token For Update
     public void setFCMToken(String FCMToken) {
-
         //Store Device info for Later Purposes
         DBHelper.getShared().setFCMToken(FCMToken);
 
     }
+
+    //-----------------------------------------END_OF_Common For Cidaas Instances-------------------------------------------------------------------------
+
 
     //Get the remote messages from the Push notification
     public static void validateDevice(Map<String, String> instanceIdFromPush) {

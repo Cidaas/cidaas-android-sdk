@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -89,10 +89,10 @@ public class CidaassdkService {
 
     private String createCustomUserAgent(Request originalRequest) {
         // App name can be also retrieved programmatically, but no need to do it for this sample needs
-        String ua = Cidaas.APP_NAME;
+        String ua = CidaasHelper.APP_NAME;
         String baseUa = System.getProperty("http.agent");
         if (baseUa != null) {
-            ua = ua + "/" + Cidaas.APP_VERSION+"("+ BuildConfig.VERSION_NAME+")"+ " " + baseUa;
+            ua = ua + "/" + CidaasHelper.APP_VERSION+"("+ BuildConfig.VERSION_NAME+")"+ " " + baseUa;
         }
         return ua;
     }

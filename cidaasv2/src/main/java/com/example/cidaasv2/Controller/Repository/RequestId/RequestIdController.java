@@ -2,13 +2,14 @@ package com.example.cidaasv2.Controller.Repository.RequestId;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Repository.RequestId.RequestIdService;
@@ -17,10 +18,9 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import androidx.annotation.Nullable;
 import timber.log.Timber;
 
-import static com.example.cidaasv2.Controller.Cidaas.ENABLE_PKCE;
+import static com.example.cidaasv2.Helper.Genral.CidaasHelper.ENABLE_PKCE;
 
 public class RequestIdController {
 
@@ -59,7 +59,7 @@ public class RequestIdController {
         savedProperties.put("Challenge", codeChallenge);
         savedProperties.put("Method", generator.codeChallengeMethod);
 
-        if(!Cidaas.ENABLE_PKCE && !clientSecret.equals("") && clientSecret!=null)
+        if(!ENABLE_PKCE && !clientSecret.equals("") && clientSecret!=null)
         {
             savedProperties.put("ClientSecret",clientSecret);
         }

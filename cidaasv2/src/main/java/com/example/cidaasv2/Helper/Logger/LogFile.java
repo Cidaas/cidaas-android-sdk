@@ -61,18 +61,18 @@ public class LogFile {
     public static boolean size(long size) {
         String hrSize = "";
         double m = size / 1024.0;
-        boolean moreThanOneMB = false;
+        boolean moreThanTenMB = false;
         DecimalFormat dec = new DecimalFormat("0.00");
 
-        if (m > 1) {
+        if (m > 10) {
             hrSize = dec.format(m).concat(" MB");
-            moreThanOneMB = true;
+            moreThanTenMB = true;
         } else {
-            moreThanOneMB = false;
+            moreThanTenMB = false;
             hrSize = dec.format(size).concat(" KB");
         }
         Timber.d("Size : " + hrSize);
-        return moreThanOneMB;
+        return moreThanTenMB;
     }
 
 
@@ -151,8 +151,8 @@ public class LogFile {
                             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
 
 
-                          //  buf.write(getTime()+" "+message + "\r\n");
-                            //buf.append(message);
+                            buf.write(" "+message + "\r\n"); //getTime()+
+                            buf.append(message);
                             buf.newLine();
                             buf.flush();
                             buf.close();

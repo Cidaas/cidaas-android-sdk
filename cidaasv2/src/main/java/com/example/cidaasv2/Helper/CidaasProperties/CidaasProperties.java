@@ -13,7 +13,7 @@ import com.example.cidaasv2.Helper.Logger.LogFile;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import static com.example.cidaasv2.Controller.Cidaas.ENABLE_PKCE;
+import static com.example.cidaasv2.Helper.Genral.CidaasHelper.ENABLE_PKCE;
 
 public class CidaasProperties {
     public static CidaasProperties shared;

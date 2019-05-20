@@ -211,7 +211,7 @@ public class FileHelper {
 
                 //Disable PKCE Flow
                 DBHelper.getShared().setEnablePKCE(false);
-                Cidaas.ENABLE_PKCE=false;
+                CidaasHelper.ENABLE_PKCE=false;
 
                 loginProperties.put("ClientId", ClientId);
                 loginProperties.put("DomainURL", DomainUrl);
