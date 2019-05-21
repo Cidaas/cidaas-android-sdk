@@ -202,8 +202,8 @@ public class EnrollController {
             enrollHashmap.put("client_id",StringtoRequestBody(enrollEntity.getClient_id()));
             enrollHashmap.put("attempt",StringtoRequestBody(""+enrollEntity.getAttempt()+""));
             enrollHashmap.put("exchange_id",StringtoRequestBody(enrollEntity.getExchange_id()));
-            enrollHashmap.put("deviceId", StringtoRequestBody(deviceInfoEntity.getDeviceId()));
-            enrollHashmap.put("pushNotificationId", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
+            enrollHashmap.put("device_id", StringtoRequestBody(deviceInfoEntity.getDeviceId()));
+            enrollHashmap.put("push_Id", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
 
 
 
