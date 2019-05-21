@@ -3,6 +3,7 @@ package com.example.cidaasv2.VerificationV2.data.Entity.Enroll;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.File;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,6 +16,12 @@ public class EnrollEntity implements Serializable {
     private String pass_code="";
     private String verificationType="";
 
+
+    //For face and voice
+    File fileToSend;
+    int attempt=0;
+
+    //For Fingerprint
     private FingerPrintEntity fingerPrintEntity;
 
     //Constructors
@@ -60,6 +67,31 @@ public class EnrollEntity implements Serializable {
         this.push_id = push_id;
         this.verificationType = verificationType;
         this.fingerPrintEntity = fingerPrintEntity;
+    }
+
+
+    public EnrollEntity(String exchange_id, String client_id, String verificationType, File fileToSend, int attempt) {
+        this.exchange_id = exchange_id;
+        this.client_id = client_id;
+        this.verificationType = verificationType;
+        this.fileToSend = fileToSend;
+        this.attempt = attempt;
+    }
+
+    public File getFileToSend() {
+        return fileToSend;
+    }
+
+    public void setFileToSend(File fileToSend) {
+        this.fileToSend = fileToSend;
+    }
+
+    public int getAttempt() {
+        return attempt;
+    }
+
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
     }
 
     public FingerPrintEntity getFingerPrintEntity() {

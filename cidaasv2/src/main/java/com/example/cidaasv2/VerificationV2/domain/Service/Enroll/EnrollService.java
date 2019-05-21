@@ -14,8 +14,11 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Service.CidaasSDK_V2_Service;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,6 +63,41 @@ public class EnrollService {
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.enroll(enrollURL, headers, enrollEntity).enqueue(new Callback<EnrollResponse>() {
+                @Override
+                public void onResponse(Call<EnrollResponse> call, Response<EnrollResponse> response) {
+                    if(response.isSuccessful())
+                    {
+                        enrollCallback.success(response.body());
+                    }
+                    else
+                    {
+                        enrollCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+                                response,"Error:- "+methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<EnrollResponse> call, Throwable t) {
+                    enrollCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+                            t.getMessage(),"Error:- "+methodName));
+                }
+            });
+        } catch (Exception e) {
+            enrollCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+
+    //call enroll Service
+    public void callEnrollServiceForFaceOrVoice(MultipartBody.Part fileToSend,@NonNull String enrollURL, Map<String, String> headers, HashMap<String, RequestBody> enrollHashmap,
+                                                final Result<EnrollResponse> enrollCallback)
+    {
+        final String methodName = "EnrollService:-callEnrollServiceForFaceOrVoice()";
+        try {
+            //call service
+            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
+            cidaasSDK_v2_services.enrollWithMultipart(enrollURL, headers,fileToSend, enrollHashmap).enqueue(new Callback<EnrollResponse>() {
                 @Override
                 public void onResponse(Call<EnrollResponse> call, Response<EnrollResponse> response) {
                     if(response.isSuccessful())

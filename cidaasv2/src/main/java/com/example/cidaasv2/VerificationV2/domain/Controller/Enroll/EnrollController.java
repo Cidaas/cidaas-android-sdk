@@ -1,6 +1,8 @@
 package com.example.cidaasv2.VerificationV2.domain.Controller.Enroll;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
@@ -18,8 +20,14 @@ import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHe
 import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
 import com.example.cidaasv2.VerificationV2.domain.Service.Enroll.EnrollService;
 
+import java.io.File;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class EnrollController {
     //Local Variables
@@ -87,14 +95,41 @@ public class EnrollController {
                 addProperties(enrollEntity, enrollResult);
             }
             else {
-                if (enrollEntity.getVerificationType().equalsIgnoreCase(AuthenticationType.TOUCHID)) {
-                    //FingerPrint
-                    callFingerPrintAuthentication(enrollEntity, enrollResult);
+
+                switch (enrollEntity.getVerificationType()) {
+
+                    case AuthenticationType.TOUCHID:
+                    {
+                        //FingerPrint
+                        callFingerPrintAuthentication(enrollEntity, enrollResult);
+                        break;
+                    }
+                    case AuthenticationType.FACE:
+                    {
+                        Bitmap finalimg = BitmapFactory.decodeFile(enrollEntity.getFileToSend().getAbsolutePath());
+
+                        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollEntity.getFileToSend());
+                        MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "cidaas.png", requestFile);
+
+                        addPropertiesForFaceOrVoice(photo,enrollEntity,enrollResult);
+                        break;
+                    }
+                    case AuthenticationType.VOICE:
+                    {
+
+                        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollEntity.getFileToSend());
+                        MultipartBody.Part voice = MultipartBody.Part.createFormData("voice", "Audio.fav", requestFile);
+
+                        addPropertiesForFaceOrVoice(voice,enrollEntity,enrollResult);
+                        break;
+                    }
+                    default:
+                    {
+                        enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
+                        return;
+                    }
                 }
-                else {
-                    enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
-                    return;
-                }
+
             }
 
         }
@@ -115,7 +150,7 @@ public class EnrollController {
                 @Override
                 public void success(String result) {
                     //set pass code as device id and call enroll call
-                    enrollEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
+                   // enrollEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
                     addProperties(enrollEntity,enrollResult);
                 }
 
@@ -152,6 +187,35 @@ public class EnrollController {
         }
     }
 
+
+    //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
+    private void addPropertiesForFaceOrVoice(MultipartBody.Part  filetosend, final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult)
+    {
+        String methodName = "EnrollController:-addPropertiesForFaceOrVoice()";
+        try {
+            //Change To Hashmap and Add Properties
+            HashMap<String, RequestBody> enrollHashmap = new HashMap<>();
+            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+
+
+            enrollHashmap.put("client_id",StringtoRequestBody(enrollEntity.getClient_id()));
+            enrollHashmap.put("attempt",StringtoRequestBody(""+enrollEntity.getAttempt()+""));
+            enrollHashmap.put("exchange_id",StringtoRequestBody(enrollEntity.getExchange_id()));
+            enrollHashmap.put("deviceId", StringtoRequestBody(deviceInfoEntity.getDeviceId()));
+            enrollHashmap.put("pushNotificationId", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
+
+
+
+            //call enroll call
+            callEnrollForFaceandVoice(filetosend,enrollHashmap,enrollEntity.getVerificationType(),enrollResult);
+        }
+        catch (Exception e) {
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
     private void callEnroll(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult)
     {
@@ -182,4 +246,43 @@ public class EnrollController {
                e.getMessage()));
         }
     }
+
+    //-------------------------------------------Call enroll Service-----------------------------------------------------------
+    private void callEnrollForFaceandVoice(final MultipartBody.Part file, final  HashMap<String, RequestBody> enrollHashmap, final String verificationType
+            , final Result<EnrollResponse> enrollResult)
+    {
+        String methodName = "EnrollController:-enroll()";
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+
+                    String enrollUrl= VerificationURLHelper.getShared().getEnrollURL(baseurl,verificationType);
+
+                    //headers Generation
+                    Map<String,String> headers=Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+
+                    //Enroll Service call
+                    EnrollService.getShared(context).callEnrollServiceForFaceOrVoice(file,enrollUrl,headers,enrollHashmap,enrollResult);
+                }
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e) {
+            enrollResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+//---------------------------------------------------String to requestBodyConversion-------------------------------------
+    public RequestBody StringtoRequestBody(String value) {
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"), value);
+        return body;
+    }
+
 }

@@ -314,7 +314,7 @@ try {
 
     //enrollFaceMFARequestEntity.setUserDeviceId(userdeviceID);
     enrollFaceMFARequestEntity.setStatusId("6e32f505-f5d8-4ddb-a2d5-cb239be93eca");
-    //enrollFaceMFARequestEntity.setImagetoSend(imgae);
+    //enrollFaceMFARequestEntity.setFileToSend(imgae);
 
     cidaas.enrollFace(imgae, sub, "6e32f505-f5d8-4ddb-a2d5-cb239be93eca", 1, new Result<EnrollFaceMFAResponseEntity>() {
         @Override

@@ -39,7 +39,7 @@ public class EnrollFaceMFARequestEntityTest {
     {
         enrollFaceMFARequestEntity.setImagetoSend(imagetoSend);
         enrollFaceMFARequestEntity.getImagetoSend();
-//        assertTrue(enrollFaceMFARequestEntity.getImagetoSend().equals("Code"));
+//        assertTrue(enrollFaceMFARequestEntity.getFileToSend().equals("Code"));
     }
 
 

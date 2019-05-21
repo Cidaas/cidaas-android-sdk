@@ -2,6 +2,7 @@ package com.example.cidaasv2.VerificationV2.data.Service;
 
 
 
+import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
@@ -19,12 +20,18 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HeaderMap;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Url;
 
 
@@ -42,6 +49,12 @@ public interface ICidaasSDK_V2_Services {
     //Enroll
     @POST
     Call<EnrollResponse> enroll(@Url String url, @HeaderMap Map<String,String> headers, @Body EnrollEntity enrollEntity);
+
+    //Enroll with multiapart
+    @Multipart
+    @POST
+    Call<EnrollResponse> enrollWithMultipart(@Url String url, @HeaderMap Map<String,String> headers, @Part MultipartBody.Part face,
+                                             @PartMap() HashMap<String, RequestBody> map);
 
     //Initiate
     @POST
@@ -63,5 +76,13 @@ public interface ICidaasSDK_V2_Services {
     @POST
     Call<AuthenticateResponse> authenticate(@Url String url, @HeaderMap Map<String,String> headers, @Body AuthenticateEntity authenticateEntity);
 
+
+    //Authenticate Face MFA
+    @POST
+    @Multipart
+    Call<AuthenticateFaceResponseEntity> authenticateMultipart(@Url String url,
+                                                             @HeaderMap Map<String,String>headers,
+                                                             @Part MultipartBody.Part face,
+                                                             @PartMap() HashMap<String, RequestBody> map);
 
 }

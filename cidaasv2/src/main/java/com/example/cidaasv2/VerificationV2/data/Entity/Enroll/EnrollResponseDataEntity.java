@@ -1,5 +1,6 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Enroll;
 
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.FaceMetadataEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId.ExchangeIDEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -10,6 +11,10 @@ public class EnrollResponseDataEntity implements Serializable {
     private ExchangeIDEntity exchange_id;
     private String sub="";
     private String status_id="";
+
+    //For Face
+    Boolean enrolled=null;
+    FaceMetadataEntity meta;
 
     public ExchangeIDEntity getExchange_id() {
         return exchange_id;
@@ -33,5 +38,21 @@ public class EnrollResponseDataEntity implements Serializable {
 
     public void setStatus_id(String status_id) {
         this.status_id = status_id;
+    }
+
+    public Boolean getEnrolled() {
+        return enrolled;
+    }
+
+    public void setEnrolled(Boolean enrolled) {
+        this.enrolled = enrolled;
+    }
+
+    public FaceMetadataEntity getMeta() {
+        return meta;
+    }
+
+    public void setMeta(FaceMetadataEntity meta) {
+        this.meta = meta;
     }
 }
