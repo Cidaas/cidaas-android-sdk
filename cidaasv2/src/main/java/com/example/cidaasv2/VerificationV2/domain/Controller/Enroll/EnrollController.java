@@ -262,7 +262,7 @@ public class EnrollController {
                     String enrollUrl= VerificationURLHelper.getShared().getEnrollURL(baseurl,verificationType);
 
                     //headers Generation
-                    Map<String,String> headers=Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+                    Map<String,String> headers=Headers.getShared(context).getHeaders(null,false,URLHelper.contentType);
 
                     //Enroll Service call
                     EnrollService.getShared(context).callEnrollServiceForFaceOrVoice(file,enrollUrl,headers,enrollHashmap,enrollResult);
