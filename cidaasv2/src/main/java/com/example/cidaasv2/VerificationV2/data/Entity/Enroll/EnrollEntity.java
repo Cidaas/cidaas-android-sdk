@@ -44,9 +44,8 @@ public class EnrollEntity implements Serializable {
     }
 
     //For Face and Voice
-    public EnrollEntity(String exchange_id, String client_id, String verificationType, File fileToSend, int face_attempt) {
+    public EnrollEntity(String exchange_id, String verificationType, File fileToSend, int face_attempt) {
         this.exchange_id = exchange_id;
-        this.client_id = client_id;
         this.verificationType = verificationType;
         this.fileToSend = fileToSend;
         this.face_attempt = face_attempt;

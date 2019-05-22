@@ -587,13 +587,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void success(SetupResponse setupResultresult) {
 
                 final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),clientId,AuthenticationType.PATTERN);
+                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PATTERN);
 
                 CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
                     @Override
                     public void success(ScannedResponse scannedResponseresult) {
                         EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                clientId,"RED-1234",AuthenticationType.PATTERN);
+                                "RED-1234",AuthenticationType.PATTERN);
 
                         CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
                             @Override
@@ -634,7 +634,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void success(SetupResponse setupResultresult) {
 
                 final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),clientId,AuthenticationType.TOUCHID);
+                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.TOUCHID);
 
 
                 final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity("Authenticate to all","dkjvhbjhbvdjkhbdv");
@@ -643,7 +643,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
                     @Override
                     public void success(ScannedResponse scannedResponseresult) {
                         EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                clientId,AuthenticationType.TOUCHID,fingerPrintEntity);
+                                AuthenticationType.TOUCHID,fingerPrintEntity);
 
                         CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
                             @Override
@@ -688,13 +688,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void success(final SetupResponse setupResultresult) {
 
                 final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),clientId,AuthenticationType.PUSH);
+                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PUSH);
 
                 CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
                     @Override
                     public void success(ScannedResponse scannedResponseresult) {
                         EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                clientId,setupResultresult.getData().getPush_selected_number(),AuthenticationType.PUSH);
+                                setupResultresult.getData().getPush_selected_number(),AuthenticationType.PUSH);
 
                         CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
                             @Override
@@ -738,7 +738,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void success(SetupResponse setupResultresult) {
 
                 final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),clientId,AuthenticationType.FACE);
+                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.FACE);
 
                 CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
                     @Override
@@ -749,7 +749,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
 
                         EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                clientId,AuthenticationType.FACE,convertImageJpegForFace(bitmap),0);
+                                AuthenticationType.FACE,convertImageJpegForFace(bitmap),0);
 
                        // enrollEntity.setFileToSend(convertImageJpegForFace(bitmap));
 
@@ -838,13 +838,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void success(SetupResponse setupResultresult) {
 
                 final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),clientId,AuthenticationType.PATTERN);
+                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PATTERN);
 
                 CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
                     @Override
                     public void success(ScannedResponse scannedResponseresult) {
                         EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                clientId,"RED-1234",AuthenticationType.VOICE);
+                                "RED-1234",AuthenticationType.VOICE);
 
                         CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
                             @Override

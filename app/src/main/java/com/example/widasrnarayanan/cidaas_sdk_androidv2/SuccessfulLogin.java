@@ -96,23 +96,4 @@ public class SuccessfulLogin extends AppCompatActivity {
 
     }
 
-
-    public void setupPatternV2(View view)
-    {
-        SetupEntity setupEntity=new SetupEntity();
-        setupEntity.setSub(sub);
-        setupEntity.setVerificationType(AuthenticationType.PATTERN);
-
-        cidaas.setupv2(setupEntity, new Result<SetupResponse>() {
-            @Override
-            public void success(SetupResponse result) {
-                Toast.makeText(SuccessfulLogin.this, "Success"+result.getData().getAuthenticator_client_id(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(SuccessfulLogin.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 }
