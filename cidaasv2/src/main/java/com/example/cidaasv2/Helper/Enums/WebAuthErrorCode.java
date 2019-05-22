@@ -194,7 +194,7 @@ public class WebAuthErrorCode {
   public static final int AUTHENTICATE_VERIFICATION_FAILURE = 10119;
 
   public static final int DELETE_VERIFICATION_FAILURE = 10120;
-  public static final int MFA_LIST_VERIFICATION_FAILURE = 10120;
+  public static final int MFA_LIST_VERIFICATION_FAILURE = 10121;
 
   //Common Error Codes
   public static final int TOUCHID_NOT_AVAILABLE = 10178;
