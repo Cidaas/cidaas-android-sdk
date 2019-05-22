@@ -130,6 +130,12 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         });*/
     }
 
+    public void configure(View view)
+    {
+        Intent intent=new Intent(MainActivity.this,ConfigureActivity.class);
+        startActivity(intent);
+    }
+
 
     public void getuserLoginInfo(View view)
     {
@@ -340,8 +346,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     }
 
     private void getFCMToken() {
-        //String token = FirebaseInstanceId.getInstance().getToken();
-        String token="fnzDeBMEJrc:APA91bHmJxE0zbrgGmuqjMqZVLkZUXtmU1A_V4L-y6E100hywQYl7h9OCn4t8ZtaV0HuZ2Cf2-2rBYpUAvn_xcW41EYHX89H3r9q9vOA7NSPsuOxHywZiUDQggLi8mUR7PZn4LgTyLRb";
+        String token = FirebaseInstanceId.getInstance().getToken();
+        //String token="fnzDeBMEJrc:APA91bHmJxE0zbrgGmuqjMqZVLkZUXtmU1A_V4L-y6E100hywQYl7h9OCn4t8ZtaV0HuZ2Cf2-2rBYpUAvn_xcW41EYHX89H3r9q9vOA7NSPsuOxHywZiUDQggLi8mUR7PZn4LgTyLRb";
       cidaas.setFCMToken(token);
 
 
@@ -572,307 +578,6 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     }
 
 
-    public void enrollPattern(View view)
-    {
-
-        //CidaasVerification.getInstance(getApplicationContext()).
-       // EnrollEntity enrollEntity=new EnrollEntity("","",);
-       // CidaasVerification.getInstance(this).enroll();
-
-
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.PATTERN);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
-            @Override
-            public void success(SetupResponse setupResultresult) {
-
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PATTERN);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                "RED-1234",AuthenticationType.PATTERN);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(MainActivity.this, "Success Pattern", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(MainActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-
-    public void enrollFinger(View view)
-    {
-
-
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.TOUCHID);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
-            @Override
-            public void success(SetupResponse setupResultresult) {
-
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.TOUCHID);
-
-
-                final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity("Authenticate to all","dkjvhbjhbvdjkhbdv");
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                AuthenticationType.TOUCHID,fingerPrintEntity);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(MainActivity.this, "Success TOUCHID", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(MainActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-
-    public void enrollPush(View view)
-    {
-
-        //CidaasVerification.getInstance(getApplicationContext()).
-        // EnrollEntity enrollEntity=new EnrollEntity("","",);
-        // CidaasVerification.getInstance(this).enroll();
-
-
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.PUSH);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
-            @Override
-            public void success(final SetupResponse setupResultresult) {
-
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PUSH);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                setupResultresult.getData().getPush_selected_number(),AuthenticationType.PUSH);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(MainActivity.this, "Success Push", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(MainActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void enrollFace(View view)
-    {
-
-        //CidaasVerification.getInstance(getApplicationContext()).
-        // EnrollEntity enrollEntity=new EnrollEntity("","",);
-        // CidaasVerification.getInstance(this).enroll();
-
-
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.FACE);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
-            @Override
-            public void success(SetupResponse setupResultresult) {
-
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.FACE);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-
-                        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
-
-
-
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                AuthenticationType.FACE,convertImageJpegForFace(bitmap),0);
-
-                       // enrollEntity.setFileToSend(convertImageJpegForFace(bitmap));
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(MainActivity.this, "Success Face", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(MainActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public File convertImageJpegForFace(Bitmap bitmap) {
-
-        Bitmap picture = bitmap;
-        try {
-            //imageFile = file();
-
-            Timber.d("Error");
-            // Toast.makeText(FaceSetupActivity.this, imageFile.toString(), Toast.LENGTH_SHORT).show();
-            if (imageFile == null) {
-                // Toast.makeText(FaceSetupActivity.this, "NUll Image", Toast.LENGTH_SHORT).show();
-                File sdDir = Environment.getExternalStorageDirectory();
-                File pictureFileDir = new File(sdDir, "Cidaas-Faces");
-                if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
-                    Toast.makeText(getApplicationContext(), "Permission Denied",
-                            Toast.LENGTH_LONG).show();
-                }
-                imageFile = new File(pictureFileDir, "cidaas_face_photo.png");
-                if (imageFile.exists()) {
-                    imageFile.delete();
-                }
-                imageFile.createNewFile();
-                // imageFile=new File(Environment.(), "Cidaas-Faces/cidaas.png");
-            }
-
-
-            out = new FileOutputStream(imageFile);
-            picture.compress(Bitmap.CompressFormat.JPEG, 95, out);
-            return imageFile;
-
-        } catch (Exception e) {
-            Log.d("Raja file", e.getLocalizedMessage());
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                Log.d("Raja io", e.getLocalizedMessage());
-            }
-        }
-        return imageFile;
-    }
-
-    public void enrollVoice(View view)
-    {
-
-        //CidaasVerification.getInstance(getApplicationContext()).
-        // EnrollEntity enrollEntity=new EnrollEntity("","",);
-        // CidaasVerification.getInstance(this).enroll();
-
-
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.VOICE);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
-            @Override
-            public void success(SetupResponse setupResultresult) {
-
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PATTERN);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                "RED-1234",AuthenticationType.VOICE);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(MainActivity.this, "Success Voice", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(MainActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 
     public void nativeFacebook(View view)
     {
@@ -903,6 +608,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         logoutButton.setVisibility(View.INVISIBLE);
       //  cidaasFacebook.logout();
     }
+
 
 
     public void nativeGoogle(View view)

@@ -1,5 +1,6 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Scanned;
 
+import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId.ExchangeIDEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -11,10 +12,7 @@ public class ScannedResponseData implements Serializable {
     private String sub="";
     private String status_id="";
     private String[] push_random_numbers;
-    private String mobile_number="";
-    private String given_name="";
-    private String family_name="";
-    private String email="";
+    private UserInfo user_info;
 
 
 
@@ -50,35 +48,11 @@ public class ScannedResponseData implements Serializable {
         this.push_random_numbers = push_random_numbers;
     }
 
-    public String getMobile_number() {
-        return mobile_number;
+    public UserInfo getUser_info() {
+        return user_info;
     }
 
-    public void setMobile_number(String mobile_number) {
-        this.mobile_number = mobile_number;
-    }
-
-    public String getGiven_name() {
-        return given_name;
-    }
-
-    public void setGiven_name(String given_name) {
-        this.given_name = given_name;
-    }
-
-    public String getFamily_name() {
-        return family_name;
-    }
-
-    public void setFamily_name(String family_name) {
-        this.family_name = family_name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUser_info(UserInfo user_info) {
+        this.user_info = user_info;
     }
 }

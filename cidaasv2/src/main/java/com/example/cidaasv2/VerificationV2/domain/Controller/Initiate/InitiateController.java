@@ -68,7 +68,7 @@ public class InitiateController {
                 }
                 else
                 {
-                    initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId or UsageType must not be null",
+                    initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("requestId or sub or UsageType must not be null",
                             "Error:"+methodName));
                     return;
                 }

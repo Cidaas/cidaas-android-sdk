@@ -13,6 +13,8 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowEntity;
@@ -27,6 +29,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Delete.DeleteController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Initiate.InitiateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAcknowledge.PushAcknowledgeController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAllow.PushAllowController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.PushRejectController;
@@ -125,6 +128,11 @@ public class CidaasVerification {
     public void pushReject(PushRejectEntity pushRejectEntity, Result<PushRejectResponse> pushRejectResponseResult)
     {
         PushRejectController.getShared(context).pushRejectVerification(pushRejectEntity,pushRejectResponseResult);
+    }
+
+    public void initiate(InitiateEntity initiateEntity, Result<InitiateResponse> initiateResponseResult)
+    {
+        InitiateController.getShared(context).initiateVerification(initiateEntity,initiateResponseResult);
     }
 
     public void authenticate(AuthenticateEntity authenticateEntity, Result<AuthenticateResponse> authenticateResponseResult)
