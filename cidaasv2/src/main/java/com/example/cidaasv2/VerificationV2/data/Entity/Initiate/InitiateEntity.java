@@ -16,7 +16,7 @@ public class InitiateEntity implements Serializable {
     private String verificationType="";
 
 
-    //Constructor
+    //Empty Constructor
     public InitiateEntity() {
     }
 

@@ -1078,7 +1078,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-    public void setupv2(@NonNull final SetupEntity setupEntity, final Result<SetupResponse> setupResponseResult)
+   /* public void setupv2(@NonNull final SetupEntity setupEntity, final Result<SetupResponse> setupResponseResult)
     {
         SetupController.getShared(context).setupVerification(setupEntity,setupResponseResult);
     }
@@ -1113,7 +1113,7 @@ public class Cidaas implements IOAuthWebLogin {
     {
         AuthenticateController.getShared(context).authenticateVerification(authenticateEntity,authenticateResponseResult);
     }
-
+*/
 
     public void registerUser( final RegistrationEntity registrationEntity, final Result<RegisterNewUserResponseEntity> registerFieldsresult,
                               final HashMap<String,String>... extraParams)

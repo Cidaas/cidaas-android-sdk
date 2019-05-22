@@ -18,64 +18,38 @@ public class EnrollEntity implements Serializable {
 
 
     //For face and voice
-    File fileToSend;
-    int attempt=0;
+    private File fileToSend;
+    private int face_attempt =0;
 
     //For Fingerprint
     private FingerPrintEntity fingerPrintEntity;
 
-    //Constructors
+    //EmptyConstructors
     public EnrollEntity() {
     }
 
-    public EnrollEntity(String exchange_id, String client_id, String verificationType) {
+
+    //For Pattern and push
+    public EnrollEntity(String exchange_id,  String pass_code, String verificationType) {
         this.exchange_id = exchange_id;
-        this.client_id = client_id;
-        this.verificationType = verificationType;
-    }
-
-
-
-    public EnrollEntity(String exchange_id, String device_id, String client_id, String push_id, String pass_code, String verificationType) {
-        this.exchange_id = exchange_id;
-        this.device_id = device_id;
-        this.client_id = client_id;
-        this.push_id = push_id;
         this.pass_code = pass_code;
         this.verificationType = verificationType;
     }
 
-    public EnrollEntity(String exchange_id, String client_id, String pass_code, String verificationType) {
+    //For FingerPrint
+    public EnrollEntity(String exchange_id,  String verificationType, FingerPrintEntity fingerPrintEntity) {
         this.exchange_id = exchange_id;
-        this.client_id = client_id;
-        this.pass_code = pass_code;
-        this.verificationType = verificationType;
-    }
-
-    public EnrollEntity(String exchange_id, String client_id, String verificationType, FingerPrintEntity fingerPrintEntity) {
-        this.exchange_id = exchange_id;
-        this.client_id = client_id;
         this.verificationType = verificationType;
         this.fingerPrintEntity = fingerPrintEntity;
     }
 
-
-    public EnrollEntity(String exchange_id, String device_id, String client_id, String push_id, String verificationType, FingerPrintEntity fingerPrintEntity) {
-        this.exchange_id = exchange_id;
-        this.device_id = device_id;
-        this.client_id = client_id;
-        this.push_id = push_id;
-        this.verificationType = verificationType;
-        this.fingerPrintEntity = fingerPrintEntity;
-    }
-
-
-    public EnrollEntity(String exchange_id, String client_id, String verificationType, File fileToSend, int attempt) {
+    //For Face and Voice
+    public EnrollEntity(String exchange_id, String client_id, String verificationType, File fileToSend, int face_attempt) {
         this.exchange_id = exchange_id;
         this.client_id = client_id;
         this.verificationType = verificationType;
         this.fileToSend = fileToSend;
-        this.attempt = attempt;
+        this.face_attempt = face_attempt;
     }
 
     public File getFileToSend() {
@@ -86,12 +60,12 @@ public class EnrollEntity implements Serializable {
         this.fileToSend = fileToSend;
     }
 
-    public int getAttempt() {
-        return attempt;
+    public int getFace_attempt() {
+        return face_attempt;
     }
 
-    public void setAttempt(int attempt) {
-        this.attempt = attempt;
+    public void setFace_attempt(int face_attempt) {
+        this.face_attempt = face_attempt;
     }
 
     public FingerPrintEntity getFingerPrintEntity() {

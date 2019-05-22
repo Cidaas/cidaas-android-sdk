@@ -56,25 +56,16 @@ public class PushAllowController {
     {
         String methodName = "PushAllowController:-checkPushAllowEntity()";
         try {
-            if (pushAllowEntity.getVerificationType() != null && !pushAllowEntity.getVerificationType().equals(""))
+            if (pushAllowEntity.getVerificationType() != null && !pushAllowEntity.getVerificationType().equals("") &&
+                    pushAllowEntity.getExchange_id() != null && !pushAllowEntity.getExchange_id().equals(""))
             {
-                if(pushAllowEntity.getClient_id() != null && !pushAllowEntity.getClient_id().equals("") &&
-                        pushAllowEntity.getExchange_id() != null && !pushAllowEntity.getExchange_id().equals(""))
-                {
-                    // Todo Check For Face and Voice
-                    addProperties(pushAllowEntity,pushAllowResult);
-                }
-                else
-                {
-                    pushAllowResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
-                            "Error:"+methodName));
-                    return;
-                }
-
+                // Todo Check For Face and Voice
+                addProperties(pushAllowEntity,pushAllowResult);
             }
             else
             {
-                pushAllowResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type must not be null", "Error:"+methodName));
+                pushAllowResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type or ExchangeId must not be null",
+                        "Error:"+methodName));
                 return;
             }
 
@@ -91,13 +82,28 @@ public class PushAllowController {
     {
         String methodName = "PushAllowController:-addProperties()";
         try {
-            //App properties
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            pushAllowEntity.setDevice_id(deviceInfoEntity.getDeviceId());
-            pushAllowEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
 
-            //call pushAllow call
-            callPushAllow(pushAllowEntity,pushAllowResult);
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    String clientId=loginPropertiesResult.get("ClientId");
+
+                    //App properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                    pushAllowEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+                    pushAllowEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+                    pushAllowEntity.setClient_id(clientId);
+
+                    //call pushAllow call
+                    callPushAllow(baseurl,pushAllowEntity,pushAllowResult);
+                }
+                @Override
+                public void failure(WebAuthError error) {
+                    pushAllowResult.failure(error);
+                }
+            });
+
         }
         catch (Exception e) {
             pushAllowResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
@@ -106,29 +112,18 @@ public class PushAllowController {
     }
 
     //-------------------------------------------Call pushAllow Service-----------------------------------------------------------
-    private void callPushAllow(final PushAllowEntity pushAllowEntity, final Result<PushAllowResponse> pushAllowResult)
+    private void callPushAllow(String baseurl,final PushAllowEntity pushAllowEntity, final Result<PushAllowResponse> pushAllowResult)
     {
         String methodName = "PushAllowController:-pushAllow()";
         try
         {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
+            String pushAllowUrl= VerificationURLHelper.getShared().getPushAllowURL(baseurl,pushAllowEntity.getVerificationType());
 
-                    String pushAllowUrl= VerificationURLHelper.getShared().getPushAllowURL(baseurl,pushAllowEntity.getVerificationType());
+            //headers Generation
+            Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
-                    //headers Generation
-                    Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
-
-                    //PushAllow Service call
-                    PushAllowService.getShared(context).callPushAllowService(pushAllowUrl,headers,pushAllowEntity,pushAllowResult);
-                }
-                @Override
-                public void failure(WebAuthError error) {
-                    pushAllowResult.failure(error);
-                }
-            });
+            //PushAllow Service call
+            PushAllowService.getShared(context).callPushAllowService(pushAllowUrl,headers,pushAllowEntity,pushAllowResult);
         }
         catch (Exception e) {
             pushAllowResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,

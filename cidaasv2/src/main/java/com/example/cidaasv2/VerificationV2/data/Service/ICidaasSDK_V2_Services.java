@@ -5,6 +5,8 @@ package com.example.cidaasv2.VerificationV2.data.Service;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
@@ -17,6 +19,8 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejec
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 
@@ -27,6 +31,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -50,7 +55,7 @@ public interface ICidaasSDK_V2_Services {
     @POST
     Call<EnrollResponse> enroll(@Url String url, @HeaderMap Map<String,String> headers, @Body EnrollEntity enrollEntity);
 
-    //Enroll with multiapart
+    //Enroll with multipart
     @Multipart
     @POST
     Call<EnrollResponse> enrollWithMultipart(@Url String url, @HeaderMap Map<String,String> headers, @Part MultipartBody.Part face,
@@ -80,9 +85,16 @@ public interface ICidaasSDK_V2_Services {
     //Authenticate Face MFA
     @POST
     @Multipart
-    Call<AuthenticateFaceResponseEntity> authenticateMultipart(@Url String url,
-                                                             @HeaderMap Map<String,String>headers,
-                                                             @Part MultipartBody.Part face,
+    Call<AuthenticateResponse> authenticateWithMultipart(@Url String url, @HeaderMap Map<String,String>headers, @Part MultipartBody.Part face,
                                                              @PartMap() HashMap<String, RequestBody> map);
+
+    //Delete MFA
+    @DELETE
+    Call<DeleteResponse> delete(@Url String url, @HeaderMap Map<String,String> headers, @Body DeleteEntity deleteEntity);
+
+    //Authenticate
+    @POST
+    Call<ConfiguredMFAList> getConfiguredMFAList(@Url String url, @HeaderMap Map<String,String> headers, @Body GetMFAListEntity getMFAListEntity);
+
 
 }

@@ -16,9 +16,9 @@ public class PushRejectEntity implements Serializable {
     public PushRejectEntity() {
     }
 
-    public PushRejectEntity(String exchange_id, String client_id, String verificationType, String reason) {
+    //Mandatory Fields
+    public PushRejectEntity(String exchange_id, String verificationType, String reason) {
         this.exchange_id = exchange_id;
-        this.client_id = client_id;
         this.verificationType = verificationType;
         this.reason = reason;
     }

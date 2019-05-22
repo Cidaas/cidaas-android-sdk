@@ -20,7 +20,6 @@ import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHe
 import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
 import com.example.cidaasv2.VerificationV2.domain.Service.Enroll.EnrollService;
 
-import java.io.File;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,14 +66,13 @@ public class EnrollController {
         String methodName = "EnrollController:-checkEnrollEntity()";
         try {
                 if(enrollEntity.getVerificationType() != null &&  !enrollEntity.getVerificationType().equals("")&&
-                        enrollEntity.getClient_id() != null && !enrollEntity.getClient_id().equals("") &&
                         enrollEntity.getExchange_id() != null && !enrollEntity.getExchange_id().equals(""))
                 {
                     handleVerificationTypes(enrollEntity,enrollResult);
                 }
                 else
                 {
-               enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type or ClientId or ExchangeId must not be empty",
+               enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type or ExchangeId must not be empty",
                             "Error:"+methodName));
                     return;
                 }
@@ -88,13 +86,9 @@ public class EnrollController {
     //-----------------------------------------------handleVerificationTypes---------------------------------------------------------------
     private void handleVerificationTypes(EnrollEntity enrollEntity,Result<EnrollResponse> enrollResult)
     {
+        //Handle if Passcode is send for finger
         String methodName = "EnrollController:-handleVerificationTypes()";
         try {
-            if (enrollEntity.getPass_code() != null && !enrollEntity.getPass_code().equals("")) {
-
-                addProperties(enrollEntity, enrollResult);
-            }
-            else {
 
                 switch (enrollEntity.getVerificationType()) {
 
@@ -125,11 +119,15 @@ public class EnrollController {
                     }
                     default:
                     {
-                        enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
-                        return;
-                    }
-                }
+                        if (enrollEntity.getPass_code() != null && !enrollEntity.getPass_code().equals("")) {
 
+                            addProperties(enrollEntity, enrollResult);
+                        }
+                        else {
+                            enrollResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
+                            return;
+                        }
+                    }
             }
 
         }
@@ -173,13 +171,28 @@ public class EnrollController {
     {
         String methodName = "EnrollController:-addProperties()";
         try {
-            //App properties
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            enrollEntity.setDevice_id(deviceInfoEntity.getDeviceId());
-            enrollEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    String clientId=loginPropertiesResult.get("ClientId");
 
-            //call enroll call
-            callEnroll(enrollEntity,enrollResult);
+                    //App properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                    enrollEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+                    enrollEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+                    enrollEntity.setClient_id(clientId);
+
+                    //call enroll call
+                    callEnroll(baseurl,enrollEntity,enrollResult);
+                }
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
+
+
         }
         catch (Exception e) {
         enrollResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
@@ -189,26 +202,40 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addPropertiesForFaceOrVoice(MultipartBody.Part  filetosend, final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult)
+    private void addPropertiesForFaceOrVoice(final MultipartBody.Part  filetosend, final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult)
     {
         String methodName = "EnrollController:-addPropertiesForFaceOrVoice()";
         try {
-            //Change To Hashmap and Add Properties
-            HashMap<String, RequestBody> enrollHashmap = new HashMap<>();
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    String clientId = loginPropertiesResult.get("ClientId");
+
+                    //Change To Hashmap and Add Properties
+                    HashMap<String, RequestBody> enrollHashmap = new HashMap<>();
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+                    //Optional Sub
+                    //  enrollHashmap.put("",StringtoRequestBody(enrollEntity.))
+                    enrollHashmap.put("exchange_id", StringtoRequestBody(enrollEntity.getExchange_id()));
+                    enrollHashmap.put("device_id", StringtoRequestBody(deviceInfoEntity.getDeviceId()));
+                    enrollHashmap.put("client_id", StringtoRequestBody(clientId));
+                    enrollHashmap.put("push_id", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
+                    enrollHashmap.put("face_attempt", StringtoRequestBody("" + enrollEntity.getFace_attempt() + ""));
 
 
+                    //call enroll call
+                    callEnrollForFaceandVoice(baseurl, filetosend, enrollHashmap, enrollEntity.getVerificationType(), enrollResult);
+                }
+                @Override
+                public void failure(WebAuthError error) {
+                    enrollResult.failure(error);
+                }
+            });
 
-            enrollHashmap.put("client_id",StringtoRequestBody(enrollEntity.getClient_id()));
-            enrollHashmap.put("attempt",StringtoRequestBody(""+enrollEntity.getAttempt()+""));
-            enrollHashmap.put("exchange_id",StringtoRequestBody(enrollEntity.getExchange_id()));
-            enrollHashmap.put("device_id", StringtoRequestBody(deviceInfoEntity.getDeviceId()));
-            enrollHashmap.put("push_Id", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
 
-
-
-            //call enroll call
-            callEnrollForFaceandVoice(filetosend,enrollHashmap,enrollEntity.getVerificationType(),enrollResult);
         }
         catch (Exception e) {
             enrollResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
@@ -217,29 +244,19 @@ public class EnrollController {
     }
 
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
-    private void callEnroll(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult)
+    private void callEnroll(String baseurl,final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult)
     {
         String methodName = "EnrollController:-enroll()";
         try
         {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
+            String enrollUrl = VerificationURLHelper.getShared().getEnrollURL(baseurl, enrollEntity.getVerificationType());
 
-                    String enrollUrl= VerificationURLHelper.getShared().getEnrollURL(baseurl,enrollEntity.getVerificationType());
+            //headers Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
 
-                    //headers Generation
-                    Map<String,String> headers=Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+            //Enroll Service call
+            EnrollService.getShared(context).callEnrollService(enrollUrl, headers, enrollEntity, enrollResult);
 
-                    //Enroll Service call
-                    EnrollService.getShared(context).callEnrollService(enrollUrl,headers,enrollEntity,enrollResult);
-                }
-                @Override
-                public void failure(WebAuthError error) {
-                    enrollResult.failure(error);
-                }
-            });
         }
         catch (Exception e) {
        enrollResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
@@ -248,30 +265,20 @@ public class EnrollController {
     }
 
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
-    private void callEnrollForFaceandVoice(final MultipartBody.Part file, final  HashMap<String, RequestBody> enrollHashmap, final String verificationType
-            , final Result<EnrollResponse> enrollResult)
+    private void callEnrollForFaceandVoice(String baseurl,final MultipartBody.Part file, final  HashMap<String, RequestBody> enrollHashmap,
+                                           final String verificationType, final Result<EnrollResponse> enrollResult)
     {
         String methodName = "EnrollController:-enroll()";
         try
         {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
+            String enrollUrl = VerificationURLHelper.getShared().getEnrollURL(baseurl, verificationType);
 
-                    String enrollUrl= VerificationURLHelper.getShared().getEnrollURL(baseurl,verificationType);
+            //headers Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, null);
 
-                    //headers Generation
-                    Map<String,String> headers=Headers.getShared(context).getHeaders(null,false,URLHelper.contentType);
+            //Enroll Service call
+            EnrollService.getShared(context).callEnrollServiceForFaceOrVoice(file, enrollUrl, headers, enrollHashmap, enrollResult);
 
-                    //Enroll Service call
-                    EnrollService.getShared(context).callEnrollServiceForFaceOrVoice(file,enrollUrl,headers,enrollHashmap,enrollResult);
-                }
-                @Override
-                public void failure(WebAuthError error) {
-                    enrollResult.failure(error);
-                }
-            });
         }
         catch (Exception e) {
             enrollResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,

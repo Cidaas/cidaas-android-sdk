@@ -17,9 +17,9 @@ public class PushAcknowledgeEntity implements Serializable {
     public PushAcknowledgeEntity() {
     }
 
-    public PushAcknowledgeEntity(String exchange_id, String client_id, String verificationType) {
+    //Mandatory Fields
+    public PushAcknowledgeEntity(String exchange_id, String verificationType) {
         this.exchange_id = exchange_id;
-        this.client_id = client_id;
         this.verificationType = verificationType;
     }
 

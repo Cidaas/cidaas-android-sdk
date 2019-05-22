@@ -19,7 +19,7 @@ public class Headers {
 
 
     private Context context;
-    Map<String, String> headers = new Hashtable<>();
+
 
     public static Headers getShared(Context contextFromCidaas) {
         try {
@@ -42,8 +42,10 @@ public class Headers {
 
     public Map<String, String> getHeaders(String accessToken,boolean verification_api_version,String contentType,String... requestId)
     {
+        Map<String, String> headers = new Hashtable<>();
         try
         {
+
             if(accessToken!=null && !accessToken.equals(""))
             {
                 headers.put("access_token", accessToken);

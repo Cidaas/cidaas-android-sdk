@@ -57,33 +57,23 @@ public class PushRejectController {
         String methodName = "PushRejectController:-checkPushRejectEntity()";
         try {
             if (pushRejectEntity.getReason() != null && !pushRejectEntity.getReason().equals("") &&
-                    pushRejectEntity.getVerificationType() != null && !pushRejectEntity.getVerificationType().equals(""))
+                    pushRejectEntity.getVerificationType() != null && !pushRejectEntity.getVerificationType().equals("") &&
+                    pushRejectEntity.getExchange_id() != null && !pushRejectEntity.getExchange_id().equals(""))
             {
-                if(pushRejectEntity.getClient_id() != null && !pushRejectEntity.getClient_id().equals("") &&
-                        pushRejectEntity.getExchange_id() != null && !pushRejectEntity.getExchange_id().equals(""))
-                {
-                    // Todo Check For Face and Voice
-                    addProperties(pushRejectEntity,pushRejectResult);
-                }
-                else
-                {
-                    pushRejectResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
-                            "Error:"+methodName));
-                    return;
-                }
 
+                addProperties(pushRejectEntity,pushRejectResult);
             }
             else
             {
-                pushRejectResult.failure(WebAuthError.getShared(context).propertyMissingException("Reason or Verification type must not be null",
+                pushRejectResult.failure(WebAuthError.getShared(context).propertyMissingException("Reason or Verification type or ExchangeId must not be null",
                         "Error:"+methodName));
                 return;
             }
 
         }
         catch (Exception e) {
-            pushRejectResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
-                    WebAuthErrorCode.PUSH_REJECT_FAILURE, e.getMessage()));
+            pushRejectResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.PUSH_REJECT_FAILURE,
+                    e.getMessage()));
         }
     }
 
@@ -93,13 +83,27 @@ public class PushRejectController {
     {
         String methodName = "PushRejectController:-addProperties()";
         try {
-            //App properties
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            pushRejectEntity.setDevice_id(deviceInfoEntity.getDeviceId());
-            pushRejectEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    String clientId=loginPropertiesResult.get("ClientId");
 
-            //call pushReject call
-            callPushReject(pushRejectEntity,pushRejectResult);
+                    //App properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                    pushRejectEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+                    pushRejectEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+
+                    //call pushReject call
+                    callPushReject(baseurl,pushRejectEntity,pushRejectResult);
+                }
+                @Override
+                public void failure(WebAuthError error) {
+                    pushRejectResult.failure(error);
+                }
+            });
+
+
         }
         catch (Exception e) {
             pushRejectResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
@@ -108,29 +112,18 @@ public class PushRejectController {
     }
 
     //-------------------------------------------Call pushReject Service-----------------------------------------------------------
-    private void callPushReject(final PushRejectEntity pushRejectEntity, final Result<PushRejectResponse> pushRejectResult)
+    private void callPushReject(String baseurl,final PushRejectEntity pushRejectEntity, final Result<PushRejectResponse> pushRejectResult)
     {
         String methodName = "PushRejectController:-pushReject()";
         try
         {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
+            String pushRejectUrl= VerificationURLHelper.getShared().getPushDenyURL(baseurl,pushRejectEntity.getVerificationType());
 
-                    String pushRejectUrl= VerificationURLHelper.getShared().getPushDenyURL(baseurl,pushRejectEntity.getVerificationType());
+            //headers Generation
+            Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
-                    //headers Generation
-                    Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
-
-                    //PushReject Service call
-                    PushRejectService.getShared(context).callPushRejectService(pushRejectUrl,headers,pushRejectEntity,pushRejectResult);
-                }
-                @Override
-                public void failure(WebAuthError error) {
-                    pushRejectResult.failure(error);
-                }
-            });
+            //PushReject Service call
+            PushRejectService.getShared(context).callPushRejectService(pushRejectUrl,headers,pushRejectEntity,pushRejectResult);
         }
         catch (Exception e) {
             pushRejectResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,

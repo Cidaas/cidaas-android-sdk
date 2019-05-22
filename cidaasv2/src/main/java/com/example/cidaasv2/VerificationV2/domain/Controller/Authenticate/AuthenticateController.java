@@ -1,6 +1,8 @@
 package com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
@@ -19,7 +21,12 @@ import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHand
 import com.example.cidaasv2.VerificationV2.domain.Service.Authenticate.AuthenticateService;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class AuthenticateController {
     //Local Variables
@@ -60,7 +67,6 @@ public class AuthenticateController {
         try {
 
                 if( authenticateEntity.getVerificationType() != null && !authenticateEntity.getVerificationType().equals("")&&
-                        authenticateEntity.getClient_id() != null && !authenticateEntity.getClient_id().equals("") &&
                         authenticateEntity.getExchange_id() != null && !authenticateEntity.getExchange_id().equals(""))
                 {
                     // Todo Check For Face and Voice
@@ -69,7 +75,7 @@ public class AuthenticateController {
                 else
                 {
                     authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException(
-                            "ClientId or ExchangeId or Verification Type must not be null", "Error:"+methodName));
+                            "ExchangeId or Verification Type must not be null", "Error:"+methodName));
                     return;
                 }
 
@@ -86,25 +92,50 @@ public class AuthenticateController {
     {
         String methodName = "AuthenticateController:-handleVerificationTypes()";
         try {
-            if (authenticateEntity.getPass_code() != null && !authenticateEntity.getPass_code().equals("")) {
+            switch (authenticateEntity.getVerificationType()) {
 
-                addProperties(authenticateEntity, authenticateResult);
-            }
-            else {
-                if (authenticateEntity.getVerificationType().equalsIgnoreCase(AuthenticationType.TOUCHID)) {
+                case AuthenticationType.TOUCHID:
+                {
                     //FingerPrint
                     callFingerPrintAuthentication(authenticateEntity, authenticateResult);
+                    break;
                 }
-                else {
-                    authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
-                    return;
+                case AuthenticationType.FACE:
+                {
+                    Bitmap finalimg = BitmapFactory.decodeFile(authenticateEntity.getFileToSend().getAbsolutePath());
+
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), authenticateEntity.getFileToSend());
+                    MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "cidaas.png", requestFile);
+
+                    addPropertiesForFaceOrVoice(photo,authenticateEntity,authenticateResult);
+                    break;
+                }
+                case AuthenticationType.VOICE:
+                {
+
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), authenticateEntity.getFileToSend());
+                    MultipartBody.Part voice = MultipartBody.Part.createFormData("voice", "Audio.fav", requestFile);
+
+                    addPropertiesForFaceOrVoice(voice,authenticateEntity,authenticateResult);
+                    break;
+                }
+                default:
+                {
+                    if (authenticateEntity.getPass_code() != null && !authenticateEntity.getPass_code().equals("")) {
+
+                        addProperties(authenticateEntity, authenticateResult);
+                    }
+                    else {
+                        authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
+                        return;
+                    }
                 }
             }
 
         }
         catch (Exception e)
         {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -118,7 +149,7 @@ public class AuthenticateController {
                 @Override
                 public void success(String result) {
                     //call authenticate call
-                    authenticateEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
+                    //authenticateEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
                     addProperties(authenticateEntity,authenticateResult);
                 }
 
@@ -130,7 +161,7 @@ public class AuthenticateController {
 
         }
         catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -142,13 +173,28 @@ public class AuthenticateController {
     {
         String methodName = "AuthenticateController:-addProperties()";
         try {
-            //App properties
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            authenticateEntity.setDevice_id(deviceInfoEntity.getDeviceId());
-            authenticateEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
 
-            //call authenticate call
-            callAuthenticate(authenticateEntity,authenticateResult);
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String clientId = loginPropertiesResult.get("ClientId");
+
+                    //App properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                    authenticateEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+                    authenticateEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+                    authenticateEntity.setClient_id(clientId);
+
+                    //call authenticate call
+                    callAuthenticate(baseurl,authenticateEntity,authenticateResult);
+                }
+                @Override
+                public void failure(WebAuthError error) {
+                    authenticateResult.failure(error);
+                }
+            });
+
         }
         catch (Exception e) {
             authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
@@ -157,33 +203,91 @@ public class AuthenticateController {
     }
 
     //-------------------------------------------Call authenticate Service-----------------------------------------------------------
-    private void callAuthenticate(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult)
+    private void callAuthenticate(String baseurl,final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult)
     {
         String methodName = "AuthenticateController:-authenticate()";
         try
         {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
+            String authenticateUrl= VerificationURLHelper.getShared().getAuthenticateURL(baseurl,authenticateEntity.getVerificationType());
 
-                    String authenticateUrl= VerificationURLHelper.getShared().getAuthenticateURL(baseurl,authenticateEntity.getVerificationType());
+            //headers Generation
+            Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
-                    //headers Generation
-                    Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
+            //Authenticate Service call
+            AuthenticateService.getShared(context).callAuthenticateService(authenticateUrl,headers,authenticateEntity,authenticateResult);
 
-                    //Authenticate Service call
-                    AuthenticateService.getShared(context).callAuthenticateService(authenticateUrl,headers,authenticateEntity,authenticateResult);
-                }
-                @Override
-                public void failure(WebAuthError error) {
-                    authenticateResult.failure(error);
-                }
-            });
         }
         catch (Exception e) {
             authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
+    }
+
+    //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
+    private void addPropertiesForFaceOrVoice(final MultipartBody.Part  filetosend, final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult)
+    {
+        String methodName = "AuthenticateController:-addPropertiesForFaceOrVoice()";
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String clientId = loginPropertiesResult.get("ClientId");
+
+                    //Change To Hashmap and Add Properties
+                    HashMap<String, RequestBody> authenticateHashmap = new HashMap<>();
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+                    //Optional Sub
+                    //  authenticateHashmap.put("",StringtoRequestBody(authenticateEntity.))
+                    authenticateHashmap.put("exchange_id",StringtoRequestBody(authenticateEntity.getExchange_id()));
+                    authenticateHashmap.put("device_id", StringtoRequestBody(deviceInfoEntity.getDeviceId()));
+                    authenticateHashmap.put("client_id",StringtoRequestBody(clientId));
+                    authenticateHashmap.put("push_id", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
+                    authenticateHashmap.put("face_attempt",StringtoRequestBody(""+authenticateEntity.getFace_attempt()+""));
+
+
+                    //call authenticate call
+                    callAuthenticateForFaceandVoice(baseurl,filetosend,authenticateHashmap,authenticateEntity.getVerificationType(),authenticateResult);
+
+                  }
+                @Override
+                public void failure(WebAuthError error) {
+                    authenticateResult.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e) {
+            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+                    WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
+        }
+    }
+
+    //-------------------------------------------Call authenticate Service-----------------------------------------------------------
+    private void callAuthenticateForFaceandVoice(String baseurl,final MultipartBody.Part file, final HashMap<String, RequestBody> authenticateHashmap,
+                                                 final String verificationType, final Result<AuthenticateResponse> authenticateResult)
+    {
+        String methodName = "AuthenticateController:-authenticate()";
+        try
+        {
+            String authenticateUrl= VerificationURLHelper.getShared().getAuthenticateURL(baseurl,verificationType);
+
+            //headers Generation
+            Map<String,String> headers=Headers.getShared(context).getHeaders(null,false,null);
+
+            //Authenticate Service call
+            AuthenticateService.getShared(context).callAuthenticateServiceForFaceOrVoice(file,authenticateUrl,headers,authenticateHashmap,authenticateResult);
+        }
+        catch (Exception e) {
+            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+                    WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
+        }
+    }
+
+    //---------------------------------------------------String to requestBodyConversion-------------------------------------
+    public RequestBody StringtoRequestBody(String value) {
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"), value);
+        return body;
     }
 }

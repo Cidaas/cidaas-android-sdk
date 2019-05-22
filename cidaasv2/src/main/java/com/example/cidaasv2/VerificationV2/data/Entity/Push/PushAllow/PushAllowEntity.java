@@ -16,9 +16,9 @@ public class PushAllowEntity implements Serializable {
     public PushAllowEntity() {
     }
 
-    public PushAllowEntity(String exchange_id, String client_id, String verificationType) {
+    //Mandatory Fields
+    public PushAllowEntity(String exchange_id, String verificationType) {
         this.exchange_id = exchange_id;
-        this.client_id = client_id;
         this.verificationType = verificationType;
     }
 

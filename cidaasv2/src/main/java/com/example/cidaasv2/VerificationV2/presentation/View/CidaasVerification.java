@@ -9,6 +9,8 @@ import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeEntity;
@@ -19,12 +21,18 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejec
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
+import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Delete.DeleteController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAcknowledge.PushAcknowledgeController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAllow.PushAllowController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.PushRejectController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Settings.SettingsController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
 
 public class CidaasVerification {
 
@@ -88,6 +96,12 @@ public class CidaasVerification {
     //-----------------------------------------END_OF_Common For Cidaas Instances-------------------------------------------------------------------------
 
 
+    public void setup(SetupEntity setupEntity, Result<SetupResponse> setupResponseResult)
+    {
+        SetupController.getShared(context).setupVerification(setupEntity,setupResponseResult);
+    }
+
+
     public void scanned(ScannedEntity scannedEntity, Result<ScannedResponse> scannedResult)
     {
         ScannedController.getShared(context).scannedVerification(scannedEntity,scannedResult);
@@ -117,5 +131,21 @@ public class CidaasVerification {
     {
         AuthenticateController.getShared(context).authenticateVerification(authenticateEntity,authenticateResponseResult);
     }
+
+    public void delete(DeleteEntity deleteEntity, Result<DeleteResponse> deleteResponseResult)
+    {
+        DeleteController.getShared(context).deleteVerification(deleteEntity,deleteResponseResult);
+    }
+
+    public void deleteAll(Result<DeleteResponse> deleteResponseResult)
+    {
+        DeleteController.getShared(context).deleteAllVerification(deleteResponseResult);
+    }
+
+    public void getConfiguredMFAList(Result<ConfiguredMFAList> configuredMFAListResult)
+    {
+        SettingsController.getShared(context).getConfiguredMFAList(configuredMFAListResult);
+    }
+
 
 }

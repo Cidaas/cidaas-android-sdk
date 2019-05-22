@@ -56,25 +56,16 @@ public class PushAcknowledgeController {
     {
         String methodName = "PushAcknowledgeController:-checkPushAcknowledgeEntity()";
         try {
-            if (pushAcknowledgeEntity.getVerificationType() != null && !pushAcknowledgeEntity.getVerificationType().equals(""))
+            if (pushAcknowledgeEntity.getVerificationType() != null && !pushAcknowledgeEntity.getVerificationType().equals("") &&
+                    pushAcknowledgeEntity.getExchange_id() != null && !pushAcknowledgeEntity.getExchange_id().equals(""))
             {
-                if(pushAcknowledgeEntity.getClient_id() != null && !pushAcknowledgeEntity.getClient_id().equals("") &&
-                        pushAcknowledgeEntity.getExchange_id() != null && !pushAcknowledgeEntity.getExchange_id().equals(""))
-                {
-                    // Todo Check For Face and Voice
-                    addProperties(pushAcknowledgeEntity,pushAcknowledgeResult);
-                }
-                else
-                {
-                    pushAcknowledgeResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or ExchangeId must not be null",
-                            "Error:"+methodName));
-                    return;
-                }
+                addProperties(pushAcknowledgeEntity,pushAcknowledgeResult);
 
             }
             else
             {
-           pushAcknowledgeResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type must not be null", "Error:"+methodName));
+           pushAcknowledgeResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type or ExchangeId must not be null",
+                   "Error:"+methodName));
                 return;
             }
 
@@ -91,13 +82,27 @@ public class PushAcknowledgeController {
     {
         String methodName = "PushAcknowledgeController:-addProperties()";
         try {
-            //App properties
-            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            pushAcknowledgeEntity.setDevice_id(deviceInfoEntity.getDeviceId());
-            pushAcknowledgeEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    String clientId=loginPropertiesResult.get("ClientId");
 
-            //call pushAcknowledge call
-            callPushAcknowledge(pushAcknowledgeEntity,pushAcknowledgeResult);
+                    //App properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                    pushAcknowledgeEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+                    pushAcknowledgeEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+                    pushAcknowledgeEntity.setClient_id(clientId);
+
+                    //call pushAcknowledge call
+                    callPushAcknowledge(baseurl,pushAcknowledgeEntity,pushAcknowledgeResult);
+                }
+                @Override
+                public void failure(WebAuthError error) {
+                    pushAcknowledgeResult.failure(error);
+                }
+            });
+
         }
         catch (Exception e) {
             pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
@@ -106,29 +111,20 @@ public class PushAcknowledgeController {
     }
 
     //-------------------------------------------Call pushAcknowledge Service-----------------------------------------------------------
-    private void callPushAcknowledge(final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult)
+    private void callPushAcknowledge(String baseurl,final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult)
     {
         String methodName = "PushAcknowledgeController:-pushAcknowledge()";
         try
         {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
 
-                    String pushAcknowledgeUrl= VerificationURLHelper.getShared().getPushAcknowledgeURL(baseurl,pushAcknowledgeEntity.getVerificationType());
+            String pushAcknowledgeUrl= VerificationURLHelper.getShared().getPushAcknowledgeURL(baseurl,pushAcknowledgeEntity.getVerificationType());
 
-                    //headers Generation
-                    Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
+            //headers Generation
+            Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
-                    //PushAcknowledge Service call
-                  PushAcknowledgeService.getShared(context).callPushAcknowledgeService(pushAcknowledgeUrl,headers,pushAcknowledgeEntity,pushAcknowledgeResult);
-                }
-                @Override
-                public void failure(WebAuthError error) {
-                    pushAcknowledgeResult.failure(error);
-                }
-            });
+            //PushAcknowledge Service call
+            PushAcknowledgeService.getShared(context).callPushAcknowledgeService(pushAcknowledgeUrl,headers,pushAcknowledgeEntity,pushAcknowledgeResult);
+
         }
         catch (Exception e) {
             pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,

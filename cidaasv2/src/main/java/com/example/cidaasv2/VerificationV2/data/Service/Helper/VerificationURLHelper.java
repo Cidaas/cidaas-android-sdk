@@ -30,6 +30,11 @@ public class VerificationURLHelper {
 
     String authenticateURL="/verification-srv/v2/authenticate/authenticate/";
 
+    String deleteURL="/verification-srv/v2/setup/device/configured/remove/";
+    String deleteAllURL="/verification-srv/v2/setup/device/configured/removeallbydeviceid/";
+
+    String getConfiguredListURL="/verification-srv/v2/setup/device/configured/list";
+
 
 
     public String getSetupURL(String baseurl,String verificationType) {
@@ -63,5 +68,17 @@ public class VerificationURLHelper {
 
     public String getAuthenticateURL(String baseurl,String verificationType) {
         return baseurl+authenticateURL+(verificationType.toLowerCase());
+    }
+
+    public String getDeleteURL(String baseurl,String verificationType,String sub) {
+        return baseurl+deleteURL+(verificationType.toLowerCase())+"/"+sub;
+    }
+
+    public String getDeleteAllURL(String baseurl,String deviceId) {
+        return baseurl+deleteAllURL+deviceId;
+    }
+
+    public String getConfiguredListURL(String baseurl) {
+        return baseurl+getConfiguredListURL;
     }
 }

@@ -14,6 +14,7 @@ public class SetupEntity implements Serializable {
     public SetupEntity() {
     }
 
+    //Mandatory Fields
     public SetupEntity(String sub, String verificationType) {
         this.sub = sub;
         this.verificationType = verificationType;

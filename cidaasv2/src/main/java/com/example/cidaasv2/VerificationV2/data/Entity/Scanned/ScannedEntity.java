@@ -18,10 +18,10 @@ public class ScannedEntity implements Serializable {
     public ScannedEntity() {
     }
 
-    public ScannedEntity(String sub, String exchange_id, String client_id, String verificationType) {
+    //Mandatory Fields
+    public ScannedEntity(String sub, String exchange_id, String verificationType) {
         this.sub = sub;
         this.exchange_id = exchange_id;
-        this.client_id = client_id;
         this.verificationType = verificationType;
     }
 
