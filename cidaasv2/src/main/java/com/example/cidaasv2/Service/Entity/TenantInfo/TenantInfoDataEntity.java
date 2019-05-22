@@ -26,5 +26,25 @@ public class TenantInfoDataEntity implements Serializable {
     }
 
     private String tenant_name;
+    private String tenant_key;
+    private String versionInfo;
     private String[] allowLoginWith;
+
+    public String getTenant_key() {
+        return tenant_key;
+    }
+
+    public void setTenant_key(String tenant_key) {
+        this.tenant_key = tenant_key;
+    }
+
+    public String getVersionInfo() {
+        return versionInfo;
+    }
+
+    public void setVersionInfo(String versionInfo) {
+        this.versionInfo = versionInfo;
+    }
 }
+
+
