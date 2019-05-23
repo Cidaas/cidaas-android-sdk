@@ -5,6 +5,9 @@ package com.example.cidaasv2.VerificationV2.data.Service;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryDataEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
@@ -21,6 +24,8 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PendingNotificationEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PendingNotificationResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 
@@ -92,9 +97,17 @@ public interface ICidaasSDK_V2_Services {
     @DELETE
     Call<DeleteResponse> delete(@Url String url, @HeaderMap Map<String,String> headers, @Body DeleteEntity deleteEntity);
 
-    //Authenticate
+    //ConfiguredMFAList
     @POST
     Call<ConfiguredMFAList> getConfiguredMFAList(@Url String url, @HeaderMap Map<String,String> headers, @Body GetMFAListEntity getMFAListEntity);
+
+    //PendingNotification List
+    @POST
+    Call<PendingNotificationResponse> getPendingNotification(@Url String url, @HeaderMap Map<String,String> headers, @Body PendingNotificationEntity pendingNotificationEntity);
+
+    //AuthenticatedHistory List
+    @POST
+    Call<AuthenticatedHistoryResponse> getAuthenticatedHistory(@Url String url, @HeaderMap Map<String,String> headers, @Body AuthenticatedHistoryEntity authenticatedHistoryEntity);
 
 
 }

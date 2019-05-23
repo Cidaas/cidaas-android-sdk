@@ -1,12 +1,16 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MFAListData implements Serializable {
 
-    public String _id;
-    public String verification_type;
-    public String configured_at;
+    private String _id="";
+    private String verification_type="";
+    private String configured_at="";
+    private String totp_secret="";
 
     public String get_id() {
         return _id;
@@ -30,6 +34,14 @@ public class MFAListData implements Serializable {
 
     public void setConfigured_at(String configured_at) {
         this.configured_at = configured_at;
+    }
+
+    public String getTotp_secret() {
+        return totp_secret;
+    }
+
+    public void setTotp_secret(String totp_secret) {
+        this.totp_secret = totp_secret;
     }
 }
 

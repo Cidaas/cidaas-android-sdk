@@ -1,16 +1,14 @@
-package com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList;
+package com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfiguredMFAList implements Serializable {
+public class PendingNotificationResponse {
     boolean success;
     int status;
-    GetMFAListResponseData data;
+    @JsonProperty("data")
+    private List<PushEntity> data;
 
     public boolean isSuccess() {
         return success;
@@ -28,11 +26,11 @@ public class ConfiguredMFAList implements Serializable {
         this.status = status;
     }
 
-    public GetMFAListResponseData getData() {
+    public List<PushEntity> getData() {
         return data;
     }
 
-    public void setData(GetMFAListResponseData data) {
+    public void setData(List<PushEntity> data) {
         this.data = data;
     }
 }

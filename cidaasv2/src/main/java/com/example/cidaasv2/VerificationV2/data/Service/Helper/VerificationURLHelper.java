@@ -35,6 +35,11 @@ public class VerificationURLHelper {
 
     String getConfiguredListURL="/verification-srv/v2/setup/device/configured/list";
 
+    String getPendingNotificationURL="/verification-srv/v2/setup/device/pending/auth/list";
+
+    String getAuthentictedHistoryURL="/verification-srv/v2/setup/device/authenticated/list";
+
+
 
 
     public String getSetupURL(String baseurl,String verificationType) {
@@ -80,5 +85,13 @@ public class VerificationURLHelper {
 
     public String getConfiguredListURL(String baseurl) {
         return baseurl+getConfiguredListURL;
+    }
+
+    public String getPendingNotificationURL(String baseurl) {
+        return baseurl+getPendingNotificationURL;
+    }
+
+    public String getAuthentictedHistoryURL(String baseurl) {
+        return baseurl+getAuthentictedHistoryURL;
     }
 }

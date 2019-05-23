@@ -94,11 +94,17 @@ public class SettingsController {
             Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
             //Settings Service call
-            SettingsService.getShared(context).callSettingsService(configuredListURL,headers,getMFAListEntity,configuredMFAListResult);
+            SettingsService.getShared(context).getConfigurationList(configuredListURL,headers,getMFAListEntity,configuredMFAListResult);
         }
         catch (Exception e) {
             configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
+
+
+
+
+
+
 }

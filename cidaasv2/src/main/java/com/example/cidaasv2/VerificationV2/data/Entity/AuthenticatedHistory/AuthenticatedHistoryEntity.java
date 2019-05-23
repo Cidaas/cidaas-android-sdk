@@ -1,15 +1,14 @@
-package com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList;
+package com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GetMFAListEntity implements Serializable {
+public class AuthenticatedHistoryEntity implements Serializable {
     private String device_id="";
     private String push_id="";
     private String client_id="";
-    private String sub="";
 
     public String getDevice_id() {
         return device_id;
@@ -32,21 +31,6 @@ public class GetMFAListEntity implements Serializable {
     }
 
     public void setClient_id(String client_id) {
-        this.client_id = client_id;
-    }
-
-    public String getSub() {
-        return sub;
-    }
-
-    public void setSub(String sub) {
-        this.sub = sub;
-    }
-
-    //No need For Developer
-    public GetMFAListEntity(String device_id, String push_id, String client_id) {
-        this.device_id = device_id;
-        this.push_id = push_id;
         this.client_id = client_id;
     }
 }

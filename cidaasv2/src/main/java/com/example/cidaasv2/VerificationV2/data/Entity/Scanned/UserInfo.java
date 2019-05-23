@@ -10,6 +10,11 @@ public class UserInfo implements Serializable {
     private String given_name="";
     private String family_name="";
     private String email="";
+    private String sub="";
+    private String picture="";
+    private String profile="";
+    private String providerUserId="";
+
 
     public String getMobile_number() {
         return mobile_number;
@@ -41,5 +46,37 @@ public class UserInfo implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getProviderUserId() {
+        return providerUserId;
+    }
+
+    public void setProviderUserId(String providerUserId) {
+        this.providerUserId = providerUserId;
     }
 }

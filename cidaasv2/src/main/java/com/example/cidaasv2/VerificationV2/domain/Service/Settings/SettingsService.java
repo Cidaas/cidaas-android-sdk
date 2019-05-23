@@ -53,10 +53,10 @@ public class SettingsService {
 
 
     //call Settings Service
-    public void callSettingsService(@NonNull String settingsURL, Map<String, String> headers, GetMFAListEntity getMFAListEntity,
-                                   final Result<ConfiguredMFAList> configuredMFAListResult)
+    public void getConfigurationList(@NonNull String settingsURL, Map<String, String> headers, GetMFAListEntity getMFAListEntity,
+                                     final Result<ConfiguredMFAList> configuredMFAListResult)
     {
-        final String methodName = "SettingsService:-callSettingsService()";
+        final String methodName = "SettingsService:-getConfigurationList()";
         try {
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
@@ -85,4 +85,6 @@ public class SettingsService {
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
+
+
 }

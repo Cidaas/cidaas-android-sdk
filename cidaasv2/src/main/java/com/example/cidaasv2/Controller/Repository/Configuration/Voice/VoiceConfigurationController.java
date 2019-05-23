@@ -470,7 +470,7 @@ public class VoiceConfigurationController {
                                 @Override
                                 public void failure(WebAuthError error) {
                                     enrollResult.failure(error);
-                                    //   Toast.makeText(context, "Error on Scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+
                                 }
                             });
                 } else {
