@@ -632,7 +632,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             }
         });
 
-        CidaasVerification.getInstance(this).getConfiguredMFAList(new Result<ConfiguredMFAList>() {
+        CidaasVerification.getInstance(this).getConfiguredMFAList(sub,new Result<ConfiguredMFAList>() {
             @Override
             public void success(ConfiguredMFAList result) {
                 Toast.makeText(MainActivity.this, ""+result.getData(), Toast.LENGTH_SHORT).show();

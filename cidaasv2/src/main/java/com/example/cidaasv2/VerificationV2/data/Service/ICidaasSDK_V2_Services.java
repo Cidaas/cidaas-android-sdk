@@ -37,6 +37,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.HTTP;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -94,7 +95,7 @@ public interface ICidaasSDK_V2_Services {
                                                              @PartMap() HashMap<String, RequestBody> map);
 
     //Delete MFA
-    @DELETE
+    @HTTP(method = "DELETE", hasBody = true)
     Call<DeleteResponse> delete(@Url String url, @HeaderMap Map<String,String> headers, @Body DeleteEntity deleteEntity);
 
     //ConfiguredMFAList

@@ -44,9 +44,11 @@ public class GetMFAListEntity implements Serializable {
     }
 
     //No need For Developer
-    public GetMFAListEntity(String device_id, String push_id, String client_id) {
+
+    public GetMFAListEntity(String device_id, String push_id, String client_id, String sub) {
         this.device_id = device_id;
         this.push_id = push_id;
         this.client_id = client_id;
+        this.sub = sub;
     }
 }

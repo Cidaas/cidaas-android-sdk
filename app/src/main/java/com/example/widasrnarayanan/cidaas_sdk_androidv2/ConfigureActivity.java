@@ -18,6 +18,8 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushNotificationEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
@@ -64,7 +66,7 @@ public class ConfigureActivity extends AppCompatActivity {
             @Override
             public void success(SetupResponse setupResultresult) {
 
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
+
                 ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PATTERN);
 
                 CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
@@ -149,6 +151,41 @@ public class ConfigureActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    public void deletePattern(View view)
+    {
+        DeleteEntity deleteEntity=new DeleteEntity(sub,AuthenticationType.PATTERN);
+        CidaasVerification.getInstance(this).delete(deleteEntity, new Result<DeleteResponse>() {
+            @Override
+            public void success(DeleteResponse result) {
+                Toast.makeText(ConfigureActivity.this, "Success Response", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void deletePush(View view)
+    {
+        DeleteEntity deleteEntity=new DeleteEntity(sub,AuthenticationType.PUSH);
+        CidaasVerification.getInstance(this).delete(deleteEntity, new Result<DeleteResponse>() {
+            @Override
+            public void success(DeleteResponse result) {
+                Toast.makeText(ConfigureActivity.this, "Success Response", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
 
     public void enrollPush(View view)

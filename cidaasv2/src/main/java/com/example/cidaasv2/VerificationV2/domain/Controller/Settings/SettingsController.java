@@ -11,6 +11,8 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
 import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
@@ -44,13 +46,37 @@ public class SettingsController {
     }
 
     //--------------------------------------------Settings--------------------------------------------------------------
-    public void getConfiguredMFAList(final Result<ConfiguredMFAList> settingsResult)
+    public void getConfiguredMFAList(String sub,final Result<ConfiguredMFAList> settingsResult)
     {
-        addProperties(settingsResult);
+        addProperties(sub,settingsResult);
     }
 
+
+    //-------------------------------------checkScannedEntity-----------------------------------------------------------
+    private void checkConfiguredMFAList(String sub, final Result<ConfiguredMFAList> settingsResult)
+    {
+        String methodName = "ScannedController:-checkScannedEntity()";
+        try {
+            if (sub != null && !sub.equals("")) {
+
+                addProperties(sub,settingsResult);
+            }
+            else
+            {
+                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null",
+                        "Error:"+methodName));
+                return;
+            }
+        }
+        catch (Exception e) {
+            settingsResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final Result<ConfiguredMFAList> configuredMFAListResult)
+    private void addProperties(final String sub, final Result<ConfiguredMFAList> configuredMFAListResult)
     {
         String methodName = "SettingsController:-addProperties()";
         try {
@@ -63,7 +89,7 @@ public class SettingsController {
 
                     //Add Properties
                     DeviceInfoEntity deviceInfoEntity=DBHelper.getShared().getDeviceInfo();
-                    GetMFAListEntity getMFAListEntity=new GetMFAListEntity(deviceInfoEntity.getDeviceId(),deviceInfoEntity.getPushNotificationId(),clientId);
+                    GetMFAListEntity getMFAListEntity=new GetMFAListEntity(deviceInfoEntity.getDeviceId(),deviceInfoEntity.getPushNotificationId(),clientId,sub);
 
                     //call settings call
                     callSettings(baseurl,getMFAListEntity,configuredMFAListResult);

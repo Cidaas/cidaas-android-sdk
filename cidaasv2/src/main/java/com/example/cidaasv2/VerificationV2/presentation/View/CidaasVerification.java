@@ -150,9 +150,9 @@ public class CidaasVerification {
         DeleteController.getShared(context).deleteAllVerification(deleteResponseResult);
     }
 
-    public void getConfiguredMFAList(Result<ConfiguredMFAList> configuredMFAListResult)
+    public void getConfiguredMFAList(String sub,Result<ConfiguredMFAList> configuredMFAListResult)
     {
-        SettingsController.getShared(context).getConfiguredMFAList(configuredMFAListResult);
+        SettingsController.getShared(context).getConfiguredMFAList(sub,configuredMFAListResult);
     }
 
 

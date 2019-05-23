@@ -12,7 +12,7 @@ public class PushEntity implements Serializable {
     String tenant_name="";
     String tenant_key="";
     String verification_type="";
-    Double request_time;
+    String request_time;
     String[] requested_types;
 
     public String getSub() {
@@ -55,11 +55,11 @@ public class PushEntity implements Serializable {
         this.verification_type = verification_type;
     }
 
-    public Double getRequest_time() {
+    public String getRequest_time() {
         return request_time;
     }
 
-    public void setRequest_time(Double request_time) {
+    public void setRequest_time(String request_time) {
         this.request_time = request_time;
     }
 
