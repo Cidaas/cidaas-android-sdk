@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

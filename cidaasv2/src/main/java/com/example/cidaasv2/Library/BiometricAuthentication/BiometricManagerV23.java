@@ -131,6 +131,7 @@ CancellationSignal cancellationSignal;
                     }
 
                     biometricCallback.onAuthenticationError(errorCode, errString);
+                    return;
                 }
 
                 @Override
@@ -138,6 +139,7 @@ CancellationSignal cancellationSignal;
                     super.onAuthenticationHelp(helpCode, helpString);
                     updateStatus(String.valueOf(helpString));
                     biometricCallback.onAuthenticationHelp(helpCode, helpString);
+                    return;
                 }
 
                 @Override
@@ -145,6 +147,7 @@ CancellationSignal cancellationSignal;
                     super.onAuthenticationSucceeded(result);
                     dismissDialog();
                     biometricCallback.onAuthenticationSuccessful();
+                    return;
                 }
 
                 @Override
@@ -152,6 +155,7 @@ CancellationSignal cancellationSignal;
                     super.onAuthenticationFailed();
                     updateStatus(context.getString(R.string.biometric_failed));
                     biometricCallback.onAuthenticationFailed();
+                    return;
                 }
             },null);
 

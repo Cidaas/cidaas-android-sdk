@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GetMFAListResponseData implements Serializable {
+public class MFAListResponseData implements Serializable {
 
     private String tenant_name = "";
     private String tenant_key = "";

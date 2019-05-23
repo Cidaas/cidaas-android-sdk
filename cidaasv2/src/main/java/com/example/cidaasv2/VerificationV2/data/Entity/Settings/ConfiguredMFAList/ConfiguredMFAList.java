@@ -1,16 +1,14 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfiguredMFAList implements Serializable {
     boolean success;
     int status;
-    GetMFAListResponseData data;
+    MFAListResponseData data;
 
     public boolean isSuccess() {
         return success;
@@ -28,11 +26,11 @@ public class ConfiguredMFAList implements Serializable {
         this.status = status;
     }
 
-    public GetMFAListResponseData getData() {
+    public MFAListResponseData getData() {
         return data;
     }
 
-    public void setData(GetMFAListResponseData data) {
+    public void setData(MFAListResponseData data) {
         this.data = data;
     }
 }

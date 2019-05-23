@@ -2,6 +2,7 @@ package com.example.cidaasv2.Helper.Entity;
 
 import android.content.Context;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -12,6 +13,8 @@ public class FingerPrintEntity implements Serializable {
     String Subtitle="Please Authenticate to continue";
     String Description="";
     String NegativeButtonString="Cancel";
+
+    @JsonIgnore
     Context context;
 
     public FingerPrintEntity(Context context) {
@@ -77,10 +80,12 @@ public class FingerPrintEntity implements Serializable {
         NegativeButtonString = negativeButtonString;
     }
 
+    @JsonIgnore
     public Context getContext() {
         return context;
     }
 
+    @JsonIgnore
     public void setContext(Context context) {
         this.context = context;
     }

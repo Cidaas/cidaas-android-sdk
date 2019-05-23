@@ -140,6 +140,12 @@ public class BiometricHandler {
             result.failure( WebAuthError.getShared(context).methodException("Exception :BiometricHandler :callFingerPrint()",
                     WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,e.getMessage()));
 
+            if(e.getMessage().equals("Unable to add window -- token null is not valid; is your activity running?"))
+            {
+                result.failure( WebAuthError.getShared(context).methodException("Exception :BiometricHandler :callFingerPrint()",
+                        WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,"Please ensure you pass the current running activity context"));
+            }
+return;
         }
 
     }
