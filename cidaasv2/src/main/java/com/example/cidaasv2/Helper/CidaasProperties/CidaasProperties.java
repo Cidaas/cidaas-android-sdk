@@ -37,7 +37,17 @@ public class CidaasProperties {
 
     public void saveCidaasProperties(final Result<Dictionary<String,String>> result)
     {
+
+        if(Cidaas.baseurl!=null && Cidaas.baseurl!="")
+        {
+            //From Authenticator app
+
+        }
+        else
+        {
             readFromFile("Cidaas.xml",result);
+        }
+
     }
 
     public void checkCidaasProperties(final Result<Dictionary<String, String>> result)

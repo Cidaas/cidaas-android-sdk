@@ -37,6 +37,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
@@ -49,7 +50,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -607,6 +610,29 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         cidaasGoogle.logout();
         logoutButton.setVisibility(View.INVISIBLE);
       //  cidaasFacebook.logout();
+    }
+
+
+    public void getConfiguredMFAList(View view) {
+        Dictionary<String,String> urlList=new Hashtable<>();
+
+        urlList.put("DomainURL","https://nightlybuild.cidaas.de");
+        urlList.put("ClientId","4d1ce9b6-7b1d-4c97-b4f6-118d00ce3d68");
+        urlList.put("RedirectURL","cidaasdemo://nightlybuild.cidaas.de/ios/com.cidaas.sdk.demo/callback");
+
+        Cidaas.getInstance(this).setURL(urlList);
+
+        CidaasVerification.getInstance(this).getConfiguredMFAList(new Result<ConfiguredMFAList>() {
+            @Override
+            public void success(ConfiguredMFAList result) {
+                Toast.makeText(MainActivity.this, ""+result.getData(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Error:-"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
