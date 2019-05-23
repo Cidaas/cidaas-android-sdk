@@ -261,6 +261,24 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
     }
 
+    //FCM TOKEN FAILURE
+    public WebAuthError FCMTokenFailure(String methodName) {
+
+        WebAuthError.shared.errorCode=WebAuthErrorCode.UPDATE_FCM_TOKEN;
+        WebAuthError.shared.statusCode= HttpStatusCode.EXPECTATION_FAILED;
+        WebAuthError.shared.ErrorMessage= context.getString(R.string.UPDATE_FCM_TOKEN_FAILURE);
+        ErrorEntity errorEntity=new ErrorEntity();
+        errorEntity.setCode(errorCode+"");
+        errorEntity.setStatus(statusCode);
+        errorEntity.setError(context.getString(R.string.UPDATE_FCM_TOKEN_FAILURE));
+
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +" Empty response"+"StatusCode:- "+statusCode;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        Timber.d(loggerMessage);
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
+        return WebAuthError.shared;
+    }
 
 
     public WebAuthError emptyResponseException(int errorCode, int statusCode, String methodName) {

@@ -39,6 +39,7 @@ public class VerificationURLHelper {
 
     String getAuthentictedHistoryURL="/verification-srv/v2/setup/device/authenticated/list";
 
+    String updateFCMTokenURL="/verification-srv/v2/setup/device/update/pushid";
 
 
 
@@ -94,4 +95,10 @@ public class VerificationURLHelper {
     public String getAuthentictedHistoryURL(String baseurl) {
         return baseurl+getAuthentictedHistoryURL;
     }
+
+    public String getUpdateFCMTokenURL(String baseurl) {
+        return baseurl+updateFCMTokenURL;
+    }
+
+
 }

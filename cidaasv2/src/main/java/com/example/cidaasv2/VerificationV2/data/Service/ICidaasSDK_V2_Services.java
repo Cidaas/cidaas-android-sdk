@@ -24,6 +24,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.Others.UpdateFCMTokenEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PendingNotificationEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PendingNotificationResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
@@ -109,6 +110,10 @@ public interface ICidaasSDK_V2_Services {
     //AuthenticatedHistory List
     @POST
     Call<AuthenticatedHistoryResponse> getAuthenticatedHistory(@Url String url, @HeaderMap Map<String,String> headers, @Body AuthenticatedHistoryEntity authenticatedHistoryEntity);
+
+    //Update FCM List
+    @POST
+    Call<String> updateFCMToken(@Url String url, @HeaderMap Map<String,String> headers, @Body UpdateFCMTokenEntity updateFCMTokenEntity);
 
 
 }

@@ -2,6 +2,7 @@ package com.example.cidaasv2.VerificationV2.domain.Controller.Settings;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -11,10 +12,9 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.Others.UpdateFCMTokenEntity;
 import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
 import com.example.cidaasv2.VerificationV2.domain.Service.Settings.SettingsService;
 
@@ -48,14 +48,14 @@ public class SettingsController {
     //--------------------------------------------Settings--------------------------------------------------------------
     public void getConfiguredMFAList(String sub,final Result<ConfiguredMFAList> settingsResult)
     {
-        addProperties(sub,settingsResult);
+        checkConfiguredMFAList(sub,settingsResult);
     }
 
 
     //-------------------------------------checkScannedEntity-----------------------------------------------------------
     private void checkConfiguredMFAList(String sub, final Result<ConfiguredMFAList> settingsResult)
     {
-        String methodName = "ScannedController:-checkScannedEntity()";
+        String methodName = "SettingsController:-checkConfiguredMFAList()";
         try {
             if (sub != null && !sub.equals("")) {
 
@@ -63,13 +63,12 @@ public class SettingsController {
             }
             else
             {
-                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null",
-                        "Error:"+methodName));
+                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", "Error:"+methodName));
                 return;
             }
         }
         catch (Exception e) {
-            settingsResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            settingsResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.MFA_LIST_FAILURE,
                     e.getMessage()));
         }
     }
@@ -127,8 +126,84 @@ public class SettingsController {
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
+    //--------------------------------------------Settings--------------------------------------------------------------
+    public void updateFCMToken(final String newFCMToken)
+    {
+        DeviceInfoEntity deviceInfoEntity= DBHelper.getShared().getDeviceInfo();
 
+        //Check for DB if it is null or empty save it in DB
+        if(deviceInfoEntity.getPushNotificationId()==null || deviceInfoEntity.getPushNotificationId().equals(""))
+        {
+            DBHelper.getShared().setFCMToken(newFCMToken);
+        }
+        else if(deviceInfoEntity.getPushNotificationId().equals(newFCMToken))
+        {
+            //No problem
+        }
+        else {
+            addPropertiesForFCM(newFCMToken);
+        }
+    }
 
+    public void addPropertiesForFCM(final String newFCMToken) {
+        final String methodName = "SettingsController:-addPropertiesForFCM()";
+        if(newFCMToken!=null && !newFCMToken.equals(""))
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String clientId = loginPropertiesResult.get("ClientId");
+
+                    //Add Properties
+                    DeviceInfoEntity deviceInfoEntity= DBHelper.getShared().getDeviceInfo();
+                    UpdateFCMTokenEntity updateFCMTokenEntity=new UpdateFCMTokenEntity(deviceInfoEntity.getDeviceId(),newFCMToken,
+                            clientId,deviceInfoEntity.getPushNotificationId());
+
+                    callupdateFCMToken(baseurl,updateFCMTokenEntity);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                  WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName);
+                }
+            });
+
+        }
+        else
+        {
+            WebAuthError.getShared(context).propertyMissingException("FCMToken must not be null",methodName);
+        }
+    }
+
+    //-------------------------------------------Call settings Service-----------------------------------------------------------
+    private void callupdateFCMToken(String baseurl, final UpdateFCMTokenEntity updateFCMTokenEntity)
+    {
+        final String methodName = "SettingsController:-callupdateFCMToken()";
+        try
+        {
+            String updateFCMTokenURL= VerificationURLHelper.getShared().getUpdateFCMTokenURL(baseurl);
+
+            //headers Generation
+            Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
+
+            //Settings Service call
+            SettingsService.getShared(context).updateFCMToken(updateFCMTokenURL, headers, updateFCMTokenEntity, new Result<String>() {
+                @Override
+                public void success(String result) {
+                    DBHelper.getShared().setFCMToken(updateFCMTokenEntity.getPush_id());
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    WebAuthError.getShared(context).FCMTokenFailure(methodName);
+                }
+            });
+        }
+        catch (Exception e) {
+            WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.UPDATE_FCM_TOKEN,e.getMessage());
+        }
+    }
 
 
 

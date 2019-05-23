@@ -65,5 +65,8 @@
     //For Location History
     <string name="LOCATION_HISTORY_FAILURE">Location History Failure</string>
 
+    //For Update FCM Token
+    <string name="UPDATE_FCM_TOKEN_FAILURE">Update FCM Token Failure</string>
+
 
 </resources>

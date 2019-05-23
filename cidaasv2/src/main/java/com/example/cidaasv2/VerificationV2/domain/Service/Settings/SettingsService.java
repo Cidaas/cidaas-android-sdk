@@ -11,6 +11,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.Others.UpdateFCMTokenEntity;
 import com.example.cidaasv2.VerificationV2.data.Service.CidaasSDK_V2_Service;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
 
@@ -83,6 +84,39 @@ public class SettingsService {
         } catch (Exception e) {
             configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
+        }
+    }
+
+    //call update FCM Token
+    public void updateFCMToken(@NonNull String updateFCMTOkenURL, Map<String, String> headers, UpdateFCMTokenEntity updateFCMTokenEntity,
+                                     final Result<String> result)
+    {
+        final String methodName = "SettingsService:-updateFCMToken()";
+        try {
+            //call service
+            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
+            cidaasSDK_v2_services.updateFCMToken(updateFCMTOkenURL, headers, updateFCMTokenEntity).enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if(response.isSuccessful())
+                    {
+                        result.success(response.body());
+                    }
+                    else
+                    {
+                        result.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.UPDATE_FCM_TOKEN,
+                                response,"Error:- "+methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    result.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.UPDATE_FCM_TOKEN,
+                            t.getMessage(),"Error:- "+methodName));
+                }
+            });
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.UPDATE_FCM_TOKEN, e.getMessage()));
         }
     }
 
