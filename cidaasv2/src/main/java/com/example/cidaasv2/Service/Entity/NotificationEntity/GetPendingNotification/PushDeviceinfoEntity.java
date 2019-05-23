@@ -14,6 +14,12 @@ public class PushDeviceinfoEntity implements Serializable {
     private String userAgent;
     private BrowserEntity browser;
 
+    private String lat="";
+    private String lon="";
+    private String purpose="";
+
+
+
     public OsEntity getOs() {
         return os;
     }
@@ -60,5 +66,29 @@ public class PushDeviceinfoEntity implements Serializable {
 
     public void setBrowser(BrowserEntity browser) {
         this.browser = browser;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 }

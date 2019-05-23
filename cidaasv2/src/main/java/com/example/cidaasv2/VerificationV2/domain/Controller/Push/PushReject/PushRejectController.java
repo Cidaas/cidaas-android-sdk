@@ -93,6 +93,7 @@ public class PushRejectController {
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
                     pushRejectEntity.setDevice_id(deviceInfoEntity.getDeviceId());
                     pushRejectEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+                    pushRejectEntity.setClient_id(clientId);
 
                     //call pushReject call
                     callPushReject(baseurl,pushRejectEntity,pushRejectResult);

@@ -10,7 +10,7 @@ public class LocationEntity implements Serializable {
     public String id="" ;
     public String lat="" ;
     public String lon="" ;
-    public AddressEntity address;
+    public PushAddressEntity address;
 
 
     public String getId() {
@@ -37,11 +37,11 @@ public class LocationEntity implements Serializable {
         this.lon = lon;
     }
 
-    public AddressEntity getAddress() {
+    public PushAddressEntity getAddress() {
         return address;
     }
 
-    public void setAddress(AddressEntity address) {
+    public void setAddress(PushAddressEntity address) {
         this.address = address;
     }
 }

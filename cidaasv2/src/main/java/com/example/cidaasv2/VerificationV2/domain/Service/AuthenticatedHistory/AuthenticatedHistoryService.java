@@ -13,7 +13,6 @@ import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.Auth
 import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryResponse;
 import com.example.cidaasv2.VerificationV2.data.Service.CidaasSDK_V2_Service;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
-import com.example.cidaasv2.VerificationV2.domain.Service.AuthenticatedHistory.AuthenticatedHistoryService;
 
 import java.util.Map;
 

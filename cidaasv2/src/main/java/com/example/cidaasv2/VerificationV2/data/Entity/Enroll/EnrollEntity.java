@@ -1,6 +1,7 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Enroll;
 
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.File;
@@ -22,6 +23,7 @@ public class EnrollEntity implements Serializable {
     private int face_attempt =0;
 
     //For Fingerprint
+    @JsonIgnore
     private FingerPrintEntity fingerPrintEntity;
 
     //EmptyConstructors
@@ -67,10 +69,12 @@ public class EnrollEntity implements Serializable {
         this.face_attempt = face_attempt;
     }
 
+    @JsonIgnore
     public FingerPrintEntity getFingerPrintEntity() {
         return fingerPrintEntity;
     }
 
+    @JsonIgnore
     public void setFingerPrintEntity(FingerPrintEntity fingerPrintEntity) {
         this.fingerPrintEntity = fingerPrintEntity;
     }

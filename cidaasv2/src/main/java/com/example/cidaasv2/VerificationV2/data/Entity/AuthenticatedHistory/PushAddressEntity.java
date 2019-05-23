@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AddressEntity implements Serializable {
+public class PushAddressEntity implements Serializable {
     public String  country_short="" ;
     public String   country_long="" ;
     public String   region="" ;
