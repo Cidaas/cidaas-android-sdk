@@ -466,7 +466,7 @@ catch (Exception e)
     {
 
 
-        FingerPrintEntity fingerPrintEntity=new FingerPrintEntity();
+        FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(this);
         fingerPrintEntity.setTitle("");
         fingerPrintEntity.setSubtitle("");
         fingerPrintEntity.setDescription("");
@@ -498,7 +498,7 @@ catch (Exception e)
                 passwordlessEntity.setTrackId(trackId);
                 passwordlessEntity.setMobile("+919787113989");
 
-                FingerPrintEntity fingerPrintEntity=new FingerPrintEntity();
+                FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(getApplicationContext());
                 fingerPrintEntity.setTitle("Hi Please AUTHENTICATE");
                 fingerPrintEntity.setSubtitle("A");
 

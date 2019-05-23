@@ -241,14 +241,16 @@ public void setEnableLog(boolean enableLog)
 
 
     //Add Login object in LocalDB(SharedPreferences) for Future purposes
-    public void addLoginProperties(Dictionary<String,String> loginpropObj) {
+    public boolean addLoginProperties(Dictionary<String,String> loginpropObj) {
         boolean result = false;
         try {
             String jsonString = shared_objectMapper.writeValueAsString(loginpropObj);
             editor.putString(LoginProperties+loginpropObj.get("DomainURL"), jsonString);
             result = editor.commit();
+            return  result;
         } catch (Exception e) {
             result = false;
+            return result;
         }
     }
 

@@ -144,7 +144,7 @@ public class EnrollController {
     {
         String methodName = "EnrollController:-callFingerPrintAuthentication()";
         try {
-            BiometricHandler.getShared(context).callFingerPrint(enrollEntity.getFingerPrintEntity(), methodName, new Result<String>() {
+            BiometricHandler.getShared(enrollEntity.getFingerPrintEntity().getContext()).callFingerPrint(enrollEntity.getFingerPrintEntity(), methodName, new Result<String>() {
                 @Override
                 public void success(String result) {
                     //set pass code as device id and call enroll call

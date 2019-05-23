@@ -145,7 +145,7 @@ public class AuthenticateController {
     {
         String methodName = "AuthenticateController:-callFingerPrintAuthentication()";
         try {
-            BiometricHandler.getShared(context).callFingerPrint(authenticateEntity.getFingerPrintEntity(), methodName, new Result<String>() {
+            BiometricHandler.getShared(authenticateEntity.getFingerPrintEntity().getContext()).callFingerPrint(authenticateEntity.getFingerPrintEntity(), methodName, new Result<String>() {
                 @Override
                 public void success(String result) {
                     //call authenticate call

@@ -583,8 +583,8 @@ public class LoginController {
         }
     }
 
-    public void setURL(@NonNull final Dictionary<String, String> loginproperties)
-    {
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties,Result<String> result)
+    {String methodName="LoginController:setURL";
         try
         {
             if(loginproperties!=null) {
@@ -597,21 +597,26 @@ public class LoginController {
                     DBHelper.getShared().setUserDeviceId(userDeviceId, Cidaas.baseurl);
                 }
 
-                DBHelper.getShared().addLoginProperties(loginproperties);
 
+                if( DBHelper.getShared().addLoginProperties(loginproperties)) {
+                    result.success("SetURL is Successfully configured ");
+                }
+                else
+                {
+                    String errorMessage = "Saving Failed in LocalDB" ;
+                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage,methodName));
+                }
 
             }
             else
             {
-                String loggerMessage = "SetURL File : " + " Error Message -Login properties in null " ;
-                LogFile.getShared(context).addFailureLog(loggerMessage);
+                String errorMessage = "Login properties in null " ;
+                result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage,methodName));
             }
         }
         catch (Exception e)
         {
-            String loggerMessage = "SetURL File : " + " Error Message - " + e.getMessage();
-            LogFile.getShared(context).addFailureLog(loggerMessage);
-
+            result.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CIDAAS_PROPERTY_MISSING,e.getMessage()));
         }
 
     }

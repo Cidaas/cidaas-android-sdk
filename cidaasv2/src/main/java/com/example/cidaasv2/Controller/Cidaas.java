@@ -808,9 +808,9 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-    public void setURL(@NonNull final Dictionary<String, String> loginproperties)
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties,Result<String> result)
     {
-        LoginController.getShared(context).setURL(loginproperties);
+        LoginController.getShared(context).setURL(loginproperties,result);
     }
 
     //------------------------------------------------------------------------------------------Local Authentication----------------------------------------

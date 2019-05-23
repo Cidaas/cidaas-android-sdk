@@ -100,7 +100,7 @@ public class FingerprintConfigurationController {
             if (Build.VERSION.SDK_INT >= 23) {
 
 
-                BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity,methodName, new Result<String>() {
+                BiometricHandler.getShared(fingerPrintEntity.getContext()).callFingerPrint(fingerPrintEntity,methodName, new Result<String>() {
                     @Override
                     public void success(String result) {
                         CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -389,7 +389,7 @@ public class FingerprintConfigurationController {
 
         LogFile.getShared(context).addInfoLog("Info :"+methodName, "Sub:-"+sub+"statusId:-"+statusId);
 
-        BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity,methodName ,new Result<String>() {
+        BiometricHandler.getShared(fingerPrintEntity.getContext()).callFingerPrint(fingerPrintEntity,methodName ,new Result<String>() {
             @Override
             public void success(String result) {
                 CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -545,7 +545,7 @@ public class FingerprintConfigurationController {
                "Info UsageType:-"+passwordlessEntity.getUsageType()+" Sub:- "+passwordlessEntity.getSub()+ " Email"+passwordlessEntity.getEmail()+
                        " Mobile"+passwordlessEntity.getMobile()+" RequestId:-"+passwordlessEntity.getRequestId()+ " TrackId:-"+passwordlessEntity.getTrackId());
 
-       BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity, methodName,new Result<String>() {
+       BiometricHandler.getShared(fingerPrintEntity.getContext()).callFingerPrint(fingerPrintEntity, methodName,new Result<String>() {
            @Override
            public void success(String result) {
                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
@@ -780,7 +780,7 @@ public class FingerprintConfigurationController {
     {  final String methodName="FingerprintConfigurationController :authenticateFingerprint()";
         try {
 
-            BiometricHandler.getShared(context).callFingerPrint(fingerPrintEntity,methodName ,new Result<String>() {
+            BiometricHandler.getShared(fingerPrintEntity.getContext()).callFingerPrint(fingerPrintEntity,methodName ,new Result<String>() {
                 @Override
                 public void success(String result) {
                     CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {

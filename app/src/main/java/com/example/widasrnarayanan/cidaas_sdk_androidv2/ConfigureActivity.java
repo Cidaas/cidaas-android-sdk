@@ -115,7 +115,7 @@ public class ConfigureActivity extends AppCompatActivity {
                 ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.TOUCHID);
 
 
-                final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity("Authenticate to all","dkjvhbjhbvdjkhbdv");
+                final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(getApplicationContext(),"Authenticate to all","dkjvhbjhbvdjkhbdv");
 
                 CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
                     @Override

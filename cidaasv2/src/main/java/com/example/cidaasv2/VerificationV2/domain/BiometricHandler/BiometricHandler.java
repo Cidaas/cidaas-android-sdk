@@ -44,7 +44,7 @@ public class BiometricHandler {
         {
             if (Build.VERSION.SDK_INT >= 23) {
 
-                FingerPrintEntity fingerPrintEntityForPassing = new FingerPrintEntity();
+                FingerPrintEntity fingerPrintEntityForPassing = new FingerPrintEntity(context);
                 if (fingerPrintEntity == null) {
                     fingerPrintEntity = fingerPrintEntityForPassing;
                 }
