@@ -15,6 +15,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushNotificationEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.ConfigureActivity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -72,11 +73,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             // @JsonIgnoreProperties(ignoreUnknown = true)
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            PushNotificationEntity pushNotificationEntity = new PushNotificationEntity();
+            PushEntity pushNotificationEntity = new PushEntity();
 
 
             if (remoteMessage != null && remoteMessage.getData() != null && remoteMessage.getData().get("data") != null) {
-                pushNotificationEntity = objectMapper.readValue(remoteMessage.getData().get("data").toString(), PushNotificationEntity.class);
+                pushNotificationEntity = objectMapper.readValue(remoteMessage.getData().get("data").toString(), PushEntity.class);
                 // Log.d("firebase ", "sendNotification: "+pushNotificationEntity.getStatusId());
             }
             //   boolean userPresent = Helper.checkIfUserExists(pushNotificationEntity);

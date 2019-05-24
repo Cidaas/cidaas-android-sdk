@@ -1,6 +1,7 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.LocationEntity;
+import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushDeviceinfoEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId.ExchangeIDEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -17,6 +18,7 @@ public class PushAcknowledgeResponseDataEntity implements Serializable {
     private String push_id="";
     private String status_id="";
     private LocationEntity address;
+    private PushDeviceInformation device_info;
 
 
     public String getSub() {
@@ -73,5 +75,13 @@ public class PushAcknowledgeResponseDataEntity implements Serializable {
 
     public void setAddress(LocationEntity address) {
         this.address = address;
+    }
+
+    public PushDeviceInformation getDevice_info() {
+        return device_info;
+    }
+
+    public void setDevice_info(PushDeviceInformation device_info) {
+        this.device_info = device_info;
     }
 }

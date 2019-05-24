@@ -41,6 +41,7 @@ public class CidaasProperties {
         if(Cidaas.baseurl!=null && Cidaas.baseurl!="")
         {
             //From Authenticator app
+            result.success(DBHelper.getShared().getLoginProperties(Cidaas.baseurl));
 
         }
         else

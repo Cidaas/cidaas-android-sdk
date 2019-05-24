@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PushDeviceinfoEntity implements Serializable {
-
+    private String ipAddress="";
     private OsEntity os;
     private EngineEntity engine;
     private String deviceMake;
@@ -19,6 +19,33 @@ public class PushDeviceinfoEntity implements Serializable {
     private String purpose="";
 
 
+    private String sub="";
+    private String deviceId="";
+
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
     public OsEntity getOs() {
         return os;

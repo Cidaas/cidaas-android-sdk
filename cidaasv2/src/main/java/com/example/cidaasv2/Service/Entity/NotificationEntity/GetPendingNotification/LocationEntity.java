@@ -6,20 +6,37 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LocationEntity implements Serializable {
-    public String  country_short ;
-    public String   country_long ;
-    public String   region ;
-    public String  city ;
-    public String  zipcode ;
-    public String   street ;
-    public String  houseNo ;
-    public String  formattedAddress ;
-    public double  latitude ;
-    public double  longitude ;
-    public String  ip ;
-    public String  ip_no ;
-    public String  resolver ;
+    private String  country_short ;
+    private String   country_long ;
+    private String   region ;
+    private String  city ;
+    private String  zipcode ;
+    private String   street ;
+    private String  houseNo ;
+    private String  formattedAddress ;
+    private double  latitude ;
+    private double  longitude ;
+    private String  ip ;
+    private String  ip_no ;
+    private String  resolver ;
+    private String status="";
+    private int elevation;
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getElevation() {
+        return elevation;
+    }
+
+    public void setElevation(int elevation) {
+        this.elevation = elevation;
+    }
 
     public String getCountry_short() {
         return country_short;

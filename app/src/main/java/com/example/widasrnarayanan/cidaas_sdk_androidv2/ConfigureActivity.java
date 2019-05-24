@@ -411,7 +411,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-
+                Toast.makeText(ConfigureActivity.this, "Fail reqid"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -59,8 +59,8 @@ public class AuthenticatedHistoryController {
             if (authenticatedHistoryEntity.getVerificationType() != null && !authenticatedHistoryEntity.getVerificationType().equals("") &&
                     authenticatedHistoryEntity.getSub() != null && !authenticatedHistoryEntity.getSub().equals("")
                     ) {
-                if( authenticatedHistoryEntity.getStartDate() != null && !authenticatedHistoryEntity.getStartDate().equals("") &&
-                        authenticatedHistoryEntity.getEndDate() != null && !authenticatedHistoryEntity.getEndDate().equals("")  ) {
+                if( authenticatedHistoryEntity.getStart_time() != null && !authenticatedHistoryEntity.getStart_time().equals("") &&
+                        authenticatedHistoryEntity.getEnd_time() != null && !authenticatedHistoryEntity.getEnd_time().equals("")  ) {
 
                     addProperties(authenticatedHistoryEntity, authenticatedHistoryResult);
                 }
