@@ -45,7 +45,7 @@ public class AuthenticatedHistoryController {
     }
 
     //--------------------------------------------AuthenticatedHistory--------------------------------------------------------------
-    public void authenticatedHistoryVerification(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final Result<AuthenticatedHistoryResponse> authenticatedHistoryResult)
+    public void getauthenticatedHistoryList(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final Result<AuthenticatedHistoryResponse> authenticatedHistoryResult)
     {
         checkAuthenticatedHistoryEntity(authenticatedHistoryEntity,authenticatedHistoryResult);
     }
@@ -56,17 +56,27 @@ public class AuthenticatedHistoryController {
     {
         String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
         try {
-          /*  if (authenticatedHistoryEntity.get() != null && !authenticatedHistoryEntity.getVerificationType().equals("") && authenticatedHistoryEntity.getSub() != null &&
-                    !authenticatedHistoryEntity.getSub().equals("")&& authenticatedHistoryEntity.getExchange_id() != null && !authenticatedHistoryEntity.getExchange_id().equals("")) {
+            if (authenticatedHistoryEntity.getVerificationType() != null && !authenticatedHistoryEntity.getVerificationType().equals("") &&
+                    authenticatedHistoryEntity.getSub() != null && !authenticatedHistoryEntity.getSub().equals("")
+                    ) {
+                if( authenticatedHistoryEntity.getStartDate() != null && !authenticatedHistoryEntity.getStartDate().equals("") &&
+                        authenticatedHistoryEntity.getEndDate() != null && !authenticatedHistoryEntity.getEndDate().equals("")  ) {
 
-                addProperties(authenticatedHistoryEntity,authenticatedHistoryResult);
+                    addProperties(authenticatedHistoryEntity, authenticatedHistoryResult);
+                }
+                else
+                {
+                    authenticatedHistoryResult.failure(WebAuthError.getShared(context).propertyMissingException("StartDate or EndDate  must not be null",
+                            "Error:"+methodName));
+                    return;
+                }
             }
             else
             {
-                authenticatedHistoryResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub or ExchangeId must not be null",
+                authenticatedHistoryResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub  must not be null",
                         "Error:"+methodName));
                 return;
-            }*/
+            }
         }
         catch (Exception e) {
             authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,

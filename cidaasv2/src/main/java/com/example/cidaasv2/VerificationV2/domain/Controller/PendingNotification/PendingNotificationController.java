@@ -45,8 +45,14 @@ public class PendingNotificationController {
 
     //--------------------------------------------PendingNotification--------------------------------------------------------------
     public void getPendingNotification(String sub,final Result<PendingNotificationResponse> pendingNotificationResult)
-    {
-        addProperties(sub,pendingNotificationResult);
+    { String methodName = "PendingNotificationController:-getPendingNotification()";
+        if(sub!=null && !sub.equals("")) {
+            addProperties(sub, pendingNotificationResult);
+        }
+        else
+        {
+            pendingNotificationResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null",methodName));
+        }
     }
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------

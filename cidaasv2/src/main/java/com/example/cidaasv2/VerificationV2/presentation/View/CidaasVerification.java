@@ -9,6 +9,8 @@ import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
@@ -24,12 +26,15 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejec
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PendingNotificationResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticateHistory.AuthenticatedHistoryController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Delete.DeleteController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Initiate.InitiateController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.PendingNotification.PendingNotificationController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAcknowledge.PushAcknowledgeController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAllow.PushAllowController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.PushRejectController;
@@ -89,13 +94,6 @@ public class CidaasVerification {
     }
 
 
-    //Set FCM Token For Update
-    public void setFCMToken(String FCMToken) {
-        //Store Device info for Later Purposes
-        DBHelper.getShared().setFCMToken(FCMToken);
-
-    }
-
     //-----------------------------------------END_OF_Common For Cidaas Instances-------------------------------------------------------------------------
 
 
@@ -153,6 +151,21 @@ public class CidaasVerification {
     public void getConfiguredMFAList(String sub,Result<ConfiguredMFAList> configuredMFAListResult)
     {
         SettingsController.getShared(context).getConfiguredMFAList(sub,configuredMFAListResult);
+    }
+
+    public void getPendingNotificationList(String sub,Result<PendingNotificationResponse> pendingNotificationResponse)
+    {
+        PendingNotificationController.getShared(context).getPendingNotification(sub,pendingNotificationResponse);
+    }
+
+    public void getAuthenticatedHistory(AuthenticatedHistoryEntity authenticatedHistoryEntity, Result<AuthenticatedHistoryResponse> authenticatedHistoryResult)
+    {
+        AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryList(authenticatedHistoryEntity,authenticatedHistoryResult);
+    }
+
+    public void updateFCMToken(String FCMToken)
+    {
+        SettingsController.getShared(context).updateFCMToken(FCMToken);
     }
 
 

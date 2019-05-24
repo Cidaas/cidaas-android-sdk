@@ -13,6 +13,8 @@ public class AuthenticatedHistoryEntity implements Serializable {
     private int skip=0;
     private int take=0;
     private String verificationType="";
+
+    //The startDate and endDate must be in ISO Format
     private String startDate="";
     private String endDate="";
 

@@ -22,7 +22,7 @@ public class VerificationURLHelper {
     String scannedURL="/verification-srv/v2/setup/scan/";
     String enrollURL="/verification-srv/v2/setup/enroll/";
 
-    String initiateURL="/verification-srv/v2/setup/enroll/";
+    String initiateURL="/verification-srv/v2/authenticate/initiate/";
 
     String pushAcknowledgeURL="/verification-srv/v2/authenticate/push_acknowledge/";
     String pushAllowURL="/verification-srv/v2/authenticate/allow/";
