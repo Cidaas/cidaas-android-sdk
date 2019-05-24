@@ -1,6 +1,5 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory;
 
-import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponseDataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,8 +11,8 @@ public class AuthenticatedHistoryResponse implements Serializable {
     private boolean success;
     private int status;
 
-    @JsonProperty("configured_list")
-    private List<AuthenticateResponseDataEntity> data;
+    @JsonProperty("data")
+    private List<AuthenticatedHistoryDataEntity> data;
 
     public boolean isSuccess() {
         return success;
@@ -31,11 +30,11 @@ public class AuthenticatedHistoryResponse implements Serializable {
         this.status = status;
     }
 
-    public List<AuthenticateResponseDataEntity> getData() {
+    public List<AuthenticatedHistoryDataEntity> getData() {
         return data;
     }
 
-    public void setData(List<AuthenticateResponseDataEntity> data) {
+    public void setData(List<AuthenticatedHistoryDataEntity> data) {
         this.data = data;
     }
 }
