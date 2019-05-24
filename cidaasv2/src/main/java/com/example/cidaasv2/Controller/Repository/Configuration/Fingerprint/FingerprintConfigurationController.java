@@ -18,8 +18,6 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
-import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
-import com.example.cidaasv2.Library.BiometricAuthentication.BiometricManager;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
@@ -34,7 +32,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerp
 import com.example.cidaasv2.Service.Repository.Verification.Fingerprint.FingerprintVerificationService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
-import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
+import com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
 
 import java.util.Dictionary;
 

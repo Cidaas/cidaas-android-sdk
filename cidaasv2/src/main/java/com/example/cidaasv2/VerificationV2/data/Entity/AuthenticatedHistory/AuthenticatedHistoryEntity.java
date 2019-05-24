@@ -15,20 +15,20 @@ public class AuthenticatedHistoryEntity implements Serializable {
     private String verificationType="";
 
     //The startDate and endDate must be in ISO Format
-    private String startDate="";
-    private String endDate="";
+    private String start_time="";
+    private String end_time="";
 
     public AuthenticatedHistoryEntity() {
     }
 
     //mandatory parameters
-    public AuthenticatedHistoryEntity(String sub, int skip, int take, String verificationType, String startDate, String endDate) {
+    public AuthenticatedHistoryEntity(String sub, int skip, int take, String verificationType, String start_time, String end_time) {
         this.sub = sub;
         this.skip = skip;
         this.take = take;
         this.verificationType = verificationType;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.start_time = start_time;
+        this.end_time = end_time;
     }
 
     public String getSub() {
@@ -63,21 +63,22 @@ public class AuthenticatedHistoryEntity implements Serializable {
         this.verificationType = verificationType;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public String getStart_time() {
+        return start_time;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setStart_time(String start_time) {
+        this.start_time = start_time;
     }
 
-    public String getEndDate() {
-        return endDate;
+    public String getEnd_time() {
+        return end_time;
     }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
     }
+
 
     public String getDevice_id() {
         return device_id;

@@ -17,7 +17,7 @@ import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
-import com.example.cidaasv2.VerificationV2.domain.BiometricHandler.BiometricHandler;
+import com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
 import com.example.cidaasv2.VerificationV2.domain.Service.Enroll.EnrollService;
 
 import java.util.Dictionary;

@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.domain.BiometricHandler;
+package com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler;
 
 import android.content.Context;
 import android.os.Build;
