@@ -8,11 +8,21 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticatedHistoryDataEntity implements Serializable {
 
+    private String _id="";
     private String sub="";
     private String status_id="";
-    private Date auth_time;
-    private PushAddressEntity address;
+    private String auth_time;
+    private LocationDetailsTrackingEntity location_details;
     private PushDeviceinfoEntity device_info;
+
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
 
     public String getSub() {
         return sub;
@@ -30,20 +40,20 @@ public class AuthenticatedHistoryDataEntity implements Serializable {
         this.status_id = status_id;
     }
 
-    public Date getAuth_time() {
+    public String getAuth_time() {
         return auth_time;
     }
 
-    public void setAuth_time(Date auth_time) {
+    public void setAuth_time(String auth_time) {
         this.auth_time = auth_time;
     }
 
-    public PushAddressEntity getAddress() {
-        return address;
+    public LocationDetailsTrackingEntity getLocation_details() {
+        return location_details;
     }
 
-    public void setAddress(PushAddressEntity address) {
-        this.address = address;
+    public void setLocation_details(LocationDetailsTrackingEntity location_details) {
+        this.location_details = location_details;
     }
 
     public PushDeviceinfoEntity getDevice_info() {
