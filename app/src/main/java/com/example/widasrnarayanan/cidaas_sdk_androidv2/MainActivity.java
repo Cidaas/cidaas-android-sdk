@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -29,6 +30,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFinge
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
@@ -155,6 +157,12 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         });
     }
 
+
+    public void getAuthInfoList(View view)
+    {
+      //  AuthenticatedHistoryEntity authenticatedHistoryEntity=new AuthenticatedHistoryEntity(sub,0,20, AuthenticationType.TOUCHID, );
+     //   CidaasVerification.getInstance(this).getAuthenticatedHistory(authenticatedHistoryEntity);
+    }
 
 
 

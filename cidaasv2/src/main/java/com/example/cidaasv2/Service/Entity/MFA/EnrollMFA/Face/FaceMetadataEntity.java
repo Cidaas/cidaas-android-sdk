@@ -34,5 +34,6 @@ public class FaceMetadataEntity implements Serializable {
     public void setNumber_images_uploaded(int number_images_uploaded) {
         this.number_images_uploaded = number_images_uploaded;
     }
+
 }
 

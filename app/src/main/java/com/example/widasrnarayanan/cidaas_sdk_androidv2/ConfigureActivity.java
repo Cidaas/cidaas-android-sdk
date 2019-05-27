@@ -357,6 +357,7 @@ public class ConfigureActivity extends AppCompatActivity {
         // CidaasVerification.getInstance(this).enroll();
 
 
+
         SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.VOICE);
 
         CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {

@@ -7,6 +7,10 @@ import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.FaceMetadataEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.MetaDataEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.VoiceMetaData;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.VoiceMetaDataEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.LinkedHashMap;
@@ -17,6 +21,10 @@ public class CommonError {
 
     public static CommonError shared;
     private Context context;
+
+    MetaDataEntity metaData;
+
+
 
     private ObjectMapper objectMapper=new ObjectMapper();
 
@@ -87,6 +95,19 @@ public class CommonError {
                 //Code
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("code")!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("code").toString().equals("")) {
                     errorEntity.setCode((int) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
+
+                    if(errorEntity.getCode()==3066)
+                    {
+                        MetaDataEntity<FaceMetadataEntity> metadataEntityMetaDataEntity=new MetaDataEntity<>();
+                         String metadata=((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString();
+                        metadataEntityMetaDataEntity=objectMapper.readValue(metadata, MetaDataEntity.class);
+                    }
+                    else if(errorEntity.getCode()==3067)
+                    {
+                        MetaDataEntity<VoiceMetaDataEntity> metadataEntityMetaDataEntity=new MetaDataEntity<>();
+                        String metadata=((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString();
+                        metadataEntityMetaDataEntity=objectMapper.readValue(metadata, MetaDataEntity.class);
+                    }
                 }
 
                 //More Info

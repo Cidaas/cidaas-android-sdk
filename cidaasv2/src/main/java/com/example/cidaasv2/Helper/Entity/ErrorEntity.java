@@ -1,5 +1,6 @@
 package com.example.cidaasv2.Helper.Entity;
 
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.MetaDataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -8,12 +9,13 @@ import java.io.Serializable;
 public class ErrorEntity implements Serializable
 {
 
-    int code;
-    String moreInfo;
-    String type;
-    int status;
-    String referenceNumber;
-    String error;
+    private int code;
+    private String moreInfo;
+    private String type;
+    private int status;
+    private String referenceNumber;
+    private  String error;
+    private MetaDataEntity metaDataEntity;
 
     public int getCode() {
         return code;
@@ -61,5 +63,13 @@ public class ErrorEntity implements Serializable
 
     public void setError(String error) {
         this.error = error;
+    }
+
+    public MetaDataEntity getMetaDataEntity() {
+        return metaDataEntity;
+    }
+
+    public void setMetaDataEntity(MetaDataEntity metaDataEntity) {
+        this.metaDataEntity = metaDataEntity;
     }
 }

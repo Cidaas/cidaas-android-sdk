@@ -101,6 +101,22 @@
         app:layout_constraintVertical_bias="0.745" />
 
     <Button
+        android:id="@+id/button50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="enrollVoice"
+        android:text="Enroll Voice"
+        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.692"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/finger" />
+
+    <Button
         android:id="@+id/button54"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
