@@ -196,7 +196,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         Toast.makeText(this, "merthpsodjsd", Toast.LENGTH_SHORT).show();
 
         FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(this,"Sample","Description");
-        BiometricHandler.getShared(this).callFingerPrint(fingerPrintEntity, "Sdsdfsdf", new Result<String>() {
+        BiometricHandler biometricHandler=new BiometricHandler(this);
+        biometricHandler.callFingerPrint(fingerPrintEntity, "Sdsdfsdf", new Result<String>() {
             @Override
             public void success(String result) {
                 Toast.makeText(MainActivity.this, "FingerSuccesss", Toast.LENGTH_SHORT).show();
@@ -204,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
             @Override
             public void failure(WebAuthError error) {
-              //  Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -612,7 +613,23 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         Cidaas.getInstance(this).setURL(urlList, new Result<String>() {
             @Override
             public void success(String result) {
+                CidaasVerification.getInstance(getApplicationContext()).getConfiguredMFAList(sub,new Result<ConfiguredMFAList>() {
+                    @Override
+                    public void success(ConfiguredMFAList result) {
+                        if(result==null)
+                        {
+                            Toast.makeText(MainActivity.this, "Empty response"+result.getData(), Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(MainActivity.this, "" + result.getData(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(MainActivity.this, "Error:-"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -621,17 +638,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             }
         });
 
-        CidaasVerification.getInstance(this).getConfiguredMFAList(sub,new Result<ConfiguredMFAList>() {
-            @Override
-            public void success(ConfiguredMFAList result) {
-                Toast.makeText(MainActivity.this, ""+result.getData(), Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, "Error:-"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
 

@@ -66,6 +66,7 @@ public class SettingsService {
                 public void onResponse(Call<ConfiguredMFAList> call, Response<ConfiguredMFAList> response) {
                     if(response.isSuccessful())
                     {
+
                         configuredMFAListResult.success(response.body());
                     }
                     else

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.logging.FileHandler;
 
 import androidx.core.content.ContextCompat;
@@ -76,21 +77,22 @@ public class LogFile {
     }
 
 
-    /*public String getTime()
+    public String getTime()
     {
         try
         {
-            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa");
-            String datetime = dateformat.format(c.getTime());
-            System.out.println(datetime);
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String formattedDate = df.format(c.getTime());
+            Timber.d(formattedDate+"Date");
 
-            return  datetime;
+            return  formattedDate;
         }
         catch (Exception e)
         {
             return "";
         }
-    }*/
+    }
 
 
 
@@ -151,7 +153,7 @@ public class LogFile {
                             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
 
 
-                            buf.write(" "+message + "\r\n"); //getTime()+
+                            buf.write(getTime()+" "+message + "\r\n");
                             buf.append(message);
                             buf.newLine();
                             buf.flush();

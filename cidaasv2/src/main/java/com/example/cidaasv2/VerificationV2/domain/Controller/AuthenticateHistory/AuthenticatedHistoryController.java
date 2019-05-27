@@ -62,6 +62,8 @@ public class AuthenticatedHistoryController {
                 if( authenticatedHistoryEntity.getStart_time() != null && !authenticatedHistoryEntity.getStart_time().equals("") &&
                         authenticatedHistoryEntity.getEnd_time() != null && !authenticatedHistoryEntity.getEnd_time().equals("")  ) {
 
+                    LogFile.getShared(context).addInfoLog(methodName,"Verification Type:"+authenticatedHistoryEntity.getVerification_type()+
+                            "Sub:"+authenticatedHistoryEntity.getSub());
                     addProperties(authenticatedHistoryEntity, authenticatedHistoryResult);
                 }
                 else

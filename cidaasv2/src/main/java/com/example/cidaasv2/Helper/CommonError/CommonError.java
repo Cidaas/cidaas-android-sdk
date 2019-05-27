@@ -85,8 +85,8 @@ public class CommonError {
                 }
 
                 //Code
-                if(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("code").toString().equals("")) {
-                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
+                if(((LinkedHashMap) commonErrorEntity.getError()).get("code")!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("code").toString().equals("")) {
+                    errorEntity.setCode((int) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
                 }
 
                 //More Info

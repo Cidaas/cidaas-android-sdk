@@ -8,19 +8,18 @@ import java.io.Serializable;
 public class ErrorEntity implements Serializable
 {
 
-    String code;
+    int code;
     String moreInfo;
     String type;
     int status;
     String referenceNumber;
     String error;
 
-
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

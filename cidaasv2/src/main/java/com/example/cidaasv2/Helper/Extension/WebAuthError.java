@@ -113,7 +113,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.statusCode= HttpStatusCode.NOT_FOUND;
         WebAuthError.shared.ErrorMessage= context.getString(R.string.FILE_NOT_FOUND);
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode+"");
+        errorEntity.setCode(errorCode);
         errorEntity.setStatus(statusCode);
         errorEntity.setError(context.getString(R.string.FILE_NOT_FOUND));
 
@@ -139,7 +139,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.DetailedErrorMessage=errorDetails;
 
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode+"");
+        errorEntity.setCode(errorCode);
         errorEntity.setStatus(statusCode);
         errorEntity.setError(context.getString(R.string.PROPERTY_MISSING));
 
@@ -160,7 +160,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.DetailedErrorMessage=errorDetails;
 
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode+"");
+        errorEntity.setCode(errorCode);
         errorEntity.setStatus(statusCode);
         errorEntity.setError(context.getString(R.string.CIDAAS_PROPERTY_MISSING));
 
@@ -182,7 +182,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
      WebAuthError.shared.DetailedErrorMessage=errorDetails;
 
      ErrorEntity errorEntity=new ErrorEntity();
-     errorEntity.setCode(errorCode+"");
+     errorEntity.setCode(errorCode);
      errorEntity.setStatus(statusCode);
      errorEntity.setError(context.getString(R.string.ACCESS_TOKEN_SERVICE_FAILURE));
 
@@ -244,7 +244,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.error=error;
 
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode+"");
+        errorEntity.setCode(errorCode);
         errorEntity.setStatus(statusCode);
         errorEntity.setError(errorMessage);
 
@@ -268,7 +268,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.statusCode= HttpStatusCode.EXPECTATION_FAILED;
         WebAuthError.shared.ErrorMessage= context.getString(R.string.UPDATE_FCM_TOKEN_FAILURE);
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode+"");
+        errorEntity.setCode(errorCode);
         errorEntity.setStatus(statusCode);
         errorEntity.setError(context.getString(R.string.UPDATE_FCM_TOKEN_FAILURE));
 
@@ -406,7 +406,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.ErrorMessage=context.getString(R.string.DEVICE_VERIFICATION_FAILURE);
 
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE+"");
+        errorEntity.setCode(WebAuthErrorCode.DEVICE_VERIFICATION_FAILURE);
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.DEVICE_VERIFICATION_FAILURE));
 
@@ -426,7 +426,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.ErrorMessage=errorMessage;
 
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode+"");
+        errorEntity.setCode(errorCode);
         errorEntity.setStatus(statusCode);
         errorEntity.setError(errorMessage);
 
@@ -460,7 +460,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.ErrorMessage=errorMessage;
 
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode+"");
+        errorEntity.setCode(errorCode);
         errorEntity.setStatus(statusCode);
         errorEntity.setError(errorMessage);
 

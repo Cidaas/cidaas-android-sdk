@@ -77,7 +77,8 @@ public class BiometricManager extends BiometricManagerV23 {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             displayBiometricPromptV23Manger(biometricCallback);
         } else {
-            displayBiometricPromptV23(biometricCallback);
+            //displayBiometricPrompt(biometricCallback);
+            displayBiometricPromptV23Manger(biometricCallback);
         }
 
     }

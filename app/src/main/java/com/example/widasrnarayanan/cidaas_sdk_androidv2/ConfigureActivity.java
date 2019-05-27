@@ -18,6 +18,8 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushNotificationEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
@@ -26,6 +28,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
@@ -38,14 +41,21 @@ import timber.log.Timber;
 
 public class ConfigureActivity extends AppCompatActivity {
 
-    PushNotificationEntity pushNotificationEntity;
+    PushEntity pushNotificationEntity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure);
 
-        if ((getIntent() != null) && (getIntent().getSerializableExtra("NotificationData") == null)) {
-            pushNotificationEntity = (PushNotificationEntity) getIntent().getSerializableExtra("NotificationData");
+        if ((getIntent() != null) && (getIntent().getSerializableExtra("NotificationData") != null)) {
+            pushNotificationEntity = (PushEntity) getIntent().getSerializableExtra("NotificationData");
+        }
+
+
+        if(pushNotificationEntity!=null) {
+            if (pushNotificationEntity.getVerification_type().equals(AuthenticationType.TOUCHID)) {
+
+            }
         }
     }
 
@@ -276,6 +286,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
                             @Override
                             public void failure(WebAuthError error) {
+                                error.getErrorEntity().getCode();
                                 Toast.makeText(ConfigureActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -417,5 +428,38 @@ public class ConfigureActivity extends AppCompatActivity {
 
 
     }
+
+    public void authenticateFinger(View view)
+    {
+        callTouchID();
+
+    }
+
+
+    public void callTouchID()
+    {
+        FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(this);
+        fingerPrintEntity.setTitle("This is Authenticateion");
+        fingerPrintEntity.setSubtitle("Subtitle");
+
+        AuthenticateEntity authenticateEntity=new AuthenticateEntity();
+        authenticateEntity.setVerificationType(pushNotificationEntity.getVerification_type());
+        authenticateEntity.setExchange_id(pushNotificationEntity.getExchange_id().getExchange_id());
+        authenticateEntity.setFingerPrintEntity(fingerPrintEntity);
+        CidaasVerification.getInstance(this).authenticate(authenticateEntity, new Result<AuthenticateResponse>() {
+            @Override
+            public void success(AuthenticateResponse result) {
+                Toast.makeText(ConfigureActivity.this, "Success Authentication"+result.getData().getSub(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
 
 }

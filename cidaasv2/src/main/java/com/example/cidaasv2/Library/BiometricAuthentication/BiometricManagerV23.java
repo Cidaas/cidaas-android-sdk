@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
+import android.os.CancellationSignal;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
@@ -32,7 +33,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
-import androidx.core.os.CancellationSignal;
+
 
 
 @TargetApi(Build.VERSION_CODES.M)
@@ -63,7 +64,7 @@ public class BiometricManagerV23 {
     AlertDialog alertDialog;
 
 CancellationSignal cancellationSignal;
-    public void displayBiometricPromptV23(final BiometricCallback biometricCallback) {
+   /* public void displayBiometricPromptV23(final BiometricCallback biometricCallback) {
         generateKey();
 
         if(initCipher()) {
@@ -110,7 +111,7 @@ CancellationSignal cancellationSignal;
 
             displayBiometricDialog(biometricCallback);
         }
-    }
+    }*/
 
 
     public void displayBiometricPromptV23Manger(final BiometricCallback biometricCallback) {
@@ -118,11 +119,12 @@ CancellationSignal cancellationSignal;
 
         if(initCipher()) {
 
+            cancellationSignal=new CancellationSignal();
             cryptoObjectManger = new FingerprintManager.CryptoObject(cipher);
 
             FingerprintManager fingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
 
-            fingerprintManager.authenticate(cryptoObjectManger, new android.os.CancellationSignal(), 0, new FingerprintManager.AuthenticationCallback() {
+            fingerprintManager.authenticate(cryptoObjectManger, cancellationSignal, 0, new FingerprintManager.AuthenticationCallback() {
                 @Override
                 public void onAuthenticationError(int errorCode, CharSequence errString) {
                     super.onAuthenticationError(errorCode, errString);
