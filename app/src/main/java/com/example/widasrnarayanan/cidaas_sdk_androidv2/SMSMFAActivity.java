@@ -51,7 +51,7 @@ public class SMSMFAActivity extends AppCompatActivity {
                      resumeLoginRequestEntity.setSub(authresult.getData().getSub());
                     resumeLoginRequestEntity.setTrack_id(trackid);
                     resumeLoginRequestEntity.setTrackingCode(authresult.getData().getTrackingCode());
-                    resumeLoginRequestEntity.setVerificationType("SMS");
+                    resumeLoginRequestEntity.setVerification_type("SMS");
                     resumeLoginRequestEntity.setUsageType("PASSWORDLESS_AUTHENTICATION");
                     cidaas.resumeLogin(resumeLoginRequestEntity, new Result<AccessTokenEntity>() {
                         @Override

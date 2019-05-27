@@ -107,7 +107,7 @@ trackid=intent.getStringExtra("trackid");
                     resumeLoginRequestEntity.setSub(result.getData().getSub());
                     resumeLoginRequestEntity.setTrack_id(trackid);
                     resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                    resumeLoginRequestEntity.setVerificationType("SMS");
+                    resumeLoginRequestEntity.setVerification_type("SMS");
                     resumeLoginRequestEntity.setUsageType("PASSWORDLESS_AUTHENTICATION");
                     cidaas.resumeLogin(resumeLoginRequestEntity, new Result<AccessTokenEntity>() {
                         @Override

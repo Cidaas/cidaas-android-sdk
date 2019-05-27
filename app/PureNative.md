@@ -627,11 +627,11 @@ To get the List of physical verifications configured by the user, call ****getMF
     "status": 200,
     "data":[  {
       "_id": "0fd78d48-f825-487f-823b-c71f05ced944",
-      "verificationType": "PATTERN"
+      "verification_type": "PATTERN"
     },
      {
       "_id": "184ec81d-5bb3-466f-b10a-351f36b31fc4",
-      "verificationType": "PUSH"
+      "verification_type": "PUSH"
     }]
 }
 ```

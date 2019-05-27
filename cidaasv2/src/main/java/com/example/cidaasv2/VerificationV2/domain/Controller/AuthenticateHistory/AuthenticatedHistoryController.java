@@ -56,7 +56,7 @@ public class AuthenticatedHistoryController {
     {
         String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
         try {
-            if (authenticatedHistoryEntity.getVerificationType() != null && !authenticatedHistoryEntity.getVerificationType().equals("") &&
+            if (authenticatedHistoryEntity.getVerification_type() != null && !authenticatedHistoryEntity.getVerification_type().equals("") &&
                     authenticatedHistoryEntity.getSub() != null && !authenticatedHistoryEntity.getSub().equals("")
                     ) {
                 if( authenticatedHistoryEntity.getStart_time() != null && !authenticatedHistoryEntity.getStart_time().equals("") &&
