@@ -1,11 +1,12 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Enroll;
 
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.FaceMetadataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MetaDataEntity<T> implements Serializable {
+public class FaceMetaData implements Serializable {
 
     private String sub="";
     private String trackingCode="";
@@ -13,7 +14,7 @@ public class MetaDataEntity<T> implements Serializable {
     private String usageType="";
     private Boolean enrolled=null;
 
-    T meta;
+    FaceMetadataEntity meta;
 
     public String getSub() {
         return sub;
@@ -55,11 +56,11 @@ public class MetaDataEntity<T> implements Serializable {
         this.enrolled = enrolled;
     }
 
-    public T getMeta() {
+    public FaceMetadataEntity getMeta() {
         return meta;
     }
 
-    public void setMeta(T meta) {
+    public void setMeta(FaceMetadataEntity meta) {
         this.meta = meta;
     }
 }

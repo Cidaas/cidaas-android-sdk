@@ -6,12 +6,14 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommonErrorEntity implements Serializable{
+
     private boolean success;
     private int status;
     private ErrorEntity errorEntity;
     private Object Error;
     private String refnumber;
     private String error_description;
+
 
 
     public ErrorEntity getErrorEntity() {

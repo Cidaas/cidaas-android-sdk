@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Helper.Entity;
 
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.MetaDataEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.FaceMetaData;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.VoiceMetaData;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -15,7 +16,8 @@ public class ErrorEntity implements Serializable
     private int status;
     private String referenceNumber;
     private  String error;
-    private MetaDataEntity metaDataEntity;
+    private FaceMetaData faceMetaData;
+    private VoiceMetaData voiceMetaData;
 
     public int getCode() {
         return code;
@@ -65,11 +67,19 @@ public class ErrorEntity implements Serializable
         this.error = error;
     }
 
-    public MetaDataEntity getMetaDataEntity() {
-        return metaDataEntity;
+    public FaceMetaData getFaceMetaData() {
+        return faceMetaData;
     }
 
-    public void setMetaDataEntity(MetaDataEntity metaDataEntity) {
-        this.metaDataEntity = metaDataEntity;
+    public void setFaceMetaData(FaceMetaData faceMetaData) {
+        this.faceMetaData = faceMetaData;
+    }
+
+    public VoiceMetaData getVoiceMetaData() {
+        return voiceMetaData;
+    }
+
+    public void setVoiceMetaData(VoiceMetaData voiceMetaData) {
+        this.voiceMetaData = voiceMetaData;
     }
 }
