@@ -16,8 +16,8 @@ public class ErrorEntity implements Serializable
     private int status;
     private String referenceNumber;
     private  String error;
-    private FaceMetaData faceMetaData;
-    private VoiceMetaData voiceMetaData;
+    private FaceMetaData metadata;
+
 
     public int getCode() {
         return code;
@@ -67,19 +67,11 @@ public class ErrorEntity implements Serializable
         this.error = error;
     }
 
-    public FaceMetaData getFaceMetaData() {
-        return faceMetaData;
+    public FaceMetaData getMetadata() {
+        return metadata;
     }
 
-    public void setFaceMetaData(FaceMetaData faceMetaData) {
-        this.faceMetaData = faceMetaData;
-    }
-
-    public VoiceMetaData getVoiceMetaData() {
-        return voiceMetaData;
-    }
-
-    public void setVoiceMetaData(VoiceMetaData voiceMetaData) {
-        this.voiceMetaData = voiceMetaData;
+    public void setMetadata(FaceMetaData metadata) {
+        this.metadata = metadata;
     }
 }

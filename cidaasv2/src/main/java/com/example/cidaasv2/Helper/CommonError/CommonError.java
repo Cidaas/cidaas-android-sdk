@@ -93,21 +93,25 @@ public class CommonError {
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("code")!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("code").toString().equals("")) {
                     errorEntity.setCode((int) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
 
-                    String metadata=((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString();
+              /*      String metadata=((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString();
+
+                    FaceMetaData faceMetaData =new FaceMetaData();
+
+                    faceMetaData =objectMapper.readValue(metadata, FaceMetaData.class);
+
+                    errorEntity.setMetadata(faceMetaData);*/
+
+                   /*
                     if(errorEntity.getCode()==3066)
                     {
-                        FaceMetaData faceMetaData =new FaceMetaData();
 
-                        faceMetaData =objectMapper.readValue(metadata, FaceMetaData.class);
-
-                        errorEntity.setFaceMetaData(faceMetaData);
                     }
                     else if(errorEntity.getCode()==3067)
                     {
                         VoiceMetaData voiceMetaData=new VoiceMetaData();
                         voiceMetaData=objectMapper.readValue(metadata, VoiceMetaData.class);
                         errorEntity.setVoiceMetaData(voiceMetaData);
-                    }
+                    }*/
                 }
 
                 //More Info
@@ -129,6 +133,11 @@ public class CommonError {
                 //Type
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("type").toString().equals("")) {
                     errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
+                }
+
+                //metaData
+                if(((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString().equals("")) {
+                    errorEntity.setMetadata((FaceMetaData) ((LinkedHashMap) commonErrorEntity.getError()).get("metadata"));
                 }
 
             }
