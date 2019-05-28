@@ -66,25 +66,25 @@ public class CommonError {
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
 
-            String errorMessage = "";
+          /*  String errorMessage = "";
 
-            ErrorEntity errorEntity = new ErrorEntity();
+            ErrorEntity errorEntity = new ErrorEntity();*/
 
-            if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
+          /*  if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("")
                     && commonErrorEntity.getError() instanceof String ) {
                 errorMessage = commonErrorEntity.getError().toString();
             }
 
             else if(commonErrorEntity.getError() instanceof Integer){
                 errorMessage=commonErrorEntity.getError_description();
-            }
-            else {
+            }*/
+          //  else {
 
                 //Handle For null using 500 internal servier error by
 
                 //Error is integer
                 //Error Message
-                if(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("error").toString().equals("")) {
+               /* if(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("error").toString().equals("")) {
                     errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
                     errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
                 }
@@ -93,15 +93,15 @@ public class CommonError {
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("code")!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("code").toString().equals("")) {
                     errorEntity.setCode((int) ((LinkedHashMap) commonErrorEntity.getError()).get("code"));
 
-              /*      String metadata=((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString();
+              *//*      String metadata=((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString();
 
                     FaceMetaData faceMetaData =new FaceMetaData();
 
                     faceMetaData =objectMapper.readValue(metadata, FaceMetaData.class);
 
-                    errorEntity.setMetadata(faceMetaData);*/
+                    errorEntity.setMetadata(faceMetaData);*//*
 
-                   /*
+                   *//*
                     if(errorEntity.getCode()==3066)
                     {
 
@@ -111,7 +111,7 @@ public class CommonError {
                         VoiceMetaData voiceMetaData=new VoiceMetaData();
                         voiceMetaData=objectMapper.readValue(metadata, VoiceMetaData.class);
                         errorEntity.setVoiceMetaData(voiceMetaData);
-                    }*/
+                    }*//*
                 }
 
                 //More Info
@@ -139,15 +139,15 @@ public class CommonError {
                 if(((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString()!=null && !((LinkedHashMap) commonErrorEntity.getError()).get("metadata").toString().equals("")) {
                     errorEntity.setMetadata((FaceMetaData) ((LinkedHashMap) commonErrorEntity.getError()).get("metadata"));
                 }
-
-            }
+*/
+          //  }
 
             LogFile.getShared(context).addFailureLog("Exception:- WebAuthErrorCode: "+webAuthErrorCode+"Response Message:-" + response.message()+
-                    " ErrorCode:- "+errorEntity.getCode()+ "error message:-" + errorMessage);
+                    " ErrorCode:- "+commonErrorEntity.getError().getCode()+ "error message:-" + commonErrorEntity.getError().getError());
 
 
-            return  WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, errorMessage, commonErrorEntity.getStatus(),
-                    errorEntity,errorResponse,methodName);
+            return  WebAuthError.getShared(context).serviceCallException(webAuthErrorCode,  commonErrorEntity.getError().getError(), commonErrorEntity.getStatus(),
+                    commonErrorEntity.getError(),errorResponse,methodName);
 
         }
         catch (Exception e) {

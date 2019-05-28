@@ -9,20 +9,20 @@ public class CommonErrorEntity implements Serializable{
 
     private boolean success;
     private int status;
-    private ErrorEntity errorEntity;
-    private Object Error;
+    private ErrorEntity Error;
+  //  private Object Error;
     private String refnumber;
     private String error_description;
 
 
 
-    public ErrorEntity getErrorEntity() {
+  /*  public ErrorEntity getErrorEntity() {
         return errorEntity;
     }
 
     public void setErrorEntity(ErrorEntity errorEntity) {
         this.errorEntity = errorEntity;
-    }
+    }*/
 
     public String getError_description() {
         return error_description;
@@ -56,13 +56,21 @@ public class CommonErrorEntity implements Serializable{
         this.status = status;
     }
 
-    public Object getError() {
+    /*public Object getError() {
         return Error;
     }
 
 
 
     public void setError(Object error) {
+        Error = error;
+    }*/
+
+    public ErrorEntity getError() {
+        return Error;
+    }
+
+    public void setError(ErrorEntity error) {
         Error = error;
     }
 }

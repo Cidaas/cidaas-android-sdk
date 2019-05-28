@@ -158,11 +158,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     }
 
 
-    public void getAuthInfoList(View view)
-    {
-      //  AuthenticatedHistoryEntity authenticatedHistoryEntity=new AuthenticatedHistoryEntity(sub,0,20, AuthenticationType.TOUCHID, );
-     //   CidaasVerification.getInstance(this).getAuthenticatedHistory(authenticatedHistoryEntity);
-    }
+
+
 
 
 
