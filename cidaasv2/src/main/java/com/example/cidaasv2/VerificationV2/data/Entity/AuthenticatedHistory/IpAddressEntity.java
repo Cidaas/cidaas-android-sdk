@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class IpAddressEntity implements Serializable {
     String ipAddress="";
     String type="";
-    LocationEntity locationEntity;
+    LocationEntity location;
 
     public String getIpAddress() {
         return ipAddress;
@@ -26,11 +26,11 @@ public class IpAddressEntity implements Serializable {
         this.type = type;
     }
 
-    public LocationEntity getLocationEntity() {
-        return locationEntity;
+    public LocationEntity getLocation() {
+        return location;
     }
 
-    public void setLocationEntity(LocationEntity locationEntity) {
-        this.locationEntity = locationEntity;
+    public void setLocation(LocationEntity location) {
+        this.location = location;
     }
 }
