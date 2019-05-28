@@ -13,7 +13,7 @@ public class AuthenticatedHistoryDataEntity implements Serializable {
     private String status_id="";
     private String auth_time;
     private LocationDetailsTrackingEntity location_details;
-    private PushDeviceinfoEntity device_info;
+    private PushDeviceInformation device_info;
 
 
     public String get_id() {
@@ -56,11 +56,11 @@ public class AuthenticatedHistoryDataEntity implements Serializable {
         this.location_details = location_details;
     }
 
-    public PushDeviceinfoEntity getDevice_info() {
+    public PushDeviceInformation getDevice_info() {
         return device_info;
     }
 
-    public void setDevice_info(PushDeviceinfoEntity device_info) {
+    public void setDevice_info(PushDeviceInformation device_info) {
         this.device_info = device_info;
     }
 }

@@ -9,9 +9,9 @@ public class PushDeviceinfoEntity implements Serializable {
     private String ipAddress="";
     private OsEntity os;
     private EngineEntity engine;
-    private String deviceMake;
-    private String deviceModel;
-    private String userAgent;
+    private String deviceMake="";
+    private String deviceModel="";
+    private String userAgent="";
     private BrowserEntity browser;
 
     private String lat="";

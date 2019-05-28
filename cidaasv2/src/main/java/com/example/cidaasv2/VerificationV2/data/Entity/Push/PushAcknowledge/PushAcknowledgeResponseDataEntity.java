@@ -1,7 +1,7 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.LocationEntity;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushDeviceinfoEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.PushDeviceInformation;
 import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId.ExchangeIDEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

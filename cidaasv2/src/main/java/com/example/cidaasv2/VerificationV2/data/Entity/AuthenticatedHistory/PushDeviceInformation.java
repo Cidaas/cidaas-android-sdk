@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge;
+package com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushDeviceinfoEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

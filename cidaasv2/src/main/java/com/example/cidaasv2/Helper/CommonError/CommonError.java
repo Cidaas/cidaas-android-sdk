@@ -3,15 +3,10 @@ package com.example.cidaasv2.Helper.CommonError;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.FaceMetaData;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.VoiceMetaData;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.LinkedHashMap;
 
 import retrofit2.Response;
 
