@@ -92,6 +92,7 @@ public class DeleteController {
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
                     deleteEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
                     deleteEntity.setClient_id(clientId);
+                    deleteEntity.setDevice_id(deviceInfoEntity.getDeviceId());
 
                     //call delete call
                     callDelete(baseurl,deleteEntity,deleteResult);

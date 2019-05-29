@@ -9,6 +9,7 @@ public class DeleteEntity implements Serializable {
     private String sub;
     private String client_id;
     private String push_id;
+    private String device_id="";
     private String verificationType;
 
 
@@ -42,6 +43,14 @@ public class DeleteEntity implements Serializable {
 
     public void setVerificationType(String verificationType) {
         this.verificationType = verificationType;
+    }
+
+    public String getDevice_id() {
+        return device_id;
+    }
+
+    public void setDevice_id(String device_id) {
+        this.device_id = device_id;
     }
 
     //For Delete User by Sub and verification Type
