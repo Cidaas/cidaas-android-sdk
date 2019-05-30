@@ -212,8 +212,8 @@ CancellationSignal cancellationSignal;
                 if(cancellationSignal != null && !cancellationSignal.isCanceled()){
                     cancellationSignal.cancel();
                 }
-                biometricCallback.onAuthenticationCancelled();
-                return;
+             /*   biometricCallback.onAuthenticationCancelled();
+                return;*/
             }
         });
 
