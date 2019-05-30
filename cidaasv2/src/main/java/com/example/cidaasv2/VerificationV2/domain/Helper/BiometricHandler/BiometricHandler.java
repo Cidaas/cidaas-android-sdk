@@ -24,17 +24,7 @@ public class BiometricHandler {
     }
 
 
-    public static BiometricHandler getShared(Context contextFromCidaas) {
-        try {
 
-            if (shared == null) {
-                shared = new BiometricHandler(contextFromCidaas);
-            }
-        } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("BiometricHandler instance Creation Exception:-" + e.getMessage());
-        }
-        return shared;
-    }
 
 
 
