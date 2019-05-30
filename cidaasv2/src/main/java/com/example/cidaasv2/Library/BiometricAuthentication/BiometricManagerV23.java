@@ -213,6 +213,7 @@ CancellationSignal cancellationSignal;
                     cancellationSignal.cancel();
                 }
                 biometricCallback.onAuthenticationCancelled();
+                return;
             }
         });
 

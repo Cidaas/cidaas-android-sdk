@@ -19,7 +19,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ConfigureActivity"></activity>
+        <activity
+            android:name=".StartingPage"
+            android:label="@string/title_activity_starting_page"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ConfigureActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

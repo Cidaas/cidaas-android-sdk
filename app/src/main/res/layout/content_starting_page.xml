@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FirstActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/textbuttonrelative"
+        android:background="@color/colorBackground"
+        android:layout_alignParentStart="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/content_header_cardTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="4dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="4dp"
+            android:fontFamily="cursive"
+            android:gravity="center"
+            android:padding="3dp"
+            android:text="CID-KART"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+
+        <Button
+            android:id="@+id/loginbuttoninActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+
+            android:backgroundTint="@color/colorPrimary"
+            android:elevation="50dp"
+            android:onClick="moveToMainActivity"
+            android:textColor="@color/colorWhite"
+            android:text="login" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/recycleCartrelative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textbuttonrelative"
+        >
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleCart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </RelativeLayout>
+
+</RelativeLayout>
