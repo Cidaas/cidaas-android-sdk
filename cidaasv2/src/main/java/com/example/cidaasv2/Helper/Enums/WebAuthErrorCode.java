@@ -27,19 +27,19 @@ public class WebAuthErrorCode {
   public static final int EMPTY_CALLBACK = 10015;
   public static final int NO_USER_FOUND = 10016;
   public static final int REFRESH_TOKEN_SERVICE_FAILURE = 10017;
-  public static final int ACCESS_TOKEN_CONVERSION_FAILURE = 10193;
-    public static final int SET_ACCESS_TOKEN = 10194;
+  public static final int ACCESS_TOKEN_CONVERSION_FAILURE = 10200;
+    public static final int SET_ACCESS_TOKEN = 10201;
 
   //Basic calls
     public  static  final  int EMPTY_TENANT_INFO_SERVICE=10018;
     public  static  final  int EMPTY_CLIENT_INFO_SERVICE=10019;
   public static final int TENANT_INFO_FAILURE = 10020;
   public static final int CLIENT_INFO_FAILURE = 10021;
-  public static final int REQUEST_ID_MISSING = 10020;
+  public static final int REQUEST_ID_MISSING = 10022;
 
-    public  static  final  int EMPTY_LOGIN_WITH_CREDENTIALS_FAILURE=10018;
-  public static final int LOGINWITH_CREDENTIALS_FAILURE = 10021;
-  public static final int REGISTRATION_SETUP_FAILURE = 10022;
+    public  static  final  int EMPTY_LOGIN_WITH_CREDENTIALS_FAILURE=10218;
+  public static final int LOGINWITH_CREDENTIALS_FAILURE = 10221;
+  public static final int REGISTRATION_SETUP_FAILURE = 10222;
 
 
 

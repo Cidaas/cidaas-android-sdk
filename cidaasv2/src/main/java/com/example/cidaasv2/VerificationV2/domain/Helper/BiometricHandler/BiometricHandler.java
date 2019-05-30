@@ -120,10 +120,15 @@ public class BiometricHandler {
 
                             @Override
                             public void onAuthenticationError(int errorCode, CharSequence errString) {
-
-                                String errorMessage = errString.toString();
-                                result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage,methodName));
-                                return;
+                                if(errorCode==5)
+                                {
+                                    onAuthenticationCancelled();
+                                }
+                                else {
+                                    String errorMessage = errString.toString();
+                                    result.failure(WebAuthError.getShared(context).fingerPrintError(errorCode, errorMessage, methodName));
+                                    return;
+                                }
                             }
                         });
             }
@@ -137,15 +142,18 @@ public class BiometricHandler {
         }
         catch (Exception e)
         {
-            result.failure( WebAuthError.getShared(context).methodException("Exception :BiometricHandler :callFingerPrint()",
-                    WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,e.getMessage()));
 
-            if(e.getMessage().equals("Unable to add window -- token null is not valid; is your activity running?"))
+
+            if(e.getMessage().contains("Unable to add window") || e.getMessage().contains("is your activity running?"))
             {
                 result.failure( WebAuthError.getShared(context).methodException("Exception :BiometricHandler :callFingerPrint()",
                         WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,"Please ensure you pass the current running activity context"));
+                return;
             }
-return;
+            result.failure( WebAuthError.getShared(context).methodException("Exception :BiometricHandler :callFingerPrint()",
+                    WebAuthErrorCode.FINGERPRINT_AUTHENTICATION_FAILED,e.getMessage()));
+            return;
+
         }
 
     }
