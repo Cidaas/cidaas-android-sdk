@@ -131,9 +131,17 @@ CancellationSignal cancellationSignal;
                     if(errorCode!=5) {
                         updateStatus(String.valueOf(errString));
                     }
+                    else {
 
-                    biometricCallback.onAuthenticationError(errorCode, errString);
-                    return;
+                        if (errorCode==5)
+                        {
+                            biometricCallback.onAuthenticationCancelled();
+                            return;
+                        }
+
+                            biometricCallback.onAuthenticationError(errorCode, errString);
+                        return;
+                    }
                 }
 
                 @Override
