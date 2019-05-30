@@ -66,6 +66,8 @@ public class CidaasHelper {
         deviceInfoEntity.setDeviceVersion(String.valueOf(Build.VERSION.RELEASE));
         deviceInfoEntity.setDeviceMake(Build.MANUFACTURER);
 
+
+
         if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
             deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
         }
