@@ -169,8 +169,6 @@ public class Cidaas implements IOAuthWebLogin {
     public static final String FIDO_VERSION = "U2F_V2";
 
     public WebAuthError webAuthError = null;
-
-
     public static String logoURLlocal="https://cdn.shortpixel.ai/client/q_glossy,ret_img/https://www.cidaas.com/wp-content/uploads/2018/02/logo.png";
 
 
