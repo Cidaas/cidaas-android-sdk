@@ -82,10 +82,10 @@ public class CidaasSDK_V2_Service {
 
     private String createCustomUserAgent(Request originalRequest) {
         // App name can be also retrieved programmatically, but no need to do it for this sample needs
-        String ua = CidaasHelper.APP_NAME;
+        String ua = "Cidaas-"+CidaasHelper.APP_NAME;
         String baseUa = System.getProperty("http.agent");
         if (baseUa != null) {
-            ua = ua + "/" + CidaasHelper.APP_VERSION+"("+ BuildConfig.VERSION_NAME+")"+ " " + baseUa;
+            ua = ua + "/" + CidaasHelper.APP_VERSION+"_"+ BuildConfig.VERSION_NAME+" " + baseUa;
         }
         return ua;
     }
