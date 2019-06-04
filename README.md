@@ -25,6 +25,7 @@ The steps here will guide you through setting up and managing authentication and
         <!--te-->
     *  [Embedded Browser Login](#embedded-browser-login)
     * [Native UI Integration](/app/PureNative.md)
+    * [Verification v2](#Verification-V2)
     <!--te-->
 
 ## Requirements
@@ -199,7 +200,32 @@ You can use embedded browser to login with cidaas , For this do the following st
        //Your Failure Code
    }
   }); 
+```
  
- ```
- 
- 
+ ### Verification-V2
+There two type of verification flow 
+ 	1. Login in app
+	2. Login in web
+	
+1.Login in App	
+	
+2.Login in Web
+
+To Login in Web you have to scan a qrcode. After getting detail from that you have to get scanned method
+
+
+```
+ScannedEntity scannedEntity=new ScannedEntity();
+CidaasVerification.getInstance(this).scanned(scannedEntity, new Result<ScannedResponse>() {
+	@Override
+	public void success(ScannedResponse result) {
+                
+        }
+
+        @Override
+        public void failure(WebAuthError error) {
+
+        }
+  });
+```
+
