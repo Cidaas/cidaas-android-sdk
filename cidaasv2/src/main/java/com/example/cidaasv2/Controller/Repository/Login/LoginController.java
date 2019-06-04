@@ -584,12 +584,10 @@ public class LoginController {
     }
 
     public void setURL(@NonNull final Dictionary<String, String> loginproperties,Result<String> result)
-    {String methodName="LoginController:setURL";
+    {String methodName="LoginController:setURL()";
         try
         {
             if(loginproperties!=null) {
-
-                Cidaas.baseurl=loginproperties.get("DomainURL");
 
 
                 if(loginproperties.get("userDeviceId")!=null && !loginproperties.get("userDeviceId").equals("")) {
@@ -599,7 +597,9 @@ public class LoginController {
 
 
                 if( DBHelper.getShared().addLoginProperties(loginproperties)) {
+                    Cidaas.baseurl=loginproperties.get("DomainURL");
                     result.success("SetURL is Successfully configured ");
+                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured "+loginproperties.get("DomainURL"));
                 }
                 else
                 {

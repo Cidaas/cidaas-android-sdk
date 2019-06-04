@@ -54,11 +54,13 @@ public class SettingsService {
 
 
     //call Settings Service
-    public void getConfigurationList(@NonNull String settingsURL, Map<String, String> headers, GetMFAListEntity getMFAListEntity,
+    public void getConfigurationList(@NonNull String settingsURL, Map<String, String> headers, final GetMFAListEntity getMFAListEntity,
                                      final Result<ConfiguredMFAList> configuredMFAListResult)
     {
         final String methodName = "SettingsService:-getConfigurationList()";
         try {
+
+            LogFile.getShared(context).addInfoLog(methodName,getMFAListEntity.getSub());
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.getConfiguredMFAList(settingsURL, headers, getMFAListEntity).enqueue(new Callback<ConfiguredMFAList>() {
@@ -67,7 +69,8 @@ public class SettingsService {
                     if(response.isSuccessful())
                     {
 
-                        LogFile.getShared(context).addSuccessLog(methodName,response.toString());
+                        LogFile.getShared(context).addSuccessLog(methodName,response.toString()+"Sub:-"+getMFAListEntity.getSub()
+                        );
                        if(response.code()==200) {
                            configuredMFAListResult.success(response.body());
                        }
