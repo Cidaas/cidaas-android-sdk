@@ -615,7 +615,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         urlList.put("ClientId","4d1ce9b6-7b1d-4c97-b4f6-118d00ce3d68");
         urlList.put("RedirectURL","cidaasdemo://nightlybuild.cidaas.de/ios/com.cidaas.sdk.demo/callback");
 
-        Cidaas.getInstance(this).setURL(urlList, new Result<String>() {
+        CidaasVerification.getInstance(this).setURL(urlList, new Result<String>() {
             @Override
             public void success(String result) {
                 CidaasVerification.getInstance(getApplicationContext()).getConfiguredMFAList(sub,new Result<ConfiguredMFAList>() {

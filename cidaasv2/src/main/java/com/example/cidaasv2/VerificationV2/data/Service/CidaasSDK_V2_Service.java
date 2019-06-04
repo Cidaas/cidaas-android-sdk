@@ -32,7 +32,7 @@ public class CidaasSDK_V2_Service {
     public ICidaasSDK_V2_Services getInstance()
     {
 
-        String baseurl= Cidaas.baseurl;
+        String baseurl= CidaasHelper.baseurl;
 
         if(baseurl==null || baseurl.equals(""))
         {
@@ -58,7 +58,7 @@ public class CidaasSDK_V2_Service {
 
                                 .build();
                         for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
-                            Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
+                          //  Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                             DBHelper.getShared().setUserAgent("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                         }
 

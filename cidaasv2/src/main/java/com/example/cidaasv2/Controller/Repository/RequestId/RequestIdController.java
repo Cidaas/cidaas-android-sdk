@@ -9,6 +9,7 @@ import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
@@ -98,7 +99,7 @@ public class RequestIdController {
                 generateChallenge();
             }
             //TODO Service call
-            Cidaas.baseurl = loginproperties.get("DomainURL");
+            CidaasHelper.baseurl = loginproperties.get("DomainURL");
 
             DBHelper.getShared().addLoginProperties(loginproperties);
 

@@ -8,6 +8,7 @@ import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
@@ -61,7 +62,7 @@ public class ClientController {
     {
        final String methodName="Client Controller :getClientInfo() without requestId";
         try{
-            if(Cidaas.baseurl!=null && !Cidaas.baseurl.equals("")) {
+            if(CidaasHelper.baseurl!=null && !CidaasHelper.baseurl.equals("")) {
 
                 CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override
@@ -125,7 +126,7 @@ public class ClientController {
         final String methodName="Client Controller :getClientInfo()";
         try{
             LogFile.getShared(context).addInfoLog("Info "+methodName, " Info requestId:-"+requestId);
-            if(Cidaas.baseurl!=null && !Cidaas.baseurl.equals("") && requestId != null && !requestId.equals("")) {
+            if(CidaasHelper.baseurl!=null && !CidaasHelper.baseurl.equals("") && requestId != null && !requestId.equals("")) {
 
                 CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override

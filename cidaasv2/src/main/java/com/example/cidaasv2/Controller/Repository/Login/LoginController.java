@@ -12,6 +12,7 @@ import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
@@ -555,7 +556,7 @@ public class LoginController {
                     }
 
 
-                    LoginController.getShared(context).getLoginURL(Cidaas.baseurl,result,null, new Result<String>() {
+                    LoginController.getShared(context).getLoginURL(CidaasHelper.baseurl,result,null, new Result<String>() {
                         @Override
                         public void success(String result) {
 
@@ -590,14 +591,9 @@ public class LoginController {
             if(loginproperties!=null) {
 
 
-                if(loginproperties.get("userDeviceId")!=null && !loginproperties.get("userDeviceId").equals("")) {
-                    String userDeviceId = loginproperties.get("userDeviceId");
-                    DBHelper.getShared().setUserDeviceId(userDeviceId, Cidaas.baseurl);
-                }
-
-
                 if( DBHelper.getShared().addLoginProperties(loginproperties)) {
-                    Cidaas.baseurl=loginproperties.get("DomainURL");
+                    CidaasHelper.baseurl=loginproperties.get("DomainURL");
+                    CidaasHelper.IS_SETURL_CALLED=true;
                     result.success("SetURL is Successfully configured ");
                     LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured "+loginproperties.get("DomainURL"));
                 }

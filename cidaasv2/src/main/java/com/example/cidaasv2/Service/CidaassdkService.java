@@ -37,7 +37,7 @@ public class CidaassdkService {
     public ICidaasSDKService getInstance()
     {
 
-        String baseurl= Cidaas.baseurl;
+        String baseurl= CidaasHelper.baseurl;
 
         if(baseurl==null || baseurl.equals(""))
         {

@@ -207,7 +207,7 @@ public class FileHelper {
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
 
 
-                Cidaas.baseurl=DomainUrl;
+                CidaasHelper.baseurl=DomainUrl;
 
                 //Disable PKCE Flow
                 DBHelper.getShared().setEnablePKCE(false);
@@ -241,7 +241,7 @@ public class FileHelper {
             Dictionary<String, String> loginProperties = new Hashtable<>();
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") ) {
 
-                Cidaas.baseurl=DomainUrl;
+                CidaasHelper.baseurl=DomainUrl;
 
                 loginProperties.put("ClientId", ClientId);
                 loginProperties.put("DomainURL", DomainUrl);

@@ -165,7 +165,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     public static String usagePass = "";
     public static ICustomLoader loader;
-    public static String baseurl = "";
+    
     public static final String FIDO_VERSION = "U2F_V2";
 
     public WebAuthError webAuthError = null;
@@ -289,7 +289,7 @@ public class Cidaas implements IOAuthWebLogin {
     // -----------------------------------------------------***** TENANT INFO *****---------------------------------------------------------------
     @Override
     public void getTenantInfo(final Result<TenantInfoEntity> tenantresult) {
-        TenantController.getShared(context).getTenantInfo(baseurl, tenantresult);
+        TenantController.getShared(context).getTenantInfo(CidaasHelper.baseurl, tenantresult);
     }
 
     // -----------------------------------------------------***** CLIENT INFO *****-------------------------------------------------------------------------
@@ -695,7 +695,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     @Override
     public void registerUser(@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult) {
-        DeduplicationController.getShared(context).registerDeduplication(baseurl, trackId, deduplicaionResult);
+        DeduplicationController.getShared(context).registerDeduplication(CidaasHelper.baseurl, trackId, deduplicaionResult);
     }
 
     @Override
@@ -806,10 +806,7 @@ public class Cidaas implements IOAuthWebLogin {
 
     }
 
-    public void setURL(@NonNull final Dictionary<String, String> loginproperties,Result<String> result)
-    {
-        LoginController.getShared(context).setURL(loginproperties,result);
-    }
+
 
     //------------------------------------------------------------------------------------------Local Authentication----------------------------------------
 
@@ -1347,7 +1344,7 @@ public class Cidaas implements IOAuthWebLogin {
     {
         try
         {
-           // Cidaas.baseurl=socialAccessTokenEntity.getDomainURL();
+           // CidaasHelper.baseurl=socialAccessTokenEntity.getDomainURL();
 
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override

@@ -32,6 +32,7 @@ import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
@@ -115,7 +116,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         GLOBAL_CONTEXT = context;
         DBHelper.setConfig(context);
 
-        Cidaas.baseurl=DomainURL;
+       CidaasHelper.baseurl=DomainURL;
 
 
 
@@ -896,7 +897,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                    if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
                       result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).propertyMissingException("Redirect URL must not be null","Error:"+methodName));
                    }
-                   Cidaas.baseurl = loginProperties.get("DomainURL");
+                  CidaasHelper.baseurl = loginProperties.get("DomainURL");
                    DBHelper.getShared().addLoginProperties(loginProperties);
                    result.success(loginProperties);
 
@@ -1089,7 +1090,7 @@ String methodName="checkSavedProperties";
                 @Override
                 public void success(AccessTokenEntity result) {
                     //Call Logout method
-                    LogoutController.getShared(GLOBAL_CONTEXT).getLogoutURL(Cidaas.baseurl, result.getAccess_token(), post_logout_redirect_url,new Result<String>() {
+                    LogoutController.getShared(GLOBAL_CONTEXT).getLogoutURL(CidaasHelper.baseurl, result.getAccess_token(), post_logout_redirect_url,new Result<String>() {
                         @Override
                         public void success(String result) {
                             //Clear cookies

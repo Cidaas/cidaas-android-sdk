@@ -29,10 +29,15 @@ public class CidaasHelper {
 
     public DeviceInfoEntity deviceInfoEntity;
 
+    public static String baseurl = "";
 
     //Comomon Varivale
     public static String APP_NAME = "cidaas";
     public static String APP_VERSION = "";
+
+
+
+    public static boolean IS_SETURL_CALLED = false;
 
 
     public static CidaasHelper getShared(Context context)
@@ -59,6 +64,9 @@ public class CidaasHelper {
         //Default Log Value
         ENABLE_LOG = false;
 
+        CidaasHelper.baseurl="";
+        CidaasHelper.IS_SETURL_CALLED=false;
+
         //Add Device info
         deviceInfoEntity = new DeviceInfoEntity();
         deviceInfoEntity.setDeviceId(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
@@ -72,8 +80,6 @@ public class CidaasHelper {
             deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
         }
 
-
-        Cidaas.baseurl="";
 
 
         PackageManager packageManager = context.getPackageManager();
@@ -102,7 +108,7 @@ public class CidaasHelper {
         CidaasProperties.getShared(context).saveCidaasProperties(new Result<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
-                Cidaas.baseurl=result.get("DomainURL");
+                CidaasHelper.baseurl=result.get("DomainURL");
             }
 
             @Override

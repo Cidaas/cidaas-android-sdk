@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Interface.ICidaasFacebook;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.facebook.AccessToken;
@@ -84,7 +85,7 @@ public class CidaasFacebook implements ICidaasFacebook {
                     if (access_token != null || !access_token.equals("")) {
 
 
-                        CidaasSDKLayout.getInstance(CidaasFacebook.this.activity).getAccessTokenBySocialWithLoader(access_token, "facebook", Cidaas.baseurl, "login", result);
+                        CidaasSDKLayout.getInstance(CidaasFacebook.this.activity).getAccessTokenBySocialWithLoader(access_token, "facebook", CidaasHelper.baseurl, "login", result);
                     }
                 }
 

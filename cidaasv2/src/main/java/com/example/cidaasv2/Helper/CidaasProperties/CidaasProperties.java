@@ -6,6 +6,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
@@ -38,10 +39,16 @@ public class CidaasProperties {
     public void saveCidaasProperties(final Result<Dictionary<String,String>> result)
     {
 
-        if(Cidaas.baseurl!=null && Cidaas.baseurl!="")
+        if(CidaasHelper.IS_SETURL_CALLED)
         {
             //From Authenticator app
-            result.success(DBHelper.getShared().getLoginProperties(Cidaas.baseurl));
+            if(!CidaasHelper.baseurl.equals("") && CidaasHelper.baseurl!=null) {
+                result.success(DBHelper.getShared().getLoginProperties(CidaasHelper.baseurl));
+            }
+            else
+            {
+                result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("CidaasHelper.Baseurl must not be empty","CidaasProperties:saveCidaasProperties()"));
+            }
 
         }
         else
@@ -55,9 +62,9 @@ public class CidaasProperties {
     {
         try
         {
-            if(Cidaas.baseurl!=null && !Cidaas.baseurl.equals("")){
+            if( CidaasHelper.baseurl!=null && ! CidaasHelper.baseurl.equals("")){
 
-                final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(Cidaas.baseurl);
+                final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties( CidaasHelper.baseurl);
                 if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
                     //check here for already saved properties
                     if (checkNotnull(result, loginProperties,"Check cidaas saved properties failure : ")) {
@@ -122,7 +129,7 @@ public class CidaasProperties {
             }
             else {
                 //Saved in Shared preference
-                Cidaas.baseurl = loginProperties.get("DomainURL");
+                 CidaasHelper.baseurl = loginProperties.get("DomainURL");
                 DBHelper.getShared().addLoginProperties(loginProperties);
                 savedResult.success(loginProperties);
             }

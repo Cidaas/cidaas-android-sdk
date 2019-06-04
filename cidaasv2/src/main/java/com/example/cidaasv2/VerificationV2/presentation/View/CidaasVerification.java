@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
@@ -42,6 +43,8 @@ import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.Pus
 import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Settings.SettingsController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
+
+import java.util.Dictionary;
 
 public class CidaasVerification {
 
@@ -167,6 +170,12 @@ public class CidaasVerification {
     public void updateFCMToken(String FCMToken)
     {
         SettingsController.getShared(context).updateFCMToken(FCMToken);
+    }
+
+    public void
+    setURL(@NonNull final Dictionary<String, String> loginproperties, Result<String> result)
+    {
+        LoginController.getShared(context).setURL(loginproperties,result);
     }
 
 

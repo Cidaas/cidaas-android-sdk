@@ -11,6 +11,7 @@ import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Interface.ICidaasGoogle;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.google.android.gms.auth.api.Auth;
@@ -197,7 +198,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
                     public void onSuccess(GoogleAccessTokenEntity tokenEntity) {
 
                         CidaasSDKLayout.getInstance(CidaasGoogle.this.activity).getAccessTokenBySocialWithLoader(tokenEntity.getAccess_token(),
-                                "google", Cidaas.baseurl, "login", localAccessTokenEntityResult);
+                                "google", CidaasHelper.baseurl, "login", localAccessTokenEntityResult);
                     }
 
                     @Override

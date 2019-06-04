@@ -7,6 +7,7 @@ import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Repository.Tenant.TenantService;
 
@@ -50,7 +51,7 @@ public class TenantController {
     {String methodName="TenantController :getTenantInfo()";
         try{
 
-            if(Cidaas.baseurl!=null && !Cidaas.baseurl.equals("")) {
+            if(CidaasHelper.baseurl!=null && !CidaasHelper.baseurl.equals("")) {
 
                 CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override
