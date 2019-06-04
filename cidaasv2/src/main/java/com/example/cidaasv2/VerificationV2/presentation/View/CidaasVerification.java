@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
@@ -169,4 +170,38 @@ public class CidaasVerification {
     }
 
 
+    public void configure(SetupEntity setupEntity, final Result<EnrollResponse> enrollResponseResult)
+    {
+        setup(setupEntity, new Result<SetupResponse>() {
+            @Override
+            public void success(SetupResponse result) {
+                //Todo handle Enroll entity and call enroll
+                EnrollEntity enrollEntity=new EnrollEntity();
+                enroll(enrollEntity,enrollResponseResult);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+               enrollResponseResult.failure(error);
+            }
+        });
+    }
+
+
+    public void login(InitiateEntity initiateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
+    {
+        initiate(initiateEntity, new Result<InitiateResponse>() {
+            @Override
+            public void success(InitiateResponse result) {
+                //Todo handle Authenticate entity and call authenticate
+                AuthenticateEntity authenticateEntity=new AuthenticateEntity();
+                authenticate(authenticateEntity,authenticateResponseResult);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                authenticateResponseResult.failure(error);
+            }
+        });
+    }
 }

@@ -11,6 +11,10 @@ import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEn
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
+import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -73,6 +77,7 @@ public class FirstActivity extends AppCompatActivity {
          }
 
      });
+
 
 
      cidaas.loginWithSocial(getApplicationContext(), "linkedin", "optinalColorParameterInColorCode", new Result<AccessTokenEntity>() {

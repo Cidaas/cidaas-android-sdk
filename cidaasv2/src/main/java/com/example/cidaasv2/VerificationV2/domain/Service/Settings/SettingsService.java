@@ -67,7 +67,18 @@ public class SettingsService {
                     if(response.isSuccessful())
                     {
 
-                        configuredMFAListResult.success(response.body());
+                        LogFile.getShared(context).addSuccessLog(methodName,response.toString());
+                       if(response.code()==200) {
+                           configuredMFAListResult.success(response.body());
+                       }
+                       else
+                       {
+
+                           ConfiguredMFAList configuredMFAList=new ConfiguredMFAList();
+                           configuredMFAList.setStatus(response.code());
+                           configuredMFAList.setSuccess(true);
+                           configuredMFAListResult.success(configuredMFAList);
+                       }
                     }
                     else
                     {

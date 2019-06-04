@@ -153,7 +153,7 @@ public class LogFile {
                             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
 
 
-                            buf.write(getTime()+" "+message + "\r\n");
+                            buf.write("Time:-"+getTime()+" "+message + "\r\n");
                             buf.append(message);
                             buf.newLine();
                             buf.flush();
@@ -208,6 +208,7 @@ public class LogFile {
 
             String loggerMessage = "S:- "+methodName+ "Success Message:- " +message;
 
+            Timber.i(loggerMessage);
             addRecordTolog(success_log_filename,loggerMessage);
 
         }
