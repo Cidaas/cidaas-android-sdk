@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void onFinger(View view)
     {
-        Toast.makeText(this, "merthpsodjsd", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "method called", Toast.LENGTH_SHORT).show();
 
         FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(this,"Sample","Description");
         BiometricHandler biometricHandler=new BiometricHandler(this);
@@ -641,7 +641,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void failure(WebAuthError error) {
 
             }
-        });
+        },"");
 
 
     }

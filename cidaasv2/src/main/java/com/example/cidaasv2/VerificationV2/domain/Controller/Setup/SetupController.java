@@ -4,9 +4,11 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
@@ -81,18 +83,27 @@ public class SetupController {
         String methodName = "SetupController:-addProperties()";
         try {
 
-            //get AccessToken
-            AccessTokenController.getShared(context).getAccessToken(setupEntity.getSub(), new Result<AccessTokenEntity>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
-                public void success(AccessTokenEntity accessTokenresult) {
-                    //call callSetup call
-                    callSetup(accessTokenresult.getAccess_token(),setupEntity,setupResult);
-                }
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String clientId = loginPropertiesResult.get("ClientId");
 
+                    //App properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                    setupEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+                    setupEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+                    setupEntity.setClient_id(clientId);
+
+                    //call setup call
+                    callSetup(baseurl,setupEntity,setupResult);
+                }
                 @Override
-                public void failure(WebAuthError error) { setupResult.failure(error);
+                public void failure(WebAuthError error) {
+                    setupResult.failure(error);
                 }
             });
+
 
         }
         catch (Exception e)
