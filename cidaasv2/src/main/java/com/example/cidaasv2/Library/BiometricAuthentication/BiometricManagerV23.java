@@ -129,8 +129,8 @@ CancellationSignal cancellationSignal;
                 public void onAuthenticationError(int errorCode, CharSequence errString) {
                     super.onAuthenticationError(errorCode, errString);
                     if(errorCode==5) {
-                        biometricCallback.onAuthenticationCancelled();
-                        return;
+                       // biometricCallback.onAuthenticationCancelled();
+                      //  return;
                     }
                     else {
                         updateStatus(String.valueOf(errString));
