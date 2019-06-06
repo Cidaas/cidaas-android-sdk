@@ -57,6 +57,11 @@ public class ConfigureActivity extends AppCompatActivity {
 
             }
         }
+
+        if(getIntent()!=null)
+        {
+
+        }
     }
 
     String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";

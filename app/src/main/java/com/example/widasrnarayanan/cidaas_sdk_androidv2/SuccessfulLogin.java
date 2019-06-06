@@ -65,7 +65,7 @@ public class SuccessfulLogin extends AppCompatActivity {
 
     public void SetUpPattern(View view){
 
-        Intent intent=new Intent(SuccessfulLogin.this,EnrollPattern.class);
+        Intent intent=new Intent(SuccessfulLogin.this,ConfigureActivity.class);
         intent.putExtra("sub",sub);
         intent.putExtra("accessToken",accessToken);
         startActivity(intent);
