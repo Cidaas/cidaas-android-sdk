@@ -584,7 +584,7 @@ public class LoginController {
         }
     }
 
-    public void setURL(@NonNull final Dictionary<String, String> loginproperties,Result<String> result)
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties,Result<String> result,String methodNameFromApp)
     {String methodName="LoginController:setURL()";
         try
         {
@@ -594,8 +594,9 @@ public class LoginController {
                 if( DBHelper.getShared().addLoginProperties(loginproperties)) {
                     CidaasHelper.baseurl=loginproperties.get("DomainURL");
                     CidaasHelper.IS_SETURL_CALLED=true;
-                    result.success("SetURL is Successfully configured ");
-                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured "+loginproperties.get("DomainURL"));
+                    result.success("SetURL is Successfully configured "+methodNameFromApp);
+                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured "+loginproperties.get("DomainURL")
+                    +"Method Name:- "+methodNameFromApp);
                 }
                 else
                 {

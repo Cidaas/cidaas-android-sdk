@@ -172,10 +172,9 @@ public class CidaasVerification {
         SettingsController.getShared(context).updateFCMToken(FCMToken);
     }
 
-    public void
-    setURL(@NonNull final Dictionary<String, String> loginproperties, Result<String> result)
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties, Result<String> result,String methodName)
     {
-        LoginController.getShared(context).setURL(loginproperties,result);
+        LoginController.getShared(context).setURL(loginproperties,result,methodName);
     }
 
 
