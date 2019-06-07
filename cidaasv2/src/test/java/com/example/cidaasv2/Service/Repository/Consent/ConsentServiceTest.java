@@ -32,7 +32,7 @@ import timber.log.Timber;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class ConsentServiceTest {
 
     Context context;

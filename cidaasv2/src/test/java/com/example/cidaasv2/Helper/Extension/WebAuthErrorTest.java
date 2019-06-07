@@ -2,23 +2,16 @@ package com.example.cidaasv2.Helper.Extension;
 
 import android.content.Context;
 
-import com.example.cidaasv2.BuildConfig;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
-
-import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
 public class WebAuthErrorTest {
 
     Context context;
@@ -57,13 +50,13 @@ public class WebAuthErrorTest {
 
     @Test
     public void testPropertyMissingException() throws Exception {
-        WebAuthError result = webAuthError.propertyMissingException();
+        WebAuthError result = webAuthError.propertyMissingException("WebError Testing");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testServiceFailureException() throws Exception {
-        WebAuthError result = webAuthError.serviceFailureException(0, "errorMessage", 0, "error",null);
+        WebAuthError result = webAuthError.serviceCallFailureException(0, "errorMessage", 0, "error",null);
         Assert.assertTrue( result instanceof WebAuthError);
     }
 

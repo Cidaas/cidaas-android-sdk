@@ -13,8 +13,26 @@ public class InitiateIVRMFARequestEntity implements Serializable{
     String verificationType;
     String usageType;
     DeviceInfoEntity deviceInfo;
+    String email;
+    String mobile;
 
     String source="MOBILE";
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public String getSource() {
         return source;

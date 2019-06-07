@@ -51,7 +51,7 @@ public class SMSMFAActivity extends AppCompatActivity {
                      resumeLoginRequestEntity.setSub(authresult.getData().getSub());
                     resumeLoginRequestEntity.setTrack_id(trackid);
                     resumeLoginRequestEntity.setTrackingCode(authresult.getData().getTrackingCode());
-                    resumeLoginRequestEntity.setVerificationType("SMS");
+                    resumeLoginRequestEntity.setVerification_type("SMS");
                     resumeLoginRequestEntity.setUsageType("PASSWORDLESS_AUTHENTICATION");
                     cidaas.resumeLogin(resumeLoginRequestEntity, new Result<AccessTokenEntity>() {
                         @Override
@@ -72,7 +72,7 @@ public class SMSMFAActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(SMSMFAActivity.this, "Result Failure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SMSMFAActivity.this, "Result Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();

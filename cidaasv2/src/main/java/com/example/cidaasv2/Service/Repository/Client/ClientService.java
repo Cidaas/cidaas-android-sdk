@@ -2,28 +2,22 @@ package com.example.cidaasv2.Service.Repository.Client;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
-import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class ClientService {
     //Get Client info
@@ -41,6 +35,12 @@ public class ClientService {
             service=new CidaassdkService();
         }
         context=contextFromCidaas;
+        if(service==null) {
+            service=new CidaassdkService();
+
+            service.setContext(context);
+        }
+
 
         //Todo setValue for authenticationType
 
@@ -62,100 +62,70 @@ public class ClientService {
         return shared;
     }
 
+    //---------------------------------------------------------getClientInfo------------------------------------------------------------------
     public void getClientInfo(String requestId, String baseurl, final Result<ClientInfoEntity> callback)
     {
         //Local Variables
-        String clienttUrl = "";
+        String methodName = "ClientService  :getClientInfo()";
         try{
 
-            if(baseurl!=null && !baseurl.equals("")){
+            if(baseurl!=null && !baseurl.equals("") && requestId!=null && !requestId.equals(""))
+            {
                 //Construct URL For RequestId
-                if(requestId!=null && !requestId.equals("")){
-                    //Construct URL For RequestId
+                String clienttUrl=baseurl+ URLHelper.getShared().getClientUrl(requestId);
 
-                    clienttUrl=baseurl+ URLHelper.getShared().getClientUrl(requestId);
-                }
-                else {
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REQUEST_ID_MISSING,context.getString(R.string.REQUEST_ID_MISSING),
-                            400,null,null));
-                    return;
-                }
+                //Header Generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
+
+                //Service call
+                ServiceForClient( clienttUrl, headers,callback);
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING),
-                        400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("RequestId or baseurl must not be empty","Error :"+methodName));
                 return;
             }
 
-            Map<String, String> headers = new Hashtable<>();
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
+        }
+    }
 
+    private void ServiceForClient( String clienttUrl, Map<String, String> headers,final Result<ClientInfoEntity> callback)
+    {
+        final String methodName="Consent Service  :getClientInfo()";
+        try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getClientInfo(clienttUrl,headers).enqueue(new Callback<ClientInfoEntity>() {
+            cidaasSDKService.getClientInfo(clienttUrl, headers).enqueue(new Callback<ClientInfoEntity>() {
                 @Override
                 public void onResponse(Call<ClientInfoEntity> call, Response<ClientInfoEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.CLIENT_INFO_FAILURE, response.code(),
+                                    "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
+                    } else {
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CLIENT_INFO_FAILURE, response,
+                                "Error :"+methodName));
 
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,errorMessage,
-                                    commonErrorEntity.getStatus(),commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CLIENT_INFO_FAILURE,
-                                    "ClientInfo Failure Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ClientInfoEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
 
                 }
             });
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CLIENT_INFO_FAILURE,e.getMessage()));
         }
     }
 

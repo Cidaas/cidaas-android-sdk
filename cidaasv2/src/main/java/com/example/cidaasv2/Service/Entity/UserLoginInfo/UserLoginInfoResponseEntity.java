@@ -12,9 +12,7 @@ public class UserLoginInfoResponseEntity implements Serializable {
     private int status;
    // private UserLoginInfoResponseDataEntity[] data;
 
-    @JsonProperty("data")
-    private List<UserLoginInfoResponseDataEntity> data;
-
+   UserLoginInfoDataEntity data;
 
     public Boolean getSuccess() {
         return success;
@@ -32,19 +30,12 @@ public class UserLoginInfoResponseEntity implements Serializable {
         this.status = status;
     }
 
-    public List<UserLoginInfoResponseDataEntity> getData() {
+    public UserLoginInfoDataEntity getData() {
         return data;
     }
 
-    public void setData(List<UserLoginInfoResponseDataEntity> data) {
+    public void setData(UserLoginInfoDataEntity data) {
         this.data = data;
     }
 
-    /* public UserLoginInfoResponseDataEntity[] getData() {
-        return data;
-    }
-
-    public void setData(UserLoginInfoResponseDataEntity[] data) {
-        this.data = data;
-    }*/
 }

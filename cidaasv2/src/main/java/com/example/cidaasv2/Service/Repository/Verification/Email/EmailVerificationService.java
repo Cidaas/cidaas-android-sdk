@@ -2,15 +2,13 @@ package com.example.cidaasv2.Service.Repository.Verification.Email;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
@@ -20,12 +18,12 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAReq
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -77,6 +75,7 @@ public class EmailVerificationService {
 
     //setupemailMFA
     public void setupEmailMFA(String baseurl, String accessToken,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupEmailMFAResponseEntity> callback){
+       final String methodName="EmailVerificationService :setupEmailMFA()";
         String setupEmailMFAUrl="";
         try
         {
@@ -85,34 +84,38 @@ public class EmailVerificationService {
                 setupEmailMFAUrl=baseurl+ URLHelper.getShared().getSetupEmailMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
+                        ,"Error :"+methodName));
                 return;
             }
 
             Map<String, String> headers = new Hashtable<>();
             // Get Device Information
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+            DeviceInfoEntity deviceInfo=new DeviceInfoEntity();
             //This is only for testing purpose
             if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                deviceInfo = DBHelper.getShared().getDeviceInfo();
             }
             else if(deviceInfoEntityFromParam!=null)
             {
-                deviceInfoEntity=deviceInfoEntityFromParam;
+                deviceInfo=deviceInfoEntityFromParam;
             }
             //Todo - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
+          //  headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
+            headers.put("access_token",accessToken);
+
+            SetupEmailMFARequestEntity setupEmailMFARequestEntity =new SetupEmailMFARequestEntity();
+            setupEmailMFARequestEntity.setDeviceInfo(deviceInfo);
 
 
 
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.setupEmailMFA(setupEmailMFAUrl,headers, deviceInfoEntity).enqueue(new Callback<SetupEmailMFAResponseEntity>() {
+            cidaasSDKService.setupEmailMFA(setupEmailMFAUrl,headers, setupEmailMFARequestEntity).enqueue(new Callback<SetupEmailMFAResponseEntity>() {
                 @Override
                 public void onResponse(Call<SetupEmailMFAResponseEntity> call, Response<SetupEmailMFAResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -120,56 +123,21 @@ public class EmailVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SETUP_EMAIL_MFA_FAILURE,
+                                    response.code(),"Error :"+methodName));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_EMAIL_MFA_FAILURE,response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupEmailMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SETUP_EMAIL_MFA_FAILURE,
+                            t.getMessage(), "Error :"+methodName));
                 }
             });
 
@@ -177,9 +145,7 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            Timber.e("acceptConsent Service exception"+e.getMessage());
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+           callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.SETUP_EMAIL_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -194,8 +160,8 @@ public class EmailVerificationService {
                 enrollEmailMFAUrl=baseurl+URLHelper.getShared().getEnrollEmailMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
+                        ,"Error :EmailVerificationService :enrollEmailMFA()"));
                 return;
             }
 
@@ -214,7 +180,8 @@ public class EmailVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
+            headers.put("access_token",accessToken);
 
 
             enrollEmailMFARequestEntity.setDeviceInfo(deviceInfoEntity);
@@ -230,57 +197,22 @@ public class EmailVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,
+                                    response.code(),"Error :EmailVerificationService :enrollEmailMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
                         //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            //Todo Handle Access Token Failure Error
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,response
+                                ,"Error :EmailVerificationService :enrollEmailMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<EnrollEmailMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,t.getMessage(),
+                            "Error :EmailVerificationService :enrollEmailMFA()"));
                 }
             });
 
@@ -288,9 +220,8 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            Timber.e("acceptConsent Service exception"+e.getMessage());
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :EmailVerificationService :enrollEmailMFA()",
+                    WebAuthErrorCode.ENROLL_EMAIL_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -306,8 +237,8 @@ public class EmailVerificationService {
                 initiateEmailMFAUrl=baseurl+URLHelper.getShared().getInitiateemailMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :EmailVerificationService :initiateEmailMFA()"));
                 return;
             }
 
@@ -326,7 +257,7 @@ public class EmailVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
             initiateEmailMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
@@ -342,55 +273,21 @@ public class EmailVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,
+                                    response.code(),"Error :EmailVerificationService :initiateEmailMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,response
+                                ,"Error :EmailVerificationService :initiateEmailMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateEmailMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(),
+                            "Error :EmailVerificationService :initiateEmailMFA()"));
                 }
             });
 
@@ -398,9 +295,8 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("acceptConsent Service exception"+e.getMessage());
-            Timber.e("acceptConsent Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :EmailVerificationService :initiateEmailMFA()",
+                    WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,e.getMessage()));
 
         }
     }
@@ -416,8 +312,8 @@ public class EmailVerificationService {
                 authenticateemailMFAUrl=baseurl+URLHelper.getShared().getAuthenticateemailMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
+                        ,"Error :EmailVerificationService :authenticateEmailMFA()"));
                 return;
             }
 
@@ -436,7 +332,7 @@ public class EmailVerificationService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
             authenticateEmailRequestEntity.setDeviceInfo(deviceInfoEntity);
 
 
@@ -451,56 +347,21 @@ public class EmailVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,
+                                    response.code(),"Error :EmailVerificationService :authenticateEmailMFA()"));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            Timber.e("response"+response.message()+e.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage(), 400,null,null));
-
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,response
+                                ,"Error :EmailVerificationService :authenticateEmailMFA()"));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateEmailResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("authenticateEmailMFA Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,t.getMessage(),
+                            "Error :EmailVerificationService :authenticateEmailMFA()"));
                 }
             });
 
@@ -508,9 +369,8 @@ public class EmailVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateEmailMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateEmailMFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :EmailVerificationService :authenticateEmailMFA()"
+                    ,WebAuthErrorCode.AUTHENTICATE_EMAIL_MFA_FAILURE,e.getMessage()));
         }
     }
 

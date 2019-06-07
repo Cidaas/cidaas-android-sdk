@@ -127,6 +127,7 @@ public class FaceDetection extends Activity {
     }
 
 
+
     public void voiceClick(View view)
     {
 

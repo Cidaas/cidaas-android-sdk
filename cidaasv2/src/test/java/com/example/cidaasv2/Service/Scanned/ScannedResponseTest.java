@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
 
-public class ScannedResponseEntityTest {
+public class ScannedResponseTest {
     ScannedResponseDataEntity data;
     ScannedResponseEntity scannedResponseEntity;
 

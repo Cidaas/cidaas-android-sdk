@@ -67,7 +67,7 @@ public class EnrollPattern extends AppCompatActivity {
     }
 
     public void verifyPattern(View view){
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -237,7 +237,7 @@ public void enrollPattern(View view)
     public void AuthenticateSmartPush(View view){
 
 
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -314,7 +314,7 @@ try {
 
     //enrollFaceMFARequestEntity.setUserDeviceId(userdeviceID);
     enrollFaceMFARequestEntity.setStatusId("6e32f505-f5d8-4ddb-a2d5-cb239be93eca");
-    //enrollFaceMFARequestEntity.setImagetoSend(imgae);
+    //enrollFaceMFARequestEntity.setFileToSend(imgae);
 
     cidaas.enrollFace(imgae, sub, "6e32f505-f5d8-4ddb-a2d5-cb239be93eca", 1, new Result<EnrollFaceMFAResponseEntity>() {
         @Override
@@ -461,20 +461,26 @@ catch (Exception e)
 
 
 
+
     public void enrollFinger(View view)
     {
 
 
+        FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(this);
+        fingerPrintEntity.setTitle("");
+        fingerPrintEntity.setSubtitle("");
+        fingerPrintEntity.setDescription("");
+        fingerPrintEntity.setNegativeButtonString("Cancel");
 
         cidaas.configureFingerprint(EnrollPattern.this,sub, "", null,new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
-                Toast.makeText(EnrollPattern.this, "Enroll SuccssFull", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EnrollPattern.this, "Enroll SuccessFull", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(EnrollPattern.this, "Enroll Fail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EnrollPattern.this, "Enroll Fail"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -492,7 +498,7 @@ catch (Exception e)
                 passwordlessEntity.setTrackId(trackId);
                 passwordlessEntity.setMobile("+919787113989");
 
-                FingerPrintEntity fingerPrintEntity=new FingerPrintEntity();
+                FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(getApplicationContext());
                 fingerPrintEntity.setTitle("Hi Please AUTHENTICATE");
                 fingerPrintEntity.setSubtitle("A");
 

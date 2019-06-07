@@ -39,7 +39,7 @@ public class URLHelper {
 
     String loginWithCredentials="/login-srv/login/sdk";
     String logoutURLForEmbeddedBrowser="/session/end_session";
-    String registrationSetup="/registration-setup-srv/public/list?acceptlanguage=";
+    String registrationSetup="/registration-callSetup-srv/public/list?acceptlanguage=";
 
     String clientUrl="/public-srv/public/";
     String tenantUrl="/public-srv/tenantinfo/basic";
@@ -54,58 +54,58 @@ public class URLHelper {
     String configuredMFAListURL="/verification-srv/settings/listbydeviceid";
     String updateFCMTokenURL="/device-srv/device/updatefcm";
 
-    String setupEmailMFA="/verification-srv/email/setup";
+    String setupEmailMFA="/verification-srv/email/callSetup";
     String enrollEmailMFA="/verification-srv/email/enroll";
     String initiateemailMFA="/verification-srv/email/initiate";
     String authenticateemailMFA="/verification-srv/email/authenticate";
 
 
-    String setupSMSMFA="/verification-srv/sms/setup";
+    String setupSMSMFA="/verification-srv/sms/callSetup";
     String enrollSMSMFA="/verification-srv/sms/enroll";
     String initiateSMSMFA="/verification-srv/sms/initiate";
     String authenticateSMSMFA="/verification-srv/sms/authenticate";
 
-    String setupIVRMFA="/verification-srv/ivr/setup";
+    String setupIVRMFA="/verification-srv/ivr/callSetup";
     String enrollIVRMFA="/verification-srv/ivr/enroll";
     String initiateIVRMFA="/verification-srv/ivr/initiate";
     String authenticateIVRMFA="/verification-srv/ivr/authenticate";
 
-    String setupBackupCodeMFA="/verification-srv/backupcode/setup";
+    String setupBackupCodeMFA="/verification-srv/backupcode/callSetup";
     String enrollBackupCodeMFA="/verification-srv/backupcode/enroll";
     String initiateBackupCodeMFA="/verification-srv/backupcode/initiate";
     String authenticateBackupCodeMFA="/verification-srv/backupcode/authenticate";
 
-    String setupFaceMFA="/verification-srv/face/setup";
+    String setupFaceMFA="/verification-srv/face/callSetup";
     String enrollFaceMFA="/verification-srv/face/enroll";
     String initiateFaceMFA="/verification-srv/face/initiate";
     String authenticateFaceMFA="/verification-srv/face/authenticate";
 
-    String setupFingerprintMFA="/verification-srv/touchid/setup";
+    String setupFingerprintMFA="/verification-srv/touchid/callSetup";
     String enrollFingerprintMFA="/verification-srv/touchid/enroll";
     String initiateFingerprintMFA="/verification-srv/touchid/initiate";
     String authenticateFingerprintMFA="/verification-srv/touchid/authenticate";
 
-    String setupFIDOMFA="/verification-srv//fidou2f/mobile/setup";
+    String setupFIDOMFA="/verification-srv//fidou2f/mobile/callSetup";
     String enrollFIDOMFA="/verification-srv/fidou2f/mobile/enroll";
     String initiateFIDOMFA="/verification-srv/fidou2f/mobile/initiate";
     String authenticateFIDOMFA="/verification-srv/fidou2f/mobile/authenticate";
 
-    String setupPatternMFA="/verification-srv/pattern/setup";
+    String setupPatternMFA="/verification-srv/pattern/callSetup";
     String enrollPatternMFA="/verification-srv/pattern/enroll";
     String initiatePatternMFA="/verification-srv/pattern/initiate";
     String authenticatePatternMFA="/verification-srv/pattern/authenticate";
 
-    String setupSmartPushMFA="/verification-srv/push/setup";
+    String setupSmartPushMFA="/verification-srv/push/callSetup";
     String enrollSmartPushMFA="/verification-srv/push/enroll";
     String initiateSmartPushMFA="/verification-srv/push/initiate";
     String authenticateSmartPushMFA="/verification-srv/push/authenticate";
 
-    String setupTOTPMFA="/verification-srv/totp/setup";
+    String setupTOTPMFA="/verification-srv/totp/callSetup";
     String enrollTOTPMFA="/verification-srv/totp/enroll";
     String initiateTOTPMFA="/verification-srv/totp/initiate";
     String authenticateTOTPMFA="/verification-srv/totp/authenticate";
 
-    String setupVoiceMFA="/verification-srv/voice/setup";
+    String setupVoiceMFA="/verification-srv/voice/callSetup";
     String enrollVoiceMFA="/verification-srv/voice/enroll";
     String initiateVoiceMFA="/verification-srv/voice/initiate";
     String authenticateVoiceMFA="/verification-srv/voice/authenticate";
@@ -127,6 +127,8 @@ public class URLHelper {
 
     String validateDeviceURL="/verification-srv/device/validate";
 
+
+
     String scannedPatternURL="/verification-srv/pattern/scanned";
     String scannedFaceURL="/verification-srv/face/scanned";
     String scannedFingerprintURL="/verification-srv/touchid/scanned";
@@ -142,7 +144,7 @@ public class URLHelper {
     String preAuthCode="&preAuthCode=" ;
 
     String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
-    String deduplicationList="users-srv/deduplication/info/";
+    String deduplicationList="/users-srv/deduplication/info/";
 
     String socialLoginURL="/login-srv/social/login/";
 
@@ -155,6 +157,7 @@ public class URLHelper {
 
 
     String openIdURL="/.well-known/openid-configuration";
+
 
 
     public String getLogoutURLForEmbeddedBrowser() {

@@ -7,11 +7,8 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseDataEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
-import com.example.cidaasv2.Service.Repository.AccessToken.AccessTokenService;
 
 import org.junit.Assert;
 import org.junit.Before;

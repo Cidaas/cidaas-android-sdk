@@ -1,11 +1,14 @@
 package com.example.cidaasv2.Helper.Converter;
 
+import android.content.Context;
+
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
-import com.example.cidaasv2.Models.DBModel.UserInfoModel;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.UserinfoEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.util.UUID;
@@ -16,12 +19,18 @@ import java.util.UUID;
 
 public class EntityToModelConverter {
 //Convert AccessTokenEntity to Model
+    Context context;
 public static EntityToModelConverter sharedinstance;
-    public static EntityToModelConverter getShared()
+
+    public EntityToModelConverter(Context contextFromCidaas) {
+       context = contextFromCidaas;
+    }
+
+    public static EntityToModelConverter getShared(Context contextFromCidaas)
     {
         if(sharedinstance==null)
         {
-            sharedinstance=new EntityToModelConverter();
+            sharedinstance=new EntityToModelConverter(contextFromCidaas);
         }
         return sharedinstance;
     }
@@ -31,6 +40,7 @@ public static EntityToModelConverter sharedinstance;
 // convert accessTokenEntity To AccessTokenModel
     public void accessTokenEntityToAccessTokenModel(AccessTokenEntity accessTokenEntity, String userId, Result<AccessTokenModel> callback)
     {
+        String methodName="accessTokenEntityToAccessTokenModel";
         try
         {
             String EncryptedToken="";
@@ -67,12 +77,15 @@ public static EntityToModelConverter sharedinstance;
                 AccessTokenModel.getShared().setEncrypted(false);
                 AccessTokenModel.getShared().setPlainToken(accessTokenEntity.getAccess_token());
             }
-         callback.success(AccessTokenModel.getShared());
+            DBHelper.getShared().setAccessToken(AccessTokenModel.getShared());
+           callback.success(AccessTokenModel.getShared());
+
         }
         catch (Exception e)
         {
             //TODO Handle Error
-            callback.failure(null);
+            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(),methodName));
+            LogFile.getShared(context).addFailureLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 
@@ -87,13 +100,25 @@ public static EntityToModelConverter sharedinstance;
             AccessTokenEntity accessTokenEntity=new AccessTokenEntity();
 
 
-           accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
-            accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
-            accessTokenEntity.setId_token(accessTokenModel.getId_token());
-            accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
-            accessTokenEntity.setScope(accessTokenModel.getScope());
-            accessTokenEntity.setUserstate(accessTokenModel.getUserState());
+            if(accessTokenModel.getAccess_token()!=null && !accessTokenModel.getAccess_token().equals("")) {
+                accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
+            }
 
+            if(accessTokenModel.getId_token()!=null && !accessTokenModel.getId_token().equals("")) {
+                accessTokenEntity.setId_token(accessTokenModel.getId_token());
+            }
+
+            if(accessTokenModel.getRefresh_token()!=null && !accessTokenModel.getRefresh_token().equals("")) {
+                accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
+            }
+            if(accessTokenModel.getScope()!=null && !accessTokenModel.getScope().equals("")) {
+                accessTokenEntity.setScope(accessTokenModel.getScope());
+            }
+            if(accessTokenModel.getUserState()!=null && !accessTokenModel.getUserState().equals("")) {
+                accessTokenEntity.setUserstate(accessTokenModel.getUserState());
+            }
+
+            accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
 
             //Decrypt the AccessToken
             if(accessTokenModel.isEncrypted()) {
@@ -102,7 +127,7 @@ public static EntityToModelConverter sharedinstance;
             }
             else
             {
-                if(accessTokenModel.getPlainToken()==null || (accessTokenModel.getPlainToken()==""))
+                if(accessTokenModel.getPlainToken()==null || (accessTokenModel.getPlainToken().equals("")))
                 {
                     accessTokenModel.setPlainToken(accessTokenEntity.getAccess_token());
                 }
@@ -113,7 +138,8 @@ public static EntityToModelConverter sharedinstance;
         catch (Exception e)
         {
             //TODO Handle Error
-          callback.failure(null);
+            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(),"Methodname"));
+            LogFile.getShared(context).addFailureLog(e.getMessage()+ WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 

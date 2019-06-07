@@ -17,23 +17,33 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Helper.AuthenticationType;
+import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Interface.ILoader;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
+import com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
+import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -51,6 +61,12 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     CidaasFacebook cidaasFacebook;
     CidaasGoogle cidaasGoogle;
     Button logoutButton;
+
+    File imageFile;
+    FileOutputStream out;
+
+
+    String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
 
 
     @Override
@@ -95,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void openAlertFinger(View view)
     {
-        cidaas.callFingerPrint(this, null, new Result<String>() {
+        /*cidaas.callFingerPrint(this, null, new Result<String>() {
             @Override
             public void success(String result) {
                 Toast.makeText(MainActivity.this, ""+result, Toast.LENGTH_SHORT).show();
@@ -105,7 +121,13 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             public void failure(WebAuthError error) {
                 Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
+    }
+
+    public void configure(View view)
+    {
+        Intent intent=new Intent(MainActivity.this,ConfigureActivity.class);
+        startActivity(intent);
     }
 
 
@@ -113,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     {
 
         String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
+
+
 
         UserLoginInfoEntity userLoginInfoEntity=new UserLoginInfoEntity();
         userLoginInfoEntity.setStartDate("2019-03-04T00:00:00.000Z");
@@ -132,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             }
         });
     }
+
+
+
 
 
 
@@ -169,6 +196,24 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         }
     }
 
+    public void onFinger(View view)
+    {
+        Toast.makeText(this, "method called", Toast.LENGTH_SHORT).show();
+
+        FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(this,"Sample","Description");
+        BiometricHandler biometricHandler=new BiometricHandler(this);
+        biometricHandler.callFingerPrint(fingerPrintEntity, "Sdsdfsdf", new Result<String>() {
+            @Override
+            public void success(String result) {
+                Toast.makeText(MainActivity.this, "FingerSuccesss", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     public void loginWithSocial(View view)
@@ -266,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     //get ClientInfo
     public void getClientInfo(View view){
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             //cidaas.getRequestId(obj,new Result<String>() {
             @Override
             public void success(AuthRequestResponseEntity requestIdresult) {
@@ -281,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(MainActivity.this, "clientInfo Faliure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "clientInfo Faliure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -289,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(getApplicationContext(), error.ErrorMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), error.getErrorMessage(), Toast.LENGTH_LONG).show();
 
             }
         });
@@ -300,7 +345,9 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     private void getFCMToken() {
         String token = FirebaseInstanceId.getInstance().getToken();
+        //String token="fnzDeBMEJrc:APA91bHmJxE0zbrgGmuqjMqZVLkZUXtmU1A_V4L-y6E100hywQYl7h9OCn4t8ZtaV0HuZ2Cf2-2rBYpUAvn_xcW41EYHX89H3r9q9vOA7NSPsuOxHywZiUDQggLi8mUR7PZn4LgTyLRb";
       cidaas.setFCMToken(token);
+
 
 
 
@@ -323,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(MainActivity.this, error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -375,11 +422,6 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             Log.d("receiver", "Got message: " + message);
         }
     };
-
-
-
-
-
 
 
 
@@ -535,7 +577,6 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
 
 
-
     public void nativeFacebook(View view)
     {
 
@@ -565,6 +606,46 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         logoutButton.setVisibility(View.INVISIBLE);
       //  cidaasFacebook.logout();
     }
+
+
+    public void getConfiguredMFAList(View view) {
+        Dictionary<String,String> urlList=new Hashtable<>();
+
+        urlList.put("DomainURL","https://nightlybuild.cidaas.de");
+        urlList.put("ClientId","4d1ce9b6-7b1d-4c97-b4f6-118d00ce3d68");
+        urlList.put("RedirectURL","cidaasdemo://nightlybuild.cidaas.de/ios/com.cidaas.sdk.demo/callback");
+
+        CidaasVerification.getInstance(this).setURL(urlList, new Result<String>() {
+            @Override
+            public void success(String result) {
+                CidaasVerification.getInstance(getApplicationContext()).getConfiguredMFAList(sub,new Result<ConfiguredMFAList>() {
+                    @Override
+                    public void success(ConfiguredMFAList result) {
+                        if(result==null)
+                        {
+                            Toast.makeText(MainActivity.this, "Empty response"+result.getData(), Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(MainActivity.this, "" + result.getData(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(MainActivity.this, "Error:-"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        },"");
+
+
+    }
+
 
 
     public void nativeGoogle(View view)

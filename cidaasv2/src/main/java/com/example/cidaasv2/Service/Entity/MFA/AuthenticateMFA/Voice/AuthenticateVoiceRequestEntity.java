@@ -13,14 +13,38 @@ public class AuthenticateVoiceRequestEntity implements Serializable {
     String userDeviceId="";
     File voiceFile;
     String usage_pass="";
-    String client_id;
+    String client_id="";
 
-    public String getClient_id() {
-        return client_id;
+    public String getStatusId() {
+        return statusId;
     }
 
-    public void setClient_id(String client_id) {
-        this.client_id = client_id;
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
+
+    public DeviceInfoEntity getDeviceInfo() {
+        return deviceInfo;
+    }
+
+    public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
+        this.deviceInfo = deviceInfo;
+    }
+
+    public String getUserDeviceId() {
+        return userDeviceId;
+    }
+
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
+    }
+
+    public File getVoiceFile() {
+        return voiceFile;
+    }
+
+    public void setVoiceFile(File voiceFile) {
+        this.voiceFile = voiceFile;
     }
 
     public String getUsage_pass() {
@@ -31,37 +55,11 @@ public class AuthenticateVoiceRequestEntity implements Serializable {
         this.usage_pass = usage_pass;
     }
 
-
-    public File getVoiceFile() {
-        return voiceFile;
+    public String getClient_id() {
+        return client_id;
     }
 
-    public void setVoiceFile(File voiceFile) {
-        this.voiceFile = voiceFile;
-    }
-
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
-
-
-    public String getUserDeviceId() {
-        return userDeviceId;
-    }
-
-    public void setUserDeviceId(String userDeviceId) {
-        this.userDeviceId = userDeviceId;
-    }
-
-    public DeviceInfoEntity getDeviceInfo() {
-        return deviceInfo;
-    }
-
-    public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
-        this.deviceInfo = deviceInfo;
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
     }
 }

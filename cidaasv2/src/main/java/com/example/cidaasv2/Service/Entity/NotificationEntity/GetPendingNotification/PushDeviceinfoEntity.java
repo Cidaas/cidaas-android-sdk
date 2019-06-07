@@ -6,13 +6,46 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PushDeviceinfoEntity implements Serializable {
-
+    private String ipAddress="";
     private OsEntity os;
     private EngineEntity engine;
-    private String deviceMake;
-    private String deviceModel;
-    private String userAgent;
+    private String deviceMake="";
+    private String deviceModel="";
+    private String userAgent="";
     private BrowserEntity browser;
+
+    private String lat="";
+    private String lon="";
+    private String purpose="";
+
+
+    private String sub="";
+    private String deviceId="";
+
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
     public OsEntity getOs() {
         return os;
@@ -60,5 +93,29 @@ public class PushDeviceinfoEntity implements Serializable {
 
     public void setBrowser(BrowserEntity browser) {
         this.browser = browser;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 }

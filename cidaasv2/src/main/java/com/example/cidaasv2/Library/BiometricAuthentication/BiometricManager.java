@@ -44,18 +44,22 @@ public class BiometricManager extends BiometricManagerV23 {
 
         if(!BiometricUtils.isSdkVersionSupported()) {
             biometricCallback.onSdkVersionNotSupported();
+            return;
         }
 
         if(!BiometricUtils.isPermissionGranted(context)) {
             biometricCallback.onBiometricAuthenticationPermissionNotGranted();
+            return;
         }
 
         if(!BiometricUtils.isHardwareSupported(context)) {
             biometricCallback.onBiometricAuthenticationNotSupported();
+            return;
         }
 
         if(!BiometricUtils.isFingerprintAvailable(context)) {
             biometricCallback.onBiometricAuthenticationNotAvailable();
+            return;
         }
 
         displayBiometricDialog(biometricCallback);
@@ -69,7 +73,14 @@ public class BiometricManager extends BiometricManagerV23 {
         } else {
 
         }*/
-        displayBiometricPromptV23(biometricCallback);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            displayBiometricPromptV23Manger(biometricCallback);
+        } else {
+            //displayBiometricPrompt(biometricCallback);
+            displayBiometricPromptV23Manger(biometricCallback);
+        }
+
     }
 
 

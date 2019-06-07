@@ -2,12 +2,17 @@ package com.example.cidaasv2.Controller.Repository.ChangePassword;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Repository.ChangePassword.ChangePasswordService;
+
+import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
@@ -21,113 +26,76 @@ public class ChangePasswordController {
 
     public ChangePasswordController(Context contextFromCidaas) {
 
-        verificationType="";
-        context=contextFromCidaas;
-        authenticationType="";
+        verificationType = "";
+        context = contextFromCidaas;
+        authenticationType = "";
         //Todo setValue for authenticationType
 
     }
 
     String codeVerifier, codeChallenge;
+
     // Generate Code Challenge and Code verifier
-    public void generateChallenge(){
+    public void generateChallenge() {
         OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
-        codeVerifier=generator.getCodeVerifier();
-        codeChallenge= generator.getCodeChallenge(codeVerifier);
+        codeVerifier = generator.getCodeVerifier();
+        codeChallenge = generator.getCodeChallenge(codeVerifier);
 
     }
 
-    public static ChangePasswordController getShared(Context contextFromCidaas )
-    {
+    public static ChangePasswordController getShared(Context contextFromCidaas) {
         try {
 
             if (shared == null) {
                 shared = new ChangePasswordController(contextFromCidaas);
             }
-        }
-        catch (Exception e)
-        {
-            Timber.i(e.getMessage());
+        } catch (Exception e) {
+            LogFile.getShared(contextFromCidaas).addFailureLog("ChangePasswordController instance Creation Exception:-"+e.getMessage());
         }
         return shared;
     }
 
-   /* //ChangePassword
-    public void changePassword(@NonNull ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
+    //ChangePasswordService
+    public void changePassword(@NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
         try {
-            String baseurl="";
-            if(savedProperties==null){
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    checkandChangePasswordService(baseurl, changePasswordRequestEntity, resetpasswordResult);
+                }
 
-                savedProperties= DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
-                    @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
-                    }
+                @Override
+                public void failure(WebAuthError error) {
+                    resetpasswordResult.failure(error);
+                }
+            });
 
-                    @Override
-                    public void failure(WebAuthError error) {
-                        resetpasswordResult.failure(error);
-                    }
-                });
-            }
 
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Authenticate change password MFA readProperties failure : " + "Error Code - " +
-                        webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage
-                        + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                resetpasswordResult.failure(webAuthError);
-            } else {
-                baseurl = savedProperties.get("DomainURL");
-                changePasswordService(baseurl,changePasswordRequestEntity,resetpasswordResult);
-
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
+        } catch (Exception e) {
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :ChangePassword Controller :changePassword()",
+                    WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
         }
     }
-*/
-    //ChangePasswordService
-    public void changePassword(@NonNull String baseurl, @NonNull ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult)
-    {
+
+    private void checkandChangePasswordService(String baseurl, @NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
         try {
 
-            if(changePasswordRequestEntity.getConfirm_password() != null && !changePasswordRequestEntity.getConfirm_password().equals("")
+            if (changePasswordRequestEntity.getConfirm_password() != null && !changePasswordRequestEntity.getConfirm_password().equals("")
                     && changePasswordRequestEntity.getNew_password() != null && !changePasswordRequestEntity.getNew_password().equals("")
                     && changePasswordRequestEntity.getIdentityId() != null && !changePasswordRequestEntity.getIdentityId().equals("")
                     && changePasswordRequestEntity.getOld_password() != null && !changePasswordRequestEntity.getOld_password().equals("")
-                    && baseurl != null && !baseurl.equals("")){
+                    && baseurl != null && !baseurl.equals("")) {
 
-                ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl,null,
-                        new Result<ChangePasswordResponseEntity>() {
-
-                            @Override
-                            public void success(ChangePasswordResponseEntity serviceresult) {
-                                resetpasswordResult.success(serviceresult);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-
-                                resetpasswordResult.failure(error);
-                            }
-                        });
+                ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl, null, resetpasswordResult);
+            } else {
+                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Confirm Password or new password or IdentityID or Old password or baseurl must not be null"
+                ,"Error :ChangePassword Controller :checkandChangePasswordService()"));
             }
-            else{
-             resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException());
-            }
-        }
-        catch (Exception e)
-        {
-            Timber.e(e.getMessage());
+        } catch (Exception e) {
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :ChangePassword Controller :checkandChangePasswordService()",
+                    WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
         }
     }
 }

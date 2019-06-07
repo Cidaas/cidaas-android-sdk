@@ -2,23 +2,18 @@ package com.example.cidaasv2.Service.Repository.Tenant;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -68,90 +63,68 @@ public class TenantService {
     public void getTenantInfo(String baseurl, final Result<TenantInfoEntity> callback)
     {
         //Local Variables
-        String TenantUrl = "";
+        String methodName = "TenantService :getTenantInfo()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
-                //Construct URL For RequestId
 
-                //Todo Chnage URL Global wise
-                TenantUrl=baseurl+ URLHelper.getShared().getTenantUrl();
+               //Construct URL For RequestId
+               String TenantUrl=baseurl+ URLHelper.getShared().getTenantUrl();
+
+               //Header Generation
+               Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
+
+               //Service Call For get tenantInfo
+               serviceForGetTenantInfo(TenantUrl, headers, callback);
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :"+methodName));
                 return;
             }
 
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.TENANT_INFO_FAILURE,e.getMessage()));
+        }
+    }
 
-            Map<String, String> headers = new Hashtable<>();
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+    public void serviceForGetTenantInfo(String tenantUrl, Map<String, String> headers, final Result<TenantInfoEntity> callback)
+    {
+        final String methodName="TenantService :getTenantInfo()";
+        try {
 
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getTenantInfo(TenantUrl,headers).enqueue(new Callback<TenantInfoEntity>() {
+            cidaasSDKService.getTenantInfo(tenantUrl, headers).enqueue(new Callback<TenantInfoEntity>() {
                 @Override
                 public void onResponse(Call<TenantInfoEntity> call, Response<TenantInfoEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.TENANT_INFO_FAILURE,
+                                  response.code(), "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.TENANT_INFO_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
-                        }
-                    }
-                    else {
+                    } else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.TENANT_INFO_FAILURE,errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            Timber.e(e);
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.TENANT_INFO_FAILURE,
-                                    "TenantINfo All Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.TENANT_INFO_FAILURE, response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<TenantInfoEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.TENANT_INFO_FAILURE,t.getMessage(), 400,null,null));
+                 callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.TENANT_INFO_FAILURE, t.getMessage()
+                         , "Error :"+methodName));
 
                 }
             });
         }
         catch (Exception e)
-        { String loggerMessage = "TenantService-getTenantInfoException: Error Message - " + e.getMessage();
-        LogFile.getShared(context).addRecordToLog(loggerMessage); Timber.d(e.getMessage());callback.failure(WebAuthError.getShared(context).propertyMissingException());
+        {
+         callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.TENANT_INFO_FAILURE, e.getMessage()));
         }
     }
 

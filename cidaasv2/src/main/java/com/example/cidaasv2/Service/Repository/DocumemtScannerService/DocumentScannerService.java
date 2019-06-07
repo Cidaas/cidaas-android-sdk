@@ -2,10 +2,8 @@ package com.example.cidaasv2.Service.Repository.DocumemtScannerService;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -20,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -45,16 +42,10 @@ public class DocumentScannerService {
 
         context=contextFromCidaas;
 
-
         if(service==null) {
             service=new CidaassdkService();
         }
-
-        //Todo setValue for authenticationType
-
     }
-
-
 
     public static DocumentScannerService getShared(Context contextFromCidaas )
     {
@@ -75,23 +66,17 @@ public class DocumentScannerService {
 
 
     //Get Deduplication info
-    public void sendDocuemntToService(String baseurl, File photoDoc, String accessToken,DeviceInfoEntity deviceInfoEntityFromparam,final Result<DocumentScannerServiceResultEntity> callback)
+    public void sendDocumentToService(String baseurl, File photoDoc, String accessToken, DeviceInfoEntity deviceInfoEntityFromparam, final Result<DocumentScannerServiceResultEntity> callback)
     {
         //Local Variables
-        String DocumentURL = "";
+        final String methodName = "DocumentScannerService :sendDocumentToService()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
-                DocumentURL=baseurl+ URLHelper.getShared().getDocumentScanner();
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
-                return;
-            }
+             String DocumentURL=baseurl+ URLHelper.getShared().getDocumentScanner();
 
 
             Map<String, String> headers = new Hashtable<>();
@@ -117,7 +102,7 @@ public class DocumentScannerService {
             //Add headers
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
             headers.put("access_token",accessToken);
 
             //Call Service-getRequestId
@@ -130,63 +115,37 @@ public class DocumentScannerService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
+                                    response.code(),"Error :"+methodName));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        String errorResponse = null;
-                        try {
-
-                            //Todo Handle proper error message
-                           errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("")
-                                    && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
-                                    "Unexpected Error"+errorResponse, 417,null,null));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,response
+                                ,"Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<DocumentScannerServiceResultEntity> call, Throwable t) {
                     Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
-                            t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
+                            t.getMessage(),"Error :"+methodName));
 
                 }
             });
+            }
+            else {
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :"+methodName));
+                return;
+            }
+
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,e.getMessage(),HttpStatusCode.BAD_REQUEST));
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
+                    e.getMessage()));
         }
     }
 }

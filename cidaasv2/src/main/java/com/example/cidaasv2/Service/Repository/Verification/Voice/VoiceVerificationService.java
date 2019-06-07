@@ -2,9 +2,8 @@ package com.example.cidaasv2.Service.Repository.Verification.Voice;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -12,7 +11,6 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
-import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Voice.AuthenticateVoiceResponseEntity;
@@ -25,11 +23,9 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARespo
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.example.cidaasv2.Service.Scanned.ScannedRequestEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -43,7 +39,7 @@ import timber.log.Timber;
 public class VoiceVerificationService {
 
     CidaassdkService service;
-    private ObjectMapper objectMapper=new ObjectMapper();
+
     //Local variables
     private String statusId;
     private String authenticationType;
@@ -82,9 +78,10 @@ public class VoiceVerificationService {
     }
 
 
-    public void scannedVoice(String baseurl,  ScannedRequestEntity scannedRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    public void scannedVoice(final String baseurl, ScannedRequestEntity scannedRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,
                              final Result<ScannedResponseEntity> callback)
     {
+        final String methodName="VoiceVerificationService :scannedVoice()";
         String scannedVoiceUrl="";
         try
         {
@@ -93,8 +90,7 @@ public class VoiceVerificationService {
                 scannedVoiceUrl=baseurl+ URLHelper.getShared().getScannedVoiceURL();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :"+methodName));
                 return;
             }
 
@@ -115,7 +111,7 @@ public class VoiceVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
             headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 
@@ -133,61 +129,25 @@ public class VoiceVerificationService {
                 public void onResponse(Call<ScannedResponseEntity> call, Response<ScannedResponseEntity> response) {
                     if (response.isSuccessful()) {
                         if(response.code()==200) {
+                            DBHelper.getShared().setUserDeviceId(response.body().getData().getUserDeviceId(),baseurl);
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,
+                                   response.code(),"Error :"+methodName));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            ErrorEntity errorEntity=new ErrorEntity();
-
-
-
-                            String errorMessage="";
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,response
+                                ,"Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ScannedResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,t.getMessage(),
+                           "Error :"+methodName));
                 }
             });
 
@@ -195,9 +155,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Voice Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("Voice Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.SCANNED_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -205,6 +163,7 @@ public class VoiceVerificationService {
     //setupVoiceMFA
     public void setupVoiceMFA(String baseurl, String accessToken,  SetupVoiceMFARequestEntity setupVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<SetupVoiceMFAResponseEntity> callback)
     {
+        final String methodName="VoiceVerificationService :setupVoiceMFA()";
         String setupVoiceMFAUrl="";
         try
         {
@@ -213,8 +172,7 @@ public class VoiceVerificationService {
                 setupVoiceMFAUrl=baseurl+URLHelper.getShared().getSetupVoiceMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :"+methodName));
                 return;
             }
 
@@ -237,7 +195,7 @@ public class VoiceVerificationService {
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 
@@ -245,7 +203,7 @@ public class VoiceVerificationService {
 
                 //Todo Chaange to FCM acceptence now it is in Authenticator
                  deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());
- }
+            }
             setupVoiceMFARequestEntity.setDeviceInfo(deviceInfoEntity);
 
             //Call Service-getRequestId
@@ -262,55 +220,21 @@ public class VoiceVerificationService {
 
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,
+                                   response.code(),"Error :"+methodName));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
-                        //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,response
+                                ,"Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SetupVoiceMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                   callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,t.getMessage(),
+                           "Error :"+methodName));
                 }
             });
 
@@ -318,9 +242,9 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Voice exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("Voice Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,
+                    WebAuthErrorCode.SETUP_VOICE_MFA_FAILURE,e.getMessage()));
+
         }
     }
 
@@ -332,6 +256,7 @@ public class VoiceVerificationService {
     //enrollVoiceMFA
     public void enrollVoice(String baseurl, String accessToken, EnrollVoiceMFARequestEntity enrollVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<EnrollVoiceMFAResponseEntity> callback)
     {
+        final String methodName="VoiceVerificationService :enrollVoice()";
         String enrollVoiceMFAUrl="";
         try
         {
@@ -340,8 +265,7 @@ public class VoiceVerificationService {
                 enrollVoiceMFAUrl=baseurl+URLHelper.getShared().getEnrollVoiceMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","Error :"+methodName));
                 return;
             }
 
@@ -366,7 +290,7 @@ public class VoiceVerificationService {
             headers.put("verification_api_version","2");
             headers.put("access_token",accessToken);
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
@@ -380,6 +304,7 @@ public class VoiceVerificationService {
 
             voiceSetupMap.put("statusId", StringtoRequestBody(enrollVoiceMFARequestEntity.getStatusId()));
             voiceSetupMap.put("usage_pass",StringtoRequestBody(enrollVoiceMFARequestEntity.getUsage_pass()));
+            voiceSetupMap.put("client_id",StringtoRequestBody(enrollVoiceMFARequestEntity.getClient_id()));
             voiceSetupMap.put("userDeviceId", StringtoRequestBody(enrollVoiceMFARequestEntity.getUserDeviceId()));
             voiceSetupMap.put("deviceId", StringtoRequestBody(enrollVoiceMFARequestEntity.getDeviceInfo().getDeviceId()));
             voiceSetupMap.put("deviceMake", StringtoRequestBody(enrollVoiceMFARequestEntity.getDeviceInfo().getDeviceMake()));
@@ -404,56 +329,22 @@ public class VoiceVerificationService {
                             if (response.code() == 200) {
                                 callback.success(response.body());
                             } else {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                                        "Service failure but successful response", response.code(), null, null));
+                                callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
+                                        response.code(),"Error :"+methodName));
                             }
                         } else {
                             assert response.errorBody() != null;
-                            //Todo Check The error if it is not recieved
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse = response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-
-                                ErrorEntity errorEntity = new ErrorEntity();
-
-
-                                //Todo Handle Access Token Failure Error
-                                String errorMessage = "";
-                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
-                                    errorMessage = commonErrorEntity.getError().toString();
-                                } else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(), errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE, e.getMessage(), 400, null, null));
-                                Timber.e("response" + response.message() + e.getMessage());
-                            }
-                            Timber.e("response" + response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,response,
+                                    "Error :"+methodName));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<EnrollVoiceMFAResponseEntity> call, Throwable t) {
-                        Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                        LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
-                        callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
+                        Timber.e("Failure in Enroll Voice service call" + t.getMessage());
+                        LogFile.getShared(context).addFailureLog(" Enroll Voice Service Failure" + t.getMessage());
+                        callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
+                                t.getMessage(), "Error :"+methodName));
                     }
                 });
             }
@@ -466,56 +357,20 @@ public class VoiceVerificationService {
                             if (response.code() == 200) {
                                 callback.success(response.body());
                             } else {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                                        "Service failure but successful response", response.code(), null, null));
+                                callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
+                                        response.code(),"Error :"+methodName));
                             }
                         } else {
                             assert response.errorBody() != null;
-                            //Todo Check The error if it is not recieved
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse = response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-
-                                ErrorEntity errorEntity = new ErrorEntity();
-
-
-                                //Todo Handle Access Token Failure Error
-                                String errorMessage = "";
-                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
-                                    errorMessage = commonErrorEntity.getError().toString();
-                                } else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(), errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE, e.getMessage(), 400, null, null));
-                                Timber.e("response" + response.message() + e.getMessage());
-                            }
-                            Timber.e("response" + response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,response,
+                                    "Error :"+methodName));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<EnrollVoiceMFAResponseEntity> call, Throwable t) {
-                        Timber.e("Failure in Login with credentials service call" + t.getMessage());
-                        LogFile.getShared(context).addRecordToLog("acceptConsent Service Failure" + t.getMessage());
-                        callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
+                        callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,
+                                t.getMessage(), "Error :"+methodName));
                     }
                 });
             }
@@ -523,9 +378,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("Voice Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("Voice Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.ENROLL_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -533,6 +386,7 @@ public class VoiceVerificationService {
     //initiateVoiceMFA
     public void initiateVoice(String baseurl, InitiateVoiceMFARequestEntity initiateVoiceMFARequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<InitiateVoiceMFAResponseEntity> callback)
     {
+       final String methodName="VoiceVerificationService :initiateVoice()";
         String initiateVoiceMFAUrl="";
         try
         {
@@ -541,8 +395,8 @@ public class VoiceVerificationService {
                 initiateVoiceMFAUrl=baseurl+URLHelper.getShared().getInitiateVoiceMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty",
+                        "Error :"+methodName));
                 return;
             }
 
@@ -563,7 +417,7 @@ public class VoiceVerificationService {
             headers.put("Content-Type", URLHelper.contentTypeJson);
             headers.put("verification_api_version","2");
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
 
@@ -586,56 +440,22 @@ public class VoiceVerificationService {
                             callback.success(response.body());
                         }
                         else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
+                            callback.failure( WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,
+                                   response.code(),"Error :"+methodName));
                         }
                     }
                     else {
                         assert response.errorBody() != null;
                         //Todo Check The error if it is not recieved
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                              errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,response,
+                                "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateVoiceMFAResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in InitiateSMSMFAResponseEntityservice call"+t.getMessage());
-                    LogFile.getShared(context).addRecordToLog("InitiateVoiceMFAResponseEntity Service Failure"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,t.getMessage(),
+                           "Error :"));
                 }
             });
 
@@ -643,9 +463,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("InitiateVoiceMFAResponseEntity Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("InitiateVoiceMFAResponseEntity Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.INITIATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 
@@ -653,6 +471,7 @@ public class VoiceVerificationService {
     public void authenticateVoice(String baseurl, AuthenticateVoiceRequestEntity authenticateVoiceRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<AuthenticateVoiceResponseEntity> callback)
     {
         String authenticateVoiceMFAUrl="";
+        final String methodName="Voice Verification Service:-authenticateVoice()";
         try
         {
             if(baseurl!=null || !baseurl.equals("")){
@@ -660,8 +479,8 @@ public class VoiceVerificationService {
                 authenticateVoiceMFAUrl=baseurl+URLHelper.getShared().getAuthenticateVoiceMFA();
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException("Baseurl must not be empty","" +
+                        "Error: "+methodName));
                 return;
             }
 
@@ -686,7 +505,7 @@ public class VoiceVerificationService {
           //  headers.put("Content-Type", URLHelper.contentType);
             headers.put("verification_api_version","2");
             headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
 
             if(DBHelper.getShared().getFCMToken()!=null && !DBHelper.getShared().getFCMToken().equals("")) {
@@ -701,6 +520,7 @@ public class VoiceVerificationService {
 
             voiceSetupMap.put("statusId", StringtoRequestBody(authenticateVoiceRequestEntity.getStatusId()));
             voiceSetupMap.put("usage_pass",StringtoRequestBody(authenticateVoiceRequestEntity.getUsage_pass()));
+            voiceSetupMap.put("client_id",StringtoRequestBody(authenticateVoiceRequestEntity.getClient_id()));
             voiceSetupMap.put("userDeviceId", StringtoRequestBody(authenticateVoiceRequestEntity.getUserDeviceId()));
             voiceSetupMap.put("deviceId", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceId()));
             voiceSetupMap.put("deviceMake", StringtoRequestBody(authenticateVoiceRequestEntity.getDeviceInfo().getDeviceMake()));
@@ -725,52 +545,20 @@ public class VoiceVerificationService {
                             if (response.code() == 200) {
                                 callback.success(response.body());
                             } else {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                                        "Service failure but successful response", response.code(), null, null));
+                                callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
+                                        response.code(),"Error: "+methodName));
                             }
                         } else {
                             assert response.errorBody() != null;
-                            //Todo Check The error if it is not recieved
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse = response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-                                String errorMessage = "";
-                                ErrorEntity errorEntity = new ErrorEntity();
-                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
-                                    errorMessage = commonErrorEntity.getError().toString();
-                                } else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(), errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage(), 400, null, null));
-                                Timber.e("response" + response.message() + e.getMessage());
-                            }
-                            Timber.e("response" + response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, response
+                                    ,"Error: "+methodName));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<AuthenticateVoiceResponseEntity> call, Throwable t) {
-                        Timber.e("Failure in AuthenticateVoiceResponseEntity service call" + t.getMessage());
-                        LogFile.getShared(context).addRecordToLog("AuthenticateVoiceResponseEntity Service Failure" + t.getMessage());
-                        callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
+                        callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
+                                t.getMessage(),"Error: "+methodName));
                     }
                 });
             }
@@ -783,52 +571,22 @@ public class VoiceVerificationService {
                             if (response.code() == 200) {
                                 callback.success(response.body());
                             } else {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                                        "Service failure but successful response", response.code(), null, null));
+                                callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
+                                        response.code(),"Error: "+methodName));
                             }
                         } else {
                             assert response.errorBody() != null;
-                            //Todo Check The error if it is not recieved
-                            try {
+                            // Handle proper error message
 
-                                // Handle proper error message
-                                String errorResponse = response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
-
-                                String errorMessage = "";
-                                ErrorEntity errorEntity = new ErrorEntity();
-                                if (commonErrorEntity.getError() != null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof String) {
-                                    errorMessage = commonErrorEntity.getError().toString();
-                                } else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError(((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo(((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber(((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType(((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(), errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, e.getMessage(), 400, null, null));
-                                Timber.e("response" + response.message() + e.getMessage());
-                            }
-                            Timber.e("response" + response.message());
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,response
+                                    ,"Error: "+methodName));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<AuthenticateVoiceResponseEntity> call, Throwable t) {
-                        Timber.e("Failure in AuthenticateVoiceResponseEntity service call" + t.getMessage());
-                        LogFile.getShared(context).addRecordToLog("AuthenticateVoiceResponseEntity Service Failure" + t.getMessage());
-                        callback.failure(WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, t.getMessage(), 400, null, null));
+                        callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE, t.getMessage(),
+                                "Error: "+methodName));
                     }
                 });
             }
@@ -836,9 +594,7 @@ public class VoiceVerificationService {
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("authenticateVoiceMFA Service exception"+e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
-            Timber.e("authenticateVoiceMFA Service exception"+e.getMessage());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception: "+methodName,WebAuthErrorCode.AUTHENTICATE_VOICE_MFA_FAILURE,e.getMessage()));
         }
     }
 

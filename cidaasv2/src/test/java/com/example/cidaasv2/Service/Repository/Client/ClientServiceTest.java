@@ -7,6 +7,7 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 
+import org.apache.tools.ant.taskdefs.Length;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +17,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class ClientServiceTest {
 
     Context context;
@@ -28,6 +29,7 @@ public class ClientServiceTest {
 
         context= RuntimeEnvironment.application;
         clientService=new ClientService(context);
+
     }
 
     @Test

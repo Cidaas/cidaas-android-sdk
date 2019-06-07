@@ -2,18 +2,18 @@ package com.example.cidaasv2.Controller;
 
 import android.content.Context;
 
-import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Pattern.EnrollPatternMFAResponseEntity;
@@ -23,7 +23,9 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMF
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
@@ -39,13 +41,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import java.util.Dictionary;
 import java.util.HashMap;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
 public class CidaasTest {
 
     Context context;
@@ -254,13 +254,33 @@ public class CidaasTest {
     @Test
     public void testConfigureEmail() throws Exception {
 
-        cidaas.configureEmail("sub", null);
+        cidaas.configureEmail("sub", new Result<SetupEmailMFAResponseEntity>() {
+            @Override
+            public void success(SetupEmailMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
     public void testEnrollEmail() throws Exception {
 
-        cidaas.enrollEmail("code", "statusId", null);
+        cidaas.enrollEmail("code", "statusId", new Result<EnrollEmailMFAResponseEntity>() {
+            @Override
+            public void success(EnrollEmailMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
@@ -288,7 +308,17 @@ public class CidaasTest {
     @Test
     public void testConfigureSMS() throws Exception {
 
-        cidaas.configureSMS("sub", null);
+        cidaas.configureSMS("sub", new Result<SetupSMSMFAResponseEntity>() {
+            @Override
+            public void success(SetupSMSMFAResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
     }
 
     @Test
@@ -509,7 +539,7 @@ public class CidaasTest {
     @Test
     public void testConfigureFingerprint() throws Exception {
 
-        cidaas.configureFingerprint("sub","" , new Result<EnrollFingerprintMFAResponseEntity>() {
+        cidaas.configureFingerprint(context,"" ,"",null, new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -525,7 +555,7 @@ public class CidaasTest {
     @Test
     public void testLoginWithFingerprint() throws Exception {
 
-        cidaas.loginWithFingerprint(new PasswordlessEntity(), new Result<LoginCredentialsResponseEntity>() {
+        cidaas.loginWithFingerprint(context,new PasswordlessEntity(),null, new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -540,7 +570,7 @@ public class CidaasTest {
 
     @Test
     public void testVerifyFingerprint() throws Exception {
-        cidaas.verifyFingerprint("statusId", null);
+        cidaas.verifyFingerprint(context,"statusId", null,null);
     }
 
     @Test
@@ -933,29 +963,18 @@ public class CidaasTest {
     }
 
 
-    @Test
-    public void testGetLoginCode() throws Exception {
 
-        cidaas.getLoginCode("urlCode=dfjvndfvjnndffv", null);
-    }
-
-
-    @Test
-    public void testGetLoginCodenull() throws Exception {
-
-        cidaas.getLoginCode("url", null);
-    }
 
 
     @Test
     public void testLoginWithFIDO() throws Exception {
-               cidaas.loginWithFIDO("usageType", "email", "sub", "trackId", null);
+               cidaas.loginWithFIDO(null,null, null);
     }
 
     @Test
     public void testGetLoginURL() throws Exception {
 
-        cidaas.getLoginURL(null);
+        cidaas.getLoginURL("");
     }
 
 

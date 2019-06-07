@@ -57,7 +57,7 @@ public class ClientControllerCallTest {
         Cidaas.baseurl=domainURL;
 
 
-        clientController.getClientInfo(HelperClass.removeLastChar(domainURL), "RequestId", new Result<ClientInfoEntity>() {
+        clientController.getClientInfo(new Result<ClientInfoEntity>() {
             @Override
             public void success(ClientInfoEntity result) {
 

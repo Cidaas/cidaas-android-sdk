@@ -83,7 +83,7 @@ public class TOTPMFA extends AppCompatActivity {
                     /*resumeLoginRequestEntity.setSub(authresult.getData().getSub());
                     resumeLoginRequestEntity.setTrack_id(trackid);
                     resumeLoginRequestEntity.setTrackingCode(authresult.getData().getTrackingCode());
-                    resumeLoginRequestEntity.setVerificationType("SMS");
+                    resumeLoginRequestEntity.setVerification_type("SMS");
                     resumeLoginRequestEntity.setUsageType("PASSWORDLESS_AUTHENTICATION");
                     cidaas.resumeLogin(resumeLoginRequestEntity, new Result<AccessTokenEntity>() {
                         @Override
@@ -111,7 +111,7 @@ public class TOTPMFA extends AppCompatActivity {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(TOTPMFA.this, "Result Failure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TOTPMFA.this, "Result Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

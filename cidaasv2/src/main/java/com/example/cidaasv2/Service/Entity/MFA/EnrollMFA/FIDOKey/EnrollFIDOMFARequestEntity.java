@@ -16,20 +16,12 @@ public class EnrollFIDOMFARequestEntity implements Serializable{
 
     String client_id;
 
-    public String getClient_id() {
-        return client_id;
+    public String getStatusId() {
+        return statusId;
     }
 
-    public void setClient_id(String client_id) {
-        this.client_id = client_id;
-    }
-
-    public String getUserDeviceId() {
-        return userDeviceId;
-    }
-
-    public void setUserDeviceId(String userDeviceId) {
-        this.userDeviceId = userDeviceId;
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
     }
 
     public String getUsage_pass() {
@@ -40,12 +32,12 @@ public class EnrollFIDOMFARequestEntity implements Serializable{
         this.usage_pass = usage_pass;
     }
 
-    public String getStatusId() {
-        return statusId;
+    public String getUserDeviceId() {
+        return userDeviceId;
     }
 
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
     }
 
     public FIDOTouchResponse getFidoTouchResponse() {
@@ -62,5 +54,13 @@ public class EnrollFIDOMFARequestEntity implements Serializable{
 
     public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
         this.deviceInfo = deviceInfo;
+    }
+
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
     }
 }

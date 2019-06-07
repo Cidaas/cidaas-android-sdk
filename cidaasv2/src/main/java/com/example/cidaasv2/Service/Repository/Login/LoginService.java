@@ -2,30 +2,22 @@ package com.example.cidaasv2.Service.Repository.Login;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseErrorEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -68,558 +60,293 @@ public class LoginService {
         return shared;
     }
 
-    //Login With Credentials
-    public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<LoginCredentialsResponseEntity> callback)
+
+
+
+    //----------------------------------------------------------Login With Credentials-----------------------------------------------------------------------------
+    public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity,
+                                     final Result<LoginCredentialsResponseEntity> callback)
     {
         //Local Variables
 
-        String loginUrl = "";
+        String methodName = "LoginService :serviceForLoginWithCredentials()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                loginUrl=baseurl+ URLHelper.getShared().getLoginWithCredentials();
+              String  loginUrl=baseurl+ URLHelper.getShared().getLoginWithCredentials();
+
+              Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+
+              //Call Service-getRequestId
+              serviceForLoginWithCredentials(loginUrl, loginCredentialsRequestEntity, headers, callback);
+
             }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+            else
+            {
+              callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :"+methodName));
                 return;
             }
-
-
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-
-
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromparam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromparam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromparam;
-            }
-
-
-
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
-
-
-            //Call Service-getRequestId
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.loginWithCredentials(loginUrl,headers, loginCredentialsRequestEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
-                @Override
-                public void onResponse(Call<LoginCredentialsResponseEntity> call, Response<LoginCredentialsResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final LoginCredentialsResponseErrorEntity loginCredentialsResponseErrorEntity;
-                            loginCredentialsResponseErrorEntity=objectMapper.readValue(errorResponse,LoginCredentialsResponseErrorEntity.class);
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
-                                    loginCredentialsResponseErrorEntity.getError().getError(), loginCredentialsResponseErrorEntity.getStatus(),
-                                    loginCredentialsResponseErrorEntity.getError(),null));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage(), 400,null,null));
-                           // Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<LoginCredentialsResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,t.getMessage(), 400,null,null));
-                }
-            });
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+          callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
         }
     }
 
+    private void serviceForLoginWithCredentials(String loginUrl,LoginCredentialsRequestEntity loginCredentialsRequestEntity,  Map<String, String> headers ,
+                                               final Result<LoginCredentialsResponseEntity> callback)
+    {
+        final String methodName="Error :LoginService :serviceForLoginWithCredentials()";
+     try {
+         final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-   /* //Logout for embedded browser Credentials
-    public void logoutForEmbeddedBrowser(final String baseurl, final String accessToken,final Result<LogoutResponseEntity> callback)
+         cidaasSDKService.loginWithCredentials(loginUrl, headers, loginCredentialsRequestEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
+             @Override
+             public void onResponse(Call<LoginCredentialsResponseEntity> call, Response<LoginCredentialsResponseEntity> response) {
+                 if (response.isSuccessful()) {
+                     if (response.code() == 200) {
+                         callback.success(response.body());
+                     } else {
+                         callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
+                                 response.code(),"Error"+methodName));
+                     }
+                 } else {
+                     assert response.errorBody() != null;
+                     try {
+
+                         // Handle proper error message
+                         String errorResponse = response.errorBody().source().readByteString().utf8();
+                         final LoginCredentialsResponseErrorEntity loginCredentialsResponseErrorEntity;
+                         loginCredentialsResponseErrorEntity = objectMapper.readValue(errorResponse, LoginCredentialsResponseErrorEntity.class);
+
+
+
+                         callback.failure(WebAuthError.getShared(context).loginFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
+                                 loginCredentialsResponseErrorEntity.getError().getError(), loginCredentialsResponseErrorEntity.getStatus(),
+                                 loginCredentialsResponseErrorEntity.getError(),"Error :"+methodName));
+
+                     } catch (Exception e) {
+                         callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
+                                 e.getMessage()));
+                         // Timber.e("response"+response.message()+e.getMessage());
+                     }
+
+                 }
+             }
+
+             @Override
+             public void onFailure(Call<LoginCredentialsResponseEntity> call, Throwable t) {
+                 callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, t.getMessage(),
+                     "Error :"+methodName));
+             }
+         });
+     }
+     catch (Exception e)
+     {
+        callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
+     }
+    }
+
+    //--------------------------------------------------------- Resume Login After MFA------------------------------------------------------------------------
+    public void continueMFA(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity,final Result<ResumeLoginResponseEntity> callback)
     {
         //Local Variables
-
-        String logoutUrl = "";
+        String methodName = "LoginService :continueMFA()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                logoutUrl=baseurl+ URLHelper.getShared().getLogoutURLForEmbeddedBrowser();
+                String resumeloginUrl=baseurl+URLHelper.getShared().getResumeLoginURL()+resumeLoginRequestEntity.getTrack_id();
+
+                //Header Generator
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+
+                //serviceCall
+                serviceCallForContinueMFA(resumeloginUrl, resumeLoginRequestEntity, headers, callback);
             }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+            else
+            {
+              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),"Error :"+methodName));
                 return;
             }
-
-
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-
-
-            *//*
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromparam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromparam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromparam;
-            }*//*
-
-
-
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
-
-           *//* headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());*//*
-
-
-            //Call Service-getRequestId
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.logoutFromEmbeddedBrowser(logoutUrl,headersxx,accessToken, "").enqueue(new Callback<LogoutResponseEntity>() {
-                @Override
-                public void onResponse(Call<LogoutResponseEntity> call, Response<LogoutResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                if(commonErrorEntity.getError_description()!=null && !commonErrorEntity.getError_description().equals(""))
-                                {
-                                    errorMessage=commonErrorEntity.getError_description();
-                                }
-                                else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                    errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                    errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                    errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                    errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                    errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                    errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGOUT_ERROR,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGOUT_ERROR,e.getMessage(), 400,null,null));
-                            // Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<LogoutResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Logout from embedded service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.LOGOUT_ERROR,t.getMessage(), 400,null,null));
-                }
-            });
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LOGOUT Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
-    }*/
+    }
 
+    private void serviceCallForContinueMFA(String resumeloginUrl, ResumeLoginRequestEntity resumeLoginRequestEntity, Map<String, String> headers,
+                                           final Result<ResumeLoginResponseEntity> callback) {
+        final String methodName = "LoginService :serviceCallForContinueMFA()";
 
-    //Resume Login After MFA
-    public void continueMFA(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<ResumeLoginResponseEntity> callback)
-    {
-        //Local Variables
-
-        String resumeloginUrl = "";
-        try{
-
-            if(baseurl!=null && !baseurl.equals("")){
-                //Construct URL For RequestId
-                resumeloginUrl=baseurl+URLHelper.getShared().getResumeLoginURL()+resumeLoginRequestEntity.getTrack_id();
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
-                return;
-            }
-
-
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-
-
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromparam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromparam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromparam;
-            }
-
-
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
-
+        try {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.resumeLogin(resumeloginUrl,headers,resumeLoginRequestEntity).enqueue(new Callback<ResumeLoginResponseEntity>() {
+            cidaasSDKService.resumeLogin(resumeloginUrl, headers, resumeLoginRequestEntity).enqueue(new Callback<ResumeLoginResponseEntity>() {
                 @Override
                 public void onResponse(Call<ResumeLoginResponseEntity> call, Response<ResumeLoginResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.RESUME_LOGIN_FAILURE, response.code(),
+                                    "Error :" + methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null,null));
-                            //Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                    } else {
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_LOGIN_FAILURE, response,
+                                "Error :" + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResumeLoginResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE, t.getMessage(),
+                            "Error :" + methodName));
                 }
             });
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 
-    //Resume Login
-    public void continuePasswordless(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity, DeviceInfoEntity deviceInfoEntityFromparam,final Result<ResumeLoginResponseEntity> callback)
+    //-------------------------------------------------------------------Resume Login-------------------------------------------------------------------------
+    public void continuePasswordless(final String baseurl, final ResumeLoginRequestEntity resumeLoginRequestEntity,
+                                     final Result<ResumeLoginResponseEntity> callback)
     {
         //Local Variables
-
-        String continuePasswordlessUrl = "";
+        String methodName = "LoginService :continuePasswordless()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                continuePasswordlessUrl=baseurl+URLHelper.getShared().getPasswordlessContinueUrl()+resumeLoginRequestEntity.getTrack_id();
+                String continuePasswordlessUrl=baseurl+URLHelper.getShared().getPasswordlessContinueUrl()+resumeLoginRequestEntity.getTrack_id();
+
+                //Header Generation
+                Map<String, String> headers =Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+
+                //Service call
+                serviceForContinuePasswordless(continuePasswordlessUrl, resumeLoginRequestEntity, headers, callback);
+
             }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+            else
+            {
+              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),"Error :"+methodName));
                 return;
             }
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
+        }
+    }
 
-
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-
-
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromparam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromparam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromparam;
-            }
-
-            //Done check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
-
+    private void serviceForContinuePasswordless(String continuePasswordlessUrl, ResumeLoginRequestEntity resumeLoginRequestEntity, Map<String, String> headers,
+                                                final Result<ResumeLoginResponseEntity> callback)
+    {
+        final String methodName="LoginService :serviceForContinuePasswordless()";
+        try {
             //Call Service-getRequestId
             final ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.resumeLogin(continuePasswordlessUrl,headers,resumeLoginRequestEntity).enqueue(new Callback<ResumeLoginResponseEntity>() {
+            cidaasSDKService.resumeLogin(continuePasswordlessUrl, headers, resumeLoginRequestEntity).enqueue(new Callback<ResumeLoginResponseEntity>() {
                 @Override
                 public void onResponse(Call<ResumeLoginResponseEntity> call, Response<ResumeLoginResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+                                   response.code(), "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
+                    } else {
                         assert response.errorBody() != null;
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            final CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                if(commonErrorEntity.getError_description()!=null && !commonErrorEntity.getError_description().equals(""))
-                                {
-                                    errorMessage=commonErrorEntity.getError_description();
-                                }
-                                else {
-                                    errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                }
-                            }
-
-
-                            //Todo Service call For fetching the Consent details
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null,null));
-                           // Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+                                response, "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResumeLoginResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE, t.getMessage(),
+                           "Error :"+methodName));
                 }
             });
         }
         catch (Exception e)
         {
-            LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
         }
     }
 
 
-    //Get all URL from the domain
+    //---------------------------------------------------------------Get all URL from the domain----------------------------------------------------------
     public void getURLList(final String baseurl, final Result<Object> callback)
     {
-            String openIdurl = "";
-            try{
+        String methodName="LoginService :getURLList()";
+        try{
 
-                if(baseurl!=null && !baseurl.equals("")){
-                    //Construct URL For RequestId
-                    openIdurl=baseurl +URLHelper.getShared().getOpenIdURL();
+            if(baseurl!=null && !baseurl.equals("")){
+                //Construct URL For RequestId
+                String  openIdurl=baseurl +URLHelper.getShared().getOpenIdURL();
+
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
+
+                serviceForGetURLList(openIdurl, headers, callback);
                 }
-                else {
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                            context.getString(R.string.EMPTY_BASE_URL_SERVICE), HttpStatusCode.EXPECTATION_FAILED,null,null));
-
-                    return;
+                else
+                {
+                 callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                         "Error :"+methodName));
+                 return;
                 }
 
-                Map<String, String> headers = new Hashtable<>();
-                headers.put("lat",LocationDetails.getShared(context).getLatitude());
-                headers.put("long",LocationDetails.getShared(context).getLongitude());
-
-                //Call Service-getURLList
-                final ICidaasSDKService cidaasSDKService = service.getInstance();
-                cidaasSDKService.getUrlList(openIdurl,headers).enqueue(new Callback<Object>() {
-                    @Override
-                    public void onResponse(Call<Object> call, Response<Object> response) {
-                        if (response.isSuccessful()) {
-                            if(response.code()==200) {
-                                callback.success(response.body());
-                            }
-                            else {
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                        "Service failure but successful response" , response.code(),null,null));
-                            }
-                        }
-                        else {
-                            assert response.errorBody() != null;
-                            try {
-
-                                // Handle proper error message
-                                String errorResponse=response.errorBody().source().readByteString().utf8();
-                                final CommonErrorEntity commonErrorEntity;
-                                commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                                String errorMessage="";
-                                ErrorEntity errorEntity=new ErrorEntity();
-                                if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                    errorMessage=commonErrorEntity.getError().toString();
-                                }
-                                else
-                                {
-                                    if(commonErrorEntity.getError_description()!=null && !commonErrorEntity.getError_description().equals(""))
-                                    {
-                                        errorMessage=commonErrorEntity.getError_description();
-                                    }
-                                    else {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                        errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                        errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                        errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                        errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                        errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                        errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-                                }
-
-
-                                //Todo Service call For fetching the Consent details
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                        errorMessage, commonErrorEntity.getStatus(),
-                                        commonErrorEntity.getError(),errorEntity));
-
-                            } catch (Exception e) {
-                                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage(), 400,null,null));
-                                // Timber.e("response"+response.message()+e.getMessage());
-                            }
-                            Timber.e("response"+response.message());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Object> call, Throwable t) {
-                        Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                        callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,t.getMessage(), 400,null,null));
-                    }
-                });
             }
             catch (Exception e)
             {
-                LogFile.getShared(context).addRecordToLog("LoginWithCredentials Service exception"+e.getMessage());
-                Timber.d(e.getMessage());
-                callback.failure(WebAuthError.getShared(context).propertyMissingException());
+                callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
             }
 
+    }
+
+    private void serviceForGetURLList(String openIdurl, Map<String, String> headers, final Result<Object> callback)
+    {
+       final String methodName="LoginService :serviceForGetURLList()";
+        try {
+            //Call Service-getURLList
+            final ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.getUrlList(openIdurl, headers).enqueue(new Callback<Object>() {
+                @Override
+                public void onResponse(Call<Object> call, Response<Object> response) {
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+                                   response.code(), "Error :"+methodName));
+                        }
+                    } else {
+                        assert response.errorBody() != null;
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_LOGIN_FAILURE, response
+                                , "Error :"+methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Object> call, Throwable t) {
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
+        }
     }
 
 }

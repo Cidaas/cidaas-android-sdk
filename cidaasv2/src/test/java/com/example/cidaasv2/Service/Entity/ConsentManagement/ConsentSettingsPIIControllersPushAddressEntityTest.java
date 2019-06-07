@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-public class ConsentSettingsPIIControllersAddressEntityTest {
+public class ConsentSettingsPIIControllersPushAddressEntityTest {
 
     ConsentSettingsPIIControllersAddressEntity consentSettingsPIIControllersAddressEntity=new ConsentSettingsPIIControllersAddressEntity();
 

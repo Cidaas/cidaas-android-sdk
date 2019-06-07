@@ -3,7 +3,7 @@ package com.example.cidaasv2.Service;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
@@ -15,6 +15,8 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.Resum
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFARequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
@@ -212,7 +214,7 @@ public interface ICidaasSDKService {
 
     //Setup Email MFA
     @POST
-    Call<SetupEmailMFAResponseEntity> setupEmailMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfoEntity);
+    Call<SetupEmailMFAResponseEntity> setupEmailMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupEmailMFARequestEntity setupEmailMFARequestEntity);
 
     //Enroll Email MFA
     @POST
@@ -229,7 +231,7 @@ public interface ICidaasSDKService {
 
     //Setup SMS MFA
     @POST
-    Call<SetupSMSMFAResponseEntity> setupSMSMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body DeviceInfoEntity deviceInfoEntity);
+    Call<SetupSMSMFAResponseEntity> setupSMSMFA(@Url String url, @HeaderMap Map<String,String>headers, @Body SetupSMSMFARequestEntity setupSMSMFARequestEntity);
 
     //Enroll SMS MFA
     @POST

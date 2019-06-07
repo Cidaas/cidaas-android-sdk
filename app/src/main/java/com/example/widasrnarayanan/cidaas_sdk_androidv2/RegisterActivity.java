@@ -15,6 +15,7 @@ import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
@@ -104,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(RegisterActivity.this,"Get Registration Setup Fails "+ error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this,"Get Registration Setup Fails "+ error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -122,16 +123,16 @@ public class RegisterActivity extends AppCompatActivity {
     public void Register(View view){
 
         RegistrationEntity registrationEntity=new RegistrationEntity();
-        registrationEntity.setUsername("RajS1");
-        registrationEntity.setEmail("rajanan2@gmail.com");
-        registrationEntity.setGiven_name("RajaSK");
-        registrationEntity.setFamily_name("RsdfsdfN");
+        registrationEntity.setUsername("Raj");
+        registrationEntity.setEmail("cidaaswidaa@gmail.com");
+        registrationEntity.setGiven_name("RajaS");
+        registrationEntity.setFamily_name("RsdfsN");
         registrationEntity.setPassword("123456");
         registrationEntity.setPassword_echo("123456");
-        registrationEntity.setMobile_number("+919876553230");
-        Date date=new Date();
-        date.setDate(27/12/1994);
-        registrationEntity.setBirthdate(date);
+        registrationEntity.setMobile_number("+919876553231");
+       // Date date=new Date();
+      //  date.setDate(27/12/1994);
+      //  registrationEntity.setBirthdate(date);
         registrationEntity.setGender("Male");
         registrationEntity.setWebsite("http://google.com");
 
@@ -163,29 +164,32 @@ public class RegisterActivity extends AppCompatActivity {
 
         registrationEntity.setCustomFields(customFileds);
 
-
-        cidaas.verifyAccount("your code", "",new Result<RegisterUserAccountVerifyResponseEntity>() {
-            @Override
-            public void success(RegisterUserAccountVerifyResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
         cidaas.registerUser(requestId, registrationEntity, new Result<RegisterNewUserResponseEntity>() {
             @Override
             public void success(RegisterNewUserResponseEntity result) {
-                //Toast.makeText(this, "Regsiter", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterActivity.this, "Register Succesfully"+result.getData().getSuggested_action()+result.getData().getNext_token(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Register Successfully"+result.getData().getSuggested_action()+result.getData().getNext_token(), Toast.LENGTH_SHORT).show();
+
+                if(result.getData().getSuggested_action().equalsIgnoreCase("DEDUPLICATION"))
+                {
+                   //cidaas.loginWithCredentials();
+                    cidaas.getDeduplicationDetails(result.getData().getTrackId(), new Result<DeduplicationResponseEntity>() {
+                        @Override
+                        public void success(DeduplicationResponseEntity result) {
+                            Toast.makeText(RegisterActivity.this, ""+result.getData().getEmail(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            Toast.makeText(RegisterActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
             }
 
             @Override
             public void failure(WebAuthError error) {
-                //Toast.makeText(this, "Regsiter", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterActivity.this, "Register Failed"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Register Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

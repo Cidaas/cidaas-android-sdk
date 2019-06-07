@@ -3,7 +3,9 @@ package com.example.cidaasv2.Library.BiometricAuthentication;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
+import android.os.CancellationSignal;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
@@ -31,7 +33,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
-import androidx.core.os.CancellationSignal;
+
 
 
 @TargetApi(Build.VERSION_CODES.M)
@@ -43,6 +45,7 @@ public class BiometricManagerV23 {
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
     private FingerprintManagerCompat.CryptoObject cryptoObject;
+    private FingerprintManager.CryptoObject cryptoObjectManger;
 
 
     protected Context context;
@@ -61,7 +64,7 @@ public class BiometricManagerV23 {
     AlertDialog alertDialog;
 
 CancellationSignal cancellationSignal;
-    public void displayBiometricPromptV23(final BiometricCallback biometricCallback) {
+   /* public void displayBiometricPromptV23(final BiometricCallback biometricCallback) {
         generateKey();
 
         if(initCipher()) {
@@ -108,9 +111,61 @@ CancellationSignal cancellationSignal;
 
             displayBiometricDialog(biometricCallback);
         }
+    }*/
+
+
+    public void displayBiometricPromptV23Manger(final BiometricCallback biometricCallback) {
+        generateKey();
+
+        if(initCipher()) {
+
+            cancellationSignal=new CancellationSignal();
+            cryptoObjectManger = new FingerprintManager.CryptoObject(cipher);
+
+            FingerprintManager fingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
+
+            fingerprintManager.authenticate(cryptoObjectManger, cancellationSignal, 0, new FingerprintManager.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationError(int errorCode, CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+                    if(errorCode==5) {
+                       // biometricCallback.onAuthenticationCancelled();
+                      //  return;
+                    }
+                    else {
+                        updateStatus(String.valueOf(errString));
+                        return;
+                    }
+                }
+
+                @Override
+                public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                    super.onAuthenticationHelp(helpCode, helpString);
+                    updateStatus(String.valueOf(helpString));
+                    biometricCallback.onAuthenticationHelp(helpCode, helpString);
+                    return;
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+                    dismissDialog();
+                    biometricCallback.onAuthenticationSuccessful();
+                    return;
+                }
+
+                @Override
+                public void onAuthenticationFailed() {
+                    super.onAuthenticationFailed();
+                    updateStatus(context.getString(R.string.biometric_failed));
+                    biometricCallback.onAuthenticationFailed();
+                    return;
+                }
+            },null);
+
+            displayBiometricDialog(biometricCallback);
+        }
     }
-
-
 
     private void displayBiometricDialog(final BiometricCallback biometricCallback) {
 
@@ -158,8 +213,11 @@ CancellationSignal cancellationSignal;
 
                 if(cancellationSignal != null && !cancellationSignal.isCanceled()){
                     cancellationSignal.cancel();
+                    biometricCallback.onAuthenticationCancelled();
+                    return;
                 }
-                biometricCallback.onAuthenticationCancelled();
+             /*
+                return;*/
             }
         });
 

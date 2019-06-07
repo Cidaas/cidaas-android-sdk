@@ -2,6 +2,8 @@ package com.example.cidaasv2.Controller.Repository.Registration;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -17,6 +19,9 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 import com.example.cidaasv2.Service.Repository.Registration.RegistrationService;
 
+import java.util.Dictionary;
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
@@ -26,6 +31,8 @@ public class RegistrationController {
     private Context context;
 
     public static RegistrationController shared;
+    public RegistrationSetupResultDataEntity[] registerFields;
+
 
     String accvid;
 
@@ -52,12 +59,76 @@ public class RegistrationController {
         }
         return shared;
     }
+    public void getRegisterationFields(@NonNull final String requestId, final String locale,
+                                      final Result<RegistrationSetupResponseEntity> registerFieldsresult)
+    {
+        final String methodName="RegistrationController :getRegisterationFields()";
+        try {
 
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    controlForGetRegistrationFields(requestId,locale,loginPropertiesResult,registerFieldsresult);
+                }
+
+
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
+                }
+            });
+        } catch (Exception e) {
+
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+    private void controlForGetRegistrationFields(@NonNull final String requestId, final String locale, Dictionary<String, String> loginPropertiesResult,
+                                                 final Result<RegistrationSetupResponseEntity> registerFieldsresult)
+    {
+        String methodName="RegistrationController :controlForGetRegistrationFields()";
+        try {
+            String baseurl = loginPropertiesResult.get("DomainURL");
+            String clientId = loginPropertiesResult.get("ClientId");
+            String language;
+
+            if (!requestId.equals("")) {
+
+                final RegistrationSetupRequestEntity registrationSetupRequestEntity;
+
+                registrationSetupRequestEntity = new RegistrationSetupRequestEntity();
+                registrationSetupRequestEntity.setRequestId(requestId);
+
+                if (locale == null || locale == "") {
+                    language = Locale.getDefault().getLanguage();
+                    registrationSetupRequestEntity.setAcceptedLanguage(language);
+
+                } else {
+                    language = locale;
+                    registrationSetupRequestEntity.setAcceptedLanguage(language);
+                }
+
+                getRegisterationFields(baseurl, registrationSetupRequestEntity, registerFieldsresult);
+
+            } else {
+                String errorMessage = "RequestId must not be empty";
+                registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error:" + methodName));
+            }
+        }
+        catch (Exception e)
+        {
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+                    e.getMessage()));
+        }
+    }
 
     //Service call To Registration Setup
     public void getRegisterationFields(@NonNull String baseurl, @NonNull RegistrationSetupRequestEntity registrationSetupRequestEntity,
                                        final Result<RegistrationSetupResponseEntity> result)
     {
+        String methodName="RegistrationController :getRegisterationFields()";
         try{
 
             if (registrationSetupRequestEntity.getAcceptedLanguage() != null && !registrationSetupRequestEntity.getAcceptedLanguage().equals("") &&
@@ -69,6 +140,7 @@ public class RegistrationController {
                     @Override
                     public void success(RegistrationSetupResponseEntity serviceresult) {
                         validateRegistrationFilelds=serviceresult;
+                        registerFields = serviceresult.getData();
                         result.success(serviceresult);
                     }
 
@@ -82,17 +154,168 @@ public class RegistrationController {
             {
                 String errorMessage="RequestId must not be empty";
 
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Accepted Language or requestId must not be null", methodName));
             }
         }
         catch (Exception e)
         {
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
+        }
+    }
 
-            String errorMessage="Exception"+e.getMessage();
+    public void registerNewUser(@NonNull final String requestId, final RegistrationEntity registrationEntity,
+                             final Result<RegisterNewUserResponseEntity> registerFieldsresult)
+    {
+        final String methodName="RegistrationController :registerNewUser()";
+        try {
 
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+                    String language;
+
+                    if (!requestId.equals("")) {
+                        if (registerFields != null)
+
+                        {
+                            if (registerFields.length > 0) {
+                                for (RegistrationSetupResultDataEntity dataEntity : registerFields) {
+
+                                    if (dataEntity.getFieldKey().equals("email")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getEmail().equals("")) {
+                                            String errorMessage = "Email must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+                                        }
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("given_name")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals("")) {
+                                            String errorMessage = "given_name must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+                                        }
+
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("family_name")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getFamily_name().equals("")) {
+                                            String errorMessage = "family_name must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+
+                                        }
+
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("mobile_number")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getMobile_number().equals("")) {
+                                            String errorMessage = "mobile_number must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+                                        }
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("password")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getPassword().equals("")) {
+                                            String errorMessage = "password must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+                                        }
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("password_echo")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals("")) {
+                                            String errorMessage = "password_echo must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+
+                                        }
+                                        if (!registrationEntity.getPassword().equals(registrationEntity.getPassword_echo())) {
+
+                                            String errorMessage = "Password and password_echo must be same";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+
+                                        }
+
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("username")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getUsername().equals("")) {
+                                            String errorMessage = "username must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+
+                                        }
+
+                                    }
+
+                                    if (dataEntity.getFieldKey().equals("birthdate")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getBirthdate().equals("")) {
+                                            String errorMessage = "birthdate must not be empty";
+                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                                            return;
+                                        }
+
+                                    }
+
+                                    if (registrationEntity.getProvider() != null && !registrationEntity.getProvider().equals("")) {
+                                        String errorMessage = "Provider must not be empty";
+                                        registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,methodName));
+                                        return;
+
+                                    }
+
+
+                                    if (registrationEntity.getCustomFields() != null) {
+                                        if (registrationEntity.getCustomFields().size() > 0) {
+                                            for (int i = 0; i < registrationEntity.getCustomFields().size(); i++) {
+                                                if (registrationEntity.getCustomFields().keys().hasMoreElements()) {
+
+                                                    // registrationEntity.getCustomFields().get()
+                                                    //todo
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            } else {
+
+                            }
+                        } else {
+
+                        }
+
+                        final RegisterNewUserRequestEntity registerNewUserRequestEntity;
+
+                        registerNewUserRequestEntity = new RegisterNewUserRequestEntity();
+                        registerNewUserRequestEntity.setRequestId(requestId);
+                        registrationEntity.setProvider("self");
+                        registerNewUserRequestEntity.setRegistrationEntity(registrationEntity);
+
+
+                        registerNewUser(baseurl, registerNewUserRequestEntity,registerFieldsresult);
+
+                    } else {
+                        String errorMessage = "RequestId must not be empty";
+
+                        registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsresult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
+                }
+            });
+        } catch (Exception e) {
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+                    e.getMessage()));
         }
     }
 
@@ -100,78 +323,79 @@ public class RegistrationController {
     public void registerNewUser(String baseurl, RegisterNewUserRequestEntity registrationEntity, final Result<RegisterNewUserResponseEntity> result) {
         try {
             //Todo Check for Not null
-
-            for (RegistrationSetupResultDataEntity dataEntity:validateRegistrationFilelds.getData()
-                 ) {
-                if(dataEntity.isRequired())
-                {
-
-                }
-            }
                 registerWithNewUserService(baseurl,registrationEntity,result);
-
-
         }
         catch (Exception e)
         {
-
-            String errorMessage="RequestId must not be empty";
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :RegistrationController :registerNewUser()",
+                    WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
     //Service call To Registration Setup
     public void registerWithNewUserService(@NonNull String baseurl,@NonNull RegisterNewUserRequestEntity registerNewUserRequestEntity,
                                            final Result<RegisterNewUserResponseEntity> result){
+        String methodName="RegistrationController :registerWithNewUserService()";
         try{
 
             if (registerNewUserRequestEntity.getRequestId() != null && !registerNewUserRequestEntity.getRequestId().equals("") &&
                     registerNewUserRequestEntity.getRegistrationEntity() != null &&
                     !registerNewUserRequestEntity.getRegistrationEntity().getFamily_name().equals("") && baseurl != null && !baseurl.equals("")) {
                 //Todo Service call
-                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity,null,
-                        new Result<RegisterNewUserResponseEntity>() {
-                    @Override
-                    public void success(RegisterNewUserResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
+                RegistrationService.getShared(context).registerNewUser(baseurl, registerNewUserRequestEntity, result);
             }
             else
             {
-
                 String errorMessage="RequestId must not be empty";
-
-                result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                        errorMessage, HttpStatusCode.EXPECTATION_FAILED));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,methodName));
             }
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-
-            String errorMessage="RequestId must not be empty";
-
-            result.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.PROPERTY_MISSING,
-                    e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
 
 
+    public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String requestId, @NonNull final String verificationMedium,
+                                          final Result<RegisterUserAccountInitiateResponseEntity> Result)
+    {
+        final String methodName="RegistrationController :initiateAccountVerificationService()";
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+                    String clientId = result.get("ClientId");
+
+                    RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity = new RegisterUserAccountInitiateRequestEntity();
+                    registerUserAccountInitiateRequestEntity.setProcessingType("CODE");
+                    registerUserAccountInitiateRequestEntity.setVerificationMedium(verificationMedium);
+                    registerUserAccountInitiateRequestEntity.setSub(sub);
+                    registerUserAccountInitiateRequestEntity.setRequestId(requestId);
+                    initiateAccountVerificationService(baseurl, registerUserAccountInitiateRequestEntity, Result);
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+    Result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
+        }
+    }
 
 
     //Service call To  register New User Account Verification via Email Setup
     public void initiateAccountVerificationService(@NonNull String baseurl,@NonNull RegisterUserAccountInitiateRequestEntity registrationEntity,
                                                     final Result<RegisterUserAccountInitiateResponseEntity> result)
     {
+        String methodName="RegistrationController :initiateAccountVerificationService()";
         try{
 
             if (registrationEntity.getRequestId() != null && !registrationEntity.getRequestId().equals("") &&
@@ -181,13 +405,10 @@ public class RegistrationController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 //Todo Service call
-                RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,null,
-                        new Result<RegisterUserAccountInitiateResponseEntity>() {
+           RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,new Result<RegisterUserAccountInitiateResponseEntity>() {
                     @Override
                     public void success(RegisterUserAccountInitiateResponseEntity serviceresult) {
                         accvid=serviceresult.getData().getAccvid();
-
-
                         result.success(serviceresult);
                     }
 
@@ -199,20 +420,52 @@ public class RegistrationController {
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                String errorMessage="Verification medium , sub or processing type must not be null";
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,methodName));
             }
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
+ result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
+ public void verifyAccountVerificationService(@NonNull final String code,@NonNull final String accvid,final Result<RegisterUserAccountVerifyResponseEntity> result)
+    {
+        final String methodName="RegistrationController :verifyAccountVerificationService()";
+        try {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> lpresult) {
+                    String baseurl = lpresult.get("DomainURL");
+                    String clientId = lpresult.get("ClientId");
 
-    //Service call To  register New User Account Verification via Email Setup
+                    if (code != null && !code.equals("") && accvid != null && !accvid.equals("")) {
+                        verifyAccountVerificationService(baseurl, code, accvid, result);
+                    }
+                    else {
+                        result.failure(WebAuthError.getShared(context).propertyMissingException("Verification Code or accvid must not be empty",methodName));
+                    }
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :"+methodName));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+  result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
+        }
+    }
+
+        //Service call To  register New User Account Verification via Email Setup
     public void verifyAccountVerificationService(@NonNull String baseurl, @NonNull String code, String accvid,
                                                  final Result<RegisterUserAccountVerifyResponseEntity> result)
     {
+        String methodName="RegistrationController :verifyAccountVerificationService()";
         try{
 
             if (accvid != null && !accvid.equals("") && code != null && !code.equals("") &&
@@ -223,27 +476,17 @@ public class RegistrationController {
                 registrationEntity.setAccvid(accvid);
 
                 //Todo Service call
-                RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity,null,
-                        new Result<RegisterUserAccountVerifyResponseEntity>() {
-                    @Override
-                    public void success(RegisterUserAccountVerifyResponseEntity serviceresult) {
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
+                RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity, result);
             }
             else
             {
-                result.failure(WebAuthError.getShared(context).propertyMissingException());
+                result.failure(WebAuthError.getShared(context).propertyMissingException("ACCVID or CODE or BASEURL must not be null",
+                        "Error :"+methodName));
             }
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
+    result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 

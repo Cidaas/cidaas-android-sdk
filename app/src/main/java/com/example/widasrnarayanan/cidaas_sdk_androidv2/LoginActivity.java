@@ -13,7 +13,7 @@ import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsErrorDataEntity;
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                         //Todo handle ConsentRequired
-                        if (error.ErrorMessage.equals("ConsentRequired")) {
+                        if (error.getErrorMessage().equals("ConsentRequired")) {
                             consentName = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_name();
                               //consentVersion = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_version();
                               sub=((LoginCredentialsErrorDataEntity) error.getError()).getSub();
@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 @Override
                                 public void failure(WebAuthError error) {
-                                    Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -155,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                         }
-                        else  if (error.ErrorMessage.equals("mfa_required")) {
+                        else  if (error.getErrorMessage().equals("mfa_required")) {
                             //final String sub=((LoginCredentialsErrorDataEntity) error.getError()).getSub();
                            sub=((LoginCredentialsErrorDataEntity) error.getError()).getSub();
 
@@ -168,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(intent);
 
                         }
-                        else if(error.ErrorMessage.equals("email_not_verified")){
+                        else if(error.getErrorMessage().equals("email_not_verified")){
                            cidaas.initiateEmailVerification(sub, requestIdresult.getData().getRequestId(), new Result<RegisterUserAccountInitiateResponseEntity>() {
                                @Override
                                public void success(RegisterUserAccountInitiateResponseEntity result) {
@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                @Override
                                public void failure(WebAuthError error) {
-                                   Toast.makeText(LoginActivity.this, "Login fails " + error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                                   Toast.makeText(LoginActivity.this, "Login fails " + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                }
                            });
                         }
@@ -314,6 +314,7 @@ public class LoginActivity extends AppCompatActivity {
                     passwordlessEntity.setRequestId(result.getData().getRequestId());
                     passwordlessEntity.setMobile("+919787113989");
                     passwordlessEntity.setUsageType(UsageType.PASSWORDLESS);
+
                     cidaas.loginWithEmail(passwordlessEntity, new Result<InitiateEmailMFAResponseEntity>() {
                         @Override
                         public void success(InitiateEmailMFAResponseEntity result) {

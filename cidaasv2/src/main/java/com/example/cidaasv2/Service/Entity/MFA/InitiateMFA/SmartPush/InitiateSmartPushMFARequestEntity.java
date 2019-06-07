@@ -18,21 +18,12 @@ public class InitiateSmartPushMFARequestEntity implements Serializable{
 
     String source="MOBILE";
 
-    public String getSource() {
-        return source;
+    public String getEmail() {
+        return email;
     }
 
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-
-    public String getUsage_pass() {
-        return usage_pass;
-    }
-
-    public void setUsage_pass(String usage_pass) {
-        this.usage_pass = usage_pass;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getMobile() {
@@ -41,14 +32,6 @@ public class InitiateSmartPushMFARequestEntity implements Serializable{
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getSub() {
@@ -83,11 +66,27 @@ public class InitiateSmartPushMFARequestEntity implements Serializable{
         this.usageType = usageType;
     }
 
+    public String getUsage_pass() {
+        return usage_pass;
+    }
+
+    public void setUsage_pass(String usage_pass) {
+        this.usage_pass = usage_pass;
+    }
+
     public DeviceInfoEntity getDeviceInfo() {
         return deviceInfo;
     }
 
     public void setDeviceInfo(DeviceInfoEntity deviceInfo) {
         this.deviceInfo = deviceInfo;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

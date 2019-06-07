@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +37,7 @@ public class CidaassdkService {
     public ICidaasSDKService getInstance()
     {
 
-        String baseurl= Cidaas.baseurl;
+        String baseurl= CidaasHelper.baseurl;
 
         if(baseurl==null || baseurl.equals(""))
         {
@@ -65,7 +65,7 @@ public class CidaassdkService {
                                  .header(HEADER_LOCATION_LONGITUDE,getLong())*/
                                 .build();
                         for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
-                            Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
+                        //    Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                             DBHelper.getShared().setUserAgent("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                         }
 
@@ -89,43 +89,12 @@ public class CidaassdkService {
 
     private String createCustomUserAgent(Request originalRequest) {
         // App name can be also retrieved programmatically, but no need to do it for this sample needs
-        String ua = Cidaas.APP_NAME;
+        String ua = "Cidaas-"+CidaasHelper.APP_NAME;
         String baseUa = System.getProperty("http.agent");
         if (baseUa != null) {
-            ua = ua + "/" + Cidaas.APP_VERSION+"("+ BuildConfig.VERSION_NAME+")"+ " " + baseUa;
+            ua = ua + "/" + CidaasHelper.APP_VERSION+"_"+ BuildConfig.VERSION_NAME+ " " + baseUa;
         }
         return ua;
     }
-
-
-
-  /*  private String getLat()
-    {
-        String lat="";
-        if(mcontext!=null) {
-            LocationDetails locationDetails = new LocationDetails(mcontext);
-            locationDetails.getLocation();
-            lat=locationDetails.getLatitude();
-
-        }
-        Timber.d("Location Longitude"+lat);
-        return lat;
-    }
-
-    private String getLong()
-    {
-        String longitude="";
-        if(mcontext!=null) {
-            LocationDetails locationDetails = new LocationDetails(mcontext);
-            locationDetails.getLocation();
-            longitude=locationDetails.getLongitude();
-
-
-
-        }
-        Timber.d("Location Longitude"+longitude);
-        return longitude;
-    }
-*/
 
 }

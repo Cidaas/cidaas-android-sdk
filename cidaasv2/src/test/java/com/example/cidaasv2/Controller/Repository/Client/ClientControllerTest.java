@@ -25,7 +25,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class ClientControllerTest {
 
     Context context;
@@ -55,7 +55,7 @@ public class ClientControllerTest {
 
     @Test
     public void testGetClientInfo() throws Exception {
-        clientController.getClientInfo("", "", new Result<ClientInfoEntity>() {
+        clientController.getClientInfo( new Result<ClientInfoEntity>() {
             @Override
             public void success(ClientInfoEntity result) {
 
@@ -84,7 +84,7 @@ public class ClientControllerTest {
         Cidaas.baseurl=domainURL;
 
 
-        clientController.getClientInfo("localhost:234235", "RequestId", new Result<ClientInfoEntity>() {
+        clientController.getClientInfo( new Result<ClientInfoEntity>() {
             @Override
             public void success(ClientInfoEntity result) {
 

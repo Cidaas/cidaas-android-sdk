@@ -19,7 +19,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class RequestIdControllerTest {
     Context context;
     RequestIdController shared;

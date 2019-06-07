@@ -1,16 +1,15 @@
 package widaas.cidaas.rajanarayanan.cidaasfacebookv2;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Interface.ICidaasFacebook;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -86,7 +85,7 @@ public class CidaasFacebook implements ICidaasFacebook {
                     if (access_token != null || !access_token.equals("")) {
 
 
-                        CidaasSDKLayout.getInstance(CidaasFacebook.this.activity).getAccessTokenBySocialWithLoader(access_token, "facebook", Cidaas.baseurl, "login", result);
+                        CidaasSDKLayout.getInstance(CidaasFacebook.this.activity).getAccessTokenBySocialWithLoader(access_token, "facebook", CidaasHelper.baseurl, "login", result);
                     }
                 }
 
@@ -106,7 +105,7 @@ public class CidaasFacebook implements ICidaasFacebook {
         catch (Exception e)
         {
             Timber.e("Exception");
-            result.failure(WebAuthError.getShared(activity).customException(400,"Exception: CidaasFacebook: signIn"+e.getMessage(),400));
+            result.failure(WebAuthError.getShared(activity).customException(400,"Exception: CidaasFacebook: signIn"+e.getMessage(),"signin"));
         }
     }
 

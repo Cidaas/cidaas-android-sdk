@@ -1,11 +1,15 @@
 package com.example.cidaasv2.Service.Repository.Login;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -16,9 +20,14 @@ import com.example.cidaasv2.Service.Repository.RequestId.RequestIdService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import okhttp3.mockwebserver.MockResponse;
@@ -26,7 +35,10 @@ import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
 import static com.example.cidaasv2.Controller.HelperClass.removeLastChar;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 
+//@RunWith(RobolectricTestRunner.class)
 public class LoginCredentialsServiceCall {
 
     Context context= Mockito.mock(Context.class);
@@ -40,6 +52,14 @@ public class LoginCredentialsServiceCall {
     CountDownLatch latch=new CountDownLatch(1);
 
 
+   // final SharedPreferences sharedPrefs = Mockito.mock(SharedPreferences.class);
+    //final SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+
+
+
+
+
+
     @Before
     public void setUp() throws Exception {
 
@@ -48,6 +68,20 @@ public class LoginCredentialsServiceCall {
         deviceInfoEntity.setDeviceModel("DeviceModel");
         deviceInfoEntity.setDeviceMake("DeviceMake");
         deviceInfoEntity.setPushNotificationId("PushNotificationId");
+
+       // Context context1= RuntimeEnvironment.application;
+       /* Mockito.when(context.getSharedPreferences("cidaas_preference", 0)).thenReturn(sharedPrefs);
+        Mockito.when(sharedPrefs.edit()).thenReturn(editor);
+        Mockito.when(editor.putString(anyString(),anyString())).thenReturn(editor);
+        Mockito.when(editor.commit()).thenReturn(true);
+        Mockito.when(DBHelper.getShared().getDeviceInfo()).thenReturn(deviceInfoEntity);*/
+
+      /*  DBHelper.setConfig(context);
+
+
+
+
+        DBHelper.getShared().addDeviceInfo(deviceInfoEntity);*/
 
         loginCredentialsRequestEntity.setRequestId("RequestId");
         loginCredentialsRequestEntity.setUsername_type("Username_type");
@@ -64,6 +98,11 @@ public class LoginCredentialsServiceCall {
         resumeLoginRequestEntity.setSub("Sub");
         resumeLoginRequestEntity.setRequestId("RequestID");
 
+
+
+
+
+
     }
 
     @Test
@@ -77,7 +116,7 @@ public class LoginCredentialsServiceCall {
                         "    \"success\": true,\n" +
                         "    \"status\": 200,\n" +
                         "    \"data\": {\n" +
-                        "    \"requestId\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
+                        "    \"sub\": \"556b95f8-9326-4250-a4ee-0e0d887f7a7d\""+
                         "    }\n" +
                         "}");
 
@@ -96,15 +135,25 @@ public class LoginCredentialsServiceCall {
         loginCredentialsRequestEntity.setUsername("Username");
         loginCredentialsRequestEntity.setPassword("Password");
 
-        loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl), loginCredentialsRequestEntity,deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+        Map<String, String> headers = new Hashtable<>();
+
+        headers.put("Content-Type", URLHelper.contentTypeJson);
+        headers.put("deviceId", deviceInfoEntity.getDeviceId());
+        headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
+        headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
+        headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
+        headers.put("lat", LocationDetails.getShared(context).getLatitude());
+        headers.put("lon",LocationDetails.getShared(context).getLongitude());
+
+        loginService.serviceForLoginWithCredentials(removeLastChar(Cidaas.baseurl), loginCredentialsRequestEntity, headers,new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
-
+                Assert.assertEquals(result.getData().getSub(),"556b95f8-9326-4250-a4ee-0e0d887f7a7d");
             }
 
             @Override
             public void failure(WebAuthError error) {
-
+               Assert.assertFalse(error.getErrorMessage()!=null);
             }
         });
     }
@@ -142,7 +191,7 @@ public class LoginCredentialsServiceCall {
         server.enqueue(response);
         Cidaas.baseurl=domainURL;
 
-        loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl), new LoginCredentialsRequestEntity(),deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+        loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl), new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -182,7 +231,7 @@ public class LoginCredentialsServiceCall {
 
 
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity,deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -243,7 +292,7 @@ public class LoginCredentialsServiceCall {
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity,deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
                     Assert.assertEquals("get Access Token",result.getData().getAccess_token());
@@ -301,7 +350,7 @@ public class LoginCredentialsServiceCall {
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity,deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -359,7 +408,7 @@ public class LoginCredentialsServiceCall {
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity,deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -411,7 +460,7 @@ public class LoginCredentialsServiceCall {
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity,deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -463,7 +512,7 @@ public class LoginCredentialsServiceCall {
             server.enqueue(response);
             Cidaas.baseurl=domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity,deviceInfoEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -542,6 +591,7 @@ public class LoginCredentialsServiceCall {
         {
             Assert.assertEquals(e.getMessage(),true,true);
             Assert.assertFalse(e.getMessage(),true);
+            latch.countDown();
         }
 
     }

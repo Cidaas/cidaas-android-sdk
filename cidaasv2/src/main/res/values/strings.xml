@@ -18,8 +18,11 @@
     <string name="DEFAULT">Error Occured.</string>
     <string name="FILE_NOT_FOUND">Property file is missing.</string>
     <string name="NO_CONTENT_IN_FILE">No content in property file.</string>
+    <string name="SERVICE_EXCEPTION">Some thing is wrong. Please Try again.</string>
 
     <string name="PROPERTY_MISSING">One of the property is missing.</string>
+    <string name="CIDAAS_PROPERTY_MISSING">DomainURL or ClientId or Redirect is missing.</string>
+    <string name="ACCESS_TOKEN_CONVERSION_FAILURE">Access Token Failure.</string>
     <string name="DEVICE_VERIFICATION_FAILURE">Device is Failed to Verify</string>
     <string name="REQUEST_ID_MISSING">Request Id is missing.</string>
     <string name="REQUEST_ID_SERVICE_FAILURE">Request Id service failure.</string>
@@ -61,6 +64,9 @@
 
     //For Location History
     <string name="LOCATION_HISTORY_FAILURE">Location History Failure</string>
+
+    //For Update FCM Token
+    <string name="UPDATE_FCM_TOKEN_FAILURE">Update FCM Token Failure</string>
 
 
 </resources>

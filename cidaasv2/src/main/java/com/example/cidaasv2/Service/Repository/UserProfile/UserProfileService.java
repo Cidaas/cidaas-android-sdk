@@ -2,30 +2,23 @@ package com.example.cidaasv2.Service.Repository.UserProfile;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class UserProfileService {
 
@@ -48,6 +41,12 @@ public class UserProfileService {
         authenticationType="";
         //Todo setValue for authenticationType
 
+        if(service==null) {
+            service=new CidaassdkService();
+
+            service.setContext(context);
+        }
+
     }
 
 
@@ -62,119 +61,82 @@ public class UserProfileService {
         }
         catch (Exception e)
         {
-            Timber.i(e.getMessage());
+           // Timber.i(e.getMessage());
         }
         return shared;
     }
 
-    //Get Internal UserProfile Info
-    public void getInternalUserProfileInfo(String baseurl,String AccessToken,String sub,DeviceInfoEntity deviceInfoEntityFromParam,final Result<UserprofileResponseEntity> callback)
+    //-----------------------------------------------------------------Get Internal UserProfile Info------------------------------------------------------
+    public void getInternalUserProfileInfo(String baseurl,String AccessToken,String sub,final Result<UserprofileResponseEntity> callback)
     {
         //Local Variables
-        String InternalUserProfileUrl = "";
+        String methodName = "UserProfileService :getInternalUserProfileInfo()";
         try{
 
             if(baseurl!=null && !baseurl.equals("") && sub!=null && !sub.equals("")){
                 //Construct URL For RequestId
 
                 //Todo Chnage URL Global wise
-                InternalUserProfileUrl=baseurl+ URLHelper.getShared().getInternaluserProfileURL()+sub;
+               String InternalUserProfileUrl=baseurl+ URLHelper.getShared().getInternaluserProfileURL()+sub;
+
+               //Headers Generation
+               Map<String, String> headers = Headers.getShared(context).getHeaders(AccessToken,false,URLHelper.contentType);
+
+               //Service Call
+               serviceForGetInternalUserProfileInfo(InternalUserProfileUrl, headers, callback);
             }
             else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
+                        "Error :"+methodName));
                 return;
             }
 
-            Map<String, String> headers = new Hashtable<>();
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
+                    e.getMessage()));
+        }
+    }
 
-            //get Device Information
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromParam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromParam;
-            }
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentType);
-            headers.put("access_token",AccessToken);
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
-
+    public void serviceForGetInternalUserProfileInfo(String internalUserProfileUrl, Map<String, String> headers,
+                                                     final Result<UserprofileResponseEntity> callback)
+    {
+        final String methodName="UserProfileService :getInternalUserProfileInfo()";
+        try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getInternalUserProfileInfo(InternalUserProfileUrl,headers).enqueue(new Callback<UserprofileResponseEntity>() {
+            cidaasSDKService.getInternalUserProfileInfo(internalUserProfileUrl, headers).enqueue(new Callback<UserprofileResponseEntity>() {
                 @Override
                 public void onResponse(Call<UserprofileResponseEntity> call, Response<UserprofileResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
+                                   response.code(), "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
-                                    "Service failure but successful response" , 400,null,null));
-                        }
-                    }
-                    else {
+                    } else {
                         assert response.errorBody() != null;
-                        try {
-
-                            //Todo Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode(((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,errorMessage, commonErrorEntity.getStatus(),
-                                    commonErrorEntity.getError(),errorEntity));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.DELETE_MFA_FAILURE,
-                                    "Get User Profile info Exception:"+ e.getMessage(), HttpStatusCode.EXPECTATION_FAILED));
-                        }
-                        Timber.e("response"+response.message());
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE, response
+                                , "Error :"+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserprofileResponseEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
+                            t.getMessage(), "Error :"+methodName));
 
                 }
             });
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception:"+methodName,WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
+                    e.getMessage()));
         }
     }
-
 
     //get user info
 }

@@ -4,4 +4,3 @@
     <item name="ClientId" type="string">Your Client Id</item>
     <item name="RedirectURL">Your redirect URL</item>
 </resources>
-

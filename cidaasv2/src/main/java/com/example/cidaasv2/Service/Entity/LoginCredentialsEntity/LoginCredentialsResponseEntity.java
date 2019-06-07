@@ -1,8 +1,7 @@
 package com.example.cidaasv2.Service.Entity.LoginCredentialsEntity;
 
 
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordResultDataEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;

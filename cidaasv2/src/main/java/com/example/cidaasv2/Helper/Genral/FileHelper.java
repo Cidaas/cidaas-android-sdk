@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -27,8 +30,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import timber.log.Timber;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -45,7 +46,6 @@ public class FileHelper {
         if(shared==null)
         {
             shared=new FileHelper(context);
-
         }
         return shared;
     }
@@ -60,6 +60,7 @@ public class FileHelper {
     //Read Properties
     public void readProperties(AssetManager assetManager,String fileNameFromBase,Result<Dictionary<String,String>> result)
     {
+        String methodName="FileHelper: readProperties()";
         InputStream inputStream;
         AssetManager asstManager= assetManager;
         String fileName=fileNameFromBase;
@@ -122,7 +123,7 @@ public class FileHelper {
                         throw new Exception("Property Cannot be null");
                     }
                 }
-                else if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("UserInfoURL")) {
+                /*else if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("UserInfoURL")) {
                     sam = nodeList.item(i).getTextContent().trim();
                     if(sam!=null && sam!="") {
                         dictObject.put("UserInfoURL", sam);
@@ -131,10 +132,10 @@ public class FileHelper {
                     {
                         throw new Exception("Property Cannot be null");
                     }
-                }
+                }*/
                 else
                 {
-                   webAuthError.propertyMissingException();
+                   webAuthError.propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty","Error"+methodName);
                    result.failure(webAuthError);
                 }
             }
@@ -151,26 +152,30 @@ public class FileHelper {
 
             if(e.getMessage().equalsIgnoreCase("Property Cannot be null"))
             {
-                webAuthError = webAuthError.propertyMissingException();
+                webAuthError = webAuthError.propertyMissingException("Property cannot be null","Error"+methodName);
+                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
                 result.failure(webAuthError);
             }
             else if (e instanceof FileNotFoundException)
             {
-                webAuthError = webAuthError.fileNotFoundException();
+                webAuthError = webAuthError.fileNotFoundException(methodName);
+                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
                 result.failure(webAuthError);
             }
             else if(e instanceof XPathExpressionException || e instanceof NullPointerException)
             {
-                webAuthError=webAuthError.noContentInFileException();
+                webAuthError=webAuthError.noContentInFileException(methodName);
+                LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
                 result.failure(webAuthError);
             }
             else
             {
-                webAuthError.ErrorMessage=e.getMessage();
-                result.failure(webAuthError);
+                //webAuthError.ErrorMessage=e.getMessage();
+                LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
+                result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
             }
 
-             result.failure(webAuthError);
+             result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
         }
 
     }
@@ -188,16 +193,25 @@ public class FileHelper {
         }
         catch (Exception e)
         {
+            LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.PARSE_XML);
             return null;
+
         }
     }
 
 //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @Nullable String ClientSecret, Result<Dictionary<String,String>> callback)
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret, Result<Dictionary<String,String>> callback)
     {
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
+
+
+                CidaasHelper.baseurl=DomainUrl;
+
+                //Disable PKCE Flow
+                DBHelper.getShared().setEnablePKCE(false);
+                CidaasHelper.ENABLE_PKCE=false;
 
                 loginProperties.put("ClientId", ClientId);
                 loginProperties.put("DomainURL", DomainUrl);
@@ -209,13 +223,12 @@ public class FileHelper {
                 callback.success(loginProperties);
             } else {
                 //T handle Error
-                callback.failure(webAuthError.propertyMissingException());
+                callback.failure(webAuthError.CidaaspropertyMissingException("","Error:-FileHelper :paramsToDictionaryConverter()"));
             }
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            callback.failure(webAuthError.propertyMissingException());
+            callback.failure(webAuthError.methodException("Exception :FileHelper :paramsToDictionaryConverter()",WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
         }
     }
 
@@ -223,9 +236,12 @@ public class FileHelper {
     //Convert parameter into a Dictionary Object
     public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, Result<Dictionary<String,String>> callback)
     {
+        String methodName="FileHelper :paramsToDictionaryConverter()";
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") ) {
+
+                CidaasHelper.baseurl=DomainUrl;
 
                 loginProperties.put("ClientId", ClientId);
                 loginProperties.put("DomainURL", DomainUrl);
@@ -235,13 +251,12 @@ public class FileHelper {
                 callback.success(loginProperties);
             } else {
                 //T handle Error
-                callback.failure(webAuthError.propertyMissingException());
+                callback.failure(webAuthError.propertyMissingException("ClientId or DomainURL or RedirectURL must not be empty","Error:"+methodName));
             }
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
-            callback.failure(webAuthError.propertyMissingException());
+            callback.failure(webAuthError.methodException("Exception :"+methodName,WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
         }
     }
 }

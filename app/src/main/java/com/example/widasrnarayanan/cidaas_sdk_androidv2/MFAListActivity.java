@@ -60,7 +60,7 @@ public class MFAListActivity extends AppCompatActivity {
 
     public void email(View view){
 
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -285,7 +285,7 @@ public class MFAListActivity extends AppCompatActivity {
 
                 for (MFAListResponseDataEntity mfaList:data
                         ) {
-                    if (mfaList.getVerificationType().equals("BACKUPCODE")) {
+                    if (mfaList.getVerification_type().equals("BACKUPCODE")) {
                         MFAListDeviceEntity[] mfaListDeviceEntities=mfaList.getDevices();
                         deviceID=mfaListDeviceEntities[0].getDeviceId();
                         physicalVerificationEntity.setPhysicalVerificationId(mfaList.get_id());
@@ -332,7 +332,7 @@ public class MFAListActivity extends AppCompatActivity {
 
                 for (MFAListResponseDataEntity mfaList:data
                         ) {
-                    if(mfaList.getVerificationType().equals("EMAIL")) {
+                    if(mfaList.getVerification_type().equals("EMAIL")) {
 
                         //Todo move to button Click
 
@@ -383,7 +383,7 @@ public class MFAListActivity extends AppCompatActivity {
 
                 for (MFAListResponseDataEntity mfaList:data
                         ) {
-                    if (mfaList.getVerificationType().equals("TOTP")) {
+                    if (mfaList.getVerification_type().equals("TOTP")) {
                         MFAListDeviceEntity[] mfaListDeviceEntities=mfaList.getDevices();
                         physicalVerificationEntity.setPhysicalVerificationId(mfaList.get_id());
                         physicalVerificationEntity.setUsageType("MULTIFACTOR_AUTHENTICATION");
@@ -431,7 +431,7 @@ public class MFAListActivity extends AppCompatActivity {
 
                 for (MFAListResponseDataEntity mfaList:data
                         ) {
-                    if (mfaList.getVerificationType().equals("IVR")) {
+                    if (mfaList.getVerification_type().equals("IVR")) {
                         MFAListDeviceEntity[] mfaListDeviceEntities=mfaList.getDevices();
                         deviceID=mfaListDeviceEntities[0].getDeviceId();
                         physicalVerificationEntity.setPhysicalVerificationId(mfaList.get_id());

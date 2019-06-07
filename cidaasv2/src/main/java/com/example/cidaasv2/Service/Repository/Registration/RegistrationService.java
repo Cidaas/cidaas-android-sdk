@@ -2,17 +2,15 @@ package com.example.cidaasv2.Service.Repository.Registration;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.CommonErrorEntity;
+import com.example.cidaasv2.Helper.CommonError.CommonError;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
-import com.example.cidaasv2.Helper.Entity.ErrorEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
 import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.CidaassdkService;
+import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
@@ -20,13 +18,10 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
-import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupErrorEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupRequestEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -78,401 +73,293 @@ public class RegistrationService {
         return shared;
     }
 
-    //Get Regsiteration Details
-    public void getRegistrationSetup(String baseurl, final RegistrationSetupRequestEntity registrationSetupRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegistrationSetupResponseEntity> callback)
+    //-----------------------------------------------------Get Regsiteration Details-------------------------------------------------------------------
+    public void getRegistrationSetup(String baseurl, final RegistrationSetupRequestEntity registrationSetupRequestEntity,
+                                     DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegistrationSetupResponseEntity> callback)
     {
         //Local Variables
 
-        String RegistrationUrl = "";
+        String methodName = "RegistrationService :getRegistrationSetup()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                RegistrationUrl=baseurl+ URLHelper.getShared().getRegistrationSetup(registrationSetupRequestEntity.getAcceptedLanguage(),registrationSetupRequestEntity.getRequestId());
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
-                return;
-            }
+                String RegistrationUrl=baseurl+ URLHelper.getShared().getRegistrationSetup(registrationSetupRequestEntity.getAcceptedLanguage(),
+                        registrationSetupRequestEntity.getRequestId());
+
 
 
             //Call Service-getRequestId
-            Map<String, String> headers = new Hashtable<>();
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
 
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
+            serviceForGetRegistrationSetup(RegistrationUrl, headers, callback);
 
-            cidaasSDKService.getRegistrationSetup(RegistrationUrl,headers).enqueue(new Callback<RegistrationSetupResponseEntity>() {
-                @Override
-                public void onResponse(Call<RegistrationSetupResponseEntity> call, Response<RegistrationSetupResponseEntity> response) {
-                    if (response.isSuccessful()) {
-                        if(response.code()==200) {
-                            callback.success(response.body());
-                        }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
-                        assert response.errorBody() != null;
-                        try {
-
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-                            RegistrationSetupErrorEntity registrationSetupErrorEntity;
-                            registrationSetupErrorEntity=objectMapper.readValue(errorResponse,RegistrationSetupErrorEntity.class);
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    registrationSetupErrorEntity.getError().getError(), registrationSetupErrorEntity.getStatus(),registrationSetupErrorEntity.getError(),null));
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<RegistrationSetupResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Login with credentials service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,t.getMessage(), 400,null,null));
-                }
-            });
+            }
+            else
+            {
+              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),"Error :"+methodName));
+                return;
+            }
 
 
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+          callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
+        }
+    }
+
+    private void serviceForGetRegistrationSetup(String registrationUrl, Map<String, String> headers, final Result<RegistrationSetupResponseEntity> callback)
+    {
+        final String methodName="RegistrationService :getRegistrationSetup()";
+        try
+        {
+            final ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.getRegistrationSetup(registrationUrl, headers).enqueue(new Callback<RegistrationSetupResponseEntity>() {
+            @Override
+            public void onResponse(Call<RegistrationSetupResponseEntity> call, Response<RegistrationSetupResponseEntity> response) {
+                if (response.isSuccessful()) {
+                    if (response.code() == 200) {
+                        callback.success(response.body());
+                    } else {
+                        callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+                                response.code(), "Error :"+methodName));
+                    }
+                } else {
+                    callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, response
+                            , "Error :"+methodName));
+                }
+            }
+
+             @Override
+             public void onFailure(Call<RegistrationSetupResponseEntity> call, Throwable t) {
+                callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, t.getMessage(),
+                      "Error :"+methodName));
+             }
+            });
+        }
+        catch (Exception e)
+        {
+          callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
 
-    //Register New User
-    public void registerNewUser(String baseurl, final RegisterNewUserRequestEntity registerNewUserRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegisterNewUserResponseEntity> callback)
+    //----------------------------------------------------------Register New User--------------------------------------------------------------------------
+    public void registerNewUser(String baseurl,final RegisterNewUserRequestEntity registerNewUserRequestEntity,final Result<RegisterNewUserResponseEntity> callback)
     {
         //Local Variables
 
-        String RegisterNewUserUrl = "";
+        String methodName = "";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
+
                 //Construct URL For RequestId
-                RegisterNewUserUrl=baseurl+URLHelper.getShared().getRegisterNewUserurl();
+               String RegisterNewUserUrl=baseurl+URLHelper.getShared().getRegisterNewUserurl();
+
+               //Header Generation
+               Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson,
+                       registerNewUserRequestEntity.getRequestId());
+
+               //service
+              serviceForRegisterNewUser(RegisterNewUserUrl, registerNewUserRequestEntity, headers, callback);
+
             }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+            else
+            {
+              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :"+methodName));
                 return;
             }
 
 
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromParam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromParam;
-            }
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("requestId", registerNewUserRequestEntity.getRequestId());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
+        }
+        catch (Exception e)
+        {
+          callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
+        }
+    }
 
+    private void serviceForRegisterNewUser(String registerNewUserUrl, RegisterNewUserRequestEntity registerNewUserRequestEntity, Map<String, String> headers,
+                                           final Result<RegisterNewUserResponseEntity> callback) {
+        final String methodName = "RegistrationService :registerNewUser()";
+        try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.registerNewUser(RegisterNewUserUrl,headers,registerNewUserRequestEntity.getRegistrationEntity()).enqueue(new Callback<RegisterNewUserResponseEntity>() {
+            cidaasSDKService.registerNewUser(registerNewUserUrl, headers, registerNewUserRequestEntity.getRegistrationEntity()).enqueue(
+                    new Callback<RegisterNewUserResponseEntity>() {
                 @Override
                 public void onResponse(Call<RegisterNewUserResponseEntity> call, Response<RegisterNewUserResponseEntity> response) {
                     if (response.isSuccessful()) {
-                        if(response.code()==200) {
+                        if (response.code() == 200) {
                             callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE
+                                    , response.code(), "Error :"+methodName));
                         }
-                        else {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    "Service failure but successful response" , response.code(),null,null));
-                        }
-                    }
-                    else {
+                    } else {
                         assert response.errorBody() != null;
-                        try {
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+                                response, "Error :"+methodName));
 
-                            // Handle proper error message
-                            String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                            CommonErrorEntity commonErrorEntity;
-                            commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                            String errorMessage="";
-                            ErrorEntity errorEntity=new ErrorEntity();
-                            if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                errorMessage=commonErrorEntity.getError().toString();
-                            }
-                            else
-                            {
-                                errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                            }
-
-
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
-
-                        } catch (Exception e) {
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage(), 400,null,null));
-                            Timber.e("response"+response.message()+e.getMessage());
-                        }
-                        Timber.e("response"+response.message());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RegisterNewUserResponseEntity> call, Throwable t) {
-                    Timber.e("Failure in Register new User service call"+t.getMessage());
-                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,t.getMessage(), 400,null,null));
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
                 }
             });
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+         callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,e.getMessage()));
         }
     }
 
-    //Register New User initiate  Account Verification
-    public void initiateAccountVerification(String baseurl, final RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity, DeviceInfoEntity deviceInfoEntityFromParam,final Result<RegisterUserAccountInitiateResponseEntity> callback)
+
+    //----------------------------------------------------Register New User initiate  Account Verification--------------------------------------------------
+    public void initiateAccountVerification(String baseurl, final RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity,
+                                            final Result<RegisterUserAccountInitiateResponseEntity> callback)
     {
         //Local Variables
 
-        String initiateAccountVerificationUrl = "";
+        String methodName = "RegistrationService :initiateAccountVerification()";
         try{
 
             if(baseurl!=null || !baseurl.equals("")){
                 //Construct URL For RequestId
-                initiateAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountInitiate();
+               String initiateAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountInitiate();
+
+               Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,URLHelper.contentTypeJson);
+
+               serviceForInitiateAccountVerification(initiateAccountVerificationUrl, registerUserAccountInitiateRequestEntity, headers, callback);
             }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+            else
+            {
+              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :"+methodName));
                 return;
             }
 
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
 
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromParam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromParam;
-            }
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
-
+    private void serviceForInitiateAccountVerification(String initiateAccountVerificationUrl,
+                                                       RegisterUserAccountInitiateRequestEntity registerUserAccountInitiateRequestEntity,
+                                                       Map<String, String> headers, final Result<RegisterUserAccountInitiateResponseEntity> callback) {
+        final String methodName = "RegistrationService :verifyAccountVerification()";
+        try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.initiateAccountVerification(initiateAccountVerificationUrl,headers,registerUserAccountInitiateRequestEntity)
+            cidaasSDKService.initiateAccountVerification(initiateAccountVerificationUrl, headers, registerUserAccountInitiateRequestEntity)
                     .enqueue(new Callback<RegisterUserAccountInitiateResponseEntity>() {
                         @Override
-                        public void onResponse(Call<RegisterUserAccountInitiateResponseEntity> call, Response<RegisterUserAccountInitiateResponseEntity> response) {
+                        public void onResponse(Call<RegisterUserAccountInitiateResponseEntity> call, Response<RegisterUserAccountInitiateResponseEntity> response)
+                        {
                             if (response.isSuccessful()) {
-                                if(response.code()==200) {
+                                if (response.code() == 200) {
                                     callback.success(response.body());
+                                } else {
+                                    callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+                                             response.code(),  "Error :"+methodName));
                                 }
-                                else {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                            "Service failure but successful response" , response.code(),null,null));
-                                }
-                            }
-                            else {
-                                assert response.errorBody() != null;
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                                    CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                                    String errorMessage="";
-                                    ErrorEntity errorEntity=new ErrorEntity();
-                                    if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                        errorMessage=commonErrorEntity.getError().toString();
-                                    }
-                                    else
-                                    {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
-
-                                } catch (Exception e) {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null,null));
-                                    Timber.e("response"+response.message()+e.getMessage());
-                                }
-                                Timber.e("response"+response.message());
+                            } else {
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+                                        response, "Error :"+methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<RegisterUserAccountInitiateResponseEntity> call, Throwable t) {
-                            Timber.e("Failure in Register new User service call"+t.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,t.getMessage(), 400,null,null));
+                            callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+                                    t.getMessage(), "Error :"+methodName));
                         }
                     });
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+                    e.getMessage()));
         }
     }
 
-    //Register New User verify  Account Verification
-    public void verifyAccountVerification(String baseurl, final RegisterUserAccountVerifyRequestEntity registerUserAccountVerifyRequestEntity,DeviceInfoEntity deviceInfoEntityFromParam,
+    //-----------------------------------------------------Register New User verify  Account Verification----------------------------------------------------
+    public void verifyAccountVerification(String baseurl, final RegisterUserAccountVerifyRequestEntity registerUserAccountVerifyRequestEntity,
                                           final Result<RegisterUserAccountVerifyResponseEntity> callback)
     {
         //Local Variables
 
-        String verifyAccountVerificationUrl = "";
+        String methodName = "RegistrationService :verifyAccountVerification()";
         try{
 
             if(baseurl!=null && !baseurl.equals("")){
                 //Construct URL For RequestId
-                verifyAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountVerify();
+                String   verifyAccountVerificationUrl=baseurl+URLHelper.getShared().getRegisterUserAccountVerify();
+
+                //Header
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
+
+                //Service
+                serviceForVerifyAccountVerification(verifyAccountVerificationUrl, registerUserAccountVerifyRequestEntity, headers, callback);
             }
-            else {
-                callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.PROPERTY_MISSING,context.getString(R.string.PROPERTY_MISSING), 400,null,null));
+            else
+            {
+             callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :"+methodName));
                 return;
             }
 
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
 
-            Map<String, String> headers = new Hashtable<>();
-            // Get Device Information
-            DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-            //This is only for testing purpose
-            if(deviceInfoEntityFromParam==null) {
-                deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            }
-            else if(deviceInfoEntityFromParam!=null)
-            {
-                deviceInfoEntity=deviceInfoEntityFromParam;
-            }
-            //Todo - check Construct Headers pending,Null Checking Pending
-            //Add headers
-            headers.put("Content-Type", URLHelper.contentTypeJson);
-            headers.put("deviceId", deviceInfoEntity.getDeviceId());
-            headers.put("deviceMake", deviceInfoEntity.getDeviceMake());
-            headers.put("deviceModel", deviceInfoEntity.getDeviceModel());
-            headers.put("deviceVersion", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat",LocationDetails.getShared(context).getLatitude());
-            headers.put("long",LocationDetails.getShared(context).getLongitude());
-
+    private void serviceForVerifyAccountVerification(String verifyAccountVerificationUrl, RegisterUserAccountVerifyRequestEntity
+            registerUserAccountVerifyRequestEntity, Map<String, String> headers, final Result<RegisterUserAccountVerifyResponseEntity> callback)
+    {
+        final String methodName="RegistrationService :verifyAccountVerification()";
+        try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
 
-            cidaasSDKService.verifyAccountVerification(verifyAccountVerificationUrl,headers,registerUserAccountVerifyRequestEntity)
+            cidaasSDKService.verifyAccountVerification(verifyAccountVerificationUrl, headers, registerUserAccountVerifyRequestEntity)
                     .enqueue(new Callback<RegisterUserAccountVerifyResponseEntity>() {
                         @Override
                         public void onResponse(Call<RegisterUserAccountVerifyResponseEntity> call, Response<RegisterUserAccountVerifyResponseEntity> response) {
                             if (response.isSuccessful()) {
-                                if(response.code()==200) {
+                                if (response.code() == 200) {
                                     callback.success(response.body());
+                                } else {
+                                    callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+                                            response.code(), "Error :"+methodName));
                                 }
-                                else {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            "Service failure but successful response" , response.code(),null,null));
-                                }
-                            }
-                            else {
+                            } else {
                                 assert response.errorBody() != null;
-                                try {
-
-                                    // Handle proper error message
-                                    String errorResponse=response.errorBody().source().readByteString().utf8();
-
-                                    CommonErrorEntity commonErrorEntity;
-                                    commonErrorEntity=objectMapper.readValue(errorResponse,CommonErrorEntity.class);
-
-
-                                    String errorMessage="";
-                                    ErrorEntity errorEntity=new ErrorEntity();
-                                    if(commonErrorEntity.getError()!=null && !commonErrorEntity.getError().toString().equals("") && commonErrorEntity.getError() instanceof  String) {
-                                        errorMessage=commonErrorEntity.getError().toString();
-                                    }
-                                    else
-                                    {
-                                        errorMessage = ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString();
-                                errorEntity.setCode( ((LinkedHashMap) commonErrorEntity.getError()).get("code").toString());
-                                errorEntity.setError( ((LinkedHashMap) commonErrorEntity.getError()).get("error").toString());
-                                errorEntity.setMoreInfo( ((LinkedHashMap) commonErrorEntity.getError()).get("moreInfo").toString());
-                                errorEntity.setReferenceNumber( ((LinkedHashMap) commonErrorEntity.getError()).get("referenceNumber").toString());
-                                errorEntity.setStatus((Integer) ((LinkedHashMap) commonErrorEntity.getError()).get("status"));
-                                errorEntity.setType( ((LinkedHashMap) commonErrorEntity.getError()).get("type").toString());
-                                    }
-
-
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            errorMessage, commonErrorEntity.getStatus(),  commonErrorEntity.getError(),errorEntity));
-
-                                } catch (Exception e) {
-                                    callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage(), 400,null,null));
-                                    Timber.e("response"+response.message()+e.getMessage());
-                                }
-                                Timber.e("response"+response.message());
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+                                        response, "Error :"+methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<RegisterUserAccountVerifyResponseEntity> call, Throwable t) {
-                            Timber.e("Failure in Register new User service call"+t.getMessage());
-                            callback.failure( WebAuthError.getShared(context).serviceFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,t.getMessage(), 400,null,null));
+                            callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+                                    t.getMessage(),"Error :"+methodName));
                         }
                     });
         }
         catch (Exception e)
         {
-            Timber.d(e.getMessage());
-            callback.failure(WebAuthError.getShared(context).propertyMissingException());
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+                    e.getMessage()));
         }
     }
 

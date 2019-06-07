@@ -17,7 +17,7 @@ import java.io.File;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+
 public class VoiceConfigurationControllerTest {
     Context context;
     VoiceConfigurationController shared;

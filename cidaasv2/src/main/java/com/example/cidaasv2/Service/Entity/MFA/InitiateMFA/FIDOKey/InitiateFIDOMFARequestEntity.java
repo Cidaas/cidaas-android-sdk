@@ -27,6 +27,46 @@ public class InitiateFIDOMFARequestEntity implements Serializable{
         this.email = email;
     }
 
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
+    public String getUserDeviceId() {
+        return userDeviceId;
+    }
+
+    public void setUserDeviceId(String userDeviceId) {
+        this.userDeviceId = userDeviceId;
+    }
+
+    public String getPhysicalVerificationId() {
+        return physicalVerificationId;
+    }
+
+    public void setPhysicalVerificationId(String physicalVerificationId) {
+        this.physicalVerificationId = physicalVerificationId;
+    }
+
+    public String getVerificationType() {
+        return verificationType;
+    }
+
+    public void setVerificationType(String verificationType) {
+        this.verificationType = verificationType;
+    }
+
+    public String getUsageType() {
+        return usageType;
+    }
+
+    public void setUsageType(String usageType) {
+        this.usageType = usageType;
+    }
+
     public String getClient_id() {
         return client_id;
     }
@@ -49,46 +89,6 @@ public class InitiateFIDOMFARequestEntity implements Serializable{
 
     public void setUsagePass(String usagePass) {
         this.usagePass = usagePass;
-    }
-
-    public String getSub() {
-        return sub;
-    }
-
-    public void setSub(String sub) {
-        this.sub = sub;
-    }
-
-    public String getPhysicalVerificationId() {
-        return physicalVerificationId;
-    }
-
-    public void setPhysicalVerificationId(String physicalVerificationId) {
-        this.physicalVerificationId = physicalVerificationId;
-    }
-
-    public String getUserDeviceId() {
-        return userDeviceId;
-    }
-
-    public void setUserDeviceId(String userDeviceId) {
-        this.userDeviceId = userDeviceId;
-    }
-
-    public String getVerificationType() {
-        return verificationType;
-    }
-
-    public void setVerificationType(String verificationType) {
-        this.verificationType = verificationType;
-    }
-
-    public String getUsageType() {
-        return usageType;
-    }
-
-    public void setUsageType(String usageType) {
-        this.usageType = usageType;
     }
 
     public DeviceInfoEntity getDeviceInfo() {

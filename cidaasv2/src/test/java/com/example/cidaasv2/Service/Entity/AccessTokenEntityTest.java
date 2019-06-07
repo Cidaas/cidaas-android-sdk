@@ -1,5 +1,7 @@
 package com.example.cidaasv2.Service.Entity;
 
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

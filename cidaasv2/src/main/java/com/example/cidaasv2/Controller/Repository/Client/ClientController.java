@@ -2,30 +2,33 @@ package com.example.cidaasv2.Controller.Repository.Client;
 
 import android.content.Context;
 
+import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
+import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
+import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
+import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Repository.Client.ClientService;
+
+import java.util.Dictionary;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class ClientController {
 
-    private String authenticationType;
-    private String verificationType;
     private Context context;
 
     public static ClientController shared;
 
     public ClientController(Context contextFromCidaas) {
-
-        verificationType="";
         context=contextFromCidaas;
-        authenticationType="";
-        //Todo setValue for authenticationType
 
     }
 
@@ -48,28 +51,25 @@ public class ClientController {
             }
         }
         catch (Exception e)
-        { Timber.i(e.getMessage());
+        {  LogFile.getShared(contextFromCidaas).addFailureLog("ClientController instance Creation Exception:-"+e.getMessage());
         }
         return shared;
     }
 
 
-    //Get Client Info
+    //-----------------------------------------------------Service call To Get Client Info without requestId----------------------------------------
+    public void getClientInfo(final Result<ClientInfoEntity> clientInfoEntityResult,final HashMap<String,String>... extraParams)
+    {
+       final String methodName="Client Controller :getClientInfo() without requestId";
+        try{
+            if(CidaasHelper.baseurl!=null && !CidaasHelper.baseurl.equals("")) {
 
-  /*  public void getClientInfo(@NonNull String RequestId, final Result<ClientInfoEntity> clientInfoEntityResult) {
-        try {
-            //Todo Check notnull in db
-            if(savedProperties==null){
-
-                savedProperties= DBHelper.getShared().getLoginProperties();
-            }
-            if(savedProperties==null){
-                //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
+                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override
-                    public void success(Dictionary<String, String> loginProperties) {
-                        savedProperties=loginProperties;
+                    public void success(Dictionary<String, String> loginPropertiesResult) {
+                        requestIdGeneration(loginPropertiesResult,clientInfoEntityResult,extraParams);
                     }
+
 
                     @Override
                     public void failure(WebAuthError error) {
@@ -77,35 +77,61 @@ public class ClientController {
                     }
                 });
             }
-            String baseurl = "";
-            if (savedProperties.get("DomainURL").equals("") || savedProperties.get("DomainURL") == null || savedProperties == null) {
-                webAuthError = webAuthError.propertyMissingException();
-                String loggerMessage = "Request-Id readProperties failure : " +
-                "Error Code - " + webAuthError.errorCode + ", Error Message - " + webAuthError.ErrorMessage + ", Status Code - " + webAuthError.statusCode;
-                LogFile.addRecordToLog(loggerMessage);
-                clientInfoEntityResult.failure(webAuthError);
-            } else {
-                baseurl = savedProperties.get("DomainURL");
-                getClientInfoService(baseurl,RequestId,clientInfoEntityResult);
+            else
+            {
+                clientInfoEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or RequestId Must not be empty"
+                        ,"Error :"+methodName));
             }
+
         }
         catch (Exception e)
         {
-            Timber.e(e.getMessage());
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                    e.getMessage()));
         }
-    }*/
+    }
 
-    //Service call To Get Client Info
-    public void getClientInfo(@NonNull String baseurl, @NonNull String RequestId, final Result<ClientInfoEntity> clientInfoEntityResult){
+
+    //RequestId Generation
+    private void requestIdGeneration(Dictionary<String, String> loginPropertiesResult,final Result<ClientInfoEntity> clientInfoEntityResult,
+                                     final HashMap<String,String>... extraParams)
+    {
+        final String methodName="Client Controller :requestIdGeneration()";
+       try
+       {
+            RequestIdController.getShared(context).getRequestId(loginPropertiesResult, new Result<AuthRequestResponseEntity>() {
+                @Override
+                public void success(AuthRequestResponseEntity result) {
+                    LogFile.getShared(context).addSuccessLog("Success" + methodName, " Success requestId:-" + result.getData().getRequestId());
+                    getClientInfo(result.getData().getRequestId(), clientInfoEntityResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    clientInfoEntityResult.failure(error);
+                }
+            }, extraParams);
+        }
+        catch (Exception e)
+        {
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+
+    //Service call to Get Client info
+    public void getClientInfo(@NonNull final String requestId, final Result<ClientInfoEntity> clientInfoEntityResult)
+    {
+        final String methodName="Client Controller :getClientInfo()";
         try{
+            LogFile.getShared(context).addInfoLog("Info "+methodName, " Info requestId:-"+requestId);
+            if(CidaasHelper.baseurl!=null && !CidaasHelper.baseurl.equals("") && requestId != null && !requestId.equals("")) {
 
-            if (baseurl != null && !baseurl.equals("") && RequestId != null && !RequestId.equals("")) {
-                // Change service call to private
-                ClientService.getShared(context).getClientInfo(RequestId, baseurl, new Result<ClientInfoEntity>() {
-
+                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                     @Override
-                    public void success(ClientInfoEntity serviceresult) {
-                        clientInfoEntityResult.success(serviceresult);
+                    public void success(Dictionary<String, String> stringresult) {
+                        ClientService.getShared(context).getClientInfo(requestId,stringresult.get("DomainURL"),clientInfoEntityResult);
                     }
 
                     @Override
@@ -116,14 +142,14 @@ public class ClientController {
             }
             else
             {
-
-
-                clientInfoEntityResult.failure(  WebAuthError.getShared(context)
-                        .customException(WebAuthErrorCode.PROPERTY_MISSING,"one of the  ClientInfoService properties missing",400));
+                clientInfoEntityResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :"+methodName));
             }
+
         }
         catch (Exception e)
-        { Timber.e(e.getMessage());
+        {
+         clientInfoEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.CLIENT_INFO_FAILURE,
+                 e.getMessage()));
         }
     }
 

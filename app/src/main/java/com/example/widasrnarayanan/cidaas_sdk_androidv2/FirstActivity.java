@@ -5,12 +5,16 @@ import android.os.Bundle;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessTokenEntity;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
+import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +26,9 @@ public class FirstActivity extends AppCompatActivity {
         setContentView(R.layout.activity_first);
 
       cidaas =new Cidaas(this);
+
+
+
 
 
     //Handle Forgot Password
@@ -70,6 +77,7 @@ public class FirstActivity extends AppCompatActivity {
          }
 
      });
+
 
 
      cidaas.loginWithSocial(getApplicationContext(), "linkedin", "optinalColorParameterInColorCode", new Result<AccessTokenEntity>() {

@@ -49,7 +49,7 @@ public class EmailMFAActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(EmailMFAActivity.this, "Result Failure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(EmailMFAActivity.this, "Result Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();
