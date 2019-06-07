@@ -20,7 +20,7 @@ public class EnrollEntity implements Serializable {
 
     //For face and voice
     private File fileToSend;
-    private int face_attempt =0;
+    private int attempt =0;
 
     //For Fingerprint
     @JsonIgnore
@@ -50,7 +50,7 @@ public class EnrollEntity implements Serializable {
         this.exchange_id = exchange_id;
         this.verificationType = verificationType;
         this.fileToSend = fileToSend;
-        this.face_attempt = face_attempt;
+        this.attempt = face_attempt;
     }
 
     public File getFileToSend() {
@@ -61,12 +61,12 @@ public class EnrollEntity implements Serializable {
         this.fileToSend = fileToSend;
     }
 
-    public int getFace_attempt() {
-        return face_attempt;
+    public int getAttempt() {
+        return attempt;
     }
 
-    public void setFace_attempt(int face_attempt) {
-        this.face_attempt = face_attempt;
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
     }
 
     @JsonIgnore
