@@ -225,7 +225,7 @@ public class EnrollController {
                     enrollHashmap.put("device_id", StringtoRequestBody(deviceInfoEntity.getDeviceId()));
                     enrollHashmap.put("client_id", StringtoRequestBody(clientId));
                     enrollHashmap.put("push_id", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
-                    enrollHashmap.put("face_attempt", StringtoRequestBody("" + enrollEntity.getFace_attempt() + ""));
+                    enrollHashmap.put("face_attempt", StringtoRequestBody("" + enrollEntity.getAttempt() + ""));
 
 
                     //call enroll call
