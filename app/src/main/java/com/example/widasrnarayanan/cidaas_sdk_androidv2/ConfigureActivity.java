@@ -91,7 +91,7 @@ public class ConfigureActivity extends AppCompatActivity {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
-
+                Toast.makeText(ConfigureActivity.this, "Pattern Configured successfully", Toast.LENGTH_SHORT).show();
             }
 
             @Override
