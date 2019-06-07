@@ -281,7 +281,7 @@ public class EmailConfigurationController {
                     if (code != null && !code.equals("") && statusId!=null && !statusId.equals("")) {
 
                         authenticateEmailRequestEntity.setCode(code);
-                        authenticateEmailRequestEntity.setStatusId(statusId);
+                        authenticateEmailRequestEntity.setStatus_id(statusId);
 
                     } else {
                         loginresult.failure(WebAuthError.getShared(context).propertyMissingException("Code must not be empty",

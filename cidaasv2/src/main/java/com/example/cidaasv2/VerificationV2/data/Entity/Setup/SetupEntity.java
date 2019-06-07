@@ -12,6 +12,7 @@ public class SetupEntity implements Serializable {
     private String device_id="";
     private String push_id="";
     private String client_id="";
+    String source="MOBILE";
 
 
     //Constructors
@@ -25,6 +26,13 @@ public class SetupEntity implements Serializable {
     }
 
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public String getSub() {
         return sub;

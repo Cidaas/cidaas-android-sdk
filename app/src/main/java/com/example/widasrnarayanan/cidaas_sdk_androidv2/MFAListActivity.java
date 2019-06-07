@@ -60,7 +60,7 @@ public class MFAListActivity extends AppCompatActivity {
 
     public void email(View view){
 
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 

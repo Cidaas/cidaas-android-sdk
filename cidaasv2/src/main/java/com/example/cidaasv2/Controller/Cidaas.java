@@ -243,6 +243,10 @@ public class Cidaas implements IOAuthWebLogin {
         return CidaasHelper.getShared(context).enableLog();
     }
 
+    public String disableLog()
+    {
+        return CidaasHelper.getShared(context).disableLog();
+    }
 
     //Set FCM Token For Update
     public void setFCMToken(String FCMToken) {

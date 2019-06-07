@@ -7,16 +7,16 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticateEmailRequestEntity implements Serializable {
 
-    String statusId;
+    String status_id;
     String code;
     DeviceInfoEntity deviceInfo;
 
-    public String getStatusId() {
-        return statusId;
+    public String getStatus_id() {
+        return status_id;
     }
 
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
+    public void setStatus_id(String status_id) {
+        this.status_id = status_id;
     }
 
     public String getCode() {

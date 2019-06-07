@@ -31,6 +31,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
+import com.example.cidaasv2.VerificationV2.domain.Controller.ConfigureRequest.ConfigureRequest;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import java.io.File;
@@ -42,6 +43,7 @@ import timber.log.Timber;
 public class ConfigureActivity extends AppCompatActivity {
 
     PushEntity pushNotificationEntity;
+    String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,13 +60,15 @@ public class ConfigureActivity extends AppCompatActivity {
             }
         }
 
+        sub=getIntent().getStringExtra("sub");
+
         if(getIntent()!=null)
         {
 
         }
     }
 
-    String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
+
     File imageFile;FileOutputStream out;
 
     public void enrollPattern(View view)
@@ -76,38 +80,18 @@ public class ConfigureActivity extends AppCompatActivity {
 
 
         SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.PATTERN);
+        EnrollEntity enrollEntity=new EnrollEntity();
 
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
+        ConfigureRequest configureRequest=new ConfigureRequest();
+        configureRequest.setSub(sub);
+        configureRequest.setVerificationType(AuthenticationType.PATTERN);
+        configureRequest.setPass_code( "RED-1234");
+
+        CidaasVerification.getInstance(this).configure(configureRequest, new Result<EnrollResponse>() {
             @Override
-            public void success(SetupResponse setupResultresult) {
+            public void success(EnrollResponse enrollResponse) {
 
 
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PATTERN);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                "RED-1234",AuthenticationType.PATTERN);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(ConfigureActivity.this, "Success Pattern", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(ConfigureActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(ConfigureActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override

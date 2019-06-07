@@ -58,8 +58,20 @@ public class CommonError {
             {
                return WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND,methodName);
             }
+
+            if(response.code()==401)
+            {
+                return WebAuthError.getShared(context).unAuthorizedAccess(webAuthErrorCode,errorResponse,methodName);
+            }
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
+
+            LogFile.getShared(context).addFailureLog("Exception:- WebAuthErrorCode: "+webAuthErrorCode+"Response Message:-" + response.message()+
+                    " ErrorCode:- "+commonErrorEntity.getError().getCode()+ "error message:-" + commonErrorEntity.getError().getError());
+
+
+            return  WebAuthError.getShared(context).serviceCallException(webAuthErrorCode,  commonErrorEntity.getError().getError(), commonErrorEntity.getStatus(),
+                    commonErrorEntity.getError(),errorResponse,methodName);
 
           /*  String errorMessage = "";
 
@@ -137,12 +149,7 @@ public class CommonError {
 */
           //  }
 
-            LogFile.getShared(context).addFailureLog("Exception:- WebAuthErrorCode: "+webAuthErrorCode+"Response Message:-" + response.message()+
-                    " ErrorCode:- "+commonErrorEntity.getError().getCode()+ "error message:-" + commonErrorEntity.getError().getError());
 
-
-            return  WebAuthError.getShared(context).serviceCallException(webAuthErrorCode,  commonErrorEntity.getError().getError(), commonErrorEntity.getStatus(),
-                    commonErrorEntity.getError(),errorResponse,methodName);
 
         }
         catch (Exception e) {

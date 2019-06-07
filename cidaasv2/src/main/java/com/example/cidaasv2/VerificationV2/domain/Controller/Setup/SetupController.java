@@ -89,14 +89,27 @@ public class SetupController {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
                     final String clientId = loginPropertiesResult.get("ClientId");
 
-                    //App properties
-                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-                    setupEntity.setDevice_id(deviceInfoEntity.getDeviceId());
-                    setupEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
-                    setupEntity.setClient_id(clientId);
+                    //get AccessToken
+                    AccessTokenController.getShared(context).getAccessToken(setupEntity.getSub(), new Result<AccessTokenEntity>() {
+                        @Override
+                        public void success(AccessTokenEntity accessTokenresult) {
+                            //call callSetup call
 
-                    //call setup call
-                    callSetup(baseurl,setupEntity,setupResult);
+                            //App properties
+                            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                            setupEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+                            setupEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+                            setupEntity.setClient_id(clientId);
+
+
+                            callSetup(baseurl,accessTokenresult.getAccess_token(),setupEntity,setupResult);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) { setupResult.failure(error);
+                        }
+                    });
+
                 }
                 @Override
                 public void failure(WebAuthError error) {
@@ -114,30 +127,21 @@ public class SetupController {
     }
 
     //Call callSetup Service
-    private void callSetup(final String accessToken, final SetupEntity setupEntity, final Result<SetupResponse> setupResult)
+    private void callSetup(final String baseurl,String accessToken, final SetupEntity setupEntity, final Result<SetupResponse> setupResult)
     {
         String methodName = "SetupController:-callSetup()";
         try
         {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
 
-                    //get url
-                    String setupUrl= VerificationURLHelper.getShared().getSetupURL(baseurl,setupEntity.getVerificationType());
+            //get url
+            String setupUrl= VerificationURLHelper.getShared().getSetupURL(baseurl,setupEntity.getVerificationType());
 
-                    //headers Generation
-                    Map<String,String> headers= Headers.getShared(context).getHeaders(accessToken,false,URLHelper.contentTypeJson);
+            //headers Generation
+            Map<String,String> headers= Headers.getShared(context).getHeaders(accessToken,false,URLHelper.contentTypeJson);
 
-                    //Setup Service call
-                    SetupService.getShared(context).callSetupService(setupUrl,headers,setupEntity,setupResult);
-                }
-                @Override
-                public void failure(WebAuthError error) {
-                    setupResult.failure(error);
-                }
-            });
+            //Setup Service call
+            SetupService.getShared(context).callSetupService(setupUrl,headers,setupEntity,setupResult);
+
         }
         catch (Exception e)
         {

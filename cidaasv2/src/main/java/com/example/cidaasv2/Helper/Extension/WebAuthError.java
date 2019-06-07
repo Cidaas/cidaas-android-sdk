@@ -321,8 +321,6 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.statusCode=HttpStatusCode.BAD_REQUEST;
         WebAuthError.shared.setErrorMessage(context.getString(R.string.SERVICE_EXCEPTION));
 
-
-
         String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage;
         LogFile.getShared(context).addFailureLog(loggerMessage);
 
@@ -498,4 +496,22 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
 
         return WebAuthError.shared;
     }
+
+
+    //unauthorized Access
+    public WebAuthError unAuthorizedAccess(int errorCode,String errorMessage,String methodName)
+    {
+        WebAuthError.shared.errorCode=errorCode;
+        WebAuthError.shared.statusCode=401;
+        WebAuthError.shared.ErrorMessage=errorMessage;
+
+
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +" Empty response"+"StatusCode:- "+statusCode;
+        LogFile.getShared(context).addFailureLog(loggerMessage);
+        Timber.d(loggerMessage);
+
+
+        return WebAuthError.shared;
+    }
+
 }

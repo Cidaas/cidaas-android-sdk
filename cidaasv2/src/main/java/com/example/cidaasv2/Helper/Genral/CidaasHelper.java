@@ -171,4 +171,12 @@ public class CidaasHelper {
         return "Log Successfully Enabled";
     }
 
+
+    public String disableLog()
+    {
+        this.ENABLE_LOG = false;
+        DBHelper.getShared().setEnableLog(ENABLE_LOG);
+        return "Log Successfully Disabled";
+    }
+
 }

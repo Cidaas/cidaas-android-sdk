@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
@@ -33,6 +34,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticateHistory.AuthenticatedHistoryController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.ConfigureRequest.ConfigureRequest;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Delete.DeleteController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Initiate.InitiateController;
@@ -178,14 +180,44 @@ public class CidaasVerification {
     }
 
 
-    public void configure(SetupEntity setupEntity, final Result<EnrollResponse> enrollResponseResult)
+    public void configure(final ConfigureRequest configureRequest, final Result<EnrollResponse> enrollResponseResult)
     {
+        SetupEntity setupEntity=new SetupEntity(configureRequest.getSub(), configureRequest.getVerificationType());
         setup(setupEntity, new Result<SetupResponse>() {
             @Override
-            public void success(SetupResponse result) {
-                //Todo handle Enroll entity and call enroll
-                EnrollEntity enrollEntity=new EnrollEntity();
-                enroll(enrollEntity,enrollResponseResult);
+            public void success(SetupResponse setupResult) {
+
+               ScannedEntity scannedEntity=new ScannedEntity(configureRequest.getSub(),setupResult.getData().getExchange_id().getExchange_id(),
+                       configureRequest.getVerificationType());
+
+                scanned(scannedEntity, new Result<ScannedResponse>() {
+                    @Override
+                    public void success(ScannedResponse scannedResult) {
+                        //Todo handle Enroll entity and call enroll\
+                        EnrollEntity enrollEntity;
+                        if(configureRequest.getVerificationType().equals(AuthenticationType.TOUCHID)) {
+                            enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),configureRequest.getVerificationType(),
+                                    configureRequest.getFingerPrintEntity());
+                        }
+                        else if((configureRequest.getVerificationType().equals(AuthenticationType.FACE)) || (configureRequest.getVerificationType().equals(AuthenticationType.VOICE)))
+                        {
+                            enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),configureRequest.getVerificationType(),
+                                    configureRequest.getFileToSend(),configureRequest.getFace_attempt());
+                        }
+                        else
+                        {
+                            enrollEntity = new EnrollEntity(configureRequest.getPass_code(),scannedResult.getData().getExchange_id().getExchange_id(),configureRequest.getVerificationType());
+                        }
+
+                        enroll(enrollEntity,enrollResponseResult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        enrollResponseResult.failure(error);
+                    }
+                });
+
             }
 
             @Override
@@ -196,8 +228,9 @@ public class CidaasVerification {
     }
 
 
-    public void login(InitiateEntity initiateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
+    public void login(AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
     {
+        InitiateEntity initiateEntity=new InitiateEntity();
         initiate(initiateEntity, new Result<InitiateResponse>() {
             @Override
             public void success(InitiateResponse result) {
