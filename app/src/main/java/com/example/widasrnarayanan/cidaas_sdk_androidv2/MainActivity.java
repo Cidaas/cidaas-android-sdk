@@ -17,12 +17,15 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Controller.Repository.LocalAuthentication.LocalAuthenticationController;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Interface.ILoader;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -505,7 +508,17 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void callLocalAuthentication(View view)
     {
-        cidaas.localAuthentication(this, new Result<LocalAuthenticationEntity>() {
+
+        BiometricEntity biometricBuilder=new BiometricEntity(this,"title","","desc","");
+        cidaas.localBiometricAuthentication(biometricBuilder, new BiometricCallback() {
+            @Override
+            public void onSdkVersionNotSupported() {
+                Toast.makeText(MainActivity.this, "onSdkVersionNotSupported", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationNotSupported() {
+                 cidaas.localAuthentication(MainActivity.this, new Result<LocalAuthenticationEntity>() {
             @Override
             public void success(LocalAuthenticationEntity result) {
                 Toast.makeText(MainActivity.this, ""+result.getMessage(), Toast.LENGTH_SHORT).show();
@@ -514,6 +527,50 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             @Override
             public void failure(WebAuthError error) {
                 Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+           });
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationNotSupported", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationNotAvailable() {
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationNotAvailable", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationPermissionNotGranted() {
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationPermissionNotGranted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationInternalError(String error) {
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationInternalError"+error, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                Toast.makeText(MainActivity.this, "onAuthenticationFailed", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onAuthenticationCancelled() {
+                Toast.makeText(MainActivity.this, "onAuthenticationCancelled", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationSuccessful() {
+                Toast.makeText(MainActivity.this, "onAuthenticationSuccessful", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                Toast.makeText(MainActivity.this, ""+helpString, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationError(int errorCode, CharSequence errString) {
+                Toast.makeText(MainActivity.this, ""+errString, Toast.LENGTH_SHORT).show();
             }
         });
     }

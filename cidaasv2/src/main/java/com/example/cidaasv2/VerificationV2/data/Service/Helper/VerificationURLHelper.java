@@ -43,6 +43,8 @@ public class VerificationURLHelper {
 
 
 
+
+
     public String getSetupURL(String baseurl,String verificationType) {
         return baseurl+setupURL+(verificationType.toLowerCase());
     }

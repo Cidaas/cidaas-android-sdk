@@ -18,6 +18,7 @@ public class InitiateEntity implements Serializable {
 
     //Empty Constructor
     public InitiateEntity() {
+
     }
 
 

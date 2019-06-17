@@ -1,6 +1,7 @@
 package com.example.cidaasv2.Controller;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +56,8 @@ import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -832,6 +835,11 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+    //Method for Local Biometric Authentocation
+    @TargetApi(Build.VERSION_CODES.P)
+    public void localBiometricAuthentication(final BiometricEntity biometricBuilder, BiometricCallback callback) {
+        LocalAuthenticationController.getShared(context).localBiometricAuthenticate(biometricBuilder,callback);
+    }
 
     //------------------------------------------------------------------------------------------XXXXXXX----------------------------------------
 

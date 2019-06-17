@@ -12,7 +12,6 @@ public class ConfigureRequest implements Serializable {
 
 
     private String pass_code="";
-    private String verificationType="";
     private String sub="";
 
     //For face and voice
@@ -34,13 +33,6 @@ public class ConfigureRequest implements Serializable {
         this.pass_code = pass_code;
     }
 
-    public String getVerificationType() {
-        return verificationType;
-    }
-
-    public void setVerificationType(String verificationType) {
-        this.verificationType = verificationType;
-    }
 
     public String getSub() {
         return sub;
@@ -71,6 +63,25 @@ public class ConfigureRequest implements Serializable {
     }
 
     public void setFingerPrintEntity(FingerPrintEntity fingerPrintEntity) {
+        this.fingerPrintEntity = fingerPrintEntity;
+    }
+
+    //For Pattern and Smart push
+    public ConfigureRequest( String sub ,String pass_code) {
+        this.pass_code = pass_code;
+        this.sub = sub;
+    }
+
+    //For Face and Voice
+    public ConfigureRequest(String sub, File fileToSend, int face_attempt) {
+        this.sub = sub;
+        this.fileToSend = fileToSend;
+        this.face_attempt = face_attempt;
+    }
+
+    //For Fingerprint
+    public ConfigureRequest(String sub, FingerPrintEntity fingerPrintEntity) {
+        this.sub = sub;
         this.fingerPrintEntity = fingerPrintEntity;
     }
 }

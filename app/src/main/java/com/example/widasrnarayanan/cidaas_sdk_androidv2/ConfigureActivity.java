@@ -78,16 +78,10 @@ public class ConfigureActivity extends AppCompatActivity {
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
         // CidaasVerification.getInstance(this).enroll();
 
+       ConfigureRequest configureRequest=new ConfigureRequest(sub,"RED-1234");
 
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.PATTERN);
-        EnrollEntity enrollEntity=new EnrollEntity();
 
-        ConfigureRequest configureRequest=new ConfigureRequest();
-        configureRequest.setSub(sub);
-        configureRequest.setVerificationType(AuthenticationType.PATTERN);
-        configureRequest.setPass_code( "RED-1234");
-
-        CidaasVerification.getInstance(this).configure(configureRequest, new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configurePattern(configureRequest,new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
@@ -104,49 +98,19 @@ public class ConfigureActivity extends AppCompatActivity {
 
     public void enrollFinger(View view)
     {
+        final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(ConfigureActivity.this,"Authenticate to all","Description");
 
+        ConfigureRequest configureRequest=new ConfigureRequest(sub,fingerPrintEntity);
 
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.TOUCHID);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
+        CidaasVerification.getInstance(this).configureFingerprint(configureRequest, new Result<EnrollResponse>() {
             @Override
-            public void success(SetupResponse setupResultresult) {
+            public void success(EnrollResponse result) {
 
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.TOUCHID);
-
-
-                final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(ConfigureActivity.this,"Authenticate to all","dkjvhbjhbvdjkhbdv");
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                AuthenticationType.TOUCHID,fingerPrintEntity);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(ConfigureActivity.this, "Success TOUCHID", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(ConfigureActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(ConfigureActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -194,47 +158,20 @@ public class ConfigureActivity extends AppCompatActivity {
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
         // CidaasVerification.getInstance(this).enroll();
 
+        ConfigureRequest configureRequest=new ConfigureRequest(sub,"");
 
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.PUSH);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
+        CidaasVerification.getInstance(this).configureSmartPush(configureRequest, new Result<EnrollResponse>() {
             @Override
-            public void success(final SetupResponse setupResultresult) {
+            public void success(EnrollResponse result) {
 
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PUSH);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                setupResultresult.getData().getPush_selected_number(),AuthenticationType.PUSH);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(ConfigureActivity.this, "Success Push", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(ConfigureActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(ConfigureActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+
             }
         });
+
     }
 
     public void enrollFace(View view)
@@ -245,47 +182,16 @@ public class ConfigureActivity extends AppCompatActivity {
         // CidaasVerification.getInstance(this).enroll();
 
 
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.FACE);
+        File file = null;
 
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
+        ConfigureRequest configureRequest=new ConfigureRequest(sub,file,0);
+
+
+        CidaasVerification.getInstance(this).configureFaceRecognition(configureRequest,new Result<EnrollResponse>() {
             @Override
-            public void success(SetupResponse setupResultresult) {
+            public void success(EnrollResponse enrollResponse) {
 
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.FACE);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-
-                        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
-
-
-
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                AuthenticationType.FACE,convertImageJpegForFace(bitmap),0);
-
-                        // enrollEntity.setFileToSend(convertImageJpegForFace(bitmap));
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(ConfigureActivity.this, "Success Face", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                error.getErrorEntity().getCode();
-                                Toast.makeText(ConfigureActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(ConfigureActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Toast.makeText(ConfigureActivity.this, "Voice Configured successfully", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -293,6 +199,8 @@ public class ConfigureActivity extends AppCompatActivity {
                 Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     public File convertImageJpegForFace(Bitmap bitmap) {
@@ -345,41 +253,16 @@ public class ConfigureActivity extends AppCompatActivity {
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
         // CidaasVerification.getInstance(this).enroll();
 
+        File file = null;
+
+        ConfigureRequest configureRequest=new ConfigureRequest(sub,file,0);
 
 
-        SetupEntity setupEntity=new SetupEntity(sub, AuthenticationType.VOICE);
-
-        CidaasVerification.getInstance(this).setup(setupEntity, new Result<SetupResponse>() {
+        CidaasVerification.getInstance(this).configureVoice(configureRequest,new Result<EnrollResponse>() {
             @Override
-            public void success(SetupResponse setupResultresult) {
+            public void success(EnrollResponse enrollResponse) {
 
-                final String clientId=setupResultresult.getData().getAuthenticator_client_id();
-                ScannedEntity scannedEntity=new ScannedEntity(sub,setupResultresult.getData().getExchange_id().getExchange_id(),AuthenticationType.PATTERN);
-
-                CidaasVerification.getInstance(getApplicationContext()).scanned(scannedEntity, new Result<ScannedResponse>() {
-                    @Override
-                    public void success(ScannedResponse scannedResponseresult) {
-                        EnrollEntity enrollEntity=new EnrollEntity(scannedResponseresult.getData().getExchange_id().getExchange_id(),
-                                "RED-1234",AuthenticationType.VOICE);
-
-                        CidaasVerification.getInstance(getApplicationContext()).enroll(enrollEntity, new Result<EnrollResponse>() {
-                            @Override
-                            public void success(EnrollResponse result) {
-                                Toast.makeText(ConfigureActivity.this, "Success Voice", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                Toast.makeText(ConfigureActivity.this, "Error enroll"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        Toast.makeText(ConfigureActivity.this, "Error scanned"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Toast.makeText(ConfigureActivity.this, "Voice Configured successfully", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -387,6 +270,7 @@ public class ConfigureActivity extends AppCompatActivity {
                 Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     public void authenticatePattern(View view)
@@ -423,6 +307,22 @@ public class ConfigureActivity extends AppCompatActivity {
     {
         callTouchID();
 
+    }
+
+
+    public void setupEmail(View view)
+    {
+        CidaasVerification.getInstance(getApplicationContext()).setupEmail(sub, new Result<SetupResponse>() {
+            @Override
+            public void success(SetupResponse result) {
+                Toast.makeText(ConfigureActivity.this, ""+result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, ""+error.getErrorEntity().getError(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

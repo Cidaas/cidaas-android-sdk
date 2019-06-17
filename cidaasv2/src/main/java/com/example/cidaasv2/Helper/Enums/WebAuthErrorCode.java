@@ -31,13 +31,13 @@ public class WebAuthErrorCode {
     public static final int SET_ACCESS_TOKEN = 10201;
 
   //Basic calls
-    public  static  final  int EMPTY_TENANT_INFO_SERVICE=10018;
-    public  static  final  int EMPTY_CLIENT_INFO_SERVICE=10019;
+  public  static  final  int EMPTY_TENANT_INFO_SERVICE=10018;
+  public  static  final  int EMPTY_CLIENT_INFO_SERVICE=10019;
   public static final int TENANT_INFO_FAILURE = 10020;
   public static final int CLIENT_INFO_FAILURE = 10021;
   public static final int REQUEST_ID_MISSING = 10022;
 
-    public  static  final  int EMPTY_LOGIN_WITH_CREDENTIALS_FAILURE=10218;
+  public  static  final  int EMPTY_LOGIN_WITH_CREDENTIALS_FAILURE=10218;
   public static final int LOGINWITH_CREDENTIALS_FAILURE = 10221;
   public static final int REGISTRATION_SETUP_FAILURE = 10222;
 

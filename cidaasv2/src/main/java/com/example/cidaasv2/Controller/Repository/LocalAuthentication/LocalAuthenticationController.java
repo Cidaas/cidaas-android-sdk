@@ -1,19 +1,27 @@
 package com.example.cidaasv2.Controller.Repository.LocalAuthentication;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricManager;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricUtils;
 import com.example.cidaasv2.R;
 
 import timber.log.Timber;
@@ -51,6 +59,28 @@ public class LocalAuthenticationController {
         }
         return shared;
     }
+
+
+    @TargetApi(Build.VERSION_CODES.P)
+    public void localBiometricAuthenticate(BiometricEntity biometricBuilder, BiometricCallback biometricCallback)
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            BiometricManager.BiometricBuilder biometricBuilderForClass = new BiometricManager.BiometricBuilder(context);
+            biometricBuilderForClass.setDescription(biometricBuilder.getDescription());
+            biometricBuilderForClass.setNegativeButtonText(biometricBuilder.getNegativeButtonText());
+            biometricBuilderForClass.setSubtitle(biometricBuilder.getSubtitle());
+            biometricBuilderForClass.setTitle(biometricBuilder.getTitle());
+
+            BiometricManager biometricManager = new BiometricManager(biometricBuilderForClass);
+
+            biometricManager.displayBiometricPromptForPieAndAbove(biometricCallback);
+        }
+        else
+        {
+            biometricCallback.onBiometricAuthenticationNotSupported();
+        }
+    }
+
 
     public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result)
     {

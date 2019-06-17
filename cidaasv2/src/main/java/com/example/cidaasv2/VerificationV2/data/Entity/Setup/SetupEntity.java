@@ -15,12 +15,8 @@ public class SetupEntity implements Serializable {
     String source="MOBILE";
 
 
-    //Constructors
-    public SetupEntity() {
-    }
-
     //Mandatory Fields
-    public SetupEntity(String sub, String verificationType) {
+    public SetupEntity(String sub,String verificationType) {
         this.sub = sub;
         this.verificationType = verificationType;
     }
