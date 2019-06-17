@@ -25,7 +25,7 @@ The steps here will guide you through setting up and managing authentication and
         <!--te-->
     *  [Embedded Browser Login](#embedded-browser-login)
     * [Native UI Integration](/app/PureNative.md)
-    * [Verification v2](#Verification-V2)
+    * [Verification v2](/app/Verification-v2.md)
     <!--te-->
 
 ## Requirements
