@@ -16,7 +16,7 @@ public class ConfigureRequest implements Serializable {
 
     //For face and voice
     private File fileToSend;
-    private int face_attempt =0;
+    private int attempt =0;
 
     //For Fingerprint
     @JsonIgnore
@@ -50,12 +50,12 @@ public class ConfigureRequest implements Serializable {
         this.fileToSend = fileToSend;
     }
 
-    public int getFace_attempt() {
-        return face_attempt;
+    public int getAttempt() {
+        return attempt;
     }
 
-    public void setFace_attempt(int face_attempt) {
-        this.face_attempt = face_attempt;
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
     }
 
     public FingerPrintEntity getFingerPrintEntity() {
@@ -66,17 +66,22 @@ public class ConfigureRequest implements Serializable {
         this.fingerPrintEntity = fingerPrintEntity;
     }
 
-    //For Pattern and Smart push
+    //For Pattern
     public ConfigureRequest( String sub ,String pass_code) {
         this.pass_code = pass_code;
         this.sub = sub;
     }
 
+    //For Smart push
+    public ConfigureRequest(String sub) {
+        this.sub = sub;
+    }
+
     //For Face and Voice
-    public ConfigureRequest(String sub, File fileToSend, int face_attempt) {
+    public ConfigureRequest(String sub, File fileToSend, int attempt) {
         this.sub = sub;
         this.fileToSend = fileToSend;
-        this.face_attempt = face_attempt;
+        this.attempt = attempt;
     }
 
     //For Fingerprint

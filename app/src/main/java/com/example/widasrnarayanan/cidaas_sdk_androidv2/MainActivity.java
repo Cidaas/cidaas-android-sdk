@@ -707,11 +707,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void nativeGoogle(View view)
     {
-
         printhashkey();
-
-
-
 
         cidaasGoogle.login(new Result<AccessTokenEntity>() {
             @Override

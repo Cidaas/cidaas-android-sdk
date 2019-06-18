@@ -3,7 +3,6 @@ package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -17,19 +16,14 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
-import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushNotificationEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.ConfigureRequest.ConfigureRequest;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
@@ -43,7 +37,8 @@ import timber.log.Timber;
 public class ConfigureActivity extends AppCompatActivity {
 
     PushEntity pushNotificationEntity;
-    String sub="825ef0f8-4f2d-46ad-831d-08a30561305d";
+    String sub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,34 +49,32 @@ public class ConfigureActivity extends AppCompatActivity {
         }
 
 
-        if(pushNotificationEntity!=null) {
-            if (pushNotificationEntity.getVerification_type().equals(AuthenticationType.TOUCHID)) {
+        if (pushNotificationEntity != null) {
+            if (pushNotificationEntity.getVerification_type().equals(AuthenticationType.FINGERPRINT)) {
 
             }
         }
 
-        sub=getIntent().getStringExtra("sub");
+        sub = getIntent().getStringExtra("sub");
 
-        if(getIntent()!=null)
-        {
+        if (getIntent() != null) {
 
         }
     }
 
 
-    File imageFile;FileOutputStream out;
+    File imageFile;
+    FileOutputStream out;
 
-    public void enrollPattern(View view)
-    {
+    public void enrollPattern(View view) {
 
         //CidaasVerification.getInstance(getApplicationContext()).
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
         // CidaasVerification.getInstance(this).enroll();
 
-       ConfigureRequest configureRequest=new ConfigureRequest(sub,"RED-1234");
+        ConfigureRequest configureRequest = new ConfigureRequest(sub, "RED-1234");
 
-
-        CidaasVerification.getInstance(this).configurePattern(configureRequest,new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configurePattern(configureRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
@@ -90,17 +83,16 @@ public class ConfigureActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "Error setup" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
-    public void enrollFinger(View view)
-    {
-        final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(ConfigureActivity.this,"Authenticate to all","Description");
+    public void enrollFinger(View view) {
+        final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(ConfigureActivity.this, "Authenticate to all", "Description");
 
-        ConfigureRequest configureRequest=new ConfigureRequest(sub,fingerPrintEntity);
+        ConfigureRequest configureRequest = new ConfigureRequest(sub, fingerPrintEntity);
 
         CidaasVerification.getInstance(this).configureFingerprint(configureRequest, new Result<EnrollResponse>() {
             @Override
@@ -116,9 +108,8 @@ public class ConfigureActivity extends AppCompatActivity {
     }
 
 
-    public void deletePattern(View view)
-    {
-        DeleteEntity deleteEntity=new DeleteEntity(sub,AuthenticationType.PATTERN);
+    public void deletePattern(View view) {
+        DeleteEntity deleteEntity = new DeleteEntity(sub, AuthenticationType.PATTERN);
         CidaasVerification.getInstance(this).delete(deleteEntity, new Result<DeleteResponse>() {
             @Override
             public void success(DeleteResponse result) {
@@ -127,15 +118,14 @@ public class ConfigureActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "Error" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
-    public void deletePush(View view)
-    {
-        DeleteEntity deleteEntity=new DeleteEntity(sub,AuthenticationType.PUSH);
+    public void deletePush(View view) {
+        DeleteEntity deleteEntity = new DeleteEntity(sub, AuthenticationType.SMARTPUSH);
         CidaasVerification.getInstance(this).delete(deleteEntity, new Result<DeleteResponse>() {
             @Override
             public void success(DeleteResponse result) {
@@ -144,21 +134,19 @@ public class ConfigureActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "Error setup" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
-
-    public void enrollPush(View view)
-    {
+    public void enrollPush(View view) {
 
         //CidaasVerification.getInstance(getApplicationContext()).
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
         // CidaasVerification.getInstance(this).enroll();
 
-        ConfigureRequest configureRequest=new ConfigureRequest(sub,"");
+        ConfigureRequest configureRequest = new ConfigureRequest(sub);
 
         CidaasVerification.getInstance(this).configureSmartPush(configureRequest, new Result<EnrollResponse>() {
             @Override
@@ -174,8 +162,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
     }
 
-    public void enrollFace(View view)
-    {
+    public void enrollFace(View view) {
 
         //CidaasVerification.getInstance(getApplicationContext()).
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
@@ -184,10 +171,10 @@ public class ConfigureActivity extends AppCompatActivity {
 
         File file = null;
 
-        ConfigureRequest configureRequest=new ConfigureRequest(sub,file,0);
+        ConfigureRequest configureRequest = new ConfigureRequest(sub, file, 0);
 
 
-        CidaasVerification.getInstance(this).configureFaceRecognition(configureRequest,new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configureFaceRecognition(configureRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
@@ -196,7 +183,7 @@ public class ConfigureActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "Error setup" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -246,8 +233,7 @@ public class ConfigureActivity extends AppCompatActivity {
         return imageFile;
     }
 
-    public void enrollVoice(View view)
-    {
+    public void enrollVoice(View view) {
 
         //CidaasVerification.getInstance(getApplicationContext()).
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
@@ -255,10 +241,10 @@ public class ConfigureActivity extends AppCompatActivity {
 
         File file = null;
 
-        ConfigureRequest configureRequest=new ConfigureRequest(sub,file,0);
+        ConfigureRequest configureRequest = new ConfigureRequest(sub, file, 0);
 
 
-        CidaasVerification.getInstance(this).configureVoice(configureRequest,new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configureVoiceRecognition(configureRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
@@ -267,20 +253,19 @@ public class ConfigureActivity extends AppCompatActivity {
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Error setup"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "Error setup" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    public void authenticatePattern(View view)
-    {
+    public void authenticatePattern(View view) {
         Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
-                InitiateEntity initiateEntity=new InitiateEntity(sub,result.getData().getRequestId(),
-                        "c3d6a9bb-8be7-48a8-a8e5-f4f650ec8a92", UsageType.PASSWORDLESS,AuthenticationType.PATTERN);
+                InitiateEntity initiateEntity = new InitiateEntity(sub, result.getData().getRequestId(),
+                        "c3d6a9bb-8be7-48a8-a8e5-f4f650ec8a92", UsageType.PASSWORDLESS, AuthenticationType.PATTERN);
                 CidaasVerification.getInstance(getApplicationContext()).initiate(initiateEntity, new Result<InitiateResponse>() {
                     @Override
                     public void success(InitiateResponse result) {
@@ -289,41 +274,43 @@ public class ConfigureActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        Toast.makeText(ConfigureActivity.this, "Initiate fail"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConfigureActivity.this, "Initiate fail" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Fail reqid"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "Fail reqid" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }
 
-    public void authenticateFinger(View view)
-    {
+    public void authenticateFinger(View view) {
         callTouchID();
 
     }
 
 
-    public void setupEmail(View view)
-    {
+    public void setupEmail(View view) {
         CidaasVerification.getInstance(getApplicationContext()).setupEmail(sub, new Result<SetupResponse>() {
             @Override
             public void success(SetupResponse result) {
-                Toast.makeText(ConfigureActivity.this, ""+result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "" + result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, ""+error.getErrorEntity().getError(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigureActivity.this, "" + error.getErrorEntity().getError(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    public void enrollEmail(){
+
+}
 
 
     public void callTouchID()

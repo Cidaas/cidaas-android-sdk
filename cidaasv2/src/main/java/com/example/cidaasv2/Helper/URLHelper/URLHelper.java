@@ -3,6 +3,7 @@ package com.example.cidaasv2.Helper.URLHelper;
 import android.net.Uri;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.AuthenticationType;
 
 import java.util.Map;
 import java.util.UUID;
@@ -220,10 +221,10 @@ public class URLHelper {
         return deleteMFA+userDeviceId+"/PATTERN";
     }
     public String getDeleteFingerprintMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/TOUCHID";
+        return deleteMFA+userDeviceId+"/"+ AuthenticationType.FINGERPRINT;
     }
     public String getDeleteSmartPushMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/PUSH";
+        return deleteMFA+userDeviceId+"/"+AuthenticationType.SMARTPUSH;
     }
     public String getDeleteFaceMFA(String userDeviceId) {
         return deleteMFA+userDeviceId+"/FACE";

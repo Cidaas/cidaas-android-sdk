@@ -92,7 +92,7 @@ public class EnrollController {
 
                 switch (enrollEntity.getVerificationType()) {
 
-                    case AuthenticationType.TOUCHID:
+                    case AuthenticationType.FINGERPRINT:
                     {
                         //FingerPrint
                         callFingerPrintAuthentication(enrollEntity, enrollResult);

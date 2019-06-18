@@ -96,7 +96,7 @@ public class AuthenticateController {
         try {
             switch (authenticateEntity.getVerificationType()) {
 
-                case AuthenticationType.TOUCHID:
+                case AuthenticationType.FINGERPRINT:
                 {
                     //FingerPrint
                     callFingerPrintAuthentication(authenticateEntity, authenticateResult);

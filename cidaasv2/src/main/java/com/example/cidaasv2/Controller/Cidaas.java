@@ -38,6 +38,7 @@ import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordCon
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
 import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoController;
 import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
@@ -1059,7 +1060,7 @@ public class Cidaas implements IOAuthWebLogin {
         {
             scannedPattern(statusId,scannedResult);
         }
-        else if(verificationType.equalsIgnoreCase("TOUCHID"))
+        else if(verificationType.equalsIgnoreCase(AuthenticationType.FINGERPRINT))
         {
             scannedFingerprint(statusId,scannedResult);
         }
@@ -1075,7 +1076,7 @@ public class Cidaas implements IOAuthWebLogin {
         {
             scannedTOTP(statusId,sub,secret,scannedResult);
         }
-        else if(verificationType.equalsIgnoreCase("PUSH"))
+        else if(verificationType.equalsIgnoreCase(AuthenticationType.SMARTPUSH))
         {
             scannedSmartPush(statusId,scannedResult);
         }

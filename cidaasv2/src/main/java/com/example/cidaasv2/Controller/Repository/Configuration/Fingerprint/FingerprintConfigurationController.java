@@ -707,7 +707,7 @@ public class FingerprintConfigurationController {
                                                                         //Todo Check not Null values
                                                                         resumeLoginRequestEntity.setSub(result.getData().getSub());
                                                                         resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
-                                                                        resumeLoginRequestEntity.setVerificationType(AuthenticationType.TOUCHID);
+                                                                        resumeLoginRequestEntity.setVerificationType(AuthenticationType.FINGERPRINT);
                                                                         resumeLoginRequestEntity.setUsageType(initiateFingerprintMFARequestEntity.getUsageType());
                                                                         resumeLoginRequestEntity.setClient_id(clientId);
                                                                         resumeLoginRequestEntity.setRequestId(requestId);

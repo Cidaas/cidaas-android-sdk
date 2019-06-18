@@ -45,7 +45,6 @@ import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedCont
 import com.example.cidaasv2.VerificationV2.domain.Controller.Settings.SettingsController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
 
-import java.io.Serializable;
 import java.util.Dictionary;
 
 public class CidaasVerification {
@@ -119,7 +118,7 @@ public class CidaasVerification {
         EnrollController.getShared(context).enrollVerification(enrollEntity,enrollResponseResult);
     }
 
-    //-------------------------------------------------------PUSH  CALL COMMON--------------------------------------------------------------
+    //-------------------------------------------------------SMARTPUSH  CALL COMMON--------------------------------------------------------------
 
                     //---------------------Acknowledge-------------------------
     public void pushAcknowledge(PushAcknowledgeEntity pushAcknowledgeEntity, Result<PushAcknowledgeResponse> pushAcknowledgeResult)
@@ -221,11 +220,48 @@ public class CidaasVerification {
         setup(setupEntity,setupResponseResult);
     }
 
-    public void enrollEmail(String exchange_id, String sub,String verificationCode,final Result<EnrollResponse> enrollResponseResult)
+    //BackupCode
+    public void setupBackupCode(String sub, Result<SetupResponse> setupResponseResult)
     {
-        EnrollEntity enrollEntity=new EnrollEntity();
+        SetupEntity setupEntity=new SetupEntity(sub,AuthenticationType.BACKUPCODE);
+        setup(setupEntity,setupResponseResult);
     }
 
+    //Enroll Email
+    public void enrollEmail(String verificationCode,String sub,String exchange_id, final Result<EnrollResponse> enrollResponseResult)
+    {
+        EnrollEntity enrollEntity=new EnrollEntity();
+        enrollEntity.setExchange_id(exchange_id);
+        enrollEntity.setSub(sub);
+        enrollEntity.setVerificationType(AuthenticationType.EMAIL);
+        enrollEntity.setPass_code(verificationCode);
+
+        enroll(enrollEntity,enrollResponseResult);
+    }
+
+    //Enroll SMS
+    public void enrollSMS(String verificationCode,String sub,String exchange_id,final Result<EnrollResponse> enrollResponseResult)
+    {
+        EnrollEntity enrollEntity=new EnrollEntity();
+        enrollEntity.setExchange_id(exchange_id);
+        enrollEntity.setSub(sub);
+        enrollEntity.setVerificationType(AuthenticationType.SMS);
+        enrollEntity.setPass_code(verificationCode);
+
+        enroll(enrollEntity,enrollResponseResult);
+    }
+
+    //Enroll IVR
+    public void enrollIVR(String verificationCode,String sub,String exchange_id,final Result<EnrollResponse> enrollResponseResult)
+    {
+        EnrollEntity enrollEntity=new EnrollEntity();
+        enrollEntity.setExchange_id(exchange_id);
+        enrollEntity.setSub(sub);
+        enrollEntity.setVerificationType(AuthenticationType.IVR);
+        enrollEntity.setPass_code(verificationCode);
+
+        enroll(enrollEntity,enrollResponseResult);
+    }
 
 
     private void setup(SetupEntity setupEntity, Result<SetupResponse> setupResponseResult)
@@ -241,7 +277,7 @@ public class CidaasVerification {
 
     public void configureSmartPush(final ConfigureRequest configureRequest, final Result<EnrollResponse> enrollResponseResult)
     {
-        configure(configureRequest,AuthenticationType.PUSH,enrollResponseResult);
+        configure(configureRequest,AuthenticationType.SMARTPUSH,enrollResponseResult);
     }
 
     public void configureFaceRecognition(final ConfigureRequest configureRequest, final Result<EnrollResponse> enrollResponseResult)
@@ -249,7 +285,7 @@ public class CidaasVerification {
         configure(configureRequest,AuthenticationType.FACE,enrollResponseResult);
     }
 
-    public void configureVoice(final ConfigureRequest configureRequest, final Result<EnrollResponse> enrollResponseResult)
+    public void configureVoiceRecognition(final ConfigureRequest configureRequest, final Result<EnrollResponse> enrollResponseResult)
     {
         configure(configureRequest,AuthenticationType.VOICE,enrollResponseResult);
     }
@@ -261,7 +297,7 @@ public class CidaasVerification {
 
     public void configureFingerprint(final ConfigureRequest configureRequest, final Result<EnrollResponse> enrollResponseResult)
     {
-        configure(configureRequest,AuthenticationType.TOUCHID,enrollResponseResult);
+        configure(configureRequest,AuthenticationType.FINGERPRINT,enrollResponseResult);
     }
 
 
@@ -282,18 +318,30 @@ public class CidaasVerification {
                     public void success(ScannedResponse scannedResult) {
                         // handle Enroll entity and call enroll
                         EnrollEntity enrollEntity;
-                        if(verificationType.equals(AuthenticationType.TOUCHID)) {
-                            enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),verificationType,
-                                    configureRequest.getFingerPrintEntity());
-                        }
-                        else if((verificationType.equals(AuthenticationType.FACE)) || (verificationType.equals(AuthenticationType.VOICE)))
-                        {
-                            enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),verificationType,
-                                    configureRequest.getFileToSend(),configureRequest.getFace_attempt());
-                        }
-                        else
-                        {
-                            enrollEntity = new EnrollEntity(configureRequest.getPass_code(),scannedResult.getData().getExchange_id().getExchange_id(),verificationType);
+
+                        switch (verificationType) {
+                            case AuthenticationType.FACE:
+                                enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),verificationType,
+                                        configureRequest.getFileToSend(),configureRequest.getAttempt());
+                                break;
+
+                            case AuthenticationType.VOICE:
+                                enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),verificationType,
+                                        configureRequest.getFileToSend(),configureRequest.getAttempt());
+                                break;
+
+                            case AuthenticationType.FINGERPRINT:
+                                enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),verificationType,
+                                        configureRequest.getFingerPrintEntity());
+                                break;
+
+                            case AuthenticationType.SMARTPUSH:
+                                enrollEntity = new EnrollEntity(configureRequest.getPass_code(),scannedResult.getData().getExchange_id().getExchange_id(),verificationType);
+                                break;
+
+                            default:
+
+                                enrollEntity = new EnrollEntity(configureRequest.getPass_code(),scannedResult.getData().getExchange_id().getExchange_id(),verificationType);
                         }
 
                         enroll(enrollEntity,enrollResponseResult);
@@ -328,7 +376,7 @@ public class CidaasVerification {
 
     public void loginWithSmartPush(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
     {
-        login(authenticateEntity,AuthenticationType.PUSH,authenticateResponseResult);
+        login(authenticateEntity,AuthenticationType.SMARTPUSH,authenticateResponseResult);
     }
 
     public void loginWithFaceRecognition(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
@@ -350,7 +398,7 @@ public class CidaasVerification {
 
     public void loginWithFingerprint(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
     {
-        login(authenticateEntity,AuthenticationType.TOUCHID,authenticateResponseResult);
+        login(authenticateEntity,AuthenticationType.FINGERPRINT,authenticateResponseResult);
     }
     //-------------------------------------------------------LOGIN CALL COMMON--------------------------------------------------------------
 

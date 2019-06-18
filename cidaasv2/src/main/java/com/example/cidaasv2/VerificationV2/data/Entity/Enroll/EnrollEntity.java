@@ -16,6 +16,7 @@ public class EnrollEntity implements Serializable {
     private String push_id="";
     private String pass_code="";
     private String verificationType="";
+    private String sub="";
 
 
     //For face and voice
@@ -85,6 +86,14 @@ public class EnrollEntity implements Serializable {
 
     public void setVerificationType(String verificationType) {
         this.verificationType = verificationType;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
     }
 
     public String getExchange_id() {
