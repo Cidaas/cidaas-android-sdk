@@ -16,7 +16,7 @@ Cidaas provides numerous options to ensure safe and diverse mechanisms for login
     <!--te-->
 * [Fingerprint](#fingerprint-verification)
     <!--ts-->
-    * [Configuration](#configure-fingerprint-verification)
+    * [Configuration](#configure-fingerprint)
     * [Usage](#login-via-fingerprint-verification)
     <!--te-->
 * [Pattern](#pattern-recognition)
