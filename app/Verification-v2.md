@@ -14,10 +14,10 @@ Cidaas provides numerous options to ensure safe and diverse mechanisms for login
     * [Configuration](#configure-voice-recognition)
     * [Usage](#login-via-voice-recognition)
     <!--te-->
-* [Touch ID](#touchid-verification)
+* [Fingerprint](#fingerprint-verification)
     <!--ts-->
-    * [Configuration](#configure-touchid-verification)
-    * [Usage](#login-via-touchid-verification)
+    * [Configuration](#configure-fingerprint)
+    * [Usage](#login-via-fingerprint-verification)
     <!--te-->
 * [Pattern](#pattern-recognition)
     <!--ts-->
@@ -208,12 +208,12 @@ cidaas.loginWithVoiceRecognition(voice: audioData, passwordlessEntity: passwordl
 }
 ```
 
-#### TouchId Verification
-You may want to allow users to use their touchId on their mobile devices or computer peripheral to be used for passwordless login.To use TouchId Verification for passwordless login, you need to configure it first.
+#### Fingerprint Verification
+You may want to allow users to use their fingerprint on their mobile devices or computer peripheral to be used for passwordless login.To use Fingerprint Verification for passwordless login, you need to configure it first.
 
 #### Configure Fingerprint
 
-To configure TouchId Verification, call **configureFingerprint()**.
+To configure Fingerprint Verification, call **configureFingerprint()**.
 
 ```java
 //Create ConfigureRequest for Fingerprint
@@ -238,7 +238,7 @@ To configure TouchId Verification, call **configureFingerprint()**.
 
 **Response:**
 
-```swift
+```json
 {
     "success": true,
     "status": 200,
@@ -248,11 +248,11 @@ To configure TouchId Verification, call **configureFingerprint()**.
 }
 ```
 
-#### Login via Touch Id Verification
+#### Login via Fingerprint Verification
 
-Once you have configured Touch Id Verification, you can also login with Touch Id Verification for Passwordless authentication. To login, call **loginWithTouchId()**.
+Once you have configured Fingerprint Verification, you can also login with Fingerprint Verification for Passwordless authentication. To login, call **loginWithFingerprint()**.
 
-```swift
+```java
 let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
@@ -293,22 +293,25 @@ If you want to offer a passwordless login after securing it with the secure patt
 
 To configure Pattern Recognition, call **configurePatternRecognition()**.
 
-```swift
-cidaas.configurePatternRecognition(pattern: "RED[1,2,3]", sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
-    switch $0 {
-        case .success(let configureSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+```java
+    ConfigureRequest configureRequest=new ConfigureRequest(sub,"your pattern String");
+
+    CidaasVerification.getInstance(this).configurePattern(configureRequest,new Result<EnrollResponse>() {
+        @Override
+        public void success(EnrollResponse enrollResponse) {
+            //Your Success Code
+        }
+
+        @Override
+        public void failure(WebAuthError error) {
+            //Your Failure Code
+       }
+});
 ```
 
 **Response:**
 
-```swift
+```json
 {
     "success": true,
     "status": 200,
@@ -363,22 +366,26 @@ SmartPush notification can be used when you would like users to receive a number
 
 To configure SmartPush Notification, call **configureSmartPush()**.
 
-```swift
-cidaas.configureSmartPush(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
-    switch $0 {
-        case .success(let configureSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+```java
+
+ConfigureRequest configureRequest=new ConfigureRequest(sub);
+
+CidaasVerification.getInstance(this).configureSmartPush(configureRequest, new Result<EnrollResponse>() {
+      @Override
+      public void success(EnrollResponse result) {
+            //Your Success Code
+      }
+
+      @Override
+      public void failure(WebAuthError error) {
+            //Your Failure Code
+      }
+});
 ```
 
 **Response:**
 
-```swift
+```json
 {
     "success": true,
     "status": 200,
@@ -503,17 +510,18 @@ To setup a passwordless login, where user types only an Email, you need to confi
 
 To receive a verification code via Email, call **configureEmail()**.
 
-```swift
-cidaas.configureEmail(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
-    switch $0 {
-        case .success(let configureSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+```java
+  CidaasVerification.getInstance(getApplicationContext()).setupEmail(sub, new Result<SetupResponse>() {
+      @Override
+      public void success(SetupResponse result) {
+          //Your Success Code
+      }
+
+      @Override
+      public void failure(WebAuthError error) {
+         //Your Failure Code
+      }
+  });
 ```
 
 **Response:**
