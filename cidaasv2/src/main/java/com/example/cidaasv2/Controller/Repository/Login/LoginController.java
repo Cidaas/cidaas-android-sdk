@@ -116,7 +116,7 @@ public class LoginController {
         String methodName = "LoginController :getLoginCredentialsRequestEntity()";
         try {
             LoginCredentialsRequestEntity loginCredentialsRequestEntity = new LoginCredentialsRequestEntity();
-            if (loginEntity.getUsername_type() == null && loginEntity.getUsername_type().equals("")) {
+            if (loginEntity.getUsername_type() == null || loginEntity.getUsername_type().equals("")) {
                 loginEntity.setUsername_type("email");
             }
 
