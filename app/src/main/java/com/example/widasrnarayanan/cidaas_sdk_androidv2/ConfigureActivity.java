@@ -39,8 +39,11 @@ import timber.log.Timber;
 public class ConfigureActivity extends AppCompatActivity {
 
     PushEntity pushNotificationEntity;
-    String sub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
+   //Sub For nightlybuild
+   // String sub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
 
+    //Sub For Venkat Free
+    String sub="468ceb0a-2cce-4151-b3dc-632521158cff";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

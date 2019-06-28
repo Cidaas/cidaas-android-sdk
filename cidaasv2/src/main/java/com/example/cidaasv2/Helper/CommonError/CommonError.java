@@ -59,10 +59,7 @@ public class CommonError {
                return WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND,methodName);
             }
 
-            if(response.code()==401)
-            {
-                return WebAuthError.getShared(context).unAuthorizedAccess(webAuthErrorCode,errorResponse,methodName);
-            }
+
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
 
