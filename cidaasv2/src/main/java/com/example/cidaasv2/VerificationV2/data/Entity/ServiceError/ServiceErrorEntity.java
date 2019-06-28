@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.data.Entity;
+package com.example.cidaasv2.VerificationV2.data.Entity.ServiceError;
 
 import java.io.Serializable;
 

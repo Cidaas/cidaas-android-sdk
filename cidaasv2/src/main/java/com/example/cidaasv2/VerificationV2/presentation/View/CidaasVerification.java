@@ -4,17 +4,21 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
+import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.LoginRequest.LoginRequest;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
@@ -25,6 +29,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowE
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.ResumeLogin.ResumeLoginEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
@@ -33,7 +38,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticateHistory.AuthenticatedHistoryController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.ConfigureRequest.ConfigureRequest;
+import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.ConfigureRequest.ConfigureRequest;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Delete.DeleteController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Initiate.InitiateController;
@@ -41,6 +46,7 @@ import com.example.cidaasv2.VerificationV2.domain.Controller.PendingNotification
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAcknowledge.PushAcknowledgeController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAllow.PushAllowController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.PushRejectController;
+import com.example.cidaasv2.VerificationV2.domain.Controller.ResumeLogin.ResumeLoginController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Settings.SettingsController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
@@ -227,6 +233,7 @@ public class CidaasVerification {
         setup(setupEntity,setupResponseResult);
     }
 
+
     //Enroll Email
     public void enrollEmail(String verificationCode,String sub,String exchange_id, final Result<EnrollResponse> enrollResponseResult)
     {
@@ -336,12 +343,12 @@ public class CidaasVerification {
                                 break;
 
                             case AuthenticationType.SMARTPUSH:
-                                enrollEntity = new EnrollEntity(configureRequest.getPass_code(),scannedResult.getData().getExchange_id().getExchange_id(),verificationType);
+                                enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),configureRequest.getPass_code(),verificationType);
                                 break;
 
                             default:
 
-                                enrollEntity = new EnrollEntity(configureRequest.getPass_code(),scannedResult.getData().getExchange_id().getExchange_id(),verificationType);
+                                enrollEntity = new EnrollEntity(scannedResult.getData().getExchange_id().getExchange_id(),configureRequest.getPass_code(),verificationType);
                         }
 
                         enroll(enrollEntity,enrollResponseResult);
@@ -368,25 +375,48 @@ public class CidaasVerification {
         InitiateController.getShared(context).initiateVerification(initiateEntity,initiateResponseResult);
     }
 
-
-    public void loginWithPattern(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
+    public void verifyEmail(String code,String exchange_id,String sub)
     {
-        login(authenticateEntity,AuthenticationType.PATTERN,authenticateResponseResult);
+
     }
 
-    public void loginWithSmartPush(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
+
+    public void verifySMS(String code,String exchange_id)
     {
-        login(authenticateEntity,AuthenticationType.SMARTPUSH,authenticateResponseResult);
+
     }
 
-    public void loginWithFaceRecognition(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
+
+    public void verifyIVR(String code,String exchange_id)
     {
-        login(authenticateEntity,AuthenticationType.FACE,authenticateResponseResult);
+
+
     }
 
-    public void loginWithVoice(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
+    public void loginWithBackupCode(String sub,String backupCode)
     {
-        login(authenticateEntity,AuthenticationType.VOICE,authenticateResponseResult);
+      
+    }
+
+
+    public void loginWithPattern(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult)
+    {
+        login(loginRequest,AuthenticationType.PATTERN,authenticateResponseResult);
+    }
+
+    public void loginWithSmartPush(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult)
+    {
+        login(loginRequest,AuthenticationType.SMARTPUSH,authenticateResponseResult);
+    }
+
+    public void loginWithFaceRecognition(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult)
+    {
+        login(loginRequest,AuthenticationType.FACE,authenticateResponseResult);
+    }
+
+    public void loginWithVoice(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult)
+    {
+        login(loginRequest,AuthenticationType.VOICE,authenticateResponseResult);
     }
 
    /* Ask how to Handle TOTP
@@ -396,28 +426,98 @@ public class CidaasVerification {
     }
     */
 
-    public void loginWithFingerprint(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResponseResult)
+    public void loginWithFingerprint(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult)
     {
-        login(authenticateEntity,AuthenticationType.FINGERPRINT,authenticateResponseResult);
+        login(loginRequest,AuthenticationType.FINGERPRINT,authenticateResponseResult);
     }
     //-------------------------------------------------------LOGIN CALL COMMON--------------------------------------------------------------
 
-    public void login(AuthenticateEntity authenticateEntity,String verificationType, final Result<AuthenticateResponse> authenticateResponseResult)
+    public void login(final LoginRequest loginRequest, final String verificationType, final Result<LoginCredentialsResponseEntity> loginCredentialsResult)
     {
-        //Todo initite and authenticate
-        InitiateEntity initiateEntity=new InitiateEntity();
-        initiate(initiateEntity, new Result<InitiateResponse>() {
+        //To get Request Id
+        Cidaas.getInstance(context).getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
-            public void success(InitiateResponse result) {
-                //Todo handle Authenticate entity and call authenticate
-                AuthenticateEntity authenticateEntity=new AuthenticateEntity();
-                authenticate(authenticateEntity,authenticateResponseResult);
+            public void success(final AuthRequestResponseEntity requestIdResult)
+            {
+                InitiateEntity initiateEntity=new InitiateEntity(loginRequest.getSub(),requestIdResult.getData().getRequestId(),loginRequest.getUsageType()
+                        ,verificationType);
+
+                initiate(initiateEntity, new Result<InitiateResponse>() {
+                    @Override
+                    public void success(InitiateResponse initiateResult) {
+                        // handle Authenticate entity and call authenticate
+
+                        AuthenticateEntity authenticateEntity;
+
+                        switch (verificationType) {
+                            case AuthenticationType.FACE:
+                                authenticateEntity = new AuthenticateEntity(initiateResult.getData().getExchange_id().getExchange_id(),verificationType,
+                                        loginRequest.getFileToSend(),loginRequest.getAttempt());
+                                break;
+
+                            case AuthenticationType.VOICE:
+                                authenticateEntity = new AuthenticateEntity(initiateResult.getData().getExchange_id().getExchange_id(),verificationType,
+                                        loginRequest.getFileToSend(),loginRequest.getAttempt());
+                                break;
+
+                            case AuthenticationType.FINGERPRINT:
+                                authenticateEntity = new AuthenticateEntity(initiateResult.getData().getExchange_id().getExchange_id(),verificationType,
+                                        loginRequest.getFingerPrintEntity());
+                                break;
+
+                            case AuthenticationType.SMARTPUSH:
+                                authenticateEntity = new AuthenticateEntity(initiateResult.getData().getExchange_id().getExchange_id(),loginRequest.getPass_code(),verificationType);
+                                break;
+
+                            default:
+
+                                authenticateEntity = new AuthenticateEntity(initiateResult.getData().getExchange_id().getExchange_id(),
+                                        loginRequest.getPass_code(),verificationType);
+                        }
+
+                        authenticate(authenticateEntity, new Result<AuthenticateResponse>() {
+                            @Override
+                            public void success(AuthenticateResponse result) {
+                                //Sdk contiue Call
+                                ResumeLoginEntity resumeLoginEntity=new ResumeLoginEntity(result.getData().getStatus_id(),
+                                        result.getData().getSub(),requestIdResult.getData().getRequestId(),verificationType);
+                                resumeLogin(resumeLoginEntity,loginCredentialsResult);
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                loginCredentialsResult.failure(error);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        loginCredentialsResult.failure(error);
+                    }
+                });
             }
 
             @Override
             public void failure(WebAuthError error) {
-                authenticateResponseResult.failure(error);
+                loginCredentialsResult.failure(error);
             }
         });
+
+
     }
+
+    private void resumeLogin(ResumeLoginEntity resumeLoginEntity,Result<LoginCredentialsResponseEntity> loginCredentialsResponseEntityResult) {
+        try
+        {
+
+            ResumeLoginController.getShared(context).resumeLoginVerification(resumeLoginEntity,loginCredentialsResponseEntityResult);
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.domain.Controller.ConfigureRequest;
+package com.example.cidaasv2.VerificationV2.data.Entity.EndUser.LoginRequest;
 
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.File;
 import java.io.Serializable;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfigureRequest implements Serializable {
-
+public class LoginRequest implements Serializable {
 
     private String pass_code="";
     private String sub="";
@@ -22,8 +20,37 @@ public class ConfigureRequest implements Serializable {
     @JsonIgnore
     private FingerPrintEntity fingerPrintEntity;
 
+    private String usageType="";
 
-    //todo generate Constructor
+
+    //For Pattern only
+    public LoginRequest(String pass_code, String sub, String usageType) {
+        this.pass_code = pass_code;
+        this.sub = sub;
+        this.usageType = usageType;
+    }
+
+    //For Push only
+    public LoginRequest(String sub, String usageType) {
+        this.sub = sub;
+        this.usageType = usageType;
+    }
+
+    //For Face and Voice
+    public LoginRequest(String sub, File fileToSend, int attempt, String usageType) {
+        this.sub = sub;
+        this.fileToSend = fileToSend;
+        this.attempt = attempt;
+        this.usageType = usageType;
+    }
+
+
+    //For Fingerprint
+    public LoginRequest(String sub, FingerPrintEntity fingerPrintEntity,String usageType) {
+        this.sub = sub;
+        this.fingerPrintEntity = fingerPrintEntity;
+        this.usageType = usageType;
+    }
 
     public String getPass_code() {
         return pass_code;
@@ -33,6 +60,13 @@ public class ConfigureRequest implements Serializable {
         this.pass_code = pass_code;
     }
 
+    public String getUsageType() {
+        return usageType;
+    }
+
+    public void setUsageType(String usageType) {
+        this.usageType = usageType;
+    }
 
     public String getSub() {
         return sub;
@@ -66,27 +100,6 @@ public class ConfigureRequest implements Serializable {
         this.fingerPrintEntity = fingerPrintEntity;
     }
 
-    //For Pattern
-    public ConfigureRequest( String sub ,String pass_code) {
-        this.pass_code = pass_code;
-        this.sub = sub;
-    }
 
-    //For Smart push
-    public ConfigureRequest(String sub) {
-        this.sub = sub;
-    }
 
-    //For Face and Voice
-    public ConfigureRequest(String sub, File fileToSend, int attempt) {
-        this.sub = sub;
-        this.fileToSend = fileToSend;
-        this.attempt = attempt;
-    }
-
-    //For Fingerprint
-    public ConfigureRequest(String sub, FingerPrintEntity fingerPrintEntity) {
-        this.sub = sub;
-        this.fingerPrintEntity = fingerPrintEntity;
-    }
 }

@@ -1,5 +1,6 @@
 package com.example.cidaasv2.Service;
 
+import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
@@ -12,6 +13,7 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAc
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
@@ -536,6 +538,9 @@ public interface ICidaasSDKService {
     Call<UserLoginInfoResponseEntity> getUserLoginInfoService(@Url String url, @HeaderMap Map<String,String>headers, @Body UserLoginInfoEntity userLoginInfoEntity);
 
 
+    //Get Consent String Details
+    @POST
+    Call<ConsentDetailsV2ResponseEntity> getConsentDetailsV2(@Url String url, @HeaderMap Map<String,String>headers,@Body ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity);
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
     //Get Registration Setup
@@ -575,6 +580,8 @@ public interface ICidaasSDKService {
     //Get Consent String Details
     @GET
     Call<ConsentDetailsResultEntity> getConsentStringDetails(@Url String url,@HeaderMap Map<String,String>headers);
+
+
 
     @GET
     Call<ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url,@HeaderMap Map<String,String>headers, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);

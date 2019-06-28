@@ -38,6 +38,10 @@ public class URLHelper {
     String consent_details="/consent-management-srv/settings/public?name=";
     String  acceptConsent="/consent-management-srv/user/status";
 
+
+    String consentDetailsV2="/consent-management-srv/v2/consent/usage/public/info";
+
+
     String loginWithCredentials="/login-srv/login/sdk";
     String logoutURLForEmbeddedBrowser="/session/end_session";
     String registrationSetup="/registration-callSetup-srv/public/list?acceptlanguage=";
@@ -160,6 +164,9 @@ public class URLHelper {
     String openIdURL="/.well-known/openid-configuration";
 
 
+    public String getConsentDetailsV2(String baseurl) {
+        return baseurl+consentDetailsV2;
+    }
 
     public String getLogoutURLForEmbeddedBrowser() {
         return logoutURLForEmbeddedBrowser;

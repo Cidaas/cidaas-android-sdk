@@ -15,6 +15,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.Authenticate
 import com.example.cidaasv2.VerificationV2.data.Service.CidaasSDK_V2_Service;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class AuthenticateService {
     private Context context;
@@ -103,12 +105,22 @@ public class AuthenticateService {
                 public void onResponse(Call<AuthenticateResponse> call, Response<AuthenticateResponse> response) {
                     if(response.isSuccessful())
                     {
+
                         authenticateCallback.success(response.body());
                     }
                     else
                     {
                         authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(
                                 WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, response,"Error:- "+methodName));
+                        // Handle proper error message
+                        String errorResponse = "NO message";
+                        try {
+                            errorResponse = response.errorBody().source().readByteString().utf8();
+                        } catch (Exception e) {
+                            Timber.d(e.getMessage()+errorResponse+e.getMessage());
+                        }
+
+                        LogFile.getShared(context).addFailureLog(errorResponse);
                     }
                 }
 

@@ -6,12 +6,12 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ConsentDetailsResultDataEntity implements Serializable{
-    String _id;
-    String description;
-    String title;
+    private String _id="";
+    private String description="";
+    private String title="";
 
-    String userAgreeText;
-    String consentURL;
+    private String userAgreeText="";
+    private String consentURL="";
 
 
     public String getConsentURL() {

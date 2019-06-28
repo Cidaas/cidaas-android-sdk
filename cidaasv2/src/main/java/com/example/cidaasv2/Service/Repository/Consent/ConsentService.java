@@ -3,6 +3,7 @@ package com.example.cidaasv2.Service.Repository.Consent;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
+import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -14,6 +15,7 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAc
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,7 +67,7 @@ public class ConsentService {
     //---------------------------------------------------------------get Consent String Details--------------------------------------------------------
     public void getConsentDetails(final String baseurl,String consentName,final Result<ConsentDetailsResultEntity> callback)
     {
-        String methodName="Consent Service  :getConsentDetails()";
+        String methodName="ConsentService:getConsentDetails()";
         try {
 
             if (baseurl != null && !baseurl.equals("")) {
@@ -128,6 +130,46 @@ public class ConsentService {
         }
     }
 
+
+    //---------------------------------------------------------------get ConsentDetailsV2--------------------------------------------------------
+    public void getConsentDetailsV2(String consentDetailsUrl,ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, Map<String, String> headers,
+                                    final Result<ConsentDetailsV2ResponseEntity> callback)
+    {
+        final String methodName="ConsentService:getConsentDetailsV2()";
+        try {
+
+            //Call Service-getRequestId
+            ICidaasSDKService cidaasSDKService = service.getInstance();
+            cidaasSDKService.getConsentDetailsV2(consentDetailsUrl,headers,consentDetailsV2RequestEntity).enqueue(new Callback<ConsentDetailsV2ResponseEntity>() {
+                @Override
+                public void onResponse(Call<ConsentDetailsV2ResponseEntity> call, Response<ConsentDetailsV2ResponseEntity> response) {
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            callback.success(response.body());
+                        } else {
+                            callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.CONSENT_STRING_FAILURE, response.code(),
+                                    "Error :"+methodName));
+                        }
+                    }
+                    else {
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CONSENT_STRING_FAILURE, response,
+                                "Error :"+methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ConsentDetailsV2ResponseEntity> call, Throwable t) {
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, t.getMessage(),
+                            "Error :"+methodName));
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
+        }
+    }
 
     //---------------------------------------------------------------------AcceptConsent----------------------------------------------------------------
     public void acceptConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,

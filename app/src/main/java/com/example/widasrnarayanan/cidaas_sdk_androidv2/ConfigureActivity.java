@@ -16,16 +16,18 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.LoginRequest.LoginRequest;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
-import com.example.cidaasv2.VerificationV2.domain.Controller.ConfigureRequest.ConfigureRequest;
+import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.ConfigureRequest.ConfigureRequest;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import java.io.File;
@@ -55,7 +57,7 @@ public class ConfigureActivity extends AppCompatActivity {
             }
         }
 
-        sub = getIntent().getStringExtra("sub");
+       // sub = getIntent().getStringExtra("sub");
 
         if (getIntent() != null) {
 
@@ -97,12 +99,12 @@ public class ConfigureActivity extends AppCompatActivity {
         CidaasVerification.getInstance(this).configureFingerprint(configureRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse result) {
-
+                Toast.makeText(ConfigureActivity.this, "success fing" + result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void failure(WebAuthError error) {
-
+                Toast.makeText(ConfigureActivity.this, "Error fing" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -260,16 +262,32 @@ public class ConfigureActivity extends AppCompatActivity {
     }
 
     public void authenticatePattern(View view) {
-        Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
+        /*Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
                 InitiateEntity initiateEntity = new InitiateEntity(sub, result.getData().getRequestId(),
-                        "c3d6a9bb-8be7-48a8-a8e5-f4f650ec8a92", UsageType.PASSWORDLESS, AuthenticationType.PATTERN);
+                         UsageType.PASSWORDLESS, AuthenticationType.PATTERN);
                 CidaasVerification.getInstance(getApplicationContext()).initiate(initiateEntity, new Result<InitiateResponse>() {
                     @Override
                     public void success(InitiateResponse result) {
                         Toast.makeText(ConfigureActivity.this, "Initiate Success", Toast.LENGTH_SHORT).show();
+
+                        AuthenticateEntity authenticateEntity=new AuthenticateEntity();
+                        authenticateEntity.setVerificationType(AuthenticationType.PATTERN);
+                        authenticateEntity.setPass_code("RED-1234");
+                        authenticateEntity.setExchange_id(result.getData().getExchange_id().getExchange_id());
+                        CidaasVerification.getInstance(getApplicationContext()).authenticate(authenticateEntity, new Result<AuthenticateResponse>() {
+                            @Override
+                            public void success(AuthenticateResponse result) {
+                                Toast.makeText(ConfigureActivity.this, "Authenticateion Success", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                Toast.makeText(ConfigureActivity.this, "Error Auteh"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
@@ -284,12 +302,81 @@ public class ConfigureActivity extends AppCompatActivity {
                 Toast.makeText(ConfigureActivity.this, "Fail reqid" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+*/
+        LoginRequest loginRequest=new LoginRequest("RED-1234",sub,UsageType.PASSWORDLESS);
 
+        CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+                Toast.makeText(ConfigureActivity.this, "Success Authenticated" + result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, "Fail " + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
     public void authenticateFinger(View view) {
-        callTouchID();
+
+
+        FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(ConfigureActivity.this, "Authenticate to all", "Description");
+        LoginRequest loginRequest=new LoginRequest(sub,fingerPrintEntity,UsageType.PASSWORDLESS);
+
+        CidaasVerification.getInstance(getApplicationContext()).loginWithFingerprint(loginRequest, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+                Toast.makeText(ConfigureActivity.this, "Success Authenticated" + result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, "Fail " + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    /* Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
+         @Override
+         public void success(AuthRequestResponseEntity result) {
+             InitiateEntity initiateEntity=new InitiateEntity(sub,result.getData().getRequestId(),UsageType.PASSWORDLESS,AuthenticationType.FINGERPRINT);
+             CidaasVerification.getInstance(getApplicationContext()).initiate(initiateEntity, new Result<InitiateResponse>() {
+                 @Override
+                 public void success(InitiateResponse result) {
+                     Toast.makeText(ConfigureActivity.this, "Success Fing"+result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
+                     final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(ConfigureActivity.this, "Authenticate to all", "Description");
+
+                     AuthenticateEntity authenticateEntity=new AuthenticateEntity();
+                     authenticateEntity.setVerificationType(AuthenticationType.FINGERPRINT);
+                     authenticateEntity.setFingerPrintEntity(fingerPrintEntity);
+                     authenticateEntity.setExchange_id(result.getData().getExchange_id().getExchange_id());
+                     CidaasVerification.getInstance(getApplicationContext()).authenticate(authenticateEntity, new Result<AuthenticateResponse>() {
+                         @Override
+                         public void success(AuthenticateResponse result) {
+                             Toast.makeText(ConfigureActivity.this, "Authenticateion Success", Toast.LENGTH_SHORT).show();
+                         }
+
+                         @Override
+                         public void failure(WebAuthError error) {
+                             Toast.makeText(ConfigureActivity.this, "Error Auteh"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                         }
+                     });
+                 }
+
+                 @Override
+                 public void failure(WebAuthError error) {
+                     Toast.makeText(ConfigureActivity.this, "Fail finger auth" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                 }
+             });
+         }
+
+         @Override
+         public void failure(WebAuthError error) {
+
+         }
+     });
+*/
 
     }
 

@@ -56,8 +56,7 @@ public class InitiateController {
     {
         String methodName = "InitiateController:-checkInitiateEntity()";
         try {
-            if (initiateEntity.getMedium_id() != null && !initiateEntity.getMedium_id().equals("") &&
-                    initiateEntity.getVerificationType() != null && !initiateEntity.getVerificationType().equals(""))
+            if (initiateEntity.getVerificationType() != null && !initiateEntity.getVerificationType().equals(""))
             {
                 if(initiateEntity.getRequest_id() != null && !initiateEntity.getRequest_id().equals("") &&
                         initiateEntity.getSub() != null && !initiateEntity.getSub().equals("") &&

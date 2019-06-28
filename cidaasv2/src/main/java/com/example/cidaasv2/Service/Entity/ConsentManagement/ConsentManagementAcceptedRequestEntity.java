@@ -8,12 +8,12 @@ import java.io.Serializable;
 public class ConsentManagementAcceptedRequestEntity implements Serializable{
 
 
-    String name;
-    String client_id;
-    String sub;
-    String version;
-    String trackId;
-    boolean accepted;
+    private String name="";
+    private String client_id="";
+    private String sub="";
+    private String version="";
+    private String trackId="";
+    private boolean accepted=false;
 
     public String getTrackId() {
         return trackId;

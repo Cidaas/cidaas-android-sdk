@@ -40,6 +40,7 @@ import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoCon
 import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
@@ -63,6 +64,7 @@ import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
+import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
@@ -324,6 +326,31 @@ public class Cidaas implements IOAuthWebLogin {
     public void loginAfterConsent(@NonNull final ConsentEntity consentEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
         ConsentController.getShared(context).acceptConsent(consentEntity,loginresult);
     }
+
+
+
+    public void getConsentDetailsV2(@NonNull final ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, final Result<ConsentDetailsV2ResponseEntity> consentResult) {
+      if(consentDetailsV2RequestEntity.getRequestId()!=null && !consentDetailsV2RequestEntity.getRequestId().equals("")) {
+
+         getRequestId(new Result<AuthRequestResponseEntity>() {
+             @Override
+             public void success(AuthRequestResponseEntity result) {
+                 consentDetailsV2RequestEntity.setRequestId(result.getData().getRequestId());
+                 ConsentController.getShared(context).getConsentDetailsV2(consentDetailsV2RequestEntity, consentResult);
+             }
+
+             @Override
+             public void failure(WebAuthError error) {
+                    consentResult.failure(error);
+             }
+         });
+      }
+      else
+      {
+          ConsentController.getShared(context).getConsentDetailsV2(consentDetailsV2RequestEntity, consentResult);
+      }
+    }
+
 
     // -----------------------------------------------------***** GET MFA LIST *****---------------------------------------------------------------
 

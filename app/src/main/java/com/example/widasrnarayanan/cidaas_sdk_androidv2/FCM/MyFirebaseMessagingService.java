@@ -101,11 +101,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Notification notification =
                         new NotificationCompat.Builder(this)
                                 .setSmallIcon(getNotificationIcon())
-                                .setContentTitle(remoteMessage.getNotification().getTitle())
-                                .setContentText(remoteMessage.getNotification().getBody())
+                                .setContentTitle("remoteMessage.getNotification().getTitle()")
+                                .setContentText("remoteMessage.getNotification().getBody()")
                                 .setChannelId(CHANNEL_ID)
                                 .setAutoCancel(true)
-                                .setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()))//Raja Changed to display Message in Notification
+                                .setStyle(new NotificationCompat.BigTextStyle().bigText("remoteMessage.getNotification().getBody()"))//Raja Changed to display Message in Notification
                                 .setContentIntent(pIntent)
                                 .setCategory(Notification.CATEGORY_PROMO)
                                 .setSound(soundUri).setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -122,8 +122,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //Notification Builder
                 NotificationCompat.Builder notificationbuilder = new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(getNotificationIcon())
-                        .setContentTitle(remoteMessage.getNotification().getTitle())//Raja Changed to display Message in Notification
-                        .setContentText(remoteMessage.getNotification().getBody())//Raja Changed to display Message in Notification
+                        .setContentTitle("remoteMessage.getNotification().getTitle()")//Raja Changed to display Message in Notification
+                        .setContentText("remoteMessage.getNotification().getBody()")//Raja Changed to display Message in Notification
                         .setAutoCancel(true)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()))//Raja Changed to display Message in Notification
                         .setContentIntent(pIntent)

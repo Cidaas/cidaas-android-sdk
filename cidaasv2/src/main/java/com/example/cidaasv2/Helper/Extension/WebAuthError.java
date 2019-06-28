@@ -506,7 +506,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.ErrorMessage=errorMessage;
 
 
-        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +" Empty response"+"StatusCode:- "+statusCode;
+        String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Response From Json"+errorMessage +" Empty response"+"StatusCode:- "+statusCode;
         LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 

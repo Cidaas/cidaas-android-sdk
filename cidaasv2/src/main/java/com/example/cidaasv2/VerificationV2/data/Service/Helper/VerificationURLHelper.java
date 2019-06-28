@@ -41,6 +41,8 @@ public class VerificationURLHelper {
 
     String updateFCMTokenURL="/verification-srv/v2/setup/device/update/pushid";
 
+    String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
+
 
 
 
@@ -102,5 +104,7 @@ public class VerificationURLHelper {
         return baseurl+updateFCMTokenURL;
     }
 
-
+    public String getPasswordlessContinueUrl(String baseurl) {
+        return baseurl+passwordlessContinueUrl;
+    }
 }

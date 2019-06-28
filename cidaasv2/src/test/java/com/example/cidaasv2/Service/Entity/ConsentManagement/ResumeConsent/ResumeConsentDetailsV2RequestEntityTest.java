@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
 
-public class ResumeConsentRequestEntityTest {
+public class ResumeConsentDetailsV2RequestEntityTest {
     @Test
     public void gettrackID()
     {

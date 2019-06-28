@@ -46,6 +46,7 @@ public class WebAuthErrorCode {
   public static final int CONSENT_URL_FAILURE = 10023;
   public static final int CONSENT_STRING_FAILURE = 10024;
   public static final int ACCEPT_CONSENT_FAILURE = 10025;
+  public static final int CONSENT_DETAILS_FAILURE = 10225;
 
   public static final int MFA_LIST_FAILURE = 10026;
 
@@ -221,6 +222,7 @@ public class WebAuthErrorCode {
   public static final int DEDUPLICATION_LOGIN_FAILURE=10195;
   public static final int LOGINWITH_BROWSER_FAILURE = 10196;
   public static final int SAVE_LOGIN_PROPERTIES = 10197;
+  public static final int PASSWORDLESS_SERVICE_FAILURE = 10198;
 
 
 
