@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.domain.Controller.Scanned;
+package com.example.cidaasv2.VerificationV2.domain.Controller.ConfigrationFlow.Scanned;
 
 import android.content.Context;
 

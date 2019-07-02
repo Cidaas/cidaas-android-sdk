@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject;
+package com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Push.PushReject;
 
 import android.content.Context;
 

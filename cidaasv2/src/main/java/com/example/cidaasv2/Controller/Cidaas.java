@@ -1,15 +1,11 @@
 package com.example.cidaasv2.Controller;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.nfc.tech.IsoDep;
 import android.os.Build;
-import android.provider.Settings;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -42,7 +38,6 @@ import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
 import com.example.cidaasv2.Helper.Entity.ConsentEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
@@ -114,27 +109,6 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAcknowledge.PushAcknowledgeController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAllow.PushAllowController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.PushRejectController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import java.io.File;
@@ -146,9 +120,6 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import timber.log.Timber;
-
-import static android.os.Build.MODEL;
-import static android.os.Build.VERSION;
 
 /**
  * Created by widasrnarayanan on 16/1/18.

@@ -21,13 +21,11 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.Authenticate
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.ConfigureRequest.ConfigurationRequest;
 import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.LoginRequest.LoginRequest;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Initiate.InitiateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.ConfigureRequest.ConfigureRequest;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import java.io.File;
@@ -40,10 +38,10 @@ public class ConfigureActivity extends AppCompatActivity {
 
     PushEntity pushNotificationEntity;
    //Sub For nightlybuild
-   // String sub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
+    String sub = "825ef0f8-4f2d-46ad-831d-08a30561305d";
 
     //Sub For Venkat Free
-    String sub="468ceb0a-2cce-4151-b3dc-632521158cff";
+  //  String sub="468ceb0a-2cce-4151-b3dc-632521158cff";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,9 +75,9 @@ public class ConfigureActivity extends AppCompatActivity {
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
         // CidaasVerification.getInstance(this).enroll();
 
-        ConfigureRequest configureRequest = new ConfigureRequest(sub, "RED-1234");
+        ConfigurationRequest configurationRequest = new ConfigurationRequest(sub, "RED-1234");
 
-        CidaasVerification.getInstance(this).configurePattern(configureRequest, new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configurePattern(configurationRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
@@ -97,9 +95,9 @@ public class ConfigureActivity extends AppCompatActivity {
     public void enrollFinger(View view) {
         final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(ConfigureActivity.this, "Authenticate to all", "Description");
 
-        ConfigureRequest configureRequest = new ConfigureRequest(sub, fingerPrintEntity);
+        ConfigurationRequest configurationRequest = new ConfigurationRequest(sub, fingerPrintEntity);
 
-        CidaasVerification.getInstance(this).configureFingerprint(configureRequest, new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configureFingerprint(configurationRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse result) {
                 Toast.makeText(ConfigureActivity.this, "success fing" + result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
@@ -151,9 +149,9 @@ public class ConfigureActivity extends AppCompatActivity {
         // EnrollEntity enrollEntity=new EnrollEntity("","",);
         // CidaasVerification.getInstance(this).enroll();
 
-        ConfigureRequest configureRequest = new ConfigureRequest(sub);
+        ConfigurationRequest configurationRequest = new ConfigurationRequest(sub);
 
-        CidaasVerification.getInstance(this).configureSmartPush(configureRequest, new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configureSmartPush(configurationRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse result) {
 
@@ -176,10 +174,10 @@ public class ConfigureActivity extends AppCompatActivity {
 
         File file = null;
 
-        ConfigureRequest configureRequest = new ConfigureRequest(sub, file, 0);
+        ConfigurationRequest configurationRequest = new ConfigurationRequest(sub, file, 0);
 
 
-        CidaasVerification.getInstance(this).configureFaceRecognition(configureRequest, new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configureFaceRecognition(configurationRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
@@ -246,10 +244,10 @@ public class ConfigureActivity extends AppCompatActivity {
 
         File file = null;
 
-        ConfigureRequest configureRequest = new ConfigureRequest(sub, file, 0);
+        ConfigurationRequest configurationRequest = new ConfigurationRequest(sub, file, 0);
 
 
-        CidaasVerification.getInstance(this).configureVoiceRecognition(configureRequest, new Result<EnrollResponse>() {
+        CidaasVerification.getInstance(this).configureVoiceRecognition(configurationRequest, new Result<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
 
@@ -306,7 +304,7 @@ public class ConfigureActivity extends AppCompatActivity {
             }
         });
 */
-        LoginRequest loginRequest=new LoginRequest("RED-1234",sub,UsageType.PASSWORDLESS);
+        LoginRequest loginRequest=LoginRequest.getPasswordlessPatternLoginRequestEntity("RED-1234",sub,"");
 
         CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new Result<LoginCredentialsResponseEntity>() {
             @Override
@@ -324,21 +322,32 @@ public class ConfigureActivity extends AppCompatActivity {
 
     public void authenticateFinger(View view) {
 
-
-        FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(ConfigureActivity.this, "Authenticate to all", "Description");
-        LoginRequest loginRequest=new LoginRequest(sub,fingerPrintEntity,UsageType.PASSWORDLESS);
-
-        CidaasVerification.getInstance(getApplicationContext()).loginWithFingerprint(loginRequest, new Result<LoginCredentialsResponseEntity>() {
+        Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
-            public void success(LoginCredentialsResponseEntity result) {
-                Toast.makeText(ConfigureActivity.this, "Success Authenticated" + result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+            public void success(AuthRequestResponseEntity result) {
+                FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(ConfigureActivity.this, "Authenticate to all", "Description");
+                LoginRequest loginRequest=LoginRequest.getPasswordlessFingerprintLoginRequestEntity(sub,result.getData().getRequestId(),fingerPrintEntity);
+
+                CidaasVerification.getInstance(getApplicationContext()).loginWithFingerprint(loginRequest, new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Toast.makeText(ConfigureActivity.this, "Success Authenticated" + result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(ConfigureActivity.this, "Fail " + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Toast.makeText(ConfigureActivity.this, "Fail " + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+
             }
         });
+
 
     /* Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
          @Override

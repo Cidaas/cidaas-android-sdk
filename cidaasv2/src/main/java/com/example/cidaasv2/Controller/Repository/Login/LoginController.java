@@ -88,7 +88,6 @@ public class LoginController {
 
                             @Override
                             public void failure(WebAuthError error) {
-
                                 result.failure(error);
                             }
                         });
@@ -123,7 +122,6 @@ public class LoginController {
             if (loginEntity.getPassword() != null && !loginEntity.getPassword().equals("") && loginEntity.getUsername() != null
                     && !loginEntity.getUsername().equals("") && requestId != null && !requestId.equals("")) {
 
-
                 loginCredentialsRequestEntity.setUsername(loginEntity.getUsername());
                 loginCredentialsRequestEntity.setUsername_type(loginEntity.getUsername_type());
                 loginCredentialsRequestEntity.setPassword(loginEntity.getPassword());
@@ -135,13 +133,11 @@ public class LoginController {
                 String errorMessage = "Username or password or RequestId must not be empty";
                 result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :"+errorMessage));
                 return null;
-
             }
-
         }
         catch (Exception e)
         {
-       result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
        return null;
         }
     }
@@ -615,9 +611,6 @@ public class LoginController {
         {
             result.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CIDAAS_PROPERTY_MISSING,e.getMessage()));
         }
-
     }
-
-
 
 }

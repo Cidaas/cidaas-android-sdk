@@ -54,6 +54,7 @@ public class CommonError {
             // Handle proper error message
             String errorResponse = response.errorBody().source().readByteString().utf8();
 
+
             if(errorResponse.contains("<!DOCTYPE html>"))
             {
                return WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND,methodName);

@@ -17,6 +17,8 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFARes
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseDataEntity;
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.LoginRequest.LoginRequest;
+import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -179,9 +181,41 @@ public class MFAListActivity extends AppCompatActivity {
     }
 });
     }
+
+    public void PatternLock(View view)
+    {
+        Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+                String requestid=result.getData().getRequestId();
+
+                LoginRequest loginRequest=LoginRequest.getMFAPatternLoginRequestEntity("RED-1234",sub,requestid,trackid);
+                CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Toast.makeText(MFAListActivity.this, "Access Token"+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(MFAListActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+
+            }
+        });
+
+
+
+    }
+
     public void pattern(View view){
 
-        cidaas.getRequestId(null,new Result<AuthRequestResponseEntity>() {
+        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 RequestId=result.getData().getRequestId();

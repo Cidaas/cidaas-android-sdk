@@ -197,32 +197,22 @@ public class WebAuthErrorCode {
   public static final int DELETE_VERIFICATION_FAILURE = 10120;
   public static final int MFA_LIST_VERIFICATION_FAILURE = 10121;
 
-  //Common Error Codes
-  public static final int TOUCHID_NOT_AVAILABLE = 10178;
-  public static final int TOUCHID_NOT_ENROLLED = 10179;
-  public static final int TOUCH_ID_PASSCODE_NOT_CONFIGURED = 10180;
-  public static final int TOUCH_ID_INVALID_AUTHENTICATION = 10181;
-  public static final int TOUCH_ID_APP_CANCELLED = 10182;
-  public static final int TOUCH_ID_SYSTEM_CANCELLED = 10183;
-  public static final int TOUCH_ID_USER_CANCELLED = 10184;
-  public static final int TOUCHID_LOCKED = 10185;
-  public static final int TOUCHID_DEFAULT_ERROR = 10186;
-  public static final int TOUCHID_INVALID_CONTEXT = 10187;
-  public static final int TOUCHID_NOT_INTERACTIVE = 10188;
 
-  public static final int NETWORK_TIMEOUT = 10189;
+  public static final int USER_LOGIN_INFO_SERVICE_FAILURE =10122;
+
+  public static final int PARAMS_TO_DICTIONARY_CONVERTER_ERROR = 10123;
+  public static final int PARSE_XML = 10124;
+  public static final int READ_PROPERTIES_ERROR = 10125;
+  public static final int CIDAAS_PROPERTY_MISSING=10126;
+  public static final int DEDUPLICATION_LOGIN_FAILURE=10127;
+  public static final int LOGINWITH_BROWSER_FAILURE = 10128;
+  public static final int SAVE_LOGIN_PROPERTIES = 10129;
+  public static final int CONFIGURE_MFA_FAILURE = 10130;
+  public static final int PASSWORDLESS_LOGIN_FAILURE = 10131;
+  public static final int INVALID_PROPERTIES = 10132;
 
 
-  public static final int USER_LOGIN_INFO_SERVICE_FAILURE =10190;
-
-  public static final int PARAMS_TO_DICTIONARY_CONVERTER_ERROR = 10191;
-  public static final int PARSE_XML = 10192;
-  public static final int READ_PROPERTIES_ERROR = 10193;
-  public static final int CIDAAS_PROPERTY_MISSING=10194;
-  public static final int DEDUPLICATION_LOGIN_FAILURE=10195;
-  public static final int LOGINWITH_BROWSER_FAILURE = 10196;
-  public static final int SAVE_LOGIN_PROPERTIES = 10197;
-  public static final int PASSWORDLESS_SERVICE_FAILURE = 10198;
+  public static final int TIME_OUT_ERROR= 10133;
 
 
 

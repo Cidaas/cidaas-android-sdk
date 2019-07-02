@@ -68,5 +68,8 @@
     //For Update FCM Token
     <string name="UPDATE_FCM_TOKEN_FAILURE">Update FCM Token Failure</string>
 
+    //For Update FCM Token
+    <string name="INVALID_PROPERTIES">Invalid Properties</string>
+
 
 </resources>

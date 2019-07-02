@@ -66,9 +66,9 @@ To configure Face Recognition, call **configureFaceRecognition()**.
 
 ```java
  //Create ConfigureRequest for face recognition
- ConfigureRequest configureRequest=new ConfigureRequest(your_sub,your_image_file,your_face_attempt);
+ ConfigureRequest configurationRequest=new ConfigureRequest(your_sub,your_image_file,your_face_attempt);
 
- CidaasVerification.getInstance(this).configureFaceRecognition(configureRequest,new Result<EnrollResponse>() {
+ CidaasVerification.getInstance(this).configureFaceRecognition(configurationRequest,new Result<EnrollResponse>() {
      @Override
      public void success(EnrollResponse enrollResponse) {
          //Your Success Code
@@ -142,9 +142,9 @@ To configure Voice Recognition, call **configureVoiceRecognition()**.
 
 ```java
 //Create ConfigureRequest for voice recognition
- ConfigureRequest configureRequest=new ConfigureRequest(your_sub,your_voice_file,your_voice_attempt);
+ ConfigureRequest configurationRequest=new ConfigureRequest(your_sub,your_voice_file,your_voice_attempt);
 
- CidaasVerification.getInstance(this).configureVoiceRecognition(configureRequest,new Result<EnrollResponse>() {
+ CidaasVerification.getInstance(this).configureVoiceRecognition(configurationRequest,new Result<EnrollResponse>() {
      @Override
      public void success(EnrollResponse enrollResponse) {
          //Your Success Code
@@ -220,9 +220,9 @@ To configure Fingerprint Verification, call **configureFingerprint()**.
  //Fingerprint entity
  final FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(Your Activity Context,Your Title,your Description);
         
- ConfigureRequest configureRequest=new ConfigureRequest(sub,fingerPrintEntity);
+ ConfigureRequest configurationRequest=new ConfigureRequest(sub,fingerPrintEntity);
 
- CidaasVerification.getInstance(this).configureFingerprint(configureRequest, new Result<EnrollResponse>() {
+ CidaasVerification.getInstance(this).configureFingerprint(configurationRequest, new Result<EnrollResponse>() {
    @Override
    public void success(EnrollResponse result) {
       //Your Success Code
@@ -294,9 +294,9 @@ If you want to offer a passwordless login after securing it with the secure patt
 To configure Pattern Recognition, call **configurePatternRecognition()**.
 
 ```java
-    ConfigureRequest configureRequest=new ConfigureRequest(sub,"your pattern String");
+    ConfigureRequest configurationRequest=new ConfigureRequest(sub,"your pattern String");
 
-    CidaasVerification.getInstance(this).configurePattern(configureRequest,new Result<EnrollResponse>() {
+    CidaasVerification.getInstance(this).configurePattern(configurationRequest,new Result<EnrollResponse>() {
         @Override
         public void success(EnrollResponse enrollResponse) {
             //Your Success Code
@@ -368,9 +368,9 @@ To configure SmartPush Notification, call **configureSmartPush()**.
 
 ```java
 
-ConfigureRequest configureRequest=new ConfigureRequest(sub);
+ConfigureRequest configurationRequest=new ConfigureRequest(sub);
 
-CidaasVerification.getInstance(this).configureSmartPush(configureRequest, new Result<EnrollResponse>() {
+CidaasVerification.getInstance(this).configureSmartPush(configurationRequest, new Result<EnrollResponse>() {
       @Override
       public void success(EnrollResponse result) {
             //Your Success Code

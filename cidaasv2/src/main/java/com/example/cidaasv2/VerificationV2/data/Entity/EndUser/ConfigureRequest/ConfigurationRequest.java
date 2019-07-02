@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfigureRequest implements Serializable {
+public class ConfigurationRequest implements Serializable {
 
 
     private String pass_code="";
@@ -67,25 +67,25 @@ public class ConfigureRequest implements Serializable {
     }
 
     //For Pattern
-    public ConfigureRequest( String sub ,String pass_code) {
+    public ConfigurationRequest(String sub , String pass_code) {
         this.pass_code = pass_code;
         this.sub = sub;
     }
 
     //For Smart push
-    public ConfigureRequest(String sub) {
+    public ConfigurationRequest(String sub) {
         this.sub = sub;
     }
 
     //For Face and Voice
-    public ConfigureRequest(String sub, File fileToSend, int attempt) {
+    public ConfigurationRequest(String sub, File fileToSend, int attempt) {
         this.sub = sub;
         this.fileToSend = fileToSend;
         this.attempt = attempt;
     }
 
     //For Fingerprint
-    public ConfigureRequest(String sub, FingerPrintEntity fingerPrintEntity) {
+    public ConfigurationRequest(String sub, FingerPrintEntity fingerPrintEntity) {
         this.sub = sub;
         this.fingerPrintEntity = fingerPrintEntity;
     }

@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.domain.Controller.Enroll;
+package com.example.cidaasv2.VerificationV2.domain.Controller.ConfigrationFlow.Enroll;
 
 import android.content.Context;
 import android.graphics.Bitmap;

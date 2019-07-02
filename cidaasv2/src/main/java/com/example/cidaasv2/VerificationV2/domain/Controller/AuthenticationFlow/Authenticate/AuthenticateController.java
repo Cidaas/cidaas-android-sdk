@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate;
+package com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Authenticate;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -274,6 +274,7 @@ public class AuthenticateController {
         String methodName = "AuthenticateController:-authenticate()";
         try
         {
+            //Authenticate URL
             String authenticateUrl= VerificationURLHelper.getShared().getAuthenticateURL(baseurl,verificationType);
 
             //headers Generation

@@ -60,6 +60,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
 
+            String BodyMessage="Empty Body Message";
+            String TitleMessage="Empty Title Message";
+            String ContentMessage="Empty Content Message";
 
             // Log.d("Push da notification",remoteMessage.getData().get("data"));
             String messageBody = null;
@@ -88,6 +91,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             PendingIntent pIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
+            if(remoteMessage.getNotification()!=null) {
+
+                TitleMessage = remoteMessage.getNotification().getTitle();
+                BodyMessage = remoteMessage.getNotification().getBody();
+            }
             //  if (userPresent) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -101,11 +109,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Notification notification =
                         new NotificationCompat.Builder(this)
                                 .setSmallIcon(getNotificationIcon())
-                                .setContentTitle("remoteMessage.getNotification().getTitle()")
-                                .setContentText("remoteMessage.getNotification().getBody()")
+                                .setContentTitle("E"+TitleMessage)
+                                .setContentText("E"+BodyMessage)
                                 .setChannelId(CHANNEL_ID)
                                 .setAutoCancel(true)
-                                .setStyle(new NotificationCompat.BigTextStyle().bigText("remoteMessage.getNotification().getBody()"))//Raja Changed to display Message in Notification
+                                .setStyle(new NotificationCompat.BigTextStyle().bigText(BodyMessage))//Raja Changed to display Message in Notification
                                 .setContentIntent(pIntent)
                                 .setCategory(Notification.CATEGORY_PROMO)
                                 .setSound(soundUri).setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -122,8 +130,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //Notification Builder
                 NotificationCompat.Builder notificationbuilder = new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(getNotificationIcon())
-                        .setContentTitle("remoteMessage.getNotification().getTitle()")//Raja Changed to display Message in Notification
-                        .setContentText("remoteMessage.getNotification().getBody()")//Raja Changed to display Message in Notification
+                        .setContentTitle("E"+TitleMessage)//Raja Changed to display Message in Notification
+                        .setContentText("E"+BodyMessage)//Raja Changed to display Message in Notification
                         .setAutoCancel(true)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()))//Raja Changed to display Message in Notification
                         .setContentIntent(pIntent)

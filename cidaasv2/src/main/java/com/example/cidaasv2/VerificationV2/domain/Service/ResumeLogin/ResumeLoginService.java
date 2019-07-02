@@ -9,10 +9,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.ResumeLogin.ResumeLoginEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.ResumeLogin.ResumeLoginResponse;
 import com.example.cidaasv2.VerificationV2.data.Service.CidaasSDK_V2_Service;
 import com.example.cidaasv2.VerificationV2.data.Service.ICidaasSDK_V2_Services;
 
@@ -71,19 +69,19 @@ public class ResumeLoginService {
                     }
                     else
                     {
-                        resumeLoginCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.PASSWORDLESS_SERVICE_FAILURE,
+                        resumeLoginCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
                                 response,"Error:- "+methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResumeLoginResponseEntity> call, Throwable t) {
-                    resumeLoginCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.PASSWORDLESS_SERVICE_FAILURE,
+                    resumeLoginCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
                             t.getMessage(),"Error:- "+methodName));
                 }
             });
         } catch (Exception e) {
-            resumeLoginCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.PASSWORDLESS_SERVICE_FAILURE,
+            resumeLoginCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
                     e.getMessage()));
         }
     }

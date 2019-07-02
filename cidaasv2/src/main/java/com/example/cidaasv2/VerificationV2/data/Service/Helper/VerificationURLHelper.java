@@ -1,5 +1,7 @@
 package com.example.cidaasv2.VerificationV2.data.Service.Helper;
 
+import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+
 public class VerificationURLHelper {
     public static String contentType = "application/x-www-form-urlencoded";
     public static String contentTypeJson = "application/json";
@@ -42,6 +44,9 @@ public class VerificationURLHelper {
     String updateFCMTokenURL="/verification-srv/v2/setup/device/update/pushid";
 
     String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
+
+    String mfaContinueCallUrl="/login-srv/precheck/continue/sdk/";
+
 
 
 
@@ -106,5 +111,9 @@ public class VerificationURLHelper {
 
     public String getPasswordlessContinueUrl(String baseurl) {
         return baseurl+passwordlessContinueUrl;
+    }
+
+    public String getMfaContinueCallUrl(String baseurl,String trackId) {
+        return baseurl+mfaContinueCallUrl+trackId;
     }
 }

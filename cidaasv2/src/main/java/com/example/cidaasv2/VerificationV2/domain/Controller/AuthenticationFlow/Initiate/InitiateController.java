@@ -1,4 +1,4 @@
-package com.example.cidaasv2.VerificationV2.domain.Controller.Initiate;
+package com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Initiate;
 
 import android.content.Context;
 
