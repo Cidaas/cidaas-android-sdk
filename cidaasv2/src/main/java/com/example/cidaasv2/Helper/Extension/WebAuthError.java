@@ -134,6 +134,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.NO_CONTENT);
         errorEntity.setError(context.getString(R.string.NO_CONTENT_IN_FILE));
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
     }
 //PropertyMissingException
@@ -149,6 +150,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setCode(WebAuthErrorCode.PROPERTY_MISSING);
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.PROPERTY_MISSING));
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = "Property Missing Error :-"+methodName+"ErrorCode :- "+ WebAuthError.shared.errorCode+" Error Message:- " +errorDetails;
         LogFile.getShared(context).addFailureLog(loggerMessage);
@@ -170,6 +172,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setCode(WebAuthErrorCode.CIDAAS_PROPERTY_MISSING);
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.CIDAAS_PROPERTY_MISSING));
+
+
 
         String loggerMessage = "Property Missing Error :-"+methodName+"ErrorCode :- "+ WebAuthError.shared.errorCode+" Error Message:- " +errorDetails;
         LogFile.getShared(context).addFailureLog(loggerMessage);
@@ -206,9 +210,18 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         WebAuthError.shared.ErrorMessage=errorMessage;
 
         ErrorEntity errorEntity=new ErrorEntity();
-        errorEntity.setCode(errorCode);
+
+        if(errorMessage.contains("timeout")) {
+            errorEntity.setCode(WebAuthErrorCode.TIME_OUT_ERROR);
+        }
+        else
+        {
+            errorEntity.setCode(errorCode);
+        }
         errorEntity.setStatus(HttpStatusCode.BAD_REQUEST);
         errorEntity.setError(errorMessage);
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage+" StatusCode:- "+statusCode;
         LogFile.getShared(context).addFailureLog(loggerMessage);
@@ -282,12 +295,13 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setCode(WebAuthErrorCode.UPDATE_FCM_TOKEN);
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.UPDATE_FCM_TOKEN_FAILURE));
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - FCM TOKEN FAILURE " +" Empty response"+"StatusCode:- "+statusCode;
         LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
-        WebAuthError.shared.setErrorEntity(errorEntity);
+
         return WebAuthError.shared;
     }
 
@@ -303,6 +317,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(statusCode);
         errorEntity.setError("Empty response");
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
         String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +" Empty response"+"StatusCode:- "+statusCode;
         LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
@@ -324,6 +339,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.BAD_REQUEST);
         errorEntity.setError(errorMessage);
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
         String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - "+errorMessage +" StatusCode:- "+statusCode;
         LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
@@ -344,6 +361,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setCode(errorCode);
         errorEntity.setStatus(HttpStatusCode.BAD_REQUEST);
         errorEntity.setError(errorMessage);
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Message - " +errorMessage;
         LogFile.getShared(context).addFailureLog(loggerMessage);
@@ -368,6 +386,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
      errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
      errorEntity.setError(context.getString(R.string.LOCATION_HISTORY_FAILURE));
 
+     WebAuthError.shared.setErrorEntity(errorEntity);
+
      return WebAuthError.shared;
  }
 
@@ -384,6 +404,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.EMPTY_LOGIN_URL));
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
         return WebAuthError.shared;
     }
@@ -400,6 +421,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.EMPTY_REDIRECT_URL));
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
     }
 //Usercancelled Exception
@@ -414,6 +436,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setCode(WebAuthErrorCode.USER_CANCELLED_LOGIN);
         errorEntity.setStatus(HttpStatusCode.CANCEL_REQUEST);
         errorEntity.setError(context.getString(R.string.USER_CANCELLED_LOGIN));
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
         return WebAuthError.shared;
     }
@@ -430,6 +454,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.NO_CONTENT);
         errorEntity.setError(context.getString(R.string.CODE_NOT_FOUND));
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
         return WebAuthError.shared;
     }
 //EmptyCallbackException
@@ -445,6 +471,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.BAD_REQUEST);
         errorEntity.setError(context.getString(R.string.EMPTY_CALLBACK));
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
         return WebAuthError.shared;
     }
 //NouserFoundException
@@ -459,6 +487,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setCode(WebAuthErrorCode.NO_USER_FOUND);
         errorEntity.setStatus(HttpStatusCode.NOT_FOUND);
         errorEntity.setError(context.getString(R.string.NO_USER_FOUND));
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
         return WebAuthError.shared;
     }
@@ -535,6 +565,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(errorMessage);
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
         String loggerMessage = "Finger print Exception:-"+methodName+" ErrorCode :- "+WebAuthError.shared.errorCode+" Error Message:- " +errorMessage;
         LogFile.getShared(context).addFailureLog(loggerMessage);
 
@@ -574,6 +606,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.USER_CANCELLED_LOGIN));
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
+
         String loggerMessage = "Facebook OnCancel Exception :- ErrorCode :- "+errorCode+" Error Message:- " + WebAuthError.shared.ErrorMessage;
         LogFile.getShared(context).addFailureLog(loggerMessage);
 
@@ -592,6 +626,8 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setCode(WebAuthErrorCode.GOOGLE_ERROR);
         errorEntity.setStatus(HttpStatusCode.EXPECTATION_FAILED);
         errorEntity.setError(context.getString(R.string.GOOGLE_SIGNIN_ERROR));
+
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
 
         String loggerMessage = "Google Signin error:- ErrorCode :- "+errorCode+" Error Message:- " + WebAuthError.shared.ErrorMessage;
@@ -613,6 +649,7 @@ public class  WebAuthError extends Error implements IOAuthExcepiton{
         errorEntity.setStatus(HttpStatusCode.UNAUTHORIZED);
         errorEntity.setError(errorMessage);
 
+        WebAuthError.shared.setErrorEntity(errorEntity);
 
 
         String loggerMessage = methodName+" :- "+"ErrorCode : "+errorCode+" "+ "Error Response From Json"+errorMessage +" Empty response"+"StatusCode:- "+statusCode;
