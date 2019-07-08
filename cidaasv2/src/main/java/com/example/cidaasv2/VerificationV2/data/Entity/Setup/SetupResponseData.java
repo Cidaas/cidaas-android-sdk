@@ -13,6 +13,7 @@ public class SetupResponseData implements Serializable {
     private String status_id="";
     private String authenticator_client_id;
     private String push_selected_number="";
+    private String totp_secret="";
 
     BackupCodeData backup_codes;
 
@@ -62,5 +63,13 @@ public class SetupResponseData implements Serializable {
 
     public void setPush_selected_number(String push_selected_number) {
         this.push_selected_number = push_selected_number;
+    }
+
+    public String getTotp_secret() {
+        return totp_secret;
+    }
+
+    public void setTotp_secret(String totp_secret) {
+        this.totp_secret = totp_secret;
     }
 }

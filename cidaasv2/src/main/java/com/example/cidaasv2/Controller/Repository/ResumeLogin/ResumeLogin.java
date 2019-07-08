@@ -2,20 +2,16 @@ package com.example.cidaasv2.Controller.Repository.ResumeLogin;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
-import com.example.cidaasv2.Service.Repository.Consent.ConsentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ResumeLogin {
@@ -107,7 +103,7 @@ public class ResumeLogin {
             resumeConsentRequestEntity.setClient_id(consentEntity.getClient_id());
 
 
-            ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity,new Result<ResumeConsentResponseEntity>() {
+            /*ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity,new Result<ResumeConsentResponseEntity>() {
                 @Override
                 public void success(ResumeConsentResponseEntity result) {
 
@@ -134,7 +130,7 @@ public class ResumeLogin {
                     loginresult.failure(error);
                 }
             });
-
+*/
 
         }
         catch (Exception e)

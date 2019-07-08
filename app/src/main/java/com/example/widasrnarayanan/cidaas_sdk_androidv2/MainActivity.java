@@ -38,7 +38,10 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFALis
 import com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,6 +51,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -94,8 +98,6 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         String token = getIntent().getDataString();
         if (token != null) {
            cidaas.handleToken(token);
-
-
         }
         else {
         }
@@ -347,19 +349,30 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     }
 
     private void getFCMToken() {
-        String token = FirebaseInstanceId.getInstance().getToken();
-        //String token="fnzDeBMEJrc:APA91bHmJxE0zbrgGmuqjMqZVLkZUXtmU1A_V4L-y6E100hywQYl7h9OCn4t8ZtaV0HuZ2Cf2-2rBYpUAvn_xcW41EYHX89H3r9q9vOA7NSPsuOxHywZiUDQggLi8mUR7PZn4LgTyLRb";
-      cidaas.setFCMToken(token);
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Timber.e( "getInstanceId failed"+ task.getException().getMessage());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        cidaas.setFCMToken(token);
+
+                        CidaasVerification.getInstance(getApplicationContext()).updateFCMToken(token);
 
 
 
+                        Timber.i("FCM TOKEN" + token);
+                   //     Toast.makeText(MainActivity.this, "Token "+token, Toast.LENGTH_SHORT).show();
 
-
-        Timber.i("FCM TOKEN" + token);
-        Toast.makeText(this, "Token"+token, Toast.LENGTH_SHORT).show();
-        // save device info
-        //getPresenter().saveDeviceInfo(token, getDeviceId());
-
+                    }
+                });
     }
 
 

@@ -72,10 +72,10 @@ public interface IOAuthWebLogin {
     //Login methods
     void loginWithCredentials(String requestId, LoginEntity loginEntity, Result<LoginCredentialsResponseEntity> result);
 
-    //Consent Details
+  /*  //Consent Details
     void getConsentDetails(String consentName, Result<ConsentDetailsResultEntity> consentResult);
     void loginAfterConsent(ConsentEntity consentEntity,Result<LoginCredentialsResponseEntity> loginresult);
-
+*/
     //MFA
     void getMFAList(String sub,Result<MFAListResponseEntity> mfaresult);
 

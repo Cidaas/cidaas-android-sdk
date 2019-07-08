@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.nfc.tech.IsoDep;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.ChangePassword.ChangePasswordController;
@@ -22,7 +25,6 @@ import com.example.cidaasv2.Controller.Repository.Configuration.SMS.SMSConfigura
 import com.example.cidaasv2.Controller.Repository.Configuration.SmartPush.SmartPushConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Voice.VoiceConfigurationController;
-import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
 import com.example.cidaasv2.Controller.Repository.LocalAuthentication.LocalAuthenticationController;
@@ -36,8 +38,6 @@ import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoCon
 import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
-import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
-import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
@@ -58,8 +58,6 @@ import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
@@ -117,8 +115,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 /**
@@ -287,7 +283,7 @@ public class Cidaas implements IOAuthWebLogin {
         LoginController.getShared(context).loginwithCredentials(requestId, loginEntity, loginresult);
     }
 
-    // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
+   /* // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
     @Override
     public void getConsentDetails(@NonNull final String consentName, final Result<ConsentDetailsResultEntity> consentResult) {
         ConsentController.getShared(context).getConsentDetails(consentName, consentResult);
@@ -321,7 +317,7 @@ public class Cidaas implements IOAuthWebLogin {
           ConsentController.getShared(context).getConsentDetailsV2(consentDetailsV2RequestEntity, consentResult);
       }
     }
-
+*/
 
     // -----------------------------------------------------***** GET MFA LIST *****---------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Service.Repository.Consent;
+package widas.raja.cidaasconsentv2.Domain.Service.Consent;
 
 import android.content.Context;
 
@@ -18,6 +18,7 @@ import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.Resum
 import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.Service.ICidaasSDKService;
+import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
@@ -65,37 +66,9 @@ public class ConsentService {
 
 
     //---------------------------------------------------------------get Consent String Details--------------------------------------------------------
-    public void getConsentDetails(final String baseurl,String consentName,final Result<ConsentDetailsResultEntity> callback)
+    public void getConsentDetails(String consentstringDetailsUrl, Map<String, String> headers, final Result<ConsentDetailsResultEntity> callback)
     {
-        String methodName="ConsentService:getConsentDetails()";
-        try {
-
-            if (baseurl != null && !baseurl.equals("")) {
-
-                //Construct URL For RequestId
-                String consentStringDetailsUrl = baseurl +URLHelper.getShared().getConsent_details()+consentName;
-
-                //Headers generation
-                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
-
-                //service call For consent details
-                serviceCallForGetConsentDetails(consentStringDetailsUrl, headers, callback);
-
-            } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
-                        ,"Error :"+methodName));
-                return;
-            }
-        }
-        catch (Exception e)
-        {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
-        }
-    }
-
-    private void serviceCallForGetConsentDetails(String consentstringDetailsUrl, Map<String, String> headers, final Result<ConsentDetailsResultEntity> callback)
-    {
-       final String methodName="Consent Service  :serviceCallForGetConsentDetails()";
+       final String methodName="Consent Service  :getConsentDetails()";
         try {
             //Call Service-getRequestId
             ICidaasSDKService cidaasSDKService = service.getInstance();
@@ -161,7 +134,6 @@ public class ConsentService {
                 public void onFailure(Call<ConsentDetailsV2ResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, t.getMessage(),
                             "Error :"+methodName));
-
                 }
             });
         }
@@ -172,7 +144,7 @@ public class ConsentService {
     }
 
     //---------------------------------------------------------------------AcceptConsent----------------------------------------------------------------
-    public void acceptConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
+ /*   public void acceptConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
                               final Result<ConsentManagementAcceptResponseEntity> callback)
     {
         String methodName="Consent Service :acceptConsent()";
@@ -181,7 +153,7 @@ public class ConsentService {
             if(baseurl!=null && !baseurl.equals("")){
 
                 //Construct URL For RequestId
-                String consentAcceptUrl=baseurl+URLHelper.getShared().getAcceptConsent();
+                String consentAcceptUrl=baseurl+ VerificationURLHelper.getShared().getAcceptConsent();
 
                 //Header Generation
                 Map<String, String> headers = Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
@@ -202,9 +174,10 @@ public class ConsentService {
            callback.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName,
                    WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage()));
         }
-    }
+    }*/
 
-    private void serviceCallForAcceptConsent(String consentAcceptUrl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
+
+    public void acceptConsent(String consentAcceptUrl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
                                              Map<String, String> headers, final Result<ConsentManagementAcceptResponseEntity> callback)
     {
     final String methodName="Consent Service :serviceCallForAcceptConsent()";

@@ -14,11 +14,29 @@ public class ResumeLoginEntity implements Serializable {
     private String trackId;
     private String usageType;
 
+    private String device_id="";
+    private String push_id="";
+
 
     public ResumeLoginEntity() {
     }
 
 
+    public String getDevice_id() {
+        return device_id;
+    }
+
+    public void setDevice_id(String device_id) {
+        this.device_id = device_id;
+    }
+
+    public String getPush_id() {
+        return push_id;
+    }
+
+    public void setPush_id(String push_id) {
+        this.push_id = push_id;
+    }
 
     public String getTrackId() {
         return trackId;

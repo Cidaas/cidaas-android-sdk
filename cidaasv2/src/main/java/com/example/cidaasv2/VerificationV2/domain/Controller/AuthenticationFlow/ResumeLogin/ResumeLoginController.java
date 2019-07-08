@@ -4,10 +4,12 @@ import android.content.Context;
 
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
+import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
@@ -129,16 +131,21 @@ public class ResumeLoginController {
     }
 
     //-------------------------------------------Call ResumeLogin Service-----------------------------------------------------------
-    private void callResumeLogin(String resumeURL,final ResumeLoginEntity ResumeLoginEntity, final Result<LoginCredentialsResponseEntity> resumeLoginResult)
+    private void callResumeLogin(String resumeURL,final ResumeLoginEntity resumeLoginEntity, final Result<LoginCredentialsResponseEntity> resumeLoginResult)
     {
         String methodName = "ResumeLoginController:-callPasswordlessResumeLogin()";
         try
         {
+            //App properties
+            DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+            resumeLoginEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+            resumeLoginEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+
             //headers Generation
             Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
             //ResumeLogin Service call
-            ResumeLoginService.getShared(context).callResumeLoginService(resumeURL, headers, ResumeLoginEntity, new Result<ResumeLoginResponseEntity>() {
+            ResumeLoginService.getShared(context).callResumeLoginService(resumeURL, headers, resumeLoginEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
                     getAccessTokenFromCode(result,resumeLoginResult);

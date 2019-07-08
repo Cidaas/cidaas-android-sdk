@@ -1,7 +1,12 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +22,7 @@ import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
@@ -63,7 +69,34 @@ public class ConfigureActivity extends AppCompatActivity {
         if (getIntent() != null) {
 
         }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("TOTPListener"));
     }
+
+
+
+    public void configureIVR(View view)
+    {
+         CidaasVerification.getInstance(getApplicationContext()).setupIVR(sub, new Result<SetupResponse>() {
+             @Override
+             public void success(SetupResponse result) {
+                 Toast.makeText(ConfigureActivity.this, ""+result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
+
+                 Intent intent=new Intent(ConfigureActivity.this,EmailAccountVerification.class);
+                 intent.putExtra("status_id",result.getData().getStatus_id());
+                 intent.putExtra("exchange_id",result.getData().getExchange_id().getExchange_id());
+                 intent.putExtra("sub",result.getData().getSub());
+                 startActivity(intent);
+
+             }
+
+             @Override
+             public void failure(WebAuthError error) {
+                 Toast.makeText(ConfigureActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+             }
+         });
+    }
+
 
 
     File imageFile;
@@ -91,6 +124,16 @@ public class ConfigureActivity extends AppCompatActivity {
         });
     }
 
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            TOTPEntity totpEntity = (TOTPEntity) intent.getSerializableExtra("TOTP");
+            Toast.makeText(context, "Message:"+totpEntity.getTotp_string()+"Timer:"+totpEntity.getTimer_count(), Toast.LENGTH_SHORT).show();
+
+        }
+    };
 
     public void enrollFinger(View view) {
         final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(ConfigureActivity.this, "Authenticate to all", "Description");
@@ -318,6 +361,69 @@ public class ConfigureActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    public void configureTOTP(View view)
+    {
+        ConfigurationRequest configurationRequest=new ConfigurationRequest(sub);
+        CidaasVerification.getInstance(getApplicationContext()).configureTOTP(configurationRequest, new Result<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse result) {
+                Toast.makeText(ConfigureActivity.this, "Success"+result.getData().getStatus_id(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void displayTotp(View view)
+    {
+        CidaasVerification.getInstance(getApplicationContext()).listenTOTP(sub);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
+    }
+
+
+    public void loginWithTOTP(View view)
+    {
+        Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
+            @Override
+            public void success(AuthRequestResponseEntity result) {
+                LoginRequest loginRequest = LoginRequest.getPasswordlessTOTPRequestEntity(sub,result.getData().getRequestId());
+                CidaasVerification.getInstance(getApplicationContext()).loginWithTOTP(loginRequest, new Result<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        Toast.makeText(ConfigureActivity.this, "Success Authenticated" + result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        Toast.makeText(ConfigureActivity.this, "Fail " + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConfigureActivity.this, "Fail " + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void cancelTOTP(View view)
+    {
+        CidaasVerification.getInstance(getApplicationContext()).cancelListenTOTP();
     }
 
     public void authenticateFinger(View view) {

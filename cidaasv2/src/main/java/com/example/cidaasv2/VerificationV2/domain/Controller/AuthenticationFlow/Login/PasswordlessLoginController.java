@@ -3,11 +3,13 @@ package com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow
 import android.content.Context;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPGenerator.GoogleAuthenticator;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -145,6 +147,17 @@ public class PasswordlessLoginController {
                 case AuthenticationType.PATTERN:
                     authenticateEntity = new AuthenticateEntity(initiateResult.getData().getExchange_id().getExchange_id(),
                             loginRequest.getPass_code(), verificationType);
+                    break;
+
+                case AuthenticationType.TOTP:
+                    String secret= DBHelper.getShared().getSecret(loginRequest.getSub());
+                    if(secret==null || secret.equals(""))
+                    {
+                        loginCredentialsResult.failure(WebAuthError.getShared(context).invalidPropertiesException("TOTP is not configured for this user: invalid or empty secret",methodName));
+                        return;
+                    }
+                    authenticateEntity = new AuthenticateEntity(initiateResult.getData().getExchange_id().getExchange_id(),
+                            GoogleAuthenticator.getTOTPCode(secret), verificationType);
                     break;
 
                 default:

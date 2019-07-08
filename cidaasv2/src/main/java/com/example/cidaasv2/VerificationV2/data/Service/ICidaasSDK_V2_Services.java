@@ -33,6 +33,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotificat
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PendingNotificationResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.UpdateFCMToken.UpdateFCMTokenResponseEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,7 +118,7 @@ public interface ICidaasSDK_V2_Services {
 
     //Update FCM List
     @POST
-    Call<String> updateFCMToken(@Url String url, @HeaderMap Map<String,String> headers, @Body UpdateFCMTokenEntity updateFCMTokenEntity);
+    Call<UpdateFCMTokenResponseEntity> updateFCMToken(@Url String url, @HeaderMap Map<String,String> headers, @Body UpdateFCMTokenEntity updateFCMTokenEntity);
 
     //Resume Login
     @POST

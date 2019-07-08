@@ -4,9 +4,11 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Enums.Result;
+import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
@@ -35,11 +37,11 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
 import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Authenticate.AuthenticateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticateHistory.AuthenticatedHistoryController;
 import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.ConfigureRequest.ConfigurationRequest;
+import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Initiate.InitiateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Login.PasswordlessLoginController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.ConfigrationFlow.Configuration.ConfigurationController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.Delete.DeleteController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.ConfigrationFlow.Enroll.EnrollController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Initiate.InitiateController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.PendingNotification.PendingNotificationController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Push.PushAcknowledge.PushAcknowledgeController;
 import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.Push.PushAllow.PushAllowController;
@@ -184,7 +186,8 @@ public class CidaasVerification {
     }
 
     //-------------------------------------------------------AUTHENTICATED HISTORY CALL--------------------------------------------------------------
-    public void getAuthenticatedHistory(AuthenticatedHistoryEntity authenticatedHistoryEntity, Result<AuthenticatedHistoryResponse> authenticatedHistoryResult)
+    public void getAuthenticatedHistory(AuthenticatedHistoryEntity authenticatedHistoryEntity,
+                                        Result<AuthenticatedHistoryResponse> authenticatedHistoryResult)
     {
         AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryList(authenticatedHistoryEntity,authenticatedHistoryResult);
     }
@@ -302,15 +305,23 @@ public class CidaasVerification {
 
 
     //-------------------------------------------------------SCANNED CALL COMMON--------------------------------------------------------------
-    private void configure(final ConfigurationRequest configurationRequest, final String verificationType, final Result<EnrollResponse> enrollResponseResult)
+    private void configure(final ConfigurationRequest configurationRequest,final String verificationType,final Result<EnrollResponse> enrollResponseResult)
     {
-        ConfigurationController.getShared(context).configurationVerification(configurationRequest,verificationType,enrollResponseResult);
+        ConfigurationController.getShared(context).configureVerification(configurationRequest,verificationType,enrollResponseResult);
     }
 
-
-    public void verifyEmail(String code,String exchange_id,String sub)
+    public void loginWithIVR(LoginRequest loginRequest,Result<InitiateResponse> initiateResult)
     {
+        InitiateEntity initiateEntity=new InitiateEntity(loginRequest.getSub(),loginRequest.getRequestId(),loginRequest.getUsageType(),
+                AuthenticationType.IVR);
+        InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
+    }
 
+    //
+    public void verifyCode(String code,String exchange_id,String requestId,Result<LoginCredentialsResponseEntity> loginResult)
+    {
+        AuthenticateEntity authenticateEntity=new AuthenticateEntity(exchange_id,code,AuthenticationType.IVR);
+       // PasswordlessLoginController.getShared(context).authenticateVerification(authenticateEntity,loginResult);
     }
 
 
@@ -352,12 +363,11 @@ public class CidaasVerification {
         login(loginRequest,AuthenticationType.VOICE,authenticateResponseResult);
     }
 
-   /* Ask how to Handle TOTP
-   public void loginWithTOTP(final ConfigurationRequest configureRequest, final Result<EnrollResponse> enrollResponseResult)
+    //  To Handle TOTP
+     public void loginWithTOTP(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult)
     {
-        configure(configureRequest,AuthenticationType.TOTP,enrollResponseResult);
+        login(loginRequest,AuthenticationType.TOTP,authenticateResponseResult);
     }
-    */
 
     public void loginWithFingerprint(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult)
     {
@@ -370,7 +380,13 @@ public class CidaasVerification {
         PasswordlessLoginController.getShared(context).loginVerification(loginRequest,verificationType,loginCredentialsResult);
     }
 
+    public void listenTOTP(String sub) {
+        TOTPConfigurationController.getShared(context).ListenTOTP(sub);
+    }
 
+    public void cancelListenTOTP() {
+        TOTPConfigurationController.getShared(context).cancelTOTP();
+    }
 
 
 }

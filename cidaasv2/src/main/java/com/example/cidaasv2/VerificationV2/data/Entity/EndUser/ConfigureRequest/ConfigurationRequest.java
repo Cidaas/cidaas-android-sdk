@@ -72,7 +72,7 @@ public class ConfigurationRequest implements Serializable {
         this.sub = sub;
     }
 
-    //For Smart push
+    //For Smart push and TOTP
     public ConfigurationRequest(String sub) {
         this.sub = sub;
     }

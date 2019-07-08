@@ -175,6 +175,39 @@ public class LoginRequest implements Serializable {
         this.trackId = trackId;
     }
 
+    //For Passwordless Email
+    public static LoginRequest getPasswordlessEmailRequestEntity(@NonNull String sub,@NonNull String requestId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.PASSWORDLESS);
+
+        return loginRequest;
+    }
+
+    //For Passwordless SMS
+    public static LoginRequest getPasswordlessSMSRequestEntity(@NonNull String sub,@NonNull String requestId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.PASSWORDLESS);
+
+        return loginRequest;
+    }
+
+    //For Passwordless IVR
+    public static LoginRequest getPasswordlessIVRRequestEntity(@NonNull String sub,@NonNull String requestId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.PASSWORDLESS);
+
+        return loginRequest;
+    }
+
     /**
      *
      * @param pass_code
@@ -198,6 +231,17 @@ public class LoginRequest implements Serializable {
 
     //For Passwordless SmartPush
     public static LoginRequest getPasswordlessSmartPushLoginRequestEntity(@NonNull String sub,@NonNull String requestId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.PASSWORDLESS);
+
+        return loginRequest;
+    }
+
+    //For Passwordless TOTP
+    public static LoginRequest getPasswordlessTOTPRequestEntity(@NonNull String sub,@NonNull String requestId)
     {
         LoginRequest loginRequest=new LoginRequest();
         loginRequest.setSub(sub);
@@ -243,6 +287,42 @@ public class LoginRequest implements Serializable {
         return loginRequest;
     }
 
+    //For Passwordless Email
+    public static LoginRequest getMFAEmailRequestEntity(@NonNull String sub,@NonNull String requestId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.PASSWORDLESS);
+
+        return loginRequest;
+    }
+
+    //For Passwordless SMS
+    public static LoginRequest getMFASMSRequestEntity(@NonNull String sub,@NonNull String requestId,@NonNull String trackId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.MFA);
+        loginRequest.setTrackId(trackId);
+
+        return loginRequest;
+    }
+
+    //For Passwordless IVR
+    public static LoginRequest getMFAIVRRequestEntity(@NonNull String sub,@NonNull String requestId,@NonNull String trackId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.MFA);
+        loginRequest.setTrackId(trackId);
+
+        return loginRequest;
+    }
+
+
     //For MFA Pattern
     public static LoginRequest getMFAPatternLoginRequestEntity(@NonNull String pass_code, @NonNull String sub,@NonNull String requestId,@NonNull String trackId)
     {
@@ -259,6 +339,18 @@ public class LoginRequest implements Serializable {
 
     //For Passwordless SmartPush
     public static LoginRequest getMFASmartPushLoginRequestEntity(@NonNull String sub,@NonNull String requestId,@NonNull String trackId)
+    {
+        LoginRequest loginRequest=new LoginRequest();
+        loginRequest.setSub(sub);
+        loginRequest.setRequestId(requestId);
+        loginRequest.setUsageType(UsageType.MFA);
+        loginRequest.setTrackId(trackId);
+
+        return loginRequest;
+    }
+
+    //For Passwordless TOTP
+    public static LoginRequest getMFATOTPRequestEntity(@NonNull String sub,@NonNull String requestId,@NonNull String trackId)
     {
         LoginRequest loginRequest=new LoginRequest();
         loginRequest.setSub(sub);

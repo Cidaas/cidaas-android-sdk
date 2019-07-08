@@ -19,37 +19,41 @@ public class VerificationURLHelper {
         return shared;
     }
 
-    //V2-Verification
+    //V2-Verification-Setup
     String setupURL="/verification-srv/v2/setup/initiate/";
     String scannedURL="/verification-srv/v2/setup/scan/";
     String enrollURL="/verification-srv/v2/setup/enroll/";
 
+    //V2-Verification-initiate
     String initiateURL="/verification-srv/v2/authenticate/initiate/";
 
-    String pushAcknowledgeURL="/verification-srv/v2/authenticate/push_acknowledge/";
-    String pushAllowURL="/verification-srv/v2/authenticate/allow/";
-    String pushRejectURL ="/verification-srv/v2/authenticate/reject/";
+    //V2-Verification-Push
+    private String pushAcknowledgeURL="/verification-srv/v2/authenticate/push_acknowledge/";
+    private String pushAllowURL="/verification-srv/v2/authenticate/allow/";
+    private String pushRejectURL ="/verification-srv/v2/authenticate/reject/";
 
-    String authenticateURL="/verification-srv/v2/authenticate/authenticate/";
+    //V2-Verification-Authenticate
+    private String authenticateURL="/verification-srv/v2/authenticate/authenticate/";
 
-    String deleteURL="/verification-srv/v2/setup/device/configured/remove/";
-    String deleteAllURL="/verification-srv/v2/setup/device/configured/removeallbydeviceid/";
+    //V2-Verification-Delete
+    private String deleteURL="/verification-srv/v2/setup/device/configured/remove/";
+    private String deleteAllURL="/verification-srv/v2/setup/device/configured/removeallbydeviceid/";
 
-    String getConfiguredListURL="/verification-srv/v2/setup/device/configured/list";
+    //V2-Verification-Get Details
+    private String getConfiguredListURL="/verification-srv/v2/setup/device/configured/list";
 
-    String getPendingNotificationURL="/verification-srv/v2/setup/device/pending/auth/list";
+    private String getPendingNotificationURL="/verification-srv/v2/setup/device/pending/auth/list";
 
-    String getAuthentictedHistoryURL="/verification-srv/v2/setup/device/authenticated/list";
+    private String getAuthentictedHistoryURL="/verification-srv/v2/setup/device/authenticated/list";
 
-    String updateFCMTokenURL="/verification-srv/v2/setup/device/update/pushid";
+    //Update FCM Token
+    private String updateFCMTokenURL="/verification-srv/v2/setup/device/update/pushid";
 
-    String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
+    //Login Continue call Passwordless
+    private String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
 
-    String mfaContinueCallUrl="/login-srv/precheck/continue/sdk/";
-
-
-
-
+    //Login Continue call MFA
+    private String mfaContinueCallUrl="/login-srv/precheck/continue/sdk/";
 
 
     public String getSetupURL(String baseurl,String verificationType) {

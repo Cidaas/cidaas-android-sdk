@@ -11,15 +11,18 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushNotificationEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
+import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.ConfigureActivity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -154,6 +157,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Timber.e(e.getMessage());
 
         }
+
+
     }
 
+    @Override
+    public void onNewToken(String token) {
+        Timber.d( " FCM Refreshed token: " + token);
+
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // Instance ID token to your app server.
+         sendRegistrationToServer(token);
+    }
+
+    // [END refresh_token]
+    private void sendRegistrationToServer(String token) {
+        // TODO: Implement this method to send token to your app server.
+
+        int version = Build.VERSION.SDK_INT;
+        String name = Build.VERSION.CODENAME;
+        String deviceName = Build.MODEL;
+        name = name + ":" + version;
+
+        String deviceId = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+
+
+        CidaasVerification.getInstance(getApplicationContext()).updateFCMToken(token);
+
+
+    }
 }

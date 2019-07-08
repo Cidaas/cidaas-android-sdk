@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                             final String finalSub = sub;
-                            cidaas.getConsentDetails(consentName, new Result<ConsentDetailsResultEntity>() {
+                   /*         cidaas.getConsentDetails(consentName, new Result<ConsentDetailsResultEntity>() {
                                 @Override
                                 public void success(ConsentDetailsResultEntity result) {
                                     Toast.makeText(LoginActivity.this, ""+result.getData().getVersion(), Toast.LENGTH_SHORT).show();
@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
                                 public void failure(WebAuthError error) {
                                     Toast.makeText(LoginActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                            });
+                            });*/
 
 
 /*

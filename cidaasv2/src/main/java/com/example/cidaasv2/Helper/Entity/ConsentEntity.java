@@ -11,6 +11,15 @@ public class ConsentEntity implements Serializable{
      private String trackId;
      private boolean isAccepted;
 
+
+    public ConsentEntity(String consentName, String consentVersion, String sub, String trackId, boolean isAccepted) {
+        this.consentName = consentName;
+        this.consentVersion = consentVersion;
+        this.sub = sub;
+        this.trackId = trackId;
+        this.isAccepted = isAccepted;
+    }
+
     public String getTrackId() {
         return trackId;
     }

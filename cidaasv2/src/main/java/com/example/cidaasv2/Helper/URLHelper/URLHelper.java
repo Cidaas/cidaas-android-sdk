@@ -33,13 +33,6 @@ public class URLHelper {
 
     String request_id_url="/authz-srv/authrequest/authz/generate";
 
-    String consent_url= "/consent-management-srv/tenant/version/pageurl?consent_name=";
-
-    String consent_details="/consent-management-srv/settings/public?name=";
-    String  acceptConsent="/consent-management-srv/user/status";
-
-
-    String consentDetailsV2="/consent-management-srv/v2/consent/usage/public/info";
 
 
     String loginWithCredentials="/login-srv/login/sdk";
@@ -162,11 +155,6 @@ public class URLHelper {
 
 
     String openIdURL="/.well-known/openid-configuration";
-
-
-    public String getConsentDetailsV2(String baseurl) {
-        return baseurl+consentDetailsV2;
-    }
 
     public String getLogoutURLForEmbeddedBrowser() {
         return logoutURLForEmbeddedBrowser;
@@ -552,19 +540,7 @@ public class URLHelper {
         return request_id_url;
     }
 
-    public String getConsent_url(String consentName,String consentVersion) {
-        return consent_url+consentName+"&version=" +consentVersion;
-    }
 
-    public String getConsent_details() {
-        return consent_details;
-    }
-
-
-
-    public String getAcceptConsent() {
-        return acceptConsent;
-    }
 
     public String getLoginWithCredentials() {
         return loginWithCredentials;

@@ -15,6 +15,7 @@ import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.Others.UpdateFCMTokenEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.UpdateFCMToken.UpdateFCMTokenResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
 import com.example.cidaasv2.VerificationV2.domain.Service.Settings.SettingsService;
 
@@ -129,19 +130,24 @@ public class SettingsController {
     //--------------------------------------------Settings--------------------------------------------------------------
     public void updateFCMToken(final String newFCMToken)
     {
+        final String methodName = "SettingsController:-updateFCMToken()";
         DeviceInfoEntity deviceInfoEntity= DBHelper.getShared().getDeviceInfo();
 
-        //Check for DB if it is null or empty save it in DB
-        if(deviceInfoEntity.getPushNotificationId()==null || deviceInfoEntity.getPushNotificationId().equals(""))
-        {
-            DBHelper.getShared().setFCMToken(newFCMToken);
+        if(newFCMToken!=null && !newFCMToken.equals("")) {
+            //Check for DB if it is null or empty save it in DB
+            if (deviceInfoEntity.getPushNotificationId() == null || deviceInfoEntity.getPushNotificationId().equals("")) {
+                DBHelper.getShared().setFCMToken(newFCMToken);
+                //addPropertiesForFCM(newFCMToken);
+            } else if (deviceInfoEntity.getPushNotificationId().equals(newFCMToken)) {
+                //No problem
+            } else {
+                addPropertiesForFCM(newFCMToken);
+            }
         }
-        else if(deviceInfoEntity.getPushNotificationId().equals(newFCMToken))
+        else
         {
-            //No problem
-        }
-        else {
-            addPropertiesForFCM(newFCMToken);
+            //Todo handle Error
+            WebAuthError.getShared(context).propertyMissingException("FCMToken must not be null",methodName);
         }
     }
 
@@ -188,9 +194,9 @@ public class SettingsController {
             Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
             //Settings Service call
-            SettingsService.getShared(context).updateFCMToken(updateFCMTokenURL, headers, updateFCMTokenEntity, new Result<String>() {
+            SettingsService.getShared(context).updateFCMToken(updateFCMTokenURL, headers, updateFCMTokenEntity, new Result<UpdateFCMTokenResponseEntity>() {
                 @Override
-                public void success(String result) {
+                public void success(UpdateFCMTokenResponseEntity result) {
                     DBHelper.getShared().setFCMToken(updateFCMTokenEntity.getPush_id());
                 }
 

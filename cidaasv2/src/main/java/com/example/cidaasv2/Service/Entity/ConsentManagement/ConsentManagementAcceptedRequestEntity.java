@@ -62,4 +62,16 @@ public class ConsentManagementAcceptedRequestEntity implements Serializable{
     public void setAccepted(boolean accepted) {
         this.accepted = accepted;
     }
+
+    public ConsentManagementAcceptedRequestEntity(String name, String client_id, String sub, String version, String trackId, boolean accepted) {
+        this.name = name;
+        this.client_id = client_id;
+        this.sub = sub;
+        this.version = version;
+        this.trackId = trackId;
+        this.accepted = accepted;
+    }
+
+    public ConsentManagementAcceptedRequestEntity() {
+    }
 }
