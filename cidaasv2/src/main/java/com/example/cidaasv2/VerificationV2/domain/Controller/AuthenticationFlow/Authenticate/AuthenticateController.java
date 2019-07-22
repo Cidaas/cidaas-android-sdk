@@ -92,7 +92,7 @@ public class AuthenticateController {
     //-----------------------------------------------handleVerificationTypes---------------------------------------------------------------
     private void handleVerificationTypes(AuthenticateEntity authenticateEntity, Result<AuthenticateResponse> authenticateResult)
     {
-        String methodName = "AuthenticateController:-handleVerificationTypes()";
+        String methodName = "AuthenticateController:-handleVerificationTypes() ";
         try {
             switch (authenticateEntity.getVerificationType()) {
 
@@ -145,7 +145,7 @@ public class AuthenticateController {
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
     private void callFingerPrintAuthentication(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult)
     {
-        String methodName = "AuthenticateController:-callFingerPrintAuthentication()";
+        String methodName = "AuthenticateController:-callFingerPrintAuthentication() ";
         try {
             BiometricHandler biometricHandler=new BiometricHandler(authenticateEntity.getFingerPrintEntity().getContext());
            biometricHandler.callFingerPrint(authenticateEntity.getFingerPrintEntity(), methodName, new Result<String>() {
@@ -229,7 +229,7 @@ public class AuthenticateController {
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
     private void addPropertiesForFaceOrVoice(final MultipartBody.Part  filetosend, final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult)
     {
-        String methodName = "AuthenticateController:-addPropertiesForFaceOrVoice()";
+        String methodName = "AuthenticateController:-addPropertiesForFaceOrVoice() ";
         try {
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
