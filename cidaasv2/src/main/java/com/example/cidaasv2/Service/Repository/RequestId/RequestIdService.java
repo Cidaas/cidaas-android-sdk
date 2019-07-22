@@ -41,8 +41,8 @@ public class RequestIdService {
         context=contextFromCidaas;
 
         if(service==null) {
-            service=new CidaassdkService();
-            service.setContext(context);
+            service=new CidaassdkService(context);
+
         }
 
         //Todo setValue for authenticationType

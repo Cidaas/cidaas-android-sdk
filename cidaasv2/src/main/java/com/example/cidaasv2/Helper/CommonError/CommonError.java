@@ -54,19 +54,17 @@ public class CommonError {
             // Handle proper error message
             String errorResponse = response.errorBody().source().readByteString().utf8();
 
+
             if(errorResponse.contains("<!DOCTYPE html>"))
             {
                return WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND,methodName);
             }
 
-            if(response.code()==401)
-            {
-                return WebAuthError.getShared(context).unAuthorizedAccess(webAuthErrorCode,errorResponse,methodName);
-            }
+
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
 
-            LogFile.getShared(context).addFailureLog("Exception:- WebAuthErrorCode: "+webAuthErrorCode+"Response Message:-" + response.message()+
+            LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: "+webAuthErrorCode+" Response Message:- " + response.message()+
                     " ErrorCode:- "+commonErrorEntity.getError().getCode()+ "error message:-" + commonErrorEntity.getError().getError());
 
 

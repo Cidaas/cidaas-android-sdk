@@ -3,6 +3,7 @@ package com.example.cidaasv2.Helper.URLHelper;
 import android.net.Uri;
 
 import com.example.cidaasv2.Controller.Cidaas;
+import com.example.cidaasv2.Helper.AuthenticationType;
 
 import java.util.Map;
 import java.util.UUID;
@@ -32,10 +33,7 @@ public class URLHelper {
 
     String request_id_url="/authz-srv/authrequest/authz/generate";
 
-    String consent_url= "/consent-management-srv/tenant/version/pageurl?consent_name=";
 
-    String consent_details="/consent-management-srv/settings/public?name=";
-    String  acceptConsent="/consent-management-srv/user/status";
 
     String loginWithCredentials="/login-srv/login/sdk";
     String logoutURLForEmbeddedBrowser="/session/end_session";
@@ -117,7 +115,7 @@ public class URLHelper {
     String ChangePasswordURl="/users-srv/changepassword";
 
     String resumeLoginURL="/login-srv/precheck/continue/sdk/";
-    String resumeConsentURL="/login-srv/precheck/continue/sdk/";
+
 
     String internaluserProfileURL="/users-srv/internal/userinfo/profile/";
     String userInfoURL="/users-srv/userinfo";
@@ -157,8 +155,6 @@ public class URLHelper {
 
 
     String openIdURL="/.well-known/openid-configuration";
-
-
 
     public String getLogoutURLForEmbeddedBrowser() {
         return logoutURLForEmbeddedBrowser;
@@ -220,10 +216,10 @@ public class URLHelper {
         return deleteMFA+userDeviceId+"/PATTERN";
     }
     public String getDeleteFingerprintMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/TOUCHID";
+        return deleteMFA+userDeviceId+"/"+ AuthenticationType.FINGERPRINT;
     }
     public String getDeleteSmartPushMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/PUSH";
+        return deleteMFA+userDeviceId+"/"+AuthenticationType.SMARTPUSH;
     }
     public String getDeleteFaceMFA(String userDeviceId) {
         return deleteMFA+userDeviceId+"/FACE";
@@ -413,9 +409,6 @@ public class URLHelper {
         return enrollVoiceMFA;
     }
 
-    public String getResumeConsentURL() {
-        return resumeConsentURL;
-    }
 
     public String getInternaluserProfileURL() {
         return internaluserProfileURL;
@@ -544,19 +537,7 @@ public class URLHelper {
         return request_id_url;
     }
 
-    public String getConsent_url(String consentName,String consentVersion) {
-        return consent_url+consentName+"&version=" +consentVersion;
-    }
 
-    public String getConsent_details() {
-        return consent_details;
-    }
-
-
-
-    public String getAcceptConsent() {
-        return acceptConsent;
-    }
 
     public String getLoginWithCredentials() {
         return loginWithCredentials;

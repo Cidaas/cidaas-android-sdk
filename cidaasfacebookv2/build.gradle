@@ -40,5 +40,5 @@ dependencies {
 
 
     //Facebook
-    implementation 'com.facebook.android:facebook-android-sdk:4.33.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.42.0'
 }

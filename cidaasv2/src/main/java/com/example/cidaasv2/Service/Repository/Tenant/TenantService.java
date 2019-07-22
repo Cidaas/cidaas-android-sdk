@@ -36,7 +36,7 @@ public class TenantService {
 
 
         if(service==null) {
-            service=new CidaassdkService();
+            service=new CidaassdkService(context);
         }
 
         //Todo setValue for authenticationType

@@ -6,21 +6,27 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 
-import androidx.appcompat.app.AppCompatActivity;
+import widas.raja.cidaasconsentv2.Helper.ConsentURLHelper;
+import widas.raja.cidaasconsentv2.Presenter.CidaasConsent;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
+
 
 public class ConsentUrlActivity extends AppCompatActivity {
 
     Cidaas cidaas;
     TextView title,description,user_agreement;
    // WebView webView;
-    String consentName,version,sub,url,trackid;
+    String consentVersionId,consentId,sub,url,trackid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,28 +40,52 @@ public class ConsentUrlActivity extends AppCompatActivity {
 
 
         Intent intent=getIntent();
-         consentName=intent.getStringExtra("consentName");
-         version=intent.getStringExtra("consentVersion");
+         consentVersionId = intent.getStringExtra("consentVersionId");
+        String requestId = intent.getStringExtra("requestId");
          sub=intent.getStringExtra("sub");
-         url=intent.getStringExtra("url");
+         consentId = intent.getStringExtra("consentId");
          trackid=intent.getStringExtra("trackid");
 
-        // webView.loadUrl(url);
-        if(consentName!=null) {
 
 
+            ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity=new ConsentDetailsV2RequestEntity(sub, requestId,trackid,consentId,consentVersionId);
 
 
-            cidaas.getConsentDetails(consentName,new Result<ConsentDetailsResultEntity>() {
+            CidaasConsent.getInstance(getApplicationContext()).getConsentDetailsV2(consentDetailsV2RequestEntity, new Result<ConsentDetailsV2ResponseEntity>() {
+                @Override
+                public void success(ConsentDetailsV2ResponseEntity result) {
+                    Toast.makeText(ConsentUrlActivity.this, ""+result.getData().getConsent_name(), Toast.LENGTH_SHORT).show();
+
+                  /*  String titleFor=result.getData().getConsent_name()
+                    title.setText(titleFor);
+                    description.setText(((LinkedHashMap) result).get("description").toString());
+                    user_agreement.setText(((LinkedHashMap) result).get("userAgreeText").toString());*/
+
+
+                    String titleFor=result.getData().getConsent_name();
+                    title.setText(titleFor);
+                    description.setText(result.getData().getContent());
+                    //user_agreement.setText();
+
+
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    Toast.makeText(ConsentUrlActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        /*    cidaas.getConsentDetails(consentName,new Result<ConsentDetailsResultEntity>() {
 
 
                 @Override
                 public void success(ConsentDetailsResultEntity result) {
-/*
+*//*
                     String titleFor=((LinkedHashMap) result).get("title").toString();
                     title.setText(titleFor);
                     description.setText(((LinkedHashMap) result).get("description").toString());
-                    user_agreement.setText(((LinkedHashMap) result).get("userAgreeText").toString());*/
+                    user_agreement.setText(((LinkedHashMap) result).get("userAgreeText").toString());*//*
 
 
                     String titleFor=result.getData().getName();
@@ -72,24 +102,37 @@ public class ConsentUrlActivity extends AppCompatActivity {
                 public void failure(WebAuthError error) {
                     Toast.makeText(ConsentUrlActivity.this, error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });
-        }
+            });*/
     }
 
 
     public void acceptButtononClick(View view){
-         ConsentEntity consentAcceptRequestEntity=new ConsentEntity();
+      /*   ConsentEntity consentAcceptRequestEntity=new ConsentEntity(consentName,version,sub,trackid,true);
         consentAcceptRequestEntity.setConsentVersion(version);
         consentAcceptRequestEntity.setSub(sub);
         consentAcceptRequestEntity.setConsentName(consentName);
-        consentAcceptRequestEntity.setAccepted(true);
+        consentAcceptRequestEntity.setAccepted(true);*/
 
-         cidaas.loginAfterConsent(consentAcceptRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+        AcceptConsentV2Entity acceptConsentV2Entity=new AcceptConsentV2Entity(sub,consentId,consentVersionId,trackid);
+
+        CidaasConsent.getInstance(getApplicationContext()).acceptConsentV2(acceptConsentV2Entity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+                Toast.makeText(ConsentUrlActivity.this, ""+result.getData().getAccess_token(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ConsentUrlActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+       /*  cidaas.loginAfterConsent(consentAcceptRequestEntity, new Result<LoginCredentialsResponseEntity>() {
              @Override
              public void success(LoginCredentialsResponseEntity result) {
                  Toast.makeText(ConsentUrlActivity.this, "consent Management is accepted", Toast.LENGTH_SHORT).show();
 
-               /*  ResumeConsentRequestEntity resumeConsentRequestEntity=new ResumeConsentRequestEntity();
+               *//*  ResumeConsentRequestEntity resumeConsentRequestEntity=new ResumeConsentRequestEntity();
 
                  resumeConsentRequestEntity.setName(consentName);
                  resumeConsentRequestEntity.setSub(sub);
@@ -116,15 +159,15 @@ public class ConsentUrlActivity extends AppCompatActivity {
 
                          }
                      }
-                 });*/
-               /*  Intent intent=new Intent(ConsentUrlActivity.this,LoginActivity.class);
-                 startActivity(intent);*/
+                 });*//*
+               *//*  Intent intent=new Intent(ConsentUrlActivity.this,LoginActivity.class);
+                 startActivity(intent);*//*
              }
 
              @Override
              public void failure(WebAuthError error) {
                  Toast.makeText(ConsentUrlActivity.this, "consent Management is Failed", Toast.LENGTH_SHORT).show();
              }
-         });
+         });*/
     }
 }

@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 public class BiometricManager extends BiometricManagerV23 {
 
 
-    protected BiometricManager(final BiometricBuilder biometricBuilder) {
+    public BiometricManager(final BiometricBuilder biometricBuilder) {
         this.context = biometricBuilder.context;
         this.title = biometricBuilder.title;
         this.subtitle = biometricBuilder.subtitle;
@@ -25,6 +25,7 @@ public class BiometricManager extends BiometricManagerV23 {
 
         if(title == null) {
             biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog title cannot be null");
+            return;
         }
 
 
@@ -35,6 +36,7 @@ public class BiometricManager extends BiometricManagerV23 {
 
         if(description == null) {
             biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog description cannot be null");
+            return;
         }
 
         if(negativeButtonText == null) {
@@ -81,6 +83,53 @@ public class BiometricManager extends BiometricManagerV23 {
             displayBiometricPromptV23Manger(biometricCallback);
         }
 
+    }
+
+
+    public void displayBiometricPromptForPieAndAbove(final BiometricCallback biometricCallback)
+    {
+        if(title == null || title.equals("")) {
+            biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog title cannot be null");
+            return;
+        }
+
+
+        if(subtitle == null || subtitle.equals("")) {
+          //  biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog subtitle cannot be null");
+        }
+
+
+        if(description == null || description.equals("")) {
+            biometricCallback.onBiometricAuthenticationInternalError("Biometric Dialog description cannot be null");
+            return;
+        }
+
+        if(negativeButtonText == null || negativeButtonText.equals("")) {
+            negativeButtonText="Cancel";
+        }
+
+
+        if(!BiometricUtils.isSdkVersionSupported()) {
+            biometricCallback.onSdkVersionNotSupported();
+            return;
+        }
+
+        if(!BiometricUtils.isPermissionGranted(context)) {
+            biometricCallback.onBiometricAuthenticationPermissionNotGranted();
+            return;
+        }
+
+        if(!BiometricUtils.isHardwareSupported(context)) {
+            biometricCallback.onBiometricAuthenticationNotSupported();
+            return;
+        }
+
+        if(!BiometricUtils.isFingerprintAvailable(context)) {
+            biometricCallback.onBiometricAuthenticationNotAvailable();
+            return;
+        }
+
+        displayBiometricPrompt(biometricCallback);
     }
 
 

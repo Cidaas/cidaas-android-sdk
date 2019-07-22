@@ -17,12 +17,15 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
+import com.example.cidaasv2.Controller.Repository.LocalAuthentication.LocalAuthenticationController;
 import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Interface.ILoader;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
@@ -35,7 +38,10 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFALis
 import com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,6 +51,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -91,8 +98,6 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         String token = getIntent().getDataString();
         if (token != null) {
            cidaas.handleToken(token);
-
-
         }
         else {
         }
@@ -344,19 +349,30 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     }
 
     private void getFCMToken() {
-        String token = FirebaseInstanceId.getInstance().getToken();
-        //String token="fnzDeBMEJrc:APA91bHmJxE0zbrgGmuqjMqZVLkZUXtmU1A_V4L-y6E100hywQYl7h9OCn4t8ZtaV0HuZ2Cf2-2rBYpUAvn_xcW41EYHX89H3r9q9vOA7NSPsuOxHywZiUDQggLi8mUR7PZn4LgTyLRb";
-      cidaas.setFCMToken(token);
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Timber.e( "getInstanceId failed"+ task.getException().getMessage());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        cidaas.setFCMToken(token);
+
+                        CidaasVerification.getInstance(getApplicationContext()).updateFCMToken(token);
 
 
 
+                        Timber.i("FCM TOKEN" + token);
+                   //     Toast.makeText(MainActivity.this, "Token "+token, Toast.LENGTH_SHORT).show();
 
-
-        Timber.i("FCM TOKEN" + token);
-        Toast.makeText(this, "Token"+token, Toast.LENGTH_SHORT).show();
-        // save device info
-        //getPresenter().saveDeviceInfo(token, getDeviceId());
-
+                    }
+                });
     }
 
 
@@ -505,7 +521,17 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void callLocalAuthentication(View view)
     {
-        cidaas.localAuthentication(this, new Result<LocalAuthenticationEntity>() {
+
+        BiometricEntity biometricBuilder=new BiometricEntity(this,"title","","desc","");
+        cidaas.localBiometricAuthentication(biometricBuilder, new BiometricCallback() {
+            @Override
+            public void onSdkVersionNotSupported() {
+                Toast.makeText(MainActivity.this, "onSdkVersionNotSupported", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationNotSupported() {
+                 cidaas.localAuthentication(MainActivity.this, new Result<LocalAuthenticationEntity>() {
             @Override
             public void success(LocalAuthenticationEntity result) {
                 Toast.makeText(MainActivity.this, ""+result.getMessage(), Toast.LENGTH_SHORT).show();
@@ -514,6 +540,50 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             @Override
             public void failure(WebAuthError error) {
                 Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+           });
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationNotSupported", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationNotAvailable() {
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationNotAvailable", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationPermissionNotGranted() {
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationPermissionNotGranted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onBiometricAuthenticationInternalError(String error) {
+                Toast.makeText(MainActivity.this, "onBiometricAuthenticationInternalError"+error, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                Toast.makeText(MainActivity.this, "onAuthenticationFailed", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onAuthenticationCancelled() {
+                Toast.makeText(MainActivity.this, "onAuthenticationCancelled", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationSuccessful() {
+                Toast.makeText(MainActivity.this, "onAuthenticationSuccessful", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                Toast.makeText(MainActivity.this, ""+helpString, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationError(int errorCode, CharSequence errString) {
+                Toast.makeText(MainActivity.this, ""+errString, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -650,11 +720,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void nativeGoogle(View view)
     {
-
         printhashkey();
-
-
-
 
         cidaasGoogle.login(new Result<AccessTokenEntity>() {
             @Override

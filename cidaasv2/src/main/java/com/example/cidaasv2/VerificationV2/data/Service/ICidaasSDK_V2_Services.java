@@ -2,6 +2,8 @@ package com.example.cidaasv2.VerificationV2.data.Service;
 
 
 
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
+import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
@@ -20,6 +22,8 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowE
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.ResumeLogin.ResumeLoginEntity;
+import com.example.cidaasv2.VerificationV2.data.Entity.ResumeLogin.ResumeLoginResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
@@ -29,6 +33,7 @@ import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotificat
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PendingNotificationResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
+import com.example.cidaasv2.VerificationV2.data.Entity.UpdateFCMToken.UpdateFCMTokenResponseEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -113,7 +118,11 @@ public interface ICidaasSDK_V2_Services {
 
     //Update FCM List
     @POST
-    Call<String> updateFCMToken(@Url String url, @HeaderMap Map<String,String> headers, @Body UpdateFCMTokenEntity updateFCMTokenEntity);
+    Call<UpdateFCMTokenResponseEntity> updateFCMToken(@Url String url, @HeaderMap Map<String,String> headers, @Body UpdateFCMTokenEntity updateFCMTokenEntity);
+
+    //Resume Login
+    @POST
+    Call<ResumeLoginResponseEntity> resumeLogin(@Url String url, @HeaderMap Map<String,String>headers, @Body ResumeLoginEntity resumeLoginRequestEntity);
 
 
 }

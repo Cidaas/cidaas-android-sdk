@@ -88,7 +88,6 @@ public class LoginController {
 
                             @Override
                             public void failure(WebAuthError error) {
-
                                 result.failure(error);
                             }
                         });
@@ -116,13 +115,12 @@ public class LoginController {
         String methodName = "LoginController :getLoginCredentialsRequestEntity()";
         try {
             LoginCredentialsRequestEntity loginCredentialsRequestEntity = new LoginCredentialsRequestEntity();
-            if (loginEntity.getUsername_type() == null && loginEntity.getUsername_type().equals("")) {
+            if (loginEntity.getUsername_type() == null || loginEntity.getUsername_type().equals("")) {
                 loginEntity.setUsername_type("email");
             }
 
             if (loginEntity.getPassword() != null && !loginEntity.getPassword().equals("") && loginEntity.getUsername() != null
                     && !loginEntity.getUsername().equals("") && requestId != null && !requestId.equals("")) {
-
 
                 loginCredentialsRequestEntity.setUsername(loginEntity.getUsername());
                 loginCredentialsRequestEntity.setUsername_type(loginEntity.getUsername_type());
@@ -135,13 +133,11 @@ public class LoginController {
                 String errorMessage = "Username or password or RequestId must not be empty";
                 result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :"+errorMessage));
                 return null;
-
             }
-
         }
         catch (Exception e)
         {
-       result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
        return null;
         }
     }
@@ -595,8 +591,10 @@ public class LoginController {
                     CidaasHelper.baseurl=loginproperties.get("DomainURL");
                     CidaasHelper.IS_SETURL_CALLED=true;
                     result.success("SetURL is Successfully configured "+methodNameFromApp);
-                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured "+loginproperties.get("DomainURL")
-                    +"Method Name:- "+methodNameFromApp);
+                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured Baseurl:-"+loginproperties.get("DomainURL")
+                    +" Method Name:- "+methodNameFromApp);
+                    LogFile.getShared(context).addInfoLog(methodName,"SetURL is Successfully configured Baseurl:-"+loginproperties.get("DomainURL")
+                            +" Method Name:- "+methodNameFromApp);
                 }
                 else
                 {
@@ -607,7 +605,7 @@ public class LoginController {
             }
             else
             {
-                String errorMessage = "Login properties in null " ;
+                String errorMessage = "Login properties in null" ;
                 result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage,methodName));
             }
         }
@@ -615,9 +613,6 @@ public class LoginController {
         {
             result.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CIDAAS_PROPERTY_MISSING,e.getMessage()));
         }
-
     }
-
-
 
 }

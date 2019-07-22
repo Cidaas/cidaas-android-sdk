@@ -9,37 +9,26 @@ public class InitiateEntity implements Serializable {
 
     private String sub="";
     private String request_id="";
-    private String medium_id="";
     private String usage_type="";
     private String device_id="";
     private String push_id="";
     private String verificationType="";
 
+    //For Pattern
 
-    //Empty Constructor
-    public InitiateEntity() {
-    }
-
-
-    public InitiateEntity(String sub, String medium_id, String usage_type) {
-        this.sub = sub;
-        this.medium_id = medium_id;
-        this.usage_type = usage_type;
-    }
-
-    public InitiateEntity(String sub, String request_id, String medium_id, String usage_type,String verificationType) {
+    public InitiateEntity(String sub, String request_id,  String usage_type,String verificationType) {
         this.sub = sub;
         this.request_id = request_id;
-        this.medium_id = medium_id;
+       // this.medium_id = medium_id;
         this.usage_type = usage_type;
         this.verificationType=verificationType;
     }
 
 
-    public InitiateEntity(String sub, String request_id, String medium_id, String usage_type, String device_id, String push_id) {
+    public InitiateEntity(String sub, String request_id, String usage_type,String verificationType, String device_id, String push_id) {
         this.sub = sub;
         this.request_id = request_id;
-        this.medium_id = medium_id;
+        this.verificationType=verificationType;
         this.usage_type = usage_type;
         this.device_id = device_id;
         this.push_id = push_id;
@@ -67,14 +56,6 @@ public class InitiateEntity implements Serializable {
 
     public void setRequest_id(String request_id) {
         this.request_id = request_id;
-    }
-
-    public String getMedium_id() {
-        return medium_id;
-    }
-
-    public void setMedium_id(String medium_id) {
-        this.medium_id = medium_id;
     }
 
     public String getUsage_type() {

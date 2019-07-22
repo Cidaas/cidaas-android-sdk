@@ -31,13 +31,13 @@ public class WebAuthErrorCode {
     public static final int SET_ACCESS_TOKEN = 10201;
 
   //Basic calls
-    public  static  final  int EMPTY_TENANT_INFO_SERVICE=10018;
-    public  static  final  int EMPTY_CLIENT_INFO_SERVICE=10019;
+  public  static  final  int EMPTY_TENANT_INFO_SERVICE=10018;
+  public  static  final  int EMPTY_CLIENT_INFO_SERVICE=10019;
   public static final int TENANT_INFO_FAILURE = 10020;
   public static final int CLIENT_INFO_FAILURE = 10021;
   public static final int REQUEST_ID_MISSING = 10022;
 
-    public  static  final  int EMPTY_LOGIN_WITH_CREDENTIALS_FAILURE=10218;
+  public  static  final  int EMPTY_LOGIN_WITH_CREDENTIALS_FAILURE=10218;
   public static final int LOGINWITH_CREDENTIALS_FAILURE = 10221;
   public static final int REGISTRATION_SETUP_FAILURE = 10222;
 
@@ -46,6 +46,7 @@ public class WebAuthErrorCode {
   public static final int CONSENT_URL_FAILURE = 10023;
   public static final int CONSENT_STRING_FAILURE = 10024;
   public static final int ACCEPT_CONSENT_FAILURE = 10025;
+  public static final int CONSENT_DETAILS_FAILURE = 10225;
 
   public static final int MFA_LIST_FAILURE = 10026;
 
@@ -196,31 +197,22 @@ public class WebAuthErrorCode {
   public static final int DELETE_VERIFICATION_FAILURE = 10120;
   public static final int MFA_LIST_VERIFICATION_FAILURE = 10121;
 
-  //Common Error Codes
-  public static final int TOUCHID_NOT_AVAILABLE = 10178;
-  public static final int TOUCHID_NOT_ENROLLED = 10179;
-  public static final int TOUCH_ID_PASSCODE_NOT_CONFIGURED = 10180;
-  public static final int TOUCH_ID_INVALID_AUTHENTICATION = 10181;
-  public static final int TOUCH_ID_APP_CANCELLED = 10182;
-  public static final int TOUCH_ID_SYSTEM_CANCELLED = 10183;
-  public static final int TOUCH_ID_USER_CANCELLED = 10184;
-  public static final int TOUCHID_LOCKED = 10185;
-  public static final int TOUCHID_DEFAULT_ERROR = 10186;
-  public static final int TOUCHID_INVALID_CONTEXT = 10187;
-  public static final int TOUCHID_NOT_INTERACTIVE = 10188;
 
-  public static final int NETWORK_TIMEOUT = 10189;
+  public static final int USER_LOGIN_INFO_SERVICE_FAILURE =10122;
+
+  public static final int PARAMS_TO_DICTIONARY_CONVERTER_ERROR = 10123;
+  public static final int PARSE_XML = 10124;
+  public static final int READ_PROPERTIES_ERROR = 10125;
+  public static final int CIDAAS_PROPERTY_MISSING=10126;
+  public static final int DEDUPLICATION_LOGIN_FAILURE=10127;
+  public static final int LOGINWITH_BROWSER_FAILURE = 10128;
+  public static final int SAVE_LOGIN_PROPERTIES = 10129;
+  public static final int CONFIGURE_MFA_FAILURE = 10130;
+  public static final int PASSWORDLESS_LOGIN_FAILURE = 10131;
+  public static final int INVALID_PROPERTIES = 10132;
 
 
-  public static final int USER_LOGIN_INFO_SERVICE_FAILURE =10190;
-
-  public static final int PARAMS_TO_DICTIONARY_CONVERTER_ERROR = 10191;
-  public static final int PARSE_XML = 10192;
-  public static final int READ_PROPERTIES_ERROR = 10193;
-  public static final int CIDAAS_PROPERTY_MISSING=10194;
-  public static final int DEDUPLICATION_LOGIN_FAILURE=10195;
-  public static final int LOGINWITH_BROWSER_FAILURE = 10196;
-  public static final int SAVE_LOGIN_PROPERTIES = 10197;
+  public static final int TIME_OUT_ERROR= 10133;
 
 
 

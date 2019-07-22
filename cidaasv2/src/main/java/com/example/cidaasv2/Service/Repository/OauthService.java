@@ -57,7 +57,7 @@ public class OauthService {
     {
         this.context=contextfromcidaas;
         if(service==null) {
-             service=new CidaassdkService();
+             service=new CidaassdkService(context);
         }
         webAuthError=new WebAuthError(context);
     }

@@ -31,6 +31,7 @@ public class ResetPasswordCodeConfirmationActivity extends AppCompatActivity {
     public void verifyCode(View view){
         String verificationCode=codeTextbox.getText().toString();
 
+
    /*     cidaas.resetPasswordValidateCode(resetRequestId, verificationCode, new Result<ResetPasswordValidateCodeResponseEntity>() {
             @Override
             public void success(ResetPasswordValidateCodeResponseEntity result) {

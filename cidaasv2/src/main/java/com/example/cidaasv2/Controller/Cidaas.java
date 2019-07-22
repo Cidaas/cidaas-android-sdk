@@ -1,14 +1,14 @@
 package com.example.cidaasv2.Controller;
 
-import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.nfc.tech.IsoDep;
 import android.os.Build;
-import android.provider.Settings;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
@@ -25,7 +25,6 @@ import com.example.cidaasv2.Controller.Repository.Configuration.SMS.SMSConfigura
 import com.example.cidaasv2.Controller.Repository.Configuration.SmartPush.SmartPushConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.TOTP.TOTPConfigurationController;
 import com.example.cidaasv2.Controller.Repository.Configuration.Voice.VoiceConfigurationController;
-import com.example.cidaasv2.Controller.Repository.Consent.ConsentController;
 import com.example.cidaasv2.Controller.Repository.Deduplication.DeduplicationController;
 import com.example.cidaasv2.Controller.Repository.DocumentScanner.DocumentScannnerController;
 import com.example.cidaasv2.Controller.Repository.LocalAuthentication.LocalAuthenticationController;
@@ -37,9 +36,8 @@ import com.example.cidaasv2.Controller.Repository.ResetPassword.ResetPasswordCon
 import com.example.cidaasv2.Controller.Repository.Tenant.TenantController;
 import com.example.cidaasv2.Controller.Repository.UserLoginInfo.UserLoginInfoController;
 import com.example.cidaasv2.Controller.Repository.UserProfile.UserProfileController;
+import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
-import com.example.cidaasv2.Helper.Entity.ConsentEntity;
-import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
@@ -55,10 +53,11 @@ import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Interface.IOAuthWebLogin;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
+import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
@@ -108,27 +107,6 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
 import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAcknowledge.PushAcknowledgeResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushAllow.PushAllowResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Push.PushReject.PushRejectResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Authenticate.AuthenticateController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Enroll.EnrollController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAcknowledge.PushAcknowledgeController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushAllow.PushAllowController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Push.PushReject.PushRejectController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Scanned.ScannedController;
-import com.example.cidaasv2.VerificationV2.domain.Controller.Setup.SetupController;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import java.io.File;
@@ -137,12 +115,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import timber.log.Timber;
-
-import static android.os.Build.MODEL;
-import static android.os.Build.VERSION;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -310,7 +283,7 @@ public class Cidaas implements IOAuthWebLogin {
         LoginController.getShared(context).loginwithCredentials(requestId, loginEntity, loginresult);
     }
 
-    // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
+   /* // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
     @Override
     public void getConsentDetails(@NonNull final String consentName, final Result<ConsentDetailsResultEntity> consentResult) {
         ConsentController.getShared(context).getConsentDetails(consentName, consentResult);
@@ -320,6 +293,31 @@ public class Cidaas implements IOAuthWebLogin {
     public void loginAfterConsent(@NonNull final ConsentEntity consentEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
         ConsentController.getShared(context).acceptConsent(consentEntity,loginresult);
     }
+
+
+
+    public void getConsentDetailsV2(@NonNull final ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, final Result<ConsentDetailsV2ResponseEntity> consentResult) {
+      if(consentDetailsV2RequestEntity.getRequestId()!=null && !consentDetailsV2RequestEntity.getRequestId().equals("")) {
+
+         getRequestId(new Result<AuthRequestResponseEntity>() {
+             @Override
+             public void success(AuthRequestResponseEntity result) {
+                 consentDetailsV2RequestEntity.setRequestId(result.getData().getRequestId());
+                 ConsentController.getShared(context).getConsentDetailsV2(consentDetailsV2RequestEntity, consentResult);
+             }
+
+             @Override
+             public void failure(WebAuthError error) {
+                    consentResult.failure(error);
+             }
+         });
+      }
+      else
+      {
+          ConsentController.getShared(context).getConsentDetailsV2(consentDetailsV2RequestEntity, consentResult);
+      }
+    }
+*/
 
     // -----------------------------------------------------***** GET MFA LIST *****---------------------------------------------------------------
 
@@ -832,6 +830,11 @@ public class Cidaas implements IOAuthWebLogin {
     }
 
 
+    //Method for Local Biometric Authentocation
+    @TargetApi(Build.VERSION_CODES.P)
+    public void localBiometricAuthentication(final BiometricEntity biometricBuilder, BiometricCallback callback) {
+        LocalAuthenticationController.getShared(context).localBiometricAuthenticate(biometricBuilder,callback);
+    }
 
     //------------------------------------------------------------------------------------------XXXXXXX----------------------------------------
 
@@ -1051,7 +1054,7 @@ public class Cidaas implements IOAuthWebLogin {
         {
             scannedPattern(statusId,scannedResult);
         }
-        else if(verificationType.equalsIgnoreCase("TOUCHID"))
+        else if(verificationType.equalsIgnoreCase(AuthenticationType.FINGERPRINT))
         {
             scannedFingerprint(statusId,scannedResult);
         }
@@ -1067,7 +1070,7 @@ public class Cidaas implements IOAuthWebLogin {
         {
             scannedTOTP(statusId,sub,secret,scannedResult);
         }
-        else if(verificationType.equalsIgnoreCase("PUSH"))
+        else if(verificationType.equalsIgnoreCase(AuthenticationType.SMARTPUSH))
         {
             scannedSmartPush(statusId,scannedResult);
         }

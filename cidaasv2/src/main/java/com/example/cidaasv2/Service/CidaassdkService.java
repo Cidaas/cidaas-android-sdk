@@ -28,12 +28,16 @@ public class CidaassdkService {
 
     private static Context mcontext;
 
+    public CidaassdkService(Context context) {
+        setContext(context);
+    }
 
-    public void setContext(Context context)
+    private void setContext(Context context)
     {
         mcontext=context;
     }
 
+    //For Cidaas Core Service
     public ICidaasSDKService getInstance()
     {
 
@@ -44,11 +48,25 @@ public class CidaassdkService {
             baseurl="https://www.google.com";
         }
 
+        OkHttpClient okHttpClient= getOKHttpClient();
+
+        ICidaasSDKService iCidaasSDKService=getRetrofit(baseurl, okHttpClient).create(ICidaasSDKService.class);
+        return iCidaasSDKService;
+    }
 
 
-        ICidaasSDKService iCidaasSDKService=null;
-        OkHttpClient okHttpClient=null;
+    public Retrofit getRetrofit(String baseurl, OkHttpClient okHttpClient) {
+        return new Retrofit.Builder()
+                   // .baseUrl(DBHelper.getShared().getLoginProperties().get("DomainURL"))
+                    .baseUrl(baseurl)//done Get Base URL
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addConverterFactory(JacksonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+    }
 
+    public OkHttpClient getOKHttpClient() {
+        OkHttpClient okHttpClient;
         final String HEADER_USER_AGENT = "User-Agent";
      /*   final String HEADER_LOCATION_LATITUDE="Lat";
         final String HEADER_LOCATION_LONGITUDE="Long";*/
@@ -73,18 +91,7 @@ public class CidaassdkService {
                     }
                 })
                 .build();
-
-
-
-        Retrofit retrofit=new Retrofit.Builder()
-               // .baseUrl(DBHelper.getShared().getLoginProperties().get("DomainURL"))
-                .baseUrl(baseurl)//done Get Base URL
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-          iCidaasSDKService=retrofit.create(ICidaasSDKService.class);
-        return iCidaasSDKService;
+        return okHttpClient;
     }
 
     private String createCustomUserAgent(Request originalRequest) {

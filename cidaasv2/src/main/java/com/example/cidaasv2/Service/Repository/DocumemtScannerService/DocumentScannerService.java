@@ -43,7 +43,7 @@ public class DocumentScannerService {
         context=contextFromCidaas;
 
         if(service==null) {
-            service=new CidaassdkService();
+            service=new CidaassdkService(context);
         }
     }
 

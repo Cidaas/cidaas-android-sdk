@@ -11,15 +11,18 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushNotificationEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
+import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.ConfigureActivity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -60,6 +63,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
 
+            String BodyMessage="Empty Body Message";
+            String TitleMessage="Empty Title Message";
+            String ContentMessage="Empty Content Message";
 
             // Log.d("Push da notification",remoteMessage.getData().get("data"));
             String messageBody = null;
@@ -88,6 +94,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             PendingIntent pIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
+            if(remoteMessage.getNotification()!=null) {
+
+                TitleMessage = remoteMessage.getNotification().getTitle();
+                BodyMessage = remoteMessage.getNotification().getBody();
+            }
             //  if (userPresent) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -101,11 +112,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Notification notification =
                         new NotificationCompat.Builder(this)
                                 .setSmallIcon(getNotificationIcon())
-                                .setContentTitle(remoteMessage.getNotification().getTitle())
-                                .setContentText(remoteMessage.getNotification().getBody())
+                                .setContentTitle("E"+TitleMessage)
+                                .setContentText("E"+BodyMessage)
                                 .setChannelId(CHANNEL_ID)
                                 .setAutoCancel(true)
-                                .setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()))//Raja Changed to display Message in Notification
+                                .setStyle(new NotificationCompat.BigTextStyle().bigText(BodyMessage))//Raja Changed to display Message in Notification
                                 .setContentIntent(pIntent)
                                 .setCategory(Notification.CATEGORY_PROMO)
                                 .setSound(soundUri).setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -122,8 +133,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //Notification Builder
                 NotificationCompat.Builder notificationbuilder = new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(getNotificationIcon())
-                        .setContentTitle(remoteMessage.getNotification().getTitle())//Raja Changed to display Message in Notification
-                        .setContentText(remoteMessage.getNotification().getBody())//Raja Changed to display Message in Notification
+                        .setContentTitle("E"+TitleMessage)//Raja Changed to display Message in Notification
+                        .setContentText("E"+BodyMessage)//Raja Changed to display Message in Notification
                         .setAutoCancel(true)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()))//Raja Changed to display Message in Notification
                         .setContentIntent(pIntent)
@@ -146,6 +157,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Timber.e(e.getMessage());
 
         }
+
+
     }
 
+    @Override
+    public void onNewToken(String token) {
+        Timber.d( " FCM Refreshed token: " + token);
+
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // Instance ID token to your app server.
+         sendRegistrationToServer(token);
+    }
+
+    // [END refresh_token]
+    private void sendRegistrationToServer(String token) {
+        // TODO: Implement this method to send token to your app server.
+
+        int version = Build.VERSION.SDK_INT;
+        String name = Build.VERSION.CODENAME;
+        String deviceName = Build.MODEL;
+        name = name + ":" + version;
+
+        String deviceId = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+
+
+        CidaasVerification.getInstance(getApplicationContext()).updateFCMToken(token);
+
+
+    }
 }

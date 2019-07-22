@@ -24,11 +24,8 @@ public class AuthenticateEntity implements Serializable {
     private File fileToSend;
     private int face_attempt=0;
 
-
-    //empty constructor
     public AuthenticateEntity() {
     }
-
 
     //For Pattern,push
     public AuthenticateEntity(String exchange_id, String pass_code,String verificationType) {

@@ -1,5 +1,6 @@
 package com.example.cidaasv2.VerificationV2.data.Entity.Setup;
 
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.BackupCodeData;
 import com.example.cidaasv2.VerificationV2.data.Entity.ExcangeId.ExchangeIDEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -12,6 +13,17 @@ public class SetupResponseData implements Serializable {
     private String status_id="";
     private String authenticator_client_id;
     private String push_selected_number="";
+    private String totp_secret="";
+
+    BackupCodeData backup_codes;
+
+    public BackupCodeData getBackup_codes() {
+        return backup_codes;
+    }
+
+    public void setBackup_codes(BackupCodeData backup_codes) {
+        this.backup_codes = backup_codes;
+    }
 
     public ExchangeIDEntity getExchange_id() {
         return exchange_id;
@@ -51,5 +63,13 @@ public class SetupResponseData implements Serializable {
 
     public void setPush_selected_number(String push_selected_number) {
         this.push_selected_number = push_selected_number;
+    }
+
+    public String getTotp_secret() {
+        return totp_secret;
+    }
+
+    public void setTotp_secret(String totp_secret) {
+        this.totp_secret = totp_secret;
     }
 }

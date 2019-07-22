@@ -59,18 +59,19 @@ public class LogFile {
     }
 
 
-    public static boolean size(long size) {
+    public static boolean size(long byteSize) {
         String hrSize = "";
-        double m = size / 1024.0;
+        double kilobyteSize = byteSize / 1024.0;
+        double megaByteSize = kilobyteSize / 1024.0;
         boolean moreThanTenMB = false;
         DecimalFormat dec = new DecimalFormat("0.00");
 
-        if (m > 10) {
-            hrSize = dec.format(m).concat(" MB");
+        if (megaByteSize > 10) {
+            hrSize = dec.format(megaByteSize).concat(" MB");
             moreThanTenMB = true;
         } else {
             moreThanTenMB = false;
-            hrSize = dec.format(size).concat(" KB");
+            hrSize = dec.format(kilobyteSize).concat(" KB");
         }
         Timber.d("Size : " + hrSize);
         return moreThanTenMB;
@@ -140,13 +141,10 @@ public class LogFile {
                         }
                         else
                         {
-                            if (logFile.exists()) {
                                 if (size(logFile.length())) {
                                     Timber.d("File deleted !");
                                     logFile.delete();
                                 }
-                            }
-
                         }
                         try {
                             //BufferedWriter for performance, true to set append to file flag

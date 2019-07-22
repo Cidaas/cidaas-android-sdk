@@ -9,11 +9,28 @@ import java.io.Serializable;
 public class BackupCodeData implements Serializable {
 
 
-    String code;
-    String statusId;
+    private String code="";
+    private String statusId="";
+    private String usedTime="";
+    private String sub="";
+    private boolean used;
     UserDeviceInfo usedDeviceInfo;
-    String usedTime;
-    boolean used;
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
+    public UserDeviceInfo getUsedDeviceInfo() {
+        return usedDeviceInfo;
+    }
+
+    public void setUsedDeviceInfo(UserDeviceInfo usedDeviceInfo) {
+        this.usedDeviceInfo = usedDeviceInfo;
+    }
 
     public String getCode() {
         return code;
@@ -29,14 +46,6 @@ public class BackupCodeData implements Serializable {
 
     public void setStatusId(String statusId) {
         this.statusId = statusId;
-    }
-
-    public UserDeviceInfo getUsedDeviceInfo() {
-        return usedDeviceInfo;
-    }
-
-    public void setUsedDeviceInfo(UserDeviceInfo usedDeviceInfo) {
-        this.usedDeviceInfo = usedDeviceInfo;
     }
 
     public String getUsedTime() {

@@ -8,12 +8,21 @@ import java.io.Serializable;
 public class ConsentManagementAcceptedRequestEntity implements Serializable{
 
 
-    String name;
-    String client_id;
-    String sub;
-    String version;
-    String trackId;
-    boolean accepted;
+    private String name="";
+    private String client_id="";
+    private String sub="";
+    private String version="";
+    private String trackId="";
+    private boolean accepted=false;
+    private String requestId="";
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
     public String getTrackId() {
         return trackId;
@@ -61,5 +70,17 @@ public class ConsentManagementAcceptedRequestEntity implements Serializable{
 
     public void setAccepted(boolean accepted) {
         this.accepted = accepted;
+    }
+
+    public ConsentManagementAcceptedRequestEntity(String name, String client_id, String sub, String version, String trackId, boolean accepted) {
+        this.name = name;
+        this.client_id = client_id;
+        this.sub = sub;
+        this.version = version;
+        this.trackId = trackId;
+        this.accepted = accepted;
+    }
+
+    public ConsentManagementAcceptedRequestEntity() {
     }
 }

@@ -7,13 +7,31 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InitiateResponse implements Serializable {
 
-  InitiateResponseDataEntity dataEntity;
+    boolean success;
+    int status;
+  InitiateResponseDataEntity data;
 
-    public InitiateResponseDataEntity getDataEntity() {
-        return dataEntity;
+    public InitiateResponseDataEntity getData() {
+        return data;
     }
 
-    public void setDataEntity(InitiateResponseDataEntity dataEntity) {
-        this.dataEntity = dataEntity;
+    public void setData(InitiateResponseDataEntity data) {
+        this.data = data;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

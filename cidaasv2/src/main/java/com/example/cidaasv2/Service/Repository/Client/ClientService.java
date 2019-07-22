@@ -32,14 +32,9 @@ public class ClientService {
     public  ClientService(Context contextFromCidaas) {
 
         if(service==null) {
-            service=new CidaassdkService();
+            service=new CidaassdkService(context);
         }
         context=contextFromCidaas;
-        if(service==null) {
-            service=new CidaassdkService();
-
-            service.setContext(context);
-        }
 
 
         //Todo setValue for authenticationType
