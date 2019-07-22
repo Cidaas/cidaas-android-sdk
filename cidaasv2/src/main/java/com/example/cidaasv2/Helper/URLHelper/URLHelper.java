@@ -115,7 +115,7 @@ public class URLHelper {
     String ChangePasswordURl="/users-srv/changepassword";
 
     String resumeLoginURL="/login-srv/precheck/continue/sdk/";
-    String resumeConsentURL="/login-srv/precheck/continue/sdk/";
+
 
     String internaluserProfileURL="/users-srv/internal/userinfo/profile/";
     String userInfoURL="/users-srv/userinfo";
@@ -409,9 +409,6 @@ public class URLHelper {
         return enrollVoiceMFA;
     }
 
-    public String getResumeConsentURL() {
-        return resumeConsentURL;
-    }
 
     public String getInternaluserProfileURL() {
         return internaluserProfileURL;

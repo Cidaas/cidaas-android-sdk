@@ -7,14 +7,16 @@ import androidx.annotation.NonNull;
 import com.example.cidaasv2.Controller.Cidaas;
 
 import widas.raja.cidaasconsentv2.Domain.Controller.Consent.ConsentController;
-import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
-import com.example.cidaasv2.Helper.Entity.ConsentEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
+
+import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 
 public class CidaasConsent {
@@ -70,6 +72,9 @@ public class CidaasConsent {
         }
     }
 
+    public void acceptConsentV2(@NonNull final AcceptConsentV2Entity acceptConsentV2Entity, final Result<LoginCredentialsResponseEntity> consentResult) {
+        ConsentController.getShared(context).acceptConsentV2(acceptConsentV2Entity, consentResult);
+    }
 
 
 

@@ -8,8 +8,6 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,54 +86,5 @@ public class ResumeLogin {
     }
 
     //-----------------------------------------------------------resumeLoginAfterConsent------------------------------------------------------------------
-    public void resumeLoginAfterConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentEntity,
-                                        final Result<LoginCredentialsResponseEntity> loginresult)
-    {
-        String methodName="ResumeLogin Controller :resumeLoginAfterConsent()";
-        try
-        {
-            ResumeConsentRequestEntity resumeConsentRequestEntity = new ResumeConsentRequestEntity();
 
-            resumeConsentRequestEntity.setTrack_id(consentEntity.getTrackId());
-            resumeConsentRequestEntity.setSub(consentEntity.getSub());
-            resumeConsentRequestEntity.setName(consentEntity.getName());
-            resumeConsentRequestEntity.setVersion(consentEntity.getVersion());
-            resumeConsentRequestEntity.setClient_id(consentEntity.getClient_id());
-
-
-            /*ConsentService.getShared(context).resumeConsent(baseurl, resumeConsentRequestEntity,new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
-
-                    AccessTokenController.getShared(context).getAccessTokenByCode(result.getData().getCode(), new Result<AccessTokenEntity>() {
-                        @Override
-                        public void success(AccessTokenEntity result) {
-                            LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();
-                            loginCredentialsResponseEntity.setSuccess(true);
-                            loginCredentialsResponseEntity.setStatus(200);
-                            loginCredentialsResponseEntity.setData(result);
-                            loginresult.success(loginCredentialsResponseEntity);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            loginresult.failure(error);
-                        }
-                    });
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    loginresult.failure(error);
-                }
-            });
-*/
-
-        }
-        catch (Exception e)
-        {
-         loginresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
-        }
-    }
 }

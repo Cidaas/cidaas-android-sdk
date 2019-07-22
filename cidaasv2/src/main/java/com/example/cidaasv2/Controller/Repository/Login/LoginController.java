@@ -591,8 +591,10 @@ public class LoginController {
                     CidaasHelper.baseurl=loginproperties.get("DomainURL");
                     CidaasHelper.IS_SETURL_CALLED=true;
                     result.success("SetURL is Successfully configured "+methodNameFromApp);
-                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured "+loginproperties.get("DomainURL")
-                    +"Method Name:- "+methodNameFromApp);
+                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured Baseurl:-"+loginproperties.get("DomainURL")
+                    +" Method Name:- "+methodNameFromApp);
+                    LogFile.getShared(context).addInfoLog(methodName,"SetURL is Successfully configured Baseurl:-"+loginproperties.get("DomainURL")
+                            +" Method Name:- "+methodNameFromApp);
                 }
                 else
                 {
@@ -603,7 +605,7 @@ public class LoginController {
             }
             else
             {
-                String errorMessage = "Login properties in null " ;
+                String errorMessage = "Login properties in null" ;
                 result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage,methodName));
             }
         }

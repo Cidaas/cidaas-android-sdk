@@ -110,4 +110,16 @@ public class ResumeLoginEntity implements Serializable {
             return resumeLoginEntity;
 
     }
+
+    public static ResumeLoginEntity getResumeConsentEntity(String trackId,String requestId, String sub, String status_id)
+    {
+        ResumeLoginEntity resumeLoginEntity=new ResumeLoginEntity();
+        resumeLoginEntity.setRequestId(requestId);
+        resumeLoginEntity.setSub(sub);
+        resumeLoginEntity.setStatus_id(status_id);
+        resumeLoginEntity.setTrackId(trackId);
+        resumeLoginEntity.setUsageType(UsageType.MFA);
+        return resumeLoginEntity;
+
+    }
 }

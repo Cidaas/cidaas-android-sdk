@@ -2,31 +2,34 @@ package widas.raja.cidaasconsentv2.Domain.Controller.Consent;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Controller.Repository.ResumeLogin.ResumeLogin;
+import androidx.annotation.NonNull;
+
+import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
-import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
-import com.example.cidaasv2.Helper.Entity.ConsentEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
-import com.example.cidaasv2.VerificationV2.domain.Controller.AuthenticationFlow.ResumeLogin.ResumeLoginController;
-import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
-
-import widas.raja.cidaasconsentv2.Domain.Service.Consent.ConsentService;
 
 import java.util.Dictionary;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import timber.log.Timber;
+import widas.raja.cidaasconsentv2.Domain.Service.Consent.ConsentService;
 import widas.raja.cidaasconsentv2.Helper.ConsentURLHelper;
+import widas.raja.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentEntity;
+import widas.raja.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentResponseEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2ResponseEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
 
 public class ConsentController {
 
@@ -174,7 +177,8 @@ public class ConsentController {
             });
 
         } catch (Exception e) {
-            loginResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,e.getMessage()));
+            loginResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,
+                    e.getMessage()));
         }
     }
 
@@ -187,35 +191,25 @@ public class ConsentController {
 
            //Headers generation
            Map<String, String> headers = Headers.getShared(context).getHeaders(null,false,null);
+
            //service call For consent details
            ConsentService.getShared(context).acceptConsent(acceptConsentURL, consentEntity, headers, new Result<ConsentManagementAcceptResponseEntity>() {
                @Override
                public void success(ConsentManagementAcceptResponseEntity result) {
-                  // ResumeLoginController.getShared(context).resumeLoginVerification();
+
+                //todo Call Resume call
                }
 
                @Override
                public void failure(WebAuthError error) {
-
+                   loginresult.failure(error);
                }
            });
-
-
-          /* ConsentService.getShared(context).acceptConsent(baseurl, consentManagementAcceptedRequestEntity, new Result<ConsentManagementAcceptResponseEntity>() {
-                       @Override
-                       public void success(ConsentManagementAcceptResponseEntity serviceresult) {
-                           ResumeLogin.getShared(context).resumeLoginAfterConsent(baseurl, consentManagementAcceptedRequestEntity, loginresult);
-                       }
-
-                       @Override
-                       public void failure(WebAuthError error) {
-                           loginresult.failure(error);
-                       }
-                   });*/
        }
        catch (Exception e)
        {
-           loginresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage()));
+           loginresult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,
+                   e.getMessage()));
        }
     }
 
@@ -235,11 +229,11 @@ public class ConsentController {
     }
 
 
-    //Consent V2
+    //------------------------------------------------------Consent V2------------------------------------------------------------------------
 
-    public void getConsentDetailsV2(@NonNull ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, Result<ConsentDetailsV2ResponseEntity> consentDetails)
+    public void getConsentDetailsV2(@NonNull ConsentDetailsV2RequestEntity consentDetailsV2Entity, Result<ConsentDetailsV2ResponseEntity> consentDetails)
     {
-         checkProperties(consentDetailsV2RequestEntity, consentDetails);
+         checkProperties(consentDetailsV2Entity, consentDetails);
     }
 
     private void checkProperties(ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, Result<ConsentDetailsV2ResponseEntity> consentDetails) {
@@ -270,21 +264,21 @@ public class ConsentController {
         }
     }
 
-    private void addProperties(final ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, final Result<ConsentDetailsV2ResponseEntity> consentDetails) {
+    private void addProperties(final ConsentDetailsV2RequestEntity consentDetailsV2Entity, final Result<ConsentDetailsV2ResponseEntity> consentDetails) {
         String methodName="ConsentController:addProperties";
         try
         {
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    if(consentDetailsV2RequestEntity.getClient_id()!=null && !consentDetailsV2RequestEntity.getClient_id().equals(""))
+                    if(consentDetailsV2Entity.getClient_id()==null || consentDetailsV2Entity.getClient_id().equals(""))
                     {
-                        consentDetailsV2RequestEntity.setClient_id(result.get("ClientId"));
-                        serviceForGetConsentDetailsV2(result.get("DomainURL"),consentDetailsV2RequestEntity,consentDetails);
+                        consentDetailsV2Entity.setClient_id(result.get("ClientId"));
+                        serviceForGetConsentDetailsV2(result.get("DomainURL"),consentDetailsV2Entity,consentDetails);
                     }
                     else
                     {
-                        serviceForGetConsentDetailsV2(result.get("DomainURL"),consentDetailsV2RequestEntity,consentDetails);
+                        serviceForGetConsentDetailsV2(result.get("DomainURL"),consentDetailsV2Entity,consentDetails);
                     }
                 }
 
@@ -317,6 +311,156 @@ public class ConsentController {
          consentDetails.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CONSENT_DETAILS_FAILURE,e.getMessage()));
      }
 
+    }
+
+//-----------------------------------------------Accept Consent V2-------------------------------------------------------------------------
+
+    public void acceptConsentV2(@NonNull AcceptConsentV2Entity acceptConsentV2Entity, Result<LoginCredentialsResponseEntity> consentDetails)
+    {
+        checkPropertiesForAcceptConsentV2(acceptConsentV2Entity, consentDetails);
+    }
+
+    private void checkPropertiesForAcceptConsentV2(AcceptConsentV2Entity acceptConsentV2Entity, Result<LoginCredentialsResponseEntity> consentDetails)
+    {
+        String methodName="ConsentController:checkPropertiesForAcceptConsentV2";
+        try
+        {
+            if(!acceptConsentV2Entity.getConsent_id().equals("") && acceptConsentV2Entity.getConsent_version_id()!=null &&
+                    !acceptConsentV2Entity.getConsent_version_id().equals("") && acceptConsentV2Entity.getConsent_id()!=null)
+            {
+                if(acceptConsentV2Entity.getSub()!=null && !acceptConsentV2Entity.getSub().equals("") &&
+                        acceptConsentV2Entity.getTrackId()!=null && !acceptConsentV2Entity.getTrackId().equals(""))
+                {
+                    addPropertiesForAcceptConsentV2(acceptConsentV2Entity,consentDetails);
+                }
+                else
+                {
+                    consentDetails.failure(WebAuthError.getShared(context).propertyMissingException("Track id or sub must not be null",methodName));
+                }
+            }
+            else
+            {
+                consentDetails.failure(WebAuthError.getShared(context).propertyMissingException("Consent id or Consent Version id must not be null",methodName));
+            }
+        }
+        catch (Exception e)
+        {
+            consentDetails.failure(WebAuthError.getShared(context).methodException(methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,e.getMessage()));
+        }
+    }
+
+    private void addPropertiesForAcceptConsentV2(final AcceptConsentV2Entity acceptConsentV2Entity, final Result<LoginCredentialsResponseEntity> consentDetails) {
+        String methodName="ConsentController:addProperties";
+        try
+        {
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    if(acceptConsentV2Entity.getClient_id()==null || acceptConsentV2Entity.getClient_id().equals(""))
+                    {
+                        acceptConsentV2Entity.setClient_id(result.get("ClientId"));
+                        serviceForAcceptConsentV2(result.get("DomainURL"),acceptConsentV2Entity,consentDetails);
+                    }
+                    else
+                    {
+                        serviceForAcceptConsentV2(result.get("DomainURL"),acceptConsentV2Entity,consentDetails);
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    consentDetails.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            consentDetails.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CONSENT_DETAILS_FAILURE,e.getMessage()));
+        }
+    }
+
+    private void serviceForAcceptConsentV2(final String baseurl, final AcceptConsentV2Entity acceptConsentV2, final Result<LoginCredentialsResponseEntity> loginResult) {
+        String methodName="ConsentController:serviceForAcceptConsentV2";
+        try
+        {
+            String consentDetailsUrl= ConsentURLHelper.getShared().getAcceptConsentV2(baseurl);
+
+            //headers Generation
+            Map<String,String> headers= Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
+
+            //Service
+            ConsentService.getShared(context).acceptConsentV2(consentDetailsUrl, acceptConsentV2, headers, new Result<AcceptConsentV2ResponseEntity>() {
+                @Override
+                public void success(AcceptConsentV2ResponseEntity result) {
+                    //todo call Resume Call
+                    ResumeConsentEntity resumeConsentEntity=new ResumeConsentEntity(acceptConsentV2.getSub(),acceptConsentV2.getTrackId()
+                            ,acceptConsentV2.getConsent_id(),acceptConsentV2.getConsent_version_id(),acceptConsentV2.getClient_id());
+
+
+                    callResumeConsent(baseurl,resumeConsentEntity,loginResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            loginResult.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CONSENT_DETAILS_FAILURE,e.getMessage()));
+        }
+    }
+
+    private void callResumeConsent(String baseurl, ResumeConsentEntity resumeConsentEntity, final Result<LoginCredentialsResponseEntity > loginResult)
+    {
+        String methodName = "ConsentController:callResumeConsent";
+        try {
+            String resumeConsentUrl = ConsentURLHelper.getShared().getResumeConsentURL(baseurl);
+
+            //headers Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
+
+            //Service
+            ConsentService.getShared(context).resumeConsent(resumeConsentUrl, resumeConsentEntity, headers, new Result<ResumeConsentResponseEntity>() {
+                @Override
+                public void success(ResumeConsentResponseEntity resumeConsentresult) {
+                    getTokenByCode(resumeConsentresult,loginResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                loginResult.failure(error);
+                }
+            });
+        } catch (Exception e) {
+            loginResult.failure(WebAuthError.getShared(context).methodException(methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE, e.getMessage()));
+        }
+    }
+
+    public void getTokenByCode(ResumeConsentResponseEntity resumeConsentresult,final Result<LoginCredentialsResponseEntity > loginResult) {
+        String methodName = "ConsentController:getTokenByCode()";
+        try {
+            AccessTokenController.getShared(context).getAccessTokenByCode(resumeConsentresult.getData().getCode(), new Result<AccessTokenEntity>() {
+                @Override
+                public void success(AccessTokenEntity accessTokenresult) {
+                    LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();
+                    loginCredentialsResponseEntity.setData(accessTokenresult);
+                    loginCredentialsResponseEntity.setStatus(200);
+                    loginCredentialsResponseEntity.setSuccess(true);
+                    loginResult.success(loginCredentialsResponseEntity);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    loginResult.failure(error);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            loginResult.failure(WebAuthError.getShared(context).methodException(methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE, e.getMessage()));
+        }
     }
 
 }

@@ -1,26 +1,14 @@
 package com.example.cidaasv2.Service;
 
-import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementResponseEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFARequestEntity;
-import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
-import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.Logout.LogoutResponseEntity;
@@ -92,6 +80,7 @@ import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Voice.InitiateVoiceMF
 import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeRequestEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.FIDO.SetupFIDOMFAResponseEntity;
@@ -103,6 +92,7 @@ import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFARequestEn
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Pattern.SetupPatternMFAResponseEntity;
+import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFAResponseEntity;
@@ -124,6 +114,8 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordValidateCo
 import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserList.ConfiguredMFAListEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
+import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 import com.example.cidaasv2.Service.Entity.ValidateDevice.ValidateDeviceRequestEntity;
@@ -205,14 +197,8 @@ public interface ICidaasSDKService {
     @POST
     Call<ResumeLoginResponseEntity> resumeLogin(@Url String url, @HeaderMap Map<String,String>headers, @Body ResumeLoginRequestEntity resumeLoginRequestEntity);
 
-    //Resume Login
-    @POST
-    Call<ResumeConsentResponseEntity> resumeConsent(@Url String url, @HeaderMap Map<String,String>headers , @Body ResumeConsentRequestEntity resumeConsentRequestEntity);
 
 
-    //consent Accept
-    @POST
-    Call<ConsentManagementAcceptResponseEntity> acceptConsent(@Url String url,  @HeaderMap Map<String,String>headers, @Body ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity);
 
     //Setup Email MFA
     @POST
@@ -538,9 +524,6 @@ public interface ICidaasSDKService {
     Call<UserLoginInfoResponseEntity> getUserLoginInfoService(@Url String url, @HeaderMap Map<String,String>headers, @Body UserLoginInfoEntity userLoginInfoEntity);
 
 
-    //Get Consent String Details
-    @POST
-    Call<ConsentDetailsV2ResponseEntity> getConsentDetailsV2(@Url String url, @HeaderMap Map<String,String>headers,@Body ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity);
 
     //-----------------------------------------------------GetCall-----------------------------------------------------------------
     //Get Registration Setup
@@ -573,13 +556,7 @@ public interface ICidaasSDKService {
     Call<MFAListResponseEntity> getmfaList(@Url String url,@HeaderMap Map<String,String>headers, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId, @Query("common_configs") boolean common_configs);
 
 
-    //Get ConsentInfo
-    @GET
-    Call<ConsentManagementResponseEntity> getConsentInfo(@Url String url,@HeaderMap Map<String,String>headers);
 
-    //Get Consent String Details
-    @GET
-    Call<ConsentDetailsResultEntity> getConsentStringDetails(@Url String url,@HeaderMap Map<String,String>headers);
 
 
 

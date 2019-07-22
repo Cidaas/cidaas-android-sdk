@@ -56,7 +56,7 @@ public class FIDOVerificationService {
         //Todo setValue for authenticationType
 
         if (service == null) {
-            service = new CidaassdkService();
+            service = new CidaassdkService(context);
         }
 
     }

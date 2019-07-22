@@ -37,7 +37,7 @@ public class LoginService {
 
     public LoginService(Context contextFromCidaas) {
         if(service==null) {
-            service=new CidaassdkService();
+            service=new CidaassdkService(contextFromCidaas);
         }
 
         context=contextFromCidaas;

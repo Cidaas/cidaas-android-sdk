@@ -26,7 +26,15 @@ public class ConsentURLHelper {
     String consent_details="/consent-management-srv/settings/public?name=";
     String acceptConsent="/consent-management-srv/user/status";
 
+
+    //----------------------------------------------------v2--------------------------------------------------
     String consentDetailsV2="/consent-management-srv/v2/consent/usage/public/info";
+    String acceptConsentV2="/consent-management-srv/v2/consent/usage/accept";
+
+
+    String resumeConsentURL="/login-srv/precheck/continue/sdk/";
+
+
 
 
     public String getConsent_url(String consentName,String consentVersion) {
@@ -45,4 +53,11 @@ public class ConsentURLHelper {
         return baseurl+consentDetailsV2;
     }
 
+    public String getAcceptConsentV2(String baseurl) {
+        return baseurl+acceptConsentV2;
+    }
+
+    public String getResumeConsentURL(String baseurl) {
+        return baseurl+resumeConsentURL;
+    }
 }

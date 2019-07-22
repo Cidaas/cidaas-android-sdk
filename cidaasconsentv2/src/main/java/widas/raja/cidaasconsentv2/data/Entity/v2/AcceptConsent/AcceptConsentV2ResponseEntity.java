@@ -1,15 +1,14 @@
-package com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent;
+package widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent;
 
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseDataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ResumeConsentResponseEntity implements Serializable{
-    boolean success;
-    int status;
-    ResumeConsentResponseDataEntity data;
+public class AcceptConsentV2ResponseEntity implements Serializable {
+    private boolean success=false;
+    private int status;
+    private AcceptConsentV2ResponseData data;
 
     public boolean isSuccess() {
         return success;
@@ -27,11 +26,12 @@ public class ResumeConsentResponseEntity implements Serializable{
         this.status = status;
     }
 
-    public ResumeConsentResponseDataEntity getData() {
+    public AcceptConsentV2ResponseData getData() {
         return data;
     }
 
-    public void setData(ResumeConsentResponseDataEntity data) {
+    public void setData(AcceptConsentV2ResponseData data) {
         this.data = data;
     }
 }
+

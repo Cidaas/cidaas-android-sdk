@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Helper.Entity;
+package widas.raja.cidaasconsentv2.data.Entity.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -6,13 +6,31 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsentDetailsV2RequestEntity implements Serializable {
-    
-    private String consent_id = "";
+
     private String sub = "";
-    private String consent_version_id = "";
     private String requestId = "";
     private String track_id = "";
+
+    private String consent_id = "";
+    private String consent_version_id = "";
     private String client_id = "";
+
+    public ConsentDetailsV2RequestEntity(String sub, String requestId, String track_id, String consent_id, String consent_version_id) {
+        this.sub = sub;
+        this.requestId = requestId;
+        this.track_id = track_id;
+        this.consent_id = consent_id;
+        this.consent_version_id = consent_version_id;
+    }
+
+    public ConsentDetailsV2RequestEntity(String sub, String requestId, String track_id, String consent_id, String consent_version_id, String client_id) {
+        this.sub = sub;
+        this.requestId = requestId;
+        this.track_id = track_id;
+        this.consent_id = consent_id;
+        this.consent_version_id = consent_version_id;
+        this.client_id = client_id;
+    }
 
     public String getConsent_id() {
         return consent_id;

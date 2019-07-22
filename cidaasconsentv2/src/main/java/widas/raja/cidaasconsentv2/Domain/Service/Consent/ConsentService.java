@@ -3,22 +3,24 @@ package widas.raja.cidaasconsentv2.Domain.Service.Consent;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.CommonError.CommonError;
-import com.example.cidaasv2.Helper.Entity.ConsentDetailsV2RequestEntity;
+
+import widas.raja.cidaasconsentv2.Domain.Service.CidaasConsentSDKService;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.R;
-import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.v2.ConsentDetailsV2ResponseEntity;
+import widas.raja.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentEntity;
+import widas.raja.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentResponseEntity;
+
+import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2ResponseEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
 import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
-import com.example.cidaasv2.Service.ICidaasSDKService;
-import com.example.cidaasv2.VerificationV2.data.Service.Helper.VerificationURLHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
@@ -27,6 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
+import widas.raja.cidaasconsentv2.data.Interface.ICidaasConsentSDKService;
 
 public class ConsentService {
 
@@ -35,18 +38,20 @@ public class ConsentService {
 
     public static ConsentService shared;
 
+    CidaasConsentSDKService service;
+
     public ConsentService(Context contextFromCidaas) {
 
         context=contextFromCidaas;
         if(service==null) {
-            service=new CidaassdkService();
+            service=new CidaasConsentSDKService(context);
         }
 
         //Todo setValue for authenticationType
 
     }
 
-    CidaassdkService service;
+
     public ObjectMapper objectMapper=new ObjectMapper();
 
     public static ConsentService getShared(Context contextFromCidaas )
@@ -71,8 +76,8 @@ public class ConsentService {
        final String methodName="Consent Service  :getConsentDetails()";
         try {
             //Call Service-getRequestId
-            ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getConsentStringDetails(consentstringDetailsUrl, headers).enqueue(new Callback<ConsentDetailsResultEntity>() {
+            ICidaasConsentSDKService cidaasConsentSDKService = service.getInstance();
+            cidaasConsentSDKService.getConsentStringDetails(consentstringDetailsUrl, headers).enqueue(new Callback<ConsentDetailsResultEntity>() {
                 @Override
                 public void onResponse(Call<ConsentDetailsResultEntity> call, Response<ConsentDetailsResultEntity> response) {
                     if (response.isSuccessful()) {
@@ -112,8 +117,8 @@ public class ConsentService {
         try {
 
             //Call Service-getRequestId
-            ICidaasSDKService cidaasSDKService = service.getInstance();
-            cidaasSDKService.getConsentDetailsV2(consentDetailsUrl,headers,consentDetailsV2RequestEntity).enqueue(new Callback<ConsentDetailsV2ResponseEntity>() {
+            ICidaasConsentSDKService cidaasConsentSDKService = service.getInstance();
+            cidaasConsentSDKService.getConsentDetailsV2(consentDetailsUrl,headers,consentDetailsV2RequestEntity).enqueue(new Callback<ConsentDetailsV2ResponseEntity>() {
                 @Override
                 public void onResponse(Call<ConsentDetailsV2ResponseEntity> call, Response<ConsentDetailsV2ResponseEntity> response) {
                     if (response.isSuccessful()) {
@@ -143,7 +148,49 @@ public class ConsentService {
         }
     }
 
-    //---------------------------------------------------------------------AcceptConsent----------------------------------------------------------------
+    //---------------------------------------------------------------------AcceptConsentV2----------------------------------------------------------------
+
+    public void acceptConsentV2(String consentAcceptUrl, AcceptConsentV2Entity acceptConsentV2Entity, Map<String, String> headers,
+                                final Result<AcceptConsentV2ResponseEntity> callback)
+    {
+        final String methodName="Consent Service :serviceCallForAcceptConsent()";
+        try {
+            //Call Service-getRequestId
+            ICidaasConsentSDKService cidaasConsentSDKService = service.getInstance();
+            cidaasConsentSDKService.acceptConsentV2(consentAcceptUrl, headers, acceptConsentV2Entity).enqueue(
+                    new Callback<AcceptConsentV2ResponseEntity>() {
+                        @Override
+                        public void onResponse(Call<AcceptConsentV2ResponseEntity> call, Response<AcceptConsentV2ResponseEntity> response)
+                        {
+                            if (response.isSuccessful()) {
+                                if (response.code() == 200) {
+                                    callback.success(response.body());
+                                } else {
+                                    callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response.code(),
+                                            "Error :"+methodName));
+                                }
+                            }
+                            else {
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response,
+                                        "Error :"+methodName));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AcceptConsentV2ResponseEntity> call, Throwable t) {
+                            callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, t.getMessage(),
+                                    "Error :"+methodName));
+                        }
+                    });
+        }
+        catch (Exception e)
+        {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, e.getMessage()));
+        }
+    }
+
+
+
  /*   public void acceptConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
                               final Result<ConsentManagementAcceptResponseEntity> callback)
     {
@@ -183,9 +230,8 @@ public class ConsentService {
     final String methodName="Consent Service :serviceCallForAcceptConsent()";
       try {
           //Call Service-getRequestId
-          final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-          cidaasSDKService.acceptConsent(consentAcceptUrl, headers, consentManagementAcceptedRequestEntity).enqueue(
+          ICidaasConsentSDKService cidaasConsentSDKService = service.getInstance();
+          cidaasConsentSDKService.acceptConsent(consentAcceptUrl, headers, consentManagementAcceptedRequestEntity).enqueue(
                   new Callback<ConsentManagementAcceptResponseEntity>() {
               @Override
               public void onResponse(Call<ConsentManagementAcceptResponseEntity> call, Response<ConsentManagementAcceptResponseEntity> response)
@@ -217,8 +263,8 @@ public class ConsentService {
       }
     }
 
-    //------------------------------------------------------------------------Resume Consent-------------------------------------------------------------
-    public void resumeConsent(final String baseurl, final ResumeConsentRequestEntity resumeConsentRequestEntity, final Result<ResumeConsentResponseEntity> callback)
+  /*  //------------------------------------------------------------------------Resume Consent-------------------------------------------------------------
+    public void resumeConsent(final String baseurl, final ResumeConsentEntity resumeConsentEntity, final Result<ResumeConsentResponseEntity> callback)
     {
         //Local Variables
         String methodName = "Consent Service :resumeConsent()";
@@ -227,13 +273,13 @@ public class ConsentService {
             if(baseurl!=null && !baseurl.equals("")){
 
                 //Construct URL For RequestId
-                String resumeConsentUrl=baseurl+URLHelper.getShared().getResumeConsentURL()+resumeConsentRequestEntity.getTrack_id();
+                String resumeConsentUrl=baseurl+URLHelper.getShared().getResumeConsentURL()+ resumeConsentEntity.getTrack_id();
 
                 //Header generation
                 Map<String, String> headers = Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
 
                 //service call resume consent
-                serviceCallForResumeConsent(resumeConsentRequestEntity,  resumeConsentUrl, headers,callback);
+                serviceCallForResumeConsent(resumeConsentEntity,  resumeConsentUrl, headers,callback);
             }
             else
             {
@@ -246,18 +292,17 @@ public class ConsentService {
         {
             callback.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE,e.getMessage()));
         }
-    }
+    }*/
 
     //----------------------------------------------------------------ServiceCallForResumeConsent--------------------------------------------------------
-    private void serviceCallForResumeConsent(ResumeConsentRequestEntity resumeConsentRequestEntity,  String resumeConsentUrl, Map<String, String> headers,
+    public void resumeConsent(String resumeConsentUrl,ResumeConsentEntity resumeConsentEntity,  Map<String, String> headers,
                                              final Result<ResumeConsentResponseEntity> callback)
     {
         final String methodName="Consent Service :serviceCallForResumeConsent()";
         try {
             //Call Service-getRequestId
-            final ICidaasSDKService cidaasSDKService = service.getInstance();
-
-            cidaasSDKService.resumeConsent(resumeConsentUrl, headers, resumeConsentRequestEntity).enqueue(new Callback<ResumeConsentResponseEntity>() {
+            ICidaasConsentSDKService cidaasConsentSDKService = service.getInstance();
+            cidaasConsentSDKService.resumeConsent(resumeConsentUrl, headers, resumeConsentEntity).enqueue(new Callback<ResumeConsentResponseEntity>() {
                 @Override
                 public void onResponse(Call<ResumeConsentResponseEntity> call, Response<ResumeConsentResponseEntity> response) {
                     if (response.isSuccessful()) {

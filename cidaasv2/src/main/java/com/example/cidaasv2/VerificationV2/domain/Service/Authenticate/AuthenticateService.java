@@ -63,6 +63,10 @@ public class AuthenticateService {
     {
         final String methodName = "AuthenticateService:-callAuthenticateService()";
         try {
+
+            LogFile.getShared(context).addInfoLog(methodName," AuthenticateURL:- "+authenticateURL+
+                    " ExchangeId:- "+authenticateEntity.getExchange_id() +" PassCode:- "+authenticateEntity.getPass_code());
+
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.authenticate(authenticateURL, headers, authenticateEntity).enqueue(new Callback<AuthenticateResponse>() {
@@ -71,6 +75,9 @@ public class AuthenticateService {
                     if(response.isSuccessful())
                     {
                         authenticateCallback.success(response.body());
+
+                        LogFile.getShared(context).addSuccessLog(methodName," Sub:- "+response.body().getData().getSub()+
+                                " Status id:- "+response.body().getData().getStatus_id() + " ExchangeId:- "+response.body().getData().getExchange_id());
                     }
                     else
                     {authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
@@ -80,7 +87,7 @@ public class AuthenticateService {
 
                 @Override
                 public void onFailure(Call<AuthenticateResponse> call, Throwable t) {
-                authenticateCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
+                    authenticateCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
                             t.getMessage(),"Error:- "+methodName));
                 }
             });
@@ -98,6 +105,10 @@ public class AuthenticateService {
         final String methodName = "AuthenticateService:-callAuthenticateServiceForFaceOrVoice()";
         try {
             //call service
+
+            LogFile.getShared(context).addInfoLog(methodName," AuthenticateURL:- "+authenticateURL+
+                    " ExchangeId:- "+authenticateHashmap.get("exchange_id"));
+
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.authenticateWithMultipart(authenticateURL, headers,fileToSend, authenticateHashmap).enqueue(new Callback<AuthenticateResponse>()
             {
@@ -107,6 +118,9 @@ public class AuthenticateService {
                     {
 
                         authenticateCallback.success(response.body());
+
+                        LogFile.getShared(context).addSuccessLog(methodName," Sub:- "+response.body().getData().getSub()+
+                                " Status id:- "+response.body().getData().getStatus_id() + " ExchangeId:- "+response.body().getData().getExchange_id());
                     }
                     else
                     {

@@ -69,9 +69,9 @@ public class AuthenticateController {
                 if( authenticateEntity.getVerificationType() != null && !authenticateEntity.getVerificationType().equals("")&&
                         authenticateEntity.getExchange_id() != null && !authenticateEntity.getExchange_id().equals(""))
                 {
-                    LogFile.getShared(context).addInfoLog(methodName,"Verification Type:"+authenticateEntity.getVerificationType()+
-                            "ExchangeId:"+authenticateEntity.getExchange_id());
-                    // Todo Check For Face and Voice
+                    LogFile.getShared(context).addInfoLog(methodName," Verification Type:- "+authenticateEntity.getVerificationType()+
+                            "ExchangeId:- "+authenticateEntity.getExchange_id());
+                    // Handle Verification
                     handleVerificationTypes(authenticateEntity,authenticateResult);
                 }
                 else

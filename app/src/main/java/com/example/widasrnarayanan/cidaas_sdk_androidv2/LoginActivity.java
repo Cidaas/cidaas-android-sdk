@@ -25,6 +25,10 @@ import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.Reg
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import widas.raja.cidaasconsentv2.Presenter.CidaasConsent;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
+
 public class LoginActivity extends AppCompatActivity {
 
     //Declare Global Variables
@@ -94,43 +98,49 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void failure(WebAuthError error) {
                         // onError of Login Display the error Message
-                        String consentName = "";
+                        String consentId = "";
                         String consentVersion = "";
+                        String consentVersionId = "";
                         String sub="";
 
-
+                        Toast.makeText(LoginActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         //Todo handle ConsentRequired
                         if (error.getErrorMessage().equals("ConsentRequired")) {
-                            consentName = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_name();
-                              //consentVersion = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_version();
+                            consentVersion = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_version();
+                            consentVersionId = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_version_id();
+                            consentId = ((LoginCredentialsErrorDataEntity) error.getError()).getConsent_id();
                               sub=((LoginCredentialsErrorDataEntity) error.getError()).getSub();
                             trackId=((LoginCredentialsErrorDataEntity) error.getError()).getTrack_id();
 
 
                             final String finalSub = sub;
-                   /*         cidaas.getConsentDetails(consentName, new Result<ConsentDetailsResultEntity>() {
+
+                            Intent intent=new Intent(LoginActivity.this,ConsentUrlActivity.class);
+                            intent.putExtra("consentVersionId",consentVersionId);
+                            intent.putExtra("consentVersion",consentVersion);
+                            intent.putExtra("sub", finalSub);
+                            intent.putExtra("trackid",trackId);
+                            intent.putExtra("consentId",consentId);
+                            startActivity(intent);
+
+
+
+                      /*      cidaas.getConsentDetails(consentName, new Result<ConsentDetailsResultEntity>() {
                                 @Override
                                 public void success(ConsentDetailsResultEntity result) {
                                     Toast.makeText(LoginActivity.this, ""+result.getData().getVersion(), Toast.LENGTH_SHORT).show();
 
                                     String consentContentUrl = result.getData().getPolicyUrl();
-                                    Intent intent=new Intent(LoginActivity.this,ConsentUrlActivity.class);
-                                    intent.putExtra("consentName",result.getData().getName());
-                                    intent.putExtra("consentVersion",result.getData().getVersion());
-                                    intent.putExtra("sub", finalSub);
-                                    intent.putExtra("trackid",trackId);
-                                    intent.putExtra("url",consentContentUrl);
-                                    startActivity(intent);
+
                                 }
 
                                 @Override
                                 public void failure(WebAuthError error) {
                                     Toast.makeText(LoginActivity.this, "Error"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                            });*/
+                            });
 
 
-/*
                             cidaas.getConsentURL(consentName, consentVersion, new Result<String>() {
                                 @Override
                                 public void success(String result) {
@@ -151,9 +161,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(LoginActivity.this, "Login fails " + error.ErrorMessage, Toast.LENGTH_SHORT).show();
                                 }
                             });
+
 */
-
-
                         }
                         else  if (error.getErrorMessage().equals("mfa_required")) {
                             //final String sub=((LoginCredentialsErrorDataEntity) error.getError()).getSub();
@@ -163,8 +172,6 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent=new Intent(LoginActivity.this,MFAListActivity.class);
                             intent.putExtra("sub",sub);
                             intent.putExtra("trackid",trackId);
-                            intent.putExtra("consentName",consentName);
-                            intent.putExtra("consentVersion",consentVersion);
                             startActivity(intent);
 
                         }

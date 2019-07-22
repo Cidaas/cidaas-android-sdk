@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Helper.Entity;
+package widas.raja.cidaasconsentv2.data.Entity.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

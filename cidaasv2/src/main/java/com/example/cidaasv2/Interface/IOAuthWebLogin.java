@@ -3,7 +3,8 @@ package com.example.cidaasv2.Interface;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.ConsentEntity;
+import androidx.annotation.NonNull;
+
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
@@ -12,7 +13,6 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
@@ -48,8 +48,6 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 
 import java.io.File;
 import java.util.HashMap;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by widasrnarayanan on 16/1/18.

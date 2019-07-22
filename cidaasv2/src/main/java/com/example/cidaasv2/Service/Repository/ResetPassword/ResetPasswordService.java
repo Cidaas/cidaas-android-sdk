@@ -50,9 +50,7 @@ public class ResetPasswordService {
         authenticationType="";
         //Todo setValue for authenticationType
         if(service==null) {
-            service=new CidaassdkService();
-
-            service.setContext(context);
+            service=new CidaassdkService(context);
         }
 
     }

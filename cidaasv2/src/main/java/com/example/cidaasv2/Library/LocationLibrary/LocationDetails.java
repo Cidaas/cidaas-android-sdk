@@ -136,6 +136,7 @@ public class LocationDetails implements LocationListener {
                 // no network provider is enabled
             } else {
                 this.canGetLocation = true;
+
                 if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,

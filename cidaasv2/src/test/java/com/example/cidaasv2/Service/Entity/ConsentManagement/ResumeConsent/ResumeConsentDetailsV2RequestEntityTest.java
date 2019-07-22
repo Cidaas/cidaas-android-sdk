@@ -1,7 +1,5 @@
 package com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent;
 
-import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoDataEntity;
-
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
