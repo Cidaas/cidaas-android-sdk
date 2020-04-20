@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
 
-import com.example.cidaasv2.Controller.Cidaas;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -28,8 +30,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.Entity.GoogleSettingsEntity;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.Interface.IGoogleAccessTokenEntity;
 
@@ -154,12 +154,15 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
                         WebAuthErrorCode.GOOGLE_ERROR,"Place the correct google service json from web", "CidaasGoogle:readFileInputs");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(e.getMessage(), "");
+//            e.printStackTrace();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(e.getMessage(), "");
+//            e.printStackTrace();
         }
-        catch (Exception ex) {
-            ex.printStackTrace();
+        catch (Exception e) {
+            Log.e(e.getMessage(), "");
+//            ex.printStackTrace();
         }
 
         return  googleSettingsEntity;
