@@ -14,11 +14,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.example.cidaasv2.Helper.Logger.LogFile;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+
+import com.example.cidaasv2.Helper.Logger.LogFile;
+
 import timber.log.Timber;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -96,7 +97,8 @@ public class LocationDetails implements LocationListener {
 
         } catch (Exception e) {
             Timber.e(e.getMessage());
-            e.printStackTrace();
+            Timber.i("Location permission Denied");
+//            e.printStackTrace();
         }
 
         return location;
@@ -176,7 +178,7 @@ public class LocationDetails implements LocationListener {
         }
         catch (Exception e)
         {
-
+            Timber.i("Location permission Denied");
         }
     }
 
@@ -210,6 +212,7 @@ public class LocationDetails implements LocationListener {
         {
             Timber.i("Location permission Denied");
             LogFile.getShared(mContext).addFailureLog("Location Permission Denied");
+
         }
         // return latitude
         return Lat;

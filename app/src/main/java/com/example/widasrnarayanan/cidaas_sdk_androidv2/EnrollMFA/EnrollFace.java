@@ -30,6 +30,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -46,9 +50,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import timber.log.Timber;
 
 public class EnrollFace extends AppCompatActivity {
@@ -237,7 +238,8 @@ public class EnrollFace extends AppCompatActivity {
             mBackgroundThread.start();
             mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e.getMessage());
+//            e.printStackTrace();
 
         }
     }
@@ -250,6 +252,7 @@ public class EnrollFace extends AppCompatActivity {
                 mBackgroundThread = null;
                 mBackgroundHandler = null;
             } catch (Exception e) {
+                Timber.e(e.getMessage());
                 e.printStackTrace();
             }
         }

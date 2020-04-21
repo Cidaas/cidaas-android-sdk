@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
+
 import com.example.cidaasv2.R;
 
 import java.io.IOException;
@@ -32,8 +34,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
-
+import timber.log.Timber;
 
 
 @TargetApi(Build.VERSION_CODES.M)
@@ -298,7 +299,8 @@ CancellationSignal cancellationSignal;
                 | InvalidAlgorithmParameterException
                 | CertificateException
                 | IOException exc) {
-            exc.printStackTrace();
+            Timber.e(exc.getMessage());
+//            exc.printStackTrace();
         }
     }
 

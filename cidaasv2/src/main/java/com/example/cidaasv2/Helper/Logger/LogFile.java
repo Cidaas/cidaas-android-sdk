@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 
+import androidx.core.content.ContextCompat;
+
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 
 import java.io.BufferedWriter;
@@ -17,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.FileHandler;
 
-import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
 /**
@@ -136,7 +137,7 @@ public class LogFile {
                             } catch (Exception e) {
                                 // TODO Auto-generated catch block
                                 Timber.d(e.getMessage());
-                                e.printStackTrace();
+//                                Timber.d(e);
                             }
                         }
                         else
@@ -159,7 +160,7 @@ public class LogFile {
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             Timber.d(e.getMessage());
-                            e.printStackTrace();
+//                            Timber.d(e);
                         }
                     }
 

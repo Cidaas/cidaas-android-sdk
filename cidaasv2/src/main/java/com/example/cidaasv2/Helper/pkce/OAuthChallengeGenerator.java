@@ -2,12 +2,10 @@ package com.example.cidaasv2.Helper.pkce;
 
 import android.util.Base64;
 
-import com.example.cidaasv2.Helper.Genral.FileHelper;
-
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+
+import timber.log.Timber;
 
 /**
  * Created by widasrnarayanan on 6/2/18.
@@ -40,7 +38,8 @@ public class OAuthChallengeGenerator {
             challenge = Base64.encodeToString(digest,Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING);
             return challenge;
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e.getMessage());
+//            e.printStackTrace();
         }
         return challenge;
     }

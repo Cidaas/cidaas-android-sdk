@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
 
-import com.example.cidaasv2.Controller.Cidaas;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -30,8 +33,6 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasService;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.Entity.GoogleSettingsEntity;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.GoogleAccessTokenEntity;
@@ -134,7 +135,8 @@ public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListene
             localAccessTokenEntityResult.failure(WebAuthError.getShared(activity).googleError());
         }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(e.getMessage(), "");
+//            e.printStackTrace();
         }
     }
 
