@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import com.example.cidaasv2.Controller.Cidaas;
+import androidx.annotation.NonNull;
+
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -29,7 +30,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import androidx.annotation.NonNull;
+import timber.log.Timber;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -82,7 +83,7 @@ public class FileHelper {
                 outputStream.close();
                 inputStream.close();
             }catch (IOException e){
-                e.printStackTrace();
+                Timber.d(e.getMessage());
             }
             Document xml=parseXML(outputStream.toByteArray());
             XPathFactory xPathfactory = XPathFactory.newInstance();
