@@ -1,0 +1,18 @@
+package widas.cidaassdkv2.cidaasnativev2.data.Entity.AccountVerification;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.io.Serializable;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class InitiateAccountVerificationResponseDataEntity implements Serializable{
+    String accvid="";
+
+    public String getAccvid() {
+        return accvid;
+    }
+
+    public void setAccvid(String accvid) {
+        this.accvid = accvid;
+    }
+}

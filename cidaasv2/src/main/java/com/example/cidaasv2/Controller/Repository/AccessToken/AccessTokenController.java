@@ -2,9 +2,9 @@ package com.example.cidaasv2.Controller.Repository.AccessToken;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.Converter.EntityToModelConverter;
+import com.example.cidaasv2.Helper.Entity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Helper.Entity.SocialAccessTokenEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
@@ -13,8 +13,6 @@ import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.SocialProvider.SocialProviderEntity;
 import com.example.cidaasv2.Service.Repository.AccessToken.AccessTokenService;
 
@@ -105,16 +103,12 @@ public class AccessTokenController {
         final String methodName="AccessToken Controller :accessTokenConversion()";
         try
         {
-             LogFile.getShared(context).addInfoLog("Info"+methodName, " Info AccessToken"+accessTokenEntity.getAccess_token()+
-                 "refreshToken:-"+accessTokenEntity.getRefresh_token()+ "ExpiresIn:-"+accessTokenEntity.getExpires_in());
-
             EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(accessTokenEntity,accessTokenEntity.getSub(),
             new Result<AccessTokenModel>()
             {
                 @Override
                 public void success(AccessTokenModel modelresult) {
-                    LogFile.getShared(context).addSuccessLog("Success"+methodName, " Success AccessToken"+modelresult.getAccess_token()+
-                        "refreshToken:-"+modelresult.getRefresh_token()+ "ExpiresIn:-"+modelresult.getExpires_in());
+
                     callback.success(accessTokenEntity);
                 }
 
@@ -221,7 +215,7 @@ public class AccessTokenController {
     }
 
     //----------------------------------------------------------Get access Token by Social-------------------------------------------------------------
-    public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, final Result<AccessTokenEntity> accessTokenEntityResult)
+   public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, final Result<AccessTokenEntity> accessTokenEntityResult)
     {
         String methodName="AccessToken Controller :getAccessTokenBySocial()";
         try
@@ -289,21 +283,8 @@ public class AccessTokenController {
 
             if (socialTokenEntity.getRequestId() == null || socialTokenEntity.getRequestId().equals("")) {
 
-
-                RequestIdController.getShared(context).getRequestId(DBHelper.getShared().getLoginProperties(socialTokenEntity.getDomainURL()),
-                        new Result<AuthRequestResponseEntity>() {
-                            @Override
-                            public void success(AuthRequestResponseEntity result) {
-                                //
-                                socialTokenEntity.setRequestId(result.getData().getRequestId());
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                //
-                                accessTokenResult.failure(error);
-                            }
-                        });
+                accessTokenResult.failure(WebAuthError.getShared(context).propertyMissingException("RequestId must not be empty","Error"+methodName));
+                return null;
             }
 
             return socialTokenEntity;

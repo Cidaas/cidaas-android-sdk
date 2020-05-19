@@ -15,14 +15,12 @@ import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.PushNotificationEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.ConfigureActivity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -35,7 +33,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //super.onMessageReceived(remoteMessage);
-        Timber.d("FCM push Message rcvd"+remoteMessage.getData());
+        //Timber.d("FCM push Message rcvd"+remoteMessage.getData());
 
            sendNotification(remoteMessage);
     }
@@ -83,7 +81,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
             if (remoteMessage != null && remoteMessage.getData() != null && remoteMessage.getData().get("data") != null) {
-                pushNotificationEntity = objectMapper.readValue(remoteMessage.getData().get("data").toString(), PushEntity.class);
+                pushNotificationEntity =/*  //Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+*/ objectMapper.readValue(remoteMessage.getData().get("data").toString(), PushEntity.class);
                 // Log.d("firebase ", "sendNotification: "+pushNotificationEntity.getStatusId());
             }
             //   boolean userPresent = Helper.checkIfUserExists(pushNotificationEntity);

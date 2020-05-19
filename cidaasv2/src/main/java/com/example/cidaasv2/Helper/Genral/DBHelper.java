@@ -126,20 +126,7 @@ public void setEnableLog(boolean enableLog)
 
 
 
-    public void addChallengeProperties(Dictionary<String,String> challengepropObj)
-    {
-        boolean result=false;
-        try {
-            String jsonString =shared_objectMapper.writeValueAsString(challengepropObj);
-            editor.putString(ChallengeProperties, jsonString);
-            result=editor.commit();
-        }
-        catch (Exception e)
-        {
-            result=false;
-        }
 
-    }
 
     //Add Secret Based on Sub
     public void addSecret(String secret,String sub){
@@ -216,8 +203,23 @@ public void setEnableLog(boolean enableLog)
         return userAgent;
     }
 
+    //Add Challenge Properties
+    public void addChallengeProperties(Dictionary<String,String> challengepropObj)
+    {
+        boolean result=false;
+        try {
+            String jsonString =shared_objectMapper.writeValueAsString(challengepropObj);
+            editor.putString(ChallengeProperties, jsonString);
+            result=editor.commit();
+        }
+        catch (Exception e)
+        {
+            result=false;
+        }
 
-    //Get Login Object
+    }
+
+    //Get Challenge Properties
     public Dictionary<String,String> getChallengeProperties()
     {
 

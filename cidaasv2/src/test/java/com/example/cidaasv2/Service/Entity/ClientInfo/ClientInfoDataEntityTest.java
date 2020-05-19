@@ -1,7 +1,5 @@
 package com.example.cidaasv2.Service.Entity.ClientInfo;
 
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestEntity;
-
 import org.junit.Assert;
 import org.junit.Test;
 

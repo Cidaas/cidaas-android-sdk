@@ -17,8 +17,6 @@ import android.widget.Toast;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
-import com.example.cidaasv2.Controller.Repository.LocalAuthentication.LocalAuthenticationController;
-import com.example.cidaasv2.Helper.AuthenticationType;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
 import com.example.cidaasv2.Helper.Entity.LocalAuthenticationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;

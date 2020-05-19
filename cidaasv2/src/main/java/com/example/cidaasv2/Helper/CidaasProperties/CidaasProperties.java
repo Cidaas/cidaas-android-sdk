@@ -146,7 +146,7 @@ public class CidaasProperties {
         return WebAuthError.getShared(context).propertyMissingException(errorMessage,methodName);
     }
 
-
+ //Check the Conditions If Condition fails return true otherwise return false
     private boolean checkNotnull(Result<Dictionary<String, String>> result, Dictionary<String, String> loginProperties,String title) {
 
         if (loginProperties.get("DomainURL") == null || loginProperties.get("DomainURL").equals("")|| loginProperties == null

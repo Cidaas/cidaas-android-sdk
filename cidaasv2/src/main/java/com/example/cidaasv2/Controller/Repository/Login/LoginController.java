@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 
-import com.example.cidaasv2.Controller.Cidaas;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.CustomTab.Helper.CustomTabHelper;
-import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
@@ -16,20 +18,14 @@ import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
+import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginResponseEntity;
 import com.example.cidaasv2.Service.Repository.Login.LoginService;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
 import timber.log.Timber;
 
 public class LoginController {
@@ -65,210 +61,23 @@ public class LoginController {
         return shared;
     }
 
+    String codeVerifier="";
+    String codeChallenge="";
+    // Generate Code Challenge and Code verifier
+    public void generateChallenge(){
 
-    //Service call for loginWithCredentials
-    public void loginwithCredentials(@NonNull final String requestId, @NonNull final LoginEntity loginEntity,
-                                     @NonNull final Result<LoginCredentialsResponseEntity> result)
-    {
-        String methodName="LoginController :loginwithCredentials()";
-        try {
+        OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
 
+        Dictionary<String,String> savedProperties=new Hashtable<>();
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    LoginCredentialsRequestEntity loginCredentialsRequestEntity = getLoginCredentialsRequestEntity(requestId, loginEntity, result);
-                    if (loginCredentialsRequestEntity != null) {
-                        LoginService.getShared(context).loginWithCredentials(loginPropertiesResult.get("DomainURL"), loginCredentialsRequestEntity,
-                                new Result<LoginCredentialsResponseEntity>() {
-                            @Override
-                            public void success(LoginCredentialsResponseEntity serviceresult) {
-                                getAccessTokenAfterLogin(serviceresult, result);
-                            }
+        codeVerifier=generator.getCodeVerifier();
+        codeChallenge=generator.getCodeChallenge(codeVerifier);
 
-                            @Override
-                            public void failure(WebAuthError error) {
-                                result.failure(error);
-                            }
-                        });
-                    } 
-                }
+        savedProperties.put("Verifier", codeVerifier);
+        savedProperties.put("Challenge", codeChallenge);
+        savedProperties.put("Method", generator.codeChallengeMethod);
 
-
-                @Override
-                public void failure(WebAuthError error) {
-                    result.failure(error);
-                }
-            });
-
-
-        }
-        catch (Exception e)
-        {
-         result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
-        }
-    }
-
-    //Get Login Credentials Request Entity
-    private LoginCredentialsRequestEntity getLoginCredentialsRequestEntity(String requestId, LoginEntity loginEntity,
-                                                                           final Result<LoginCredentialsResponseEntity> result) {
-        String methodName = "LoginController :getLoginCredentialsRequestEntity()";
-        try {
-            LoginCredentialsRequestEntity loginCredentialsRequestEntity = new LoginCredentialsRequestEntity();
-            if (loginEntity.getUsername_type() == null || loginEntity.getUsername_type().equals("")) {
-                loginEntity.setUsername_type("email");
-            }
-
-            if (loginEntity.getPassword() != null && !loginEntity.getPassword().equals("") && loginEntity.getUsername() != null
-                    && !loginEntity.getUsername().equals("") && requestId != null && !requestId.equals("")) {
-
-                loginCredentialsRequestEntity.setUsername(loginEntity.getUsername());
-                loginCredentialsRequestEntity.setUsername_type(loginEntity.getUsername_type());
-                loginCredentialsRequestEntity.setPassword(loginEntity.getPassword());
-                loginCredentialsRequestEntity.setRequestId(requestId);
-                return loginCredentialsRequestEntity;
-
-            } else {
-
-                String errorMessage = "Username or password or RequestId must not be empty";
-                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :"+errorMessage));
-                return null;
-            }
-        }
-        catch (Exception e)
-        {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
-       return null;
-        }
-    }
-
-
-    private void getAccessTokenAfterLogin(LoginCredentialsResponseEntity serviceresult, final Result<LoginCredentialsResponseEntity> result)
-    {
-        //Access Token After Login
-        AccessTokenController.getShared(context).getAccessTokenByCode(serviceresult.getData().getCode(), new Result<AccessTokenEntity>() {
-            @Override
-            public void success(AccessTokenEntity accessTokenresult) {
-
-                LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();
-                loginCredentialsResponseEntity.setData(accessTokenresult);
-                loginCredentialsResponseEntity.setStatus(200);
-                loginCredentialsResponseEntity.setSuccess(true);
-                result.success(loginCredentialsResponseEntity);
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-                result.failure(error);
-            }
-        });
-    }
-
-
-    //Service call for Continue MFA
-    public void continueMFA(@NonNull String baseurl, @NonNull ResumeLoginRequestEntity resumeLoginRequestEntity,
-                            @NonNull final Result<LoginCredentialsResponseEntity> result)
-    {
-        String methodName="LoginController :continueMFA()";
-        try {
-            if (resumeLoginRequestEntity.getTrack_id() != null && !resumeLoginRequestEntity.getTrack_id().equals("") &&
-                    resumeLoginRequestEntity.getClient_id() != null && !resumeLoginRequestEntity.getClient_id().equals("") &&
-                    resumeLoginRequestEntity.getSub() != null && !resumeLoginRequestEntity.getSub().equals("") &&
-                    resumeLoginRequestEntity.getTrackingCode() != null && !resumeLoginRequestEntity.getTrackingCode().equals("") &&
-                    resumeLoginRequestEntity.getVerificationType() != null && !resumeLoginRequestEntity.getVerificationType().equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
-
-                //Done Service call
-                LoginService.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity,  new Result<ResumeLoginResponseEntity>() {
-                    @Override
-                    public void success(final ResumeLoginResponseEntity serviceresult) {
-
-                        //Done get Access Token by Code
-                        AccessTokenController.getShared(context).getAccessTokenByCode(serviceresult.getData().getCode(), new Result<AccessTokenEntity>() {
-                            @Override
-                            public void success(AccessTokenEntity accessTokenresult) {
-                                LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();
-                                loginCredentialsResponseEntity.setData(accessTokenresult);
-                                loginCredentialsResponseEntity.setStatus(200);
-                                loginCredentialsResponseEntity.setSuccess(true);
-                                result.success(loginCredentialsResponseEntity);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-                                result.failure(error);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            } else {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("Tracking code, verification type or baseurl must not be empty",
-                        "Error:"+methodName));
-            }
-
-        } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
-        }
-    }
-
-
-    //Service call for Continue PasswordLess
-    public void continuePasswordless(@NonNull String baseurl, @NonNull ResumeLoginRequestEntity resumeLoginRequestEntity,
-                                     @NonNull final Result<LoginCredentialsResponseEntity> result)
-    {
-        String methodName="LoginController :continuePasswordless()";
-        try {
-            if (resumeLoginRequestEntity.getClient_id() != null && !resumeLoginRequestEntity.getClient_id().equals("") &&
-                    resumeLoginRequestEntity.getSub() != null && !resumeLoginRequestEntity.getSub().equals("") &&
-                    resumeLoginRequestEntity.getTrackingCode() != null && !resumeLoginRequestEntity.getTrackingCode().equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
-
-                //Done Service call
-                LoginService.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity,  new Result<ResumeLoginResponseEntity>() {
-                    @Override
-                    public void success(final ResumeLoginResponseEntity serviceresult) {
-
-                        //Done get Access Token by Code
-                        AccessTokenController.getShared(context).getAccessTokenByCode(serviceresult.getData().getCode(), new Result<AccessTokenEntity>() {
-                            @Override
-                            public void success(AccessTokenEntity accessTokenresult) {
-
-                                LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();
-                                loginCredentialsResponseEntity.setData(accessTokenresult);
-                                loginCredentialsResponseEntity.setStatus(200);
-                                loginCredentialsResponseEntity.setSuccess(true);
-                                result.success(loginCredentialsResponseEntity);
-                            }
-
-                            @Override
-                            public void failure(WebAuthError error) {
-
-                                result.failure(error);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-            else
-            {
-                String errorMessage="ClientId , sub , Track code, base url must not be empty";
-                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :"+methodName));
-            }
-
-        } catch (Exception e) {
-           result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
-        }
+        DBHelper.getShared().addChallengeProperties(savedProperties);
     }
 
 
@@ -288,16 +97,20 @@ public class LoginController {
 
                     Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(baseurl);
 
-                    //////////////////This is for testing purpose
+                    //////////////////This is for testcase purpose
                     Dictionary<String, String> challengeProperties = new Hashtable<>();
 
                     if (challengePropertiesfromparam == null) {
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     } else if (challengePropertiesfromparam != null) {
                         challengeProperties = challengePropertiesfromparam;
-                    } else {
-                        challengeProperties = new Hashtable<>();
                     }
+
+                    if(challengeProperties.size()==0 || challengeProperties.isEmpty()||challengeProperties.get("Challenge")==null || challengeProperties.get("Challenge")=="") {
+                        generateChallenge();
+                        challengeProperties = DBHelper.getShared().getChallengeProperties();
+                    }
+
 
 
                     String authzURL = urlList.get("authorization_endpoint");
@@ -305,6 +118,7 @@ public class LoginController {
                     String redirectURL = loginProperties.get("RedirectURL");
                     String challenge = challengeProperties.get("Challenge");
 
+                    //Todo Here the Error may occur due to Challange is empty
                     if (clientId != null && !clientId.equals("") && redirectURL != null && !redirectURL.equals("") && challenge != null && !challenge.equals("")) {
 
                         String finalURL = URLHelper.getShared().constructLoginURL(authzURL, clientId, redirectURL, challenge, "login");
@@ -434,7 +248,7 @@ public class LoginController {
       }
     }
 
-    public void loginWithSocial(@NonNull final Context activityContext, @NonNull final String requestId, @NonNull final String provider,
+   /* public void loginWithSocial(@NonNull final Context activityContext, @NonNull final String requestId, @NonNull final String provider,
                                 @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain)
     {
       final String methodName="LoginController :loginWithSocial()";
@@ -464,7 +278,7 @@ public class LoginController {
    callbacktoMain.failure( WebAuthError.getShared(context).methodException("Exception : "+methodName,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,e.getMessage()));
       }
 
-    }
+    }*/
 
     //Private Methods
     private String getCodeFromUrl(String url) {
@@ -492,7 +306,14 @@ public class LoginController {
     }
 
 
+    public void handleToken(String code) {   /*,Result<AccessTokenEntity> callbacktoMain*/
 
+        if (logincallback != null) {
+
+            getLoginCode(code, logincallback);
+        }
+    }
+   // Belongs to Core
     public void getLoginCode(String url, Result<AccessTokenEntity> callback) {
         try {
             // showLoader();
@@ -516,43 +337,26 @@ public class LoginController {
         }
     }
 
-    public void handleToken(String code){   /*,Result<AccessTokenEntity> callbacktoMain*/
-
-        if (logincallback != null) {
-
-            getLoginCode(code, logincallback);
-        }
-
-
-        /* else if(callbacktoMain!=null)
-       {
-        *//*logincallback=()callbacktoMain;
-        getLoginCode(code,callbacktoMain);*//*
-       }*/
-        //Todo Handle Else part and give Exception
-
-    }
-
     //Get Login URL without any Argument
     public void getLoginURL( final Result<String> callback) {
         try {
             //Check requestId is not null
-
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
                     //This is to generate the Code Challenge
 
-                    /////This is for testing purpose
+                    /////This is for test Case purpose
                     Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
 
-                    if(challengeProperties.size()==0) {
-
+                    if(challengeProperties.size()==0 || challengeProperties==null || challengeProperties.isEmpty()) {
+                       generateChallenge();
+                        challengeProperties=DBHelper.getShared().getChallengeProperties();
                     }
 
 
-                    LoginController.getShared(context).getLoginURL(CidaasHelper.baseurl,result,null, new Result<String>() {
+                    getLoginURL(CidaasHelper.baseurl,result,challengeProperties, new Result<String>() {
                         @Override
                         public void success(String result) {
 
@@ -613,6 +417,187 @@ public class LoginController {
         {
             result.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CIDAAS_PROPERTY_MISSING,e.getMessage()));
         }
+    }
+
+
+    //Get Login URL without any Argument
+    public void getRegistrationURL( final Result<String> callback) {
+        try {
+            //Check requestId is not null
+            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+
+                    //This is to generate the Code Challenge
+
+                    /////This is for test Case purpose
+                    Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
+
+                    if(challengeProperties.size()==0 || challengeProperties==null || challengeProperties.isEmpty()) {
+                        generateChallenge();
+                        challengeProperties=DBHelper.getShared().getChallengeProperties();
+                    }
+
+
+                    getRegistrationURL(CidaasHelper.baseurl,result,challengeProperties, new Result<String>() {
+                        @Override
+                        public void success(String result) {
+
+                            callback.success(result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callback.failure(error);
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    callback.failure(error);
+                }
+            });
+
+
+        } catch (Exception e) {
+            //Todo Handle Error
+            callback.failure(WebAuthError.getShared(context)
+                    .methodException("Exception :LoginController :getLoginURL() " ,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
+        }
+    }
+
+    //Get Registration URL for Custom browser and Webview
+    public void getRegistrationURL(@NonNull final String baseurl, Dictionary<String, String> loginProperties,
+                            final Dictionary<String, String> challengePropertiesfromparam, @NonNull final Result<String> callbackResult)
+    {
+        final String methodName="LoginController :getRegistrationURL()";
+        try {
+
+            LoginService.getShared(context).getURLList(baseurl, new Result<Object>() {
+                @Override
+                public void success(Object result) {
+
+                    LinkedHashMap<String, String> urlList = new LinkedHashMap<>();
+                    urlList = (LinkedHashMap<String, String>) result;
+
+                    Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(baseurl);
+
+                    //////////////////This is for testcase purpose
+                    Dictionary<String, String> challengeProperties = new Hashtable<>();
+
+                    if (challengePropertiesfromparam == null) {
+                        challengeProperties = DBHelper.getShared().getChallengeProperties();
+                    } else if (challengePropertiesfromparam != null) {
+                        challengeProperties = challengePropertiesfromparam;
+                    }
+
+                    if(challengeProperties.size()==0 || challengeProperties.isEmpty()||challengeProperties.get("Challenge")==null || challengeProperties.get("Challenge")=="") {
+                        generateChallenge();
+                        challengeProperties = DBHelper.getShared().getChallengeProperties();
+                    }
+
+
+
+                    String authzURL = urlList.get("authorization_endpoint");
+                    String clientId = loginProperties.get("ClientId");
+                    String redirectURL = loginProperties.get("RedirectURL");
+                    String challenge = challengeProperties.get("Challenge");
+
+                    //Todo Here the Error may occur due to Challange is empty
+                    if (clientId != null && !clientId.equals("") && redirectURL != null && !redirectURL.equals("") && challenge != null && !challenge.equals("")) {
+
+                        String finalURL = URLHelper.getShared().constructLoginURL(authzURL, clientId, redirectURL, challenge, "register");
+                        if (finalURL != null && !finalURL.equals("")) {
+                            callbackResult.success(finalURL);
+                        } else {
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error:"+methodName));
+                        }
+                    } else {
+                        callbackResult.failure(WebAuthError.getShared(context).propertyMissingException( "ClientId or RedirectURL or Challenge must not be empty"
+                                , "Error :"+methodName));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    callbackResult.failure(error);
+                }
+            });
+        } catch (Exception e) {
+            callbackResult.failure(WebAuthError.getShared(context)
+                    .methodException("Exception :"+methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
+        }
+    }
+
+
+    //Get Register With Browser
+    public void registerWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain)
+    {
+        final String methodName="LoginController :loginWithBrowser()";
+        try {
+
+            getRegistrationURL(new Result<String>() {
+                @Override
+                public void success(String result) {
+                    String registrationURL = result;
+                    logincallback = callbacktoMain;
+                    if (registrationURL != null) {
+                        launchCustomTab(activityContext,registrationURL, color);
+                    } else {
+                        //TODo callback Failure
+                        callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE,
+                                "EMPTY URL",methodName));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    callbacktoMain.failure(error);
+                }
+            });
+
+
+        } catch (Exception e) {
+            // TODO: Handle Exception
+
+            callbacktoMain.failure(WebAuthError.getShared(context)
+                    .methodException("Exception :"+methodName ,WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
+        }
+
+
+    }
+
+    public void loginWithSocial(@NonNull final Context activityContext, @NonNull final String requestId, @NonNull final String provider,
+                                @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain)
+    {
+        final String methodName="LoginController :loginWithSocial()";
+        try
+        {
+            getSocialLoginURL(requestId, provider, new Result<String>() {
+                @Override
+                public void success(String socialLoginURL) {
+                    logincallback = callbacktoMain;
+                    if (socialLoginURL != null) {
+                        launchCustomTab(activityContext,socialLoginURL, color);
+                    } else {
+                        callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE,
+                                "EMPTY SOCIAL URL","Error"+methodName));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    callbacktoMain.failure(error);
+                }
+            });
+
+        }
+        catch (Exception e)
+        {
+            callbacktoMain.failure( WebAuthError.getShared(context).methodException("Exception : "+methodName,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,e.getMessage()));
+        }
+
     }
 
 }

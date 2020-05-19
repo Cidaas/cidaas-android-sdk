@@ -1,16 +1,9 @@
 package com.example.cidaasv2.Service.Register.RegistrationSetup;
 
-import com.example.cidaasv2.R;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import static org.mockito.Mockito.*;
 
 public class RegistrationSetupResultDataEntityTest {
     String dataType;

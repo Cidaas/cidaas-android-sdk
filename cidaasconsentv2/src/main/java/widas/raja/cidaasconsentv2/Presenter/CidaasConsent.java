@@ -5,19 +5,18 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.example.cidaasv2.Controller.Cidaas;
-
-import widas.raja.cidaasconsentv2.Domain.Controller.Consent.ConsentController;
-import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
-import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
+import com.example.cidaasv2.Helper.Entity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 
+import widas.raja.cidaasconsentv2.Domain.Controller.Consent.ConsentController;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
 import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
 import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 
 public class CidaasConsent {
 
@@ -48,8 +47,6 @@ public class CidaasConsent {
         ConsentController.getShared(context).acceptConsent(consentEntity,loginresult);
     }
 
-
-
     public void getConsentDetailsV2(@NonNull final ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, final Result<ConsentDetailsV2ResponseEntity> consentResult) {
         if(consentDetailsV2RequestEntity.getRequestId()!=null && !consentDetailsV2RequestEntity.getRequestId().equals("")) {
 
@@ -75,7 +72,5 @@ public class CidaasConsent {
     public void acceptConsentV2(@NonNull final AcceptConsentV2Entity acceptConsentV2Entity, final Result<LoginCredentialsResponseEntity> consentResult) {
         ConsentController.getShared(context).acceptConsentV2(acceptConsentV2Entity, consentResult);
     }
-
-
 
 }

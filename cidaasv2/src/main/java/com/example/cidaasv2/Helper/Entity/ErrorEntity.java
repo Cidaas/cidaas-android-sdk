@@ -1,7 +1,6 @@
 package com.example.cidaasv2.Helper.Entity;
 
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.FaceMetaData;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.VoiceMetaData;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -16,7 +15,7 @@ public class ErrorEntity implements Serializable
     private int status;
     private String referenceNumber;
     private  String error="";
-    private FaceMetaData metadata;
+
 
     public String track_id = "";
     public String sub= "";
@@ -137,13 +136,5 @@ public class ErrorEntity implements Serializable
 
     public void setError(String error) {
         this.error = error;
-    }
-
-    public FaceMetaData getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(FaceMetaData metadata) {
-        this.metadata = metadata;
     }
 }

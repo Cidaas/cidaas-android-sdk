@@ -22,7 +22,19 @@
         <activity
             android:name=".StartingPage"
             android:label="@string/title_activity_starting_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="widas.in"
+                    android:pathPattern="/samp" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ConfigureActivity" />
 
         <meta-data

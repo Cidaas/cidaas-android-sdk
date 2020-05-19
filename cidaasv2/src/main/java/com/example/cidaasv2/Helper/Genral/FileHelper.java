@@ -55,8 +55,6 @@ public class FileHelper {
         webAuthError=WebAuthError.getShared(this.context);
     }
 
-
-
     //Read Properties
     public void readProperties(AssetManager assetManager,String fileNameFromBase,Result<Dictionary<String,String>> result)
     {
@@ -90,49 +88,39 @@ public class FileHelper {
             XPathExpression expr = xpath.compile("//resources/item[@string]");
             NodeList nl = (NodeList) expr.evaluate(xml, XPathConstants.NODESET);
             NodeList nodeList = xml.getElementsByTagName("item");
-            String sam=null;
+            String xmlString=null;
             for(int i=0;i<nodeList.getLength();i++) {
                 if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("ClientId")) {
-                    sam = nodeList.item(i).getTextContent().trim();
+                    xmlString = nodeList.item(i).getTextContent().trim();
                     //Assign Value in a string Dictionary
-                    if(sam!=null && sam!="") {
-                        dictObject.put("ClientId", sam);
+                    if(xmlString!=null && xmlString!="") {
+                        dictObject.put("ClientId", xmlString);
                     }
                     else
                     {
-                        throw new Exception("Property Cannot be null");
+                        throw new Exception("Property ClientID Cannot be null");
                     }
                 }
                 else if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("DomainURL")) {
-                    sam = nodeList.item(i).getTextContent().trim();
-                    if(sam!=null && sam!="") {
-                        dictObject.put("DomainURL", sam);
+                    xmlString = nodeList.item(i).getTextContent().trim();
+                    if(xmlString!=null && xmlString!="") {
+                        dictObject.put("DomainURL", xmlString);
                     }
                     else
                     {
-                        throw new Exception("Property Cannot be null");
+                        throw new Exception("Property DomainURL Cannot be null");
                     }
                 }
                 else if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("RedirectURL")) {
-                    sam = nodeList.item(i).getTextContent().trim();
-                    if(sam!=null && sam!="") {
-                        dictObject.put("RedirectURL", sam);
+                    xmlString = nodeList.item(i).getTextContent().trim();
+                    if(xmlString!=null && xmlString!="") {
+                        dictObject.put("RedirectURL", xmlString);
                     }
                     else
                     {
-                        throw new Exception("Property Cannot be null");
+                        throw new Exception("Property RedirectURL Cannot be null");
                     }
                 }
-                /*else if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("UserInfoURL")) {
-                    sam = nodeList.item(i).getTextContent().trim();
-                    if(sam!=null && sam!="") {
-                        dictObject.put("UserInfoURL", sam);
-                    }
-                    else
-                    {
-                        throw new Exception("Property Cannot be null");
-                    }
-                }*/
                 else
                 {
                    webAuthError.propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty","Error"+methodName);
@@ -150,13 +138,7 @@ public class FileHelper {
         }
         catch (Exception e) {
 
-            if(e.getMessage().equalsIgnoreCase("Property Cannot be null"))
-            {
-                webAuthError = webAuthError.propertyMissingException("Property cannot be null","Error"+methodName);
-                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
-                result.failure(webAuthError);
-            }
-            else if (e instanceof FileNotFoundException)
+            if (e instanceof FileNotFoundException)
             {
                 webAuthError = webAuthError.fileNotFoundException(methodName);
                 LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());

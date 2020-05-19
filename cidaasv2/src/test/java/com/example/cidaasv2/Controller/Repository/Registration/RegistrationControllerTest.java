@@ -2,7 +2,6 @@ package com.example.cidaasv2.Controller.Repository.Registration;
 
 import android.content.Context;
 
-import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
@@ -18,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 

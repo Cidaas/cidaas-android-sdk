@@ -9,8 +9,6 @@ import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.URLHelper.URLHelper;
-import com.example.cidaasv2.R;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
@@ -20,7 +18,7 @@ import widas.raja.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentRespons
 import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
 import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2ResponseEntity;
 import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
-import com.example.cidaasv2.Service.HelperForService.Headers.Headers;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
@@ -29,7 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
-import widas.raja.cidaasconsentv2.data.Interface.ICidaasConsentSDKService;
+import widas.raja.cidaasconsentv2.data.Service.ICidaasConsentSDKService;
 
 public class ConsentService {
 

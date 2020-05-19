@@ -1,8 +1,5 @@
 package com.example.cidaasv2.Service.Entity.TenantInfo;
 
-import com.example.cidaasv2.Service.Entity.UserProfile.UseprofileResponseDataEntity;
-import com.example.cidaasv2.Service.Entity.UserProfile.UserprofileResponseEntity;
-
 import junit.framework.Assert;
 
 import org.junit.Before;

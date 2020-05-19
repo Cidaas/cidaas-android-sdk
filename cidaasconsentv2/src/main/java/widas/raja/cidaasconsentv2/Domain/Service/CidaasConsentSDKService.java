@@ -4,10 +4,9 @@ import android.content.Context;
 
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.CidaassdkService;
-import com.example.cidaasv2.Service.ICidaasSDKService;
 
 import okhttp3.OkHttpClient;
-import widas.raja.cidaasconsentv2.data.Interface.ICidaasConsentSDKService;
+import widas.raja.cidaasconsentv2.data.Service.ICidaasConsentSDKService;
 
 public class CidaasConsentSDKService {
 

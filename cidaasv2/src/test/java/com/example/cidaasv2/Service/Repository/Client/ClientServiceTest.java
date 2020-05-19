@@ -2,19 +2,16 @@ package com.example.cidaasv2.Service.Repository.Client;
 
 import android.content.Context;
 
-import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 
-import org.apache.tools.ant.taskdefs.Length;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 

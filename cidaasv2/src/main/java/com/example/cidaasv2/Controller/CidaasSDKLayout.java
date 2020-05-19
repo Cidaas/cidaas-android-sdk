@@ -28,7 +28,6 @@ import com.example.cidaasv2.Controller.Repository.Login.LogoutController;
 import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Helper.CidaasSDKHelper;
 import com.example.cidaasv2.Helper.Entity.SocialAccessTokenEntity;
-import com.example.cidaasv2.Helper.Enums.HttpStatusCode;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;

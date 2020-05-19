@@ -14,7 +14,6 @@ import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEnt
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedResponse;
-import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
 import androidx.appcompat.app.AppCompatActivity;
 

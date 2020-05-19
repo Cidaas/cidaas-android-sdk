@@ -31,26 +31,37 @@ public class URLHelper {
         return shared;
     }
 
-    String request_id_url="/authz-srv/authrequest/authz/generate";
 
 
-
-    String loginWithCredentials="/login-srv/login/sdk";
     String logoutURLForEmbeddedBrowser="/session/end_session";
-    String registrationSetup="/registration-callSetup-srv/public/list?acceptlanguage=";
+    String userLoginInfoURL ="/verification-srv/verificationstatus/status/search/sdk";
 
-    String clientUrl="/public-srv/public/";
-    String tenantUrl="/public-srv/tenantinfo/basic";
-    String registerNewUserurl="/users-srv/register";
 
-    String mfa_URL="/verification-srv/settings/list?sub=";
-    String mfaList="/verification-srv/settings/listbydeviceid";
-    String deleteMFA="/verification-srv/settings/delete/";
-    String deleteAllMFA="/verification-srv/settings/deleteall/";
-    String denyNotification="/verification-srv/notification/reject";
-    String PendingNotificationURL="/verification-srv/notification/initiated/";
-    String configuredMFAListURL="/verification-srv/settings/listbydeviceid";
-    String updateFCMTokenURL="/device-srv/device/updatefcm";
+
+    String tokenUrl="/token-srv/token";
+    String socialTokenURL="/login-srv/social/token";
+
+    String preAuthCode="&preAuthCode=" ;
+
+    String scannedPatternURL="/verification-srv/pattern/scanned";
+    String scannedFaceURL="/verification-srv/face/scanned";
+    String scannedFingerprintURL="/verification-srv/touchid/scanned";
+    String scannedSmartPushURL="/verification-srv/push/scanned";
+    String scannedTOTPURL="/verification-srv/totp/scanned";
+    String scannedVoiceURL="/verification-srv/voice/scanned";
+
+    String scannedFIDOURL="/verification-srv/fidou2f/mobile/scanned";
+
+    String socialLoginURL="/login-srv/social/login/";
+
+    String internaluserProfileURL="/users-srv/internal/userinfo/profile/";
+    String userInfoURL="/users-srv/userinfo";
+
+
+    String documentScanner="/access-control-srv/ocr/validate";
+
+
+    String openIdURL="/.well-known/openid-configuration";
 
     String setupEmailMFA="/verification-srv/email/callSetup";
     String enrollEmailMFA="/verification-srv/email/enroll";
@@ -108,218 +119,17 @@ public class URLHelper {
     String initiateVoiceMFA="/verification-srv/voice/initiate";
     String authenticateVoiceMFA="/verification-srv/voice/authenticate";
 
-
-    String initiateResetPassword="/users-srv/resetpassword/initiate";
-    String ResetPasswordValidateCode="/users-srv/resetpassword/validatecode";
-    String ResetNewPasswordURl="/users-srv/resetpassword/accept";
-    String ChangePasswordURl="/users-srv/changepassword";
-
-    String resumeLoginURL="/login-srv/precheck/continue/sdk/";
-
-
-    String internaluserProfileURL="/users-srv/internal/userinfo/profile/";
-    String userInfoURL="/users-srv/userinfo";
-
-    String RegisterUserAccountInitiate="/verification-srv/account/initiate";
-    String RegisterUserAccountVerify="/verification-srv/account/verify";
-
-    String validateDeviceURL="/verification-srv/device/validate";
-
-
-
-    String scannedPatternURL="/verification-srv/pattern/scanned";
-    String scannedFaceURL="/verification-srv/face/scanned";
-    String scannedFingerprintURL="/verification-srv/touchid/scanned";
-    String scannedSmartPushURL="/verification-srv/push/scanned";
-    String scannedTOTPURL="/verification-srv/totp/scanned";
-    String scannedVoiceURL="/verification-srv/voice/scanned";
-
-    String scannedFIDOURL="/verification-srv/fidou2f/mobile/scanned";
-
-    String tokenUrl="/token-srv/token";
-    String socialTokenURL="/login-srv/social/token";
-
-    String preAuthCode="&preAuthCode=" ;
-
-    String passwordlessContinueUrl="/login-srv/verification/sdk/login/";
-    String deduplicationList="/users-srv/deduplication/info/";
-
-    String socialLoginURL="/login-srv/social/login/";
-
-    String registerdeduplication="/users-srv/deduplication/register/";
-
-    String documentScanner="/access-control-srv/ocr/validate";
-
-    String userLoginInfoURL ="/verification-srv/verificationstatus/status/search/sdk";
-
-
-
-    String openIdURL="/.well-known/openid-configuration";
-
-    public String getLogoutURLForEmbeddedBrowser() {
-        return logoutURLForEmbeddedBrowser;
-    }
-
-    public String getSocialLoginURL() {
-        return socialLoginURL;
-    }
-
-    public String getOpenIdURL() {
-        return openIdURL;
-    }
-
-    public String getPendingNotificationURL() {
-        return PendingNotificationURL;
-    }
-
-    public String getConfiguredMFAListURL() {
-        return configuredMFAListURL;
-    }
-
-    public String getDeleteMFA(String userDeviceId, String verificationType) {
-        return deleteMFA+userDeviceId+"/"+verificationType;
-    }
-
     public String getUserLoginInfoURL() {
         return userLoginInfoURL;
     }
-
-    public String getUpdateFCMTokenURL() {
-        return updateFCMTokenURL;
-    }
-
-    public String getDeleteAllMFA() {
-        return deleteAllMFA;
-    }
-
-    public String getDenyNotification() {
-        return denyNotification;
-    }
-
-    public String getDeleteEmailMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/EMAIL";
-    }
-
-    public String getDeleteSMSMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/SMS";
-    }
-
-    public String getDeleteIVRMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/IVR";
-    }
-
-    public String getDeleteBackupcodeMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/BACKUPCODE";
-    }
-
-    public String getDeletePatternMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/PATTERN";
-    }
-    public String getDeleteFingerprintMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/"+ AuthenticationType.FINGERPRINT;
-    }
-    public String getDeleteSmartPushMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/"+AuthenticationType.SMARTPUSH;
-    }
-    public String getDeleteFaceMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/FACE";
-    }
-
-    public String getDeleteVoiceMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/VOICE";
-    }
-
-
-    public String getDeleteFIDOMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/FIDOU2F";
-    }
-
-    public String getDeleteTOTPMFA(String userDeviceId) {
-        return deleteMFA+userDeviceId+"/TOTP";
-    }
-
-
-
-
-
-
-    public String getPreAuthCode() {
-        return preAuthCode;
-    }
-
-    public String getSocialTokenURL() {
-        return socialTokenURL;
-    }
-
     public String getUserInfoURL() {
         return userInfoURL;
     }
-
-    public String getDocumentScanner() {
-        return documentScanner;
-    }
-
-    public String getMfaList() {
-        return mfaList;
-    }
-
-    public String getRegisterdeduplication() {
-        return registerdeduplication;
-    }
-
-    public String getDeduplicationList() {
-        return deduplicationList;
-    }
-
-    public String getPasswordlessContinueUrl() {
-        return passwordlessContinueUrl;
-    }
-
-    public String getScannedFIDOURL() {
-        return scannedFIDOURL;
-    }
-
-    public String getScannedFaceURL() {
-        return scannedFaceURL;
-    }
-
-    public String getScannedFingerprintURL() {
-        return scannedFingerprintURL;
-    }
-
-    public String getScannedSmartPushURL() {
-        return scannedSmartPushURL;
-    }
-
-    public String getScannedTOTPURL() {
-        return scannedTOTPURL;
-    }
-
-    public String getScannedVoiceURL() {
-        return scannedVoiceURL;
-    }
-
-    public String getTokenUrl() {
-        return tokenUrl;
+    public String getInternaluserProfileURL() {
+        return internaluserProfileURL;
     }
 
 
-
-    public String getScannedPatternURL() {
-        return scannedPatternURL;
-    }
-
-    public String getValidateDeviceURL() {
-        return validateDeviceURL;
-    }
-
-    public String getRegisterUserAccountInitiate() {
-        return RegisterUserAccountInitiate;
-    }
-
-    public String getRegisterUserAccountVerify() {
-        return RegisterUserAccountVerify;
-    }
 
     public String getSetupEmailMFA() {
         return setupEmailMFA;
@@ -409,15 +219,6 @@ public class URLHelper {
         return enrollVoiceMFA;
     }
 
-
-    public String getInternaluserProfileURL() {
-        return internaluserProfileURL;
-    }
-
-    public String getResumeLoginURL() {
-        return resumeLoginURL;
-    }
-
     public String getInitiateFaceMFA() {
         return initiateFaceMFA;
     }
@@ -490,31 +291,12 @@ public class URLHelper {
         return authenticateBackupCodeMFA;
     }
 
-
-    public String getResetNewPasswordURl() {
-        return ResetNewPasswordURl;
-    }
-
-
     public String getInitiateSMSMFA() {
         return initiateSMSMFA;
     }
 
     public String getAuthenticateSMSMFA() {
         return authenticateSMSMFA;
-    }
-
-
-    public String getChangePasswordURl() {
-        return ChangePasswordURl;
-    }
-
-    public String getResetPasswordValidateCode() {
-        return ResetPasswordValidateCode;
-    }
-
-    public String getInitiateResetPassword() {
-        return initiateResetPassword;
     }
 
     public String getAuthenticateemailMFA() {
@@ -525,35 +307,73 @@ public class URLHelper {
         return initiateemailMFA;
     }
 
-    public String getMfa_URL() {
-        return mfa_URL;
+    public String getLogoutURLForEmbeddedBrowser() {
+        return logoutURLForEmbeddedBrowser;
     }
 
-    public String getRegisterNewUserurl() {
-        return registerNewUserurl;
+    public String getSocialLoginURL() {
+        return socialLoginURL;
     }
 
-    public String getRequest_id_url() {
-        return request_id_url;
+    public String getOpenIdURL() {
+        return openIdURL;
     }
 
 
 
-    public String getLoginWithCredentials() {
-        return loginWithCredentials;
+
+
+    public String getPreAuthCode() {
+        return preAuthCode;
     }
 
-    public String getRegistrationSetup(String acceptedLanguage,String requestId) {
-        return registrationSetup+acceptedLanguage + "&requestId=" +requestId;
+    public String getSocialTokenURL() {
+        return socialTokenURL;
     }
 
-    public String getClientUrl(String requestId) {
-        return clientUrl+requestId;
+
+    public String getDocumentScanner() {
+        return documentScanner;
     }
 
-    public String getTenantUrl() {
-        return tenantUrl;
+
+
+
+    public String getScannedFIDOURL() {
+        return scannedFIDOURL;
     }
+
+    public String getScannedFaceURL() {
+        return scannedFaceURL;
+    }
+
+    public String getScannedFingerprintURL() {
+        return scannedFingerprintURL;
+    }
+
+    public String getScannedSmartPushURL() {
+        return scannedSmartPushURL;
+    }
+
+    public String getScannedTOTPURL() {
+        return scannedTOTPURL;
+    }
+
+    public String getScannedVoiceURL() {
+        return scannedVoiceURL;
+    }
+
+    public String getTokenUrl() {
+        return tokenUrl;
+    }
+
+
+
+    public String getScannedPatternURL() {
+        return scannedPatternURL;
+    }
+
+
 
     public String constructLoginURL(String authzURL,String clientId,String redirectURL,String codeChallenge,String viewType)
     {

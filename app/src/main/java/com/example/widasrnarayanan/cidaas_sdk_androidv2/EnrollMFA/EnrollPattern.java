@@ -451,7 +451,7 @@ catch (Exception e)
 
     private String getFCMToken() {
         String token = FirebaseInstanceId.getInstance().getToken();
-        Timber.i("FCM TOKEN" + token);
+      //  Timber.i("FCM TOKEN" + token);
 
         return token;
         // save device info

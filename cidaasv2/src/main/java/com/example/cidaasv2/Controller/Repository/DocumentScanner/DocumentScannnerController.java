@@ -75,7 +75,7 @@ public class DocumentScannnerController {
         try {
             imageFile = file();
 
-            Timber.d("Error");
+            //Timber.d("Error");
             // Toast.makeText(FaceSetupActivity.this, imageFile.toString(), Toast.LENGTH_SHORT).show();
             if (imageFile == null) {
                 // Toast.makeText(FaceSetupActivity.this, "NUll Image", Toast.LENGTH_SHORT).show();

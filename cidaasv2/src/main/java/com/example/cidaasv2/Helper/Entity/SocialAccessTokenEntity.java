@@ -13,6 +13,13 @@ public class SocialAccessTokenEntity implements Serializable {
     private String requestId;
     private String viewType;
 
+    public SocialAccessTokenEntity(String token, String provider, String domainURL, String requestId, String viewType) {
+        this.token = token;
+        this.provider = provider;
+        this.DomainURL = domainURL;
+        this.requestId = requestId;
+        this.viewType = viewType;
+    }
 
     public String getToken() {
         return token;

@@ -2,7 +2,6 @@ package com.example.cidaasv2.Controller.Repository.RequestId;
 
 import android.content.Context;
 
-import com.example.cidaasv2.BuildConfig;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
@@ -13,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import java.util.Dictionary;
 import java.util.Hashtable;

@@ -128,7 +128,7 @@ public class DocumentScannerService {
 
                 @Override
                 public void onFailure(Call<DocumentScannerServiceResultEntity> call, Throwable t) {
-                    Timber.e("Faliure in Request id service call"+t.getMessage());
+                 //   Timber.e("Faliure in Request id service call"+t.getMessage());
                     callback.failure( WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE,
                             t.getMessage(),"Error :"+methodName));
 

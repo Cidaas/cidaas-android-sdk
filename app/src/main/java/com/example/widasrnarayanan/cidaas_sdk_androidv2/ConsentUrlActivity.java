@@ -13,10 +13,8 @@ import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 
-import widas.raja.cidaasconsentv2.Helper.ConsentURLHelper;
 import widas.raja.cidaasconsentv2.Presenter.CidaasConsent;
 import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
-import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
 import widas.raja.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
 import widas.raja.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
 

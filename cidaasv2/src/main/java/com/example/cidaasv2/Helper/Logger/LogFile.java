@@ -73,7 +73,7 @@ public class LogFile {
             moreThanTenMB = false;
             hrSize = dec.format(kilobyteSize).concat(" KB");
         }
-        Timber.d("Size : " + hrSize);
+       // Timber.d("Size : " + hrSize);
         return moreThanTenMB;
     }
 
@@ -85,7 +85,7 @@ public class LogFile {
             Calendar c = Calendar.getInstance();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String formattedDate = df.format(c.getTime());
-            Timber.d(formattedDate+"Date");
+           // Timber.d(formattedDate+"Date");
 
             return  formattedDate;
         }
@@ -206,7 +206,7 @@ public class LogFile {
 
             String loggerMessage = "S:- "+methodName+ "Success Message:- " +message;
 
-            Timber.i(loggerMessage);
+           // Timber.i(loggerMessage);
             addRecordTolog(success_log_filename,loggerMessage);
 
         }

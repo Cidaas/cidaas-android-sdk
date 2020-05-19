@@ -1,16 +1,14 @@
+/*
 package com.example.cidaasv2.Service.Repository.Login;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
-import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
@@ -20,11 +18,7 @@ import com.example.cidaasv2.Service.Repository.RequestId.RequestIdService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -35,8 +29,6 @@ import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
 import static com.example.cidaasv2.Controller.HelperClass.removeLastChar;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 
 //@RunWith(RobolectricTestRunner.class)
 public class LoginCredentialsServiceCall {
@@ -70,18 +62,22 @@ public class LoginCredentialsServiceCall {
         deviceInfoEntity.setPushNotificationId("PushNotificationId");
 
        // Context context1= RuntimeEnvironment.application;
-       /* Mockito.when(context.getSharedPreferences("cidaas_preference", 0)).thenReturn(sharedPrefs);
+       */
+/* Mockito.when(context.getSharedPreferences("cidaas_preference", 0)).thenReturn(sharedPrefs);
         Mockito.when(sharedPrefs.edit()).thenReturn(editor);
         Mockito.when(editor.putString(anyString(),anyString())).thenReturn(editor);
         Mockito.when(editor.commit()).thenReturn(true);
-        Mockito.when(DBHelper.getShared().getDeviceInfo()).thenReturn(deviceInfoEntity);*/
-
-      /*  DBHelper.setConfig(context);
+        Mockito.when(DBHelper.getShared().getDeviceInfo()).thenReturn(deviceInfoEntity);*//*
 
 
+      */
+/*  DBHelper.setConfig(context);
 
 
-        DBHelper.getShared().addDeviceInfo(deviceInfoEntity);*/
+
+
+        DBHelper.getShared().addDeviceInfo(deviceInfoEntity);*//*
+
 
         loginCredentialsRequestEntity.setRequestId("RequestId");
         loginCredentialsRequestEntity.setUsername_type("Username_type");
@@ -308,7 +304,7 @@ public class LoginCredentialsServiceCall {
             });
             //latch.await();
             //Thread.sleep(3000);
-            Timber.e("Success");
+       //     Timber.e("Success");
 
         }
         catch (Exception e)
@@ -1211,3 +1207,4 @@ public class LoginCredentialsServiceCall {
 
 
 }
+*/
