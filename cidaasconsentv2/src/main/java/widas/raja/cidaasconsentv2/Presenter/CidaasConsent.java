@@ -9,7 +9,7 @@ import com.example.cidaasv2.Helper.Entity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
+//import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 
 import widas.raja.cidaasconsentv2.Domain.Controller.Consent.ConsentController;
@@ -38,10 +38,10 @@ public class CidaasConsent {
 
     // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
 
-    public void getConsentDetails(@NonNull final String consentName, final Result<ConsentDetailsResultEntity> consentResult) {
+ /*   public void getConsentDetails(@NonNull final String consentName, final Result<ConsentDetailsResultEntity> consentResult) {
         ConsentController.getShared(context).getConsentDetails(consentName, consentResult);
     }
-
+*/
 
     public void loginAfterConsent(@NonNull final ConsentEntity consentEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
         ConsentController.getShared(context).acceptConsent(consentEntity,loginresult);
@@ -50,7 +50,7 @@ public class CidaasConsent {
     public void getConsentDetailsV2(@NonNull final ConsentDetailsV2RequestEntity consentDetailsV2RequestEntity, final Result<ConsentDetailsV2ResponseEntity> consentResult) {
         if(consentDetailsV2RequestEntity.getRequestId()!=null && !consentDetailsV2RequestEntity.getRequestId().equals("")) {
 
-            Cidaas.getInstance(context).getRequestId(new Result<AuthRequestResponseEntity>() {
+          /*  Cidaas.getInstance(context).getRequestId(new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
                     consentDetailsV2RequestEntity.setRequestId(result.getData().getRequestId());
@@ -61,7 +61,7 @@ public class CidaasConsent {
                 public void failure(WebAuthError error) {
                     consentResult.failure(error);
                 }
-            });
+            });*/
         }
         else
         {

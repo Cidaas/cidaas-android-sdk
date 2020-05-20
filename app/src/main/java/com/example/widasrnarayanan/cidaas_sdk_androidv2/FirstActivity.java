@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.os.Bundle;
@@ -9,7 +10,7 @@ import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
 import com.example.cidaasv2.VerificationV2.data.Entity.Scanned.ScannedEntity;
@@ -124,3 +125,4 @@ public class FirstActivity extends AppCompatActivity {
 
 
 }
+*/

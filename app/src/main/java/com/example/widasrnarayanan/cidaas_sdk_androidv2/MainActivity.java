@@ -15,6 +15,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.CidaasSDKLayout;
 import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
@@ -25,17 +30,8 @@ import com.example.cidaasv2.Interface.ILoader;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
-import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
-import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoEntity;
 import com.example.cidaasv2.Service.Entity.UserLoginInfo.UserLoginInfoResponseEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.AuthenticatedHistory.AuthenticatedHistoryEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
-import com.example.cidaasv2.VerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
-import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
-import com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollPattern;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -49,19 +45,24 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 import widaas.cidaas.rajanarayanan.cidaasfacebookv2.CidaasFacebook;
 import widaas.cidaas.rajanarayanan.cidaasgooglev2.CidaasGoogle;
+import widas.cidaassdkv2.cidaasVerificationV2.View.CidaasVerification;
+import widas.cidaassdkv2.cidaasVerificationV2.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
+import widas.cidaassdkv2.cidaasVerificationV2.data.Entity.Setup.SetupResponse;
+import widas.cidaassdkv2.cidaasVerificationV2.domain.Helper.BiometricHandler.BiometricHandler;
+import widas.cidaassdkv2.cidaasnativev2.View.CidaasNative;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.AuthRequest.AuthRequestResponseEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.ClientInfo.ClientInfoEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.TenantInfo.TenantInfoEntity;
 
 
 public class MainActivity extends AppCompatActivity implements ILoader{
 
     ProgressDialog progressDialog;
      Cidaas cidaas;
+    CidaasNative cidaasNative;
      String requestId;
     CidaasFacebook cidaasFacebook;
     CidaasGoogle cidaasGoogle;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
          cidaas = Cidaas.getInstance(getApplicationContext());
+         cidaasNative =CidaasNative.getInstance(getApplicationContext());
          CidaasSDKLayout.loader=this;
          getFCMToken();
 
@@ -129,8 +131,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     public void configure(View view)
     {
-        Intent intent=new Intent(MainActivity.this,ConfigureActivity.class);
-        startActivity(intent);
+      //  Intent intent=new Intent(MainActivity.this,ConfigureActivity.class);
+        //startActivity(intent);
     }
 
 
@@ -180,10 +182,10 @@ public class MainActivity extends AppCompatActivity implements ILoader{
                     Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
 
 
-                    Intent intent=new Intent(MainActivity.this,SuccessfulLogin.class);
+                    /*Intent intent=new Intent(MainActivity.this,SuccessfulLogin.class);
                     intent.putExtra("sub",result.getSub());
                     intent.putExtra("accessToken",result.getAccess_token());
-                    startActivity(intent);
+                    startActivity(intent);*/
                 }
 
                 @Override
@@ -228,24 +230,35 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             extraParam.put("scope","openid profile email phone offline_access");
             Cidaas.extraParams=extraParam;
 
+           cidaasNative.getRequestId(new Result<AuthRequestResponseEntity>() {
+               @Override
+               public void success(AuthRequestResponseEntity result) {
+                   cidaas.loginWithSocial(getApplication(), result.getData().getRequestId(),"google", null, new Result<AccessTokenEntity>() {
+                       @Override
+                       public void success(AccessTokenEntity result) {
+                           Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
 
-            cidaas.loginWithSocial(this, "google", null, new Result<AccessTokenEntity>() {
-                @Override
-                public void success(AccessTokenEntity result) {
-                    Toast.makeText(MainActivity.this, "Access Token"+result.getAccess_token(), Toast.LENGTH_SHORT).show();
 
-
-                    Intent intent=new Intent(MainActivity.this,SuccessfulLogin.class);
+                  /*  Intent intent=new Intent(MainActivity.this,SuccessfulLogin.class);
                     intent.putExtra("sub",result.getSub());
                     intent.putExtra("accessToken",result.getAccess_token());
-                    startActivity(intent);
-                }
+                    startActivity(intent);*/
+                       }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                       @Override
+                       public void failure(WebAuthError error) {
+                           Toast.makeText(MainActivity.this, "Failure"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                       }
+                   });
+
+               }
+
+               @Override
+               public void failure(WebAuthError error) {
+
+               }
+           });
+
 
          /*   cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
                 @Override
@@ -291,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         String message=cidaas.enableLog();
 
         Toast.makeText(this, ""+message, Toast.LENGTH_SHORT).show();
-        MyApp.getCidaasInstance().getRequestId(new Result<AuthRequestResponseEntity>() {
+        CidaasNative.getInstance(this).getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 requestId=result.getData().getRequestId();
@@ -314,14 +327,27 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     //get ClientInfo
     public void getClientInfo(View view){
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+
+
+        Cidaas.getInstance(this).getLoginURL(new Result<String>() {
+            @Override
+            public void success(String result) {
+                Toast.makeText(MainActivity.this, ""+result, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+     /*   cidaasNative.getRequestId(new Result<AuthRequestResponseEntity>() {
             //cidaas.getRequestId(obj,new Result<String>() {
             @Override
             public void success(AuthRequestResponseEntity requestIdresult) {
 
                // Toast.makeText(MainActivity.this, result.getData().getRequestId(), Toast.LENGTH_SHORT).show();
 
-                cidaas.getClientInfo(requestIdresult.getData().getRequestId(), new Result<ClientInfoEntity>() {
+                cidaasNative.getClientInfo(requestIdresult.getData().getRequestId(), new Result<ClientInfoEntity>() {
                     @Override
                     public void success(ClientInfoEntity result) {
                         Toast.makeText(MainActivity.this, "ClientInfo = "+result.getData().getClient_name(), Toast.LENGTH_SHORT).show();
@@ -342,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             }
         });
 
-
+*/
 
     }
 
@@ -360,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
 
-                        cidaas.setFCMToken(token);
+                       // cidaas.setFCMToken(token);
 
                         CidaasVerification.getInstance(getApplicationContext()).updateFCMToken(token);
 
@@ -376,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     //get Tenant Info
     public void getTenantInfo(View view){
-        cidaas.getTenantInfo(new Result<TenantInfoEntity>() {
+        cidaasNative.getTenantInfo(new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
                 Toast.makeText(MainActivity.this, "Tenenat info = "+result.getData().getTenant_name(), Toast.LENGTH_SHORT).show();
@@ -410,8 +436,19 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     public void ResetPassword(View v)
     {
 
-        Intent intent=new Intent(MainActivity.this,ForgotPassword.class);
-        startActivity(intent);
+      /*  Intent intent=new Intent(MainActivity.this,ForgotPassword.class);
+        startActivity(intent);*/
+      CidaasVerification.getInstance(this).setupSMS(sub, new Result<SetupResponse>() {
+          @Override
+          public void success(SetupResponse result) {
+              Toast.makeText(MainActivity.this, ""+result.getData().getSub(), Toast.LENGTH_SHORT).show();
+          }
+
+          @Override
+          public void failure(WebAuthError error) {
+              Toast.makeText(MainActivity.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+          }
+      });
     }
 
     // redirect To register
@@ -423,8 +460,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
     //Redierct to Login Page
     public void redirectToLoginPage(View view)
     {
-        Intent intent=new Intent(MainActivity.this,LoginActivity.class);
-        startActivity(intent);
+       /* Intent intent=new Intent(MainActivity.this,LoginActivity.class);
+        startActivity(intent);*/
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -451,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
         {
             try
             {
-                cidaas.listenTOTP("");
+                //cidaas.listenTOTP("");
             }
             catch (Exception e){
 
@@ -462,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
 
     //Redirect to Enroll
     public void redirectToEnrollMFA(View view){
-        Intent intent=new Intent(MainActivity.this,EnrollPattern.class);
+       // Intent intent=new Intent(MainActivity.this,EnrollPattern.class);
         //intent.putExtra("sub",sub);
     }
 
@@ -480,7 +517,7 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             }
         });*/
 
-            cidaas.configureFingerprint(MainActivity.this,"sub","",null, new Result<EnrollFingerprintMFAResponseEntity>() {
+          /*  cidaas.configureFingerprint(MainActivity.this,"sub","",null, new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -489,8 +526,8 @@ public class MainActivity extends AppCompatActivity implements ILoader{
             @Override
             public void failure(WebAuthError error) {
 
-            }
-        });
+            }*/
+       // });
     }
 
     @Override

@@ -50,7 +50,6 @@ import widas.cidaassdkv2.cidaasVerificationV2.domain.Controller.ConfigrationFlow
 import widas.cidaassdkv2.cidaasVerificationV2.domain.Controller.ConfigrationFlow.Enroll.EnrollController;
 import widas.cidaassdkv2.cidaasVerificationV2.domain.Controller.ConfigrationFlow.Scanned.ScannedController;
 import widas.cidaassdkv2.cidaasVerificationV2.domain.Controller.Delete.DeleteController;
-import widas.cidaassdkv2.cidaasVerificationV2.domain.Controller.MFASettings.VerificationSettingsController;
 import widas.cidaassdkv2.cidaasVerificationV2.domain.Controller.PendingNotification.PendingNotificationController;
 import widas.cidaassdkv2.cidaasVerificationV2.domain.Controller.Settings.SettingsController;
 
@@ -204,7 +203,7 @@ public class CidaasVerification {
         SettingsController.getShared(context).updateFCMToken(FCMToken);
     }
 
-    public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
+  /*  public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
     {
         VerificationSettingsController.getShared(context).updateFCMToken(sub ,FCMToken, new Result<Object>() {
             @Override
@@ -217,7 +216,7 @@ public class CidaasVerification {
                 LogFile.getShared(context).addFailureLog("Update FCM Token Error" + error.getMessage());
             }
         });
-    }
+    }*/
 
     //------------------------------------------CALL FOR SDK ONLY----------------------------------------------------------------------
 

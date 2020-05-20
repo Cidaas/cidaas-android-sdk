@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -80,3 +81,4 @@ public class ForgotPassword extends AppCompatActivity {
 
     }
 }
+*/

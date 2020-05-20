@@ -16,8 +16,6 @@ android {
         versionCode 1
         versionName "0.0.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-
     }
     buildTypes {
         release {
@@ -28,6 +26,8 @@ android {
         }
 
     }
+
+
     testOptions {
         unitTests.returnDefaultValues = true
         unitTests {
@@ -36,6 +36,11 @@ android {
 
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/test/assets/'] } }
+    buildToolsVersion = '29.0.2'
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 dependencies {

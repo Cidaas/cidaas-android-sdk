@@ -25,7 +25,6 @@ import android.widget.TextView;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Controller.Repository.Login.LoginController;
 import com.example.cidaasv2.Controller.Repository.Login.LogoutController;
-import com.example.cidaasv2.Controller.Repository.RequestId.RequestIdController;
 import com.example.cidaasv2.Helper.CidaasSDKHelper;
 import com.example.cidaasv2.Helper.Entity.SocialAccessTokenEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -35,6 +34,7 @@ import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Genral.FileHelper;
 import com.example.cidaasv2.Helper.Logger.LogFile;
+import com.example.cidaasv2.Helper.pkce.OAuthChallengeGenerator;
 import com.example.cidaasv2.Interface.ICidaasFacebook;
 import com.example.cidaasv2.Interface.ICidaasGoogle;
 import com.example.cidaasv2.Interface.ILoader;
@@ -331,14 +331,6 @@ public class CidaasSDKLayout extends RelativeLayout {
                     loginProperties=result;
 
                     //This is to generate the Code Challenge
-
-                    /////This is for testing purpose
-                    Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
-
-                    if(challengeProperties.size()==0) {
-                        RequestIdController.getShared(GLOBAL_CONTEXT).generateChallenge();
-                    }
-
 
                     LoginController.getShared(GLOBAL_CONTEXT).getLoginURL(DomainURL,result,null, new Result<String>() {
                         @Override
@@ -808,7 +800,7 @@ public class CidaasSDKLayout extends RelativeLayout {
               hideLoader();
               accessTokenCallback.failure(error);
             }
-        },extraParams);
+        });
     }
 
 

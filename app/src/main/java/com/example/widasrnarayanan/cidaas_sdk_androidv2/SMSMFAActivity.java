@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -47,7 +48,8 @@ public class SMSMFAActivity extends AppCompatActivity {
                 intent.putExtra("sub",sub);
                 intent.putExtra("accessToken",authresult.getData().getAccess_token());
                 startActivity(intent);
-                    /*ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
+                    */
+/*ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
                      resumeLoginRequestEntity.setSub(authresult.getData().getSub());
                     resumeLoginRequestEntity.setTrack_id(trackid);
                     resumeLoginRequestEntity.setTrackingCode(authresult.getData().getTrackingCode());
@@ -64,7 +66,8 @@ public class SMSMFAActivity extends AppCompatActivity {
                         public void failure(WebAuthError error) {
                             Toast.makeText(SMSMFAActivity.this, "Login Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    });*/
+                    });*//*
+
 
 
                // Toast.makeText(SMSMFAActivity.this, "Sub"+result.getData().getSub()+" Tracking code = "+result.getData().getTrackingCode(), Toast.LENGTH_SHORT).show();
@@ -78,3 +81,4 @@ public class SMSMFAActivity extends AppCompatActivity {
         Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -15,8 +16,8 @@ import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentia
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseDataEntity;
-import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import MFAListResponseDataEntity;
+import MFAListResponseEntity;
 import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.LoginRequest.LoginRequest;
 import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
@@ -311,7 +312,8 @@ public class MFAListActivity extends AppCompatActivity {
         });
   }
     public void face(View view){
-   /*     cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
+   */
+/*     cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
             @Override
             public void success(MFAListResponseEntity result) {
                 MFAListResponseDataEntity[] data=result.getData();
@@ -356,9 +358,11 @@ public class MFAListActivity extends AppCompatActivity {
                 Toast.makeText(MFAListActivity.this, "Falire MFA", Toast.LENGTH_SHORT).show();
             }
         });
-   */ }
+   *//*
+ }
     public void fingerprint(View view){
-   /*     cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
+   */
+/*     cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
             @Override
             public void success(MFAListResponseEntity result) {
                 MFAListResponseDataEntity[] data=result.getData();
@@ -407,9 +411,11 @@ public class MFAListActivity extends AppCompatActivity {
                 Toast.makeText(MFAListActivity.this, "Falire MFA", Toast.LENGTH_SHORT).show();
             }
         });
-   */ }
+   *//*
+ }
     public void totp(View view){
-     /*   cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
+     */
+/*   cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
             @Override
             public void success(MFAListResponseEntity result) {
                 MFAListResponseDataEntity[] data=result.getData();
@@ -455,9 +461,11 @@ public class MFAListActivity extends AppCompatActivity {
                 Toast.makeText(MFAListActivity.this, "Falire MFA", Toast.LENGTH_SHORT).show();
             }
         });
-  */  }
+  *//*
+  }
     public void voice(View view){
-   /*     cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
+   */
+/*     cidaas.getmfaList(sub, new Result<MFAListResponseEntity>() {
             @Override
             public void success(MFAListResponseEntity result) {
                 MFAListResponseDataEntity[] data=result.getData();
@@ -504,5 +512,7 @@ public class MFAListActivity extends AppCompatActivity {
                 Toast.makeText(MFAListActivity.this, "Falire MFA", Toast.LENGTH_SHORT).show();
             }
         });
-   */ }
+   *//*
+ }
     }
+*/

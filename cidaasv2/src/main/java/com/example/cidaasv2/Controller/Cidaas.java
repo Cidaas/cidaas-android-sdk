@@ -24,7 +24,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.Loaders.ICustomLoader;
-import com.example.cidaasv2.Interface.IOAuthWebLogin;
+/*import com.example.cidaasv2.Interface.IOAuthWebLogin;*/
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricCallback;
 import com.example.cidaasv2.Library.BiometricAuthentication.BiometricEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
@@ -157,7 +157,7 @@ public class Cidaas  {
         AccessTokenController.getShared(context).getAccessToken(refershtoken, result);
     }
 
-    public void getAccessTokenFromSocial(SocialAccessTokenEntity socialAccessTokenEntity, Result<AccessTokenEntity> result) {
+    public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, Result<AccessTokenEntity> result) {
         AccessTokenController.getShared(context).getAccessTokenBySocial(socialAccessTokenEntity, result);
     }
 

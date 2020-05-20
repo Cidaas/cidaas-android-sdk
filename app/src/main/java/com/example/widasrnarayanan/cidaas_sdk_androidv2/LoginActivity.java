@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -120,7 +121,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                      /*      cidaas.getConsentDetails(consentName, new Result<ConsentDetailsResultEntity>() {
+                      */
+/*      cidaas.getConsentDetails(consentName, new Result<ConsentDetailsResultEntity>() {
                                 @Override
                                 public void success(ConsentDetailsResultEntity result) {
                                     Toast.makeText(LoginActivity.this, ""+result.getData().getVersion(), Toast.LENGTH_SHORT).show();
@@ -157,7 +159,8 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
 
-*/
+*//*
+
                         }
                         else  if (error.getErrorMessage().equals("mfa_required")) {
                             //final String sub=((LoginCredentialsErrorDataEntity) error.getError()).getSub();
@@ -344,3 +347,4 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 }
+*/

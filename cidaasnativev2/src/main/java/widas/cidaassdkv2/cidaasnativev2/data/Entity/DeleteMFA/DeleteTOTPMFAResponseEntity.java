@@ -1,22 +1,14 @@
-package com.example.cidaasv2.Service.Entity.MFA.MFAList;
+package widas.cidaassdkv2.cidaasnativev2.data.Entity.DeleteMFA;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class MFAListResponseEntity implements Serializable{
+public class DeleteTOTPMFAResponseEntity implements Serializable {
+
     boolean success;
     int status;
-    MFAListResponseDataEntity[] data;
-
-    public MFAListResponseDataEntity[] getData() {
-        return data;
-    }
-
-    public void setData(MFAListResponseDataEntity[] data) {
-        this.data = data;
-    }
 
     public boolean isSuccess() {
         return success;
@@ -33,6 +25,4 @@ public class MFAListResponseEntity implements Serializable{
     public void setStatus(int status) {
         this.status = status;
     }
-
-
 }

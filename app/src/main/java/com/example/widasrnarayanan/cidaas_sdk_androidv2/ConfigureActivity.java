@@ -1,43 +1,12 @@
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import com.example.cidaasv2.Controller.Cidaas;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.cidaasv2.Helper.AuthenticationType;
-import com.example.cidaasv2.Helper.Entity.FingerPrintEntity;
-import com.example.cidaasv2.Helper.Enums.Result;
-import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.TOTPEntity.TOTPEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Authenticate.AuthenticateResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Delete.DeleteResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.ConfigureRequest.ConfigurationRequest;
-import com.example.cidaasv2.VerificationV2.data.Entity.EndUser.LoginRequest.LoginRequest;
-import com.example.cidaasv2.VerificationV2.data.Entity.Enroll.EnrollResponse;
-import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
-import com.example.cidaasv2.VerificationV2.data.Entity.Setup.SetupResponse;
-import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import timber.log.Timber;
+import widas.cidaassdkv2.cidaasVerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 
 public class ConfigureActivity extends AppCompatActivity {
 
@@ -69,12 +38,12 @@ public class ConfigureActivity extends AppCompatActivity {
 
         }
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("TOTPListener"));
+       // LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("TOTPListener"));
     }
 
 
 
-    public void configureIVR(View view)
+  /*  public void configureIVR(View view)
     {
          CidaasVerification.getInstance(getApplicationContext()).setupIVR(sub, new Result<SetupResponse>() {
              @Override
@@ -305,7 +274,7 @@ public class ConfigureActivity extends AppCompatActivity {
     }
 
     public void authenticatePattern(View view) {
-        /*Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
+Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -345,7 +314,8 @@ public class ConfigureActivity extends AppCompatActivity {
                 Toast.makeText(ConfigureActivity.this, "Fail reqid" + error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-*/
+
+
         LoginRequest loginRequest=LoginRequest.getPasswordlessPatternLoginRequestEntity("RED-1234",sub,"");
 
         CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new Result<LoginCredentialsResponseEntity>() {
@@ -454,7 +424,7 @@ public class ConfigureActivity extends AppCompatActivity {
         });
 
 
-    /* Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
+ Cidaas.getInstance(getApplicationContext()).getRequestId(new Result<AuthRequestResponseEntity>() {
          @Override
          public void success(AuthRequestResponseEntity result) {
              InitiateEntity initiateEntity=new InitiateEntity(sub,result.getData().getRequestId(),UsageType.PASSWORDLESS,AuthenticationType.FINGERPRINT);
@@ -493,7 +463,8 @@ public class ConfigureActivity extends AppCompatActivity {
 
          }
      });
-*/
+
+
 
     }
 
@@ -541,6 +512,6 @@ public class ConfigureActivity extends AppCompatActivity {
     }
 
 
-
+*/
 
 }

@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -32,7 +33,8 @@ public class ResetPasswordCodeConfirmationActivity extends AppCompatActivity {
         String verificationCode=codeTextbox.getText().toString();
 
 
-   /*     cidaas.resetPasswordValidateCode(resetRequestId, verificationCode, new Result<ResetPasswordValidateCodeResponseEntity>() {
+   */
+/*     cidaas.resetPasswordValidateCode(resetRequestId, verificationCode, new Result<ResetPasswordValidateCodeResponseEntity>() {
             @Override
             public void success(ResetPasswordValidateCodeResponseEntity result) {
                 Intent intent=new Intent(ResetPasswordCodeConfirmationActivity.this,ResetNewPasswordActivty.class);
@@ -47,5 +49,7 @@ public class ResetPasswordCodeConfirmationActivity extends AppCompatActivity {
                 Toast.makeText(ResetPasswordCodeConfirmationActivity.this, "Fails"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-   */ }
+   *//*
+ }
 }
+*/

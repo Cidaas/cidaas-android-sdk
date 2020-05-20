@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -54,10 +55,12 @@ public class ConsentUrlActivity extends AppCompatActivity {
                 public void success(ConsentDetailsV2ResponseEntity result) {
                     Toast.makeText(ConsentUrlActivity.this, ""+result.getData().getConsent_name(), Toast.LENGTH_SHORT).show();
 
-                  /*  String titleFor=result.getData().getConsent_name()
+                  */
+/*  String titleFor=result.getData().getConsent_name()
                     title.setText(titleFor);
                     description.setText(((LinkedHashMap) result).get("description").toString());
-                    user_agreement.setText(((LinkedHashMap) result).get("userAgreeText").toString());*/
+                    user_agreement.setText(((LinkedHashMap) result).get("userAgreeText").toString());*//*
+
 
 
                     String titleFor=result.getData().getConsent_name();
@@ -74,16 +77,21 @@ public class ConsentUrlActivity extends AppCompatActivity {
                 }
             });
 
-        /*    cidaas.getConsentDetails(consentName,new Result<ConsentDetailsResultEntity>() {
+        */
+/*    cidaas.getConsentDetails(consentName,new Result<ConsentDetailsResultEntity>() {
 
 
                 @Override
                 public void success(ConsentDetailsResultEntity result) {
 *//*
+*/
+/*
                     String titleFor=((LinkedHashMap) result).get("title").toString();
                     title.setText(titleFor);
                     description.setText(((LinkedHashMap) result).get("description").toString());
                     user_agreement.setText(((LinkedHashMap) result).get("userAgreeText").toString());*//*
+*/
+/*
 
 
                     String titleFor=result.getData().getName();
@@ -100,16 +108,19 @@ public class ConsentUrlActivity extends AppCompatActivity {
                 public void failure(WebAuthError error) {
                     Toast.makeText(ConsentUrlActivity.this, error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });*/
+            });*//*
+
     }
 
 
     public void acceptButtononClick(View view){
-      /*   ConsentEntity consentAcceptRequestEntity=new ConsentEntity(consentName,version,sub,trackid,true);
+      */
+/*   ConsentEntity consentAcceptRequestEntity=new ConsentEntity(consentName,version,sub,trackid,true);
         consentAcceptRequestEntity.setConsentVersion(version);
         consentAcceptRequestEntity.setSub(sub);
         consentAcceptRequestEntity.setConsentName(consentName);
-        consentAcceptRequestEntity.setAccepted(true);*/
+        consentAcceptRequestEntity.setAccepted(true);*//*
+
 
         AcceptConsentV2Entity acceptConsentV2Entity=new AcceptConsentV2Entity(sub,consentId,consentVersionId,trackid);
 
@@ -125,12 +136,15 @@ public class ConsentUrlActivity extends AppCompatActivity {
             }
         });
 
-       /*  cidaas.loginAfterConsent(consentAcceptRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+       */
+/*  cidaas.loginAfterConsent(consentAcceptRequestEntity, new Result<LoginCredentialsResponseEntity>() {
              @Override
              public void success(LoginCredentialsResponseEntity result) {
                  Toast.makeText(ConsentUrlActivity.this, "consent Management is accepted", Toast.LENGTH_SHORT).show();
 
-               *//*  ResumeConsentRequestEntity resumeConsentRequestEntity=new ResumeConsentRequestEntity();
+               *//*
+*/
+/*  ResumeConsentRequestEntity resumeConsentRequestEntity=new ResumeConsentRequestEntity();
 
                  resumeConsentRequestEntity.setName(consentName);
                  resumeConsentRequestEntity.setSub(sub);
@@ -158,14 +172,22 @@ public class ConsentUrlActivity extends AppCompatActivity {
                          }
                      }
                  });*//*
-               *//*  Intent intent=new Intent(ConsentUrlActivity.this,LoginActivity.class);
+*/
+/*
+               *//*
+*/
+/*  Intent intent=new Intent(ConsentUrlActivity.this,LoginActivity.class);
                  startActivity(intent);*//*
+*/
+/*
              }
 
              @Override
              public void failure(WebAuthError error) {
                  Toast.makeText(ConsentUrlActivity.this, "consent Management is Failed", Toast.LENGTH_SHORT).show();
              }
-         });*/
+         });*//*
+
     }
 }
+*/

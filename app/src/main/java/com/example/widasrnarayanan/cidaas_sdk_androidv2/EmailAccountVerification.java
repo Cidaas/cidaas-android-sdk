@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -43,7 +44,8 @@ public class EmailAccountVerification extends AppCompatActivity {
     public void ButtonClickVerifyEmail(View view){
         try {
             String verificationCode = verificationCodeTextbox.getText().toString();
-            /*if (accvid != null && accvid!="") {
+            */
+/*if (accvid != null && accvid!="") {
                 cidaas.verifyAccount( verificationCode, accvid,new Result<RegisterUserAccountVerifyResponseEntity>() {
                     @Override
                     public void success(RegisterUserAccountVerifyResponseEntity result) {
@@ -67,7 +69,8 @@ public class EmailAccountVerification extends AppCompatActivity {
                 }
             });
 
-            }*/
+            }*//*
+
 
             if (statusId != null && !statusId.equals("") && exchangeId != null && !exchangeId.equals("")) {
                 CidaasVerification.getInstance(getApplicationContext()).enrollIVR(verificationCode, sub, exchangeId, new Result<EnrollResponse>() {
@@ -90,3 +93,4 @@ public class EmailAccountVerification extends AppCompatActivity {
         }
     }
 }
+*/

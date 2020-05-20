@@ -80,7 +80,7 @@ public class FileHelper {
                 outputStream.close();
                 inputStream.close();
             }catch (IOException e){
-                e.printStackTrace();
+                 //e.printStackTrace();
             }
             Document xml=parseXML(outputStream.toByteArray());
             XPathFactory xPathfactory = XPathFactory.newInstance();

@@ -1,3 +1,4 @@
+/*
 package com.example.cidaasv2.Interface;
 
 
@@ -28,7 +29,7 @@ import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceMFARes
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.IVR.InitiateIVRMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
+import MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
@@ -49,9 +50,11 @@ import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetup
 import java.io.File;
 import java.util.HashMap;
 
+*/
 /**
  * Created by widasrnarayanan on 16/1/18.
- */
+ *//*
+
 
 public interface IOAuthWebLogin {
 
@@ -70,10 +73,12 @@ public interface IOAuthWebLogin {
     //Login methods
     void loginWithCredentials(String requestId, LoginEntity loginEntity, Result<LoginCredentialsResponseEntity> result);
 
-  /*  //Consent Details
+  */
+/*  //Consent Details
     void getConsentDetails(String consentName, Result<ConsentDetailsResultEntity> consentResult);
     void loginAfterConsent(ConsentEntity consentEntity,Result<LoginCredentialsResponseEntity> loginresult);
-*/
+*//*
+
     //MFA
     void getMFAList(String sub,Result<MFAListResponseEntity> mfaresult);
 
@@ -161,3 +166,4 @@ void changePassword(String sub, ChangePasswordRequestEntity changePasswordReques
 
 
 }
+*/

@@ -20,6 +20,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+    buildToolsVersion = '29.0.2'
 
 }
 
@@ -34,6 +39,10 @@ dependencies {
 
     //Cidaas-Core
     implementation project(':cidaasv2')
+
+    // common codec for TOTP Generation
+    implementation 'commons-codec:commons-codec:1.10'
+
 
     //For Retrofit Call
     implementation 'com.squareup.retrofit2:converter-jackson:2.8.1'

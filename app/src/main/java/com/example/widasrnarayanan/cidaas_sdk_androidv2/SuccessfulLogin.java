@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -72,10 +73,12 @@ public class SuccessfulLogin extends AppCompatActivity {
 
     public void ConfigIVR(View view){
 
-     /*   Intent intent=new Intent(SuccessfulLogin.this,IVRConfigActivity.class);
+     */
+/*   Intent intent=new Intent(SuccessfulLogin.this,IVRConfigActivity.class);
         intent.putExtra("sub",sub);
         intent.putExtra("accessToken",accessToken);
-        startActivity(intent);*/
+        startActivity(intent);*//*
+
 
 
         cidaas.configureSMS(sub, new Result<SetupSMSMFAResponseEntity>() {
@@ -94,3 +97,4 @@ public class SuccessfulLogin extends AppCompatActivity {
     }
 
 }
+*/

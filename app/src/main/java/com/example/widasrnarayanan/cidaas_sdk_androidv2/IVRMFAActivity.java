@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -55,7 +56,8 @@ public class IVRMFAActivity extends AppCompatActivity {
         });
 
 
-       /* cidaas.loginWithIVR(statusId, verificationCode, new Result<AuthenticateIVRResponseEntity>() {
+       */
+/* cidaas.loginWithIVR(statusId, verificationCode, new Result<AuthenticateIVRResponseEntity>() {
             @Override
             public void success(AuthenticateIVRResponseEntity result) {
                 if(trackid!=null && trackid!=""){
@@ -93,6 +95,8 @@ public class IVRMFAActivity extends AppCompatActivity {
                 Toast.makeText(IVRMFAActivity.this, "Result Failure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-       */ Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();
+       *//*
+ Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();
     }
 }
+*/

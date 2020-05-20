@@ -1,11 +1,11 @@
-package com.example.cidaasv2.Service.Entity.MFA.DeleteMFA;
+package widas.cidaassdkv2.cidaasnativev2.data.Entity.DeleteMFA;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class DeleteSmartPushMFAResponseEntity implements Serializable {
+public class DeletePatternMFAResponseEntity implements Serializable {
 
     boolean success;
     int status;

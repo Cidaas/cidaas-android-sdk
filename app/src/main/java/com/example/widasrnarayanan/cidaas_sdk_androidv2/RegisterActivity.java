@@ -9,28 +9,30 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.cidaasv2.Controller.Cidaas;
-import com.example.cidaasv2.Helper.Entity.RegistrationCustomFieldEntity;
-import com.example.cidaasv2.Helper.Entity.RegistrationEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
-import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
-import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
-import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountVerifyResponseEntity;
-import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import com.example.cidaasv2.Service.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import widas.cidaassdkv2.cidaasnativev2.View.CidaasNative;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.AuthRequest.AuthRequestResponseEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.Deduplication.DeduplicationResponseEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.Register.RegistrationCustomFieldEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.Register.RegistrationEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
 
 public class RegisterActivity extends AppCompatActivity {
 
     //Declare Global Variables
     Cidaas cidaas;
+    CidaasNative cidaasNative;
     String requestId;
 
     @Override
@@ -40,21 +42,27 @@ public class RegisterActivity extends AppCompatActivity {
 
         //Intialise variables
         cidaas=new Cidaas(this);
+        cidaasNative=new CidaasNative(this);
 
 
-        //Call requestId and get registeration Details
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+    }
+
+
+    public void getRegisterFileds(View view)
+    {
+        //Call requestId and get registration Details
+        cidaasNative.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 //todo On Success Of Request id Call registration service
                 requestId=result.getData().getRequestId();
-                cidaas.getRegistrationFields(result.getData().getRequestId(), "en_US", new Result<RegistrationSetupResponseEntity>() {
+                cidaasNative.getRegistrationFields(result.getData().getRequestId(), "en_US", new Result<RegistrationSetupResponseEntity>() {
                     @Override
                     public void success(RegistrationSetupResponseEntity result) {
 
                         RegistrationSetupResultDataEntity[] registrationSetupResultDataEntity=result.getData();
 
-                       ScrollView sv = new ScrollView(getApplicationContext());
+                        ScrollView sv = new ScrollView(getApplicationContext());
                         sv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
                         RelativeLayout relativeLayout=findViewById(R.id.relativeRegister);
@@ -69,12 +77,12 @@ public class RegisterActivity extends AppCompatActivity {
                         linearLayout.setHorizontalScrollBarEnabled(true);
                         linearLayout.setVerticalScrollbarPosition(1);
                         relativeLayout.addView(linearLayout);
-                       // sv.addView(relativeLayout);
+                        // sv.addView(relativeLayout);
                         for (RegistrationSetupResultDataEntity registrationSetupResultData:registrationSetupResultDataEntity
-                             ) {
+                        ) {
 
 
-                        //----Create a TextView------
+                            //----Create a TextView------
                        /* EditText editText = new EditText(getApplicationContext());
                              //editText.setText("This TextView is dynamically created");
                             editText.setHint(registrationSetupResultData.getFieldKey());
@@ -97,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         //---Create a layout param for the layout-----------------
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                       // addContentView(linearLayout, layoutParams);
+                        // addContentView(linearLayout, layoutParams);
                         Toast.makeText(RegisterActivity.this,"Get Registration Setup"+ result.getStatus(), Toast.LENGTH_SHORT).show();
 
                     }
@@ -163,7 +171,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         registrationEntity.setCustomFields(customFileds);
 
-        cidaas.registerUser(requestId, registrationEntity, new Result<RegisterNewUserResponseEntity>() {
+        cidaasNative.registerUser(requestId, registrationEntity, new Result<RegisterNewUserResponseEntity>() {
             @Override
             public void success(RegisterNewUserResponseEntity result) {
                 Toast.makeText(RegisterActivity.this, "Register Successfully"+result.getData().getSuggested_action()+result.getData().getNext_token(), Toast.LENGTH_SHORT).show();
@@ -171,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if(result.getData().getSuggested_action().equalsIgnoreCase("DEDUPLICATION"))
                 {
                    //cidaas.loginWithCredentials();
-                    cidaas.getDeduplicationDetails(result.getData().getTrackId(), new Result<DeduplicationResponseEntity>() {
+                    cidaasNative.getDeduplicationDetails(result.getData().getTrackId(), new Result<DeduplicationResponseEntity>() {
                         @Override
                         public void success(DeduplicationResponseEntity result) {
                             Toast.makeText(RegisterActivity.this, ""+result.getData().getEmail(), Toast.LENGTH_SHORT).show();

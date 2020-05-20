@@ -40,7 +40,7 @@ public class OAuthChallengeGenerator {
             challenge = Base64.encodeToString(digest,Base64.URL_SAFE|Base64.NO_WRAP|Base64.NO_PADDING);
             return challenge;
         } catch (Exception e) {
-            e.printStackTrace();
+            
         }
         return challenge;
     }

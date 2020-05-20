@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.os.Bundle;
@@ -70,3 +71,4 @@ public class IVRConfigActivity extends AppCompatActivity {
 
     }
 }
+*/

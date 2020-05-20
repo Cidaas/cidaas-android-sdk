@@ -6,19 +6,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.UserinfoEntity;
 
-import androidx.appcompat.app.AppCompatActivity;
+import widas.cidaassdkv2.cidaasnativev2.View.CidaasNative;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 
 public class ChangeOldPasswordActivity extends AppCompatActivity {
 
     Cidaas cidaas;
+    CidaasNative cidaasNative;
     String sub,accessToken;
     EditText oldpass,newpass,Confirmpass;
 
@@ -28,7 +31,7 @@ public class ChangeOldPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_old_password);
 
         cidaas=new Cidaas(this);
-
+        cidaasNative=new CidaasNative(this);
         oldpass=findViewById(R.id.oldpasswordText);
         newpass=findViewById(R.id.newpasswordtext);
         Confirmpass=findViewById(R.id.confirmtextbox);
@@ -61,7 +64,7 @@ public class ChangeOldPasswordActivity extends AppCompatActivity {
                         changePasswordRequestEntity.setNew_password(newpassword);
                         changePasswordRequestEntity.setOld_password(oldpassword);
 
-                        cidaas.changePassword(sub,changePasswordRequestEntity, new Result<ChangePasswordResponseEntity>() {
+                        cidaasNative.changePassword(sub,changePasswordRequestEntity, new Result<ChangePasswordResponseEntity>() {
                             @Override
                             public void success(ChangePasswordResponseEntity result) {
                                 Toast.makeText(ChangeOldPasswordActivity.this, "Suceess", Toast.LENGTH_SHORT).show();

@@ -29,7 +29,7 @@ public class NativeURLHelper {
     String deduplicationList="/users-srv/deduplication/info/";
     String registerdeduplication="/users-srv/deduplication/register/";
 
-    String registrationSetup="/registration-callSetup-srv/public/list?acceptlanguage=";
+    String registrationSetup="/registration-setup-srv/public/list?acceptlanguage=";
 
     String registerNewUserurl="/users-srv/register";
 

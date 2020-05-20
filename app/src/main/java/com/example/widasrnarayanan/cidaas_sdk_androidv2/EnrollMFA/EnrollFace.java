@@ -35,7 +35,6 @@ import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Enums.UsageType;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
-import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -50,6 +49,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import timber.log.Timber;
+import widas.cidaassdkv2.cidaasVerificationV2.View.CidaasVerification;
+import widas.cidaassdkv2.cidaasnativev2.View.CidaasNative;
+import widas.cidaassdkv2.cidaasnativev2.data.Entity.AuthRequest.AuthRequestResponseEntity;
 
 public class EnrollFace extends AppCompatActivity {
 
@@ -237,7 +239,7 @@ public class EnrollFace extends AppCompatActivity {
             mBackgroundThread.start();
             mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
         } catch (Exception e) {
-            e.printStackTrace();
+         //e.printStackTrace();
 
         }
     }
@@ -250,7 +252,7 @@ public class EnrollFace extends AppCompatActivity {
                 mBackgroundThread = null;
                 mBackgroundHandler = null;
             } catch (Exception e) {
-                e.printStackTrace();
+             //e.printStackTrace();
             }
         }
     }
@@ -259,11 +261,13 @@ public class EnrollFace extends AppCompatActivity {
     public void onClickButton(View view)
     {
         final Cidaas cidaas=Cidaas.getInstance(getApplicationContext());
+        final CidaasNative cidaasNative=CidaasNative.getInstance(getApplicationContext());
+        final CidaasVerification cidaasVerification=CidaasVerification.getInstance(getApplicationContext());
 
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
 
 
-        cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
+        cidaasNative.getRequestId(new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
                 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -288,7 +292,7 @@ public class EnrollFace extends AppCompatActivity {
                 });*/
 
 
-               cidaas.configureFaceRecognition(convertImageJpegForFace(bitmap), ssub,"",1, new Result<EnrollFaceMFAResponseEntity>() {
+             /*  cidaasVerification.configureFaceRecognition(convertImageJpegForFace(bitmap), ssub,"",1, new Result<EnrollFaceMFAResponseEntity>() {
                    @Override
                    public void success(EnrollFaceMFAResponseEntity result) {
                        Toast.makeText(EnrollFace.this, "Face Configured Successfully "+result.getData().getSub(), Toast.LENGTH_SHORT).show();
@@ -298,7 +302,7 @@ public class EnrollFace extends AppCompatActivity {
                    public void failure(WebAuthError error) {
                        Toast.makeText(EnrollFace.this, ""+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                    }
-               });
+               });*/
             }
 
             @Override
@@ -501,7 +505,7 @@ public class EnrollFace extends AppCompatActivity {
                 manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
             chars = manager.getCameraCharacteristics(cameraDevice.getId());
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+         //e.printStackTrace();
         }
         Range<Integer>[] ranges = chars.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
 
@@ -554,7 +558,7 @@ public class EnrollFace extends AppCompatActivity {
                 }
             }, null);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+         //e.printStackTrace();
         }
     }
 
@@ -574,7 +578,7 @@ public class EnrollFace extends AppCompatActivity {
             }
             manager.openCamera(cameraId, stateCallback, null);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+         //e.printStackTrace();
         }
        // Log.e(TAG, "openCamera X");
     }
@@ -587,7 +591,7 @@ public class EnrollFace extends AppCompatActivity {
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), mcaptureCallBack, mBackgroundHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+         //e.printStackTrace();
         }
     }
 

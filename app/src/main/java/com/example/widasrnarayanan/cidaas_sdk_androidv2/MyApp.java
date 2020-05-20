@@ -6,6 +6,7 @@ import android.content.Context;
 import com.example.cidaasv2.Controller.Cidaas;
 
 import timber.log.Timber;
+import widas.cidaassdkv2.cidaasnativev2.View.CidaasNative;
 
 
 /**
@@ -15,7 +16,7 @@ import timber.log.Timber;
 public class MyApp extends Application {
     public static Context appContext;
     public static Cidaas cidaas;
-
+    public static CidaasNative cidaasNative;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -23,6 +24,7 @@ public class MyApp extends Application {
         appContext = this;
         appContext = getApplicationContext();
         cidaas = Cidaas.getInstance(appContext);
+        cidaasNative = CidaasNative.getInstance(appContext);
 
     }
 
@@ -30,6 +32,13 @@ public class MyApp extends Application {
     public static Cidaas getCidaasInstance() {
         if (cidaas == null) {
             cidaas = Cidaas.getInstance(appContext);
+        }
+        return cidaas;
+    }
+
+    public static Cidaas getCidaasNativeInstance() {
+        if (cidaasNative == null) {
+            cidaasNative = CidaasNative.getInstance(appContext);
         }
         return cidaas;
     }

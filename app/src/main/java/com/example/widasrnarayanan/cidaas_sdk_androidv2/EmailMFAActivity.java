@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -55,3 +56,4 @@ public class EmailMFAActivity extends AppCompatActivity {
         Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();
     }
 }
+*/

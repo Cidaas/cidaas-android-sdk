@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -94,13 +95,18 @@ trackid=intent.getStringExtra("trackid");
 
             }
         });
-       /* cidaas.authenticateBackupCodeMFA(statusId, verificationCode, new Result<AuthenticateBackupCodeResponseEntity>() {
+       */
+/* cidaas.authenticateBackupCodeMFA(statusId, verificationCode, new Result<AuthenticateBackupCodeResponseEntity>() {
             @Override
             public void success(AuthenticateBackupCodeResponseEntity result) {
-               *//* Intent intent=new Intent(BackupCodeMFAActivity.this,LoginActivity.class);
+               *//*
+*/
+/* Intent intent=new Intent(BackupCodeMFAActivity.this,LoginActivity.class);
                 intent.putExtra("isMFASuccessfull",result.isSuccess());
                 intent.putExtra("trackid",trackid);
                 startActivity(intent);*//*
+*/
+/*
 
                 if(trackid!=null && trackid!=""){
                     ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
@@ -133,6 +139,8 @@ trackid=intent.getStringExtra("trackid");
                 Toast.makeText(BackupCodeMFAActivity.this, "Result Failure"+error.ErrorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-       */ Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();
+       *//*
+ Toast.makeText(this, verificationCode, Toast.LENGTH_SHORT).show();
     }
 }
+*/

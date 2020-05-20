@@ -15,8 +15,6 @@ import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.cidaasv2.VerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
-import com.example.cidaasv2.VerificationV2.presentation.View.CidaasVerification;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.ConfigureActivity;
 import com.example.widasrnarayanan.cidaas_sdk_androidv2.R;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -25,6 +23,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import timber.log.Timber;
+import widas.cidaassdkv2.cidaasVerificationV2.View.CidaasVerification;
+import widas.cidaassdkv2.cidaasVerificationV2.data.Entity.Settings.PendingNotification.PushEntity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public MyFirebaseMessagingService() {

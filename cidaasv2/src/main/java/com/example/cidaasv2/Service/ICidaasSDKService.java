@@ -3,8 +3,6 @@ package com.example.cidaasv2.Service;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.Service.Entity.DocumentScanner.DocumentScannerServiceResultEntity;
-import com.example.cidaasv2.Service.Entity.MFA.DeleteMFA.DeleteMFAResponseEntity;
-import com.example.cidaasv2.Service.Entity.MFA.MFAList.MFAListResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity;
 import com.example.cidaasv2.Service.Entity.NotificationEntity.GetPendingNotification.NotificationEntity;
@@ -20,7 +18,6 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -360,14 +357,14 @@ public interface ICidaasSDKService {
     Call<UserprofileResponseEntity> getInternalUserProfileInfo(@Url String url, @HeaderMap Map<String,String>headers);
 
 
-    //Get MFA list
+    /*//Get MFA list
     @GET
     Call<MFAListResponseEntity> getmfaList(@Url String url,@HeaderMap Map<String,String>headers, @Query("sub") String userid, @Query("userDeviceId") String userDeviceId, @Query("common_configs") boolean common_configs);
 
     //Get MFA list
     @GET
     Call<MFAListResponseEntity> getmfaList(@Url String url,@HeaderMap Map<String,String>headers, @Body String email);
-
+*/
     @GET
     Call<ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url,@HeaderMap Map<String,String>headers, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);
 

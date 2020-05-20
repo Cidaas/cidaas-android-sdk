@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA;
 
 import android.app.Activity;
@@ -147,3 +148,4 @@ public class FaceDetection extends Activity {
     }
 
 }
+*/

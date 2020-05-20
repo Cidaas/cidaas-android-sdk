@@ -66,22 +66,19 @@ public class CidaasNativeService {
         okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(20, TimeUnit.SECONDS)
                 .connectTimeout(100, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request originalRequest = chain.request();
-                        Request requestWithUserAgent = originalRequest.newBuilder()
-                                .header(HEADER_USER_AGENT, createCustomUserAgent(originalRequest))
-                                /*.addHeader(HEADER_LOCATION_LATITUDE,getLat())
-                                .header(HEADER_LOCATION_LONGITUDE,getLong())*/
-                                .build();
-                        for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
-                            //    Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
-                            DBHelper.getShared().setUserAgent("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
-                        }
-
-                        return chain.proceed(requestWithUserAgent);
+                .addNetworkInterceptor(chain -> {
+                    Request originalRequest = chain.request();
+                    Request requestWithUserAgent = originalRequest.newBuilder()
+                            .header(HEADER_USER_AGENT, createCustomUserAgent(originalRequest))
+                            /*.addHeader(HEADER_LOCATION_LATITUDE,getLat())
+                            .header(HEADER_LOCATION_LONGITUDE,getLong())*/
+                            .build();
+                    for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
+                        //    Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
+                        DBHelper.getShared().setUserAgent("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                     }
+
+                    return chain.proceed(requestWithUserAgent);
                 })
                 .build();
         return okHttpClient;

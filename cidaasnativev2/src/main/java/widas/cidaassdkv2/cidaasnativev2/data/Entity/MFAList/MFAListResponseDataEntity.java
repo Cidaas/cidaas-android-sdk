@@ -1,4 +1,4 @@
-package com.example.cidaasv2.Service.Entity.MFA.MFAList;
+package widas.cidaassdkv2.cidaasnativev2.data.Entity.MFAList;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

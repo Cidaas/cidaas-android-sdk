@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -80,7 +81,8 @@ public class TOTPMFA extends AppCompatActivity {
                     public void success(LoginCredentialsResponseEntity authresult) {
                         if(trackid!=null && trackid!=""){
                             ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
-                    /*resumeLoginRequestEntity.setSub(authresult.getData().getSub());
+                    */
+/*resumeLoginRequestEntity.setSub(authresult.getData().getSub());
                     resumeLoginRequestEntity.setTrack_id(trackid);
                     resumeLoginRequestEntity.setTrackingCode(authresult.getData().getTrackingCode());
                     resumeLoginRequestEntity.setVerification_type("SMS");
@@ -100,7 +102,8 @@ public class TOTPMFA extends AppCompatActivity {
                             Toast.makeText(TOTPMFA.this, "Login Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-*/
+*//*
+
                         }
                         else
                         {
@@ -126,3 +129,4 @@ public class TOTPMFA extends AppCompatActivity {
     }
 
 }
+*/

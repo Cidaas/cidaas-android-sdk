@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA;
 
 import android.Manifest;
@@ -39,10 +40,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
+import widas.cidaassdkv2.cidaasVerificationV2.View.CidaasVerification;
+import widas.cidaassdkv2.cidaasnativev2.View.CidaasNative;
 
 public class EnrollPattern extends AppCompatActivity {
 
     Cidaas cidaas;
+    CidaasNative cidaasNative;
+    CidaasVerification cidaasVerification;
     String sub,accessToken,trackId,code;
 
     public String FCMTOKENFORAUTH="";
@@ -51,6 +56,8 @@ public class EnrollPattern extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_pattern);
         cidaas=Cidaas.getInstance(this);
+        cidaasNative=CidaasNative.getInstance(this);
+        cidaasVerification=CidaasVerification.getInstance(this);
 
         Intent intent=getIntent();
         sub=intent.getStringExtra("sub");
@@ -110,7 +117,7 @@ public void enrollPattern(View view)
 
     try{
 
-       cidaas.configurePatternRecognition("RED[1,2,3,4]", sub, "", new Result<EnrollPatternMFAResponseEntity>() {
+       cidaasVerification.configurePattern("RED[1,2,3,4]", sub, "", new Result<EnrollPatternMFAResponseEntity>() {
            @Override
            public void success(EnrollPatternMFAResponseEntity result) {
                Toast.makeText(EnrollPattern.this, "Sucess", Toast.LENGTH_SHORT).show();
@@ -131,6 +138,7 @@ public void enrollPattern(View view)
 }
 
 
+*/
 /*public void FIDO(View view)
 {
     cidaas.getRequestId(new Result<AuthRequestResponseEntity>() {
@@ -168,7 +176,8 @@ public void enrollPattern(View view)
 
         }
     });
-}*/
+}*//*
+
 
 
 
@@ -192,7 +201,8 @@ public void enrollPattern(View view)
 
     public void SetupSmartPush(View view)
     {
-     /*  cidaas.setupSmartPushMFA(sub, new Result<SetupSmartPushMFAResponseEntity>() {
+     */
+/*  cidaas.setupSmartPushMFA(sub, new Result<SetupSmartPushMFAResponseEntity>() {
             @Override
             public void success(SetupSmartPushMFAResponseEntity result) {
                 Toast.makeText(EnrollPattern.this, "Success push", Toast.LENGTH_SHORT).show();
@@ -203,7 +213,8 @@ public void enrollPattern(View view)
                 Toast.makeText(EnrollPattern.this, "Fails push "+error.ErrorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-*/
+*//*
+
 
      cidaas.configureSmartPush(sub,"", new Result<EnrollSmartPushMFAResponseEntity>() {
          @Override
@@ -221,6 +232,7 @@ public void enrollPattern(View view)
 
     public void EnrollSmartPush(View view){
 
+*/
 /*
         cidaas.enrollSmartPushMFA(enrollSmartPushMFARequestEntity, new Result<EnrollSmartPushMFAResponseEntity>() {
             @Override
@@ -233,7 +245,8 @@ public void enrollPattern(View view)
                 Toast.makeText(EnrollPattern.this, "Enroll failure", Toast.LENGTH_SHORT).show();
             }
         });
-   */ }
+   *//*
+ }
     public void AuthenticateSmartPush(View view){
 
 
@@ -332,7 +345,8 @@ try {
 catch (Exception ec){
     Toast.makeText(this, "Test"+ec, Toast.LENGTH_SHORT).show();
 }
-   /* cidaas.enrollFaceMFA(enrollFaceMFARequestEntity, new Result<EnrollFaceMFAResponseEntity>() {
+   */
+/* cidaas.enrollFaceMFA(enrollFaceMFARequestEntity, new Result<EnrollFaceMFAResponseEntity>() {
         @Override
         public void success(EnrollFaceMFAResponseEntity result) {
             Toast.makeText(EnrollPattern.this, "Enroll Sucessfully" + result, Toast.LENGTH_SHORT).show();
@@ -343,7 +357,8 @@ catch (Exception ec){
             Toast.makeText(EnrollPattern.this, "Enroll failure", Toast.LENGTH_SHORT).show();
         }
     });
-*/
+*//*
+
     }
     public void AuthenticateFace(View view){
         final String userdeviceID="7557f73c-8ea8-4cee-979f-4609878894aa";
@@ -523,3 +538,4 @@ catch (Exception e)
 
     }
 }
+*/

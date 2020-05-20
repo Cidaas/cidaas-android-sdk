@@ -1,3 +1,4 @@
+/*
 package com.example.widasrnarayanan.cidaas_sdk_androidv2;
 
 import android.content.Intent;
@@ -78,7 +79,8 @@ public class Smartpush extends AppCompatActivity {
                          // resumeLoginRequestEntity.setTrackingCode(result.getData().getTrackingCode());
                          resumeLoginRequestEntity.setVerificationType("SMARTPUSH");
                          resumeLoginRequestEntity.setUsageType("PASSWORDLESS_AUTHENTICATION");
-                   /* cidaas.resumeLogin(resumeLoginRequestEntity, new Result<AccessTokenEntity>() {
+                   */
+/* cidaas.resumeLogin(resumeLoginRequestEntity, new Result<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
                             Toast.makeText(Smartpush.this, ""+result.getAccess_token(), Toast.LENGTH_SHORT).show();
@@ -93,7 +95,8 @@ public class Smartpush extends AppCompatActivity {
                             Toast.makeText(Smartpush.this, "Login Failed"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-*/
+*//*
+
                      }
                      else
                      {
@@ -120,3 +123,4 @@ public class Smartpush extends AppCompatActivity {
 
     }
 }
+*/

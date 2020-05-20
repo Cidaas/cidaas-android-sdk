@@ -134,7 +134,7 @@ public class CidaasGoogleV2 implements GoogleApiClient.OnConnectionFailedListene
             localAccessTokenEntityResult.failure(WebAuthError.getShared(activity).googleError());
         }
         } catch (Exception e) {
-            e.printStackTrace();
+         //e.printStackTrace();
         }
     }
 

@@ -136,7 +136,7 @@ public class LogFile {
                             } catch (Exception e) {
                                 // TODO Auto-generated catch block
                                 Timber.d(e.getMessage());
-                                e.printStackTrace();
+                                 //e.printStackTrace();
                             }
                         }
                         else
@@ -159,7 +159,7 @@ public class LogFile {
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             Timber.d(e.getMessage());
-                            e.printStackTrace();
+                             //e.printStackTrace();
                         }
                     }
 
