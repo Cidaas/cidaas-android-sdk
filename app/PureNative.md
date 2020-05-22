@@ -45,6 +45,21 @@ The steps here will guide you through setting up and managing authentication and
 <!--te-->
 
 
+
+#### Initialisation
+
+The first step of integrating cidaas sdk With Native UI Feature is the initialisation process.
+```java
+
+CidaasNative cidaasNative = CidaasNative.getInstance(your Activity Context);
+
+or
+
+CidaasNative cidaasNative =new CidaasNative(your Activity Context); 
+
+```
+
+
 #### Getting Request Id
 
 First, You have to  get RequestId and use this in your subsequent calls. Server provides a unique Id based on urls configured for your application. Henceforth, in all requests like login, registration, you have to pass requestId, which is utilized to identify your client between two consecutive independant calls. To get the requestId, call
