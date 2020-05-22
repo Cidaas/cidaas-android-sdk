@@ -28,7 +28,7 @@ public class ChangePasswordControllerTest {
 
     @Before
     public void setUp() {
-        context = RuntimeEnvironment.systemContext;
+        context = RuntimeEnvironment.application;
         changePasswordController=new ChangePasswordController(context);
     }
 
@@ -67,7 +67,7 @@ public class ChangePasswordControllerTest {
     }
 
     @Test
-    public void testChangePasswordFalies() throws Exception {
+    public void testChangePasswordFailes() throws Exception {
 
         ChangePasswordRequestEntity changePasswordRequestEntity=new ChangePasswordRequestEntity();
         changePasswordRequestEntity.setAccess_token("Access_Token");

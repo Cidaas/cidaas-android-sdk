@@ -173,10 +173,10 @@ public class LoginController {
                                      @NonNull final Result<LoginCredentialsResponseEntity> result) {
         String methodName = "LoginController :continuePasswordless()";
         try {
-            if (resumeLoginRequestEntity.getClient_id() != null && !resumeLoginRequestEntity.getClient_id().equals("") &&
-                    resumeLoginRequestEntity.getSub() != null && !resumeLoginRequestEntity.getSub().equals("") &&
-                    resumeLoginRequestEntity.getTrackingCode() != null && !resumeLoginRequestEntity.getTrackingCode().equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
+            if (isNotEmpty(resumeLoginRequestEntity.getClient_id()) &&
+                    isNotEmpty(resumeLoginRequestEntity.getSub()) &&
+                    isNotEmpty(resumeLoginRequestEntity.getTrackingCode()) &&
+                    isNotEmpty(baseurl)) {
 
                 //Done Service call
                 LoginService.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {

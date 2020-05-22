@@ -33,7 +33,12 @@ import com.example.cidaasv2.Service.Scanned.ScannedResponseEntity;
 import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
+
+import org.apache.commons.lang3.StringUtils;
+
 import timber.log.Timber;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class SmartPushConfigurationController {
 
@@ -433,10 +438,10 @@ public class SmartPushConfigurationController {
 
             if(baseurl!=null && !baseurl.equals("") && accessToken!=null && !accessToken.equals("")) {
 
-                if (enrollSmartPushMFARequestEntity.getUserDeviceId() != null && !enrollSmartPushMFARequestEntity.getUserDeviceId().equals("") &&
-                        enrollSmartPushMFARequestEntity.getStatusId() != null && !enrollSmartPushMFARequestEntity.getStatusId().equals("") &&
-                        enrollSmartPushMFARequestEntity.getClient_id() != null && !enrollSmartPushMFARequestEntity.getClient_id().equals("") &&
-                        enrollSmartPushMFARequestEntity.getVerifierPassword() != null && !enrollSmartPushMFARequestEntity.getVerifierPassword().equals("")) {
+                if (isNotEmpty(enrollSmartPushMFARequestEntity.getUserDeviceId()) &&
+                        isNotEmpty(enrollSmartPushMFARequestEntity.getStatusId()) &&
+                        isNotEmpty(enrollSmartPushMFARequestEntity.getClient_id()) &&
+                        isNotEmpty(enrollSmartPushMFARequestEntity.getVerifierPassword())) {
 
                     // call Enroll Service
                     SmartPushVerificationService.getShared(context).enrollSmartPush(baseurl, accessToken, enrollSmartPushMFARequestEntity,
