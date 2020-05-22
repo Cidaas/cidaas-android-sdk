@@ -45,8 +45,8 @@ public class InitiateTOTPMFARequestEntityTest {
     @Test
     public void setUsagePass()
     {
-        initiateTOTPMFARequestEntity.setUsagePass("UsagePass");
-        assertTrue(initiateTOTPMFARequestEntity.getUsagePass().equals("UsagePass"));
+        initiateTOTPMFARequestEntity.setUsage_pass("UsagePass");
+        assertTrue(initiateTOTPMFARequestEntity.getUsage_pass().equals("UsagePass"));
     }
 
 

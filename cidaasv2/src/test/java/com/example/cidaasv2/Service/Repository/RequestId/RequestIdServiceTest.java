@@ -6,6 +6,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 
@@ -68,7 +69,7 @@ public class RequestIdServiceTest {
         loginProperties.put("DomainURL","");
         loginProperties.put("ClientId","");
         loginProperties.put("RedirectURL","RedirectURL");
-        requestIdService.getRequestID(loginProperties,null,null, new Result<AuthRequestResponseEntity>() {
+        requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -81,25 +82,6 @@ public class RequestIdServiceTest {
         });
     }
 
-   /* @Test
-    public void testGetRequestIDNotnull() throws Exception {
-        Dictionary<String,String> loginProperties=new Hashtable<>();
-        loginProperties.put("DomainURL","DomainURL");
-        loginProperties.put("ClientId","ClientId");
-        loginProperties.put("RedirectURL","RedirectURL");
-        requestIdService.getRequestID(loginProperties,null,null, new Result<AuthRequestResponseEntity>() {
-            @Override
-            public void success(AuthRequestResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-    }
-*/
 
     @Test
     public void testGetRequestIDnull() throws Exception {
@@ -107,7 +89,7 @@ public class RequestIdServiceTest {
         loginProperties.put("DomainURL","");
         loginProperties.put("ClientId","");
         loginProperties.put("RedirectURL","RedirectURL");
-        requestIdService.getRequestID(loginProperties,null,null, new Result<AuthRequestResponseEntity>() {
+        requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -130,14 +112,14 @@ public class RequestIdServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
         Dictionary<String,String> loginProperties=new Hashtable<>();
         loginProperties.put("DomainURL","localhost:234235");
         loginProperties.put("ClientId","");
         loginProperties.put("RedirectURL","RedirectURL");
 
-        requestIdService.getRequestID(loginProperties, null,null, new Result<AuthRequestResponseEntity>() {
+        requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
             @Override
             public void success(AuthRequestResponseEntity result) {
 
@@ -151,8 +133,5 @@ public class RequestIdServiceTest {
 
 
     }
-
-
 }
 
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

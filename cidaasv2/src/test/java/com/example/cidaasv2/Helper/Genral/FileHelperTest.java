@@ -38,7 +38,7 @@ Context context;
        // resources = RuntimeEnvironment.application.getResources();
         assetManager=context.getAssets();
 
-        RuntimeEnvironment.application.getAssets().open("Cidaas.xml");
+        RuntimeEnvironment.application.getAssets().open("Cidaastest.xml");
         DBHelper.setConfig(context);
     }
 
@@ -136,7 +136,7 @@ Context context;
 
             @Override
             public void failure(WebAuthError error) {
-                Assert.assertEquals("Error",error.ErrorMessage);
+                Assert.assertEquals("Error", error.getErrorMessage());
             }
         });
     }
@@ -152,10 +152,8 @@ Context context;
 
             @Override
             public void failure(WebAuthError error) {
-             Assert.assertEquals("One of the property is missing.",error.ErrorMessage);
+                Assert.assertEquals("DomainURL or ClientId or Redirect is missing.", error.getErrorMessage());
             }
         });
     }
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

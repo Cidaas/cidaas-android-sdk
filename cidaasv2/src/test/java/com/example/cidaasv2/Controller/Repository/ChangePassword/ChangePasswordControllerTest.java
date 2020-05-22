@@ -29,7 +29,7 @@ public class ChangePasswordControllerTest {
 
     @Before
     public void setUp() {
-        context= RuntimeEnvironment.application;
+        context = RuntimeEnvironment.systemContext;
         changePasswordController=new ChangePasswordController(context);
     }
 
@@ -54,7 +54,7 @@ public class ChangePasswordControllerTest {
         changePasswordRequestEntity.setNew_password("Password");
         changePasswordRequestEntity.setIdentityId("IdentityId");
         changePasswordRequestEntity.setSub("Sub");
-        changePasswordController.changePassword("baseurl", changePasswordRequestEntity, new Result<ChangePasswordResponseEntity>() {
+        changePasswordController.changePassword(changePasswordRequestEntity, new Result<ChangePasswordResponseEntity>() {
             @Override
             public void success(ChangePasswordResponseEntity result) {
 
@@ -75,7 +75,7 @@ public class ChangePasswordControllerTest {
         changePasswordRequestEntity.setOld_password("Old_Password");
         changePasswordRequestEntity.setConfirm_password("Password");
         changePasswordRequestEntity.setSub("Sub");
-        changePasswordController.changePassword("baseurl", changePasswordRequestEntity, new Result<ChangePasswordResponseEntity>() {
+        changePasswordController.changePassword(changePasswordRequestEntity, new Result<ChangePasswordResponseEntity>() {
             @Override
             public void success(ChangePasswordResponseEntity result) {
 
@@ -88,5 +88,3 @@ public class ChangePasswordControllerTest {
         });
     }
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

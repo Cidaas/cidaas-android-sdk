@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 import com.example.cidaasv2.util.AuthenticationAPI;
@@ -36,7 +37,7 @@ public class TenantServiceCall {
     @Before
     public void setUp() throws Exception{
         context= Mockito.mock(Context.class);
-        service=new CidaassdkService();
+        service = new CidaassdkService(context);
         MockitoAnnotations.initMocks(this);
         tenantService=new TenantService(context);
        // mockAPI=new AuthenticationAPI();
@@ -72,9 +73,9 @@ public class TenantServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            tenantService.getTenantInfo(removeLastChar(Cidaas.baseurl), new Result<TenantInfoEntity>() {
+            tenantService.getTenantInfo(removeLastChar(CidaasHelper.baseurl), new Result<TenantInfoEntity>() {
                 @Override
                 public void success(TenantInfoEntity result) {
 
@@ -131,9 +132,9 @@ public class TenantServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            tenantService.getTenantInfo(removeLastChar(Cidaas.baseurl), new Result<TenantInfoEntity>() {
+            tenantService.getTenantInfo(removeLastChar(CidaasHelper.baseurl), new Result<TenantInfoEntity>() {
                 @Override
                 public void success(TenantInfoEntity result) {
 
@@ -190,9 +191,9 @@ public class TenantServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            tenantService.getTenantInfo(removeLastChar(Cidaas.baseurl), new Result<TenantInfoEntity>() {
+            tenantService.getTenantInfo(removeLastChar(CidaasHelper.baseurl), new Result<TenantInfoEntity>() {
                 @Override
                 public void success(TenantInfoEntity result) {
 
@@ -241,9 +242,9 @@ public class TenantServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            tenantService.getTenantInfo(removeLastChar(Cidaas.baseurl), new Result<TenantInfoEntity>() {
+            tenantService.getTenantInfo(removeLastChar(CidaasHelper.baseurl), new Result<TenantInfoEntity>() {
                 @Override
                 public void success(TenantInfoEntity result) {
 
@@ -293,9 +294,9 @@ public class TenantServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            tenantService.getTenantInfo(removeLastChar(Cidaas.baseurl), new Result<TenantInfoEntity>() {
+            tenantService.getTenantInfo(removeLastChar(CidaasHelper.baseurl), new Result<TenantInfoEntity>() {
                 @Override
                 public void success(TenantInfoEntity result) {
 

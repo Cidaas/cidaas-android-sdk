@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternResponseEntity;
@@ -53,7 +54,7 @@ public class PatternVerificationServiceCallTest {
     @Before
     public void setUp() throws Exception{
         context= Mockito.mock(Context.class);
-        service=new CidaassdkService();
+        service = new CidaassdkService(context);
         MockitoAnnotations.initMocks(this);
         patternVerificationService=new PatternVerificationService(context);
 
@@ -103,16 +104,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"), new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -166,16 +166,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),null ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"), new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -232,16 +232,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"), new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -298,15 +297,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"), new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -355,14 +354,14 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"), new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -412,14 +411,14 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"),new InitiatePatternMFARequestEntity(),deviceInfoEntity ,new Result<InitiatePatternMFAResponseEntity>() {
+            patternVerificationService.initiatePattern(loginProperties.get("DomainURL"), new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
                 @Override
                 public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -475,16 +474,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.setupPattern(loginProperties.get("DomainURL"),"AccessToken",new SetupPatternMFARequestEntity(),deviceInfoEntity ,new Result<SetupPatternMFAResponseEntity>() {
+            patternVerificationService.setupPattern(loginProperties.get("DomainURL"), "AccessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
                 @Override
                 public void success(SetupPatternMFAResponseEntity result) {
 
@@ -538,17 +537,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            patternVerificationService.setupPattern(loginProperties.get("DomainURL"),"AccessToken",new SetupPatternMFARequestEntity(),null ,new Result<SetupPatternMFAResponseEntity>() {
+            patternVerificationService.setupPattern(loginProperties.get("DomainURL"), "AccessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
                 @Override
                 public void success(SetupPatternMFAResponseEntity result) {
 
@@ -605,17 +603,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-
-            patternVerificationService.setupPattern(loginProperties.get("DomainURL"),"AccessToken",new SetupPatternMFARequestEntity(),deviceInfoEntity ,new Result<SetupPatternMFAResponseEntity>() {
+            patternVerificationService.setupPattern(loginProperties.get("DomainURL"), "AccessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
                 @Override
                 public void success(SetupPatternMFAResponseEntity result) {
 
@@ -672,16 +668,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            patternVerificationService.setupPattern(loginProperties.get("DomainURL"),"AccessToken",new SetupPatternMFARequestEntity(),deviceInfoEntity ,new Result<SetupPatternMFAResponseEntity>() {
+            patternVerificationService.setupPattern(loginProperties.get("DomainURL"), "AccessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
                 @Override
                 public void success(SetupPatternMFAResponseEntity result) {
 
@@ -730,15 +725,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.setupPattern(loginProperties.get("DomainURL"),"AccessToken",new SetupPatternMFARequestEntity(),deviceInfoEntity ,new Result<SetupPatternMFAResponseEntity>() {
+            patternVerificationService.setupPattern(loginProperties.get("DomainURL"), "AccessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
                 @Override
                 public void success(SetupPatternMFAResponseEntity result) {
 
@@ -788,15 +783,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.setupPattern(loginProperties.get("DomainURL"),"AccessToken",new SetupPatternMFARequestEntity(),deviceInfoEntity ,new Result<SetupPatternMFAResponseEntity>() {
+            patternVerificationService.setupPattern(loginProperties.get("DomainURL"), "AccessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
                 @Override
                 public void success(SetupPatternMFAResponseEntity result) {
 
@@ -852,16 +847,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -916,17 +911,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity,null ,new Result<ScannedResponseEntity>() {
+            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -983,17 +977,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-
-            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1050,15 +1042,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1107,15 +1099,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1165,15 +1157,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity,deviceInfoEntity ,new Result<ScannedResponseEntity>() {
+            patternVerificationService.scannedPattern(loginProperties.get("DomainURL"), scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
                 @Override
                 public void success(ScannedResponseEntity result) {
 
@@ -1229,16 +1221,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs",new EnrollPatternMFARequestEntity(),deviceInfoEntity ,new Result<EnrollPatternMFAResponseEntity>() {
+            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
                 @Override
                 public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -1355,17 +1347,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs",new EnrollPatternMFARequestEntity(),null ,new Result<EnrollPatternMFAResponseEntity>() {
+            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
                 @Override
                 public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -1422,17 +1413,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-
-            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs",new EnrollPatternMFARequestEntity(),deviceInfoEntity ,new Result<EnrollPatternMFAResponseEntity>() {
+            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
                 @Override
                 public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -1489,16 +1478,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs",new EnrollPatternMFARequestEntity(),deviceInfoEntity ,new Result<EnrollPatternMFAResponseEntity>() {
+            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
                 @Override
                 public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -1547,15 +1535,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs",new EnrollPatternMFARequestEntity(),deviceInfoEntity ,new Result<EnrollPatternMFAResponseEntity>() {
+            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
                 @Override
                 public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -1605,15 +1593,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs",new EnrollPatternMFARequestEntity(),deviceInfoEntity ,new Result<EnrollPatternMFAResponseEntity>() {
+            patternVerificationService.enrollPattern(loginProperties.get("DomainURL"), "accs", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
                 @Override
                 public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -1668,16 +1656,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(),deviceInfoEntity ,new Result<AuthenticatePatternResponseEntity>() {
+            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
                 @Override
                 public void success(AuthenticatePatternResponseEntity result) {
 
@@ -1731,16 +1719,16 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(),null ,new Result<AuthenticatePatternResponseEntity>() {
+            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
                 @Override
                 public void success(AuthenticatePatternResponseEntity result) {
 
@@ -1797,16 +1785,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(),deviceInfoEntity ,new Result<AuthenticatePatternResponseEntity>() {
+            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
                 @Override
                 public void success(AuthenticatePatternResponseEntity result) {
 
@@ -1863,15 +1850,15 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(),deviceInfoEntity ,new Result<AuthenticatePatternResponseEntity>() {
+            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
                 @Override
                 public void success(AuthenticatePatternResponseEntity result) {
 
@@ -1920,14 +1907,14 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(),deviceInfoEntity ,new Result<AuthenticatePatternResponseEntity>() {
+            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
                 @Override
                 public void success(AuthenticatePatternResponseEntity result) {
 
@@ -1977,14 +1964,14 @@ public class PatternVerificationServiceCallTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(),deviceInfoEntity ,new Result<AuthenticatePatternResponseEntity>() {
+            patternVerificationService.authenticatePattern(loginProperties.get("DomainURL"), new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
                 @Override
                 public void success(AuthenticatePatternResponseEntity result) {
 

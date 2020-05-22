@@ -2,7 +2,7 @@ package com.example.cidaasv2.Controller;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Helper.Entity.ConsentEntity;
+
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
 import com.example.cidaasv2.Helper.Entity.PasswordlessEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
@@ -45,6 +45,8 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.Dictionary;
 import java.util.HashMap;
 
+import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
+
 @RunWith(RobolectricTestRunner.class)
 public class CidaasTest {
 
@@ -55,10 +57,9 @@ public class CidaasTest {
     @Before
     public void setUp() {
 
-        context= RuntimeEnvironment.application;
+        context = RuntimeEnvironment.application;
         DBHelper.setConfig(context);
-        cidaas=new Cidaas(context);
-
+        cidaas = new Cidaas(context);
 
 
     }
@@ -66,9 +67,9 @@ public class CidaasTest {
     @Test
     public void testGetInstance() throws Exception {
 
-       Cidaas result = Cidaas.getInstance(context);
+        Cidaas result = Cidaas.getInstance(context);
 
-        Assert.assertTrue(result instanceof Cidaas );
+        Assert.assertTrue(result instanceof Cidaas);
 
     }
 
@@ -76,12 +77,12 @@ public class CidaasTest {
     public void testGetTenantInfo() throws Exception {
 
 
-        cidaas=Cidaas.getInstance(context);
+        cidaas = Cidaas.getInstance(context);
 
         cidaas.getTenantInfo(new Result<TenantInfoEntity>() {
             @Override
             public void success(TenantInfoEntity result) {
-                 Assert.assertEquals("Tenant Name",result.getData().getTenant_name());
+                Assert.assertEquals("Tenant Name", result.getData().getTenant_name());
             }
 
             @Override
@@ -110,9 +111,9 @@ public class CidaasTest {
         });
     }
 
-        @Test
+    @Test
     public void testGetClientInfo() throws Exception {
-     cidaas.getClientInfo("RequestId", new Result<ClientInfoEntity>() {
+        cidaas.getClientInfo("RequestId", new Result<ClientInfoEntity>() {
             @Override
             public void success(ClientInfoEntity result) {
 
@@ -125,26 +126,6 @@ public class CidaasTest {
         });
     }
 
-
-
-    @Test
-    public void testCheckSavedProperties() throws Exception {
-
-
-      //  when(FileHelper.getShared(context)).thenReturn(fileHelper);
-
-        cidaas.checkSavedProperties(new Result<Dictionary<String, String>>() {
-            @Override
-            public void success(Dictionary<String, String> result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-    }
 
     @Test
     public void testIsENABLE_PKCE() throws Exception {
@@ -175,16 +156,13 @@ public class CidaasTest {
             put("usage_pass", "usage_pass");
         }});
 
-        Assert.assertEquals("usage_pass",cidaas.getInstanceId());
+        Assert.assertEquals("usage_pass", cidaas.getInstanceId());
     }
 
     @Test
     public void testGetremoteMessageNull() throws Exception {
-       // Cidaas.setremoteMessage(new HashMap<String, String>());
-
-        Assert.assertEquals(null,cidaas.getInstanceId());
+        Assert.assertEquals(null, cidaas.getInstanceId());
     }
-
 
 
     @Test
@@ -200,39 +178,15 @@ public class CidaasTest {
     }
 
 
-
-
     @Test
     public void testLoginWithCredentials() throws Exception {
 
-        LoginEntity loginEntity=new LoginEntity();
+        LoginEntity loginEntity = new LoginEntity();
         loginEntity.setPassword("Password");
         loginEntity.setUsername("Username");
         loginEntity.setUsername_type("UsernameType");
 
         cidaas.loginWithCredentials("requestId", loginEntity, new Result<LoginCredentialsResponseEntity>() {
-            @Override
-            public void success(LoginCredentialsResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-    }
-
-    @Test
-    public void testGetConsentDetails() throws Exception {
-
-        cidaas.getConsentDetails("consentName", null);
-    }
-
-    @Test
-    public void testLoginAfterConsent() throws Exception {
-
-        cidaas.loginAfterConsent(new ConsentEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -393,17 +347,17 @@ public class CidaasTest {
 
     @Test
     public void testLoginWithIVR() throws Exception {
-       cidaas.loginWithIVR(new PasswordlessEntity(), new Result<InitiateIVRMFAResponseEntity>() {
-           @Override
-           public void success(InitiateIVRMFAResponseEntity result) {
+        cidaas.loginWithIVR(new PasswordlessEntity(), new Result<InitiateIVRMFAResponseEntity>() {
+            @Override
+            public void success(InitiateIVRMFAResponseEntity result) {
 
-           }
+            }
 
-           @Override
-           public void failure(WebAuthError error) {
+            @Override
+            public void failure(WebAuthError error) {
 
-           }
-       });
+            }
+        });
     }
 
     @Test
@@ -452,12 +406,6 @@ public class CidaasTest {
 
             }
         });
-    }
-
-    @Test
-    public void testVerifyBackupcode() throws Exception {
-
-        cidaas.verifyBackupcode("code", "statusId", null);
     }
 
     @Test
@@ -539,7 +487,7 @@ public class CidaasTest {
     @Test
     public void testConfigureFingerprint() throws Exception {
 
-        cidaas.configureFingerprint(context,"" ,"",null, new Result<EnrollFingerprintMFAResponseEntity>() {
+        cidaas.configureFingerprint(context, "", "", null, new Result<EnrollFingerprintMFAResponseEntity>() {
             @Override
             public void success(EnrollFingerprintMFAResponseEntity result) {
 
@@ -555,7 +503,7 @@ public class CidaasTest {
     @Test
     public void testLoginWithFingerprint() throws Exception {
 
-        cidaas.loginWithFingerprint(context,new PasswordlessEntity(),null, new Result<LoginCredentialsResponseEntity>() {
+        cidaas.loginWithFingerprint(context, new PasswordlessEntity(), null, new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -570,13 +518,13 @@ public class CidaasTest {
 
     @Test
     public void testVerifyFingerprint() throws Exception {
-        cidaas.verifyFingerprint(context,"statusId", null,null);
+        cidaas.verifyFingerprint(context, "statusId", null, null);
     }
 
     @Test
     public void testConfigureSmartPush() throws Exception {
 
-        cidaas.configureSmartPush("sub","" , new Result<EnrollSmartPushMFAResponseEntity>() {
+        cidaas.configureSmartPush("sub", "", new Result<EnrollSmartPushMFAResponseEntity>() {
             @Override
             public void success(EnrollSmartPushMFAResponseEntity result) {
 
@@ -604,6 +552,7 @@ public class CidaasTest {
             }
         });
     }
+
     @Test
     public void testVerifySmartPush() throws Exception {
 
@@ -623,7 +572,7 @@ public class CidaasTest {
     @Test
     public void testConfigureTOTP() throws Exception {
 
-        cidaas.configureTOTP("sub","" ,new Result<EnrollTOTPMFAResponseEntity>() {
+        cidaas.configureTOTP("sub", "", new Result<EnrollTOTPMFAResponseEntity>() {
             @Override
             public void success(EnrollTOTPMFAResponseEntity result) {
 
@@ -697,7 +646,7 @@ public class CidaasTest {
     @Test
     public void testVerifyVoice() throws Exception {
 
-      //  cidaas.verifyVoice(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "statusId", null);
+        //  cidaas.verifyVoice(new File(getClass().getResource("/com/example/cidaasv2/Controller/PleaseReplaceMeWithTestFile.txt").getFile()), "statusId", null);
     }
 
     @Test
@@ -768,7 +717,7 @@ public class CidaasTest {
 
     @Test
     public void testGetDeduplicationDetails() throws Exception {
-       cidaas.getDeduplicationDetails("trackId", null);
+        cidaas.getDeduplicationDetails("trackId", null);
     }
 
     @Test
@@ -833,7 +782,7 @@ public class CidaasTest {
 
     @Test
     public void testResetPassword() throws Exception {
-        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        ResetPasswordEntity resetPasswordEntity = new ResetPasswordEntity();
         resetPasswordEntity.setConfirmPassword("Password");
         resetPasswordEntity.setPassword("Password");
         resetPasswordEntity.setExchangeId("ExchangeID");
@@ -854,7 +803,7 @@ public class CidaasTest {
 
     @Test
     public void testResetPasswordNull() throws Exception {
-        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        ResetPasswordEntity resetPasswordEntity = new ResetPasswordEntity();
         resetPasswordEntity.setConfirmPassword("ConfirmPassword");
         resetPasswordEntity.setPassword("Password");
         resetPasswordEntity.setExchangeId("ExchangeID");
@@ -875,7 +824,7 @@ public class CidaasTest {
 
     @Test
     public void testResetPasswordCase2() throws Exception {
-        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        ResetPasswordEntity resetPasswordEntity = new ResetPasswordEntity();
         resetPasswordEntity.setConfirmPassword("");
         resetPasswordEntity.setPassword("");
         resetPasswordEntity.setExchangeId("");
@@ -897,7 +846,7 @@ public class CidaasTest {
 
     @Test
     public void testResetPasswordCase3() throws Exception {
-        ResetPasswordEntity resetPasswordEntity=new ResetPasswordEntity();
+        ResetPasswordEntity resetPasswordEntity = new ResetPasswordEntity();
         resetPasswordEntity.setConfirmPassword("Pass");
         resetPasswordEntity.setPassword("Pass");
         resetPasswordEntity.setExchangeId("");
@@ -915,8 +864,6 @@ public class CidaasTest {
             }
         });
     }
-
-
 
 
     @Test
@@ -963,48 +910,14 @@ public class CidaasTest {
     }
 
 
-
-
-
     @Test
     public void testLoginWithFIDO() throws Exception {
-               cidaas.loginWithFIDO(null,null, null);
+        cidaas.loginWithFIDO(null, null, null);
     }
-
-    @Test
-    public void testGetLoginURL() throws Exception {
-
-        cidaas.getLoginURL("");
-    }
-
-
 
     @Test
     public void testGetLoginURL3() throws Exception {
 
         cidaas.getLoginURL("DomainUrl", "ClientId", "RedirectURL", "ClientSecret", null);
     }
-
-
-
-    @Test
-    public void testResume() throws Exception {
-
-
-        cidaas.logincallback=new Result<AccessTokenEntity>() {
-            @Override
-            public void success(AccessTokenEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        };
-        cidaas.handleToken("code");
-    }
-
-
 }
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoDataEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
@@ -51,7 +52,7 @@ public class TenantServiceTest {
     @Before
     public void setUp() throws Exception{
         context= RuntimeEnvironment.application;
-        service=new CidaassdkService();
+        service = new CidaassdkService(context);
         MockitoAnnotations.initMocks(this);
         tenantService=new TenantService(context);
         mockAPI=new AuthenticationAPI();
@@ -78,7 +79,7 @@ public class TenantServiceTest {
 
             @Override
             public void failure(WebAuthError error) {
-                Timber.e(error.ErrorMessage);
+                Timber.e(error.getErrorMessage());
             }
         });
     }
@@ -96,7 +97,7 @@ public class TenantServiceTest {
             @Override
             public void failure(WebAuthError error) {
 
-                Timber.e(error.ErrorMessage);
+                Timber.e(error.getErrorMessage());
             }
         });
     }
@@ -135,7 +136,7 @@ public class TenantServiceTest {
             @Override
             public void failure(WebAuthError error) {
 
-                Timber.e(error.ErrorMessage);
+                Timber.e(error.getErrorMessage());
             }
         });
     }
@@ -225,7 +226,7 @@ public class TenantServiceTest {
         };
         server.setDispatcher(dispatcher);
 
-        Cidaas.baseurl="https://"+server.getHostName()+":2716/";
+            CidaasHelper.baseurl = "https://" + server.getHostName() + ":2716/";
         //server.start();
 
 
@@ -272,7 +273,7 @@ public class TenantServiceTest {
 
             mockAPI.getDomain();
             mockAPI.willReturnTenant();
-            Cidaas.baseurl=removeLastChar(mockAPI.getDomain());
+            CidaasHelper.baseurl = removeLastChar(mockAPI.getDomain());
 
          //  tenantService.getTenantInfo();
 
@@ -333,7 +334,7 @@ public class TenantServiceTest {
             };
             server.setDispatcher(dispatcher);
 
-            Cidaas.baseurl="https://"+server.getHostName()+":4006/";
+            CidaasHelper.baseurl = "https://" + server.getHostName() + ":4006/";
 
             tenantService.getTenantInfo("localhost:4006", new Result<TenantInfoEntity>() {
                 @Override
@@ -393,9 +394,9 @@ public class TenantServiceTest {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-           tenantService.getTenantInfo(removeLastChar(Cidaas.baseurl), new Result<TenantInfoEntity>() {
+            tenantService.getTenantInfo(removeLastChar(CidaasHelper.baseurl), new Result<TenantInfoEntity>() {
                @Override
                public void success(TenantInfoEntity result) {
                    latch.countDown();
@@ -412,8 +413,7 @@ public class TenantServiceTest {
             Thread.sleep(3000);
 
 
-
-            // final String responsebody=stringresponse(new OkHttpClient(),Cidaas.baseurl+"public-srv/tenantinfo/basic");
+            // final String responsebody=stringresponse(new OkHttpClient(),CidaasHelper.baseurl+"public-srv/tenantinfo/basic");
 
 
 

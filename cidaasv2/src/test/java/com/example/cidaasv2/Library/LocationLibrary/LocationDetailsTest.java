@@ -3,12 +3,15 @@ package com.example.cidaasv2.Library.LocationLibrary;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -36,13 +39,14 @@ public class LocationDetailsTest {
     public void testGetShared() throws Exception {
         when(shared.getLocation()).thenReturn(null);
 
-        Context context = mock(Context.class);
+        mContext = mock(Context.class);
 
-        when(context.checkPermission(eq(Manifest.permission.WRITE_EXTERNAL_STORAGE),anyInt(),anyInt())).thenReturn(
+        when(mContext.checkPermission(eq(Manifest.permission.WRITE_EXTERNAL_STORAGE), anyInt(), anyInt())).thenReturn(
                 PackageManager.PERMISSION_GRANTED);
 
-        LocationDetails result = LocationDetails.getShared(null);
-        Assert.assertEquals(new LocationDetails(null, "string"), result);
+        LocationDetails locationDetail1 = LocationDetails.getShared(mContext);
+        LocationDetails locationDetail2 = LocationDetails.getShared(mContext);
+        Assert.assertEquals(locationDetail2, locationDetail1);
     }
 
     @Test
@@ -61,7 +65,7 @@ public class LocationDetailsTest {
         when(shared.getLocation()).thenReturn(null);
 
         String result = locationDetails.getLatitude();
-        Assert.assertEquals("replaceMeWithExpectedResult", result);
+        Assert.assertEquals("", result);
     }
 
     @Test
@@ -69,24 +73,19 @@ public class LocationDetailsTest {
         when(shared.getLocation()).thenReturn(null);
 
         String result = locationDetails.getLongitude();
-        Assert.assertEquals("replaceMeWithExpectedResult", result);
+        Assert.assertEquals("", result);
     }
 
     @Test
     public void testGetBearing() throws Exception {
         float result = locationDetails.getBearing();
-        Assert.assertEquals(0f, result);
+        Assert.assertEquals(0.0, result, 0.0);
     }
 
     @Test
     public void testCanGetLocation() throws Exception {
         boolean result = locationDetails.canGetLocation();
-        Assert.assertEquals(true, result);
-    }
-
-    @Test
-    public void testShowSettingsAlert() throws Exception {
-        locationDetails.showSettingsAlert();
+        Assert.assertEquals(false, result);
     }
 
     @Test

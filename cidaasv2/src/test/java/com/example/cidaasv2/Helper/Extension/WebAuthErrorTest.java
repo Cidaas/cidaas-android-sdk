@@ -14,13 +14,13 @@ import org.robolectric.RuntimeEnvironment;
 @RunWith(RobolectricTestRunner.class)
 public class WebAuthErrorTest {
 
-    Context context;
+    private Context context;
     @Mock
     Object error;
-   
-    WebAuthError shared;
 
-    WebAuthError webAuthError;
+    private WebAuthError shared;
+
+    private WebAuthError webAuthError;
 
     @Before
     public void setUp() {
@@ -37,74 +37,74 @@ public class WebAuthErrorTest {
     }
 
     @Test
-    public void testFileNotFoundException() throws Exception {
-        WebAuthError result = webAuthError.fileNotFoundException();
+    public void testFileNotFoundException() {
+        WebAuthError result = webAuthError.fileNotFoundException("testFileNotFoundException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
-    public void testNoContentInFileException() throws Exception {
-        WebAuthError result = webAuthError.noContentInFileException();
+    public void testNoContentInFileException() {
+        WebAuthError result = webAuthError.noContentInFileException("testNoContentInFileException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testPropertyMissingException() throws Exception {
-        WebAuthError result = webAuthError.propertyMissingException("WebError Testing");
+        WebAuthError result = webAuthError.propertyMissingException("WebError Testing", "testPropertyMissingException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testServiceFailureException() throws Exception {
-        WebAuthError result = webAuthError.serviceCallFailureException(0, "errorMessage", 0, "error",null);
+        WebAuthError result = webAuthError.serviceCallFailureException(0, "errorMessage", "testServiceFailureException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testLoginURLMissingException() throws Exception {
-        WebAuthError result = webAuthError.loginURLMissingException();
+        WebAuthError result = webAuthError.loginURLMissingException("testLoginURLMissingException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testRedirectURLMissingException() throws Exception {
-        WebAuthError result = webAuthError.redirectURLMissingException();
+        WebAuthError result = webAuthError.redirectURLMissingException("testRedirectURLMissingException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testUserCancelledException() throws Exception {
-        WebAuthError result = webAuthError.userCancelledException();
+        WebAuthError result = webAuthError.userCancelledException("testUserCancelledException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testCodeNotFoundException() throws Exception {
-        WebAuthError result = webAuthError.codeNotFoundException();
+        WebAuthError result = webAuthError.codeNotFoundException("testCodeNotFoundException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testEmptyCallbackException() throws Exception {
-        WebAuthError result = webAuthError.emptyCallbackException();
+        WebAuthError result = webAuthError.emptyCallbackException("testEmptyCallbackException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testNoUserFoundException() throws Exception {
-        WebAuthError result = webAuthError.noUserFoundException();
+        WebAuthError result = webAuthError.noUserFoundException("testNoUserFoundException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testDeviceVerificationFailureException() throws Exception {
-        WebAuthError result = webAuthError.deviceVerificationFailureException();
+        WebAuthError result = webAuthError.deviceVerificationFailureException("testDeviceVerificationFailureException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 
     @Test
     public void testCustomException() throws Exception {
-        WebAuthError result = webAuthError.customException(0, "errorMessage", 0);
+        WebAuthError result = webAuthError.customException(0, "errorMessage", "testCustomException");
         Assert.assertTrue( result instanceof WebAuthError);
     }
 

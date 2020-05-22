@@ -6,6 +6,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
@@ -100,7 +101,7 @@ public class SmartPushVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -165,7 +166,7 @@ public class SmartPushVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -231,7 +232,7 @@ public class SmartPushVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -297,7 +298,7 @@ public class SmartPushVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -365,7 +366,7 @@ public class SmartPushVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();

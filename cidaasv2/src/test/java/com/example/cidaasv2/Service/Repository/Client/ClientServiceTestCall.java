@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 
@@ -34,12 +35,9 @@ public class ClientServiceTestCall {
     @Before
     public void setUp() throws Exception{
         context= Mockito.mock(Context.class);
-        service=new CidaassdkService();
+        service = new CidaassdkService(null);
         MockitoAnnotations.initMocks(this);
         clientService=new ClientService(context);
-        // mockAPI=new AuthenticationAPI();
-
-
     }
 
     @Test
@@ -75,9 +73,9 @@ public class ClientServiceTestCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            clientService.getClientInfo("requestId",removeLastChar(Cidaas.baseurl), new Result<ClientInfoEntity>() {
+            clientService.getClientInfo("requestId", removeLastChar(CidaasHelper.baseurl), new Result<ClientInfoEntity>() {
                 @Override
                 public void success(ClientInfoEntity result) {
 
@@ -134,9 +132,9 @@ public class ClientServiceTestCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            clientService.getClientInfo("requestId",removeLastChar(Cidaas.baseurl), new Result<ClientInfoEntity>() {
+            clientService.getClientInfo("requestId", removeLastChar(CidaasHelper.baseurl), new Result<ClientInfoEntity>() {
                 @Override
                 public void success(ClientInfoEntity result) {
 
@@ -193,9 +191,9 @@ public class ClientServiceTestCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            clientService.getClientInfo("requestId",removeLastChar(Cidaas.baseurl), new Result<ClientInfoEntity>() {
+            clientService.getClientInfo("requestId", removeLastChar(CidaasHelper.baseurl), new Result<ClientInfoEntity>() {
                 @Override
                 public void success(ClientInfoEntity result) {
 
@@ -244,9 +242,9 @@ public class ClientServiceTestCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            clientService.getClientInfo("requestId",removeLastChar(Cidaas.baseurl), new Result<ClientInfoEntity>() {
+            clientService.getClientInfo("requestId", removeLastChar(CidaasHelper.baseurl), new Result<ClientInfoEntity>() {
                 @Override
                 public void success(ClientInfoEntity result) {
 
@@ -296,9 +294,9 @@ public class ClientServiceTestCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            clientService.getClientInfo("requestId",removeLastChar(Cidaas.baseurl), new Result<ClientInfoEntity>() {
+            clientService.getClientInfo("requestId", removeLastChar(CidaasHelper.baseurl), new Result<ClientInfoEntity>() {
                 @Override
                 public void success(ClientInfoEntity result) {
 
@@ -372,7 +370,7 @@ public class ClientServiceTestCall {
             };
             server.setDispatcher(dispatcher);
 
-            Cidaas.baseurl="https://"+server.getHostName()+":203452/";
+            CidaasHelper.baseurl = "https://" + server.getHostName() + ":203452/";
 
             clientService.getClientInfo("req","localhost:2007", new Result<ClientInfoEntity>() {
                 @Override

@@ -101,7 +101,7 @@ public class RegistrationServiceTest {
     @Test
     public void testRegisterNewUser() throws Exception {
 
-        registrationService.registerNewUser("baseurl", new RegisterNewUserRequestEntity(),null , new Result<RegisterNewUserResponseEntity>() {
+        registrationService.registerNewUser("baseurl", new RegisterNewUserRequestEntity(), new Result<RegisterNewUserResponseEntity>() {
             @Override
             public void success(RegisterNewUserResponseEntity result) {
 
@@ -117,7 +117,7 @@ public class RegistrationServiceTest {
     @Test
     public void testRegisterNewUsernull() throws Exception {
 
-        registrationService.registerNewUser("", new RegisterNewUserRequestEntity(),null , new Result<RegisterNewUserResponseEntity>() {
+        registrationService.registerNewUser("", new RegisterNewUserRequestEntity(), new Result<RegisterNewUserResponseEntity>() {
             @Override
             public void success(RegisterNewUserResponseEntity result) {
 
@@ -133,7 +133,7 @@ public class RegistrationServiceTest {
     @Test
     public void testInitiateAccountVerification() throws Exception {
 
-        registrationService.initiateAccountVerification("baseurl", new RegisterUserAccountInitiateRequestEntity(),null , new Result<RegisterUserAccountInitiateResponseEntity>() {
+        registrationService.initiateAccountVerification("baseurl", new RegisterUserAccountInitiateRequestEntity(), new Result<RegisterUserAccountInitiateResponseEntity>() {
             @Override
             public void success(RegisterUserAccountInitiateResponseEntity result) {
 
@@ -149,7 +149,7 @@ public class RegistrationServiceTest {
     @Test
     public void testInitiateAccountVerificationnull() throws Exception {
 
-        registrationService.initiateAccountVerification("", new RegisterUserAccountInitiateRequestEntity(),null , new Result<RegisterUserAccountInitiateResponseEntity>() {
+        registrationService.initiateAccountVerification("", new RegisterUserAccountInitiateRequestEntity(), new Result<RegisterUserAccountInitiateResponseEntity>() {
             @Override
             public void success(RegisterUserAccountInitiateResponseEntity result) {
 
@@ -166,7 +166,7 @@ public class RegistrationServiceTest {
     @Test
     public void testVerifyAccountVerification() throws Exception {
 
-        registrationService.verifyAccountVerification("baseurl", new RegisterUserAccountVerifyRequestEntity(),null , new Result<RegisterUserAccountVerifyResponseEntity>() {
+        registrationService.verifyAccountVerification("baseurl", new RegisterUserAccountVerifyRequestEntity(), new Result<RegisterUserAccountVerifyResponseEntity>() {
             @Override
             public void success(RegisterUserAccountVerifyResponseEntity result) {
 
@@ -183,7 +183,7 @@ public class RegistrationServiceTest {
     @Test
     public void testVerifyAccountVerificationnull() throws Exception {
 
-        registrationService.verifyAccountVerification("", new RegisterUserAccountVerifyRequestEntity(),null , new Result<RegisterUserAccountVerifyResponseEntity>() {
+        registrationService.verifyAccountVerification("", new RegisterUserAccountVerifyRequestEntity(), new Result<RegisterUserAccountVerifyResponseEntity>() {
             @Override
             public void success(RegisterUserAccountVerifyResponseEntity result) {
 
@@ -197,4 +197,3 @@ public class RegistrationServiceTest {
     }
 }
 
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

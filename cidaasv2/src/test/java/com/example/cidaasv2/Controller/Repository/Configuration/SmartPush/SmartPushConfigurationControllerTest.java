@@ -80,13 +80,13 @@ public class SmartPushConfigurationControllerTest {
 
     @Test
     public void testLoginWithSmartPush() throws Exception {
-        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", "trackId", "requestId", null, null);
+        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", null, null, null);
     }
 
 
     @Test
     public void testLoginWithSmart() throws Exception {
-        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", "trackId", "requestId", null, null);
+        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", null, null, null);
     }
 
     @Test
@@ -99,8 +99,6 @@ public class SmartPushConfigurationControllerTest {
         accessTokenModel.setPlainToken("PlainToken");
         accessTokenModel.setSeconds(System.currentTimeMillis()+1000000);
 
-        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", "trackId", "requestId", null, null);
+        smartPushConfigurationController.LoginWithSmartPush("baseurl", "clientId", null, null, null);
     }
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

@@ -46,8 +46,8 @@ public class InitiatePatternMFARequestEntityTest {
     @Test
     public void setUsagePass()
     {
-        initiatePatternMFARequestEntity.setUsagePass("UsagePass");
-        assertTrue(initiatePatternMFARequestEntity.getUsagePass().equals("UsagePass"));
+        initiatePatternMFARequestEntity.setUsage_pass("UsagePass");
+        assertTrue(initiatePatternMFARequestEntity.getUsage_pass().equals("UsagePass"));
     }
 
 

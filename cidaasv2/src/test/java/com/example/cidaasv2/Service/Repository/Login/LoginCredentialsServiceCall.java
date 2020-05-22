@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Helper.URLHelper.URLHelper;
 import com.example.cidaasv2.Library.LocationLibrary.LocationDetails;
@@ -52,14 +53,6 @@ public class LoginCredentialsServiceCall {
     CountDownLatch latch=new CountDownLatch(1);
 
 
-   // final SharedPreferences sharedPrefs = Mockito.mock(SharedPreferences.class);
-    //final SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
-
-
-
-
-
-
     @Before
     public void setUp() throws Exception {
 
@@ -68,20 +61,6 @@ public class LoginCredentialsServiceCall {
         deviceInfoEntity.setDeviceModel("DeviceModel");
         deviceInfoEntity.setDeviceMake("DeviceMake");
         deviceInfoEntity.setPushNotificationId("PushNotificationId");
-
-       // Context context1= RuntimeEnvironment.application;
-       /* Mockito.when(context.getSharedPreferences("cidaas_preference", 0)).thenReturn(sharedPrefs);
-        Mockito.when(sharedPrefs.edit()).thenReturn(editor);
-        Mockito.when(editor.putString(anyString(),anyString())).thenReturn(editor);
-        Mockito.when(editor.commit()).thenReturn(true);
-        Mockito.when(DBHelper.getShared().getDeviceInfo()).thenReturn(deviceInfoEntity);*/
-
-      /*  DBHelper.setConfig(context);
-
-
-
-
-        DBHelper.getShared().addDeviceInfo(deviceInfoEntity);*/
 
         loginCredentialsRequestEntity.setRequestId("RequestId");
         loginCredentialsRequestEntity.setUsername_type("Username_type");
@@ -97,12 +76,6 @@ public class LoginCredentialsServiceCall {
         resumeLoginRequestEntity.setClient_id("ClientID");
         resumeLoginRequestEntity.setSub("Sub");
         resumeLoginRequestEntity.setRequestId("RequestID");
-
-
-
-
-
-
     }
 
     @Test
@@ -127,7 +100,7 @@ public class LoginCredentialsServiceCall {
 
 
         server.enqueue(response);
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
         LoginCredentialsRequestEntity loginCredentialsRequestEntity=new LoginCredentialsRequestEntity();
         loginCredentialsRequestEntity.setRequestId("RequestId");
@@ -145,7 +118,7 @@ public class LoginCredentialsServiceCall {
         headers.put("lat", LocationDetails.getShared(context).getLatitude());
         headers.put("lon",LocationDetails.getShared(context).getLongitude());
 
-        loginService.serviceForLoginWithCredentials(removeLastChar(Cidaas.baseurl), loginCredentialsRequestEntity, headers,new Result<LoginCredentialsResponseEntity>() {
+        loginService.serviceForLoginWithCredentials(removeLastChar(CidaasHelper.baseurl), loginCredentialsRequestEntity, headers, new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
                 Assert.assertEquals(result.getData().getSub(),"556b95f8-9326-4250-a4ee-0e0d887f7a7d");
@@ -189,9 +162,9 @@ public class LoginCredentialsServiceCall {
 
 
         server.enqueue(response);
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
-        loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl), new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
+        loginService.loginWithCredentials(removeLastChar(CidaasHelper.baseurl), new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -227,11 +200,10 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(CidaasHelper.baseurl), loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -290,9 +262,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(CidaasHelper.baseurl), loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
                     Assert.assertEquals("get Access Token",result.getData().getAccess_token());
@@ -348,9 +320,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(CidaasHelper.baseurl), loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -406,9 +378,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(CidaasHelper.baseurl), loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -458,9 +430,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(CidaasHelper.baseurl), loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -510,9 +482,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.loginWithCredentials(removeLastChar(Cidaas.baseurl),loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
+            loginService.loginWithCredentials(removeLastChar(CidaasHelper.baseurl), loginCredentialsRequestEntity, new Result<LoginCredentialsResponseEntity>() {
                 @Override
                 public void success(LoginCredentialsResponseEntity result) {
 
@@ -565,11 +537,10 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-
-            loginService.continueMFA(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continueMFA(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
                    Assert.assertEquals("Code",result.getData().getCode());
@@ -626,9 +597,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continueMFA(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continueMFA(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
                     Assert.assertEquals("Code",result.getData().getCode());
@@ -684,9 +655,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continueMFA(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continueMFA(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 
@@ -742,9 +713,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continueMFA(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continueMFA(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 
@@ -794,9 +765,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continueMFA(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continueMFA(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 
@@ -845,9 +816,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continueMFA(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continueMFA(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 
@@ -899,11 +870,10 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-
-            loginService.continuePasswordless(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continuePasswordless(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
                     Assert.assertEquals("Code",result.getData().getCode());
@@ -959,9 +929,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continuePasswordless(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continuePasswordless(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
                     Assert.assertEquals("Code",result.getData().getCode());
@@ -1017,9 +987,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continuePasswordless(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continuePasswordless(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 
@@ -1075,9 +1045,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continuePasswordless(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continuePasswordless(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 
@@ -1127,9 +1097,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continuePasswordless(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continuePasswordless(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 
@@ -1179,9 +1149,9 @@ public class LoginCredentialsServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginService.continuePasswordless(removeLastChar(Cidaas.baseurl), resumeLoginRequestEntity, deviceInfoEntity, new Result<ResumeLoginResponseEntity>() {
+            loginService.continuePasswordless(removeLastChar(CidaasHelper.baseurl), resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                 @Override
                 public void success(ResumeLoginResponseEntity result) {
 

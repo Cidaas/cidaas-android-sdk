@@ -2,10 +2,11 @@ package com.example.cidaasv2.Service.Repository.AccessToken;
 
 import android.content.Context;
 
-import com.example.cidaasv2.Controller.Cidaas;
+
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 import com.example.cidaasv2.util.AuthenticationAPI;
@@ -24,13 +25,13 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
-import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
-
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 
 
 @RunWith(RobolectricTestRunner.class)
 
 public class AccessTokenServiceTest {
+
    Context context;
    AccessTokenService accessTokenService;
     AuthenticationAPI mockAPI;
@@ -72,7 +73,7 @@ public class AccessTokenServiceTest {
     @Test
     public void testGetAccessTokenByCode() throws Exception {
 
-        accessTokenService.getAccessTokenByCode("", "",null,null,null ,new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByCode("", "", new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -88,7 +89,7 @@ public class AccessTokenServiceTest {
     @Test
     public void testGetAccessTokenByCodeSucess() throws Exception {
 
-        accessTokenService.getAccessTokenByCode("baseURL", "Code", null,null,null,new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByCode("baseURL", "Code", new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -126,9 +127,7 @@ public class AccessTokenServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-
-
-        accessTokenService.getAccessTokenByRefreshToken("refreshToken", loginproperties,null,null, new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByRefreshToken("refreshToken", loginproperties, new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -149,7 +148,7 @@ public class AccessTokenServiceTest {
         loginproperties.put("ClientId","ClientId");
         loginproperties.put("RedirectURL","RedirectURL");
 
-        accessTokenService.getAccessTokenByRefreshToken("refreshToken", null,null,null ,new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByRefreshToken("refreshToken", null, new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -183,9 +182,7 @@ public class AccessTokenServiceTest {
             mockAPI.willReturnAccessToken();
 
 
-
-
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginproperties,null,null, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken", loginproperties, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     Assert.assertTrue(true);
@@ -212,7 +209,7 @@ public class AccessTokenServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -221,8 +218,7 @@ public class AccessTokenServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-
-        accessTokenService.getAccessTokenByRefreshToken("localhost:234235", loginproperties,null,null, new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByRefreshToken("localhost:234235", loginproperties, new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -247,7 +243,7 @@ public class AccessTokenServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
         loginproperties.put("DomainURL","localhost:234235");
@@ -255,7 +251,7 @@ public class AccessTokenServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-        accessTokenService.getAccessTokenByCode("localhost:234235", "code",null,loginproperties,null, new Result<AccessTokenEntity>() {
+        accessTokenService.getAccessTokenByCode("localhost:234235", "code", new Result<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
 
@@ -269,10 +265,4 @@ public class AccessTokenServiceTest {
 
 
     }
-
-
-
-
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

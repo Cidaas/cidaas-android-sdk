@@ -8,21 +8,18 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertTrue;
 
 public class AuthenticateEmailRequestEntityTest {
-
-
-
-    AuthenticateEmailRequestEntity authenticateEmailRequestEntity=new AuthenticateEmailRequestEntity();
+    private AuthenticateEmailRequestEntity authenticateEmailRequestEntity;
 
     @Before
     public void setUp() {
-
+        authenticateEmailRequestEntity = new AuthenticateEmailRequestEntity();
     }
 
     @Test
     public void getStatusID()
     {
-        authenticateEmailRequestEntity.setStatusId("Status_ID");
-        assertTrue(authenticateEmailRequestEntity.getStatusId().equals("Status_ID"));
+        authenticateEmailRequestEntity.setStatus_id("Status_ID");
+        assertTrue(authenticateEmailRequestEntity.getStatus_id().equals("Status_ID"));
     }
 
     @Test
@@ -53,5 +50,3 @@ public class AuthenticateEmailRequestEntityTest {
     }
 
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

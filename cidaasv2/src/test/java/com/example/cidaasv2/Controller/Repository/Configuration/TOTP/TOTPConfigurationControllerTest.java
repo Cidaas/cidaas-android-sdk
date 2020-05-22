@@ -61,7 +61,7 @@ public class TOTPConfigurationControllerTest {
     @Test
     public void testLoginWithTOTP() throws Exception {
 
-        tOTPConfigurationController.LoginWithTOTP("baseurl", "clientId", "trackId", "requestId", null, null);
+        tOTPConfigurationController.LoginWithTOTP("baseurl", "clientId", null, null, null);
     }
 
     @Test

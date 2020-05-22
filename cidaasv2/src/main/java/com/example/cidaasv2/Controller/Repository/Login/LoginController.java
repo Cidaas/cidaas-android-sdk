@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 
-import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Controller.Repository.AccessToken.AccessTokenController;
 import com.example.cidaasv2.Helper.CidaasProperties.CidaasProperties;
 import com.example.cidaasv2.Helper.CustomTab.Helper.CustomTabHelper;
@@ -35,17 +34,14 @@ import timber.log.Timber;
 public class LoginController {
 
     private Context context;
-   // public String loginURL;
-    //public String DomainURL="";
-    public String redirectUrl;
-    public Result<AccessTokenEntity> logincallback;
+    public Result<AccessTokenEntity> loginCallback;
 
     public static LoginController shared;
 
     public LoginController(Context contextFromCidaas) {
 
         //Set Callback Null;
-        logincallback = null;
+        loginCallback = null;
         context = contextFromCidaas;
         //Todo setValue for authenticationType
 
@@ -100,8 +96,6 @@ public class LoginController {
                     result.failure(error);
                 }
             });
-
-
         }
         catch (Exception e)
         {
@@ -159,7 +153,6 @@ public class LoginController {
 
             @Override
             public void failure(WebAuthError error) {
-
                 result.failure(error);
             }
         });
@@ -377,7 +370,7 @@ public class LoginController {
                 @Override
                 public void success(String result) {
                     String loginURL = result;
-                    logincallback = callbacktoMain;
+                    loginCallback = callbacktoMain;
                     if (loginURL != null) {
                         launchCustomTab(activityContext,loginURL, color);
                     } else {
@@ -443,7 +436,7 @@ public class LoginController {
          getSocialLoginURL(requestId, provider, new Result<String>() {
                         @Override
                         public void success(String socialLoginURL) {
-                            logincallback = callbacktoMain;
+                            loginCallback = callbacktoMain;
                             if (socialLoginURL != null) {
                                launchCustomTab(activityContext,socialLoginURL, color);
                             } else {
@@ -484,8 +477,8 @@ public class LoginController {
             }
             return code;
         } catch (Exception e) {
-           
-            logincallback.failure(WebAuthError.getShared(context).methodException("Exception :LoginController :getCodeFromUrl() " ,
+
+            loginCallback.failure(WebAuthError.getShared(context).methodException("Exception :LoginController :getCodeFromUrl() ",
                     WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
             return null;
         }
@@ -518,9 +511,9 @@ public class LoginController {
 
     public void handleToken(String code){   /*,Result<AccessTokenEntity> callbacktoMain*/
 
-        if (logincallback != null) {
+        if (loginCallback != null) {
 
-            getLoginCode(code, logincallback);
+            getLoginCode(code, loginCallback);
         }
 
 
