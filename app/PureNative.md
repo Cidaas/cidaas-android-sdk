@@ -52,7 +52,7 @@ First, You have to  get RequestId and use this in your subsequent calls. Server 
 ****getRequestId()****.
 ```java
 
-cidaas.getRequestId(new Result < AuthRequestResponseEntity > () {
+cidaasNative.getRequestId(new Result < AuthRequestResponseEntity > () {
   @Override
   public void success(AuthRequestResponseEntity result) {
 
@@ -91,7 +91,7 @@ Sometimes you may want to lookup different types of login available ('Email', 'M
 
 ```java
 
-cidaas.getTenantInfo(new Result < TenantInfoEntity > () {
+cidaasNative.getTenantInfo(new Result < TenantInfoEntity > () {
 
   @Override
   public void success(TenantInfoEntity result) {
@@ -131,7 +131,7 @@ cidaas.getTenantInfo(new Result < TenantInfoEntity > () {
 Once you get tenant information, if you want to find client information you can call the following method. It contains client name, logo url specified for the client in the Admin's Apps section and details of what all social providers are configured for the App. To get the client information, call ****getClientInfo()****.
 
 ```java
-cidaas.getClientInfo("your RequestId", new Result < ClientInfoEntity > () {
+cidaasNative.getClientInfo("your RequestId", new Result < ClientInfoEntity > () {
   @Override
   public void success(ClientInfoEntity result) {
 
@@ -175,7 +175,7 @@ cidaas.getClientInfo("your RequestId", new Result < ClientInfoEntity > () {
 Before registration, you may want to know what all are the fields that you must show to your user. For getting these fields, call  ****getRegistrationFields()****.
 
 ```java
-cidaas.getRegistrationFields("Your_RequestId","Your_locale" ,new Result < RegistrationSetupResponseEntity > () {
+cidaasNative.getRegistrationFields("Your_RequestId","Your_locale" ,new Result < RegistrationSetupResponseEntity > () {
   @Override
   public void success(RegistrationSetupResponseEntity result) {
     // your success code here
@@ -268,7 +268,7 @@ Dictionary < String, RegistrationCustomFieldEntity > customFileds = new Hashtabl
 customFileds.put(registrationCustomFieldEntity.getKey(), registrationCustomFieldEntity);
 registrationEntity.setCustomFields(customFileds);
 
-cidaas.registerUser("Your_requestId", registrationEntity, new Result < RegisterNewUserResponseEntity > () {
+cidaasNative.registerUser("Your_requestId", registrationEntity, new Result < RegisterNewUserResponseEntity > () {
 
     @Override
     public void success(RegisterNewUserResponseEntity result) {
@@ -315,7 +315,7 @@ To get the list of similar users, call ****getDeduplicationDetails()**** . If th
 > #### Note :- You can get the track id from thein the data of success respone of registerUser().
 
 ```java
- cidaas.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
+ cidaasNative.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
   @Override
   public void success(DeduplicationResponseEntity result) {
    //Your success code here.
@@ -375,7 +375,7 @@ To get the list of similar users, call ****getDeduplicationDetails()**** . If th
 While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****registerUser()**** method can be called to ignore shown result and register details in registration form as a new user.
 
 ```java
-cidaas.registerUser("your track id", new Result < RegisterDeduplicationEntity > () {
+cidaasNative.registerUser("your track id", new Result < RegisterDeduplicationEntity > () {
  @Override
  public void success(RegisterDeduplicationEntity result) {
   //Your success code here
@@ -409,7 +409,7 @@ cidaas.registerUser("your track id", new Result < RegisterDeduplicationEntity > 
 While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****loginWithDeduplication()**** method can be called to use one of those existing logins shown by the system. Note that, System will still use the secure authentication and verifications that were setup for earlier user, before login.
 
 ```java
-cidaas.loginWithDeduplication("your_requestId","your_sub", "your_password", new Result < LoginCredentialsResponseEntity > () {
+cidaasNative.loginWithDeduplication("your_requestId","your_sub", "your_password", new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here
@@ -449,7 +449,7 @@ This method is to be used when you want to receive a verification code via Email
 **initiateEmailVerification()**.
 
 ```java
-cidaas.initiateEmailVerification("your_sub", "your_requestId", new Result < RegisterUserAccountInitiateResponseEntity > () {
+cidaasNative.initiateEmailVerification("your_sub", "your_requestId", new Result < RegisterUserAccountInitiateResponseEntity > () {
 @Override
 public void success(RegisterUserAccountInitiateResponseEntity result) {
 //your Success Code
@@ -470,7 +470,7 @@ If you would like to receive a verification code via SMS, call  **initiateSMSVer
 
 
 
-cidaas.initiateSMSVerification("Your_sub", "Your_requestId", new Result<RegisterUserAccountInitiateResponseEntity>() {
+cidaasNative.initiateSMSVerification("Your_sub", "Your_requestId", new Result<RegisterUserAccountInitiateResponseEntity>() {
 
 @Override
 public void success(RegisterUserAccountInitiateResponseEntity result) {
@@ -498,7 +498,7 @@ In order to receive a verification code via IVR verification call, call **initia
 
 ```java
 
-cidaas.initiateIVRVerification("your_sub", "your_requestId", new Result < RegisterUserAccountInitiateResponseEntity > () {
+cidaasNative.initiateIVRVerification("your_sub", "your_requestId", new Result < RegisterUserAccountInitiateResponseEntity > () {
 
 @Override
 public void success(RegisterUserAccountInitiateResponseEntity result) {
@@ -532,7 +532,7 @@ public void failure(WebAuthError error) {
 Once you received your verification code via any of the mediums like Email, SMS or IVR, you need to verify the code. For that verification, call **verifyAccount()**.
 ```java
 
-cidaas.verifyAccount("your code", new Result < RegisterUserAccountVerifyResponseEntity > () {
+cidaasNative.verifyAccount("your code", new Result < RegisterUserAccountVerifyResponseEntity > () {
 
 @Override
 public void success(RegisterUserAccountVerifyResponseEntity result) {
@@ -571,7 +571,7 @@ loginEntity.setUsername("davidjhonson@gmail.com");
 loginEntity.setPassword("123456");
 loginEntity.setUsername_type("email");
 
-cidaas.loginWithCredentials("Your RequestId", loginEntity, new Result < LoginCredentialsResponseEntity > () {
+cidaasNative.loginWithCredentials("Your RequestId", loginEntity, new Result < LoginCredentialsResponseEntity > () {
 
 @Override
 public void success(LoginCredentialsResponseEntity result) {
@@ -607,7 +607,7 @@ To get the List of physical verifications configured by the user, call ****getMF
 
 
 ```java
- cidaas.getMFAList("your_sub", new Result<MFAListResponseEntity>() {
+ cidaasNative.getMFAList("your_sub", new Result<MFAListResponseEntity>() {
          @Override
          public void success(MFAListResponseEntity result) {
              //Your Success Code here
@@ -641,13 +641,13 @@ To get the List of physical verifications configured by the user, call ****getMF
 For device verification , we send one push notification to you For that you need to register your FCM Token(Firebase cloud Messaging) in your app in admin UI and 
  For that you need to call, ****setFCMToken()****.
  ```java 
-  cidaas.setFCMToken(refreshedToken);
+  cidaasVerification.setFCMToken(refreshedToken);
   ```
   
   Then in the FirebaseMessagingService extented class, in the onMessageReceived() method,you need to set the remotemessage recieved here using ****setRemoteMessage()****.
   
    ```java 
-  cidaas.setFCMToken(refreshedToken);
+  cidaasVerification.setFCMToken(refreshedToken);
   ```
  
  
@@ -662,7 +662,7 @@ For resetting password, you will get a verification code either via Email or SMS
 
 ****initiateResetPasswordByEmail()****.
 ```java
-cidaas. cidaas.initiateResetPasswordByEmail("Your_requestId", "your_email_id", new Result < ResetPasswordResponseEntity > () {
+cidaasNative.initiateResetPasswordByEmail("Your_requestId", "your_email_id", new Result < ResetPasswordResponseEntity > () {
 @Override
 public void success(ResetPasswordResponseEntity result) {
    //Your success code here
@@ -693,7 +693,7 @@ For resetting password, you will get a verification code either via Email or SMS
 
 ****initiateResetPasswordBySMS()****.
 ```java
-cidaas. cidaas.initiateResetPasswordBySMS("Your_requestId", "your_mobile_number", new Result < ResetPasswordResponseEntity > () {
+cidaasNative.initiateResetPasswordBySMS("Your_requestId", "your_mobile_number", new Result < ResetPasswordResponseEntity > () {
 @Override
 public void success(ResetPasswordResponseEntity result) {
    //Your success code here
@@ -724,7 +724,7 @@ public void failure(WebAuthError error) {
 Once verification code received, verify that code by calling ****handleResetPassword()****.
 ```java
 
-cidaas.handleResetPassword("your verificaton code","your_rprq", new Result < ResetPasswordValidateCodeResponseEntity > () {
+cidaasNative.handleResetPassword("your verificaton code","your_rprq", new Result < ResetPasswordValidateCodeResponseEntity > () {
 
 @Override
 public void success(ResetPasswordValidateCodeResponseEntity result) {
@@ -762,7 +762,7 @@ resetPasswordEntity.setPassword("yournewPassword");           								resetPassw
 resetPasswordEntity.setExchangeId("yourexchangeId");
 resetPasswordEntity.setResetRequestId("yourresetRequestId");
 
-cidaas.resetPassword(ResetPasswordEntity resetPasswordEntity, new Result < ResetNewPasswordResponseEntity > () {
+cidaasNative.resetPassword(ResetPasswordEntity resetPasswordEntity, new Result < ResetNewPasswordResponseEntity > () {
 @Override
 public void success(ResetNewPasswordResponseEntity result) {
     //Your success code here.
@@ -800,7 +800,7 @@ To get the consent details call **getConsentDetails()**.
 
 ```java
 
-cidaas.getConsentDetails(consentName,new Result < ConsentDetailsResultEntity > () {
+cidaasConsent.getConsentDetails(consentName,new Result < ConsentDetailsResultEntity > () {
  @Override
  public void success(ConsentDetailsResultEntity result) {
   //Your success code here
@@ -833,7 +833,7 @@ cidaas.getConsentDetails(consentName,new Result < ConsentDetailsResultEntity > (
 For accept the consent you need to call ****loginAfterConsent()****
 
 ```java
-cidaas.loginAfterConsent(ConsentEntity consentEntity, new Result < LoginCredentialsResponseEntity > () {
+cidaasConsent.loginAfterConsent(ConsentEntity consentEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here
