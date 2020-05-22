@@ -42,10 +42,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 
-import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentEntity;
 
 @RunWith(RobolectricTestRunner.class)
 public class CidaasTest {

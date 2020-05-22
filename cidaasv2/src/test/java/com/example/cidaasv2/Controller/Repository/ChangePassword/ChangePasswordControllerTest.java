@@ -18,7 +18,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-
 public class ChangePasswordControllerTest {
 
     Context context;

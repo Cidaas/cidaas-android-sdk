@@ -19,27 +19,26 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-
 public class LoginControllerTest {
     Context context;
     LoginController loginController;
 
     @Before
     public void setUp() {
-        context= RuntimeEnvironment.application;
-        loginController=new LoginController(context);
+        context = RuntimeEnvironment.application;
+        loginController = new LoginController(context);
     }
 
     @Test
-    public void testGetShared() throws Exception {
+    public void testGetShared() {
         LoginController result = LoginController.getShared(null);
         Assert.assertTrue(result instanceof LoginController);
     }
 
     @Test
-    public void testLoginWithCredentials() throws Exception {
+    public void testLoginWithCredentials() {
 
-        LoginEntity loginEntity=new LoginEntity();
+        LoginEntity loginEntity = new LoginEntity();
         loginController.loginwithCredentials("requestId", loginEntity, new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
@@ -54,7 +53,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void testContinueMFA() throws Exception {
+    public void testContinueMFA() {
         loginController.continueMFA("baseurl", new ResumeLoginRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
@@ -69,7 +68,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void testContinuePasswordless() throws Exception {
+    public void testContinuePasswordless() {
         loginController.continuePasswordless("baseurl", new ResumeLoginRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
@@ -83,10 +82,152 @@ public class LoginControllerTest {
         });
     }
 
-    /**f (resumeLoginRequestEntity.getTrack_id() != null && !resumeLoginRequestEntity.getTrack_id().equals("") &&
-     resumeLoginRequestEntity.getClient_id() != null && !resumeLoginRequestEntity.getClient_id().equals("") &&
-     resumeLoginRequestEntity.getSub() != null && !resumeLoginRequestEntity.getSub().equals("") &&
-     resumeLoginRequestEntity.getTrackingCode() != null && !resumeLoginRequestEntity.getTrackingCode().equals("") &&
-     resumeLoginRequestEntity.getVerificationType() != null && !resumeLoginRequestEntity.getVerificationType().equals("") &&
-     baseurl != null && !baseurl.equals("")) {**/
+    @Test
+    public void testContinueMFAMissingClientId() {
+        ResumeLoginRequestEntity testEntity = new ResumeLoginRequestEntity();
+        testEntity.setVerificationType("VerificationType");
+        testEntity.setSub("sub");
+        testEntity.setTrack_id("trackId");
+        testEntity.setTrackingCode("trackingCode");
+
+        loginController.continueMFA("baseurl", testEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue(error.getErrorMessage().contains("One of the property is missing"));
+            }
+        });
+    }
+
+    @Test
+    public void testContinueMFAMissingVerificationType() {
+        ResumeLoginRequestEntity testEntity = new ResumeLoginRequestEntity();
+        testEntity.setClient_id("ClientId");
+        testEntity.setSub("sub");
+        testEntity.setTrack_id("trackId");
+        testEntity.setTrackingCode("trackingCode");
+
+        loginController.continueMFA("baseurl", testEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue(error.getErrorMessage().contains("One of the property is missing"));
+            }
+        });
+    }
+
+    @Test
+    public void testContinueMFAMissingSub() {
+        ResumeLoginRequestEntity testEntity = new ResumeLoginRequestEntity();
+        testEntity.setClient_id("ClientId");
+        testEntity.setVerificationType("VerificationType");
+        testEntity.setTrack_id("trackId");
+        testEntity.setTrackingCode("trackingCode");
+
+        loginController.continueMFA("baseurl", testEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue(error.getErrorMessage().contains("One of the property is missing"));
+            }
+        });
+    }
+
+    @Test
+    public void testContinueMFAMissingTrackId() {
+        ResumeLoginRequestEntity testEntity = new ResumeLoginRequestEntity();
+        testEntity.setClient_id("ClientId");
+        testEntity.setVerificationType("VerificationType");
+        testEntity.setSub("sub");
+        testEntity.setTrackingCode("trackingCode");
+
+        loginController.continueMFA("baseurl", testEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue(error.getErrorMessage().contains("One of the property is missing"));
+            }
+        });
+    }
+
+    @Test
+    public void testContinueMFAMissingTrackingCode() {
+        ResumeLoginRequestEntity testEntity = new ResumeLoginRequestEntity();
+        testEntity.setClient_id("ClientId");
+        testEntity.setVerificationType("VerificationType");
+        testEntity.setSub("sub");
+        testEntity.setTrack_id("trackId");
+
+        loginController.continueMFA("baseurl", testEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue(error.getErrorMessage().contains("One of the property is missing"));
+            }
+        });
+    }
+
+    @Test
+    public void testContinueMFAMissingBaseUrl() {
+        ResumeLoginRequestEntity testEntity = new ResumeLoginRequestEntity();
+        testEntity.setClient_id("ClientId");
+        testEntity.setVerificationType("VerificationType");
+        testEntity.setSub("sub");
+        testEntity.setTrack_id("trackId");
+        testEntity.setTrackingCode("trackingCode");
+
+        loginController.continueMFA("", testEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue(error.getErrorMessage().contains("One of the property is missing"));
+            }
+        });
+    }
+
+    @Test
+    public void testContinueMFANullValues() {
+        ResumeLoginRequestEntity testEntity = new ResumeLoginRequestEntity();
+        testEntity.setClient_id(null);
+        testEntity.setVerificationType(null);
+        testEntity.setSub(null);
+        testEntity.setTrack_id(null);
+        testEntity.setTrackingCode(null);
+
+        loginController.continueMFA(null, testEntity, new Result<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue(error.getErrorMessage().contains("One of the property is missing"));
+            }
+        });
+    }
 }

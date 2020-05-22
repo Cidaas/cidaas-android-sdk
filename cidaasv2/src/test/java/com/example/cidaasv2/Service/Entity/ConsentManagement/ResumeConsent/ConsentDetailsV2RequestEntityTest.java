@@ -3,12 +3,13 @@ package com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent;
 import org.junit.Before;
 import org.junit.Test;
 
-import widas.raja.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
 
 import static junit.framework.TestCase.assertTrue;
 
 public class ConsentDetailsV2RequestEntityTest {
-    private ConsentDetailsV2RequestEntity underTest;
+
+/**
+ // TODO move to cidaasconsentv2 https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/52private ConsentDetailsV2RequestEntity underTest;
 
     @Before
     public void setup() {
@@ -46,5 +47,5 @@ public class ConsentDetailsV2RequestEntityTest {
     public void getClientId()
     {
         assertTrue(underTest.getClient_id() == "client_id");
-    }
+    }**/
 }

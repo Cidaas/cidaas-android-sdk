@@ -29,47 +29,32 @@ import java.util.LinkedHashMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import timber.log.Timber;
 
 public class LoginController {
 
     private Context context;
-    public Result<AccessTokenEntity> loginCallback;
+    private Result<AccessTokenEntity> loginCallback;
+    private static LoginController shared;
 
-    public static LoginController shared;
-
-    public LoginController(Context contextFromCidaas) {
-
-        //Set Callback Null;
-        loginCallback = null;
+    protected LoginController(Context contextFromCidaas) {
         context = contextFromCidaas;
-        //Todo setValue for authenticationType
-
-        //Make Call back null
-
     }
 
     public static LoginController getShared(Context contextFromCidaas) {
-        try {
-
-            if (shared == null) {
-                shared = new LoginController(contextFromCidaas);
-            }
-        } catch (Exception e) {
-            Timber.i(e.getMessage());
+        if (shared == null) {
+            shared = new LoginController(contextFromCidaas);
         }
         return shared;
     }
 
-
     //Service call for loginWithCredentials
     public void loginwithCredentials(@NonNull final String requestId, @NonNull final LoginEntity loginEntity,
-                                     @NonNull final Result<LoginCredentialsResponseEntity> result)
-    {
-        String methodName="LoginController :loginwithCredentials()";
+                                     @NonNull final Result<LoginCredentialsResponseEntity> result) {
         try {
-
-
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
@@ -77,29 +62,26 @@ public class LoginController {
                     if (loginCredentialsRequestEntity != null) {
                         LoginService.getShared(context).loginWithCredentials(loginPropertiesResult.get("DomainURL"), loginCredentialsRequestEntity,
                                 new Result<LoginCredentialsResponseEntity>() {
-                            @Override
-                            public void success(LoginCredentialsResponseEntity serviceresult) {
-                                getAccessTokenAfterLogin(serviceresult, result);
-                            }
+                                    @Override
+                                    public void success(LoginCredentialsResponseEntity serviceresult) {
+                                        getAccessTokenAfterLogin(serviceresult, result);
+                                    }
 
-                            @Override
-                            public void failure(WebAuthError error) {
-                                result.failure(error);
-                            }
-                        });
-                    } 
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        result.failure(error);
+                                    }
+                                });
+                    }
                 }
-
 
                 @Override
                 public void failure(WebAuthError error) {
                     result.failure(error);
                 }
             });
-        }
-        catch (Exception e)
-        {
-         result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).methodException("Exception : ", WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
         }
     }
 
@@ -125,55 +107,30 @@ public class LoginController {
             } else {
 
                 String errorMessage = "Username or password or RequestId must not be empty";
-                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :"+errorMessage));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :" + errorMessage));
                 return null;
             }
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
+            return null;
         }
-        catch (Exception e)
-        {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,e.getMessage()));
-       return null;
-        }
-    }
-
-
-    private void getAccessTokenAfterLogin(LoginCredentialsResponseEntity serviceresult, final Result<LoginCredentialsResponseEntity> result)
-    {
-        //Access Token After Login
-        AccessTokenController.getShared(context).getAccessTokenByCode(serviceresult.getData().getCode(), new Result<AccessTokenEntity>() {
-            @Override
-            public void success(AccessTokenEntity accessTokenresult) {
-
-                LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();
-                loginCredentialsResponseEntity.setData(accessTokenresult);
-                loginCredentialsResponseEntity.setStatus(200);
-                loginCredentialsResponseEntity.setSuccess(true);
-                result.success(loginCredentialsResponseEntity);
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                result.failure(error);
-            }
-        });
     }
 
 
     //Service call for Continue MFA
     public void continueMFA(@NonNull String baseurl, @NonNull ResumeLoginRequestEntity resumeLoginRequestEntity,
-                            @NonNull final Result<LoginCredentialsResponseEntity> result)
-    {
-        String methodName="LoginController :continueMFA()";
+                            @NonNull final Result<LoginCredentialsResponseEntity> result) {
+        String methodName = "LoginController :continueMFA()";
         try {
-            if (resumeLoginRequestEntity.getTrack_id() != null && !resumeLoginRequestEntity.getTrack_id().equals("") &&
-                    resumeLoginRequestEntity.getClient_id() != null && !resumeLoginRequestEntity.getClient_id().equals("") &&
-                    resumeLoginRequestEntity.getSub() != null && !resumeLoginRequestEntity.getSub().equals("") &&
-                    resumeLoginRequestEntity.getTrackingCode() != null && !resumeLoginRequestEntity.getTrackingCode().equals("") &&
-                    resumeLoginRequestEntity.getVerificationType() != null && !resumeLoginRequestEntity.getVerificationType().equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
+            if (isNotEmpty(resumeLoginRequestEntity.getTrack_id()) &&
+                    isNotEmpty(resumeLoginRequestEntity.getClient_id()) &&
+                    isNotEmpty(resumeLoginRequestEntity.getSub()) &&
+                    isNotEmpty(resumeLoginRequestEntity.getTrackingCode()) &&
+                    isNotEmpty(resumeLoginRequestEntity.getVerificationType()) &&
+                    isNotEmpty(baseurl)) {
 
                 //Done Service call
-                LoginService.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity,  new Result<ResumeLoginResponseEntity>() {
+                LoginService.getShared(context).continueMFA(baseurl, resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                     @Override
                     public void success(final ResumeLoginResponseEntity serviceresult) {
 
@@ -202,20 +159,19 @@ public class LoginController {
                 });
             } else {
                 result.failure(WebAuthError.getShared(context).propertyMissingException("Tracking code, verification type or baseurl must not be empty",
-                        "Error:"+methodName));
+                        "Error:" + methodName));
             }
 
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE, e.getMessage()));
         }
     }
 
 
     //Service call for Continue PasswordLess
     public void continuePasswordless(@NonNull String baseurl, @NonNull ResumeLoginRequestEntity resumeLoginRequestEntity,
-                                     @NonNull final Result<LoginCredentialsResponseEntity> result)
-    {
-        String methodName="LoginController :continuePasswordless()";
+                                     @NonNull final Result<LoginCredentialsResponseEntity> result) {
+        String methodName = "LoginController :continuePasswordless()";
         try {
             if (resumeLoginRequestEntity.getClient_id() != null && !resumeLoginRequestEntity.getClient_id().equals("") &&
                     resumeLoginRequestEntity.getSub() != null && !resumeLoginRequestEntity.getSub().equals("") &&
@@ -223,7 +179,7 @@ public class LoginController {
                     baseurl != null && !baseurl.equals("")) {
 
                 //Done Service call
-                LoginService.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity,  new Result<ResumeLoginResponseEntity>() {
+                LoginService.getShared(context).continuePasswordless(baseurl, resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
                     @Override
                     public void success(final ResumeLoginResponseEntity serviceresult) {
 
@@ -252,24 +208,21 @@ public class LoginController {
                         result.failure(error);
                     }
                 });
-            }
-            else
-            {
-                String errorMessage="ClientId , sub , Track code, base url must not be empty";
-                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :"+methodName));
+            } else {
+                String errorMessage = "ClientId , sub , Track code, base url must not be empty";
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :" + methodName));
             }
 
         } catch (Exception e) {
-           result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE, e.getMessage()));
         }
     }
 
 
     //Get login URL for Custom browser and Webview
     public void getLoginURL(@NonNull final String baseurl, Dictionary<String, String> loginProperties,
-                            final Dictionary<String, String> challengePropertiesfromparam, @NonNull final Result<String> callbackResult)
-    {
-        final String methodName="LoginController :getLoginURL()";
+                            final Dictionary<String, String> challengePropertiesfromparam, @NonNull final Result<String> callbackResult) {
+        final String methodName = "LoginController :getLoginURL()";
         try {
 
             LoginService.getShared(context).getURLList(baseurl, new Result<Object>() {
@@ -304,11 +257,11 @@ public class LoginController {
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
                         } else {
-                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error:"+methodName));
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error:" + methodName));
                         }
                     } else {
-                        callbackResult.failure(WebAuthError.getShared(context).propertyMissingException( "ClientId or RedirectURL or Challenge must not be empty"
-                                        , "Error :"+methodName));
+                        callbackResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or RedirectURL or Challenge must not be empty"
+                                , "Error :" + methodName));
                     }
                 }
 
@@ -319,15 +272,14 @@ public class LoginController {
             });
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :"+methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
+                    .methodException("Exception :" + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
 
     //Get login URL for Custom browser
-    public void getSocialLoginURL(final String provider, final String requestId, @NonNull final Result<String> callbackResult)
-    {
-        final String methodName="LoginController :getSocialLoginURL()";
+    public void getSocialLoginURL(final String provider, final String requestId, @NonNull final Result<String> callbackResult) {
+        final String methodName = "LoginController :getSocialLoginURL()";
         try {
             CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
                 @Override
@@ -338,32 +290,31 @@ public class LoginController {
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
                         } else {
-                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error "+methodName));
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error " + methodName));
                         }
 
                     } else {
                         callbackResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,
-                                "BaseURL or provider or requestid must not be null", "Error "+methodName));
+                                "BaseURL or provider or requestid must not be null", "Error " + methodName));
                     }
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    callbackResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("","Error"+methodName));
+                    callbackResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error" + methodName));
                 }
             });
 
         } catch (Exception e) {
-            callbackResult.failure(WebAuthError.getShared(context).methodException("Exception : "+methodName,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,
+            callbackResult.failure(WebAuthError.getShared(context).methodException("Exception : " + methodName, WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,
                     e.getMessage()));
         }
     }
 
 
     //Get Login With Browser
-    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain)
-    {
-        final String methodName="LoginController :loginWithBrowser()";
+    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+        final String methodName = "LoginController :loginWithBrowser()";
         try {
 
             getLoginURL(new Result<String>() {
@@ -372,11 +323,11 @@ public class LoginController {
                     String loginURL = result;
                     loginCallback = callbacktoMain;
                     if (loginURL != null) {
-                        launchCustomTab(activityContext,loginURL, color);
+                        launchCustomTab(activityContext, loginURL, color);
                     } else {
                         //TODo callback Failure
-                       callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE,
-                               "EMPTY URL",methodName));
+                        callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE,
+                                "EMPTY URL", methodName));
                     }
                 }
 
@@ -388,78 +339,101 @@ public class LoginController {
 
 
         } catch (Exception e) {
-           // TODO: Handle Exception
+            // TODO: Handle Exception
 
             callbacktoMain.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :"+methodName ,WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
+                    .methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
         }
 
 
     }
 
-    private void launchCustomTab(@NonNull Context activityContext, @NonNull String url, @Nullable String color)
-    {
-        final String methodName="LoginController :launchCustomTab()";
-      try {
-          CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-          builder.setShowTitle(true);//TO show title
-
-          //  CustomTabsClient.getPackageName()
-          builder.setStartAnimations(activityContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-
-          if (color != null) {
-
-              builder.setToolbarColor(Color.parseColor(color));
-          }
-
-          CustomTabsIntent customTabsIntent = builder.build();
-
-          String packageName = CustomTabHelper.getShared().getPackageNameToUse(context);
-
-          if (packageName != null && !packageName.equals("")) {
-              customTabsIntent.intent.setPackage(packageName);
-          }
-          customTabsIntent.launchUrl(activityContext, Uri.parse(url));
-      }
-      catch (Exception e)
-      {
-        WebAuthError.getShared(context).methodException("Exception:"+methodName,WebAuthErrorCode.SAVE_LOGIN_PROPERTIES,e.getMessage());
-      }
-    }
 
     public void loginWithSocial(@NonNull final Context activityContext, @NonNull final String requestId, @NonNull final String provider,
-                                @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain)
-    {
-      final String methodName="LoginController :loginWithSocial()";
-      try
-      {
-         getSocialLoginURL(requestId, provider, new Result<String>() {
-                        @Override
-                        public void success(String socialLoginURL) {
-                            loginCallback = callbacktoMain;
-                            if (socialLoginURL != null) {
-                               launchCustomTab(activityContext,socialLoginURL, color);
-                            } else {
-                               callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE,
-                                       "EMPTY SOCIAL URL","Error"+methodName));
-                            }
-                        }
+                                @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+        final String methodName = "LoginController :loginWithSocial()";
+        try {
+            getSocialLoginURL(requestId, provider, new Result<String>() {
+                @Override
+                public void success(String socialLoginURL) {
+                    loginCallback = callbacktoMain;
+                    if (socialLoginURL != null) {
+                        launchCustomTab(activityContext, socialLoginURL, color);
+                    } else {
+                        callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE,
+                                "EMPTY SOCIAL URL", "Error" + methodName));
+                    }
+                }
 
-                        @Override
-                        public void failure(WebAuthError error) {
-                            callbacktoMain.failure(error);
-                        }
-                    });
+                @Override
+                public void failure(WebAuthError error) {
+                    callbacktoMain.failure(error);
+                }
+            });
 
-      }
-      catch (Exception e)
-      {
-   callbacktoMain.failure( WebAuthError.getShared(context).methodException("Exception : "+methodName,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE,e.getMessage()));
-      }
+        } catch (Exception e) {
+            callbacktoMain.failure(WebAuthError.getShared(context).methodException("Exception : " + methodName, WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
+        }
 
+    }
+
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties, Result<String> result, String methodNameFromApp) {
+        String methodName = "LoginController:setURL()";
+        try {
+            if (loginproperties != null) {
+
+
+                if (DBHelper.getShared().addLoginProperties(loginproperties)) {
+                    CidaasHelper.baseurl = loginproperties.get("DomainURL");
+                    CidaasHelper.IS_SETURL_CALLED = true;
+                    result.success("SetURL is Successfully configured " + methodNameFromApp);
+                    LogFile.getShared(context).addSuccessLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                            + " Method Name:- " + methodNameFromApp);
+                    LogFile.getShared(context).addInfoLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                            + " Method Name:- " + methodNameFromApp);
+                } else {
+                    String errorMessage = "Saving Failed in LocalDB";
+                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage, methodName));
+                }
+
+            } else {
+                String errorMessage = "Login properties in null";
+                result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage, methodName));
+            }
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).methodException(methodName, WebAuthErrorCode.CIDAAS_PROPERTY_MISSING, e.getMessage()));
+        }
     }
 
     //Private Methods
+
+    private void launchCustomTab(@NonNull Context activityContext, @NonNull String url, @Nullable String color) {
+        final String methodName = "LoginController :launchCustomTab()";
+        try {
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setShowTitle(true);//TO show title
+
+            //  CustomTabsClient.getPackageName()
+            builder.setStartAnimations(activityContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+
+            if (color != null) {
+
+                builder.setToolbarColor(Color.parseColor(color));
+            }
+
+            CustomTabsIntent customTabsIntent = builder.build();
+
+            String packageName = CustomTabHelper.getShared().getPackageNameToUse(context);
+
+            if (packageName != null && !packageName.equals("")) {
+                customTabsIntent.intent.setPackage(packageName);
+            }
+            customTabsIntent.launchUrl(activityContext, Uri.parse(url));
+        } catch (Exception e) {
+            WebAuthError.getShared(context).methodException("Exception:" + methodName, WebAuthErrorCode.SAVE_LOGIN_PROPERTIES, e.getMessage());
+        }
+    }
+
     private String getCodeFromUrl(String url) {
         try {
             String code = null;
@@ -485,8 +459,7 @@ public class LoginController {
     }
 
 
-
-    public void getLoginCode(String url, Result<AccessTokenEntity> callback) {
+    private void getLoginCode(String url, Result<AccessTokenEntity> callback) {
         try {
             // showLoader();
             String code = getCodeFromUrl(url);
@@ -501,15 +474,15 @@ public class LoginController {
                 LogFile.getShared(context).addFailureLog(loggerMessage);
             }
         } catch (Exception e) {
-           
-            callback.failure( WebAuthError.getShared(context)
-                    .methodException("Exception :LoginController :getCodeFromUrl ",WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
+
+            callback.failure(WebAuthError.getShared(context)
+                    .methodException("Exception :LoginController :getCodeFromUrl ", WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
 
             //Todo handle Exception
         }
     }
 
-    public void handleToken(String code){   /*,Result<AccessTokenEntity> callbacktoMain*/
+    public void handleToken(String code) {   /*,Result<AccessTokenEntity> callbacktoMain*/
 
         if (loginCallback != null) {
 
@@ -527,7 +500,7 @@ public class LoginController {
     }
 
     //Get Login URL without any Argument
-    public void getLoginURL( final Result<String> callback) {
+    private void getLoginURL(final Result<String> callback) {
         try {
             //Check requestId is not null
 
@@ -538,14 +511,14 @@ public class LoginController {
                     //This is to generate the Code Challenge
 
                     /////This is for testing purpose
-                    Dictionary<String,String> challengeProperties=DBHelper.getShared().getChallengeProperties();
+                    Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
 
-                    if(challengeProperties.size()==0) {
+                    if (challengeProperties.size() == 0) {
 
                     }
 
 
-                    LoginController.getShared(context).getLoginURL(CidaasHelper.baseurl,result,null, new Result<String>() {
+                    LoginController.getShared(context).getLoginURL(CidaasHelper.baseurl, result, null, new Result<String>() {
                         @Override
                         public void success(String result) {
 
@@ -569,43 +542,28 @@ public class LoginController {
         } catch (Exception e) {
             //Todo Handle Error
             callback.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :LoginController :getLoginURL() " ,WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
+                    .methodException("Exception :LoginController :getLoginURL() ", WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
-    public void setURL(@NonNull final Dictionary<String, String> loginproperties,Result<String> result,String methodNameFromApp)
-    {String methodName="LoginController:setURL()";
-        try
-        {
-            if(loginproperties!=null) {
+    private void getAccessTokenAfterLogin(LoginCredentialsResponseEntity serviceresult, final Result<LoginCredentialsResponseEntity> result) {
+        //Access Token After Login
+        AccessTokenController.getShared(context).getAccessTokenByCode(serviceresult.getData().getCode(), new Result<AccessTokenEntity>() {
+            @Override
+            public void success(AccessTokenEntity accessTokenresult) {
 
-
-                if( DBHelper.getShared().addLoginProperties(loginproperties)) {
-                    CidaasHelper.baseurl=loginproperties.get("DomainURL");
-                    CidaasHelper.IS_SETURL_CALLED=true;
-                    result.success("SetURL is Successfully configured "+methodNameFromApp);
-                    LogFile.getShared(context).addSuccessLog(methodName,"SetURL is Successfully configured Baseurl:-"+loginproperties.get("DomainURL")
-                    +" Method Name:- "+methodNameFromApp);
-                    LogFile.getShared(context).addInfoLog(methodName,"SetURL is Successfully configured Baseurl:-"+loginproperties.get("DomainURL")
-                            +" Method Name:- "+methodNameFromApp);
-                }
-                else
-                {
-                    String errorMessage = "Saving Failed in LocalDB" ;
-                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage,methodName));
-                }
-
+                LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();
+                loginCredentialsResponseEntity.setData(accessTokenresult);
+                loginCredentialsResponseEntity.setStatus(200);
+                loginCredentialsResponseEntity.setSuccess(true);
+                result.success(loginCredentialsResponseEntity);
             }
-            else
-            {
-                String errorMessage = "Login properties in null" ;
-                result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage,methodName));
+
+            @Override
+            public void failure(WebAuthError error) {
+                result.failure(error);
             }
-        }
-        catch (Exception e)
-        {
-            result.failure(WebAuthError.getShared(context).methodException(methodName,WebAuthErrorCode.CIDAAS_PROPERTY_MISSING,e.getMessage()));
-        }
+        });
     }
 
 }
