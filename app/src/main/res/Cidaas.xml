@@ -11,8 +11,8 @@
 <!--
 
 <resources>
-<item name="DomainURL" type="string">https://dev-android-free.cidaas.de</item>
+<item name="DomainURL" type="string">https://dev-android-free.de.cidaas.de</item>
 <item name="ClientId" type="string">141bdf75-4865-44fd-a909-20e1ab66a908</item>
-<item name="RedirectURL">https://dev-android-free.cidaas.de</item>
+<item name="RedirectURL">https://dev-android-free.de.cidaas.de</item>
 
 </resources>-->

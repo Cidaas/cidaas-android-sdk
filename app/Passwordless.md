@@ -1,6 +1,6 @@
 # Passwordless or Multifactor Authentication
 
-cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in cidaas.    
+de.cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, de.cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in de.cidaas.
 
 ## Table of Contents
 <!--ts-->
@@ -61,8 +61,8 @@ For TOTP, Pattern, Touch ID, Smart Push, Face and Voice verification, you need t
     
 ```java
  public void onMessageReceived(RemoteMessage remoteMessage) {
-        Cidaas cidaas=Cidaas.getInstance(this);
-        cidaas.setremoteMessage(remoteMessage.getData());
+        Cidaas de.cidaas=Cidaas.getInstance(this);
+        de.cidaas.setremoteMessage(remoteMessage.getData());
   }
 ```
 
@@ -76,7 +76,7 @@ To setup a passwordless login, where user types only an Email, you need to confi
 To receive a verification code via Email, call **configureEmail()**.
 ```java
 
-cidaas.configureEmail("your sub", new Result < SetupEmailMFAResponseEntity > () {
+de.cidaas.configureEmail("your sub", new Result < SetupEmailMFAResponseEntity > () {
   @Override
   public void success(SetupEmailMFAResponseEntity result) {
     //Your success code here
@@ -107,7 +107,7 @@ Once you received your verification code via Email, you need to verify that code
  **enrollEmail()**.
  
 ```java
-cidaas.enrollEmail("your_code","your_status_id", new Result < EnrollEmailMFAResponseEntity > () {
+de.cidaas.enrollEmail("your_code","your_status_id", new Result < EnrollEmailMFAResponseEntity > () {
 
   @Override
   public void success(EnrollEmailMFAResponseEntity result) {
@@ -144,7 +144,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
 
   @Override
   public void success(LoginCredentialsResponseEntity result) {
@@ -175,7 +175,7 @@ cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < LoginC
 Once you received your verification code via Email, you need to verify the code. For that verification, call **verifyEmail()**.
 ```java
 
-cidaas.verifyEmail("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.verifyEmail("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
   @Override
   public void success(LoginCredentialsResponseEntity result) {
     // Your Success code here
@@ -214,7 +214,7 @@ To receive a verification code via SMS, call **configureSMS()**.
 
 ```java
 
-cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
+de.cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
   @Override
   public void success(SetupSMSMFAResponseEntity result) {
     //Your success code here
@@ -245,7 +245,7 @@ cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
 Once you received your verification code via SMS, you need to verify the code. For that verification, call **enrollSMS()**.
 
 ```java
-cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFAResponseEntity > () {
+de.cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFAResponseEntity > () {
   @Override
   public void success(EnrollSMSMFAResponseEntity result) {
     //Your success code here
@@ -283,7 +283,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithSMS(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithSMS(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
    @Override
    public void success(LoginCredentialsResponseEntity result) {
     //Your success code here
@@ -312,7 +312,7 @@ cidaas.loginWithSMS(PasswordlessEntity passwordlessEntity, new Result < LoginCre
 Once you received your verification code via SMS, you need to verify the code. For that verification, call **verifySMS()**.
 
 ```java
-cidaas.verifySMS("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.verifySMS("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   // Your Success code here
@@ -348,7 +348,7 @@ To use IVR as a passwordless login, you need to configure IVR physical verificat
 
 To receive a verification code via IVR, call **configureIVR()**.
 ```java
-cidaas.configureIVR(sub, new Result < SetupIVRMFAResponseEntity > () {
+de.cidaas.configureIVR(sub, new Result < SetupIVRMFAResponseEntity > () {
  @Override
  public void success(SetupIVRMFAResponseEntity result) {
   //Your success code here
@@ -379,7 +379,7 @@ Once you received your verification code via IVR verification call, you need to 
 
 ```java
 
-cidaas.enrollIVR("your_code","your_statusId", new Result < EnrollIVRMFAResponseEntity > () {
+de.cidaas.enrollIVR("your_code","your_statusId", new Result < EnrollIVRMFAResponseEntity > () {
  @Override
  public void success(EnrollIVRMFAResponseEntity result) {
   //Your success code here
@@ -418,7 +418,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithIVR(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithIVR(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here
@@ -447,7 +447,7 @@ Once you received your verification code via IVR, you need to verify the code. F
 
 ```java
 
-cidaas.verifyIVR("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.verifyIVR("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
 @Override
 public void success(LoginCredentialsResponseEntity result) {
         // Your Success code here
@@ -487,7 +487,7 @@ To use Backupcode as a passwordless login, you need to configure Backupcode phys
 To configure or view the Backupcode, call **configureBackupcode()**.
 ```java
 
-cidaas.configureBackupcode(sub, new Result < SetupBackupcodeMFAResponseEntity > () {
+de.cidaas.configureBackupcode(sub, new Result < SetupBackupcodeMFAResponseEntity > () {
  @Override
  public void success(SetupBackupcodeMFAResponseEntity result) {
   //Your success code here
@@ -531,7 +531,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithBackupcode("yourverificationCode",PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithBackupcode("yourverificationCode",PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //your success code here.
@@ -572,7 +572,7 @@ To configure TOTP verification, call **configureTOTP()**.
 
 ```java
 
-cidaas.configureTOTP("Your Sub", new Result < EnrollTOTPMFAResponseEntity > () {
+de.cidaas.configureTOTP("Your Sub", new Result < EnrollTOTPMFAResponseEntity > () {
  @Override
  public void success(EnrollTOTPMFAResponseEntity result) {
   //your success code here
@@ -611,7 +611,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithTOTP(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithTOTP(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -651,7 +651,7 @@ If you want to offer a passwordless login after securing it with the secure patt
 To configure Pattern Recognition, call **configurePatternRecognition()**.
 
 ```java
-cidaas.configurePatternRecognition("RED[1,2,3]", "Your Sub", new Result < EnrollPatternMFAResponseEntity > () {
+de.cidaas.configurePatternRecognition("RED[1,2,3]", "Your Sub", new Result < EnrollPatternMFAResponseEntity > () {
  @Override
  public void success(EnrollPatternPMFAResponseEntity result) {
   //your success code here
@@ -687,7 +687,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithPatternRecognition("RED[1,2,3]", PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithPatternRecognition("RED[1,2,3]", PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //your success code here
@@ -727,7 +727,7 @@ To configure fingerprint Verification, call **configureFingerprint()**.
 
 ```java
 
-cidaas.configureFingerprint("Your Sub", new Result < EnrollFingerprintMFAResponseEntity > () {
+de.cidaas.configureFingerprint("Your Sub", new Result < EnrollFingerprintMFAResponseEntity > () {
  @Override
  public void success(EnrollFingerprintPMFAResponseEntity result) {
   //your success code here
@@ -764,7 +764,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithFingerprint(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithFingerprint(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -804,7 +804,7 @@ To configure SmartPush Notification, call **configureSmartPush()**.
 
 ```java
 
-   cidaas.configureSmartPush("Your Sub", new Result < EnrollSmartPushMFAResponseEntity > () {
+   de.cidaas.configureSmartPush("Your Sub", new Result < EnrollSmartPushMFAResponseEntity > () {
     @Override
     public void success(EnrollSmartPushPMFAResponseEntity result) {
      //your success code here
@@ -841,7 +841,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithSmartPush(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithSmartPush(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -874,7 +874,7 @@ cidaas.loginWithSmartPush(PasswordlessEntity passwordlessEntity, new Result < Lo
 
 #### Face Recognition
 
-Biometrics plays an important role in the modern world. cidaas can register a user's face, extract unique features from it, and use that to identify when they present their face for identification. To use Face Recognition as a passwordless login, you need to configure it first.
+Biometrics plays an important role in the modern world. de.cidaas can register a user's face, extract unique features from it, and use that to identify when they present their face for identification. To use Face Recognition as a passwordless login, you need to configure it first.
 
 #### Configure Face Recognition
 
@@ -882,7 +882,7 @@ To configure Face Recognition, call **configureFaceRecognition()**.
 
 ```java
 
-cidaas.configureFaceRecognition(File photo, "Your Sub", new Result < EnrollFaceRecognitionMFAResponseEntity > () {
+de.cidaas.configureFaceRecognition(File photo, "Your Sub", new Result < EnrollFaceRecognitionMFAResponseEntity > () {
  @Override
  public void success(EnrollFaceRecognitionPMFAResponseEntity result) {
   //your success code here
@@ -919,7 +919,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
@@ -951,7 +951,7 @@ cidaas.loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEntit
 
 #### Voice Recognition
 
-Biometric plays an important role in the modern world. cidaas can record your user's voice, extract unique features and use that to verify. To use Voice Recognition as a passwordless login, you need to configure it first.
+Biometric plays an important role in the modern world. de.cidaas can record your user's voice, extract unique features and use that to verify. To use Voice Recognition as a passwordless login, you need to configure it first.
  
 #### Configure Voice Recognition
 
@@ -959,7 +959,7 @@ To configure Voice Recognition, call **configureVoiceRecognition()**.
 
 ```java
 
-    cidaas.configureVoiceRecognition(File voice, "Your Sub", new Result < EnrollVoiceRecognitionMFAResponseEntity > () {
+    de.cidaas.configureVoiceRecognition(File voice, "Your Sub", new Result < EnrollVoiceRecognitionMFAResponseEntity > () {
      @Override
      public void success(EnrollFaceRecognitionPMFAResponseEntity result) {
       //your success code here
@@ -996,7 +996,7 @@ passwordlessEntity.setTrackId(trackid);
 passwordlessEntity.setRequestId(result.getData().getRequestId());
 passwordlessEntity.setSub(sub);
 
-cidaas.loginWithVoiceRecognition(File voice,PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+de.cidaas.loginWithVoiceRecognition(File voice,PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
  @Override
  public void success(LoginCredentialsResponseEntity result) {
   //Your success code here  
