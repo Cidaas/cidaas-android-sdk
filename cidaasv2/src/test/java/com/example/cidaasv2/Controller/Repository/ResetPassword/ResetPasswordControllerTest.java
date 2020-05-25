@@ -42,7 +42,7 @@ public class ResetPasswordControllerTest {
 
     @Test
     public void testResetPasswordValidateCode() throws Exception {
-        resetPasswordController.resetPasswordValidateCode("baseurl", "verificationCode", "rprq", new Result<ResetPasswordValidateCodeResponseEntity>() {
+        resetPasswordController.resetPasswordValidateCode("verificationCode", "rprq", new Result<ResetPasswordValidateCodeResponseEntity>() {
             @Override
             public void success(ResetPasswordValidateCodeResponseEntity result) {
 

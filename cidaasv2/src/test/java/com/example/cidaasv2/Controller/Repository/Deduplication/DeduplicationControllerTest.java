@@ -37,7 +37,7 @@ public class DeduplicationControllerTest {
 
     @Test
     public void testGetDeduplicationList() throws Exception {
-        deduplicationController.getDeduplicationList("baseurl", "trackId", null);
+        deduplicationController.getDeduplicationList("trackId", null);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class DeduplicationControllerTest {
 
     @Test
     public void testLoginDeduplication() throws Exception {
-        deduplicationController.loginDeduplication("baseurl", "requestId", "sub", "password", new Result<LoginCredentialsResponseEntity>() {
+        deduplicationController.loginDeduplication("requestId", "sub", "password", new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 

@@ -94,8 +94,8 @@ public class LoginService {
         }
     }
 
-    private void serviceForLoginWithCredentials(String loginUrl,LoginCredentialsRequestEntity loginCredentialsRequestEntity,  Map<String, String> headers ,
-                                               final Result<LoginCredentialsResponseEntity> callback)
+    protected void serviceForLoginWithCredentials(String loginUrl, LoginCredentialsRequestEntity loginCredentialsRequestEntity, Map<String, String> headers,
+                                                  final Result<LoginCredentialsResponseEntity> callback)
     {
         final String methodName="Error :LoginService :serviceForLoginWithCredentials()";
      try {

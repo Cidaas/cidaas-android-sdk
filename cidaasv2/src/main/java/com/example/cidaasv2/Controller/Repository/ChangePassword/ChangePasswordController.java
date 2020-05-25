@@ -15,6 +15,9 @@ import com.example.cidaasv2.Service.Repository.ChangePassword.ChangePasswordServ
 import java.util.Dictionary;
 
 import androidx.annotation.NonNull;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import timber.log.Timber;
 
 public class ChangePasswordController {
@@ -63,7 +66,7 @@ public class ChangePasswordController {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
-                    checkandChangePasswordService(baseurl, changePasswordRequestEntity, resetpasswordResult);
+                    checkAndChangePasswordService(baseurl, changePasswordRequestEntity, resetpasswordResult);
                 }
 
                 @Override
@@ -79,14 +82,14 @@ public class ChangePasswordController {
         }
     }
 
-    private void checkandChangePasswordService(String baseurl, @NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
+    private void checkAndChangePasswordService(String baseurl, @NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
         try {
 
-            if (changePasswordRequestEntity.getConfirm_password() != null && !changePasswordRequestEntity.getConfirm_password().equals("")
-                    && changePasswordRequestEntity.getNew_password() != null && !changePasswordRequestEntity.getNew_password().equals("")
-                    && changePasswordRequestEntity.getIdentityId() != null && !changePasswordRequestEntity.getIdentityId().equals("")
-                    && changePasswordRequestEntity.getOld_password() != null && !changePasswordRequestEntity.getOld_password().equals("")
-                    && baseurl != null && !baseurl.equals("")) {
+            if (isNotEmpty(changePasswordRequestEntity.getConfirm_password())
+                    && isNotEmpty(changePasswordRequestEntity.getNew_password())
+                    && isNotEmpty(changePasswordRequestEntity.getIdentityId())
+                    && isNotEmpty(changePasswordRequestEntity.getOld_password())
+                    && isNotEmpty(baseurl)) {
 
                 ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl, null, resetpasswordResult);
             } else {

@@ -6,6 +6,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintResponseEntity;
@@ -112,7 +113,7 @@ public class FingerprintVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -177,7 +178,7 @@ public class FingerprintVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -243,7 +244,7 @@ public class FingerprintVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -309,7 +310,7 @@ public class FingerprintVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -377,7 +378,7 @@ public class FingerprintVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();

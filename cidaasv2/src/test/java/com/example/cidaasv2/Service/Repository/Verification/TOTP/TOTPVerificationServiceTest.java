@@ -6,6 +6,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPResponseEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPRequestEntity;
@@ -98,7 +99,7 @@ public class TOTPVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -175,7 +176,7 @@ public class TOTPVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -247,7 +248,7 @@ public class TOTPVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -313,7 +314,7 @@ public class TOTPVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -381,7 +382,7 @@ public class TOTPVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();

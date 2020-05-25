@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 
@@ -39,7 +40,7 @@ public class RequestIdServiceCall {
     @Before
     public void setUp() throws Exception{
         context=Mockito.mock(Context.class);
-        service=new CidaassdkService();
+        service = new CidaassdkService(null);
         MockitoAnnotations.initMocks(this);
         requestIdService=new RequestIdService(context);
 
@@ -84,16 +85,16 @@ public class RequestIdServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            requestIdService.getRequestID(loginProperties, deviceInfoEntity,savedProperties,new Result<AuthRequestResponseEntity>() {
+            requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
 
@@ -146,16 +147,16 @@ public class RequestIdServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            requestIdService.getRequestID(loginProperties, deviceInfoEntity,savedProperties,new Result<AuthRequestResponseEntity>() {
+            requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
 
@@ -212,16 +213,15 @@ public class RequestIdServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-
-            requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {
+            requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
 
@@ -278,15 +278,15 @@ public class RequestIdServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
 
-            requestIdService.getRequestID(loginProperties, deviceInfoEntity,savedProperties,new Result<AuthRequestResponseEntity>() {
+            requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
 
@@ -335,14 +335,14 @@ public class RequestIdServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {
+            requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
 
@@ -392,14 +392,14 @@ public class RequestIdServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 
-            requestIdService.getRequestID(loginProperties,deviceInfoEntity,savedProperties, new Result<AuthRequestResponseEntity>() {
+            requestIdService.getRequestID(loginProperties, new Result<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
 

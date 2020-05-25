@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 
@@ -87,9 +88,9 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
             deduplicationService.getDeduplicationList("RefreshToken","track", new Result<DeduplicationResponseEntity>() {
@@ -144,12 +145,12 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            deduplicationService.getDeduplicationList(Cidaas.baseurl,"track", new Result<DeduplicationResponseEntity>() {
+            deduplicationService.getDeduplicationList(CidaasHelper.baseurl, "track", new Result<DeduplicationResponseEntity>() {
                 @Override
                 public void success(DeduplicationResponseEntity result) {
 
@@ -205,11 +206,11 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            deduplicationService.getDeduplicationList(Cidaas.baseurl,"track", new Result<DeduplicationResponseEntity>() {
+            deduplicationService.getDeduplicationList(CidaasHelper.baseurl, "track", new Result<DeduplicationResponseEntity>() {
                 @Override
                 public void success(DeduplicationResponseEntity result) {
 
@@ -265,11 +266,11 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            CidaasHelper.baseurl = domainURL;
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            deduplicationService.getDeduplicationList(Cidaas.baseurl,"track", new Result<DeduplicationResponseEntity>() {
+            deduplicationService.getDeduplicationList(CidaasHelper.baseurl, "track", new Result<DeduplicationResponseEntity>() {
                 @Override
                 public void success(DeduplicationResponseEntity result) {
 
@@ -318,11 +319,11 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            deduplicationService.getDeduplicationList(Cidaas.baseurl,"track", new Result<DeduplicationResponseEntity>() {
+            deduplicationService.getDeduplicationList(CidaasHelper.baseurl, "track", new Result<DeduplicationResponseEntity>() {
                 @Override
                 public void success(DeduplicationResponseEntity result) {
 
@@ -371,12 +372,12 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            deduplicationService.getDeduplicationList(Cidaas.baseurl,null, new Result<DeduplicationResponseEntity>() {
+            deduplicationService.getDeduplicationList(CidaasHelper.baseurl, null, new Result<DeduplicationResponseEntity>() {
                 @Override
                 public void success(DeduplicationResponseEntity result) {
 
@@ -430,12 +431,12 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            deduplicationService.registerDeduplication(HelperClass.removeLastChar(Cidaas.baseurl),"track", new Result<RegisterDeduplicationEntity>() {
+            deduplicationService.registerDeduplication(HelperClass.removeLastChar(CidaasHelper.baseurl), "track", new Result<RegisterDeduplicationEntity>() {
                 @Override
                 public void success(RegisterDeduplicationEntity result) {
 
@@ -485,12 +486,12 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            deduplicationService.registerDeduplication(HelperClass.removeLastChar(Cidaas.baseurl),"track", new Result<RegisterDeduplicationEntity>() {
+            deduplicationService.registerDeduplication(HelperClass.removeLastChar(CidaasHelper.baseurl), "track", new Result<RegisterDeduplicationEntity>() {
                 @Override
                 public void success(RegisterDeduplicationEntity result) {
 
@@ -546,11 +547,11 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            deduplicationService.registerDeduplication(HelperClass.removeLastChar(Cidaas.baseurl),"track", new Result<RegisterDeduplicationEntity>() {
+            deduplicationService.registerDeduplication(HelperClass.removeLastChar(CidaasHelper.baseurl), "track", new Result<RegisterDeduplicationEntity>() {
                 @Override
                 public void success(RegisterDeduplicationEntity result) {
 
@@ -606,11 +607,11 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            CidaasHelper.baseurl = domainURL;
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            deduplicationService.registerDeduplication(HelperClass.removeLastChar(Cidaas.baseurl),"track", new Result<RegisterDeduplicationEntity>() {
+            deduplicationService.registerDeduplication(HelperClass.removeLastChar(CidaasHelper.baseurl), "track", new Result<RegisterDeduplicationEntity>() {
                 @Override
                 public void success(RegisterDeduplicationEntity result) {
 
@@ -659,11 +660,11 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            deduplicationService.registerDeduplication(HelperClass.removeLastChar(Cidaas.baseurl),"track", new Result<RegisterDeduplicationEntity>() {
+            deduplicationService.registerDeduplication(HelperClass.removeLastChar(CidaasHelper.baseurl), "track", new Result<RegisterDeduplicationEntity>() {
                 @Override
                 public void success(RegisterDeduplicationEntity result) {
 
@@ -712,12 +713,12 @@ public class DeduplicationServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            deduplicationService.registerDeduplication(HelperClass.removeLastChar(Cidaas.baseurl),"track", new Result<RegisterDeduplicationEntity>() {
+            deduplicationService.registerDeduplication(HelperClass.removeLastChar(CidaasHelper.baseurl), "track", new Result<RegisterDeduplicationEntity>() {
                 @Override
                 public void success(RegisterDeduplicationEntity result) {
 

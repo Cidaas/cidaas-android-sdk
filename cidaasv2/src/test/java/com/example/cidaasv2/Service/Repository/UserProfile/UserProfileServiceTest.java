@@ -35,7 +35,7 @@ public class UserProfileServiceTest {
     @Test
     public void testGetInternalUserProfileInfo() throws Exception {
 
-        userProfileService.getInternalUserProfileInfo("baseurl", "AccessToken", "sub", null,new Result<UserprofileResponseEntity>() {
+        userProfileService.getInternalUserProfileInfo("baseurl", "AccessToken", "sub", new Result<UserprofileResponseEntity>() {
             @Override
             public void success(UserprofileResponseEntity result) {
 

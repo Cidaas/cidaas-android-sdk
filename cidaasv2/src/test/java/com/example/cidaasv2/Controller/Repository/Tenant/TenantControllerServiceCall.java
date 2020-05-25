@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 
 import org.junit.Assert;
@@ -56,10 +57,10 @@ public class TenantControllerServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             final CountDownLatch latch=new CountDownLatch(1);
-            tenantController.getTenantInfo(removeLastChar(Cidaas.baseurl), new Result<TenantInfoEntity>() {
+            tenantController.getTenantInfo(removeLastChar(CidaasHelper.baseurl), new Result<TenantInfoEntity>() {
                 @Override
                 public void success(TenantInfoEntity result) {
 

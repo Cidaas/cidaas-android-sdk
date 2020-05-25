@@ -462,5 +462,4 @@ public class ConsentController {
             loginResult.failure(WebAuthError.getShared(context).methodException(methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE, e.getMessage()));
         }
     }
-
 }

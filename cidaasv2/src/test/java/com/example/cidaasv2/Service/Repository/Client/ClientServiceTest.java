@@ -54,7 +54,7 @@ public class ClientServiceTest {
 
             @Override
             public void failure(WebAuthError error) {
-            Assert.assertEquals("Request Id is missing.",error.getErrorMessage());
+                Assert.assertEquals("RequestId or baseurl must not be empty", error.getDetailedErrorMessage());
             }
         });
     }
@@ -70,7 +70,7 @@ public class ClientServiceTest {
 
             @Override
             public void failure(WebAuthError error) {
-              Assert.assertEquals(true,error.ErrorMessage.equals("One of the property is missing."));
+                Assert.assertEquals(true, error.getErrorMessage().equals("One of the property is missing."));
             }
         });
     }

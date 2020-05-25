@@ -46,8 +46,8 @@ public class InitiateFingerprintMFARequestEntityTest {
     @Test
     public void setUsagePass()
     {
-        initiateFingerprintMFARequestEntity.setUsagePass("UsagePass");
-        assertTrue(initiateFingerprintMFARequestEntity.getUsagePass().equals("UsagePass"));
+        initiateFingerprintMFARequestEntity.setUsage_pass("UsagePass");
+        assertTrue(initiateFingerprintMFARequestEntity.getUsage_pass().equals("UsagePass"));
     }
 
 

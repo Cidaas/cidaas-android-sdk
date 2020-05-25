@@ -41,28 +41,11 @@ public class BackupCodeConfigurationControllerTest {
 
     @Test
     public void testConfigureBackupCode() throws Exception {
-        backupCodeConfigurationController.configureBackupCode("sub", "baseurl", null);
+        backupCodeConfigurationController.configureBackupCode("sub", null);
     }
 
     @Test
     public void testLoginWithBackupCode() throws Exception {
-        backupCodeConfigurationController.loginWithBackupCode("code", "baseurl", "trackId", "clientId", "requestId", null, null);
-    }
-
-    @Test
-    public void testVerifyBackupCode() throws Exception {
-        backupCodeConfigurationController.verifyBackupCode("baseurl", "clientId", new AuthenticateBackupCodeRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
-            @Override
-            public void success(LoginCredentialsResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
+        backupCodeConfigurationController.loginWithBackupCode("code", null, null);
     }
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

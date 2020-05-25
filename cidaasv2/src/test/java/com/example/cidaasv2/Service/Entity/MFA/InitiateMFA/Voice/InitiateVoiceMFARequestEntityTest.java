@@ -45,8 +45,8 @@ public class InitiateVoiceMFARequestEntityTest {
     @Test
     public void setUsagePass()
     {
-        initiateVoiceMFARequestEntity.setUsagePass("UsagePass");
-        assertTrue(initiateVoiceMFARequestEntity.getUsagePass().equals("UsagePass"));
+        initiateVoiceMFARequestEntity.setUsage_pass("UsagePass");
+        assertTrue(initiateVoiceMFARequestEntity.getUsage_pass().equals("UsagePass"));
     }
     
     

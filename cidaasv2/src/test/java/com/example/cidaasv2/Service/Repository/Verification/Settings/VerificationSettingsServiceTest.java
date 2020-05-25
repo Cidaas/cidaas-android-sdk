@@ -35,7 +35,7 @@ public class VerificationSettingsServiceTest {
     @Test
     public void testGetmfaList() throws Exception {
 
-        verificationSettingsService.getmfaList("baseurl", "sub", "userDeviceID", null,new Result<MFAListResponseEntity>() {
+        verificationSettingsService.getmfaList("baseurl", "sub", "userDeviceID", new Result<MFAListResponseEntity>() {
             @Override
             public void success(MFAListResponseEntity result) {
 
@@ -51,7 +51,7 @@ public class VerificationSettingsServiceTest {
     @Test
     public void testGetmfaListnull() throws Exception {
 
-        verificationSettingsService.getmfaList("", "", "userDeviceID", null,new Result<MFAListResponseEntity>() {
+        verificationSettingsService.getmfaList("", "", "userDeviceID", new Result<MFAListResponseEntity>() {
             @Override
             public void success(MFAListResponseEntity result) {
 

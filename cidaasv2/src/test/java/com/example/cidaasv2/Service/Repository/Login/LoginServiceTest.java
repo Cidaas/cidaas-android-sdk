@@ -8,6 +8,7 @@ import com.example.cidaasv2.Controller.Repository.Client.ClientController;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Service.Entity.ClientInfo.ClientInfoEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
@@ -37,13 +38,14 @@ public class LoginServiceTest {
 
     Context context;
     LoginService loginService;
-    DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+    DeviceInfoEntity deviceInfoEntity = new DeviceInfoEntity();
 
 
     @Before
     public void setUp() {
-        context= RuntimeEnvironment.application.getApplicationContext();
-        loginService=new LoginService(context);
+
+        context = RuntimeEnvironment.application.getApplicationContext();
+        loginService = new LoginService(context);
         DBHelper.setConfig(context);
 
 
@@ -53,10 +55,10 @@ public class LoginServiceTest {
         deviceInfoEntity.setDeviceMake("DeviceMake");
         deviceInfoEntity.setPushNotificationId("PushNotificationId");
 
-        Dictionary<String, String> savedProperties=new Hashtable<>();
+        Dictionary<String, String> savedProperties = new Hashtable<>();
 
         savedProperties.put("Verifier", "codeVerifier");
-        savedProperties.put("Challenge","codeChallenge");
+        savedProperties.put("Challenge", "codeChallenge");
         savedProperties.put("Method", "ChallengeMethod");
 
         DBHelper.getShared().addChallengeProperties(savedProperties);
@@ -66,7 +68,7 @@ public class LoginServiceTest {
 
     @Test
     public void testGetShared() throws Exception {
-        LoginService result = LoginService.getShared(null);
+        LoginService result = LoginService.getShared(context);
         Assert.assertTrue(result instanceof LoginService);
     }
 
@@ -105,25 +107,25 @@ public class LoginServiceTest {
     @Test
     public void testContinueMFA() throws Exception {
 
-       loginService.continueMFA("baseurl", null, null,new Result<ResumeLoginResponseEntity>() {
-           @Override
-           public void success(ResumeLoginResponseEntity result) {
+        loginService.continueMFA("baseurl", null, new Result<ResumeLoginResponseEntity>() {
+            @Override
+            public void success(ResumeLoginResponseEntity result) {
 
-           }
+            }
 
-           @Override
-           public void failure(WebAuthError error) {
+            @Override
+            public void failure(WebAuthError error) {
 
-           }
-       });
+            }
+        });
     }
 
     @Test
     public void testContinueMFANUll() throws Exception {
-        ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
+        ResumeLoginRequestEntity resumeLoginRequestEntity = new ResumeLoginRequestEntity();
         resumeLoginRequestEntity.setTrack_id("TrackId");
 
-        loginService.continueMFA("baseurl", resumeLoginRequestEntity,null, new Result<ResumeLoginResponseEntity>() {
+        loginService.continueMFA("baseurl", resumeLoginRequestEntity, new Result<ResumeLoginResponseEntity>() {
             @Override
             public void success(ResumeLoginResponseEntity result) {
 
@@ -140,7 +142,7 @@ public class LoginServiceTest {
     @Test
     public void testContinueMFAnul() throws Exception {
 
-        loginService.continueMFA("", null, null,new Result<ResumeLoginResponseEntity>() {
+        loginService.continueMFA("", null, new Result<ResumeLoginResponseEntity>() {
             @Override
             public void success(ResumeLoginResponseEntity result) {
 
@@ -155,7 +157,7 @@ public class LoginServiceTest {
 
     @Test
     public void testContinuePasswordless() throws Exception {
-        loginService.continuePasswordless("", null,null, new Result<ResumeLoginResponseEntity>() {
+        loginService.continuePasswordless("", null, new Result<ResumeLoginResponseEntity>() {
             @Override
             public void success(ResumeLoginResponseEntity result) {
 
@@ -163,42 +165,7 @@ public class LoginServiceTest {
 
             @Override
             public void failure(WebAuthError error) {
-
-            }
-        });
-    }
-
-    @Test
-    public void testContinuePasswordles() throws Exception {
-
-        loginService.continuePasswordless("base", null,null, new Result<ResumeLoginResponseEntity>() {
-            @Override
-            public void success(ResumeLoginResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
-            }
-        });
-    }
-
-    @Test
-    public void testContinuePasswordlessn() throws Exception {
-        ResumeLoginRequestEntity resumeLoginRequestEntity=new ResumeLoginRequestEntity();
-        resumeLoginRequestEntity.setTrack_id("TrackId");
-
-
-        loginService.continuePasswordless("base", resumeLoginRequestEntity,null, new Result<ResumeLoginResponseEntity>() {
-            @Override
-            public void success(ResumeLoginResponseEntity result) {
-
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-
+                Assert.assertTrue(error.getDetailedErrorMessage().contains("Base URL is empty."));
             }
         });
     }
@@ -208,12 +175,12 @@ public class LoginServiceTest {
 
 
         MockWebServer server = new MockWebServer();
-        String domainURL= server.url("").toString();
+        String domainURL = server.url("").toString();
         server.url("/public-srv/Clientinfo/basic");
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         loginService.loginWithCredentials("localhost:234235", new LoginCredentialsRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
@@ -230,21 +197,21 @@ public class LoginServiceTest {
 
 
     }
+
     @Test
     public void testContiuneMFAfail() throws Exception {
 
 
         MockWebServer server = new MockWebServer();
-        String domainURL= server.url("").toString();
+        String domainURL = server.url("").toString();
         server.url("/public-srv/Clientinfo/basic");
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
-
-        loginService.continuePasswordless("localhost:234235", new ResumeLoginRequestEntity(),null, new Result<ResumeLoginResponseEntity>() {
+        loginService.continuePasswordless("localhost:234235", new ResumeLoginRequestEntity(), new Result<ResumeLoginResponseEntity>() {
             @Override
             public void success(ResumeLoginResponseEntity result) {
 
@@ -264,16 +231,15 @@ public class LoginServiceTest {
 
 
         MockWebServer server = new MockWebServer();
-        String domainURL= server.url("").toString();
+        String domainURL = server.url("").toString();
         server.url("/public-srv/Clientinfo/basic");
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
-
-        loginService.continueMFA("localhost:234235", new ResumeLoginRequestEntity(),null, new Result<ResumeLoginResponseEntity>() {
+        loginService.continueMFA("localhost:234235", new ResumeLoginRequestEntity(), new Result<ResumeLoginResponseEntity>() {
             @Override
             public void success(ResumeLoginResponseEntity result) {
 
@@ -281,16 +247,8 @@ public class LoginServiceTest {
 
             @Override
             public void failure(WebAuthError error) {
-                Timber.e("Success");
+
             }
         });
-
-
     }
-
-
-
-
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

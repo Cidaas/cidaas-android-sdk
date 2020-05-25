@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 
@@ -92,12 +93,12 @@ public class ChangePasswordServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity, HelperClass.removeLastChar(CidaasHelper.baseurl), deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
                 public void success(ChangePasswordResponseEntity result) {
 
@@ -149,12 +150,12 @@ public class ChangePasswordServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity, HelperClass.removeLastChar(CidaasHelper.baseurl), deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
                 public void success(ChangePasswordResponseEntity result) {
 
@@ -210,11 +211,11 @@ public class ChangePasswordServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity, HelperClass.removeLastChar(CidaasHelper.baseurl), deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
                 public void success(ChangePasswordResponseEntity result) {
 
@@ -270,12 +271,11 @@ public class ChangePasswordServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            CidaasHelper.baseurl = domainURL;
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-
-            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity, HelperClass.removeLastChar(CidaasHelper.baseurl), deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
                 public void success(ChangePasswordResponseEntity result) {
 
@@ -324,12 +324,12 @@ public class ChangePasswordServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity, HelperClass.removeLastChar(CidaasHelper.baseurl), deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
                 public void success(ChangePasswordResponseEntity result) {
 
@@ -378,13 +378,13 @@ public class ChangePasswordServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity, HelperClass.removeLastChar(CidaasHelper.baseurl), deviceInfoEntity, new Result<ChangePasswordResponseEntity>() {
                 @Override
                 public void success(ChangePasswordResponseEntity result) {
 
@@ -434,13 +434,13 @@ public class ChangePasswordServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            changePasswordService.changePassword(changePasswordRequestEntity,HelperClass.removeLastChar(Cidaas.baseurl),null, new Result<ChangePasswordResponseEntity>() {
+            changePasswordService.changePassword(changePasswordRequestEntity, HelperClass.removeLastChar(CidaasHelper.baseurl), null, new Result<ChangePasswordResponseEntity>() {
                 @Override
                 public void success(ChangePasswordResponseEntity result) {
 

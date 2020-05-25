@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.AccessToken.AccessTokenEntity;
 
 import org.junit.Assert;
@@ -24,7 +25,6 @@ import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
 public class AccessTokenServiceCall {
-
     Context context= Mockito.mock(Context.class);
 
     private final CountDownLatch latch = new CountDownLatch(1);
@@ -85,12 +85,12 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginProperties,deviceInfoEntity,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken", loginProperties, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -140,12 +140,12 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginProperties,null,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken", loginProperties, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -201,11 +201,11 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginProperties,deviceInfoEntity,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken", loginProperties, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -261,11 +261,11 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            CidaasHelper.baseurl = domainURL;
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginProperties,deviceInfoEntity,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken", loginProperties, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -314,11 +314,11 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginProperties,deviceInfoEntity,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken", loginProperties, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -367,12 +367,12 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            accessTokenService.getAccessTokenByRefreshToken("RefreshToken",loginProperties,deviceInfoEntity,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByRefreshToken("RefreshToken", loginProperties, new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -425,12 +425,12 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(Cidaas.baseurl),"Code", deviceInfoEntity,loginProperties,savedProperties,new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(CidaasHelper.baseurl), "Code", new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -486,11 +486,11 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(Cidaas.baseurl),"Code",deviceInfoEntity,loginProperties,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(CidaasHelper.baseurl), "Code", new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -546,11 +546,11 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            CidaasHelper.baseurl = domainURL;
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
 
-            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(Cidaas.baseurl),"Code",deviceInfoEntity,loginProperties,savedProperties, new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(CidaasHelper.baseurl), "Code", new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -599,11 +599,11 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(Cidaas.baseurl),"Code", deviceInfoEntity,loginProperties,savedProperties,new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(CidaasHelper.baseurl), "Code", new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -652,12 +652,12 @@ public class AccessTokenServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
 
-            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(Cidaas.baseurl),"Code", deviceInfoEntity,loginProperties,savedProperties,new Result<AccessTokenEntity>() {
+            accessTokenService.getAccessTokenByCode(HelperClass.removeLastChar(CidaasHelper.baseurl), "Code", new Result<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
 
@@ -684,7 +684,4 @@ public class AccessTokenServiceCall {
         }
 
     }
-
-
-
 }

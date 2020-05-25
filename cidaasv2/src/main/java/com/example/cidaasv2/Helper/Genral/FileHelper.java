@@ -11,6 +11,7 @@ import com.example.cidaasv2.Helper.Enums.WebAuthErrorCode;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Helper.Logger.LogFile;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -32,6 +33,8 @@ import javax.xml.xpath.XPathFactory;
 
 import timber.log.Timber;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 /**
  * Created by widasrnarayanan on 16/1/18.
  */
@@ -42,30 +45,27 @@ public class FileHelper {
     public static FileHelper shared;
     public Context context;
     WebAuthError webAuthError;
-    public static FileHelper getShared(Context context)
-    {
-        if(shared==null)
-        {
-            shared=new FileHelper(context);
+
+    public static FileHelper getShared(Context context) {
+        if (shared == null) {
+            shared = new FileHelper(context);
         }
         return shared;
     }
 
     FileHelper(Context context) {
         this.context = context;
-        webAuthError=WebAuthError.getShared(this.context);
+        webAuthError = WebAuthError.getShared(this.context);
     }
 
 
-
     //Read Properties
-    public void readProperties(AssetManager assetManager,String fileNameFromBase,Result<Dictionary<String,String>> result)
-    {
-        String methodName="FileHelper: readProperties()";
+    public void readProperties(AssetManager assetManager, String fileNameFromBase, Result<Dictionary<String, String>> result) {
+        String methodName = "FileHelper: readProperties()";
         InputStream inputStream;
-        AssetManager asstManager= assetManager;
-        String fileName=fileNameFromBase;
-        Dictionary<String, String> dictObject=new Hashtable<>();
+        AssetManager asstManager = assetManager;
+        String fileName = fileNameFromBase;
+        Dictionary<String, String> dictObject = new Hashtable<>();
 
         //todo check the file name
 
@@ -82,45 +82,37 @@ public class FileHelper {
                 }
                 outputStream.close();
                 inputStream.close();
-            }catch (IOException e){
+            } catch (IOException e) {
                 Timber.d(e.getMessage());
             }
-            Document xml=parseXML(outputStream.toByteArray());
+            Document xml = parseXML(outputStream.toByteArray());
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
             XPathExpression expr = xpath.compile("//resources/item[@string]");
             NodeList nl = (NodeList) expr.evaluate(xml, XPathConstants.NODESET);
             NodeList nodeList = xml.getElementsByTagName("item");
-            String sam=null;
-            for(int i=0;i<nodeList.getLength();i++) {
+            String sam = null;
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("ClientId")) {
                     sam = nodeList.item(i).getTextContent().trim();
                     //Assign Value in a string Dictionary
-                    if(sam!=null && sam!="") {
+                    if (sam != null && sam != "") {
                         dictObject.put("ClientId", sam);
-                    }
-                    else
-                    {
+                    } else {
                         throw new Exception("Property Cannot be null");
                     }
-                }
-                else if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("DomainURL")) {
+                } else if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("DomainURL")) {
                     sam = nodeList.item(i).getTextContent().trim();
-                    if(sam!=null && sam!="") {
+                    if (sam != null && sam != "") {
                         dictObject.put("DomainURL", sam);
-                    }
-                    else
-                    {
+                    } else {
                         throw new Exception("Property Cannot be null");
                     }
-                }
-                else if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("RedirectURL")) {
+                } else if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("RedirectURL")) {
                     sam = nodeList.item(i).getTextContent().trim();
-                    if(sam!=null && sam!="") {
+                    if (sam != null && sam != "") {
                         dictObject.put("RedirectURL", sam);
-                    }
-                    else
-                    {
+                    } else {
                         throw new Exception("Property Cannot be null");
                     }
                 }
@@ -134,115 +126,100 @@ public class FileHelper {
                         throw new Exception("Property Cannot be null");
                     }
                 }*/
-                else
-                {
-                   webAuthError.propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty","Error"+methodName);
-                   result.failure(webAuthError);
+                else {
+                    webAuthError.propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty", "Error" + methodName);
+                    result.failure(webAuthError);
                 }
             }
-            if(dictObject.size()!=0) {
+            if (dictObject.size() != 0) {
                 result.success(dictObject);
-            }
-            else
-            {
+            } else {
                 throw new Exception("File is Corrupted,All properties are missing");
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
-            if(e.getMessage().equalsIgnoreCase("Property Cannot be null"))
-            {
-                webAuthError = webAuthError.propertyMissingException("Property cannot be null","Error"+methodName);
-                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
+            if (e.getMessage().equalsIgnoreCase("Property Cannot be null")) {
+                webAuthError = webAuthError.propertyMissingException("Property cannot be null", "Error" + methodName);
+                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage() + webAuthError.getErrorCode());
                 result.failure(webAuthError);
-            }
-            else if (e instanceof FileNotFoundException)
-            {
+            } else if (e instanceof FileNotFoundException) {
                 webAuthError = webAuthError.fileNotFoundException(methodName);
-                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage()+webAuthError.getErrorCode());
+                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage() + webAuthError.getErrorCode());
                 result.failure(webAuthError);
-            }
-            else if(e instanceof XPathExpressionException || e instanceof NullPointerException)
-            {
-                webAuthError=webAuthError.noContentInFileException(methodName);
-                LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
+            } else if (e instanceof XPathExpressionException || e instanceof NullPointerException) {
+                webAuthError = webAuthError.noContentInFileException(methodName);
+                LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
                 result.failure(webAuthError);
-            }
-            else
-            {
+            } else {
                 //webAuthError.ErrorMessage=e.getMessage();
-                LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.READ_PROPERTIES_ERROR);
-                result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+                LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
+                result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()", WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
             }
 
-             result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()",WebAuthErrorCode.READ_PROPERTIES_ERROR,e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()", WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
         }
 
     }
 
-  //Parse XML
-    public Document parseXML(byte[] inputStream)
-    {
+    //Parse XML
+    public Document parseXML(byte[] inputStream) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         try {
 
-            byte[] Docfile=inputStream;
+            byte[] Docfile = inputStream;
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(new ByteArrayInputStream(Docfile));
-        }
-        catch (Exception e)
-        {
-            LogFile.getShared(context).addFailureLog(e.getMessage()+WebAuthErrorCode.PARSE_XML);
+        } catch (Exception e) {
+            LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.PARSE_XML);
             return null;
 
         }
     }
 
-//Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret, Result<Dictionary<String,String>> callback)
-    {
+    //Convert parameter into a Dictionary Object
+    public void paramsToDictionaryConverter(@NonNull String domainUrl, @NonNull String clientId, @NonNull String redirectURL, @NonNull String clientSecret, Result<Dictionary<String, String>> callback) {
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
-            if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
+            if (isNotEmpty(clientId) &&
+                    isNotEmpty(domainUrl) &&
+                    isNotEmpty(redirectURL) &&
+                    isNotEmpty(clientSecret)) {
 
 
-                CidaasHelper.baseurl=DomainUrl;
+                CidaasHelper.baseurl = domainUrl;
 
                 //Disable PKCE Flow
                 DBHelper.getShared().setEnablePKCE(false);
-                CidaasHelper.ENABLE_PKCE=false;
+                CidaasHelper.ENABLE_PKCE = false;
 
-                loginProperties.put("ClientId", ClientId);
-                loginProperties.put("DomainURL", DomainUrl);
-                loginProperties.put("RedirectURL", RedirectURL);
-                loginProperties.put("ClientSecret",ClientSecret);
+                loginProperties.put("ClientId", clientId);
+                loginProperties.put("DomainURL", domainUrl);
+                loginProperties.put("RedirectURL", redirectURL);
+                loginProperties.put("ClientSecret", clientSecret);
 
                 DBHelper.getShared().addLoginProperties(loginProperties);
 
                 callback.success(loginProperties);
             } else {
                 //T handle Error
-                callback.failure(webAuthError.CidaaspropertyMissingException("","Error:-FileHelper :paramsToDictionaryConverter()"));
+                callback.failure(webAuthError.CidaaspropertyMissingException("", "Error:-FileHelper :paramsToDictionaryConverter()"));
             }
-        }
-        catch (Exception e)
-        {
-            callback.failure(webAuthError.methodException("Exception :FileHelper :paramsToDictionaryConverter()",WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
+        } catch (Exception e) {
+            callback.failure(webAuthError.methodException("Exception :FileHelper :paramsToDictionaryConverter()", WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR, e.getMessage()));
         }
     }
 
 
     //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, Result<Dictionary<String,String>> callback)
-    {
-        String methodName="FileHelper :paramsToDictionaryConverter()";
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, Result<Dictionary<String, String>> callback) {
+        String methodName = "FileHelper :paramsToDictionaryConverter()";
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
-            if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") ) {
+            if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("")) {
 
-                CidaasHelper.baseurl=DomainUrl;
+                CidaasHelper.baseurl = DomainUrl;
 
                 loginProperties.put("ClientId", ClientId);
                 loginProperties.put("DomainURL", DomainUrl);
@@ -252,12 +229,10 @@ public class FileHelper {
                 callback.success(loginProperties);
             } else {
                 //T handle Error
-                callback.failure(webAuthError.propertyMissingException("ClientId or DomainURL or RedirectURL must not be empty","Error:"+methodName));
+                callback.failure(webAuthError.propertyMissingException("ClientId or DomainURL or RedirectURL must not be empty", "Error:" + methodName));
             }
-        }
-        catch (Exception e)
-        {
-            callback.failure(webAuthError.methodException("Exception :"+methodName,WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR,e.getMessage()));
+        } catch (Exception e) {
+            callback.failure(webAuthError.methodException("Exception :" + methodName, WebAuthErrorCode.PARAMS_TO_DICTIONARY_CONVERTER_ERROR, e.getMessage()));
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.cidaasv2.Helper.Converter;
 
+import android.content.Context;
+
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Models.DBModel.AccessTokenModel;
@@ -15,16 +17,16 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class EntityToModelConverterTest {
 
-    EntityToModelConverter entityToModelConverter=new EntityToModelConverter();
+    EntityToModelConverter entityToModelConverter;
     @Before
     public void setUp() {
-
+        entityToModelConverter = new EntityToModelConverter(null);
 
     }
 
     @Test
     public void testGetShared() throws Exception {
-        EntityToModelConverter result = EntityToModelConverter.getShared();
+        EntityToModelConverter result = EntityToModelConverter.getShared(null);
         Assert.assertTrue( result instanceof EntityToModelConverter);
     }
 
@@ -58,5 +60,3 @@ public class EntityToModelConverterTest {
         });
     }
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

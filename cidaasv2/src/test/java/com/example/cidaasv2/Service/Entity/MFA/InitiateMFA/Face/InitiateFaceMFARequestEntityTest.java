@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 public class InitiateFaceMFARequestEntityTest {
 
-    InitiateFaceMFARequestEntity initiateFaceMFARequestEntity;
+    private InitiateFaceMFARequestEntity initiateFaceMFARequestEntity;
 
     @Before
     public void setUp() {
@@ -43,8 +43,8 @@ public class InitiateFaceMFARequestEntityTest {
     @Test
     public void setUsagePass()
     {
-        initiateFaceMFARequestEntity.setUsagePass("UsagePass");
-        assertTrue(initiateFaceMFARequestEntity.getUsagePass().equals("UsagePass"));
+        initiateFaceMFARequestEntity.setUsage_pass("UsagePass");
+        assertTrue(initiateFaceMFARequestEntity.getUsage_pass().equals("UsagePass"));
     }
 
     @Test

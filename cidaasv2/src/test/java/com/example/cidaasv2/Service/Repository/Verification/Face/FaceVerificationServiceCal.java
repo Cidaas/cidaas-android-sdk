@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.CidaassdkService;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFARequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFAResponseEntity;
@@ -41,7 +42,7 @@ public class FaceVerificationServiceCal {
     @Before
     public void setUp() throws Exception{
         context= Mockito.mock(Context.class);
-        service=new CidaassdkService();
+        service = new CidaassdkService(context);
         MockitoAnnotations.initMocks(this);
         faceVerificationService=new FaceVerificationService(context);
 
@@ -86,11 +87,11 @@ public class FaceVerificationServiceCal {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
@@ -149,11 +150,11 @@ public class FaceVerificationServiceCal {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
@@ -215,10 +216,10 @@ public class FaceVerificationServiceCal {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
@@ -281,10 +282,10 @@ public class FaceVerificationServiceCal {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
@@ -338,10 +339,10 @@ public class FaceVerificationServiceCal {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 
@@ -395,10 +396,10 @@ public class FaceVerificationServiceCal {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL",HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientID","ClientID");
             loginProperties.put("RedirectURL","RedirectURL");
 

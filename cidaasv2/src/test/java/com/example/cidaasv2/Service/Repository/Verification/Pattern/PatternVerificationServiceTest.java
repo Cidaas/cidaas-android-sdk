@@ -6,6 +6,7 @@ import com.example.cidaasv2.Controller.Cidaas;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Helper.Genral.DBHelper;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternRequestEntity;
 import com.example.cidaasv2.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternResponseEntity;
@@ -65,7 +66,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testSetupPatternMFA() throws Exception {
 
-        patternVerificationService.setupPattern("baseurl", "accessToken",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
+        patternVerificationService.setupPattern("baseurl", "accessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
             @Override
             public void success(SetupPatternMFAResponseEntity result) {
 
@@ -81,7 +82,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testSetupPatternNullMFA() throws Exception {
 
-        patternVerificationService.setupPattern("", "accessToken",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
+        patternVerificationService.setupPattern("", "accessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
             @Override
             public void success(SetupPatternMFAResponseEntity result) {
 
@@ -103,7 +104,7 @@ public class PatternVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -112,7 +113,7 @@ public class PatternVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-        patternVerificationService.setupPattern("localhost:234235", "accessToken",new SetupPatternMFARequestEntity(),null, new Result<SetupPatternMFAResponseEntity>() {
+        patternVerificationService.setupPattern("localhost:234235", "accessToken", new SetupPatternMFARequestEntity(), true, new Result<SetupPatternMFAResponseEntity>() {
             @Override
             public void success(SetupPatternMFAResponseEntity result) {
 
@@ -131,7 +132,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testScannedPatternMFA() throws Exception {
 
-        patternVerificationService.scannedPattern("baseurl", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
+        patternVerificationService.scannedPattern("baseurl", scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -146,7 +147,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testScannedPatternNUllMFA() throws Exception {
 
-        patternVerificationService.scannedPattern("", scannedRequestEntity,null,new Result<ScannedResponseEntity>() {
+        patternVerificationService.scannedPattern("", scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -168,7 +169,7 @@ public class PatternVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -177,8 +178,7 @@ public class PatternVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-
-        patternVerificationService.scannedPattern("localhost:234235", scannedRequestEntity,null, new Result<ScannedResponseEntity>() {
+        patternVerificationService.scannedPattern("localhost:234235", scannedRequestEntity, true, new Result<ScannedResponseEntity>() {
             @Override
             public void success(ScannedResponseEntity result) {
 
@@ -197,7 +197,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testEnrollPatternMFA() throws Exception {
 
-        patternVerificationService.enrollPattern("baseurl", "accessToken", new EnrollPatternMFARequestEntity(), null,new Result<EnrollPatternMFAResponseEntity>() {
+        patternVerificationService.enrollPattern("baseurl", "accessToken", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
             @Override
             public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -212,7 +212,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testEnrollPatternNULLMFA() throws Exception {
 
-        patternVerificationService.enrollPattern("", "accessToken", new EnrollPatternMFARequestEntity(), null,new Result<EnrollPatternMFAResponseEntity>() {
+        patternVerificationService.enrollPattern("", "accessToken", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
             @Override
             public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -234,7 +234,7 @@ public class PatternVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -243,8 +243,7 @@ public class PatternVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-
-        patternVerificationService.enrollPattern("localhost:234235", "accessToken", new EnrollPatternMFARequestEntity(),null, new Result<EnrollPatternMFAResponseEntity>() {
+        patternVerificationService.enrollPattern("localhost:234235", "accessToken", new EnrollPatternMFARequestEntity(), true, new Result<EnrollPatternMFAResponseEntity>() {
             @Override
             public void success(EnrollPatternMFAResponseEntity result) {
 
@@ -262,7 +261,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testInitiatePattern() throws Exception {
 
-        patternVerificationService.initiatePattern("baseurl", new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
+        patternVerificationService.initiatePattern("baseurl", new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
             @Override
             public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -278,7 +277,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testInitiatePatternNULLMFA() throws Exception {
 
-        patternVerificationService.initiatePattern("",new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
+        patternVerificationService.initiatePattern("", new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
             @Override
             public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -300,7 +299,7 @@ public class PatternVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -309,8 +308,7 @@ public class PatternVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-
-        patternVerificationService.initiatePattern("localhost:234235", new InitiatePatternMFARequestEntity(),null, new Result<InitiatePatternMFAResponseEntity>() {
+        patternVerificationService.initiatePattern("localhost:234235", new InitiatePatternMFARequestEntity(), true, new Result<InitiatePatternMFAResponseEntity>() {
             @Override
             public void success(InitiatePatternMFAResponseEntity result) {
 
@@ -329,7 +327,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testAuthenticatePattern() throws Exception {
 
-        patternVerificationService.authenticatePattern("baseurl", new AuthenticatePatternRequestEntity(),null, new Result<AuthenticatePatternResponseEntity>() {
+        patternVerificationService.authenticatePattern("baseurl", new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
             @Override
             public void success(AuthenticatePatternResponseEntity result) {
 
@@ -345,7 +343,7 @@ public class PatternVerificationServiceTest {
     @Test
     public void testAuthenticatePatternNULLMFA() throws Exception {
 
-        patternVerificationService.authenticatePattern("", new AuthenticatePatternRequestEntity(),null, new Result<AuthenticatePatternResponseEntity>() {
+        patternVerificationService.authenticatePattern("", new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
             @Override
             public void success(AuthenticatePatternResponseEntity result) {
 
@@ -368,7 +366,7 @@ public class PatternVerificationServiceTest {
         server.enqueue(new MockResponse());
 
 
-        Cidaas.baseurl=domainURL;
+        CidaasHelper.baseurl = domainURL;
 
 
         Dictionary<String,String> loginproperties=new Hashtable<>();
@@ -377,8 +375,7 @@ public class PatternVerificationServiceTest {
         loginproperties.put("RedirectURL","RedirectURL");
 
 
-
-        patternVerificationService.authenticatePattern("localhost:234235", new AuthenticatePatternRequestEntity(),null, new Result<AuthenticatePatternResponseEntity>() {
+        patternVerificationService.authenticatePattern("localhost:234235", new AuthenticatePatternRequestEntity(), true, new Result<AuthenticatePatternResponseEntity>() {
             @Override
             public void success(AuthenticatePatternResponseEntity result) {
 

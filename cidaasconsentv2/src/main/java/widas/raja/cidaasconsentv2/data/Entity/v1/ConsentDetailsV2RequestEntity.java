@@ -7,13 +7,13 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsentDetailsV2RequestEntity implements Serializable {
 
-    private String sub = "";
-    private String requestId = "";
-    private String track_id = "";
+    private String sub;
+    private String requestId;
+    private String track_id;
 
-    private String consent_id = "";
-    private String consent_version_id = "";
-    private String client_id = "";
+    private String consent_id;
+    private String consent_version_id;
+    private String client_id;
 
     public ConsentDetailsV2RequestEntity(String sub, String requestId, String track_id, String consent_id, String consent_version_id) {
         this.sub = sub;
@@ -24,11 +24,7 @@ public class ConsentDetailsV2RequestEntity implements Serializable {
     }
 
     public ConsentDetailsV2RequestEntity(String sub, String requestId, String track_id, String consent_id, String consent_version_id, String client_id) {
-        this.sub = sub;
-        this.requestId = requestId;
-        this.track_id = track_id;
-        this.consent_id = consent_id;
-        this.consent_version_id = consent_version_id;
+        this(sub, requestId, track_id, consent_id, consent_version_id);
         this.client_id = client_id;
     }
 

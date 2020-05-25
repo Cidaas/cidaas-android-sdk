@@ -9,8 +9,7 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
+
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +29,8 @@ import timber.log.Timber;
 @RunWith(RobolectricTestRunner.class)
 
 public class ConsentServiceTest {
-
+    /**
+     // TODO move to cidaascosentv2 https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/52
     Context context;
     ConsentService consentService;
 
@@ -276,7 +276,5 @@ public class ConsentServiceTest {
 
 
     }
-
+     **/
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

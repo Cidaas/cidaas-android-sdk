@@ -7,6 +7,7 @@ import com.example.cidaasv2.Controller.HelperClass;
 import com.example.cidaasv2.Helper.Entity.DeviceInfoEntity;
 import com.example.cidaasv2.Helper.Enums.Result;
 import com.example.cidaasv2.Helper.Extension.WebAuthError;
+import com.example.cidaasv2.Helper.Genral.CidaasHelper;
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 
 import org.junit.Assert;
@@ -57,11 +58,11 @@ public class RequestIdControllerServiceCall {
 
 
             server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+            CidaasHelper.baseurl = domainURL;
 
 
             Dictionary<String,String> loginProperties=new Hashtable<>();
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+            loginProperties.put("DomainURL", HelperClass.removeLastChar(CidaasHelper.baseurl));
             loginProperties.put("ClientId","ClientId");
             loginProperties.put("RedirectURL","RedirectURL");
 

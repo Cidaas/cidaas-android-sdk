@@ -32,12 +32,12 @@ public class SMSConfigurationControllerTest {
 
     @Test
     public void testConfigureSMS() throws Exception {
-        sMSConfigurationController.configureSMS("sub", "baseurl", null);
+        sMSConfigurationController.configureSMS("sub", null);
     }
 
     @Test
     public void testEnrollSMSMFA() throws Exception {
-        sMSConfigurationController.enrollSMSMFA("code", "StatusId", "baseurl", null);
+        sMSConfigurationController.enrollSMSMFA("code", "StatusId", null);
     }
 
     @Test
@@ -48,12 +48,12 @@ public class SMSConfigurationControllerTest {
 
     @Test
     public void testLoginWithSMS() throws Exception {
-        sMSConfigurationController.loginWithSMS("baseurl", "trackId", "clientId", "requestId", null, null);
+        sMSConfigurationController.loginWithSMS(null, null);
     }
 
     @Test
     public void testVerifySMS() throws Exception {
-        sMSConfigurationController.verifySMS("baseurl", "clientId", new AuthenticateSMSRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
+        sMSConfigurationController.verifySMS("baseurl", "clientId", new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -66,10 +66,5 @@ public class SMSConfigurationControllerTest {
         });
     }
 
-    @Test
-    public void testSetupSMSMFA() throws Exception {
-        sMSConfigurationController.setupSMSMFA("AccessToken", "baseurl", null);
-    }
-}
 
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
+}

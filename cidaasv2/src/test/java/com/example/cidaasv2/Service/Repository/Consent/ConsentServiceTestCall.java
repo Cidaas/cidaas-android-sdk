@@ -10,8 +10,6 @@ import com.example.cidaasv2.Helper.Extension.WebAuthError;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
 import com.example.cidaasv2.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentResponseEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,1173 +26,1112 @@ import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
 public class ConsentServiceTestCall {
-    Context context= Mockito.mock(Context.class);
+    /**
+     // TODO move to cidaascosentv2  https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/52
+     Context context= Mockito.mock(Context.class);
 
-    private final CountDownLatch latch = new CountDownLatch(1);
+     private final CountDownLatch latch = new CountDownLatch(1);
 
 
-    ConsentService consentService=new ConsentService(context);
+     ConsentService consentService=new ConsentService(context);
 
 
-    DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
-    Dictionary<String, String> savedProperties=new Hashtable<>();
+     DeviceInfoEntity deviceInfoEntity=new DeviceInfoEntity();
+     Dictionary<String, String> savedProperties=new Hashtable<>();
 
-    Dictionary<String,String> loginProperties=new Hashtable<>();
+     Dictionary<String,String> loginProperties=new Hashtable<>();
 
-    ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
-    ResumeConsentRequestEntity resumeConsentRequestEntity=new ResumeConsentRequestEntity();
+     ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity=new ConsentManagementAcceptedRequestEntity();
+     ResumeConsentRequestEntity resumeConsentRequestEntity=new ResumeConsentRequestEntity();
 
 
-    @Before
-    public void setUp() throws Exception{
-        context=Mockito.mock(Context.class);
-        MockitoAnnotations.initMocks(this);
+     @Before public void setUp() throws Exception{
+     context=Mockito.mock(Context.class);
+     MockitoAnnotations.initMocks(this);
 
-        deviceInfoEntity.setDeviceId("DeviceID");
-        deviceInfoEntity.setDeviceVersion("DeviceVersion");
-        deviceInfoEntity.setDeviceModel("DeviceModel");
-        deviceInfoEntity.setDeviceMake("DeviceMake");
-        deviceInfoEntity.setPushNotificationId("PushNotificationId");
+     deviceInfoEntity.setDeviceId("DeviceID");
+     deviceInfoEntity.setDeviceVersion("DeviceVersion");
+     deviceInfoEntity.setDeviceModel("DeviceModel");
+     deviceInfoEntity.setDeviceMake("DeviceMake");
+     deviceInfoEntity.setPushNotificationId("PushNotificationId");
 
 
-        savedProperties.put("Verifier", "codeVerifier");
-        savedProperties.put("Challenge","codeChallenge");
-        savedProperties.put("Method", "ChallengeMethod");
+     savedProperties.put("Verifier", "codeVerifier");
+     savedProperties.put("Challenge","codeChallenge");
+     savedProperties.put("Method", "ChallengeMethod");
 
 
-        loginProperties.put("ClientId","ClientId");
-        loginProperties.put("RedirectURL","RedirectURL");
+     loginProperties.put("ClientId","ClientId");
+     loginProperties.put("RedirectURL","RedirectURL");
 
-        consentManagementAcceptedRequestEntity.setTrackId("TrackId");
-        consentManagementAcceptedRequestEntity.setVersion("Version");
-        consentManagementAcceptedRequestEntity.setName("Name");
-        consentManagementAcceptedRequestEntity.setAccepted(true);
-        consentManagementAcceptedRequestEntity.setSub("Sub");
-        consentManagementAcceptedRequestEntity.setClient_id("ClientId");
+     consentManagementAcceptedRequestEntity.setTrackId("TrackId");
+     consentManagementAcceptedRequestEntity.setVersion("Version");
+     consentManagementAcceptedRequestEntity.setName("Name");
+     consentManagementAcceptedRequestEntity.setAccepted(true);
+     consentManagementAcceptedRequestEntity.setSub("Sub");
+     consentManagementAcceptedRequestEntity.setClient_id("ClientId");
 
-        resumeConsentRequestEntity.setTrack_id("TrackId");
-        resumeConsentRequestEntity.setVersion("Version");
-        resumeConsentRequestEntity.setName("Name");
-        resumeConsentRequestEntity.setSub("Sub");
-        resumeConsentRequestEntity.setClient_id("ClientId");
-    }
+     resumeConsentRequestEntity.setTrack_id("TrackId");
+     resumeConsentRequestEntity.setVersion("Version");
+     resumeConsentRequestEntity.setName("Name");
+     resumeConsentRequestEntity.setSub("Sub");
+     resumeConsentRequestEntity.setClient_id("ClientId");
+     }
 
 
-    @Test
-    public void testWebClient() throws  Exception{
+     @Test public void testWebClient() throws  Exception{
 
-        try {
-            Timber.e("Success");
+     try {
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(200)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"data\": {\n" +
-                            "    \"name\": \"Raja_Developers\"\n" +
-                            "    }\n" +
-                            "}");
+     final MockResponse response = new MockResponse().setResponseCode(200)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"data\": {\n" +
+     "    \"name\": \"Raja_Developers\"\n" +
+     "    }\n" +
+     "}");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/token-srv/token");
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/token-srv/token");
 
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
-                @Override
-                public void success(ConsentDetailsResultEntity result) {
+     consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
+     @Override public void success(ConsentDetailsResultEntity result) {
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getName());
-                    latch.countDown();
+     Assert.assertEquals("Raja_Developers",result.getData().getName());
+     latch.countDown();
 
-                }
+     }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Cidaas developer",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Cidaas developer",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-    }
+     }
 
 
-    @Test
-    public void testWebClientException() throws  Exception{
+     @Test public void testWebClientException() throws  Exception{
 
-        try {
-            Timber.e("Success");
+     try {
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(200)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"access_token\": \"Raja_Developers\"\n" +
-                            "}");
+     final MockResponse response = new MockResponse().setResponseCode(200)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"access_token\": \"Raja_Developers\"\n" +
+     "}");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/token-srv/token");
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/token-srv/token");
 
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
-                @Override
-                public void success(ConsentDetailsResultEntity result) {
-
-                    Assert.assertEquals("Raja_Developers",result.getData().getName());
-                    latch.countDown();
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Cidaas developer",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            // latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
-
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
+     @Override public void success(ConsentDetailsResultEntity result) {
 
-    }
+     Assert.assertEquals("Raja_Developers",result.getData().getName());
+     latch.countDown();
 
-    @Test
-    public void testWebClientFor202() throws  Exception{
+     }
 
-        try {
-            Timber.e("Success");
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Cidaas developer",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     // latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(202)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"data\": {\n" +
-                            "        \"tenant_name\": \"Raja Developers\",\n" +
-                            "        \"allowLoginWith\": [\n" +
-                            "            \"EMAIL\",\n" +
-                            "            \"MOBILE\",\n" +
-                            "            \"USER_NAME\"\n" +
-                            "        ]\n" +
-                            "    }\n" +
-                            "}");
-
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
-
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
-
-            consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
-                @Override
-                public void success(ConsentDetailsResultEntity result) {
-
-                    Assert.assertEquals("Raja_Developers",result.getData().getName());
-                    latch.countDown();
-
-                }
+     }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Service failure but successful response",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     @Test public void testWebClientFor202() throws  Exception{
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     try {
+     Timber.e("Success");
 
-    }
+     final MockResponse response = new MockResponse().setResponseCode(202)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"data\": {\n" +
+     "        \"tenant_name\": \"Raja Developers\",\n" +
+     "        \"allowLoginWith\": [\n" +
+     "            \"EMAIL\",\n" +
+     "            \"MOBILE\",\n" +
+     "            \"USER_NAME\"\n" +
+     "        ]\n" +
+     "    }\n" +
+     "}");
 
-    @Test
-    public void testWebClientFor401() throws  Exception{
-
-        try {
-            Timber.e("Success");
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "   \"error\": {\n" +
-                            "                \"code\": 24008,\n" +
-                            "                        \"moreInfo\": \"\",\n" +
-                            "                        \"type\": \"LoginException\",\n" +
-                            "                        \"status\": 400,\n" +
-                            "                        \"referenceNumber\": \"1537337364806\",\n" +
-                            "                        \"error\": \"Invalid tenant\"\n" +
-                            "            }\n" +
-                            "}");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
-
-
-
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
-
-            consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
-                @Override
-                public void success(ConsentDetailsResultEntity result) {
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getName());
-                    latch.countDown();
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-                }
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
+     @Override public void success(ConsentDetailsResultEntity result) {
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     Assert.assertEquals("Raja_Developers",result.getData().getName());
+     latch.countDown();
 
-    }
+     }
 
-    @Test
-    public void testWebClientFaliureError() throws  Exception{
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Service failure but successful response",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-        try {
-            Timber.e("Success");
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant\" \n" +
-                            "}");
+     }
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     @Test public void testWebClientFor401() throws  Exception{
 
+     try {
+     Timber.e("Success");
 
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "   \"error\": {\n" +
+     "                \"code\": 24008,\n" +
+     "                        \"moreInfo\": \"\",\n" +
+     "                        \"type\": \"LoginException\",\n" +
+     "                        \"status\": 400,\n" +
+     "                        \"referenceNumber\": \"1537337364806\",\n" +
+     "                        \"error\": \"Invalid tenant\"\n" +
+     "            }\n" +
+     "}");
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-            consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
-                @Override
-                public void success(ConsentDetailsResultEntity result) {
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getName());
-                    latch.countDown();
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                }
+     consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
+     @Override public void success(ConsentDetailsResultEntity result) {
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     Assert.assertEquals("Raja_Developers",result.getData().getName());
+     latch.countDown();
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
 
-    }
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-    @Test
-    public void testWebClientFaliureException() throws  Exception{
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-        try {
-            Timber.e("Success");
+     }
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant \n" +
-                            "}");
+     @Test public void testWebClientFaliureError() throws  Exception{
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     try {
+     Timber.e("Success");
 
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant\" \n" +
+     "}");
 
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
-                @Override
-                public void success(ConsentDetailsResultEntity result) {
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getName());
-                    latch.countDown();
+     consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
+     @Override public void success(ConsentDetailsResultEntity result) {
 
-                }
+     Assert.assertEquals("Raja_Developers",result.getData().getName());
+     latch.countDown();
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     }
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-    }
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
+     }
 
-    //AcceptConsent
-    @Test
-    public void testAcceptConsent() throws  Exception{
+     @Test public void testWebClientFaliureException() throws  Exception{
 
-        try {
-            Timber.e("Success");
+     try {
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(200)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"data\":  true " +
-                            "}");
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant \n" +
+     "}");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/token-srv/token");
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-            consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void success(ConsentManagementAcceptResponseEntity result) {
+     consentService.getConsentDetails(HelperClass.removeLastChar(Cidaas.baseurl),"ConsentName", new Result<ConsentDetailsResultEntity>() {
+     @Override public void success(ConsentDetailsResultEntity result) {
 
-                    Assert.assertEquals(true,result.isData());
-                    latch.countDown();
+     Assert.assertEquals("Raja_Developers",result.getData().getName());
+     latch.countDown();
 
-                }
+     }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Cidaas developer",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-    }
+     }
 
 
-    @Test
-    public void testAcceptConsentException() throws  Exception{
+     //AcceptConsent
+     @Test public void testAcceptConsent() throws  Exception{
 
-        try {
-            Timber.e("Success");
+     try {
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(200)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"access_token\": \"Raja_Developers\"\n" +
-                            "}");
+     final MockResponse response = new MockResponse().setResponseCode(200)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"data\":  true " +
+     "}");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/token-srv/token");
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/token-srv/token");
 
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void success(ConsentManagementAcceptResponseEntity result) {
+     consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+     @Override public void success(ConsentManagementAcceptResponseEntity result) {
 
-                    Assert.assertEquals(true,result.isData());
-                    latch.countDown();
+     Assert.assertEquals(true,result.isData());
+     latch.countDown();
 
-                }
+     }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Cidaas developer",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            // latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Cidaas developer",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-    }
+     }
 
-    @Test
-    public void testAcceptConsentFor202() throws  Exception{
 
-        try {
-            Timber.e("Success");
+     @Test public void testAcceptConsentException() throws  Exception{
 
-            final MockResponse response = new MockResponse().setResponseCode(202)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 202,\n" +
-                            "    \"data\":  true " +
-                            "}");
+     try {
+     Timber.e("Success");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     final MockResponse response = new MockResponse().setResponseCode(200)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"access_token\": \"Raja_Developers\"\n" +
+     "}");
 
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/token-srv/token");
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void success(ConsentManagementAcceptResponseEntity result) {
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                    Assert.assertEquals(true,result.isData());
-                    latch.countDown();
 
-                }
+     consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+     @Override public void success(ConsentManagementAcceptResponseEntity result) {
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Service failure but successful response",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            Thread.sleep(3000);
-            Timber.e("Success");
+     Assert.assertEquals(true,result.isData());
+     latch.countDown();
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
 
-    }
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Cidaas developer",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     // latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-    @Test
-    public void testAcceptConsentFor401() throws  Exception{
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-        try {
-            Timber.e("Success");
+     }
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "   \"error\": {\n" +
-                            "                \"code\": 24008,\n" +
-                            "                        \"moreInfo\": \"\",\n" +
-                            "                        \"type\": \"LoginException\",\n" +
-                            "                        \"status\": 400,\n" +
-                            "                        \"referenceNumber\": \"1537337364806\",\n" +
-                            "                        \"error\": \"Invalid tenant\"\n" +
-                            "            }\n" +
-                            "}");
+     @Test public void testAcceptConsentFor202() throws  Exception{
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     try {
+     Timber.e("Success");
 
+     final MockResponse response = new MockResponse().setResponseCode(202)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 202,\n" +
+     "    \"data\":  true " +
+     "}");
 
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-            consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void success(ConsentManagementAcceptResponseEntity result) {
 
-                    Assert.assertEquals(true,result.isData());
-                    latch.countDown();
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-                }
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+     @Override public void success(ConsentManagementAcceptResponseEntity result) {
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     Assert.assertEquals(true,result.isData());
+     latch.countDown();
 
-    }
+     }
 
-    @Test
-    public void testAcceptConsentFaliureError() throws  Exception{
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Service failure but successful response",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     Thread.sleep(3000);
+     Timber.e("Success");
 
-        try {
-            Timber.e("Success");
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant\" \n" +
-                            "}");
+     }
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     @Test public void testAcceptConsentFor401() throws  Exception{
 
+     try {
+     Timber.e("Success");
 
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "   \"error\": {\n" +
+     "                \"code\": 24008,\n" +
+     "                        \"moreInfo\": \"\",\n" +
+     "                        \"type\": \"LoginException\",\n" +
+     "                        \"status\": 400,\n" +
+     "                        \"referenceNumber\": \"1537337364806\",\n" +
+     "                        \"error\": \"Invalid tenant\"\n" +
+     "            }\n" +
+     "}");
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-            consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void success(ConsentManagementAcceptResponseEntity result) {
 
-                    Assert.assertEquals(true,result.isData());
-                    latch.countDown();
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                }
+     consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+     @Override public void success(ConsentManagementAcceptResponseEntity result) {
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     Assert.assertEquals(true,result.isData());
+     latch.countDown();
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
 
-    }
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-    @Test
-    public void testAcceptConsentFaliureException() throws  Exception{
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-        try {
-            Timber.e("Success");
+     }
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant \n" +
-                            "}");
+     @Test public void testAcceptConsentFaliureError() throws  Exception{
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     try {
+     Timber.e("Success");
 
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant\" \n" +
+     "}");
 
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void success(ConsentManagementAcceptResponseEntity result) {
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                    Assert.assertEquals(true,result.isData());
-                    latch.countDown();
+     consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+     @Override public void success(ConsentManagementAcceptResponseEntity result) {
 
-                }
+     Assert.assertEquals(true,result.isData());
+     latch.countDown();
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     }
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-    }
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-    @Test
-    public void testAcceptConsentFException() throws  Exception{
+     }
 
-        try {
-            Timber.e("Success");
+     @Test public void testAcceptConsentFaliureException() throws  Exception{
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant \n" +
-                            "}");
+     try {
+     Timber.e("Success");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant \n" +
+     "}");
 
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
 
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-            consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,null, new Result<ConsentManagementAcceptResponseEntity>() {
-                @Override
-                public void success(ConsentManagementAcceptResponseEntity result) {
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                    Assert.assertEquals(true,result.isData());
-                    latch.countDown();
+     consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,deviceInfoEntity, new Result<ConsentManagementAcceptResponseEntity>() {
+     @Override public void success(ConsentManagementAcceptResponseEntity result) {
 
-                }
+     Assert.assertEquals(true,result.isData());
+     latch.countDown();
 
-                @Override
-                public void failure(WebAuthError error) {
+     }
+
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
+
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
+
+     }
+
+     @Test public void testAcceptConsentFException() throws  Exception{
+
+     try {
+     Timber.e("Success");
+
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant \n" +
+     "}");
+
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
+
+
+
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
+
+
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+
+     consentService.acceptConsent(HelperClass.removeLastChar(Cidaas.baseurl),consentManagementAcceptedRequestEntity,null, new Result<ConsentManagementAcceptResponseEntity>() {
+     @Override public void success(ConsentManagementAcceptResponseEntity result) {
+
+     Assert.assertEquals(true,result.isData());
+     latch.countDown();
+
+     }
+
+     @Override public void failure(WebAuthError error) {
 //                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-    }
+     }
 
 
-    //resumeConsent
+     //resumeConsent
 
-    @Test
-    public void testResumeConsent() throws  Exception{
+     @Test public void testResumeConsent() throws  Exception{
 
-        try {
-            Timber.e("Success");
+     try {
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(200)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"data\": {\n" +
-                            "    \"code\": \"Raja_Developers\"\n" +
-                            "    }\n" +
-                            "}");
+     final MockResponse response = new MockResponse().setResponseCode(200)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"data\": {\n" +
+     "    \"code\": \"Raja_Developers\"\n" +
+     "    }\n" +
+     "}");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/token-srv/token");
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/token-srv/token");
 
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
+     consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
+     @Override public void success(ResumeConsentResponseEntity result) {
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getCode());
-                    latch.countDown();
+     Assert.assertEquals("Raja_Developers",result.getData().getCode());
+     latch.countDown();
 
-                }
+     }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Cidaas developer",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Cidaas developer",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-    }
+     }
 
 
-    @Test
-    public void testResumeConsentException() throws  Exception{
+     @Test public void testResumeConsentException() throws  Exception{
 
-        try {
-            Timber.e("Success");
+     try {
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(200)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"access_token\": \"Raja_Developers\"\n" +
-                            "}");
+     final MockResponse response = new MockResponse().setResponseCode(200)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"access_token\": \"Raja_Developers\"\n" +
+     "}");
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/token-srv/token");
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/token-srv/token");
 
 
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
 
-            consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
-
-                    Assert.assertEquals("Raja_Developers",result.getData().getCode());
-                    latch.countDown();
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Cidaas developer",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            // latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
-
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
-
-    }
-
-    @Test
-    public void testResumeConsentFor202() throws  Exception{
-
-        try {
-            Timber.e("Success");
-
-            final MockResponse response = new MockResponse().setResponseCode(202)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": true,\n" +
-                            "    \"status\": 200,\n" +
-                            "    \"data\": {\n" +
-                            "        \"tenant_name\": \"Raja Developers\",\n" +
-                            "        \"allowLoginWith\": [\n" +
-                            "            \"EMAIL\",\n" +
-                            "            \"MOBILE\",\n" +
-                            "            \"USER_NAME\"\n" +
-                            "        ]\n" +
-                            "    }\n" +
-                            "}");
-
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
-
-
-
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
-
-            consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
-
-                    Assert.assertEquals("Raja_Developers",result.getData().getCode());
-                    latch.countDown();
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Service failure but successful response",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
-
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
-
-    }
-
-    @Test
-    public void testResumeConsentFor401() throws  Exception{
-
-        try {
-            Timber.e("Success");
-
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "   \"error\": {\n" +
-                            "                \"code\": 24008,\n" +
-                            "                        \"moreInfo\": \"\",\n" +
-                            "                        \"type\": \"LoginException\",\n" +
-                            "                        \"status\": 400,\n" +
-                            "                        \"referenceNumber\": \"1537337364806\",\n" +
-                            "                        \"error\": \"Invalid tenant\"\n" +
-                            "            }\n" +
-                            "}");
-
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
-
-
-
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
-            consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
-
-                    Assert.assertEquals("Raja_Developers",result.getData().getCode());
-                    latch.countDown();
-
-                }
+     consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
+     @Override public void success(ResumeConsentResponseEntity result) {
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     Assert.assertEquals("Raja_Developers",result.getData().getCode());
+     latch.countDown();
+
+     }
+
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Cidaas developer",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     // latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
+
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
+
+     }
+
+     @Test public void testResumeConsentFor202() throws  Exception{
+
+     try {
+     Timber.e("Success");
+
+     final MockResponse response = new MockResponse().setResponseCode(202)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": true,\n" +
+     "    \"status\": 200,\n" +
+     "    \"data\": {\n" +
+     "        \"tenant_name\": \"Raja Developers\",\n" +
+     "        \"allowLoginWith\": [\n" +
+     "            \"EMAIL\",\n" +
+     "            \"MOBILE\",\n" +
+     "            \"USER_NAME\"\n" +
+     "        ]\n" +
+     "    }\n" +
+     "}");
+
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
+
+
+
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
+
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+
+     consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
+     @Override public void success(ResumeConsentResponseEntity result) {
+
+     Assert.assertEquals("Raja_Developers",result.getData().getCode());
+     latch.countDown();
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
-
-    }
-
-    @Test
-    public void testResumeConsentFaliureError() throws  Exception{
-
-        try {
-            Timber.e("Success");
-
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant\" \n" +
-                            "}");
-
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
-
-
-
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
-
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
-
-            consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity, deviceInfoEntity,new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
+     }
+
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Service failure but successful response",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getCode());
-                    latch.countDown();
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
+
+     }
+
+     @Test public void testResumeConsentFor401() throws  Exception{
+
+     try {
+     Timber.e("Success");
+
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "   \"error\": {\n" +
+     "                \"code\": 24008,\n" +
+     "                        \"moreInfo\": \"\",\n" +
+     "                        \"type\": \"LoginException\",\n" +
+     "                        \"status\": 400,\n" +
+     "                        \"referenceNumber\": \"1537337364806\",\n" +
+     "                        \"error\": \"Invalid tenant\"\n" +
+     "            }\n" +
+     "}");
+
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-                }
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
+     @Override public void success(ResumeConsentResponseEntity result) {
 
-    }
+     Assert.assertEquals("Raja_Developers",result.getData().getCode());
+     latch.countDown();
 
-    @Test
-    public void testResumeConsentFaliureException() throws  Exception{
+     }
 
-        try {
-            Timber.e("Success");
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant \n" +
-                            "}");
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     }
 
+     @Test public void testResumeConsentFaliureError() throws  Exception{
 
+     try {
+     Timber.e("Success");
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant\" \n" +
+     "}");
 
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-            consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getCode());
-                    latch.countDown();
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-                }
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                @Override
-                public void failure(WebAuthError error) {
-                    Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity, deviceInfoEntity,new Result<ResumeConsentResponseEntity>() {
+     @Override public void success(ResumeConsentResponseEntity result) {
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     Assert.assertEquals("Raja_Developers",result.getData().getCode());
+     latch.countDown();
 
-    }
+     }
 
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
-    @Test
-    public void testResumeConseiureException() throws  Exception{
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
-        try {
-            Timber.e("Success");
+     }
 
-            final MockResponse response = new MockResponse().setResponseCode(401)
-                    .addHeader("Content-Type", "application/json; charset=utf-8")
-                    .setBody("{\n" +
-                            "    \"success\": false,\n" +
-                            "    \"status\": 401,\n" +
-                            "     \"error\": \"Invalid tenant \n" +
-                            "}");
+     @Test public void testResumeConsentFaliureException() throws  Exception{
 
-            MockWebServer server = new MockWebServer();
-            String domainURL= server.url("").toString();
-            server.url("/public-srv/tenantinfo/basic");
+     try {
+     Timber.e("Success");
 
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant \n" +
+     "}");
 
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
 
-            server.enqueue(response);
-            Cidaas.baseurl=domainURL;
 
 
-            loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
 
-            consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,null, new Result<ResumeConsentResponseEntity>() {
-                @Override
-                public void success(ResumeConsentResponseEntity result) {
 
-                    Assert.assertEquals("Raja_Developers",result.getData().getCode());
-                    latch.countDown();
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
 
-                }
+     consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,deviceInfoEntity, new Result<ResumeConsentResponseEntity>() {
+     @Override public void success(ResumeConsentResponseEntity result) {
 
-                @Override
-                public void failure(WebAuthError error) {
-                  //  Assert.assertEquals("Invalid tenant",error.getErrorMessage());
-                    latch.countDown();
-                }
-            });
-            //latch.await();
-            //Thread.sleep(3000);
-            Timber.e("Success");
+     Assert.assertEquals("Raja_Developers",result.getData().getCode());
+     latch.countDown();
 
-        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(e.getMessage(),true,true);
-            Assert.assertFalse(e.getMessage(),true);
-        }
+     }
 
-    }
+     @Override public void failure(WebAuthError error) {
+     Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
 
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
 
+     }
 
+
+     @Test public void testResumeConseiureException() throws  Exception{
+
+     try {
+     Timber.e("Success");
+
+     final MockResponse response = new MockResponse().setResponseCode(401)
+     .addHeader("Content-Type", "application/json; charset=utf-8")
+     .setBody("{\n" +
+     "    \"success\": false,\n" +
+     "    \"status\": 401,\n" +
+     "     \"error\": \"Invalid tenant \n" +
+     "}");
+
+     MockWebServer server = new MockWebServer();
+     String domainURL= server.url("").toString();
+     server.url("/public-srv/tenantinfo/basic");
+
+
+
+     server.enqueue(response);
+     Cidaas.baseurl=domainURL;
+
+
+     loginProperties.put("DomainURL", HelperClass.removeLastChar(Cidaas.baseurl));
+
+     consentService.resumeConsent(HelperClass.removeLastChar(Cidaas.baseurl),resumeConsentRequestEntity,null, new Result<ResumeConsentResponseEntity>() {
+     @Override public void success(ResumeConsentResponseEntity result) {
+
+     Assert.assertEquals("Raja_Developers",result.getData().getCode());
+     latch.countDown();
+
+     }
+
+     @Override public void failure(WebAuthError error) {
+     //  Assert.assertEquals("Invalid tenant",error.getErrorMessage());
+     latch.countDown();
+     }
+     });
+     //latch.await();
+     //Thread.sleep(3000);
+     Timber.e("Success");
+
+     }
+     catch (Exception e)
+     {
+     Assert.assertEquals(e.getMessage(),true,true);
+     Assert.assertFalse(e.getMessage(),true);
+     }
+
+     }
+     **/
 }

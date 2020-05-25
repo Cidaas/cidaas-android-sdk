@@ -46,22 +46,22 @@ public class IVRConfigurationControllerTest {
 
     @Test
     public void testConfigureIVR() throws Exception {
-        iVRConfigurationController.configureIVR("sub", "baseurl", null);
+        iVRConfigurationController.configureIVR("sub", null);
     }
 
     @Test
     public void testEnrollIVRMFA() throws Exception {
-        iVRConfigurationController.enrollIVRMFA("code", "StatusId", "baseurl", null);
+        iVRConfigurationController.enrollIVRMFA("code", "StatusId", null);
     }
 
     @Test
     public void testLoginWithIVR() throws Exception {
-        iVRConfigurationController.loginWithIVR("baseurl", "trackId", "clientId", "requestId", null, null);
+        iVRConfigurationController.loginWithIVR(null, null);
     }
 
     @Test
     public void testVerifyIVR() throws Exception {
-        iVRConfigurationController.verifyIVR("baseurl", "clientId", new AuthenticateIVRRequestEntity(), new Result<LoginCredentialsResponseEntity>() {
+        iVRConfigurationController.verifyIVR("baseurl", "clientId", new Result<LoginCredentialsResponseEntity>() {
             @Override
             public void success(LoginCredentialsResponseEntity result) {
 
@@ -74,5 +74,3 @@ public class IVRConfigurationControllerTest {
         });
     }
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

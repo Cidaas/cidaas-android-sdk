@@ -5,12 +5,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CommonErrorEntityTest {
-CommonErrorEntity commonErrorEntity=new CommonErrorEntity();
+    private CommonErrorEntity commonErrorEntity;
 
     @Before
     public void setUp() {
-
-
+        commonErrorEntity = new CommonErrorEntity();
+        commonErrorEntity.setError_description("Error");
     }
 
     @Test
@@ -29,14 +29,6 @@ CommonErrorEntity commonErrorEntity=new CommonErrorEntity();
     }
 
     @Test
-    public void Error(){
-        commonErrorEntity.setError("Error");
-        Assert.assertEquals("Error",commonErrorEntity.getError());
-
-    }
-
-
-    @Test
     public void setRefnumber(){
 
         commonErrorEntity.setRefnumber("refNumber");
@@ -49,7 +41,3 @@ CommonErrorEntity commonErrorEntity=new CommonErrorEntity();
         Assert.assertEquals("ErrorDesc",commonErrorEntity.getError_description());
     }
 }
-
-
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
