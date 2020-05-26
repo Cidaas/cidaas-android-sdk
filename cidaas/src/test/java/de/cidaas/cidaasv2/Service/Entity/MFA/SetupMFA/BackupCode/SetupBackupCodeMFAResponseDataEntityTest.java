@@ -3,8 +3,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.SetupMFA.BackupCode;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.BackupCode.BackupCodeData;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseDataEntity;
 
 public class SetupBackupCodeMFAResponseDataEntityTest {
     //Field backupCodes of type BackupCodeData[] - was not mocked since Mockito doesn't mock arrays

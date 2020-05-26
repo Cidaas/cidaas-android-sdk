@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.util.logging.FileHandler;
 
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;

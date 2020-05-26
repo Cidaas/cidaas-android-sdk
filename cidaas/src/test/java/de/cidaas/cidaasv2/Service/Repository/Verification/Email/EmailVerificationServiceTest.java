@@ -2,17 +2,6 @@ package de.cidaas.cidaasv2.Service.Repository.Verification.Email;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Cidaas;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Email.AuthenticateEmailResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Email.InitiateEmailMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.Email.SetupEmailMFAResponseEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +11,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

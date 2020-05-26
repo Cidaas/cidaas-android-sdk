@@ -1,11 +1,11 @@
 package de.cidaas.cidaasv2.Service.Entity.MFA.SetupMFA.Voice;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.Voice.SetupVoiceMFARequestEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
 
 import static junit.framework.Assert.assertTrue;
 

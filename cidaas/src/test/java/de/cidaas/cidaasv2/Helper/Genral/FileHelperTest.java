@@ -4,11 +4,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.FileHelper;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +14,7 @@ import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.Dictionary;
+
 
 @RunWith(RobolectricTestRunner.class)
 public class FileHelperTest {

@@ -2,11 +2,7 @@ package de.cidaas.cidaasv2.Controller.Repository.ChangePassword;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
-import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseDataEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 
 import org.junit.Assert;
@@ -15,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
 
 @RunWith(RobolectricTestRunner.class)
 

@@ -1,14 +1,14 @@
 package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.Face;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
 
 import static junit.framework.Assert.assertTrue;
 

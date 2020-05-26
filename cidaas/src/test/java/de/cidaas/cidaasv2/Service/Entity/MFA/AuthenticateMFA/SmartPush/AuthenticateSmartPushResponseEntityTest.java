@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushResponseEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

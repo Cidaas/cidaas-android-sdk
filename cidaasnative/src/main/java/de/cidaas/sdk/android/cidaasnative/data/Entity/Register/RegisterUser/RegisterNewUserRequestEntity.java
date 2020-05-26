@@ -1,10 +1,11 @@
 package de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterNewUserRequestEntity implements Serializable {

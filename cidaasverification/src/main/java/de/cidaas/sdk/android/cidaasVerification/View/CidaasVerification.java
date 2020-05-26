@@ -4,13 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Controller.Repository.Login.LoginController;
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-
 import java.util.Dictionary;
 
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateEntity;
@@ -50,6 +43,13 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationFl
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.Delete.DeleteController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.PendingNotification.PendingNotificationController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.Settings.SettingsController;
+import de.cidaas.sdk.android.controller.LoginController;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.AuthenticationType;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+
 
 public class CidaasVerification {
 

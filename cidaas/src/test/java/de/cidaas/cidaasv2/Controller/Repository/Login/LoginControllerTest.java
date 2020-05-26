@@ -3,12 +3,6 @@ package de.cidaas.cidaasv2.Controller.Repository.Login;
 import android.content.Context;
 
 import com.example.cidaasv2.Helper.Entity.LoginEntity;
-
-import de.cidaas.sdk.android.cidaas.Controller.Repository.Login.LoginController;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
-import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsRequestEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.ResumeLogin.ResumeLoginRequestEntity;
 
@@ -18,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
 
 @RunWith(RobolectricTestRunner.class)
 public class LoginControllerTest {

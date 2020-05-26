@@ -2,26 +2,25 @@ package de.cidaas.cidaasv2.Service.Repository.Verification.Face;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Face.AuthenticateFaceResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Face.InitiateFaceMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.Face.SetupFaceMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedResponseEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
+
+
+
+
+
+
+
+
 
 import okhttp3.RequestBody;
 

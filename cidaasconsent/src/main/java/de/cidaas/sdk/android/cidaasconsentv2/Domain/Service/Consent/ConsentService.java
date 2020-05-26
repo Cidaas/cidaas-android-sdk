@@ -2,32 +2,29 @@ package de.cidaas.sdk.android.cidaasconsentv2.Domain.Service.Consent;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CommonError.CommonError;
-
-import de.cidaas.sdk.android.cidaasconsentv2.Domain.Service.CidaasConsentSDKService;
-import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentManagementAcceptResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
-import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentEntity;
-import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentResponseEntity;
-
-import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
-import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2ResponseEntity;
-import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
+import de.cidaas.sdk.android.cidaasconsentv2.Domain.Service.CidaasConsentSDKService;
+import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentEntity;
+import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.ResumeConsent.ResumeConsentResponseEntity;
+import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
+import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
+import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2ResponseEntity;
+import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
+import de.cidaas.sdk.android.cidaasconsentv2.data.Service.ICidaasConsentSDKService;
+import de.cidaas.sdk.android.helper.commonerror.CommonError;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.service.entity.consentmanagement.ConsentDetailsResultEntity;
+import de.cidaas.sdk.android.service.entity.consentmanagement.ConsentManagementAcceptResponseEntity;
+import de.cidaas.sdk.android.service.entity.consentmanagement.ConsentManagementAcceptedRequestEntity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
-import de.cidaas.sdk.android.cidaasconsentv2.data.Service.ICidaasConsentSDKService;
 
 public class ConsentService {
 

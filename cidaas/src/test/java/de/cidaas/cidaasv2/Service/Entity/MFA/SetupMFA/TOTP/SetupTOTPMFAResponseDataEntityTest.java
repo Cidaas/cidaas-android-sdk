@@ -3,7 +3,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.SetupMFA.TOTP;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseDataEntity;
 
 public class SetupTOTPMFAResponseDataEntityTest {
     SetupTOTPMFAResponseDataEntity setupResponseDataEntity = new SetupTOTPMFAResponseDataEntity();

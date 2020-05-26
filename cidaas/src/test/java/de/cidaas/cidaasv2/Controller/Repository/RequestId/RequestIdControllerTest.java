@@ -2,9 +2,6 @@ package de.cidaas.cidaasv2.Controller.Repository.RequestId;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 
 import org.junit.Assert;
@@ -16,6 +13,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
 
 @RunWith(RobolectricTestRunner.class)
 

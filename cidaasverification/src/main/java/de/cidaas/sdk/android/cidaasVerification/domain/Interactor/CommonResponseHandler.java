@@ -2,9 +2,8 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Interactor;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.logger.LogFile;
 import okhttp3.Response;
 
 public class CommonResponseHandler<T> {

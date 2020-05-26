@@ -1,12 +1,12 @@
 package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.SMS;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFARequestEntity;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
 
 import static junit.framework.Assert.assertTrue;
 

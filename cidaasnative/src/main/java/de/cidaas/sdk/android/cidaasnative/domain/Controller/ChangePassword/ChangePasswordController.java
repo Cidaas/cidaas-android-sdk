@@ -4,18 +4,18 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.pkce.OAuthChallengeGenerator;
-
 import java.util.Dictionary;
 
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.ChangePassword.ChangePasswordService;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.pkce.OAuthChallengeGenerator;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+
 
 public class ChangePasswordController {
     private String authenticationType;

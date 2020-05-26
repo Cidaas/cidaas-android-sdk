@@ -4,21 +4,20 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import java.util.Dictionary;
 
-import timber.log.Timber;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.Deduplication.DeduplicationService;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.Login.NativeLoginService;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import timber.log.Timber;
 
 public class DeduplicationController {
     private Context context;

@@ -2,15 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.Authenticatio
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.UsageType;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.EndUser.LoginRequest.LoginRequest;
@@ -21,6 +12,15 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Controller.Authentication
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.AuthenticationFlow.Initiate.InitiateController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.AuthenticationFlow.VerificationContinue.VerificationContinueController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Helper.TOTPGenerator.GoogleAuthenticator;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.AuthenticationType;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.UsageType;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+
 
 public class PasswordlessLoginController {
     //Local Variables

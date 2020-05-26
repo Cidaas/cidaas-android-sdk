@@ -2,14 +2,10 @@ package de.cidaas.cidaasv2.Service.Repository;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.UserinfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Repository.OauthService;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 
 public class OauthServiceTest {
 

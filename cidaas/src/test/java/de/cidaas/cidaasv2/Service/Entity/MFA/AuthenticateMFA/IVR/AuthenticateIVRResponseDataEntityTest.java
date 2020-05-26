@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.AuthenticateMFA.IVR;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRResponseDataEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

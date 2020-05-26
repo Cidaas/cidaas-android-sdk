@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.IVR.AuthenticateIVRResponseEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

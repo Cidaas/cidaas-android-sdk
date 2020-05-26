@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.AuthenticateMFA.FIDOKey;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.FIDOKey.AuthenticateFIDORequestDevice;
 
 import static junit.framework.TestCase.assertTrue;
 

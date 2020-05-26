@@ -2,18 +2,17 @@ package de.cidaas.sdk.android.cidaasnative.domain.Controller.Tenant;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Service.Tenant.TenantService;
+import androidx.annotation.NonNull;
 
 import java.util.Dictionary;
 
-import androidx.annotation.NonNull;
-
+import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.Service.Tenant.TenantService;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
 import timber.log.Timber;
 
 public class TenantController {

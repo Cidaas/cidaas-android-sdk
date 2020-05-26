@@ -7,8 +7,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.BackupCode.SetupBackupCodeMFAResponseEntity;
 
 public class SetupBackupCodeMFAResponseEntityTest {
     @Mock

@@ -5,8 +5,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFAResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.FIDOKey.InitiateFIDOMFAResponseEntity;
 
 public class InitiateFIDOMFAResponseEntityTest {
 

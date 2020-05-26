@@ -8,8 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.IVR.SetupIVRMFAResponseEntity;
 
 public class SetupIVRMFAResponseEntityTest {
     @Mock

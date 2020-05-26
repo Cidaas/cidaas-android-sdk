@@ -2,11 +2,6 @@ package de.cidaas.cidaasv2.Helper.Genral;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Models.DBModel.AccessTokenModel;
-import de.cidaas.sdk.android.cidaas.Models.DBModel.UserInfoModel;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +11,11 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
 
 
 @RunWith(RobolectricTestRunner.class)

@@ -2,15 +2,8 @@ package de.cidaas.cidaasv2.Service.Repository.Tenant;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Cidaas;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.CidaassdkService;
-
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoDataEntity;
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
-
-import de.cidaas.cidaasv2.util.AuthenticationAPI;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,15 +17,18 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.concurrent.CountDownLatch;
 
+import de.cidaas.cidaasv2.util.AuthenticationAPI;
+
+
+
+
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import timber.log.Timber;
 
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 
 

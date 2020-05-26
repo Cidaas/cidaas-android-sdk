@@ -7,8 +7,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailResponseDataEntity;
 
 public class EnrollEmailMFAResponseEntityTest {
     @Mock

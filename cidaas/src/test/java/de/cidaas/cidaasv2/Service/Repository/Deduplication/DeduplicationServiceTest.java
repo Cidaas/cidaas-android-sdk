@@ -2,9 +2,6 @@ package de.cidaas.cidaasv2.Service.Repository.Deduplication;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import com.example.cidaasv2.Service.Entity.Deduplication.DeduplicationResponseEntity;
 import com.example.cidaasv2.Service.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 

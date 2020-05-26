@@ -8,8 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
 
 public class SetupTOTPMFAResponseEntityTest {
     @Mock

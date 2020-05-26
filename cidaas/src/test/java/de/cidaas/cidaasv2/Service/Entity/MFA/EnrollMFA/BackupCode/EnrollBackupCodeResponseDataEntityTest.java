@@ -3,7 +3,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.BackupCode;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.BackupCode.EnrollBackupCodeResponseDataEntity;
 
 import static junit.framework.Assert.assertTrue;
 

@@ -1,10 +1,10 @@
 package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.IVR;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.IVR.EnrollIVRMFARequestEntity;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
 
 import static junit.framework.Assert.assertTrue;
 

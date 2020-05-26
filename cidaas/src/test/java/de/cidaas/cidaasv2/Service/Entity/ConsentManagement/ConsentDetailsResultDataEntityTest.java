@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.ConsentManagement;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentDetailsResultDataEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

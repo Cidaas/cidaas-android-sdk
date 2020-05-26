@@ -2,17 +2,13 @@ package de.cidaas.cidaasv2.Service.Repository.UserProfile;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.UserProfile.UserprofileResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Repository.UserProfile.UserProfileService;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
 
 @RunWith(RobolectricTestRunner.class)
 public class UserProfileServiceTest {

@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.Voice;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Voice.EnrollVoiceResponseDataEntity;
 
 import static junit.framework.Assert.assertTrue;
 

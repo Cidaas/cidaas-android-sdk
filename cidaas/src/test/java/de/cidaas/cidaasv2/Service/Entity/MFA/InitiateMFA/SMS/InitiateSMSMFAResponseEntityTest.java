@@ -8,8 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
 
 public class InitiateSMSMFAResponseEntityTest {
     @Mock

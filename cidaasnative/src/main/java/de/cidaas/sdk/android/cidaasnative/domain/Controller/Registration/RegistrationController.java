@@ -2,23 +2,22 @@ package de.cidaas.sdk.android.cidaasnative.domain.Controller.Registration;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserRequestEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupRequestEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Service.Registration.RegistrationService;
+import androidx.annotation.NonNull;
 
 import java.util.Dictionary;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.Service.Registration.RegistrationService;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.properties.CidaasProperties;
 import timber.log.Timber;
 
 public class RegistrationController {

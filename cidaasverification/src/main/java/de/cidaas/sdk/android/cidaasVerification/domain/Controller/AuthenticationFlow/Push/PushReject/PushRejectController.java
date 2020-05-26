@@ -2,16 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.Authenticatio
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.Map;
 
@@ -19,6 +9,16 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushReject.Push
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushReject.PushRejectResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Push.PushReject.PushRejectService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+
 
 public class PushRejectController {
     //Local Variables

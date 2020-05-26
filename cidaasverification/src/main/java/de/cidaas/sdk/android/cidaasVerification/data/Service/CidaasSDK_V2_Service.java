@@ -5,9 +5,9 @@ import android.content.Context;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
 import de.cidaas.sdk.android.cidaasVerification.BuildConfig;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.helper.general.DBHelper;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

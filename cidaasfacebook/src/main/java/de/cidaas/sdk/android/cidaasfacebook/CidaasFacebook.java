@@ -12,12 +12,12 @@ import com.facebook.login.LoginResult;
 
 import java.util.Arrays;
 
-import de.cidaas.sdk.android.cidaas.Controller.CidaasSDKLayout;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Interface.ICidaasFacebook;
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
+import de.cidaas.sdk.android.CidaasSDKLayout;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.interfaces.ICidaasFacebook;
+import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import timber.log.Timber;
 
 public class CidaasFacebook implements ICidaasFacebook {

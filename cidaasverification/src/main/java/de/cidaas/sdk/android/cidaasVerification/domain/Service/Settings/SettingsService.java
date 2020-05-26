@@ -4,23 +4,22 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Helper.CommonError.CommonError;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Settings.ConfiguredMFAList.ConfiguredMFAList;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Settings.ConfiguredMFAList.GetMFAListEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Settings.Others.UpdateFCMTokenEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.UpdateFCMToken.UpdateFCMTokenResponseEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.helper.commonerror.CommonError;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SettingsService {
     private Context context;

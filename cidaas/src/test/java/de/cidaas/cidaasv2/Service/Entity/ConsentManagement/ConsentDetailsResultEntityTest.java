@@ -5,8 +5,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentDetailsResultEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentSettingsReponseDataEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.TOTP;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPResponseDataEntity;
 
 import static junit.framework.Assert.assertTrue;
 

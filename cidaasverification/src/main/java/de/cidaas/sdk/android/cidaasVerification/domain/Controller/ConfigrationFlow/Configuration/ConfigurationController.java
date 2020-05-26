@@ -2,13 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationF
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.EndUser.ConfigureRequest.ConfigurationRequest;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.EnrollEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.EnrollResponse;
@@ -20,6 +13,13 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationFl
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationFlow.Scanned.ScannedController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationFlow.Setup.SetupController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Helper.TOTPGenerator.GoogleAuthenticator;
+import de.cidaas.sdk.android.helper.AuthenticationType;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+
 
 public class ConfigurationController {
 

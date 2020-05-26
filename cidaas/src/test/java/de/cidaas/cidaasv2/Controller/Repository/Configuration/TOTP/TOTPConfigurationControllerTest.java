@@ -2,12 +2,6 @@ package de.cidaas.cidaasv2.Controller.Repository.Configuration.TOTP;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.TOTPEntity.TOTPEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,10 +1,11 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.NotificationEntity.GetPendingNotification.PushDeviceinfoEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.service.entity.notificationentity.getpendingnotification.PushDeviceinfoEntity;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PushDeviceInformation implements Serializable {

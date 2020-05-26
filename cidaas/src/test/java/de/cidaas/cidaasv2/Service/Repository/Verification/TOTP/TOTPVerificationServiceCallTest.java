@@ -2,25 +2,7 @@ package de.cidaas.cidaasv2.Service.Repository.Verification.TOTP;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Cidaas;
-import de.cidaas.cidaasv2.Controller.HelperClass;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.CidaassdkService;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.TOTP.AuthenticateTOTPResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.TOTP.EnrollTOTPMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.TOTP.SetupTOTPMFAResponseEntity;
-
 import com.example.cidaasv2.Service.Repository.Verification.TOTP.TOTPVerificationService;
-
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedResponseEntity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +13,22 @@ import org.mockito.MockitoAnnotations;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.CountDownLatch;
+
+import de.cidaas.cidaasv2.Controller.HelperClass;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
+
+
+
+
+
+
+
+
+
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

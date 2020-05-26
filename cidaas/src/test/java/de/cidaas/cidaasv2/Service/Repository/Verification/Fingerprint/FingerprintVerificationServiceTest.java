@@ -2,22 +2,6 @@ package de.cidaas.cidaasv2.Service.Repository.Verification.Fingerprint;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Cidaas;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Fingerprint.AuthenticateFingerprintResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Fingerprint.InitiateFingerprintMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedResponseEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +11,21 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
+
+
+
+
+
+
+
+
+
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

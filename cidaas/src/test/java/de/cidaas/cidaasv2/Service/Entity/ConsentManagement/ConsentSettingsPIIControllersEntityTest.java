@@ -5,8 +5,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentSettingsPIIControllersAddressEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentSettingsPIIControllersEntity;
 
 public class ConsentSettingsPIIControllersEntityTest {
 

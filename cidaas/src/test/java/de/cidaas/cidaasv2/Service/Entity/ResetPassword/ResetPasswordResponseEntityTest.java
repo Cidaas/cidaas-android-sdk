@@ -1,7 +1,5 @@
 package de.cidaas.cidaasv2.Service.Entity.ResetPassword;
 
-import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoDataEntity;
-
 import junit.framework.Assert;
 
 import org.junit.Before;

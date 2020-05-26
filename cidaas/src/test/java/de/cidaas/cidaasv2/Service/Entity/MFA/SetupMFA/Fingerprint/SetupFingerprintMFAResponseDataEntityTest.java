@@ -3,7 +3,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.SetupMFA.Fingerprint;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.Fingerprint.SetupFingerprintMFAResponseDataEntity;
 
 public class SetupFingerprintMFAResponseDataEntityTest {
     SetupFingerprintMFAResponseDataEntity setupFingerprintMFAResponseDataEntity = new SetupFingerprintMFAResponseDataEntity();

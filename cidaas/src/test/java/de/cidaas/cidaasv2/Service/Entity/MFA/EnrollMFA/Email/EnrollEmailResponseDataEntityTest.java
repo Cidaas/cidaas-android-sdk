@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.Email;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Email.EnrollEmailResponseDataEntity;
 
 import static junit.framework.Assert.assertTrue;
 

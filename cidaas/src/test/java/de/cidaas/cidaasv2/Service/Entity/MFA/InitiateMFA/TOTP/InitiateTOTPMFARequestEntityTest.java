@@ -1,10 +1,10 @@
 package de.cidaas.cidaasv2.Service.Entity.MFA.InitiateMFA.TOTP;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.TOTP.InitiateTOTPMFARequestEntity;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.service.entity.mfa.InitiateMFA.TOTP.InitiateTOTPMFARequestEntity;
 
 import static junit.framework.Assert.assertTrue;
 

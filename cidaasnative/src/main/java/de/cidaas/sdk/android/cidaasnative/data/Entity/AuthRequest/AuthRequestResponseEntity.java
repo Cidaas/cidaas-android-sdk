@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import de.cidaas.sdk.android.cidaasnative.data.Entity.RequestId.RequestIDEntity;
 
+
 /**
  * Created by widasrnarayanan on 9/5/18.
  */

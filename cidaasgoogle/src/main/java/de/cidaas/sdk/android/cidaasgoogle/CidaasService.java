@@ -2,19 +2,18 @@ package de.cidaas.sdk.android.cidaasgoogle;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import de.cidaas.sdk.android.cidaasgoogle.Entity.GoogleSettingsEntity;
 import de.cidaas.sdk.android.cidaasgoogle.Interface.ICidaasGoogleService;
 import de.cidaas.sdk.android.cidaasgoogle.Interface.IGoogleAccessTokenEntity;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by ganesh on 03/01/18.

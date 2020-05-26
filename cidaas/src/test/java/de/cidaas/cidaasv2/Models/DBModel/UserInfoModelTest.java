@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import de.cidaas.sdk.android.cidaas.Models.DBModel.UserInfoModel;
 
 public class UserInfoModelTest {
     @Mock

@@ -3,7 +3,6 @@ package de.cidaas.cidaasv2.Helper.Entity;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.PhysicalVerificationEntity;
 
 public class PhysicalVerificationEntityTest {
 

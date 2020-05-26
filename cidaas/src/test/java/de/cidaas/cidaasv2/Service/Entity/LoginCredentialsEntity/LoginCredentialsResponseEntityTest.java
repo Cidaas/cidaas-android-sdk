@@ -1,11 +1,10 @@
 package de.cidaas.cidaasv2.Service.Entity.LoginCredentialsEntity;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+
 
 public class LoginCredentialsResponseEntityTest {
 

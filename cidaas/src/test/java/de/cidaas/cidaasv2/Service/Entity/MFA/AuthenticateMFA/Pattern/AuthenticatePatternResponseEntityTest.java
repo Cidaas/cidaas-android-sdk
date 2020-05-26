@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.Pattern.AuthenticatePatternResponseEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

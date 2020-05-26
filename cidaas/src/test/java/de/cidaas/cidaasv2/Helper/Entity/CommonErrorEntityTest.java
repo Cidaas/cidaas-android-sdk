@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.CommonErrorEntity;
 
 public class CommonErrorEntityTest {
     CommonErrorEntity commonErrorEntity = new CommonErrorEntity();

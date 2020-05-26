@@ -3,8 +3,6 @@ package de.cidaas.cidaasv2.Service.Entity.ConsentManagement;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentSettingsResponseServiceEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentSettingsServicePurposeEntity;
 
 public class ConsentSettingsResponseServiceEntityTest {
     //Field purposes of type ConsentSettingsServicePurposeEntity[] - was not mocked since Mockito doesn't mock arrays

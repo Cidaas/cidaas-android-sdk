@@ -5,8 +5,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedResponseEntity;
 
 public class ScannedResponseTest {
     ScannedResponseDataEntity data;

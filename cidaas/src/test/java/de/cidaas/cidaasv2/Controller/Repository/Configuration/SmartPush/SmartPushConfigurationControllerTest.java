@@ -2,20 +2,20 @@ package de.cidaas.cidaasv2.Controller.Repository.Configuration.SmartPush;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Models.DBModel.AccessTokenModel;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.SmartPush.EnrollSmartPushMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.SmartPush.SetupSmartPushMFARequestEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
+
+
+
 
 
 @RunWith(RobolectricTestRunner.class)

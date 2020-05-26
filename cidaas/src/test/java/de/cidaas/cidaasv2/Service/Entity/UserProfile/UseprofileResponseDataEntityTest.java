@@ -4,9 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.UserProfile.IdentityEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.UserProfile.UseprofileResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.UserProfile.UserAccountEntity;
 
 public class UseprofileResponseDataEntityTest {
 

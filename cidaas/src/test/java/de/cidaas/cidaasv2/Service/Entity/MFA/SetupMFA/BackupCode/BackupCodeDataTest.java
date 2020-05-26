@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.BackupCode.BackupCodeData;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.BackupCode.UserDeviceInfo;
 
 public class BackupCodeDataTest {
 

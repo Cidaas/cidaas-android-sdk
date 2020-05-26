@@ -2,11 +2,6 @@ package de.cidaas.cidaasv2.Service.Repository.Registration;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateRequestEntity;
@@ -25,6 +20,11 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
 
 @RunWith(RobolectricTestRunner.class)
 public class RegistrationServiceTest {

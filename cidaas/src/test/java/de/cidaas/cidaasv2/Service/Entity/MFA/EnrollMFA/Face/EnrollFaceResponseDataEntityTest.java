@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.EnrollMFA.Face;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Face.EnrollFaceResponseDataEntity;
 
 import static junit.framework.Assert.assertTrue;
 

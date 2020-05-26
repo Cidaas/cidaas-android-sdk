@@ -2,18 +2,6 @@ package de.cidaas.cidaasv2.Service.Repository.Verification.SMS;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Cidaas;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.CidaassdkService;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSRequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.SMS.EnrollSMSMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFARequestEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.SMS.InitiateSMSMFAResponseEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.SMS.SetupSMSMFAResponseEntity;
-
 import com.example.cidaasv2.Service.Repository.Verification.SMS.SMSVerificationService;
 
 import org.junit.Assert;
@@ -25,6 +13,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

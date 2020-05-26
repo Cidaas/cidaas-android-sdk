@@ -2,11 +2,6 @@ package de.cidaas.cidaasv2.Service.Repository.ResetPassword;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import com.example.cidaasv2.Service.Entity.ResetPassword.ResetPasswordRequestEntity;
@@ -19,6 +14,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
 
 @RunWith(RobolectricTestRunner.class)
 public class ResetPasswordServiceTest {

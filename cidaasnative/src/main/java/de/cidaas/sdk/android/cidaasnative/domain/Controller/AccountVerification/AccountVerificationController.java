@@ -4,20 +4,19 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import java.util.Dictionary;
 
-import timber.log.Timber;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.AccountVerificationListResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.AccountVerification.AccountVerificationService;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import timber.log.Timber;
 
 public class AccountVerificationController {
 

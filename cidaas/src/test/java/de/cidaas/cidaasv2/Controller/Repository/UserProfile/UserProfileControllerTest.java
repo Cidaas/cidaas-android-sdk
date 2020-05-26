@@ -2,9 +2,8 @@ package de.cidaas.cidaasv2.Controller.Repository.UserProfile;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Service.Repository.UserProfile.UserProfileService;
-
 import org.junit.Test;
+
 
 public class UserProfileControllerTest {
 

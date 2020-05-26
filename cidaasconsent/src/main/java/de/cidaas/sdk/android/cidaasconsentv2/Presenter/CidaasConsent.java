@@ -4,16 +4,17 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-//import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
-
 import de.cidaas.sdk.android.cidaasconsentv2.Domain.Controller.Consent.ConsentController;
 import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v1.ConsentDetailsV2RequestEntity;
 import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v1.ConsentEntity;
 import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.AcceptConsent.AcceptConsentV2Entity;
 import de.cidaas.sdk.android.cidaasconsentv2.data.Entity.v2.ConsentDetails.ConsentDetailsV2ResponseEntity;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+
+
+//import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 
 public class CidaasConsent {
 

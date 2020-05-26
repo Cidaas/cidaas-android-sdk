@@ -5,27 +5,19 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Dictionary;
+import java.util.HashMap;
+
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.AccountVerificationListResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Controller.AccountVerification.AccountVerificationController;
-import de.cidaas.sdk.android.cidaasnative.domain.Controller.ChangePassword.ChangePasswordController;
-
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.FileHelper;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
@@ -34,10 +26,8 @@ import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetNewPass
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
-
-import java.util.Dictionary;
-import java.util.HashMap;
-
+import de.cidaas.sdk.android.cidaasnative.domain.Controller.AccountVerification.AccountVerificationController;
+import de.cidaas.sdk.android.cidaasnative.domain.Controller.ChangePassword.ChangePasswordController;
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.Client.ClientController;
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.Deduplication.DeduplicationController;
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.Login.NativeLoginController;
@@ -45,6 +35,14 @@ import de.cidaas.sdk.android.cidaasnative.domain.Controller.Registration.Registr
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.RequestId.RequestIdController;
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.ResetPassword.ResetPasswordController;
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.Tenant.TenantController;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.helper.general.FileHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+
 
 public class CidaasNative {
 

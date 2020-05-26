@@ -5,8 +5,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Pattern.InitiatePatternMFAResponseDataEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Pattern.InitiatePatternMFAResponseEntity;
 
 public class InitiatePatternMFAResponseEntityTest {
     InitiatePatternMFAResponseDataEntity data;

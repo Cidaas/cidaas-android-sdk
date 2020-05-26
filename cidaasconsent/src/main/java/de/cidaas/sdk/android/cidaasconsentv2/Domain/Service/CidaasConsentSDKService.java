@@ -2,11 +2,10 @@ package de.cidaas.sdk.android.cidaasconsentv2.Domain.Service;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Service.CidaassdkService;
-
-import okhttp3.OkHttpClient;
 import de.cidaas.sdk.android.cidaasconsentv2.data.Service.ICidaasConsentSDKService;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.service.CidaassdkService;
+import okhttp3.OkHttpClient;
 
 public class CidaasConsentSDKService {
 

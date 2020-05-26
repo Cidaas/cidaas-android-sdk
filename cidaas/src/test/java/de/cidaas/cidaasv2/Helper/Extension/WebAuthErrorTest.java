@@ -11,7 +11,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
 
 @RunWith(RobolectricTestRunner.class)
 public class WebAuthErrorTest {

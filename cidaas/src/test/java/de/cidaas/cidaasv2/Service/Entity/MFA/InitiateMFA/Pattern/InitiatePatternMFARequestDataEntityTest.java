@@ -2,7 +2,6 @@ package de.cidaas.cidaasv2.Service.Entity.MFA.InitiateMFA.Pattern;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.InitiateMFA.Pattern.InitiatePatternMFARequestDataEntity;
 
 import static junit.framework.Assert.assertTrue;
 

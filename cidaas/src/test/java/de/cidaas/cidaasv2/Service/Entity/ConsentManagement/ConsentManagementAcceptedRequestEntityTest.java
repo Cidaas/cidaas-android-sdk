@@ -1,12 +1,9 @@
 package de.cidaas.cidaasv2.Service.Entity.ConsentManagement;
 
-import com.example.cidaasv2.Service.Entity.ConsentManagement.ResumeConsent.ResumeConsentRequestEntity;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.ConsentManagement.ConsentManagementAcceptedRequestEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

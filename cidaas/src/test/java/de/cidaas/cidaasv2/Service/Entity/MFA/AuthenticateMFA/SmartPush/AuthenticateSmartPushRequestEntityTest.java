@@ -1,12 +1,10 @@
 package de.cidaas.cidaasv2.Service.Entity.MFA.AuthenticateMFA.SmartPush;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.SmartPush.AuthenticateSmartPushRequestEntity;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertTrue;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
 
 public class AuthenticateSmartPushRequestEntityTest {
 

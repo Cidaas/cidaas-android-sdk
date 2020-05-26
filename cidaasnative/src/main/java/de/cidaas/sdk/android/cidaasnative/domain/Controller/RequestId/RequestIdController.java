@@ -4,23 +4,21 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.pkce.OAuthChallengeGenerator;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Service.RequestId.RequestIdService;
-
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.Service.RequestId.RequestIdService;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.pkce.OAuthChallengeGenerator;
+import de.cidaas.sdk.android.properties.CidaasProperties;
 import timber.log.Timber;
 
-import static de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper.ENABLE_PKCE;
 
 public class RequestIdController {
 
@@ -123,8 +121,8 @@ public class RequestIdController {
             return true;
         }
 
-        ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
-        if (!ENABLE_PKCE) {
+        CidaasHelper.ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
+        if (!CidaasHelper.ENABLE_PKCE) {
             if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret").equals("") || loginproperties == null
                     || !((Hashtable) loginproperties).containsKey("ClientSecret")) {
                 Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("PKCE flow is disabled ,ClientSecret must not be null",

@@ -1,10 +1,9 @@
 package de.cidaas.cidaasv2.Service.Entity;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 
 public class AccessTokenEntityTest {
 

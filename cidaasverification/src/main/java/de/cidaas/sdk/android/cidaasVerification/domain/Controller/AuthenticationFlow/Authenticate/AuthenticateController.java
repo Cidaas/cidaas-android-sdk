@@ -4,29 +4,28 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Helper.BiometricHandler.BiometricHandler;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Authenticate.AuthenticateService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.AuthenticationType;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class AuthenticateController {
     //Local Variables

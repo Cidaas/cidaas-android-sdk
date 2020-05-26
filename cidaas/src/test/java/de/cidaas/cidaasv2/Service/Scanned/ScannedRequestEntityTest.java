@@ -1,12 +1,12 @@
 package de.cidaas.cidaasv2.Service.Scanned;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Service.Scanned.ScannedRequestEntity;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
 
 public class ScannedRequestEntityTest {
 

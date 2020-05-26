@@ -1,11 +1,5 @@
 package de.cidaas.cidaasv2.Helper.Converter;
 
-import de.cidaas.sdk.android.cidaas.Helper.Converter.EntityToModelConverter;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Models.DBModel.AccessTokenModel;
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

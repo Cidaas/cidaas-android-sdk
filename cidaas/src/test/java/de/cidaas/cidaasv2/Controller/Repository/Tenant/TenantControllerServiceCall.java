@@ -2,10 +2,6 @@ package de.cidaas.cidaasv2.Controller.Repository.Tenant;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Cidaas;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import com.example.cidaasv2.Service.Entity.TenantInfo.TenantInfoEntity;
 
 import org.junit.Assert;
@@ -13,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.concurrent.CountDownLatch;
+
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

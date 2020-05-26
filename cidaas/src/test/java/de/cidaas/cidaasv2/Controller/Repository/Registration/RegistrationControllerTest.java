@@ -2,9 +2,6 @@ package de.cidaas.cidaasv2.Controller.Repository.Registration;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserRequestEntity;
 import com.example.cidaasv2.Service.Register.RegisterUser.RegisterNewUserResponseEntity;
 import com.example.cidaasv2.Service.Register.RegisterUserAccountVerification.RegisterUserAccountInitiateRequestEntity;
@@ -18,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
 
 @RunWith(RobolectricTestRunner.class)
 

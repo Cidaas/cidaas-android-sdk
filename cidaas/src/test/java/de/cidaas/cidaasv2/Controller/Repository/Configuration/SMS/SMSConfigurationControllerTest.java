@@ -2,12 +2,7 @@ package de.cidaas.cidaasv2.Controller.Repository.Configuration.SMS;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import com.example.cidaasv2.Service.Entity.LoginCredentialsEntity.LoginCredentialsResponseEntity;
-
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.AuthenticateMFA.SMS.AuthenticateSMSRequestEntity;
 
 import org.junit.Assert;
 import org.junit.Before;

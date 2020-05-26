@@ -2,13 +2,6 @@ package de.cidaas.cidaasv2.Service.Repository.AccessToken;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Cidaas;
-import de.cidaas.cidaasv2.Controller.HelperClass;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +12,13 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.CountDownLatch;
 
-import de.cidaas.sdk.android.cidaas.Service.Repository.AccessToken.AccessTokenService;
+import de.cidaas.cidaasv2.Controller.HelperClass;
+
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+
+
+
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;

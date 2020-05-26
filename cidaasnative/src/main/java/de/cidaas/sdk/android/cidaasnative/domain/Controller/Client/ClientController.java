@@ -2,20 +2,20 @@ package de.cidaas.sdk.android.cidaasnative.domain.Controller.Client;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.pkce.OAuthChallengeGenerator;
-
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Service.Client.ClientService;
+import androidx.annotation.NonNull;
 
 import java.util.Dictionary;
 
-import androidx.annotation.NonNull;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.Service.Client.ClientService;
+import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.pkce.OAuthChallengeGenerator;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+
 
 public class ClientController {
 
