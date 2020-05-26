@@ -2,23 +2,23 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationF
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
+import java.util.Dictionary;
+import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Scanned.ScannedEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Scanned.ScannedResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Scanned.ScannedService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
 
-import java.util.Dictionary;
-import java.util.Map;
 
 public class ScannedController {
 
@@ -46,13 +46,13 @@ public class ScannedController {
     }
 
     //--------------------------------------------Scanned--------------------------------------------------------------
-    public void scannedVerification(final ScannedEntity scannedEntity, final Result<ScannedResponse> scannedResult) {
+    public void scannedVerification(final ScannedEntity scannedEntity, final EventResult<ScannedResponse> scannedResult) {
         checkScannedEntity(scannedEntity, scannedResult);
     }
 
 
     //-------------------------------------checkScannedEntity-----------------------------------------------------------
-    private void checkScannedEntity(final ScannedEntity scannedEntity, final Result<ScannedResponse> scannedResult) {
+    private void checkScannedEntity(final ScannedEntity scannedEntity, final EventResult<ScannedResponse> scannedResult) {
         String methodName = "ScannedController:-checkScannedEntity()";
         try {
             if (scannedEntity.getVerificationType() != null && !scannedEntity.getVerificationType().equals("") && scannedEntity.getSub() != null &&
@@ -72,11 +72,11 @@ public class ScannedController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final ScannedEntity scannedEntity, final Result<ScannedResponse> scannedResult) {
+    private void addProperties(final ScannedEntity scannedEntity, final EventResult<ScannedResponse> scannedResult) {
         String methodName = "ScannedController:-addProperties()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -106,7 +106,7 @@ public class ScannedController {
     }
 
     //-------------------------------------------Call scanned Service-----------------------------------------------------------
-    private void callScanned(String baseurl, final ScannedEntity scannedEntity, final Result<ScannedResponse> scannedResult) {
+    private void callScanned(String baseurl, final ScannedEntity scannedEntity, final EventResult<ScannedResponse> scannedResult) {
         String methodName = "ScannedController:-scanned()";
         try {
             String scannedUrl = VerificationURLHelper.getShared().getScannedURL(baseurl, scannedEntity.getVerificationType());

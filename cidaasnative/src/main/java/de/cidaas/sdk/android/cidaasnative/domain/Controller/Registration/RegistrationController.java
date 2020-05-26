@@ -2,23 +2,22 @@ package de.cidaas.sdk.android.cidaasnative.domain.Controller.Registration;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserRequestEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupRequestEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Service.Registration.RegistrationService;
+import androidx.annotation.NonNull;
 
 import java.util.Dictionary;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.Service.Registration.RegistrationService;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.properties.CidaasProperties;
 import timber.log.Timber;
 
 public class RegistrationController {
@@ -52,11 +51,11 @@ public class RegistrationController {
     }
 
     public void getRegisterationFields(@NonNull final String requestId, final String locale,
-                                       final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
+                                       final EventResult<RegistrationSetupResponseEntity> registerFieldsresult) {
         final String methodName = "RegistrationController :getRegisterationFields()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     controlForGetRegistrationFields(requestId, locale, loginPropertiesResult, registerFieldsresult);
@@ -76,7 +75,7 @@ public class RegistrationController {
     }
 
     private void controlForGetRegistrationFields(@NonNull final String requestId, final String locale, Dictionary<String, String> loginPropertiesResult,
-                                                 final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
+                                                 final EventResult<RegistrationSetupResponseEntity> registerFieldsresult) {
         String methodName = "RegistrationController :controlForGetRegistrationFields()";
         try {
             String baseurl = loginPropertiesResult.get("DomainURL");
@@ -113,7 +112,7 @@ public class RegistrationController {
 
     //Service call To Registration Setup
     public void getRegisterationFields(@NonNull String baseurl, @NonNull RegistrationSetupRequestEntity registrationSetupRequestEntity,
-                                       final Result<RegistrationSetupResponseEntity> result) {
+                                       final EventResult<RegistrationSetupResponseEntity> result) {
         String methodName = "RegistrationController :getRegisterationFields()";
         try {
 
@@ -122,7 +121,7 @@ public class RegistrationController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 RegistrationService.getShared(context).getRegistrationSetup(baseurl, registrationSetupRequestEntity, null,
-                        new Result<RegistrationSetupResponseEntity>() {
+                        new EventResult<RegistrationSetupResponseEntity>() {
                             @Override
                             public void success(RegistrationSetupResponseEntity serviceresult) {
                                 validateRegistrationFilelds = serviceresult;
@@ -146,11 +145,11 @@ public class RegistrationController {
     }
 
     public void registerNewUser(@NonNull final String requestId, final RegistrationEntity registrationEntity,
-                                final Result<RegisterNewUserResponseEntity> registerFieldsresult) {
+                                final EventResult<RegisterNewUserResponseEntity> registerFieldsresult) {
         final String methodName = "RegistrationController :registerNewUser()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
@@ -299,7 +298,7 @@ public class RegistrationController {
     }
 
     //Register new User
-    public void registerNewUser(String baseurl, RegisterNewUserRequestEntity registrationEntity, final Result<RegisterNewUserResponseEntity> result) {
+    public void registerNewUser(String baseurl, RegisterNewUserRequestEntity registrationEntity, final EventResult<RegisterNewUserResponseEntity> result) {
         try {
             // Check for Not null
             registerWithNewUserService(baseurl, registrationEntity, result);
@@ -311,7 +310,7 @@ public class RegistrationController {
 
     //Service call To Registration Setup
     public void registerWithNewUserService(@NonNull String baseurl, @NonNull RegisterNewUserRequestEntity registerNewUserRequestEntity,
-                                           final Result<RegisterNewUserResponseEntity> result) {
+                                           final EventResult<RegisterNewUserResponseEntity> result) {
         String methodName = "RegistrationController :registerWithNewUserService()";
         try {
 
@@ -332,11 +331,11 @@ public class RegistrationController {
 
 
    /* public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String requestId, @NonNull final String verificationMedium,
-                                          final Result<InitiateAccountVerificationResponseEntity> Result)
+                                          finalEventResult<InitiateAccountVerificationResponseEntity>EventResult)
     {
         final String methodName="RegistrationController :initiateAccountVerificationService()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
@@ -347,26 +346,26 @@ public class RegistrationController {
                     initiateAccountVerificationRequestEntity.setVerificationMedium(verificationMedium);
                     initiateAccountVerificationRequestEntity.setSub(sub);
                     initiateAccountVerificationRequestEntity.setRequestId(requestId);
-                    initiateAccountVerificationService(baseurl, initiateAccountVerificationRequestEntity, Result);
+                    initiateAccountVerificationService(baseurl, initiateAccountVerificationRequestEntity,EventResult);
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
+                   EventResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
                 }
             });
         }
         catch (Exception e)
         {
-    Result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
+   EventResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
         }
     }
 
 
     //Service call To  register New User Account Verification via Email Setup
     public void initiateAccountVerificationService(@NonNull String baseurl,@NonNull InitiateAccountVerificationRequestEntity registrationEntity,
-                                                    final Result<InitiateAccountVerificationResponseEntity> result)
+                                                    finalEventResult<InitiateAccountVerificationResponseEntity> result)
     {
         String methodName="RegistrationController :initiateAccountVerificationService()";
         try{
@@ -378,7 +377,7 @@ public class RegistrationController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 // Service call
-           RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,new Result<InitiateAccountVerificationResponseEntity>() {
+           RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,new EventResult<InitiateAccountVerificationResponseEntity>() {
                     @Override
                     public void success(InitiateAccountVerificationResponseEntity serviceresult) {
                         accvid=serviceresult.getData().getAccvid();
@@ -403,11 +402,11 @@ public class RegistrationController {
         }
     }
 
-    public void verifyAccountVerificationService(@NonNull final String code,@NonNull final String accvid,final Result<VerifyAccountResponseEntity> result)
+    public void verifyAccountVerificationService(@NonNull final String code,@NonNull final String accvid,finalEventResult<VerifyAccountResponseEntity> result)
     {
         final String methodName="RegistrationController :verifyAccountVerificationService()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = lpresult.get("DomainURL");
@@ -436,7 +435,7 @@ public class RegistrationController {
 
         //Service call To  register New User Account Verification via Email Setup
     public void verifyAccountVerificationService(@NonNull String baseurl, @NonNull String code, String accvid,
-                                                 final Result<VerifyAccountResponseEntity> result)
+                                                 finalEventResult<VerifyAccountResponseEntity> result)
     {
         String methodName="RegistrationController :verifyAccountVerificationService()";
         try{

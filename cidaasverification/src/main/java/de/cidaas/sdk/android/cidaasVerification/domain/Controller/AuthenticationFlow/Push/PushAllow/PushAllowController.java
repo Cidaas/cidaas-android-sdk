@@ -2,16 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.Authenticatio
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.Map;
 
@@ -19,6 +9,16 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAllow.PushA
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAllow.PushAllowResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Push.PushAllow.PushAllowService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+
 
 public class PushAllowController {
     //Local Variables
@@ -46,13 +46,13 @@ public class PushAllowController {
 
 
     //--------------------------------------------PushAllow--------------------------------------------------------------
-    public void pushAllowVerification(final PushAllowEntity pushAllowEntity, final Result<PushAllowResponse> pushAllowResult) {
+    public void pushAllowVerification(final PushAllowEntity pushAllowEntity, final EventResult<PushAllowResponse> pushAllowResult) {
         checkPushAllowEntity(pushAllowEntity, pushAllowResult);
     }
 
 
     //-------------------------------------checkPushAllowEntity-----------------------------------------------------------
-    private void checkPushAllowEntity(final PushAllowEntity pushAllowEntity, final Result<PushAllowResponse> pushAllowResult) {
+    private void checkPushAllowEntity(final PushAllowEntity pushAllowEntity, final EventResult<PushAllowResponse> pushAllowResult) {
         String methodName = "PushAllowController:-checkPushAllowEntity()";
         try {
             if (pushAllowEntity.getVerificationType() != null && !pushAllowEntity.getVerificationType().equals("") &&
@@ -72,11 +72,11 @@ public class PushAllowController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final PushAllowEntity pushAllowEntity, final Result<PushAllowResponse> pushAllowResult) {
+    private void addProperties(final PushAllowEntity pushAllowEntity, final EventResult<PushAllowResponse> pushAllowResult) {
         String methodName = "PushAllowController:-addProperties()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -105,7 +105,7 @@ public class PushAllowController {
     }
 
     //-------------------------------------------Call pushAllow Service-----------------------------------------------------------
-    private void callPushAllow(String baseurl, final PushAllowEntity pushAllowEntity, final Result<PushAllowResponse> pushAllowResult) {
+    private void callPushAllow(String baseurl, final PushAllowEntity pushAllowEntity, final EventResult<PushAllowResponse> pushAllowResult) {
         String methodName = "PushAllowController:-pushAllow()";
         try {
             String pushAllowUrl = VerificationURLHelper.getShared().getPushAllowURL(baseurl, pushAllowEntity.getVerificationType());

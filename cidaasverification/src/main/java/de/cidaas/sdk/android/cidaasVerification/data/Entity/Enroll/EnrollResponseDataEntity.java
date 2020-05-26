@@ -1,11 +1,12 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.EnrollMFA.Face.FaceMetadataEntity;
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
+import de.cidaas.sdk.android.service.entity.mfa.EnrollMFA.Face.FaceMetadataEntity;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EnrollResponseDataEntity implements Serializable {

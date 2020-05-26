@@ -1,12 +1,13 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Settings.ConfiguredMFAList;
 
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.Scanned.UserInfo;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.List;
+
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.Scanned.UserInfo;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MFAListResponseData implements Serializable {

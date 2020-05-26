@@ -2,18 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationF
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Controller.Repository.AccessToken.AccessTokenController;
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.Map;
 
@@ -21,6 +9,18 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Setup.SetupEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Setup.SetupResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Setup.SetupService;
+import de.cidaas.sdk.android.controller.AccessTokenController;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+
 
 public class SetupController {
 
@@ -47,13 +47,13 @@ public class SetupController {
         return shared;
     }
 
-    public void setupVerification(final SetupEntity setupEntity, final Result<SetupResponse> setupResult) {
+    public void setupVerification(final SetupEntity setupEntity, final EventResult<SetupResponse> setupResult) {
         checkSetupEntity(setupEntity, setupResult);
     }
 
 
     //------------------------------------------------------checkSetupEntity-------------------------------------------------------
-    private void checkSetupEntity(final SetupEntity setupEntity, final Result<SetupResponse> setupResult) {
+    private void checkSetupEntity(final SetupEntity setupEntity, final EventResult<SetupResponse> setupResult) {
         String methodName = "SetupController:-checkSetupEntity()";
         try {
             if (setupEntity.getSub() != null && !setupEntity.getSub().equals("") && setupEntity.getVerificationType() != null &&
@@ -73,18 +73,18 @@ public class SetupController {
 
 
     //Add Device info and pushnotificationId
-    private void addProperties(final SetupEntity setupEntity, final Result<SetupResponse> setupResult) {
+    private void addProperties(final SetupEntity setupEntity, final EventResult<SetupResponse> setupResult) {
         String methodName = "SetupController:-addProperties()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
                     final String clientId = loginPropertiesResult.get("ClientId");
 
                     //get AccessToken
-                    AccessTokenController.getShared(context).getAccessToken(setupEntity.getSub(), new Result<AccessTokenEntity>() {
+                    AccessTokenController.getShared(context).getAccessToken(setupEntity.getSub(), new EventResult<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity accessTokenresult) {
                             //call callSetup call
@@ -121,7 +121,7 @@ public class SetupController {
     }
 
     //Call callSetup Service
-    private void callSetup(final String baseurl, String accessToken, final SetupEntity setupEntity, final Result<SetupResponse> setupResult) {
+    private void callSetup(final String baseurl, String accessToken, final SetupEntity setupEntity, final EventResult<SetupResponse> setupResult) {
         String methodName = "SetupController:-callSetup()";
         try {
 

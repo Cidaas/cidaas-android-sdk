@@ -5,13 +5,8 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 
-import de.cidaas.sdk.android.cidaas.Controller.CidaasSDKLayout;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.CidaasHelper;
-import de.cidaas.sdk.android.cidaas.Interface.ICidaasGoogle;
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,11 +22,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
+import de.cidaas.sdk.android.CidaasSDKLayout;
 import de.cidaas.sdk.android.cidaasgoogle.Entity.GoogleSettingsEntity;
 import de.cidaas.sdk.android.cidaasgoogle.Interface.IGoogleAccessTokenEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
+import de.cidaas.sdk.android.interfaces.ICidaasGoogle;
+import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
+
 
 public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, ICidaasGoogle {
 
@@ -42,7 +42,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
     public static final int REQ_CODE = 9001;
     private GoogleSignInOptions signInOptions;
 
-    Result<AccessTokenEntity> localAccessTokenEntityResult;
+    EventResult<AccessTokenEntity> localAccessTokenEntityResult;
 
 
     private GoogleSettingsEntity googleSettingsEntity;
@@ -71,7 +71,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
 
         CidaasSDKLayout.iCidaasGoogle = new ICidaasGoogle() {
             @Override
-            public void login(Result<AccessTokenEntity> accessTokenEntityResult) {
+            public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
                 signIn(accessTokenEntityResult);
             }
 
@@ -85,7 +85,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
     }
 
 
-    private void signIn(Result<AccessTokenEntity> accessTokenEntityResult) {
+    private void signIn(EventResult<AccessTokenEntity> accessTokenEntityResult) {
         this.requestGoogleAccount(REQ_CODE);
         localAccessTokenEntityResult = accessTokenEntityResult;
     }
@@ -212,7 +212,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
     }
 
     @Override
-    public void login(Result<AccessTokenEntity> accessTokenEntityResult) {
+    public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
         signIn(accessTokenEntityResult);
     }
 

@@ -4,29 +4,28 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Helper.BiometricHandler.BiometricHandler;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Authenticate.AuthenticateService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.AuthenticationType;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class AuthenticateController {
     //Local Variables
@@ -54,13 +53,13 @@ public class AuthenticateController {
 
 
     //--------------------------------------------Authenticate--------------------------------------------------------------
-    public void authenticateVerification(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult) {
+    public void authenticateVerification(final AuthenticateEntity authenticateEntity, final EventResult<AuthenticateResponse> authenticateResult) {
         checkAuthenticateEntity(authenticateEntity, authenticateResult);
     }
 
 
     //-------------------------------------checkAuthenticateEntity-----------------------------------------------------------
-    private void checkAuthenticateEntity(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult) {
+    private void checkAuthenticateEntity(final AuthenticateEntity authenticateEntity, final EventResult<AuthenticateResponse> authenticateResult) {
         String methodName = "AuthenticateController:-checkAuthenticateEntity()";
         try {
 
@@ -84,7 +83,7 @@ public class AuthenticateController {
 
 
     //-----------------------------------------------handleVerificationTypes---------------------------------------------------------------
-    private void handleVerificationTypes(AuthenticateEntity authenticateEntity, Result<AuthenticateResponse> authenticateResult) {
+    private void handleVerificationTypes(AuthenticateEntity authenticateEntity, EventResult<AuthenticateResponse> authenticateResult) {
         String methodName = "AuthenticateController:-handleVerificationTypes() ";
         try {
             switch (authenticateEntity.getVerificationType()) {
@@ -129,11 +128,11 @@ public class AuthenticateController {
     }
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void callFingerPrintAuthentication(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult) {
+    private void callFingerPrintAuthentication(final AuthenticateEntity authenticateEntity, final EventResult<AuthenticateResponse> authenticateResult) {
         String methodName = "AuthenticateController:-callFingerPrintAuthentication() ";
         try {
             BiometricHandler biometricHandler = new BiometricHandler(authenticateEntity.getFingerPrintEntity().getContext());
-            biometricHandler.callFingerPrint(authenticateEntity.getFingerPrintEntity(), methodName, new Result<String>() {
+            biometricHandler.callFingerPrint(authenticateEntity.getFingerPrintEntity(), methodName, new EventResult<String>() {
                 @Override
                 public void success(String result) {
                     //call authenticate call
@@ -155,11 +154,11 @@ public class AuthenticateController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult) {
+    private void addProperties(final AuthenticateEntity authenticateEntity, final EventResult<AuthenticateResponse> authenticateResult) {
         String methodName = "AuthenticateController:-addProperties()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -188,7 +187,7 @@ public class AuthenticateController {
     }
 
     //-------------------------------------------Call authenticate Service-----------------------------------------------------------
-    private void callAuthenticate(String baseurl, final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult) {
+    private void callAuthenticate(String baseurl, final AuthenticateEntity authenticateEntity, final EventResult<AuthenticateResponse> authenticateResult) {
         String methodName = "AuthenticateController:-authenticate()";
         try {
             String authenticateUrl = VerificationURLHelper.getShared().getAuthenticateURL(baseurl, authenticateEntity.getVerificationType());
@@ -206,10 +205,10 @@ public class AuthenticateController {
     }
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addPropertiesForFaceOrVoice(final MultipartBody.Part filetosend, final AuthenticateEntity authenticateEntity, final Result<AuthenticateResponse> authenticateResult) {
+    private void addPropertiesForFaceOrVoice(final MultipartBody.Part filetosend, final AuthenticateEntity authenticateEntity, final EventResult<AuthenticateResponse> authenticateResult) {
         String methodName = "AuthenticateController:-addPropertiesForFaceOrVoice() ";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -247,7 +246,7 @@ public class AuthenticateController {
 
     //-------------------------------------------Call authenticate Service-----------------------------------------------------------
     private void callAuthenticateForFaceandVoice(String baseurl, final MultipartBody.Part file, final HashMap<String, RequestBody> authenticateHashmap,
-                                                 final String verificationType, final Result<AuthenticateResponse> authenticateResult) {
+                                                 final String verificationType, final EventResult<AuthenticateResponse> authenticateResult) {
         String methodName = "AuthenticateController:-authenticate()";
         try {
             //Authenticate URL

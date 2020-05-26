@@ -2,13 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationF
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.EndUser.ConfigureRequest.ConfigurationRequest;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.EnrollEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.EnrollResponse;
@@ -20,6 +13,13 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationFl
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationFlow.Scanned.ScannedController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Controller.ConfigrationFlow.Setup.SetupController;
 import de.cidaas.sdk.android.cidaasVerification.domain.Helper.TOTPGenerator.GoogleAuthenticator;
+import de.cidaas.sdk.android.helper.AuthenticationType;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+
 
 public class ConfigurationController {
 
@@ -48,17 +48,17 @@ public class ConfigurationController {
 
 
     //--------------------------------------------Configuration--------------------------------------------------------------
-    public void configureVerification(final ConfigurationRequest configurationRequest, final String verificationType, final Result<EnrollResponse> enrollResponseResult) {
+    public void configureVerification(final ConfigurationRequest configurationRequest, final String verificationType, final EventResult<EnrollResponse> enrollResponseResult) {
         callSetupCall(configurationRequest, verificationType, enrollResponseResult);
     }
 
     //--------------------------------------------Configuration Setup--------------------------------------------------------------
 
-    private void callSetupCall(final ConfigurationRequest configurationRequest, final String verificationType, final Result<EnrollResponse> enrollResponseResult) {
+    private void callSetupCall(final ConfigurationRequest configurationRequest, final String verificationType, final EventResult<EnrollResponse> enrollResponseResult) {
         String methodName = "ConfigurationController:configureVerification()";
         try {
             SetupEntity setupEntity = new SetupEntity(configurationRequest.getSub(), verificationType);
-            setup(setupEntity, new Result<SetupResponse>() {
+            setup(setupEntity, new EventResult<SetupResponse>() {
                 @Override
                 public void success(SetupResponse setupResult) {
                     String exchange_id = setupResult.getData().getExchange_id().getExchange_id();
@@ -90,12 +90,12 @@ public class ConfigurationController {
 
 
     private void callScannedCall(String exchange_id, final ConfigurationRequest configurationRequest, final String verificationType,
-                                 final Result<EnrollResponse> enrollResponseResult) {
+                                 final EventResult<EnrollResponse> enrollResponseResult) {
         String methodName = "ConfigurationController:callScannedCall()";
         try {
             ScannedEntity scannedEntity = new ScannedEntity(configurationRequest.getSub(), exchange_id, verificationType);
 
-            ScannedController.getShared(context).scannedVerification(scannedEntity, new Result<ScannedResponse>() {
+            ScannedController.getShared(context).scannedVerification(scannedEntity, new EventResult<ScannedResponse>() {
                 @Override
                 public void success(ScannedResponse scannedResult) {
                     generateEnrollEntity(scannedResult, verificationType, configurationRequest, enrollResponseResult);
@@ -115,7 +115,7 @@ public class ConfigurationController {
 
 
     private void generateEnrollEntity(ScannedResponse scannedResult, String verificationType, ConfigurationRequest configurationRequest,
-                                      Result<EnrollResponse> enrollResponseResult) {
+                                      EventResult<EnrollResponse> enrollResponseResult) {
         String methodName = "ConfigurationController:generateEnrollEntity()";
         try {
             // handle Enroll entity and call enroll
@@ -157,7 +157,7 @@ public class ConfigurationController {
         }
     }
 
-    public void setup(SetupEntity setupEntity, Result<SetupResponse> setupResponseResult) {
+    public void setup(SetupEntity setupEntity, EventResult<SetupResponse> setupResponseResult) {
         SetupController.getShared(context).setupVerification(setupEntity, setupResponseResult);
     }
 

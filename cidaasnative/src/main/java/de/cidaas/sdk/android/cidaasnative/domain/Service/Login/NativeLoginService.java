@@ -2,25 +2,24 @@ package de.cidaas.sdk.android.cidaasnative.domain.Service.Login;
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsResponseErrorEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 public class NativeLoginService {
 
@@ -56,7 +55,7 @@ public class NativeLoginService {
 
     //----------------------------------------------------------Login With Credentials-----------------------------------------------------------------------------
     public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity,
-                                     final Result<LoginCredentialsResponseEntity> callback) {
+                                     final EventResult<LoginCredentialsResponseEntity> callback) {
         //Local Variables
 
         String methodName = "LoginService :serviceForLoginWithCredentials()";
@@ -81,7 +80,7 @@ public class NativeLoginService {
     }
 
     private void serviceForLoginWithCredentials(String loginUrl, LoginCredentialsRequestEntity loginCredentialsRequestEntity, Map<String, String> headers,
-                                                final Result<LoginCredentialsResponseEntity> callback) {
+                                                final EventResult<LoginCredentialsResponseEntity> callback) {
         final String methodName = "Error :LoginService :serviceForLoginWithCredentials()";
         try {
             final ICidaasNativeService CidaasNativeService = service.getInstance();

@@ -1,0 +1,53 @@
+package de.cidaas.sdk.android.Service.Entity.MFA.EnrollMFA.Fingerprint;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import de.cidaas.sdk.android.service.entity.mfa.EnrollMFA.Fingerprint.EnrollFingerprintMFAResponseEntity;
+import de.cidaas.sdk.android.service.entity.mfa.EnrollMFA.Fingerprint.EnrollFingerprintResponseDataEntity;
+
+
+public class EnrollFingerprintMFAResponseEntityTest {
+    @Mock
+    EnrollFingerprintResponseDataEntity data;
+    @InjectMocks
+    EnrollFingerprintMFAResponseEntity enrollFingerprintMFAResponseEntity;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void setSuccess() {
+        enrollFingerprintMFAResponseEntity.setSuccess(true);
+        Assert.assertTrue(enrollFingerprintMFAResponseEntity.isSuccess());
+
+    }
+
+    @Test
+    public void setStatus() {
+        enrollFingerprintMFAResponseEntity.setStatus(27);
+        Assert.assertEquals(27, enrollFingerprintMFAResponseEntity.getStatus());
+
+    }
+
+    @Test
+    public void setData() {
+        data = new EnrollFingerprintResponseDataEntity();
+
+        data.setSub("Test");
+        enrollFingerprintMFAResponseEntity.setData(data);
+        Assert.assertEquals("Test", enrollFingerprintMFAResponseEntity.getData().getSub());
+
+    }
+
+
+}
+
+//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

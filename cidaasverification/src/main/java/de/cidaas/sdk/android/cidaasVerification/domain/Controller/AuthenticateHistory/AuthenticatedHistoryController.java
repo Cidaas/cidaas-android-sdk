@@ -2,16 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.AuthenticateH
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.Map;
 
@@ -19,6 +9,16 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory.AuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.AuthenticatedHistory.AuthenticatedHistoryService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+
 
 public class AuthenticatedHistoryController {
     //Local Variables
@@ -45,13 +45,13 @@ public class AuthenticatedHistoryController {
     }
 
     //--------------------------------------------AuthenticatedHistory--------------------------------------------------------------
-    public void getauthenticatedHistoryList(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final Result<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    public void getauthenticatedHistoryList(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         checkAuthenticatedHistoryEntity(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
 
 
     //-------------------------------------checkAuthenticatedHistoryEntity-----------------------------------------------------------
-    private void checkAuthenticatedHistoryEntity(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final Result<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    private void checkAuthenticatedHistoryEntity(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
         try {
             if (authenticatedHistoryEntity.getVerification_type() != null && !authenticatedHistoryEntity.getVerification_type().equals("") &&
@@ -81,11 +81,11 @@ public class AuthenticatedHistoryController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final Result<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    private void addProperties(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         String methodName = "AuthenticatedHistoryController:-addProperties()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -115,7 +115,7 @@ public class AuthenticatedHistoryController {
     }
 
     //-------------------------------------------Call authenticatedHistory Service-----------------------------------------------------------
-    private void callAuthenticatedHistory(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final Result<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    private void callAuthenticatedHistory(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryURL(baseurl);

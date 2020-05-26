@@ -4,17 +4,6 @@ package de.cidaas.sdk.android.cidaasVerification.data.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.HTTP;
-import retrofit2.http.HeaderMap;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.PartMap;
-import retrofit2.http.Url;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory.AuthenticatedHistoryEntity;
@@ -43,6 +32,17 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Setup.SetupResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.UpdateFCMToken.UpdateFCMTokenResponseEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.VerificationContinue.VerificationContinue;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.VerificationContinue.VerificationContinueResponseEntity;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.HTTP;
+import retrofit2.http.HeaderMap;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.PartMap;
+import retrofit2.http.Url;
 
 
 public interface ICidaasSDK_V2_Services {

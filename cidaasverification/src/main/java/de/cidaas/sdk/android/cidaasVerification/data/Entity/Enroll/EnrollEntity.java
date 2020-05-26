@@ -1,12 +1,13 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.FingerPrintEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.File;
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.entities.FingerPrintEntity;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EnrollEntity implements Serializable {

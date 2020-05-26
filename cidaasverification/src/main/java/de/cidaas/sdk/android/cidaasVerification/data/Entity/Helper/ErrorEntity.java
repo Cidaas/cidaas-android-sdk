@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.FaceMetaData;
 
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorEntity implements Serializable {
 

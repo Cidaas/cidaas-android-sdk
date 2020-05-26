@@ -1,8 +1,8 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Initiate;
 
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
-
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
 
 
 public class InitiateResponseDataEntity implements Serializable {

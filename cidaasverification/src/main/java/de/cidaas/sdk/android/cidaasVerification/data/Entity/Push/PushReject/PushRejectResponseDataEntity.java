@@ -1,10 +1,11 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushReject;
 
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PushRejectResponseDataEntity implements Serializable {

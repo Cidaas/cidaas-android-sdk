@@ -1,10 +1,11 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.VerificationContinue;
 
-import de.cidaas.sdk.android.cidaas.Helper.Enums.UsageType;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.helper.enums.UsageType;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VerificationContinue implements Serializable {

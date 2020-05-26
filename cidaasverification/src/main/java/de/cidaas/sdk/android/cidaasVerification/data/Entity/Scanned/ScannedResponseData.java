@@ -1,10 +1,11 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Scanned;
 
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScannedResponseData implements Serializable {

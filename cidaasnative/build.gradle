@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 29
+    testOptions.unitTests.includeAndroidResources = true
     buildToolsVersion "29.0.2"
 
 
@@ -33,9 +34,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 
     //Cidaas-Core
@@ -49,4 +47,20 @@ dependencies {
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    //Testing
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    // Required -- JUnit 4 framework
+    testImplementation 'junit:junit:4.12'
+    // Optional -- Mockito framework
+
+
+    testImplementation 'org.robolectric:robolectric:4.2'
+
+    testImplementation 'com.squareup.okhttp3:mockwebserver:3.8.0'
+
+    testImplementation 'androidx.test:monitor:1.2.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
 }

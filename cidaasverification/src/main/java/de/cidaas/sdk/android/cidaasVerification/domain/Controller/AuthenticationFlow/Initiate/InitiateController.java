@@ -2,16 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.Authenticatio
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.Map;
 
@@ -19,6 +9,16 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Initiate.InitiateEnt
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Initiate.InitiateResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Initiate.InitiateService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+
 
 public class InitiateController {
     //Local Variables
@@ -46,13 +46,13 @@ public class InitiateController {
 
 
     //--------------------------------------------Initiate--------------------------------------------------------------
-    public void initiateVerification(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    public void initiateVerification(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         checkInitiateEntity(initiateEntity, initiateResult);
     }
 
 
     //-------------------------------------checkInitiateEntity-----------------------------------------------------------
-    private void checkInitiateEntity(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    private void checkInitiateEntity(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         String methodName = "InitiateController:-checkInitiateEntity()";
         try {
             if (initiateEntity.getVerificationType() != null && !initiateEntity.getVerificationType().equals("")) {
@@ -80,7 +80,7 @@ public class InitiateController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    private void addProperties(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         String methodName = "InitiateController:-addProperties()";
         try {
             //App properties
@@ -97,10 +97,10 @@ public class InitiateController {
     }
 
     //-------------------------------------------Call initiate Service-----------------------------------------------------------
-    private void callInitiate(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    private void callInitiate(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         String methodName = "InitiateController:-initiate()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
