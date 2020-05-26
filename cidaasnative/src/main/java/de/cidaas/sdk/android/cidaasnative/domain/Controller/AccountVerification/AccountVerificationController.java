@@ -4,20 +4,19 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-
 import java.util.Dictionary;
 
-import timber.log.Timber;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.AccountVerificationListResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.AccountVerification.AccountVerificationService;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import timber.log.Timber;
 
 public class AccountVerificationController {
 
@@ -46,10 +45,10 @@ public class AccountVerificationController {
     }
 
     public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String requestId, @NonNull final String verificationMedium,
-                                                   final Result<InitiateAccountVerificationResponseEntity> Result) {
+                                                   final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
         final String methodName = "AccountVerificationController :initiateAccountVerificationService()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
@@ -60,24 +59,24 @@ public class AccountVerificationController {
                     initiateAccountVerificationRequestEntity.setVerificationMedium(verificationMedium);
                     initiateAccountVerificationRequestEntity.setSub(sub);
                     initiateAccountVerificationRequestEntity.setRequestId(requestId);
-                    initiateAccountVerificationService(baseurl, initiateAccountVerificationRequestEntity, Result);
+                    initiateAccountVerificationService(baseurl, initiateAccountVerificationRequestEntity, EventResult);
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName));
+                    EventResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName));
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+            EventResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 
 
     //Service call To  register New User Account Verification via Email Setup
     public void initiateAccountVerificationService(@NonNull String baseurl, @NonNull InitiateAccountVerificationRequestEntity registrationEntity,
-                                                   final Result<InitiateAccountVerificationResponseEntity> result) {
+                                                   final EventResult<InitiateAccountVerificationResponseEntity> result) {
         String methodName = "AccountVerificationController :initiateAccountVerificationService()";
         try {
 
@@ -88,7 +87,7 @@ public class AccountVerificationController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 // Service call
-                AccountVerificationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity, new Result<InitiateAccountVerificationResponseEntity>() {
+                AccountVerificationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity, new EventResult<InitiateAccountVerificationResponseEntity>() {
                     @Override
                     public void success(InitiateAccountVerificationResponseEntity serviceresult) {
                         accvid = serviceresult.getData().getAccvid();
@@ -109,10 +108,10 @@ public class AccountVerificationController {
         }
     }
 
-    public void verifyAccountVerificationService(@NonNull final String code, @NonNull final String accvid, final Result<VerifyAccountResponseEntity> result) {
+    public void verifyAccountVerificationService(@NonNull final String code, @NonNull final String accvid, final EventResult<VerifyAccountResponseEntity> result) {
         final String methodName = "AccountVerificationController :verifyAccountVerificationService()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = lpresult.get("DomainURL");
@@ -137,7 +136,7 @@ public class AccountVerificationController {
     }
 
     //Service call To  register New User Account Verification via Email Setup
-    public void verifyAccountVerificationService(@NonNull String baseurl, @NonNull String code, String accvid, final Result<VerifyAccountResponseEntity> result) {
+    public void verifyAccountVerificationService(@NonNull String baseurl, @NonNull String code, String accvid, final EventResult<VerifyAccountResponseEntity> result) {
         String methodName = "AccountVerificationController :verifyAccountVerificationService()";
         try {
 
@@ -159,10 +158,10 @@ public class AccountVerificationController {
         }
     }
 
-    public void getAccountVerificationList(@NonNull final String sub, final Result<AccountVerificationListResponseEntity> result) {
+    public void getAccountVerificationList(@NonNull final String sub, final EventResult<AccountVerificationListResponseEntity> result) {
         final String methodName = "AccountVerificationController :AccountVerificationListResponseEntity()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
                     String baseurl = lpresult.get("DomainURL");
@@ -187,7 +186,7 @@ public class AccountVerificationController {
     }
 
     //Service call To  register New User Account Verification via Email Setup
-    private void getAccountVerificationList(@NonNull String baseurl, @NonNull String sub, final Result<AccountVerificationListResponseEntity> result) {
+    private void getAccountVerificationList(@NonNull String baseurl, @NonNull String sub, final EventResult<AccountVerificationListResponseEntity> result) {
         String methodName = "AccountVerificationController :verifyAccountVerificationService()";
         try {
 

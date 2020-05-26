@@ -1,19 +1,12 @@
 package de.cidaas.sdk.android.cidaasnative.data.Service;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.HeaderMap;
-import retrofit2.http.POST;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.AccountVerificationListResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseEntity;
@@ -22,10 +15,6 @@ import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsRequ
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LogoutResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterUser.RegisterNewUserResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationRequestEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountRequestEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.VerifyAccountResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
@@ -37,6 +26,16 @@ import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswor
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.HeaderMap;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ICidaasNativeService {
 

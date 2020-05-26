@@ -2,16 +2,6 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Controller.Authenticatio
 
 import android.content.Context;
 
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.Map;
 
@@ -19,6 +9,16 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAcknowledge
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAcknowledge.PushAcknowledgeResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Push.PushAcknowledge.PushAcknowledgeService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+
 
 public class PushAcknowledgeController {
     //Local Variables
@@ -46,13 +46,13 @@ public class PushAcknowledgeController {
 
 
     //--------------------------------------------PushAcknowledge--------------------------------------------------------------
-    public void pushAcknowledgeVerification(final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    public void pushAcknowledgeVerification(final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         checkPushAcknowledgeEntity(pushAcknowledgeEntity, pushAcknowledgeResult);
     }
 
 
     //-------------------------------------checkPushAcknowledgeEntity-----------------------------------------------------------
-    private void checkPushAcknowledgeEntity(final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    private void checkPushAcknowledgeEntity(final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         String methodName = "PushAcknowledgeController:-checkPushAcknowledgeEntity()";
         try {
             if (pushAcknowledgeEntity.getVerificationType() != null && !pushAcknowledgeEntity.getVerificationType().equals("") &&
@@ -73,10 +73,10 @@ public class PushAcknowledgeController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    private void addProperties(final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         String methodName = "PushAcknowledgeController:-addProperties()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -105,7 +105,7 @@ public class PushAcknowledgeController {
     }
 
     //-------------------------------------------Call pushAcknowledge Service-----------------------------------------------------------
-    private void callPushAcknowledge(String baseurl, final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    private void callPushAcknowledge(String baseurl, final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         String methodName = "PushAcknowledgeController:-pushAcknowledge()";
         try {
 

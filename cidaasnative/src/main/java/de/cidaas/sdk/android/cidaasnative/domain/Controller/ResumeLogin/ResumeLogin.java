@@ -5,7 +5,7 @@ import android.content.Context;
 
 import LoginController;
 import PasswordlessEntity;
-import Result;
+importEventResult;
 import UsageType;
 import WebAuthErrorCode;
 import WebAuthError;
@@ -44,7 +44,7 @@ public class ResumeLogin {
 
     public void resumeLoginAfterSuccessfullAuthentication(String sub, String trackingCode, String verificationType, String usageType,
                                                           String clientId,String requestId,String trackId, String baseURL,
-                                                          Result<LoginCredentialsResponseEntity> loginresult)
+                                                         EventResult<LoginCredentialsResponseEntity> loginresult)
     {String methodName="ResumeLogin Controller :resumeLoginAfterSuccessfullAuthentication()";
         try {
 
@@ -79,7 +79,7 @@ public class ResumeLogin {
     //--------------------------------------------------------resumeLoginAfterSuccessfullAuthentication--------------------------------------------------
     public void resumeLoginAfterSuccessfullAuthentication(String sub, String trackingCode, String verificationType, PasswordlessEntity passwordlessEntity,
                                                           String clientId, String baseURL,
-                                                          Result<LoginCredentialsResponseEntity> loginresult) {
+                                                         EventResult<LoginCredentialsResponseEntity> loginresult) {
         resumeLoginAfterSuccessfullAuthentication(sub,trackingCode,verificationType,passwordlessEntity.getUsageType(),clientId,
                 passwordlessEntity.getRequestId(),passwordlessEntity.getTrackId(),baseURL,loginresult);
 

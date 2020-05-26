@@ -3,12 +3,13 @@ package de.cidaas.sdk.android.cidaasVerification.domain.Helper.BiometricHandler;
 import android.content.Context;
 import android.os.Build;
 
-import de.cidaas.sdk.android.cidaas.Helper.Entity.FingerPrintEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Library.BiometricAuthentication.BiometricCallback;
-import de.cidaas.sdk.android.cidaas.Library.BiometricAuthentication.BiometricManager;
+import de.cidaas.sdk.android.entities.FingerPrintEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.library.biometricauthentication.BiometricCallback;
+import de.cidaas.sdk.android.library.biometricauthentication.BiometricManager;
+
 
 public class BiometricHandler {
 
@@ -23,7 +24,7 @@ public class BiometricHandler {
     }
 
 
-    public void callFingerPrint(FingerPrintEntity fingerPrintEntity, final String methodName, final Result<String> result) {
+    public void callFingerPrint(FingerPrintEntity fingerPrintEntity, final String methodName, final EventResult<String> result) {
         try {
             if (Build.VERSION.SDK_INT >= 23) {
 

@@ -1,12 +1,13 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAcknowledge;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.NotificationEntity.GetPendingNotification.LocationEntity;
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory.PushDeviceInformation;
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory.LocationEntity;
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory.PushDeviceInformation;
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PushAcknowledgeResponseDataEntity implements Serializable {

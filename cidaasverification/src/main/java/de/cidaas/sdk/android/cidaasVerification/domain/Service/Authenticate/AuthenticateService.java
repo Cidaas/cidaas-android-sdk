@@ -4,25 +4,24 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Helper.CommonError.CommonError;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateEntity;
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateResponse;
+import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
+import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.helper.commonerror.CommonError;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.logger.LogFile;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateEntity;
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.Authenticate.AuthenticateResponse;
-import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
-import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 
 public class AuthenticateService {
     private Context context;
@@ -54,7 +53,7 @@ public class AuthenticateService {
 
     //call authenticate Service
     public void callAuthenticateService(@NonNull String authenticateURL, Map<String, String> headers, AuthenticateEntity authenticateEntity,
-                                        final Result<AuthenticateResponse> authenticateCallback) {
+                                        final EventResult<AuthenticateResponse> authenticateCallback) {
         final String methodName = "AuthenticateService:-callAuthenticateService()";
         try {
 
@@ -91,7 +90,7 @@ public class AuthenticateService {
 
     //call authenticate Service
     public void callAuthenticateServiceForFaceOrVoice(MultipartBody.Part fileToSend, @NonNull String authenticateURL, Map<String, String> headers,
-                                                      HashMap<String, RequestBody> authenticateHashmap, final Result<AuthenticateResponse> authenticateCallback) {
+                                                      HashMap<String, RequestBody> authenticateHashmap, final EventResult<AuthenticateResponse> authenticateCallback) {
         final String methodName = "AuthenticateService:-callAuthenticateServiceForFaceOrVoice()";
         try {
             //call service

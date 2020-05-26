@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.cidaas.sdk.android.cidaasVerification" />
+<manifest package="de.cidaas.sdk.android.cidaasVerification" />

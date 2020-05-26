@@ -4,27 +4,26 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.cidaas.Controller.Repository.AccessToken.AccessTokenController;
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Service.Entity.AccessToken.AccessTokenEntity;
-
 import java.util.Dictionary;
 
-import timber.log.Timber;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.Login.NativeLoginService;
+import de.cidaas.sdk.android.controller.AccessTokenController;
+import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
+import timber.log.Timber;
 
 public class NativeLoginController {
     private Context context;
     // public String loginURL;
     //public String DomainURL="";
     public String redirectUrl;
-    public Result<AccessTokenEntity> logincallback;
+    public EventResult<AccessTokenEntity> logincallback;
 
     public static NativeLoginController shared;
 
@@ -51,17 +50,17 @@ public class NativeLoginController {
 
     //Service call for loginWithCredentials
     public void loginwithCredentials(@NonNull final String requestId, @NonNull final LoginEntity loginEntity,
-                                     @NonNull final Result<LoginCredentialsResponseEntity> result) {
+                                     @NonNull final EventResult<LoginCredentialsResponseEntity> result) {
         String methodName = "LoginController :loginwithCredentials()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     LoginCredentialsRequestEntity loginCredentialsRequestEntity = getLoginCredentialsRequestEntity(requestId, loginEntity, result);
                     if (loginCredentialsRequestEntity != null) {
                         NativeLoginService.getShared(context).loginWithCredentials(loginPropertiesResult.get("DomainURL"), loginCredentialsRequestEntity,
-                                new Result<LoginCredentialsResponseEntity>() {
+                                new EventResult<LoginCredentialsResponseEntity>() {
                                     @Override
                                     public void success(LoginCredentialsResponseEntity serviceresult) {
                                         getAccessTokenAfterLogin(serviceresult, result);
@@ -88,7 +87,7 @@ public class NativeLoginController {
     }
 
     //Get Login Credentials Request Entity
-    private LoginCredentialsRequestEntity getLoginCredentialsRequestEntity(String requestId, LoginEntity loginEntity, final Result<LoginCredentialsResponseEntity> result) {
+    private LoginCredentialsRequestEntity getLoginCredentialsRequestEntity(String requestId, LoginEntity loginEntity, final EventResult<LoginCredentialsResponseEntity> result) {
 
         String methodName = "LoginController :getLoginCredentialsRequestEntity()";
         try {
@@ -119,9 +118,9 @@ public class NativeLoginController {
     }
 
 
-    private void getAccessTokenAfterLogin(LoginCredentialsResponseEntity serviceresult, final Result<LoginCredentialsResponseEntity> result) {
+    private void getAccessTokenAfterLogin(LoginCredentialsResponseEntity serviceresult, final EventResult<LoginCredentialsResponseEntity> result) {
         //Access Token After Login
-        AccessTokenController.getShared(context).getAccessTokenByCode(serviceresult.getData().getCode(), new Result<AccessTokenEntity>() {
+        AccessTokenController.getShared(context).getAccessTokenByCode(serviceresult.getData().getCode(), new EventResult<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity accessTokenresult) {
 

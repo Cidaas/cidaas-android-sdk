@@ -1,6 +1,7 @@
 package de.cidaas.sdk.android.cidaasnative.data.Service.Helper;
 
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
+
+import de.cidaas.sdk.android.helper.AuthenticationType;
 
 public class NativeURLHelper {
     public static String contentType = "application/x-www-form-urlencoded";

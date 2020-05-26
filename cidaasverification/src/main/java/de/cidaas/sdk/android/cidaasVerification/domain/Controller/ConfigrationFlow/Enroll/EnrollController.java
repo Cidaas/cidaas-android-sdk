@@ -4,29 +4,28 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import de.cidaas.sdk.android.cidaas.Helper.AuthenticationType;
-import de.cidaas.sdk.android.cidaas.Helper.CidaasProperties.CidaasProperties;
-import de.cidaas.sdk.android.cidaas.Helper.Entity.DeviceInfoEntity;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.Result;
-import de.cidaas.sdk.android.cidaas.Helper.Enums.WebAuthErrorCode;
-import de.cidaas.sdk.android.cidaas.Helper.Extension.WebAuthError;
-import de.cidaas.sdk.android.cidaas.Helper.Genral.DBHelper;
-import de.cidaas.sdk.android.cidaas.Helper.Logger.LogFile;
-import de.cidaas.sdk.android.cidaas.Helper.URLHelper.URLHelper;
-import de.cidaas.sdk.android.cidaas.Service.HelperForService.Headers.Headers;
-
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.EnrollEntity;
 import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.EnrollResponse;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Helper.BiometricHandler.BiometricHandler;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Enroll.EnrollService;
+import de.cidaas.sdk.android.entities.DeviceInfoEntity;
+import de.cidaas.sdk.android.helper.AuthenticationType;
+import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
+import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.logger.LogFile;
+import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
+import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class EnrollController {
     //Local Variables
@@ -54,13 +53,13 @@ public class EnrollController {
 
 
     //--------------------------------------------Enroll--------------------------------------------------------------
-    public void enrollVerification(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    public void enrollVerification(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         checkEnrollEntity(enrollEntity, enrollResult);
     }
 
 
     //-------------------------------------checkEnrollEntity-----------------------------------------------------------
-    private void checkEnrollEntity(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void checkEnrollEntity(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-checkEnrollEntity()";
         try {
             if (enrollEntity.getVerificationType() != null && !enrollEntity.getVerificationType().equals("") &&
@@ -78,7 +77,7 @@ public class EnrollController {
     }
 
     //-----------------------------------------------handleVerificationTypes---------------------------------------------------------------
-    private void handleVerificationTypes(EnrollEntity enrollEntity, Result<EnrollResponse> enrollResult) {
+    private void handleVerificationTypes(EnrollEntity enrollEntity, EventResult<EnrollResponse> enrollResult) {
         //Handle if Passcode is send for finger
         String methodName = "EnrollController:-handleVerificationTypes()";
         try {
@@ -126,12 +125,12 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void callFingerPrintAuthentication(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void callFingerPrintAuthentication(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-callFingerPrintAuthentication()";
         try {
             BiometricHandler biometricHandler = new BiometricHandler(enrollEntity.getFingerPrintEntity().getContext());
 
-            biometricHandler.callFingerPrint(enrollEntity.getFingerPrintEntity(), methodName, new Result<String>() {
+            biometricHandler.callFingerPrint(enrollEntity.getFingerPrintEntity(), methodName, new EventResult<String>() {
                 @Override
                 public void success(String result) {
                     //set pass code as device id and call enroll call
@@ -153,10 +152,10 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void addProperties(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-addProperties()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -187,11 +186,11 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addPropertiesForFaceOrVoice(final MultipartBody.Part filetosend, final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void addPropertiesForFaceOrVoice(final MultipartBody.Part filetosend, final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-addPropertiesForFaceOrVoice()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -228,7 +227,7 @@ public class EnrollController {
     }
 
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
-    private void callEnroll(String baseurl, final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void callEnroll(String baseurl, final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-enroll()";
         try {
             String enrollUrl = VerificationURLHelper.getShared().getEnrollURL(baseurl, enrollEntity.getVerificationType());
@@ -247,7 +246,7 @@ public class EnrollController {
 
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
     private void callEnrollForFaceandVoice(String baseurl, final MultipartBody.Part file, final HashMap<String, RequestBody> enrollHashmap,
-                                           final String verificationType, final Result<EnrollResponse> enrollResult) {
+                                           final String verificationType, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-enroll()";
         try {
             String enrollUrl = VerificationURLHelper.getShared().getEnrollURL(baseurl, verificationType);

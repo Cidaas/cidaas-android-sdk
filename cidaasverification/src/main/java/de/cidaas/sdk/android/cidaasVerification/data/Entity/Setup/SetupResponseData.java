@@ -1,11 +1,12 @@
 package de.cidaas.sdk.android.cidaasVerification.data.Entity.Setup;
 
-import de.cidaas.sdk.android.cidaas.Service.Entity.MFA.SetupMFA.BackupCode.BackupCodeData;
-import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+
+import de.cidaas.sdk.android.cidaasVerification.data.Entity.ExcangeId.ExchangeIDEntity;
+import de.cidaas.sdk.android.service.entity.mfa.SetupMFA.BackupCode.BackupCodeData;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SetupResponseData implements Serializable {
