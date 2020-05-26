@@ -1,12 +1,12 @@
 # Cidaas Android SDK V2
 
-[![Build Status](https://travis-ci.org/Cidaas/cidaas-sdk-android-v2.svg?branch=development)](https://travis-ci.org/Cidaas/cidaas-sdk-android-v2) 
-[![codecov.io](https://codecov.io/gh/Cidaas/cidaas-sdk-android-v2/branch/development/graph/badge.svg)](https://codecov.io/gh/Cidaas/cidaas-sdk-android-v2/branch/development)
-[![jitpack](https://jitpack.io/v/Cidaas/cidaas-sdk-android-v2.svg)](https://jitpack.io/#Cidaas/cidaas-sdk-android-v2)
+[![Build Status](https://travis-ci.org/Cidaas/de.cidaas-sdk-android-v2.svg?branch=development)](https://travis-ci.org/Cidaas/de.cidaas-sdk-android-v2)
+[![codecov.io](https://codecov.io/gh/Cidaas/de.cidaas-sdk-android-v2/branch/development/graph/badge.svg)](https://codecov.io/gh/Cidaas/de.cidaas-sdk-android-v2/branch/development)
+[![jitpack](https://jitpack.io/v/Cidaas/de.cidaas-sdk-android-v2.svg)](https://jitpack.io/#Cidaas/de.cidaas-sdk-android-v2)
 [![Platform](https://img.shields.io/badge/Platforms-android-4E4E4E.svg?colorA=28a745)](#installation)
 
 
-The steps here will guide you through setting up and managing authentication and authorization in your apps using cidaas SDK.
+The steps here will guide you through setting up and managing authentication and authorization in your apps using de.cidaas SDK.
 
 ## Table of Contents
 
@@ -36,7 +36,7 @@ The steps here will guide you through setting up and managing authentication and
 ### Installation
 
 
-Cidaas SDK is available through jitpack.io.  Please ensure that you are using the latest versions by [checking here](https://jitpack.io/#Cidaas/cidaas-v2-sdk-android)
+Cidaas SDK is available through jitpack.io.  Please ensure that you are using the latest versions by [checking here](https://jitpack.io/#Cidaas/de.cidaas-v2-sdk-android)
 
 Add the following Gradle configuration to your Android project:
 
@@ -51,7 +51,7 @@ allprojects {
  Add the dependency to app module
  ```java
 dependencies {
- implementation 'com.github.Cidaas:cidaas-v2-sdk-android:2.0.2'
+ implementation 'com.github.Cidaas:de.cidaas-v2-sdk-android:1.0.4'
 }
  ```
  
@@ -88,25 +88,25 @@ Following sections will help you to generate some of the information that is nee
 
 ### Getting client Id and urls
 
-You can get this by creating your App in App settings section of cidaas Admin portal. Once you select the right scope and application type, and fill in all mandatory fields, you can use the generated Client ID and re-direct URLs.
+You can get this by creating your App in App settings section of de.cidaas Admin portal. Once you select the right scope and application type, and fill in all mandatory fields, you can use the generated Client ID and re-direct URLs.
 
 
 #### Initialisation
 
-The first step of integrating cidaas sdk is the initialisation process.
+The first step of integrating de.cidaas sdk is the initialisation process.
 ```java
 
-Cidaas cidaas = Cidaas.getInstance(your Activity Context);
+Cidaas de.cidaas = Cidaas.getInstance(your Activity Context);
 
 or
 
-Cidaas cidaas =new Cidaas(your Activity Context); 
+Cidaas de.cidaas =new Cidaas(your Activity Context);
 
 ```
 
 ### Usage
 
-> ##### Note:- If you are going to use Native browser login, you must use getInstance() method to create cidaas instance
+> ##### Note:- If you are going to use Native browser login, you must use getInstance() method to create de.cidaas instance
 
 
 #### Native Browser Login 
@@ -114,7 +114,7 @@ Cidaas cidaas =new Cidaas(your Activity Context);
 You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
 
 ```java
- cidaas.loginWithBrowser(yourContext, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
+ de.cidaas.loginWithBrowser(yourContext, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
 		//Your Success Code
@@ -131,7 +131,7 @@ You can login using your native browser and redirects to the App once successful
 You can also perform social login using your native browser and redirects to the App once successfully logged in. To perform social login call ****loginWithSocial()****.
 
 ```swift
- cidaas.loginWithSocial(yourContext, yourSocialProvider, "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
+ de.cidaas.loginWithSocial(yourContext, yourSocialProvider, "optionalColorParameterInColorCode", new Result<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
 		//Your Success Code
@@ -155,7 +155,7 @@ If you use deep link or custom scheme, add intent in manifest and resume the SDK
 ```java
 String token = getIntent().getDataString();
 if (token != null) {
-	cidaas.handleToken(token);
+	de.cidaas.handleToken(token);
 }
 ```
 
@@ -165,13 +165,13 @@ If you use app links, configure your Domain setup and resume the SDK from your a
 ```java
  String token = getIntent().getDataString();
  if (token != null) {
- 	cidaas.handleToken(token);
+ 	de.cidaas.handleToken(token);
 }
 ```
 
 ### Embedded Browser Login
 
-You can use embedded browser to login with cidaas , For this do the following steps
+You can use embedded browser to login with de.cidaas , For this do the following steps
 1. Create an instance for CidaasSDKLayout using the activity context.
 
 ```Java
