@@ -13,7 +13,7 @@ import com.facebook.login.LoginResult;
 import java.util.Arrays;
 
 import de.cidaas.sdk.android.CidaasSDKLayout;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.interfaces.ICidaasFacebook;
@@ -47,7 +47,7 @@ public class CidaasFacebook implements ICidaasFacebook {
 
 
     @Override
-    public void login(Result<AccessTokenEntity> accessTokenEntityResult) {
+    public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
         signOut();
         signIn(accessTokenEntityResult);
     }
@@ -66,7 +66,7 @@ public class CidaasFacebook implements ICidaasFacebook {
         }
     }
 
-    private void signIn(final Result<AccessTokenEntity> result) {
+    private void signIn(final EventResult<AccessTokenEntity> result) {
         try {
 
 

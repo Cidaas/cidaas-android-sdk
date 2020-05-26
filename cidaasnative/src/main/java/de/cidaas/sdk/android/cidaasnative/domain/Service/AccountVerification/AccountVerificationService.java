@@ -15,7 +15,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
@@ -64,7 +64,7 @@ public class AccountVerificationService {
 
     //----------------------------------------------------Register New User initiate  Account Verification--------------------------------------------------
     public void initiateAccountVerification(String baseurl, final InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity,
-                                            final Result<InitiateAccountVerificationResponseEntity> callback) {
+                                            final EventResult<InitiateAccountVerificationResponseEntity> callback) {
         //Local Variables
 
         String methodName = "AccountVerificationService :initiateAccountVerification()";
@@ -90,7 +90,7 @@ public class AccountVerificationService {
 
     private void serviceForInitiateAccountVerification(String initiateAccountVerificationUrl,
                                                        InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity,
-                                                       Map<String, String> headers, final Result<InitiateAccountVerificationResponseEntity> callback) {
+                                                       Map<String, String> headers, final EventResult<InitiateAccountVerificationResponseEntity> callback) {
         final String methodName = "AccountVerificationService :verifyAccountVerification()";
         try {
             //Call Service-getRequestId
@@ -127,7 +127,7 @@ public class AccountVerificationService {
 
     //-----------------------------------------------------Register New User verify  Account Verification----------------------------------------------------
     public void verifyAccountVerification(String baseurl, final VerifyAccountRequestEntity verifyAccountRequestEntity,
-                                          final Result<VerifyAccountResponseEntity> callback) {
+                                          final EventResult<VerifyAccountResponseEntity> callback) {
         //Local Variables
 
         String methodName = "AccountVerificationService :verifyAccountVerification()";
@@ -154,7 +154,7 @@ public class AccountVerificationService {
     }
 
     private void serviceForVerifyAccountVerification(String verifyAccountVerificationUrl, VerifyAccountRequestEntity
-            verifyAccountRequestEntity, Map<String, String> headers, final Result<VerifyAccountResponseEntity> callback) {
+            verifyAccountRequestEntity, Map<String, String> headers, final EventResult<VerifyAccountResponseEntity> callback) {
         final String methodName = "AccountVerificationService :verifyAccountVerification()";
         try {
             //Call Service-getRequestId
@@ -192,7 +192,7 @@ public class AccountVerificationService {
 
     //-----------------------------------------------------Register New User  Account Verification List ----------------------------------------------------
     public void getAccountVerificationList(String baseurl, final String sub,
-                                           final Result<AccountVerificationListResponseEntity> callback) {
+                                           final EventResult<AccountVerificationListResponseEntity> callback) {
         //Local Variables
 
         String methodName = "AccountVerificationService :getAccountVerificationList()";
@@ -218,7 +218,7 @@ public class AccountVerificationService {
         }
     }
 
-    private void serviceForGetAccountVerificationList(String verifyAccountVerificationUrl, Map<String, String> headers, final Result<AccountVerificationListResponseEntity> callback) {
+    private void serviceForGetAccountVerificationList(String verifyAccountVerificationUrl, Map<String, String> headers, final EventResult<AccountVerificationListResponseEntity> callback) {
         final String methodName = "AccountVerificationService :verifyAccountVerification()";
         try {
             //Call Service-getRequestId

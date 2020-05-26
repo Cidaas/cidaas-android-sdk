@@ -12,7 +12,7 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Service.VerificationConti
 import de.cidaas.sdk.android.controller.AccessTokenController;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.UsageType;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -49,13 +49,13 @@ public class VerificationContinueController {
     }
 
     //--------------------------------------------VerificationContinue--------------------------------------------------------------
-    public void verificationContinue(final VerificationContinue verificationContinueEntity, final Result<LoginCredentialsResponseEntity> verificationContinueResponseResult) {
+    public void verificationContinue(final VerificationContinue verificationContinueEntity, final EventResult<LoginCredentialsResponseEntity> verificationContinueResponseResult) {
         checkVerificationContinueEntity(verificationContinueEntity, verificationContinueResponseResult);
     }
 
 
     //-------------------------------------checkVerificationContinueEntity-----------------------------------------------------------
-    private void checkVerificationContinueEntity(final VerificationContinue verificationContinueEntity, final Result<LoginCredentialsResponseEntity> VerificationContinueResult) {
+    private void checkVerificationContinueEntity(final VerificationContinue verificationContinueEntity, final EventResult<LoginCredentialsResponseEntity> VerificationContinueResult) {
         String methodName = "VerificationContinueController:-checkVerificationContinueEntity()";
         try {
             if (verificationContinueEntity.getVerificationType() != null && !verificationContinueEntity.getVerificationType().equals("") &&
@@ -90,11 +90,11 @@ public class VerificationContinueController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final VerificationContinue verificationContinueEntity, final Result<LoginCredentialsResponseEntity> verificationContinueResponseResult) {
+    private void addProperties(final VerificationContinue verificationContinueEntity, final EventResult<LoginCredentialsResponseEntity> verificationContinueResponseResult) {
         String methodName = "VerificationContinueController:-addProperties()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(final Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -121,7 +121,7 @@ public class VerificationContinueController {
     }
 
     //-------------------------------------------Call VerificationContinue Service-----------------------------------------------------------
-    private void callVerificationContinue(String resumeURL, final VerificationContinue verificationContinueEntity, final Result<LoginCredentialsResponseEntity> verificationContinueResult) {
+    private void callVerificationContinue(String resumeURL, final VerificationContinue verificationContinueEntity, final EventResult<LoginCredentialsResponseEntity> verificationContinueResult) {
         String methodName = "VerificationContinueController:-callPasswordlessVerificationContinue()";
         try {
             //App properties
@@ -133,7 +133,7 @@ public class VerificationContinueController {
             Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
 
             //VerificationContinue Service call
-            VerificationContinueService.getShared(context).callVerificationContinueService(resumeURL, headers, verificationContinueEntity, new Result<VerificationContinueResponseEntity>() {
+            VerificationContinueService.getShared(context).callVerificationContinueService(resumeURL, headers, verificationContinueEntity, new EventResult<VerificationContinueResponseEntity>() {
                 @Override
                 public void success(VerificationContinueResponseEntity result) {
                     getAccessTokenFromCode(result, verificationContinueResult);
@@ -150,10 +150,10 @@ public class VerificationContinueController {
         }
     }
 
-    public void getAccessTokenFromCode(VerificationContinueResponseEntity result, final Result<LoginCredentialsResponseEntity> verificationContinueResult) {
+    public void getAccessTokenFromCode(VerificationContinueResponseEntity result, final EventResult<LoginCredentialsResponseEntity> verificationContinueResult) {
         String methodName = "VerificationContinueController:-getAccessTokenFromCode()";
         try {
-            AccessTokenController.getShared(context).getAccessTokenByCode(result.getData().getCode(), new Result<AccessTokenEntity>() {
+            AccessTokenController.getShared(context).getAccessTokenByCode(result.getData().getCode(), new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity accessTokenresult) {
                     LoginCredentialsResponseEntity loginCredentialsResponseEntity = new LoginCredentialsResponseEntity();

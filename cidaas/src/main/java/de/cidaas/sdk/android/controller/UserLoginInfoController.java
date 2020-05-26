@@ -4,7 +4,7 @@ import android.content.Context;
 
 import java.util.Dictionary;
 
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.properties.CidaasProperties;
@@ -41,17 +41,17 @@ public class UserLoginInfoController {
         return shared;
     }
 
-    public void getUserLoginInfo(final UserLoginInfoEntity userLoginInfoEntity, final Result<UserLoginInfoResponseEntity> result) {
+    public void getUserLoginInfo(final UserLoginInfoEntity userLoginInfoEntity, final EventResult<UserLoginInfoResponseEntity> result) {
         final String methodName = "UserLoginInfoController :getUserLoginInfo()";
         try {
             if (userLoginInfoEntity.getSub() != null && !userLoginInfoEntity.getSub().equals("")) {
-                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(final Dictionary<String, String> lpresult) {
                         final String baseurl = lpresult.get("DomainURL");
 
                         //Get AccessToken From Sub
-                        AccessTokenController.getShared(context).getAccessToken(userLoginInfoEntity.getSub(), new Result<AccessTokenEntity>() {
+                        AccessTokenController.getShared(context).getAccessToken(userLoginInfoEntity.getSub(), new EventResult<AccessTokenEntity>() {
                             @Override
                             public void success(AccessTokenEntity accessTokenresult) {
                                 getUserLoginInfo(baseurl, accessTokenresult.getAccess_token(), userLoginInfoEntity, result);
@@ -81,7 +81,7 @@ public class UserLoginInfoController {
     }
 
     public void getUserLoginInfo(String baseurl, String accessToken, UserLoginInfoEntity locationHistoryEntity,
-                                 Result<UserLoginInfoResponseEntity> locationHistoryResponseEntityResult) {
+                                 EventResult<UserLoginInfoResponseEntity> locationHistoryResponseEntityResult) {
         String methodName = "UserLoginInfoController :getUserLoginInfo()";
         if (baseurl != null && !baseurl.equals("") && accessToken != null && !accessToken.equals("")) {
             UserLoginInfoService.getShared(context).getUserLoginInfoService(baseurl, accessToken, locationHistoryEntity, locationHistoryResponseEntityResult);

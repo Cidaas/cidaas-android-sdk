@@ -46,7 +46,7 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Controller.Settings.Setti
 import de.cidaas.sdk.android.controller.LoginController;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.helper.AuthenticationType;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.helper.general.DBHelper;
 
@@ -112,48 +112,48 @@ public class CidaasVerification {
     //------------------------------------------CALL FOR AUTHENTICATOR AND WEB TO MOBILE FLOW ONLY----------------------------------------------------------------------
 
     //-------------------------------------------------------SCANNED CALL COMMON--------------------------------------------------------------
-    public void scanned(ScannedEntity scannedEntity, Result<ScannedResponse> scannedResult) {
+    public void scanned(ScannedEntity scannedEntity, EventResult<ScannedResponse> scannedResult) {
         ScannedController.getShared(context).scannedVerification(scannedEntity, scannedResult);
     }
 
     //-------------------------------------------------------ENROLL CALL COMMON--------------------------------------------------------------
 
-    public void enroll(@NonNull final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResponseResult) {
+    public void enroll(@NonNull final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResponseResult) {
         EnrollController.getShared(context).enrollVerification(enrollEntity, enrollResponseResult);
     }
 
     //-------------------------------------------------------SMARTPUSH  CALL COMMON--------------------------------------------------------------
 
     //---------------------Acknowledge-------------------------
-    public void pushAcknowledge(PushAcknowledgeEntity pushAcknowledgeEntity, Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    public void pushAcknowledge(PushAcknowledgeEntity pushAcknowledgeEntity, EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         PushAcknowledgeController.getShared(context).pushAcknowledgeVerification(pushAcknowledgeEntity, pushAcknowledgeResult);
     }
 
     //---------------------Allow-------------------------
-    public void pushAllow(PushAllowEntity pushAllowEntity, Result<PushAllowResponse> pushAllowResponseResult) {
+    public void pushAllow(PushAllowEntity pushAllowEntity, EventResult<PushAllowResponse> pushAllowResponseResult) {
         PushAllowController.getShared(context).pushAllowVerification(pushAllowEntity, pushAllowResponseResult);
     }
 
     //---------------------Reject-------------------------
-    public void pushReject(PushRejectEntity pushRejectEntity, Result<PushRejectResponse> pushRejectResponseResult) {
+    public void pushReject(PushRejectEntity pushRejectEntity, EventResult<PushRejectResponse> pushRejectResponseResult) {
         PushRejectController.getShared(context).pushRejectVerification(pushRejectEntity, pushRejectResponseResult);
     }
 
 
     //-------------------------------------------------------AUTHENTICATE CALL COMMON--------------------------------------------------------------
-    public void authenticate(AuthenticateEntity authenticateEntity, Result<AuthenticateResponse> authenticateResponseResult) {
+    public void authenticate(AuthenticateEntity authenticateEntity, EventResult<AuthenticateResponse> authenticateResponseResult) {
         AuthenticateController.getShared(context).authenticateVerification(authenticateEntity, authenticateResponseResult);
     }
 
     //-------------------------------------------------------PENDING NOTIFICATION LIST CALL --------------------------------------------------------------
-    public void getPendingNotificationList(String sub, Result<PendingNotificationResponse> pendingNotificationResponse) {
+    public void getPendingNotificationList(String sub, EventResult<PendingNotificationResponse> pendingNotificationResponse) {
         PendingNotificationController.getShared(context).getPendingNotification(sub, pendingNotificationResponse);
     }
 
     //-------------------------------------------------------SETURL CALL COMMON--------------------------------------------------------------
 
     //FOR MULTIPLE TENANT AND MULTIPLE USER(ONLY FOR AUTHENTICATOR)
-    public void setURL(@NonNull final Dictionary<String, String> loginproperties, Result<String> result, String methodName) {
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties, EventResult<String> result, String methodName) {
         LoginController.getShared(context).setURL(loginproperties, result, methodName);
     }
 
@@ -162,23 +162,23 @@ public class CidaasVerification {
 
     //-------------------------------------------------------DELETE CALL COMMON--------------------------------------------------------------
     //warning IF TOTP IS DELETED IT MUST BE DELETED FROM BY WEBPAGE ONLY
-    public void delete(DeleteEntity deleteEntity, Result<DeleteResponse> deleteResponseResult) {
+    public void delete(DeleteEntity deleteEntity, EventResult<DeleteResponse> deleteResponseResult) {
         DeleteController.getShared(context).deleteVerification(deleteEntity, deleteResponseResult);
     }
 
     //---------------------DELETE ALL CALL ------------------------------
-    public void deleteAll(Result<DeleteResponse> deleteResponseResult) {
+    public void deleteAll(EventResult<DeleteResponse> deleteResponseResult) {
         DeleteController.getShared(context).deleteAllVerification(deleteResponseResult);
     }
 
     //--------------------------------------------CONFIGURED MFA LIST CALL --------------------------------------------------------------
-    public void getConfiguredMFAList(String sub, Result<ConfiguredMFAList> configuredMFAListResult) {
+    public void getConfiguredMFAList(String sub, EventResult<ConfiguredMFAList> configuredMFAListResult) {
         SettingsController.getShared(context).getConfiguredMFAList(sub, configuredMFAListResult);
     }
 
     //-------------------------------------------------------AUTHENTICATED HISTORY CALL--------------------------------------------------------------
     public void getAuthenticatedHistory(AuthenticatedHistoryEntity authenticatedHistoryEntity,
-                                        Result<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+                                        EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryList(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
 
@@ -189,7 +189,7 @@ public class CidaasVerification {
 
   /*  public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
     {
-        VerificationSettingsController.getShared(context).updateFCMToken(sub ,FCMToken, new Result<Object>() {
+        VerificationSettingsController.getShared(context).updateFCMToken(sub ,FCMToken, new EventResult<Object>() {
             @Override
             public void success(Object result) {
                 LogFile.getShared(context).addFailureLog("Update FCM Token Success");
@@ -207,32 +207,32 @@ public class CidaasVerification {
     //------------------------------------------SETUP CALL--------------------------------------------------------------
 
     //EMAIL
-    public void setupEmail(String sub, Result<SetupResponse> setupResponseResult) {
+    public void setupEmail(String sub, EventResult<SetupResponse> setupResponseResult) {
         SetupEntity setupEntity = new SetupEntity(sub, AuthenticationType.EMAIL);
         ConfigurationController.getShared(context).setup(setupEntity, setupResponseResult);
     }
 
     //SMS
-    public void setupSMS(String sub, Result<SetupResponse> setupResponseResult) {
+    public void setupSMS(String sub, EventResult<SetupResponse> setupResponseResult) {
         SetupEntity setupEntity = new SetupEntity(sub, AuthenticationType.SMS);
         ConfigurationController.getShared(context).setup(setupEntity, setupResponseResult);
     }
 
     //IVR
-    public void setupIVR(String sub, Result<SetupResponse> setupResponseResult) {
+    public void setupIVR(String sub, EventResult<SetupResponse> setupResponseResult) {
         SetupEntity setupEntity = new SetupEntity(sub, AuthenticationType.IVR);
         ConfigurationController.getShared(context).setup(setupEntity, setupResponseResult);
     }
 
     //BackupCode
-    public void setupBackupCode(String sub, Result<SetupResponse> setupResponseResult) {
+    public void setupBackupCode(String sub, EventResult<SetupResponse> setupResponseResult) {
         SetupEntity setupEntity = new SetupEntity(sub, AuthenticationType.BACKUPCODE);
         ConfigurationController.getShared(context).setup(setupEntity, setupResponseResult);
     }
 
 
     //Enroll Email
-    public void enrollEmail(String verificationCode, String sub, String exchange_id, final Result<EnrollResponse> enrollResponseResult) {
+    public void enrollEmail(String verificationCode, String sub, String exchange_id, final EventResult<EnrollResponse> enrollResponseResult) {
         EnrollEntity enrollEntity = new EnrollEntity();
         enrollEntity.setExchange_id(exchange_id);
         enrollEntity.setSub(sub);
@@ -243,7 +243,7 @@ public class CidaasVerification {
     }
 
     //Enroll SMS
-    public void enrollSMS(String verificationCode, String sub, String exchange_id, final Result<EnrollResponse> enrollResponseResult) {
+    public void enrollSMS(String verificationCode, String sub, String exchange_id, final EventResult<EnrollResponse> enrollResponseResult) {
         EnrollEntity enrollEntity = new EnrollEntity();
         enrollEntity.setExchange_id(exchange_id);
         enrollEntity.setSub(sub);
@@ -254,7 +254,7 @@ public class CidaasVerification {
     }
 
     //Enroll IVR
-    public void enrollIVR(String verificationCode, String sub, String exchange_id, final Result<EnrollResponse> enrollResponseResult) {
+    public void enrollIVR(String verificationCode, String sub, String exchange_id, final EventResult<EnrollResponse> enrollResponseResult) {
         EnrollEntity enrollEntity = new EnrollEntity();
         enrollEntity.setExchange_id(exchange_id);
         enrollEntity.setSub(sub);
@@ -265,88 +265,88 @@ public class CidaasVerification {
     }
 
 
-    public void configurePattern(final ConfigurationRequest configurationRequest, final Result<EnrollResponse> enrollResponseResult) {
+    public void configurePattern(final ConfigurationRequest configurationRequest, final EventResult<EnrollResponse> enrollResponseResult) {
         configure(configurationRequest, AuthenticationType.PATTERN, enrollResponseResult);
     }
 
-    public void configureSmartPush(final ConfigurationRequest configurationRequest, final Result<EnrollResponse> enrollResponseResult) {
+    public void configureSmartPush(final ConfigurationRequest configurationRequest, final EventResult<EnrollResponse> enrollResponseResult) {
         configure(configurationRequest, AuthenticationType.SMARTPUSH, enrollResponseResult);
     }
 
-    public void configureFaceRecognition(final ConfigurationRequest configurationRequest, final Result<EnrollResponse> enrollResponseResult) {
+    public void configureFaceRecognition(final ConfigurationRequest configurationRequest, final EventResult<EnrollResponse> enrollResponseResult) {
         configure(configurationRequest, AuthenticationType.FACE, enrollResponseResult);
     }
 
-    public void configureVoiceRecognition(final ConfigurationRequest configurationRequest, final Result<EnrollResponse> enrollResponseResult) {
+    public void configureVoiceRecognition(final ConfigurationRequest configurationRequest, final EventResult<EnrollResponse> enrollResponseResult) {
         configure(configurationRequest, AuthenticationType.VOICE, enrollResponseResult);
     }
 
-    public void configureTOTP(final ConfigurationRequest configurationRequest, final Result<EnrollResponse> enrollResponseResult) {
+    public void configureTOTP(final ConfigurationRequest configurationRequest, final EventResult<EnrollResponse> enrollResponseResult) {
         configure(configurationRequest, AuthenticationType.TOTP, enrollResponseResult);
     }
 
-    public void configureFingerprint(final ConfigurationRequest configurationRequest, final Result<EnrollResponse> enrollResponseResult) {
+    public void configureFingerprint(final ConfigurationRequest configurationRequest, final EventResult<EnrollResponse> enrollResponseResult) {
         configure(configurationRequest, AuthenticationType.FINGERPRINT, enrollResponseResult);
     }
 
     //-------------------------------------------------------SCANNED CALL COMMON--------------------------------------------------------------
-    private void configure(final ConfigurationRequest configurationRequest, final String verificationType, final Result<EnrollResponse> enrollResponseResult) {
+    private void configure(final ConfigurationRequest configurationRequest, final String verificationType, final EventResult<EnrollResponse> enrollResponseResult) {
         ConfigurationController.getShared(context).configureVerification(configurationRequest, verificationType, enrollResponseResult);
     }
 
-    public void initiateIVR(LoginRequest loginRequest, Result<InitiateResponse> initiateResult) {
+    public void initiateIVR(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
         InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
                 AuthenticationType.IVR);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
 
-    public void initiateEmail(LoginRequest loginRequest, Result<InitiateResponse> initiateResult) {
+    public void initiateEmail(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
         InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
                 AuthenticationType.SMS);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
 
-    public void initiateSMS(LoginRequest loginRequest, Result<InitiateResponse> initiateResult) {
+    public void initiateSMS(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
         InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
                 AuthenticationType.EMAIL);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
 
     //Onlu For Native ... Can we
-    public void verifyCode(String code, String exchange_id, String verificationType, String requestId, String usageType, Result<LoginCredentialsResponseEntity> loginResult) {
+    public void verifyCode(String code, String exchange_id, String verificationType, String requestId, String usageType, EventResult<LoginCredentialsResponseEntity> loginResult) {
         AuthenticateEntity authenticateEntity = new AuthenticateEntity(exchange_id, code, verificationType);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsageType(usageType);
         PasswordlessLoginController.getShared(context).authenticateVerification(authenticateEntity, verificationType, requestId, loginRequest, loginResult);
     }
 
-    public void loginWithPattern(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult) {
+    public void loginWithPattern(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
         login(loginRequest, AuthenticationType.PATTERN, authenticateResponseResult);
     }
 
-    public void loginWithSmartPush(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult) {
+    public void loginWithSmartPush(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
         login(loginRequest, AuthenticationType.SMARTPUSH, authenticateResponseResult);
     }
 
-    public void loginWithFaceRecognition(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult) {
+    public void loginWithFaceRecognition(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
         login(loginRequest, AuthenticationType.FACE, authenticateResponseResult);
     }
 
-    public void loginWithVoice(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult) {
+    public void loginWithVoice(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
         login(loginRequest, AuthenticationType.VOICE, authenticateResponseResult);
     }
 
     //  To Handle TOTP
-    public void loginWithTOTP(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult) {
+    public void loginWithTOTP(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
         login(loginRequest, AuthenticationType.TOTP, authenticateResponseResult);
     }
 
-    public void loginWithFingerprint(final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> authenticateResponseResult) {
+    public void loginWithFingerprint(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
         login(loginRequest, AuthenticationType.FINGERPRINT, authenticateResponseResult);
     }
     //-------------------------------------------------------LOGIN CALL COMMON--------------------------------------------------------------
 
-    private void login(final LoginRequest loginRequest, final String verificationType, final Result<LoginCredentialsResponseEntity> loginCredentialsResult) {
+    private void login(final LoginRequest loginRequest, final String verificationType, final EventResult<LoginCredentialsResponseEntity> loginCredentialsResult) {
         PasswordlessLoginController.getShared(context).loginVerification(loginRequest, verificationType, loginCredentialsResult);
     }
 

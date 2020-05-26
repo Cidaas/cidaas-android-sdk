@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.VerificationContinue
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -50,7 +50,7 @@ public class VerificationContinueService {
 
     //call VerificationContinue Service
     public void callVerificationContinueService(@NonNull String verificationContinueURL, Map<String, String> headers, VerificationContinue verificationContinueEntity,
-                                                final Result<VerificationContinueResponseEntity> verificationContinueCallback) {
+                                                final EventResult<VerificationContinueResponseEntity> verificationContinueCallback) {
         final String methodName = "VerificationContinueService:-callVerificationContinueService()";
         try {
             //call service

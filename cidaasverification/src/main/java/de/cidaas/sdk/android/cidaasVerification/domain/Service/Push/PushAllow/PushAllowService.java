@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAllow.PushA
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -50,7 +50,7 @@ public class PushAllowService {
 
     //call pushAllow Service
     public void callPushAllowService(@NonNull String pushAllowURL, Map<String, String> headers, PushAllowEntity pushAllowEntity,
-                                     final Result<PushAllowResponse> pushAllowCallback) {
+                                     final EventResult<PushAllowResponse> pushAllowCallback) {
         final String methodName = "PushAllowService:-callPushAllowService()";
         try {
             //call service

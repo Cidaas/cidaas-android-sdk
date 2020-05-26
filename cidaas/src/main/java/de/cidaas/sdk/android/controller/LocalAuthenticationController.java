@@ -15,7 +15,7 @@ import android.widget.Button;
 import com.example.cidaasv2.R;
 
 import de.cidaas.sdk.android.entities.LocalAuthenticationEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.library.biometricauthentication.BiometricCallback;
@@ -33,7 +33,7 @@ public class LocalAuthenticationController {
 
     public static LocalAuthenticationController shared;
     private Activity activityFromCidaas;
-    private Result<LocalAuthenticationEntity> localAuthenticationEntityCallback;
+    private EventResult<LocalAuthenticationEntity> localAuthenticationEntityCallback;
 
     public LocalAuthenticationController(Context contextFromCidaas) {
 
@@ -72,7 +72,7 @@ public class LocalAuthenticationController {
     }
 
 
-    public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result) {
+    public void localAuthentication(final Activity activity, EventResult<LocalAuthenticationEntity> result) {
         String methodName = "LocalAuthenticationController :localAuthentication()";
         try {
             activityFromCidaas = activity;
@@ -96,7 +96,7 @@ public class LocalAuthenticationController {
 
     //------------------------------------------------------------------------------------------Local Authentication----------------------------------------
 
-    //Cidaas Set OnActivity Result For Handling Device Authentication
+    //Cidaas Set OnActivityEventResult For Handling Device Authentication
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         String methodName = "LocalAuthenticationController :onActivityResult()";
 
@@ -151,7 +151,7 @@ public class LocalAuthenticationController {
     }
 
     //Show the Alert Dilog Which is go to settings
-    public void showDialogToSetupLock(final Activity activity, Result<LocalAuthenticationEntity> result) {
+    public void showDialogToSetupLock(final Activity activity, EventResult<LocalAuthenticationEntity> result) {
 
         try {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);

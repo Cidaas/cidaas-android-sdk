@@ -10,7 +10,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Delete.DeleteRespons
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Delete.DeleteService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -46,13 +46,13 @@ public class DeleteController {
     }
 
     //--------------------------------------------Delete--------------------------------------------------------------
-    public void deleteVerification(final DeleteEntity deleteEntity, final Result<DeleteResponse> deleteResult) {
+    public void deleteVerification(final DeleteEntity deleteEntity, final EventResult<DeleteResponse> deleteResult) {
         checkDeleteEntity(deleteEntity, deleteResult);
     }
 
 
     //-------------------------------------checkDeleteEntity-----------------------------------------------------------
-    private void checkDeleteEntity(final DeleteEntity deleteEntity, final Result<DeleteResponse> deleteResult) {
+    private void checkDeleteEntity(final DeleteEntity deleteEntity, final EventResult<DeleteResponse> deleteResult) {
         String methodName = "DeleteController:-checkDeleteEntity()";
         try {
             if (deleteEntity.getVerificationType() != null && !deleteEntity.getVerificationType().equals("") && deleteEntity.getSub() != null &&
@@ -73,10 +73,10 @@ public class DeleteController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final DeleteEntity deleteEntity, final Result<DeleteResponse> deleteResult) {
+    private void addProperties(final DeleteEntity deleteEntity, final EventResult<DeleteResponse> deleteResult) {
         String methodName = "DeleteController:-addProperties()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -106,7 +106,7 @@ public class DeleteController {
     }
 
     //-------------------------------------------Call delete Service-----------------------------------------------------------
-    private void callDelete(String baseurl, final DeleteEntity deleteEntity, final Result<DeleteResponse> deleteResult) {
+    private void callDelete(String baseurl, final DeleteEntity deleteEntity, final EventResult<DeleteResponse> deleteResult) {
         String methodName = "DeleteController:-delete()";
         try {
             String deleteUrl = VerificationURLHelper.getShared().getDeleteURL(baseurl, deleteEntity.getVerificationType(), deleteEntity.getSub());
@@ -124,17 +124,17 @@ public class DeleteController {
     }
 
     //--------------------------------------------DeleteAll--------------------------------------------------------------
-    public void deleteAllVerification(final Result<DeleteResponse> deleteResult) {
+    public void deleteAllVerification(final EventResult<DeleteResponse> deleteResult) {
         DeleteEntity deleteEntity = new DeleteEntity();
         callDeleteAll(deleteEntity, deleteResult);
     }
 
 
     //--------------------------------------------callDeleteAll--------------------------------------------------------------
-    private void callDeleteAll(final DeleteEntity deleteEntity, final Result<DeleteResponse> deleteResult) {
+    private void callDeleteAll(final DeleteEntity deleteEntity, final EventResult<DeleteResponse> deleteResult) {
         String methodName = "DeleteController:-callDeleteAll()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");

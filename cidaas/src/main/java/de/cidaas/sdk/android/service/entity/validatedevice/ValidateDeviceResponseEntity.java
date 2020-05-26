@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.Service.Entity.ValidateDevice;
+package de.cidaas.sdk.android.service.entity.validatedevice;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

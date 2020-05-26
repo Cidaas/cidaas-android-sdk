@@ -19,7 +19,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -59,7 +59,7 @@ public class RequestIdService {
     }
 
     //-------------------------------------------------------Get Request ID From Service--------------------------------------------------------------
-    public void getRequestID(Dictionary<String, String> loginProperties, final Result<AuthRequestResponseEntity> callback,
+    public void getRequestID(Dictionary<String, String> loginProperties, final EventResult<AuthRequestResponseEntity> callback,
                              @Nullable HashMap<String, String>... extraParams) {
         String methodName = "RequestIdService :getRequestID()";
         try {
@@ -110,7 +110,7 @@ public class RequestIdService {
     }
 
     public void serviceForGetRequestId(String requestidURL, Map<String, String> authRequestEntityMap, Map<String, String> headers,
-                                       final Result<AuthRequestResponseEntity> callback) {
+                                       final EventResult<AuthRequestResponseEntity> callback) {
         final String methodName = "RequestIdService :getRequestID()";
         try {
             //add codeChallenge and codeChallengeMethod and clientSecret

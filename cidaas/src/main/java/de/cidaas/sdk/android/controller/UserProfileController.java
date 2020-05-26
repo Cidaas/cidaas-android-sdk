@@ -4,7 +4,7 @@ import android.content.Context;
 
 import java.util.Dictionary;
 
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.properties.CidaasProperties;
@@ -39,15 +39,15 @@ public class UserProfileController {
     }
 
 
-    public void getUserProfile(String sub, final Result<UserinfoEntity> callback) {
+    public void getUserProfile(String sub, final EventResult<UserinfoEntity> callback) {
         String methodName = "UserProfileController :getUserProfile()";
         try {
             if (sub != null && !sub.equals("")) {
 
-                AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                AccessTokenController.getShared(context).getAccessToken(sub, new EventResult<AccessTokenEntity>() {
                     @Override
                     public void success(final AccessTokenEntity accessTokenresult) {
-                        CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                        CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                             @Override
                             public void success(Dictionary<String, String> result) {
                                 OauthService.getShared(context).getUserinfo(accessTokenresult.getAccess_token(), result.get("DomainURL"), callback);
@@ -89,7 +89,7 @@ public class UserProfileController {
 }
 
    /*//Get Internal userProfile
-    public void getInternalUserProfile(@NonNull String AccessToken, @NonNull String sub, @NonNull final Result<UserprofileResponseEntity> result){
+    public void getInternalUserProfile(@NonNull String AccessToken, @NonNull String sub, @NonNull finalEventResult<UserprofileResponseEntity> result){
         try {
             String baseurl="";
             if(savedProperties==null){
@@ -98,7 +98,7 @@ public class UserProfileController {
             }
             if(savedProperties==null){
                 //Read from file if localDB is null
-                readFromFile(new Result<Dictionary<String, String>>() {
+                readFromFile(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> loginProperties) {
                         savedProperties=loginProperties;
@@ -131,12 +131,12 @@ public class UserProfileController {
     }
 
     //Service call To get InternalUserProfile
-    private void getInternalUserProfileService(@NonNull String baseurl, @NonNull String AccessToken,@NonNull String sub,final Result<UserprofileResponseEntity> result){
+    private void getInternalUserProfileService(@NonNull String baseurl, @NonNull String AccessToken,@NonNull String sub,finalEventResult<UserprofileResponseEntity> result){
         try{
 
             if (baseurl != null && !baseurl.equals("") && sub != null && !sub.equals("")) {
                 // Change service call to private
-                OauthService.getShared(context).getInternalUserProfileInfo(baseurl,AccessToken,sub, new Result<UserprofileResponseEntity>() {
+                OauthService.getShared(context).getInternalUserProfileInfo(baseurl,AccessToken,sub, new EventResult<UserprofileResponseEntity>() {
 
                     @Override
                     public void success(UserprofileResponseEntity serviceresult) {

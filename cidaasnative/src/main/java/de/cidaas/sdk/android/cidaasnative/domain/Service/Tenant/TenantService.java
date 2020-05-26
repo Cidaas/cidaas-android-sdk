@@ -12,7 +12,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
@@ -57,7 +57,7 @@ public class TenantService {
 
 
     //Get Tenant info
-    public void getTenantInfo(String baseurl, final Result<TenantInfoEntity> callback) {
+    public void getTenantInfo(String baseurl, final EventResult<TenantInfoEntity> callback) {
         //Local Variables
         String methodName = "TenantService :getTenantInfo()";
         try {
@@ -83,7 +83,7 @@ public class TenantService {
         }
     }
 
-    public void serviceForGetTenantInfo(String tenantUrl, Map<String, String> headers, final Result<TenantInfoEntity> callback) {
+    public void serviceForGetTenantInfo(String tenantUrl, Map<String, String> headers, final EventResult<TenantInfoEntity> callback) {
         final String methodName = "TenantService :getTenantInfo()";
         try {
 

@@ -10,7 +10,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAcknowledge
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Push.PushAcknowledge.PushAcknowledgeService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -46,13 +46,13 @@ public class PushAcknowledgeController {
 
 
     //--------------------------------------------PushAcknowledge--------------------------------------------------------------
-    public void pushAcknowledgeVerification(final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    public void pushAcknowledgeVerification(final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         checkPushAcknowledgeEntity(pushAcknowledgeEntity, pushAcknowledgeResult);
     }
 
 
     //-------------------------------------checkPushAcknowledgeEntity-----------------------------------------------------------
-    private void checkPushAcknowledgeEntity(final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    private void checkPushAcknowledgeEntity(final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         String methodName = "PushAcknowledgeController:-checkPushAcknowledgeEntity()";
         try {
             if (pushAcknowledgeEntity.getVerificationType() != null && !pushAcknowledgeEntity.getVerificationType().equals("") &&
@@ -73,10 +73,10 @@ public class PushAcknowledgeController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    private void addProperties(final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         String methodName = "PushAcknowledgeController:-addProperties()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -105,7 +105,7 @@ public class PushAcknowledgeController {
     }
 
     //-------------------------------------------Call pushAcknowledge Service-----------------------------------------------------------
-    private void callPushAcknowledge(String baseurl, final PushAcknowledgeEntity pushAcknowledgeEntity, final Result<PushAcknowledgeResponse> pushAcknowledgeResult) {
+    private void callPushAcknowledge(String baseurl, final PushAcknowledgeEntity pushAcknowledgeEntity, final EventResult<PushAcknowledgeResponse> pushAcknowledgeResult) {
         String methodName = "PushAcknowledgeController:-pushAcknowledge()";
         try {
 

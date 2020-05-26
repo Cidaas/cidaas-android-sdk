@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
@@ -53,7 +53,7 @@ public class ClientService {
     }
 
     //---------------------------------------------------------getClientInfo------------------------------------------------------------------
-    public void getClientInfo(String requestId, String baseurl, final Result<ClientInfoEntity> callback) {
+    public void getClientInfo(String requestId, String baseurl, final EventResult<ClientInfoEntity> callback) {
         //Local Variables
         String methodName = "ClientService  :getClientInfo()";
         try {
@@ -77,7 +77,7 @@ public class ClientService {
         }
     }
 
-    private void ServiceForClient(String clienttUrl, Map<String, String> headers, final Result<ClientInfoEntity> callback) {
+    private void ServiceForClient(String clienttUrl, Map<String, String> headers, final EventResult<ClientInfoEntity> callback) {
         final String methodName = "Consent Service  :getClientInfo()";
         try {
             //Call Service-getRequestId

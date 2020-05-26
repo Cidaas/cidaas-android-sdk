@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushAcknowledge
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -49,7 +49,7 @@ public class PushAcknowledgeService {
 
     //call pushAcknowledge Service
     public void callPushAcknowledgeService(@NonNull String pushAcknowledgeURL, Map<String, String> headers, PushAcknowledgeEntity pushAcknowledgeEntity,
-                                           final Result<PushAcknowledgeResponse> pushAcknowledgeCallback) {
+                                           final EventResult<PushAcknowledgeResponse> pushAcknowledgeCallback) {
         final String methodName = "PushAcknowledgeService:-callPushAcknowledgeService()";
         try {
             //call service

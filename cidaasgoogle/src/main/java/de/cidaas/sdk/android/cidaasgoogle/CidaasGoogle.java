@@ -25,7 +25,7 @@ import java.io.InputStream;
 import de.cidaas.sdk.android.CidaasSDKLayout;
 import de.cidaas.sdk.android.cidaasgoogle.Entity.GoogleSettingsEntity;
 import de.cidaas.sdk.android.cidaasgoogle.Interface.IGoogleAccessTokenEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -42,7 +42,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
     public static final int REQ_CODE = 9001;
     private GoogleSignInOptions signInOptions;
 
-    Result<AccessTokenEntity> localAccessTokenEntityResult;
+    EventResult<AccessTokenEntity> localAccessTokenEntityResult;
 
 
     private GoogleSettingsEntity googleSettingsEntity;
@@ -71,7 +71,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
 
         CidaasSDKLayout.iCidaasGoogle = new ICidaasGoogle() {
             @Override
-            public void login(Result<AccessTokenEntity> accessTokenEntityResult) {
+            public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
                 signIn(accessTokenEntityResult);
             }
 
@@ -85,7 +85,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
     }
 
 
-    private void signIn(Result<AccessTokenEntity> accessTokenEntityResult) {
+    private void signIn(EventResult<AccessTokenEntity> accessTokenEntityResult) {
         this.requestGoogleAccount(REQ_CODE);
         localAccessTokenEntityResult = accessTokenEntityResult;
     }
@@ -212,7 +212,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
     }
 
     @Override
-    public void login(Result<AccessTokenEntity> accessTokenEntityResult) {
+    public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
         signIn(accessTokenEntityResult);
     }
 

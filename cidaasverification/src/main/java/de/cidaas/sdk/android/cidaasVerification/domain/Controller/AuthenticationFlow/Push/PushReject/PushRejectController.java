@@ -10,7 +10,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushReject.Push
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Push.PushReject.PushRejectService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -46,13 +46,13 @@ public class PushRejectController {
 
 
     //--------------------------------------------PushReject--------------------------------------------------------------
-    public void pushRejectVerification(final PushRejectEntity pushRejectEntity, final Result<PushRejectResponse> pushRejectResult) {
+    public void pushRejectVerification(final PushRejectEntity pushRejectEntity, final EventResult<PushRejectResponse> pushRejectResult) {
         checkPushRejectEntity(pushRejectEntity, pushRejectResult);
     }
 
 
     //-------------------------------------checkPushRejectEntity-----------------------------------------------------------
-    private void checkPushRejectEntity(final PushRejectEntity pushRejectEntity, final Result<PushRejectResponse> pushRejectResult) {
+    private void checkPushRejectEntity(final PushRejectEntity pushRejectEntity, final EventResult<PushRejectResponse> pushRejectResult) {
         String methodName = "PushRejectController:-checkPushRejectEntity()";
         try {
             if (pushRejectEntity.getReason() != null && !pushRejectEntity.getReason().equals("") &&
@@ -74,10 +74,10 @@ public class PushRejectController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final PushRejectEntity pushRejectEntity, final Result<PushRejectResponse> pushRejectResult) {
+    private void addProperties(final PushRejectEntity pushRejectEntity, final EventResult<PushRejectResponse> pushRejectResult) {
         String methodName = "PushRejectController:-addProperties()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -107,7 +107,7 @@ public class PushRejectController {
     }
 
     //-------------------------------------------Call pushReject Service-----------------------------------------------------------
-    private void callPushReject(String baseurl, final PushRejectEntity pushRejectEntity, final Result<PushRejectResponse> pushRejectResult) {
+    private void callPushReject(String baseurl, final PushRejectEntity pushRejectEntity, final EventResult<PushRejectResponse> pushRejectResult) {
         String methodName = "PushRejectController:-pushReject()";
         try {
             String pushRejectUrl = VerificationURLHelper.getShared().getPushDenyURL(baseurl, pushRejectEntity.getVerificationType());

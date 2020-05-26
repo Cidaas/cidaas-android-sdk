@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.AuthenticatedHistory
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -50,7 +50,7 @@ public class AuthenticatedHistoryService {
 
     //call AuthenticatedHistory Service
     public void callAuthenticatedHistoryService(@NonNull String authenticatedHistoryURL, Map<String, String> headers, AuthenticatedHistoryEntity authenticatedHistoryEntity,
-                                                final Result<AuthenticatedHistoryResponse> authenticatedHistoryCallback) {
+                                                final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryCallback) {
         final String methodName = "AuthenticatedHistoryService:-callAuthenticatedHistoryService()";
         try {
             //call service

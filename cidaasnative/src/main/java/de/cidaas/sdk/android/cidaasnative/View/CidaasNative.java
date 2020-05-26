@@ -36,7 +36,7 @@ import de.cidaas.sdk.android.cidaasnative.domain.Controller.RequestId.RequestIdC
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.ResetPassword.ResetPasswordController;
 import de.cidaas.sdk.android.cidaasnative.domain.Controller.Tenant.TenantController;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -85,9 +85,9 @@ public class CidaasNative {
 
     //Get Request Id By Passing loginProperties as Value in parameters with Client Secret
     public void getRequestId(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret,
-                             final Result<AuthRequestResponseEntity> result) {
+                             final EventResult<AuthRequestResponseEntity> result) {
         try {
-            FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, ClientSecret, new Result<Dictionary<String, String>>() {
+            FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, ClientSecret, new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginproperties) {
 
@@ -107,9 +107,9 @@ public class CidaasNative {
 
     //Get Request Id By Passing loginProperties as Value in parameters
     public void getRequestId(@NonNull final String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL,
-                             final Result<AuthRequestResponseEntity> Primaryresult, final HashMap<String, String>... extraParams) {
+                             final EventResult<AuthRequestResponseEntity> Primaryresult, final HashMap<String, String>... extraParams) {
         try {
-            FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, new Result<Dictionary<String, String>>() {
+            FileHelper.getShared(context).paramsToDictionaryConverter(DomainUrl, ClientId, RedirectURL, new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesresult) {
                     getRequestId(loginPropertiesresult, Primaryresult, extraParams);
@@ -127,11 +127,11 @@ public class CidaasNative {
     }
 
     //Get Request Id without passing any value
-    public void getRequestId(final Result<AuthRequestResponseEntity> resulttoReturn, @Nullable final HashMap<String, String>... extraParams) {
+    public void getRequestId(final EventResult<AuthRequestResponseEntity> resulttoReturn, @Nullable final HashMap<String, String>... extraParams) {
         try {
 
 
-            CidaasProperties.getShared(context).saveCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).saveCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
 
@@ -152,7 +152,7 @@ public class CidaasNative {
 
     // ***** REQUEST ID CONTROLLER SENDER *****
 
-    public void getRequestId(final Dictionary<String, String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult,
+    public void getRequestId(final Dictionary<String, String> loginproperties, final EventResult<AuthRequestResponseEntity> Primaryresult,
                              @Nullable HashMap<String, String>... extraParams) {
         RequestIdController.getShared(context).getRequestId(loginproperties, Primaryresult, extraParams);
     }
@@ -160,9 +160,9 @@ public class CidaasNative {
     // -----------------------------------------------------------*******ClientID****----------------------------------------------------------------------
 
     //Client Id With out Passing RequestId
-    public void getClientInfo(final Result<ClientInfoEntity> clientInfoEntityResult, final HashMap<String, String>... extraParams) {
+    public void getClientInfo(final EventResult<ClientInfoEntity> clientInfoEntityResult, final HashMap<String, String>... extraParams) {
         try {
-            getRequestId(new Result<AuthRequestResponseEntity>() {
+            getRequestId(new EventResult<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
                     getClientInfo(result.getData().getRequestId(), clientInfoEntityResult);
@@ -179,22 +179,22 @@ public class CidaasNative {
     }
 
     //*********ClientId With RequestId**********
-    public void getClientInfo(final String requestId, final Result<ClientInfoEntity> clientInfoEntityResult) {
+    public void getClientInfo(final String requestId, final EventResult<ClientInfoEntity> clientInfoEntityResult) {
         ClientController.getShared(context).getClientInfo(requestId, clientInfoEntityResult);
     }
 
 
     // -----------------------------------------------------***** TENANT INFO *****------------------------------------------------------------------------
-    public void getTenantInfo(final Result<TenantInfoEntity> tenantresult) {
+    public void getTenantInfo(final EventResult<TenantInfoEntity> tenantresult) {
         TenantController.getShared(context).getTenantInfo(CidaasHelper.baseurl, tenantresult);
     }
 
     // -----------------------------------------------------***** LOGIN WITH CREDENTIALS *****---------------------------------------------------------------
 
     // Login With Credentials With out request Id
-    public void loginWithCredentials(final LoginEntity loginEntity, final Result<LoginCredentialsResponseEntity> loginresult, final HashMap<String, String>... extraParams) {
+    public void loginWithCredentials(final LoginEntity loginEntity, final EventResult<LoginCredentialsResponseEntity> loginresult, final HashMap<String, String>... extraParams) {
         try {
-            getRequestId(new Result<AuthRequestResponseEntity>() {
+            getRequestId(new EventResult<AuthRequestResponseEntity>() {
                 @Override
                 public void success(AuthRequestResponseEntity result) {
                     loginWithCredentials(result.getData().getRequestId(), loginEntity, loginresult);
@@ -211,20 +211,20 @@ public class CidaasNative {
     }
 
     // Login With Credentials With request Id
-    public void loginWithCredentials(final String requestId, final LoginEntity loginEntity, final Result<LoginCredentialsResponseEntity> loginresult) {
+    public void loginWithCredentials(final String requestId, final LoginEntity loginEntity, final EventResult<LoginCredentialsResponseEntity> loginresult) {
         NativeLoginController.getShared(context).loginwithCredentials(requestId, loginEntity, loginresult);
     }
 
     // -----------------------------------------------------***** REGISTER *****---------------------------------------------------------------
 
 
-    public void getRegistrationFields(final String locale, final Result<RegistrationSetupResponseEntity> registerFieldsresult,
+    public void getRegistrationFields(final String locale, final EventResult<RegistrationSetupResponseEntity> registerFieldsresult,
                                       final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
                             getRegistrationFields(result.getData().getRequestId(), locale, registerFieldsresult);
@@ -247,13 +247,13 @@ public class CidaasNative {
         }
     }
 
-    public void registerUser(final RegistrationEntity registrationEntity, final Result<RegisterNewUserResponseEntity> registerFieldsresult,
+    public void registerUser(final RegistrationEntity registrationEntity, final EventResult<RegisterNewUserResponseEntity> registerFieldsresult,
                              final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
                             registerUser(result.getData().getRequestId(), registrationEntity, registerFieldsresult);
@@ -277,146 +277,146 @@ public class CidaasNative {
     }
 
 
-    public void getRegistrationFields(@NonNull final String requestId, final String locale, final Result<RegistrationSetupResponseEntity> registerFieldsresult) {
+    public void getRegistrationFields(@NonNull final String requestId, final String locale, final EventResult<RegistrationSetupResponseEntity> registerFieldsresult) {
         RegistrationController.getShared(context).getRegisterationFields(requestId, locale, registerFieldsresult);
     }
 
 
     public void registerUser(@NonNull final String requestId, final RegistrationEntity registrationEntity,
-                             final Result<RegisterNewUserResponseEntity> registerFieldsresult) {
+                             final EventResult<RegisterNewUserResponseEntity> registerFieldsresult) {
         RegistrationController.getShared(context).registerNewUser(requestId, registrationEntity, registerFieldsresult);
     }
     // -----------------------------------------------------***** Initiate Verification *****---------------------------------------------------------------
 
 
-    public void initiateEmailVerification(@NonNull final String sub, final Result<InitiateAccountVerificationResponseEntity> Result,
+    public void initiateEmailVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
                                           final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateEmailVerification(sub, result.getData().getRequestId(), Result);
+                            initiateEmailVerification(sub, result.getData().getRequestId(), EventResult);
                         }
 
                         @Override
                         public void failure(WebAuthError error) {
-                            Result.failure(error);
+                            EventResult.failure(error);
                         }
                     }, extraParams);
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(error);
+                    EventResult.failure(error);
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateEmailVerification()", WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE, e.getMessage()));
+            EventResult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateEmailVerification()", WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE, e.getMessage()));
         }
     }
 
 
     public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
-                                          final Result<InitiateAccountVerificationResponseEntity> Result) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "email", Result);
+                                          final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
+        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "email", EventResult);
     }
 
-    public void initiateSMSVerification(@NonNull final String sub, final Result<InitiateAccountVerificationResponseEntity> Result,
+    public void initiateSMSVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
                                         final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateSMSVerification(sub, result.getData().getRequestId(), Result);
+                            initiateSMSVerification(sub, result.getData().getRequestId(), EventResult);
                         }
 
                         @Override
                         public void failure(WebAuthError error) {
-                            Result.failure(error);
+                            EventResult.failure(error);
                         }
                     }, extraParams);
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(error);
+                    EventResult.failure(error);
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateSMSVerification()", WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE, e.getMessage()));
+            EventResult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateSMSVerification()", WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE, e.getMessage()));
         }
     }
 
 
     public void initiateSMSVerification(@NonNull final String sub, @NonNull final String requestId,
-                                        final Result<InitiateAccountVerificationResponseEntity> Result) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "sms", Result);
+                                        final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
+        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "sms", EventResult);
     }
 
-    public void initiateIVRVerification(@NonNull final String sub, final Result<InitiateAccountVerificationResponseEntity> Result,
+    public void initiateIVRVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
                                         final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateIVRVerification(sub, result.getData().getRequestId(), Result);
+                            initiateIVRVerification(sub, result.getData().getRequestId(), EventResult);
                         }
 
                         @Override
                         public void failure(WebAuthError error) {
-                            Result.failure(error);
+                            EventResult.failure(error);
                         }
                     }, extraParams);
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    Result.failure(error);
+                    EventResult.failure(error);
                 }
             });
         } catch (Exception e) {
-            Result.failure(WebAuthError.getShared(context).methodException("initiateIVRVerification", WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE, e.getMessage()));
+            EventResult.failure(WebAuthError.getShared(context).methodException("initiateIVRVerification", WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE, e.getMessage()));
         }
     }
 
-    public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId, final Result<InitiateAccountVerificationResponseEntity> Result) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "ivr", Result);
+    public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId, final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
+        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "ivr", EventResult);
     }
 
-    public void verifyAccount(@NonNull final String code, @NonNull final String accvid, final Result<VerifyAccountResponseEntity> result) {
+    public void verifyAccount(@NonNull final String code, @NonNull final String accvid, final EventResult<VerifyAccountResponseEntity> result) {
         AccountVerificationController.getShared(context).verifyAccountVerificationService(code, accvid, result);
     }
 
-    public void getAccountVerificationList(@NonNull final String sub, final Result<AccountVerificationListResponseEntity> result) {
+    public void getAccountVerificationList(@NonNull final String sub, final EventResult<AccountVerificationListResponseEntity> result) {
         AccountVerificationController.getShared(context).getAccountVerificationList(sub, result);
     }
 
     //----------------------------------DEDEUPLICATION------------------------------------------------------------------------------------------------------
 
-    public void getDeduplicationDetails(@NonNull final String trackId, final Result<DeduplicationResponseEntity> deduplicaionResult) {
+    public void getDeduplicationDetails(@NonNull final String trackId, final EventResult<DeduplicationResponseEntity> deduplicaionResult) {
         DeduplicationController.getShared(context).getDeduplicationList(trackId, deduplicaionResult);
     }
 
-    public void registerDeduplication(@NonNull final String trackId, final Result<RegisterDeduplicationEntity> deduplicaionResult) {
+    public void registerDeduplication(@NonNull final String trackId, final EventResult<RegisterDeduplicationEntity> deduplicaionResult) {
         DeduplicationController.getShared(context).registerDeduplication(CidaasHelper.baseurl, trackId, deduplicaionResult);
     }
 
     public void loginWithDeduplication(@NonNull final String sub, @NonNull final String password,
-                                       final Result<LoginCredentialsResponseEntity> loginresult, final HashMap<String, String>... extraParams) {
+                                       final EventResult<LoginCredentialsResponseEntity> loginresult, final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
                             loginWithDeduplication(result.getData().getRequestId(), sub, password, loginresult);
@@ -440,7 +440,7 @@ public class CidaasNative {
     }
 
     public void loginWithDeduplication(final String requestId, @NonNull final String sub, @NonNull final String password,
-                                       final Result<LoginCredentialsResponseEntity> deduplicaionResult) {
+                                       final EventResult<LoginCredentialsResponseEntity> deduplicaionResult) {
         DeduplicationController.getShared(context).loginDeduplication(requestId, sub, password, deduplicaionResult);
 
     }
@@ -448,12 +448,12 @@ public class CidaasNative {
     //----------------------------------Forgot password------------------------------------------------------------------------------------------------------
 
     public void initiateResetPasswordByEmail(final String email,
-                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult, final HashMap<String, String>... extraParams) {
+                                             final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult, final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
                             initiateResetPasswordByEmail(result.getData().getRequestId(), email, resetPasswordResponseEntityResult);
@@ -478,18 +478,18 @@ public class CidaasNative {
 
     // chang
     public void initiateResetPasswordByEmail(final String requestId, final String email,
-                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+                                             final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, email, "email", resetPasswordResponseEntityResult);
     }
 
 
     public void initiateResetPasswordBySMS(final String mobileNumber,
-                                           final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult, final HashMap<String, String>... extraParams) {
+                                           final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult, final HashMap<String, String>... extraParams) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new Result<AuthRequestResponseEntity>() {
+                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
                             initiateResetPasswordBySMS(result.getData().getRequestId(), mobileNumber, resetPasswordResponseEntityResult);
@@ -513,18 +513,18 @@ public class CidaasNative {
     }
 
     public void initiateResetPasswordBySMS(final String requestId, final String mobileNumber,
-                                           final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+                                           final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, mobileNumber, "sms", resetPasswordResponseEntityResult);
     }
 
 
     public void handleResetPassword(@NonNull final String verificationCode, final String rprq,
-                                    final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult) {
+                                    final EventResult<ResetPasswordValidateCodeResponseEntity> resetpasswordResult) {
         ResetPasswordController.getShared(context).resetPasswordValidateCode(verificationCode, rprq, resetpasswordResult);
     }
 
     //done Change to entity
-    public void resetPassword(@NonNull final ResetPasswordEntity resetPasswordEntity, final Result<ResetNewPasswordResponseEntity> resetpasswordResult) {
+    public void resetPassword(@NonNull final ResetPasswordEntity resetPasswordEntity, final EventResult<ResetNewPasswordResponseEntity> resetpasswordResult) {
         ResetPasswordController.getShared(context).resetNewPassword(resetPasswordEntity, resetpasswordResult);
 
     }
@@ -532,7 +532,7 @@ public class CidaasNative {
     //----------------------------------Change password------------------------------------------------------------------------------------------------------
 
     // change the sub to access token
-    public void changePassword(String sub, final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> result) {
+    public void changePassword(String sub, final ChangePasswordRequestEntity changePasswordRequestEntity, final EventResult<ChangePasswordResponseEntity> result) {
         ChangePasswordController.getShared(context).changePassword(changePasswordRequestEntity, result);
     }
 

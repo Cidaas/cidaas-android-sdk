@@ -13,7 +13,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
 import de.cidaas.sdk.android.helper.customtab.CustomTabHelper;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -32,7 +32,7 @@ public class LoginController {
     // public String loginURL;
     //public String DomainURL="";
     public String redirectUrl;
-    public Result<AccessTokenEntity> logincallback;
+    public EventResult<AccessTokenEntity> logincallback;
 
     public static LoginController shared;
 
@@ -81,11 +81,11 @@ public class LoginController {
 
     //Get login URL for Custom browser and Webview
     public void getLoginURL(@NonNull final String baseurl, Dictionary<String, String> loginProperties,
-                            final Dictionary<String, String> challengePropertiesfromparam, @NonNull final Result<String> callbackResult) {
+                            final Dictionary<String, String> challengePropertiesfromparam, @NonNull final EventResult<String> callbackResult) {
         final String methodName = "LoginController :getLoginURL()";
         try {
 
-            LoginService.getShared(context).getURLList(baseurl, new Result<Object>() {
+            LoginService.getShared(context).getURLList(baseurl, new EventResult<Object>() {
                 @Override
                 public void success(Object result) {
 
@@ -142,10 +142,10 @@ public class LoginController {
 
 
     //Get login URL for Custom browser
-    public void getSocialLoginURL(final String provider, final String requestId, @NonNull final Result<String> callbackResult) {
+    public void getSocialLoginURL(final String provider, final String requestId, @NonNull final EventResult<String> callbackResult) {
         final String methodName = "LoginController :getSocialLoginURL()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     if (provider != null && !provider.equals("") && requestId != null && !requestId.equals("")) {
@@ -177,11 +177,11 @@ public class LoginController {
 
 
     //Get Login With Browser
-    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         final String methodName = "LoginController :loginWithBrowser()";
         try {
 
-            getLoginURL(new Result<String>() {
+            getLoginURL(new EventResult<String>() {
                 @Override
                 public void success(String result) {
                     String loginURL = result;
@@ -240,12 +240,12 @@ public class LoginController {
     }
 
    /* public void loginWithSocial(@NonNull final Context activityContext, @NonNull final String requestId, @NonNull final String provider,
-                                @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain)
+                                @Nullable final String color, finalEventResult<AccessTokenEntity> callbacktoMain)
     {
       final String methodName="LoginController :loginWithSocial()";
       try
       {
-         getSocialLoginURL(requestId, provider, new Result<String>() {
+         getSocialLoginURL(requestId, provider, new EventResult<String>() {
                         @Override
                         public void success(String socialLoginURL) {
                             logincallback = callbacktoMain;
@@ -306,7 +306,7 @@ public class LoginController {
     }
 
     // Belongs to Core
-    public void getLoginCode(String url, Result<AccessTokenEntity> callback) {
+    public void getLoginCode(String url, EventResult<AccessTokenEntity> callback) {
         try {
             // showLoader();
             String code = getCodeFromUrl(url);
@@ -317,7 +317,7 @@ public class LoginController {
             } else {
                 // hideLoader();
                 String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - ";
-                //+error.errorCode + ", Error Message - " + error.ErrorMessage + ", Status Code - " +  error.statusCode;
+                //+error.errorCode + ", Error Message - " + error.getErrorMessage() + ", Status Code - " +  error.statusCode;
                 LogFile.getShared(context).addFailureLog(loggerMessage);
             }
         } catch (Exception e) {
@@ -330,10 +330,10 @@ public class LoginController {
     }
 
     //Get Login URL without any Argument
-    public void getLoginURL(final Result<String> callback) {
+    public void getLoginURL(final EventResult<String> callback) {
         try {
             //Check requestId is not null
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
@@ -348,7 +348,7 @@ public class LoginController {
                     }
 
 
-                    getLoginURL(CidaasHelper.baseurl, result, challengeProperties, new Result<String>() {
+                    getLoginURL(CidaasHelper.baseurl, result, challengeProperties, new EventResult<String>() {
                         @Override
                         public void success(String result) {
 
@@ -376,7 +376,7 @@ public class LoginController {
         }
     }
 
-    public void setURL(@NonNull final Dictionary<String, String> loginproperties, Result<String> result, String methodNameFromApp) {
+    public void setURL(@NonNull final Dictionary<String, String> loginproperties, EventResult<String> result, String methodNameFromApp) {
         String methodName = "LoginController:setURL()";
         try {
             if (loginproperties != null) {
@@ -406,10 +406,10 @@ public class LoginController {
 
 
     //Get Login URL without any Argument
-    public void getRegistrationURL(final Result<String> callback) {
+    public void getRegistrationURL(final EventResult<String> callback) {
         try {
             //Check requestId is not null
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
@@ -424,7 +424,7 @@ public class LoginController {
                     }
 
 
-                    getRegistrationURL(CidaasHelper.baseurl, result, challengeProperties, new Result<String>() {
+                    getRegistrationURL(CidaasHelper.baseurl, result, challengeProperties, new EventResult<String>() {
                         @Override
                         public void success(String result) {
 
@@ -454,11 +454,11 @@ public class LoginController {
 
     //Get Registration URL for Custom browser and Webview
     public void getRegistrationURL(@NonNull final String baseurl, Dictionary<String, String> loginProperties,
-                                   final Dictionary<String, String> challengePropertiesfromparam, @NonNull final Result<String> callbackResult) {
+                                   final Dictionary<String, String> challengePropertiesfromparam, @NonNull final EventResult<String> callbackResult) {
         final String methodName = "LoginController :getRegistrationURL()";
         try {
 
-            LoginService.getShared(context).getURLList(baseurl, new Result<Object>() {
+            LoginService.getShared(context).getURLList(baseurl, new EventResult<Object>() {
                 @Override
                 public void success(Object result) {
 
@@ -515,11 +515,11 @@ public class LoginController {
 
 
     //Get Register With Browser
-    public void registerWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+    public void registerWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         final String methodName = "LoginController :loginWithBrowser()";
         try {
 
-            getRegistrationURL(new Result<String>() {
+            getRegistrationURL(new EventResult<String>() {
                 @Override
                 public void success(String result) {
                     String registrationURL = result;
@@ -551,10 +551,10 @@ public class LoginController {
     }
 
     public void loginWithSocial(@NonNull final Context activityContext, @NonNull final String requestId, @NonNull final String provider,
-                                @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+                                @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         final String methodName = "LoginController :loginWithSocial()";
         try {
-            getSocialLoginURL(requestId, provider, new Result<String>() {
+            getSocialLoginURL(requestId, provider, new EventResult<String>() {
                 @Override
                 public void success(String socialLoginURL) {
                     logincallback = callbacktoMain;

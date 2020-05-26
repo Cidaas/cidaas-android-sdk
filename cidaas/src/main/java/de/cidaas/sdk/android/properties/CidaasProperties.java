@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -32,7 +32,7 @@ public class CidaasProperties {
     }
 
 
-    public void saveCidaasProperties(final Result<Dictionary<String, String>> result) {
+    public void saveCidaasProperties(final EventResult<Dictionary<String, String>> result) {
 
         if (CidaasHelper.IS_SETURL_CALLED) {
             //From Authenticator app
@@ -48,7 +48,7 @@ public class CidaasProperties {
 
     }
 
-    public void checkCidaasProperties(final Result<Dictionary<String, String>> result) {
+    public void checkCidaasProperties(final EventResult<Dictionary<String, String>> result) {
         try {
             if (CidaasHelper.baseurl != null && !CidaasHelper.baseurl.equals("")) {
 
@@ -74,9 +74,9 @@ public class CidaasProperties {
     }
 
 
-    private void readFromFile(String fileName, final Result<Dictionary<String, String>> loginPropertiesResult) {
+    private void readFromFile(String fileName, final EventResult<Dictionary<String, String>> loginPropertiesResult) {
         try {
-            FileHelper.getShared(context).readProperties(context.getAssets(), fileName, new Result<Dictionary<String, String>>() {
+            FileHelper.getShared(context).readProperties(context.getAssets(), fileName, new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(final Dictionary<String, String> loginProperties) {
                     //on successfully completion of file reading add it to LocalDB(shared Preference) and call requestIdByloginProperties
@@ -100,7 +100,7 @@ public class CidaasProperties {
     }
 
 
-    private void checkPKCEFlow(Dictionary<String, String> loginProperties, Result<Dictionary<String, String>> savedResult) {
+    private void checkPKCEFlow(Dictionary<String, String> loginProperties, EventResult<Dictionary<String, String>> savedResult) {
         try {
 
 
@@ -126,7 +126,7 @@ public class CidaasProperties {
     }
 
     //Check the Conditions If Condition fails return true otherwise return false
-    private boolean checkNotnull(Result<Dictionary<String, String>> result, Dictionary<String, String> loginProperties, String title) {
+    private boolean checkNotnull(EventResult<Dictionary<String, String>> result, Dictionary<String, String> loginProperties, String title) {
 
         if (loginProperties.get("DomainURL") == null || loginProperties.get("DomainURL").equals("") || loginProperties == null
                 || !((Hashtable) loginProperties).containsKey("DomainURL")) {

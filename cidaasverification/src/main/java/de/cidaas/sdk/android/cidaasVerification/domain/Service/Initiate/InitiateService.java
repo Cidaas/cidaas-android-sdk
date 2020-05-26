@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Initiate.InitiateRes
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -49,7 +49,7 @@ public class InitiateService {
 
     //call initiate Service
     public void callInitiateService(@NonNull String initiateURL, Map<String, String> headers, InitiateEntity initiateEntity,
-                                    final Result<InitiateResponse> initiateCallback) {
+                                    final EventResult<InitiateResponse> initiateCallback) {
         final String methodName = "InitiateService:-callInitiateService()";
         try {
             //call service

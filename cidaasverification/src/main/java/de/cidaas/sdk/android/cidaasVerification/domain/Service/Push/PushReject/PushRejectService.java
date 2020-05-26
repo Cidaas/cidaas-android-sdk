@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Push.PushReject.Push
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -49,7 +49,7 @@ public class PushRejectService {
 
     //call pushReject Service
     public void callPushRejectService(@NonNull String pushRejectURL, Map<String, String> headers, PushRejectEntity pushRejectEntity,
-                                      final Result<PushRejectResponse> pushRejectCallback) {
+                                      final EventResult<PushRejectResponse> pushRejectCallback) {
         final String methodName = "PushRejectService:-callPushRejectService()";
         try {
             //call service

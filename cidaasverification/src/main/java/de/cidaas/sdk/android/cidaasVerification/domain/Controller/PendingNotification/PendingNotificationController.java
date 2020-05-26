@@ -10,7 +10,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Settings.PendingNoti
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.PendingNotification.PendingNotificationService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -45,7 +45,7 @@ public class PendingNotificationController {
     }
 
     //--------------------------------------------PendingNotification--------------------------------------------------------------
-    public void getPendingNotification(String sub, final Result<PendingNotificationResponse> pendingNotificationResult) {
+    public void getPendingNotification(String sub, final EventResult<PendingNotificationResponse> pendingNotificationResult) {
         String methodName = "PendingNotificationController:-getPendingNotification()";
         if (sub != null && !sub.equals("")) {
             addProperties(sub, pendingNotificationResult);
@@ -55,11 +55,11 @@ public class PendingNotificationController {
     }
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final String sub, final Result<PendingNotificationResponse> pendingNotificaitonResult) {
+    private void addProperties(final String sub, final EventResult<PendingNotificationResponse> pendingNotificaitonResult) {
         String methodName = "PendingNotificationController:-addProperties()";
         try {
             //App properties
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -88,7 +88,7 @@ public class PendingNotificationController {
     }
 
     //-------------------------------------------Call PendingNotification Service-----------------------------------------------------------
-    private void callPendingNotification(String baseurl, final PendingNotificationEntity pendingNotificationEntity, final Result<PendingNotificationResponse> pendingNotificationResult) {
+    private void callPendingNotification(String baseurl, final PendingNotificationEntity pendingNotificationEntity, final EventResult<PendingNotificationResponse> pendingNotificationResult) {
         String methodName = "PendingNotificationController:-callPendingNotification()";
         try {
             String configuredListURL = VerificationURLHelper.getShared().getPendingNotificationURL(baseurl);

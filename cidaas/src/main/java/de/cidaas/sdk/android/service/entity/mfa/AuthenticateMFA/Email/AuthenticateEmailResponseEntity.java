@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class AuthenticateEmailResponseEntity implements Serializable {
     boolean success;
     int status;
-    de.cidaas.sdk.android.service.entity.mfaAuthenticateMFA.Email.AuthenticateEmailResponseDataEntity data;
+    AuthenticateEmailResponseDataEntity data;
 
     public boolean isSuccess() {
         return success;
@@ -26,11 +26,11 @@ public class AuthenticateEmailResponseEntity implements Serializable {
         this.status = status;
     }
 
-    public de.cidaas.sdk.android.service.entity.mfaAuthenticateMFA.Email.AuthenticateEmailResponseDataEntity getData() {
+    public AuthenticateEmailResponseDataEntity getData() {
         return data;
     }
 
-    public void setData(de.cidaas.sdk.android.service.entity.mfaAuthenticateMFA.Email.AuthenticateEmailResponseDataEntity data) {
+    public void setData(AuthenticateEmailResponseDataEntity data) {
         this.data = data;
     }
 }

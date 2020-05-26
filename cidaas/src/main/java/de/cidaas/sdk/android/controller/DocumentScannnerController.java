@@ -13,7 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Dictionary;
 
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.properties.CidaasProperties;
@@ -111,21 +111,21 @@ public class DocumentScannnerController {
         return imageFile;
     }
 
-    public void sendtoServicecall(final File photo, final String sub, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+    public void sendtoServicecall(final File photo, final String sub, final EventResult<DocumentScannerServiceResultEntity> resultEntityResult) {
 
         final String methodName = "DocumentScannnerController :sendtoServicecall()";
         try {
 
             if (photo != null && !sub.equals("") && sub != null) {
 
-                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> result) {
                         final String baseurl = result.get("DomainURL");
 
                         if (baseurl != null && !baseurl.equals("")) {
 
-                            AccessTokenController.getShared(context).getAccessToken(sub, new Result<AccessTokenEntity>() {
+                            AccessTokenController.getShared(context).getAccessToken(sub, new EventResult<AccessTokenEntity>() {
                                 @Override
                                 public void success(AccessTokenEntity result) {
                                     sendtoServicecall(baseurl, photo, result.getAccess_token(), resultEntityResult);
@@ -159,7 +159,7 @@ public class DocumentScannnerController {
     }
 
 
-    public void sendtoServicecall(String baseurl, File photo, String accessToken, Result<DocumentScannerServiceResultEntity> result) {
+    public void sendtoServicecall(String baseurl, File photo, String accessToken, EventResult<DocumentScannerServiceResultEntity> result) {
         String methodName = "DocumentScannnerController :sendtoServicecall()";
         try {
 

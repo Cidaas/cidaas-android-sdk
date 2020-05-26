@@ -13,7 +13,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.UpdateFCMToken.Updat
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -52,7 +52,7 @@ public class SettingsService {
 
     //call Settings Service
     public void getConfigurationList(@NonNull String settingsURL, Map<String, String> headers, final GetMFAListEntity getMFAListEntity,
-                                     final Result<ConfiguredMFAList> configuredMFAListResult) {
+                                     final EventResult<ConfiguredMFAList> configuredMFAListResult) {
         final String methodName = "SettingsService:-getConfigurationList()";
         try {
 
@@ -95,7 +95,7 @@ public class SettingsService {
 
     //call update FCM Token
     public void updateFCMToken(@NonNull String updateFCMTOkenURL, Map<String, String> headers, UpdateFCMTokenEntity updateFCMTokenEntity,
-                               final Result<UpdateFCMTokenResponseEntity> result) {
+                               final EventResult<UpdateFCMTokenResponseEntity> result) {
         final String methodName = "SettingsService:-updateFCMToken()";
         try {
             //call service

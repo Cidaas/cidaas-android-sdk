@@ -6,7 +6,7 @@ import com.scottyab.aescrypt.AESCrypt;
 
 import java.util.UUID;
 
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -37,7 +37,7 @@ public class EntityToModelConverter {
     //Entity to Model Conversion
 
     // convert accessTokenEntity To AccessTokenModel
-    public void accessTokenEntityToAccessTokenModel(AccessTokenEntity accessTokenEntity, String userId, Result<AccessTokenModel> callback) {
+    public void accessTokenEntityToAccessTokenModel(AccessTokenEntity accessTokenEntity, String userId, EventResult<AccessTokenModel> callback) {
         String methodName = "accessTokenEntityToAccessTokenModel";
         try {
             String EncryptedToken = "";
@@ -84,7 +84,7 @@ public class EntityToModelConverter {
     // Model to Entity  Conversion
 
     // convert accessTokenModel to AccessTokenEntity
-    public void accessTokenModelToAccessTokenEntity(AccessTokenModel accessTokenModel, String userId, Result<AccessTokenEntity> callback) {
+    public void accessTokenModelToAccessTokenEntity(AccessTokenModel accessTokenModel, String userId, EventResult<AccessTokenEntity> callback) {
         try {
             AccessTokenEntity accessTokenEntity = new AccessTokenEntity();
 

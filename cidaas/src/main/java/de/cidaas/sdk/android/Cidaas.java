@@ -23,7 +23,7 @@ import de.cidaas.sdk.android.controller.UserProfileController;
 import de.cidaas.sdk.android.entities.LocalAuthenticationEntity;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.entities.SocialAccessTokenEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -52,7 +52,7 @@ public class Cidaas {
     private static final int RESULT_OK = -1;
 
 
-    Result<LocalAuthenticationEntity> localAuthenticationEntityCallback;
+    EventResult<LocalAuthenticationEntity> localAuthenticationEntityCallback;
 
 
     public Context context;
@@ -117,33 +117,33 @@ public class Cidaas {
     }
 
     // ****** LOGIN WITH Document *****-------------------------------------------------------------------------------------------------------
-    public void VerifyDocument(final File photo, final String sub, final Result<DocumentScannerServiceResultEntity> resultEntityResult) {
+    public void VerifyDocument(final File photo, final String sub, final EventResult<DocumentScannerServiceResultEntity> resultEntityResult) {
         DocumentScannnerController.getShared(context).sendtoServicecall(photo, sub, resultEntityResult);
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------------
 
     //@Override
-    public void getAccessToken(String sub, Result<AccessTokenEntity> result) {
+    public void getAccessToken(String sub, EventResult<AccessTokenEntity> result) {
         AccessTokenController.getShared(context).getAccessToken(sub, result);
     }
 
-    public void getAccessTokenFromRefreshToken(String refershtoken, Result<AccessTokenEntity> result) {
+    public void getAccessTokenFromRefreshToken(String refershtoken, EventResult<AccessTokenEntity> result) {
         AccessTokenController.getShared(context).getAccessToken(refershtoken, result);
     }
 
-    public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, Result<AccessTokenEntity> result) {
+    public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, EventResult<AccessTokenEntity> result) {
         AccessTokenController.getShared(context).getAccessTokenBySocial(socialAccessTokenEntity, result);
     }
 
     //For Authenticator App
-    public void setAccessToken(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result) {
+    public void setAccessToken(final AccessTokenEntity accessTokenEntity, final EventResult<LoginCredentialsResponseEntity> result) {
         AccessTokenController.getShared(context).setAccessToken(accessTokenEntity, result);
     }
 
     //Get userinfo Based on Access Token
     // @Override
-    public void getUserInfo(String sub, final Result<UserinfoEntity> callback) {
+    public void getUserInfo(String sub, final EventResult<UserinfoEntity> callback) {
         UserProfileController.getShared(context).getUserProfile(sub, callback);
     }
 
@@ -154,39 +154,39 @@ public class Cidaas {
     }
 
     // Custom Tab
-    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+    public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         LoginController.getShared(context).loginWithBrowser(activityContext, color, callbacktoMain);
     }
 
     //Get Login URL
-    public void getLoginURL(final Result<String> callback) {
+    public void getLoginURL(final EventResult<String> callback) {
         LoginController.getShared(context).getLoginURL(callback);
     }
 
     //Get Registration URL
-    public void getRegistrationURL(final Result<String> callback) {
+    public void getRegistrationURL(final EventResult<String> callback) {
         LoginController.getShared(context).getRegistrationURL(callback);
     }
 
     // Custom Tab
-    public void RegisterWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+    public void RegisterWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         LoginController.getShared(context).registerWithBrowser(activityContext, color, callbacktoMain);
     }
     //------------------------------------------------------------------------------------------Local Authentication----------------------------------------
 
-    //Cidaas Set OnActivity Result For Handling Device Authentication
+    //Cidaas Set OnActivityEventResult For Handling Device Authentication
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         LocalAuthenticationController.getShared(context).onActivityResult(requestCode, resultCode, data);
     }
 
     //Show the Alert Dilog Which is go to settings
-    private void showDialogToSetupLock(final Activity activity, Result<LocalAuthenticationEntity> result) {
+    private void showDialogToSetupLock(final Activity activity, EventResult<LocalAuthenticationEntity> result) {
         LocalAuthenticationController.getShared(context).showDialogToSetupLock(activity, result);
     }
 
     //Method for Local Authentocation
 
-    public void localAuthentication(final Activity activity, Result<LocalAuthenticationEntity> result) {
+    public void localAuthentication(final Activity activity, EventResult<LocalAuthenticationEntity> result) {
         LocalAuthenticationController.getShared(context).localAuthentication(activity, result);
     }
 
@@ -218,18 +218,18 @@ public class Cidaas {
 
     //----------------------------------LocationHistory------------------------------------------------------------------------------------------------------
     // Add Logs
-    public void getUserLoginInfo(final UserLoginInfoEntity userLoginInfoEntity, final Result<UserLoginInfoResponseEntity> result) {
+    public void getUserLoginInfo(final UserLoginInfoEntity userLoginInfoEntity, final EventResult<UserLoginInfoResponseEntity> result) {
         UserLoginInfoController.getShared(context).getUserLoginInfo(userLoginInfoEntity, result);
     }
 
     // Ask Ganehs
     public void loginWithSocial(@NonNull final Context activityContext, @NonNull final String requestId, @NonNull final String provider,
-                                @Nullable final String color, final Result<AccessTokenEntity> callbacktoMain) {
+                                @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         LoginController.getShared(context).loginWithSocial(activityContext, requestId, provider, color, callbacktoMain);
     }
 
     //Get Social Login URL
-    public void getSocialLoginURL(final String requestId, final String provider, final Result<String> callback) {
+    public void getSocialLoginURL(final String requestId, final String provider, final EventResult<String> callback) {
         LoginController.getShared(context).getSocialLoginURL(provider, requestId, callback);
     }
 
@@ -238,12 +238,12 @@ public class Cidaas {
 // -----------------------------------------------------***** GET MFA LIST *****---------------------------------------------------------------
 /*
     @Override
-    public void getMFAList(final String sub, final Result<MFAListResponseEntity> mfaresult) {
+    public void getMFAList(final String sub, finalEventResult<MFAListResponseEntity> mfaresult) {
         VerificationSettingsController.getShared(context).getmfaList(sub, mfaresult);
     }
 
 
-    public void getMFAListByEmail(final String email, final Result<MFAListResponseEntity> mfaresult) {
+    public void getMFAListByEmail(final String email, finalEventResult<MFAListResponseEntity> mfaresult) {
         VerificationSettingsController.getShared(context).getmfaListByEmail(email, mfaresult);
     }
  */   // -----------------------------------------------------***** PASSWORD LESS LOGIN AND MFA SERVICE CALL *****---------------------------------------------------------------
@@ -255,31 +255,31 @@ public class Cidaas {
 
   /*  //---------------------------------------DELETE CALL-------------------------------------------------------------------------------------------------
     //Delete call
-    public void deleteVerificationByType(@NonNull final String verificationType, @NonNull final String sub, final Result<DeleteMFAResponseEntity> deleteResult)
+    public void deleteVerificationByType(@NonNull final String verificationType, @NonNull final String sub, finalEventResult<DeleteMFAResponseEntity> deleteResult)
     {
         VerificationSettingsController.getShared(context).deleteMFA(verificationType,sub,deleteResult);
     }
 
     //Delete call
-    public void deleteVerificationByDevice( @NonNull final String sub,final Result<DeleteMFAResponseEntity> result)
+    public void deleteVerificationByDevice( @NonNull final String sub,finalEventResult<DeleteMFAResponseEntity> result)
     {
         VerificationSettingsController.getShared(context).deleteAllMFA(sub,result);
     }
 
     //Deny Call
-    public void denyNotification(@NonNull final String sub, @NonNull final String reason, @NonNull final String statusId, final Result<DenyNotificationResponseEntity> result)
+    public void denyNotification(@NonNull final String sub, @NonNull final String reason, @NonNull final String statusId, finalEventResult<DenyNotificationResponseEntity> result)
     {
         VerificationSettingsController.getShared(context).denyNotification(sub,reason,statusId, result);
     }
 
     //Get Pending Notification
-    public void getPendingNotificationList(@NonNull final String sub,  final Result<NotificationEntity> result)
+    public void getPendingNotificationList(@NonNull final String sub,  finalEventResult<NotificationEntity> result)
     {
         VerificationSettingsController.getShared(context).getPendingNotification(sub, result);
     }
 
     //Get user List Notification
-    public void getConfigurationList(@NonNull final String sub,  final Result<ConfiguredMFAListEntity> result,final String... baseURL)
+    public void getConfigurationList(@NonNull final String sub,  finalEventResult<ConfiguredMFAListEntity> result,final String... baseURL)
     {
         VerificationSettingsController.getShared(context).getConfiguredMFAList(sub,result,baseURL);
     }*/

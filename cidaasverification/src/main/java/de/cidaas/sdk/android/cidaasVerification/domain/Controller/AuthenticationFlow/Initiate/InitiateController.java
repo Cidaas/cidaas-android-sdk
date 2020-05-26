@@ -10,7 +10,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Initiate.InitiateRes
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Initiate.InitiateService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -46,13 +46,13 @@ public class InitiateController {
 
 
     //--------------------------------------------Initiate--------------------------------------------------------------
-    public void initiateVerification(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    public void initiateVerification(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         checkInitiateEntity(initiateEntity, initiateResult);
     }
 
 
     //-------------------------------------checkInitiateEntity-----------------------------------------------------------
-    private void checkInitiateEntity(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    private void checkInitiateEntity(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         String methodName = "InitiateController:-checkInitiateEntity()";
         try {
             if (initiateEntity.getVerificationType() != null && !initiateEntity.getVerificationType().equals("")) {
@@ -80,7 +80,7 @@ public class InitiateController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    private void addProperties(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         String methodName = "InitiateController:-addProperties()";
         try {
             //App properties
@@ -97,10 +97,10 @@ public class InitiateController {
     }
 
     //-------------------------------------------Call initiate Service-----------------------------------------------------------
-    private void callInitiate(final InitiateEntity initiateEntity, final Result<InitiateResponse> initiateResult) {
+    private void callInitiate(final InitiateEntity initiateEntity, final EventResult<InitiateResponse> initiateResult) {
         String methodName = "InitiateController:-initiate()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");

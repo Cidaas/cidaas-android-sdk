@@ -11,7 +11,7 @@ import java.util.Map;
 
 import de.cidaas.sdk.android.entities.SocialAccessTokenEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -60,7 +60,7 @@ public class AccessTokenService {
     }
 
     //Get Access Token by code
-    public void getAccessTokenByCode(String baseurl, String Code, final Result<AccessTokenEntity> acessTokencallback) {
+    public void getAccessTokenByCode(String baseurl, String Code, final EventResult<AccessTokenEntity> acessTokencallback) {
         String methodName = "AccessToken service :-getAccessTokenByCode()";
         try {
 
@@ -106,7 +106,7 @@ public class AccessTokenService {
     }
 
     private void serviceForGetAccessTokenByCode(String getAccessTokenUrl, Map<String, String> headers, Map<String, String> querymap,
-                                                final Result<AccessTokenEntity> acessTokencallback) {
+                                                final EventResult<AccessTokenEntity> acessTokencallback) {
         final String methodName = "AccessToken service :-serviceForGetAccessTokenByCode()";
         try {
             //call service
@@ -140,12 +140,12 @@ public class AccessTokenService {
     }
 
     //Get Access Token by Clientid and Client Secret
-    public void getAccessTokenByIdAndSecret(String ClientId, String ClientSecret, Result<AccessTokenEntity> callback) {
+    public void getAccessTokenByIdAndSecret(String ClientId, String ClientSecret, EventResult<AccessTokenEntity> callback) {
 
     }
 
     //--------------------------------------------------------Get AccessToken by Refresh Token-----------------------------------------------------------
-    public void getAccessTokenByRefreshToken(String refreshToken, Dictionary<String, String> loginProperties, final Result<AccessTokenEntity> callback) {
+    public void getAccessTokenByRefreshToken(String refreshToken, Dictionary<String, String> loginProperties, final EventResult<AccessTokenEntity> callback) {
         String methodName = "AccessToken service :-getAccessTokenByRefreshToken()";
         try {
             //Local Variables
@@ -188,7 +188,7 @@ public class AccessTokenService {
         }
     }
 
-    private void serviceForAccessTokenService(String url, Map<String, String> headers, Map<String, String> querymap, final Result<AccessTokenEntity> callback) {
+    private void serviceForAccessTokenService(String url, Map<String, String> headers, Map<String, String> querymap, final EventResult<AccessTokenEntity> callback) {
         final String methodName = "AccessToken service :-getAccessTokenByRefreshToken()";
         try {
             //call service
@@ -226,7 +226,7 @@ public class AccessTokenService {
 
     //----------------------------------------------------------get Access Token by Social---------------------------------------------------------------
     public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, Dictionary<String, String> loginProperties,
-                                       final Result<SocialProviderEntity> callback) {
+                                       final EventResult<SocialProviderEntity> callback) {
         String methodName = "AccessToken service :-getAccessTokenBySocial()";
         try {
 
@@ -246,7 +246,7 @@ public class AccessTokenService {
     }
 
 
-    private void serviceForGetAccessTokenBySocial(String baseURL, Map<String, String> headers, final Result<SocialProviderEntity> callback) {
+    private void serviceForGetAccessTokenBySocial(String baseURL, Map<String, String> headers, final EventResult<SocialProviderEntity> callback) {
         final String methodName = "AccessToken service :-serviceForGetAccessTokenBySocial()";
         try {
             ICidaasSDKService cidaasSDKService = service.getInstance();

@@ -20,7 +20,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
@@ -70,7 +70,7 @@ public class RegistrationService {
 
     //-----------------------------------------------------Get Regsiteration Details-------------------------------------------------------------------
     public void getRegistrationSetup(String baseurl, final RegistrationSetupRequestEntity registrationSetupRequestEntity,
-                                     DeviceInfoEntity deviceInfoEntityFromParam, final Result<RegistrationSetupResponseEntity> callback) {
+                                     DeviceInfoEntity deviceInfoEntityFromParam, final EventResult<RegistrationSetupResponseEntity> callback) {
         //Local Variables
 
         String methodName = "RegistrationService :getRegistrationSetup()";
@@ -98,7 +98,7 @@ public class RegistrationService {
         }
     }
 
-    private void serviceForGetRegistrationSetup(String registrationUrl, Map<String, String> headers, final Result<RegistrationSetupResponseEntity> callback) {
+    private void serviceForGetRegistrationSetup(String registrationUrl, Map<String, String> headers, final EventResult<RegistrationSetupResponseEntity> callback) {
         final String methodName = "RegistrationService :getRegistrationSetup()";
         try {
             final ICidaasNativeService cidaasNativeService = service.getInstance();
@@ -131,7 +131,7 @@ public class RegistrationService {
 
 
     //----------------------------------------------------------Register New User--------------------------------------------------------------------------
-    public void registerNewUser(String baseurl, final RegisterNewUserRequestEntity registerNewUserRequestEntity, final Result<RegisterNewUserResponseEntity> callback) {
+    public void registerNewUser(String baseurl, final RegisterNewUserRequestEntity registerNewUserRequestEntity, final EventResult<RegisterNewUserResponseEntity> callback) {
         //Local Variables
 
         String methodName = "";
@@ -161,7 +161,7 @@ public class RegistrationService {
     }
 
     private void serviceForRegisterNewUser(String registerNewUserUrl, RegisterNewUserRequestEntity registerNewUserRequestEntity, Map<String, String> headers,
-                                           final Result<RegisterNewUserResponseEntity> callback) {
+                                           final EventResult<RegisterNewUserResponseEntity> callback) {
         final String methodName = "RegistrationService :registerNewUser()";
         try {
             //Call Service-getRequestId
@@ -199,7 +199,7 @@ public class RegistrationService {
 
     //----------------------------------------------------Register New User initiate  Account Verification--------------------------------------------------
     public void initiateAccountVerification(String baseurl, final InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity,
-                                            final Result<InitiateAccountVerificationResponseEntity> callback) {
+                                            final EventResult<InitiateAccountVerificationResponseEntity> callback) {
         //Local Variables
 
         String methodName = "RegistrationService :initiateAccountVerification()";
@@ -225,7 +225,7 @@ public class RegistrationService {
 
     private void serviceForInitiateAccountVerification(String initiateAccountVerificationUrl,
                                                        InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity,
-                                                       Map<String, String> headers, final Result<InitiateAccountVerificationResponseEntity> callback) {
+                                                       Map<String, String> headers, final EventResult<InitiateAccountVerificationResponseEntity> callback) {
         final String methodName = "RegistrationService :verifyAccountVerification()";
         try {
             //Call Service-getRequestId
@@ -262,7 +262,7 @@ public class RegistrationService {
 
     //-----------------------------------------------------Register New User verify  Account Verification----------------------------------------------------
     public void verifyAccountVerification(String baseurl, final VerifyAccountRequestEntity verifyAccountRequestEntity,
-                                          final Result<VerifyAccountResponseEntity> callback) {
+                                          final EventResult<VerifyAccountResponseEntity> callback) {
         //Local Variables
 
         String methodName = "RegistrationService :verifyAccountVerification()";
@@ -289,7 +289,7 @@ public class RegistrationService {
     }
 
     private void serviceForVerifyAccountVerification(String verifyAccountVerificationUrl, VerifyAccountRequestEntity
-            verifyAccountRequestEntity, Map<String, String> headers, final Result<VerifyAccountResponseEntity> callback) {
+            verifyAccountRequestEntity, Map<String, String> headers, final EventResult<VerifyAccountResponseEntity> callback) {
         final String methodName = "RegistrationService :verifyAccountVerification()";
         try {
             //Call Service-getRequestId

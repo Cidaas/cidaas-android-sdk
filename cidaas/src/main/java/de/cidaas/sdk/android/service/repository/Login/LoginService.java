@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
@@ -52,7 +52,7 @@ public class LoginService {
     }
 
     //---------------------------------------------------------------Get all URL from the domain----------------------------------------------------------
-    public void getURLList(final String baseurl, final Result<Object> callback) {
+    public void getURLList(final String baseurl, final EventResult<Object> callback) {
         String methodName = "LoginService :getURLList()";
         try {
 
@@ -75,7 +75,7 @@ public class LoginService {
 
     }
 
-    private void serviceForGetURLList(String openIdurl, Map<String, String> headers, final Result<Object> callback) {
+    private void serviceForGetURLList(String openIdurl, Map<String, String> headers, final EventResult<Object> callback) {
         final String methodName = "LoginService :serviceForGetURLList()";
         try {
             //Call Service-getURLList

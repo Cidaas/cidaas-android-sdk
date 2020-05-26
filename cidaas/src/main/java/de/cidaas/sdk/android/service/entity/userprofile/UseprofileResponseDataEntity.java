@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.Service.Entity.UserProfile;
+package de.cidaas.sdk.android.service.entity.userprofile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

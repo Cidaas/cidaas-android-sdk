@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
@@ -57,7 +57,7 @@ public class UserLoginInfoService {
         return shared;
     }
 
-    public void getUserLoginInfoService(String baseurl, String accessToken, UserLoginInfoEntity userLoginInfoEntity, final Result<UserLoginInfoResponseEntity> callback) {
+    public void getUserLoginInfoService(String baseurl, String accessToken, UserLoginInfoEntity userLoginInfoEntity, final EventResult<UserLoginInfoResponseEntity> callback) {
         String methodName = "UserLoginInfoService :getUserLoginInfoService()";
         try {
             if (baseurl != null && !baseurl.equals("")) {
@@ -82,7 +82,7 @@ public class UserLoginInfoService {
     }
 
     private void serviceForUserLoginInfo(String userLoginInfoURL, UserLoginInfoEntity userLoginInfoEntity, Map<String, String> headers,
-                                         final Result<UserLoginInfoResponseEntity> callback) {
+                                         final EventResult<UserLoginInfoResponseEntity> callback) {
         final String methodName = "UserLoginInfoService :serviceForUserLoginInfo()";
         try {
             //Call Service-getRequestId

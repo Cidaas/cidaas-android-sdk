@@ -9,7 +9,7 @@ import java.util.Dictionary;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ChangePassword.ChangePasswordRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ChangePassword.ChangePasswordResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.ChangePassword.ChangePasswordService;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -56,9 +56,9 @@ public class ChangePasswordController {
     }
 
     //ChangePasswordService
-    public void changePassword(@NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
+    public void changePassword(@NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final EventResult<ChangePasswordResponseEntity> resetpasswordResult) {
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
@@ -78,7 +78,7 @@ public class ChangePasswordController {
         }
     }
 
-    private void checkandChangePasswordService(String baseurl, @NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final Result<ChangePasswordResponseEntity> resetpasswordResult) {
+    private void checkandChangePasswordService(String baseurl, @NonNull final ChangePasswordRequestEntity changePasswordRequestEntity, final EventResult<ChangePasswordResponseEntity> resetpasswordResult) {
         String methodName = "ChangePassword Controller :checkandChangePasswordService()";
         try {
 

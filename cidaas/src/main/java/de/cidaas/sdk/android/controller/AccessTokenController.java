@@ -7,7 +7,7 @@ import java.util.Dictionary;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.entities.SocialAccessTokenEntity;
 import de.cidaas.sdk.android.helper.converter.EntityToModelConverter;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -43,10 +43,10 @@ public class AccessTokenController {
     }
 
     //-------------------------------------------------------Get AccessToken By Code-------------------------------------------------------
-    public void getAccessTokenByCode(final String code, final Result<AccessTokenEntity> callback) {
+    public void getAccessTokenByCode(final String code, final EventResult<AccessTokenEntity> callback) {
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
@@ -66,12 +66,12 @@ public class AccessTokenController {
         }
     }
 
-    private void getAccessWithCode(String baseurl, final String code, final Result<AccessTokenEntity> callback) {
+    private void getAccessWithCode(String baseurl, final String code, final EventResult<AccessTokenEntity> callback) {
         String methodName = "AccessToken Controller :getAccessWithCode()";
         try {
             //Log File
             LogFile.getShared(context).addInfoLog("Info of ", " Info Baseurl" + baseurl + " code" + code);
-            AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, new Result<AccessTokenEntity>() {
+            AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(final AccessTokenEntity result) {
                     accessTokenConversion(result, callback);
@@ -88,11 +88,11 @@ public class AccessTokenController {
     }
 
     //-------------------------------------------------------- accessTokenConversion---------------------------------------------------------
-    private void accessTokenConversion(final AccessTokenEntity accessTokenEntity, final Result<AccessTokenEntity> callback) {
+    private void accessTokenConversion(final AccessTokenEntity accessTokenEntity, final EventResult<AccessTokenEntity> callback) {
         final String methodName = "AccessToken Controller :accessTokenConversion()";
         try {
             EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(),
-                    new Result<AccessTokenModel>() {
+                    new EventResult<AccessTokenModel>() {
                         @Override
                         public void success(AccessTokenModel modelresult) {
 
@@ -110,7 +110,7 @@ public class AccessTokenController {
     }
 
     //-------------------------------------------------------- Get Access Token by userId---------------------------------------------------------
-    public void getAccessToken(String sub, final Result<AccessTokenEntity> callback) {
+    public void getAccessToken(String sub, final EventResult<AccessTokenEntity> callback) {
         String methodName = "AccessToken Controller :getAccessToken()";
         try {
             LogFile.getShared(context).addInfoLog("Info " + methodName, " Info Sub:-" + sub);
@@ -129,7 +129,7 @@ public class AccessTokenController {
         }
     }
 
-    private void getAccessToken(String sub, Result<AccessTokenEntity> callback, AccessTokenModel accessTokenModel) {
+    private void getAccessToken(String sub, EventResult<AccessTokenEntity> callback, AccessTokenModel accessTokenModel) {
         String methodName = "AccessToken Controller :getAccessToken()";
         try {
             LogFile.getShared(context).addInfoLog("Info " + methodName, " Info Sub:-" + sub + " AccessToken" + accessTokenModel.getAccess_token() +
@@ -150,16 +150,16 @@ public class AccessTokenController {
     }
 
     //--------------------------------------------------------Get Access Token by Refresh Token-------------------------------------------------------
-    public void getAccessTokenByRefreshToken(final String refreshToken, final Result<AccessTokenEntity> callback) {
+    public void getAccessTokenByRefreshToken(final String refreshToken, final EventResult<AccessTokenEntity> callback) {
         String methodName = "AccessToken Controller :getAccessTokenByRefreshToken()";
         try {
             //Log Info message
             LogFile.getShared(context).addInfoLog("Info " + methodName, " Info RefreshToken:-" + refreshToken);
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken, loginPropertiesResult, new Result<AccessTokenEntity>() {
+                    AccessTokenService.getShared(context).getAccessTokenByRefreshToken(refreshToken, loginPropertiesResult, new EventResult<AccessTokenEntity>() {
                         @Override
                         public void success(AccessTokenEntity result) {
                             accessTokenConversion(result, callback);
@@ -183,7 +183,7 @@ public class AccessTokenController {
     }
 
     //----------------------------------------------------------Get access Token by Social-------------------------------------------------------------
-    public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, final Result<AccessTokenEntity> accessTokenEntityResult) {
+    public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, final EventResult<AccessTokenEntity> accessTokenEntityResult) {
         String methodName = "AccessToken Controller :getAccessTokenBySocial()";
         try {
             SocialAccessTokenEntity socialAccessTokenEntityAftercheck = checkNotNullForSocialEntity(socialAccessTokenEntity, accessTokenEntityResult);
@@ -192,7 +192,7 @@ public class AccessTokenController {
             if (socialAccessTokenEntityAftercheck != null) {
                 Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(socialAccessTokenEntity.getDomainURL());
 
-                AccessTokenService.getShared(context).getAccessTokenBySocial(socialAccessTokenEntityAftercheck, loginProperties, new Result<SocialProviderEntity>() {
+                AccessTokenService.getShared(context).getAccessTokenBySocial(socialAccessTokenEntityAftercheck, loginProperties, new EventResult<SocialProviderEntity>() {
                     @Override
                     public void success(SocialProviderEntity result) {
 
@@ -213,7 +213,7 @@ public class AccessTokenController {
         }
     }
 
-    private SocialAccessTokenEntity checkNotNullForSocialEntity(final SocialAccessTokenEntity socialTokenEntity, final Result<AccessTokenEntity> accessTokenResult) {
+    private SocialAccessTokenEntity checkNotNullForSocialEntity(final SocialAccessTokenEntity socialTokenEntity, final EventResult<AccessTokenEntity> accessTokenResult) {
 
 
         String methodName = "AccessToken Controller :checkNotNullForSocialEntity()";
@@ -255,7 +255,7 @@ public class AccessTokenController {
     }
 
     //----------------------------------------------------------setAccessToken----------------------------------------------------------------------
-    public void setAccessToken(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result) {
+    public void setAccessToken(final AccessTokenEntity accessTokenEntity, final EventResult<LoginCredentialsResponseEntity> result) {
         String methodName = "AccessToken Controller :setAccessToken()";
         try {
             if (accessTokenEntity.getSub() != null && !accessTokenEntity.getSub().equals("") &&
@@ -273,7 +273,7 @@ public class AccessTokenController {
     }
 
     //----------------------------------------------------------conversionToAccessTokenModel-------------------------------------------------------------
-    private void conversionToAccessTokenModel(final AccessTokenEntity accessTokenEntity, final Result<LoginCredentialsResponseEntity> result) {
+    private void conversionToAccessTokenModel(final AccessTokenEntity accessTokenEntity, final EventResult<LoginCredentialsResponseEntity> result) {
         String methodName = "AccessToken Controller :conversionToAccessTokenModel()";
         try {
             //Log Info message
@@ -282,7 +282,7 @@ public class AccessTokenController {
 
 
             //Entity converter
-            EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new Result<AccessTokenModel>() {
+            EntityToModelConverter.getShared(context).accessTokenEntityToAccessTokenModel(accessTokenEntity, accessTokenEntity.getSub(), new EventResult<AccessTokenModel>() {
                 @Override
                 public void success(AccessTokenModel accessTokenModel) {
                     generateLoginCredentials(accessTokenEntity, accessTokenModel, result);
@@ -300,7 +300,7 @@ public class AccessTokenController {
     }
 
     //----------------------------------------------------------generateLoginCredentials-------------------------------------------------------------
-    private void generateLoginCredentials(AccessTokenEntity accessTokenEntity, AccessTokenModel accessTokenModel, final Result<LoginCredentialsResponseEntity> result) {
+    private void generateLoginCredentials(AccessTokenEntity accessTokenEntity, AccessTokenModel accessTokenModel, final EventResult<LoginCredentialsResponseEntity> result) {
         String methodName = "AccessToken Controller :generateLoginCredentials()";
 
         try {

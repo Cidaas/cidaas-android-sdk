@@ -15,7 +15,7 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Helper.BiometricHandler.B
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Enroll.EnrollService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.AuthenticationType;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -53,13 +53,13 @@ public class EnrollController {
 
 
     //--------------------------------------------Enroll--------------------------------------------------------------
-    public void enrollVerification(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    public void enrollVerification(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         checkEnrollEntity(enrollEntity, enrollResult);
     }
 
 
     //-------------------------------------checkEnrollEntity-----------------------------------------------------------
-    private void checkEnrollEntity(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void checkEnrollEntity(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-checkEnrollEntity()";
         try {
             if (enrollEntity.getVerificationType() != null && !enrollEntity.getVerificationType().equals("") &&
@@ -77,7 +77,7 @@ public class EnrollController {
     }
 
     //-----------------------------------------------handleVerificationTypes---------------------------------------------------------------
-    private void handleVerificationTypes(EnrollEntity enrollEntity, Result<EnrollResponse> enrollResult) {
+    private void handleVerificationTypes(EnrollEntity enrollEntity, EventResult<EnrollResponse> enrollResult) {
         //Handle if Passcode is send for finger
         String methodName = "EnrollController:-handleVerificationTypes()";
         try {
@@ -125,12 +125,12 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void callFingerPrintAuthentication(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void callFingerPrintAuthentication(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-callFingerPrintAuthentication()";
         try {
             BiometricHandler biometricHandler = new BiometricHandler(enrollEntity.getFingerPrintEntity().getContext());
 
-            biometricHandler.callFingerPrint(enrollEntity.getFingerPrintEntity(), methodName, new Result<String>() {
+            biometricHandler.callFingerPrint(enrollEntity.getFingerPrintEntity(), methodName, new EventResult<String>() {
                 @Override
                 public void success(String result) {
                     //set pass code as device id and call enroll call
@@ -152,10 +152,10 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void addProperties(final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-addProperties()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -186,11 +186,11 @@ public class EnrollController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addPropertiesForFaceOrVoice(final MultipartBody.Part filetosend, final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void addPropertiesForFaceOrVoice(final MultipartBody.Part filetosend, final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-addPropertiesForFaceOrVoice()";
         try {
 
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -227,7 +227,7 @@ public class EnrollController {
     }
 
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
-    private void callEnroll(String baseurl, final EnrollEntity enrollEntity, final Result<EnrollResponse> enrollResult) {
+    private void callEnroll(String baseurl, final EnrollEntity enrollEntity, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-enroll()";
         try {
             String enrollUrl = VerificationURLHelper.getShared().getEnrollURL(baseurl, enrollEntity.getVerificationType());
@@ -246,7 +246,7 @@ public class EnrollController {
 
     //-------------------------------------------Call enroll Service-----------------------------------------------------------
     private void callEnrollForFaceandVoice(String baseurl, final MultipartBody.Part file, final HashMap<String, RequestBody> enrollHashmap,
-                                           final String verificationType, final Result<EnrollResponse> enrollResult) {
+                                           final String verificationType, final EventResult<EnrollResponse> enrollResult) {
         String methodName = "EnrollController:-enroll()";
         try {
             String enrollUrl = VerificationURLHelper.getShared().getEnrollURL(baseurl, verificationType);

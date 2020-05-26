@@ -25,7 +25,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -54,7 +54,7 @@ public class FileHelper {
     }
 
     //Read Properties
-    public void readProperties(AssetManager assetManager, String fileNameFromBase, Result<Dictionary<String, String>> result) {
+    public void readProperties(AssetManager assetManager, String fileNameFromBase, EventResult<Dictionary<String, String>> result) {
         String methodName = "FileHelper: readProperties()";
         InputStream inputStream;
         AssetManager asstManager = assetManager;
@@ -158,7 +158,7 @@ public class FileHelper {
     }
 
     //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret, Result<Dictionary<String, String>> callback) {
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret, EventResult<Dictionary<String, String>> callback) {
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
             if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
@@ -189,7 +189,7 @@ public class FileHelper {
 
 
     //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, Result<Dictionary<String, String>> callback) {
+    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, EventResult<Dictionary<String, String>> callback) {
         String methodName = "FileHelper :paramsToDictionaryConverter()";
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();

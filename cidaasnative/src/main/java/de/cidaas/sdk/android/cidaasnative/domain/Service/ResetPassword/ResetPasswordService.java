@@ -19,7 +19,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -69,7 +69,7 @@ public class ResetPasswordService {
     }
 
     public void initiateresetPassword(ResetPasswordRequestEntity resetPasswordRequestEntity, String baseurl, DeviceInfoEntity deviceInfoEntityFromParam,
-                                      final Result<ResetPasswordResponseEntity> callback) {
+                                      final EventResult<ResetPasswordResponseEntity> callback) {
         //Local Variables
         String resetpasswordUrl = "";
         try {
@@ -141,7 +141,7 @@ public class ResetPasswordService {
 
     //Reset Password Validate Code
     public void resetPasswordValidateCode(ResetPasswordValidateCodeRequestEntity resetPasswordValidateCodeRequestEntity,
-                                          String baseurl, final Result<ResetPasswordValidateCodeResponseEntity> callback) {
+                                          String baseurl, final EventResult<ResetPasswordValidateCodeResponseEntity> callback) {
         //Local Variables
         String resetpasswordValidateCodeUrl = "";
         try {
@@ -179,7 +179,7 @@ public class ResetPasswordService {
         }
     }
 
-    public void serviceForResetPasswordValidateCode(String resetpasswordValidateCodeUrl, ResetPasswordValidateCodeRequestEntity resetPasswordValidateCodeRequestEntity, Map<String, String> headers, final Result<ResetPasswordValidateCodeResponseEntity> callback) {
+    public void serviceForResetPasswordValidateCode(String resetpasswordValidateCodeUrl, ResetPasswordValidateCodeRequestEntity resetPasswordValidateCodeRequestEntity, Map<String, String> headers, final EventResult<ResetPasswordValidateCodeResponseEntity> callback) {
         //Call Service-getRequestId
         ICidaasNativeService cidaasNativeService = service.getInstance();
         cidaasNativeService.resetPasswordValidateCode(resetpasswordValidateCodeUrl, headers, resetPasswordValidateCodeRequestEntity)
@@ -212,7 +212,7 @@ public class ResetPasswordService {
 
     //Reset Password Validate Code
     public void resetNewPassword(ResetPasswordEntity resetPasswordEntity,
-                                 String baseurl, final Result<ResetNewPasswordResponseEntity> callback) {
+                                 String baseurl, final EventResult<ResetNewPasswordResponseEntity> callback) {
         //Local Variables
         String ResetNewPasswordUrl = "";
         try {
@@ -249,7 +249,7 @@ public class ResetPasswordService {
         }
     }
 
-    public void serviceCallForResetNewPassword(String resetNewPasswordUrl, ResetPasswordEntity resetPasswordEntity, Map<String, String> headers, final Result<ResetNewPasswordResponseEntity> callback) {
+    public void serviceCallForResetNewPassword(String resetNewPasswordUrl, ResetPasswordEntity resetPasswordEntity, Map<String, String> headers, final EventResult<ResetNewPasswordResponseEntity> callback) {
         //Call Service-getRequestId
         ICidaasNativeService cidaasNativeService = service.getInstance();
         cidaasNativeService.ResetNewPassword(resetNewPasswordUrl, headers, resetPasswordEntity)

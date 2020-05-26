@@ -13,7 +13,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
@@ -62,7 +62,7 @@ public class DeduplicationService {
     }
 
     //----------------------------------------------------Get Deduplication info--------------------------------------------------
-    public void getDeduplicationList(String baseurl, String trackId, final Result<DeduplicationResponseEntity> callback) {
+    public void getDeduplicationList(String baseurl, String trackId, final EventResult<DeduplicationResponseEntity> callback) {
         //Local Variables
         String methodName = "DeduplicationService :getDeduplicationList()";
         try {
@@ -88,7 +88,7 @@ public class DeduplicationService {
         }
     }
 
-    private void serviceCallForDeduplicationList(final Result<DeduplicationResponseEntity> callback, String deduplicationUrl, Map<String, String> headers) {
+    private void serviceCallForDeduplicationList(final EventResult<DeduplicationResponseEntity> callback, String deduplicationUrl, Map<String, String> headers) {
         final String methodName = "DeduplicationService :serviceCallForDeduplicationList()";
         try {
             //Call Service-getRequestId
@@ -122,7 +122,7 @@ public class DeduplicationService {
     }
 
     //--------------------------------------------------Register Deduplication info------------------------------------------------
-    public void registerDeduplication(String baseurl, String trackId, final Result<RegisterDeduplicationEntity> callback) {
+    public void registerDeduplication(String baseurl, String trackId, final EventResult<RegisterDeduplicationEntity> callback) {
         //Local Variables
         String methodName = "DeduplicationService :registerDeduplication()";
         try {
@@ -147,7 +147,7 @@ public class DeduplicationService {
         }
     }
 
-    private void serviceCallForRegisterDeduplication(String registerDeduplicationUrl, Map<String, String> headers, final Result<RegisterDeduplicationEntity> callback) {
+    private void serviceCallForRegisterDeduplication(String registerDeduplicationUrl, Map<String, String> headers, final EventResult<RegisterDeduplicationEntity> callback) {
         final String methodName = "";
         try {
             //Call Service-getRequestId

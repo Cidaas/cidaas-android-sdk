@@ -13,7 +13,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswor
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.ResetPassword.ResetPasswordService;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.properties.CidaasProperties;
@@ -48,11 +48,11 @@ public class ResetPasswordController {
 
     //----------------------------------------initiateresetPasswordService------------------------------------------------------------------
     public void initiateresetPasswordService(final String requestId, final String email, @NonNull final String resetMedium,
-                                             final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+                                             final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         final String methodName = "RegistrationController :initiateresetPasswordService()";
         try {
             if (requestId != null && !requestId.equals("") && email != null && !email.equals("") && resetMedium != null && !resetMedium.equals("")) {
-                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> loginPropertiesResult) {
                         successOfInitiateResetPassword(requestId, email, resetMedium, loginPropertiesResult, resetPasswordResponseEntityResult);
@@ -75,7 +75,7 @@ public class ResetPasswordController {
 
     //----------------------------------------successOfInitiateResetPassword------------------------------------------------------------------
     public void successOfInitiateResetPassword(final String requestId, final String email, @NonNull final String resetMedium,
-                                               Dictionary<String, String> loginPropertiesResult, final Result<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+                                               Dictionary<String, String> loginPropertiesResult, final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         String methodName = "RegistrationController :successOfInitiateResetPassword()";
         try {
             String baseurl = loginPropertiesResult.get("DomainURL");
@@ -101,7 +101,7 @@ public class ResetPasswordController {
 
     //initiateResetResetPasswordService
     public void initiateresetPasswordService(@NonNull String baseurl, @NonNull ResetPasswordRequestEntity resetPasswordRequestEntity,
-                                             final Result<ResetPasswordResponseEntity> resetpasswordResult) {
+                                             final EventResult<ResetPasswordResponseEntity> resetpasswordResult) {
         String methodName = "RegistrationController :initiateresetPasswordService()";
         try {
 
@@ -124,10 +124,10 @@ public class ResetPasswordController {
 
     //----------------------------------------------------ResetResetPasswordValidateCodeService---------------------------------------------------
     public void resetPasswordValidateCode(@NonNull final String verificationCode, @NonNull final String rprq,
-                                          final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult) {
+                                          final EventResult<ResetPasswordValidateCodeResponseEntity> resetpasswordResult) {
         final String methodName = "RegistrationController :resetPasswordValidateCode()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
@@ -147,7 +147,7 @@ public class ResetPasswordController {
 
     //------------------------------------------------------------------successOfResetPasswordValidateCode--------------------------------------------
     public void successOfResetPasswordValidateCode(String baseurl, @NonNull final String verificationCode, @NonNull final String rprq,
-                                                   final Result<ResetPasswordValidateCodeResponseEntity> resetpasswordResult) {
+                                                   final EventResult<ResetPasswordValidateCodeResponseEntity> resetpasswordResult) {
         String methodName = "RegistrationController :successOfResetPasswordValidateCode()";
         try {
             if (verificationCode != null && !verificationCode.equals("") && rprq != null && !rprq.equals("")) {
@@ -168,10 +168,10 @@ public class ResetPasswordController {
     }
 
 
-    public void resetNewPassword(final ResetPasswordEntity resetPasswordEntity, final Result<ResetNewPasswordResponseEntity> resetpasswordResult) {
+    public void resetNewPassword(final ResetPasswordEntity resetPasswordEntity, final EventResult<ResetNewPasswordResponseEntity> resetpasswordResult) {
         final String methodName = "";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
@@ -191,7 +191,7 @@ public class ResetPasswordController {
         }
     }
 
-    public void notNullChecking(String baseurl, final ResetPasswordEntity resetPasswordEntity, final Result<ResetNewPasswordResponseEntity> resetpasswordResult) {
+    public void notNullChecking(String baseurl, final ResetPasswordEntity resetPasswordEntity, final EventResult<ResetNewPasswordResponseEntity> resetpasswordResult) {
         String methodName = "RegistrationController :notNullChecking()";
         try {
             if (resetPasswordEntity.getPassword() != null && !resetPasswordEntity.getPassword().equals("") && resetPasswordEntity.getConfirmPassword() != null
@@ -224,7 +224,7 @@ public class ResetPasswordController {
 
 
     //---------------------------------------------resetNewPasswordService
-    public void resetNewPassword(@NonNull String baseurl, ResetPasswordEntity resetPasswordEntity, final Result<ResetNewPasswordResponseEntity>
+    public void resetNewPassword(@NonNull String baseurl, ResetPasswordEntity resetPasswordEntity, final EventResult<ResetNewPasswordResponseEntity>
             resetpasswordResult) {
         String methodName = "RegistrationController :resetNewPassword()";
         try {
@@ -234,7 +234,7 @@ public class ResetPasswordController {
                     && baseurl != null && !baseurl.equals("")) {
 
                 ResetPasswordService.getShared(context).resetNewPassword(resetPasswordEntity, baseurl,
-                        new Result<ResetNewPasswordResponseEntity>() {
+                        new EventResult<ResetNewPasswordResponseEntity>() {
 
                             @Override
                             public void success(ResetNewPasswordResponseEntity serviceresult) {

@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.service.entity.mfaAuthenticateMFA.Face;
+package de.cidaas.sdk.android.service.entity.mfa.AuthenticateMFA.Face;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

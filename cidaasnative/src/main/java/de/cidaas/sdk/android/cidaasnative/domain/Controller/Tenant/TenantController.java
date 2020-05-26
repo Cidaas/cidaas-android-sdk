@@ -8,7 +8,7 @@ import java.util.Dictionary;
 
 import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.Tenant.TenantService;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -40,13 +40,13 @@ public class TenantController {
     }
 
     //Service call To get Tenant Info
-    public void getTenantInfo(@NonNull String baseurl, final Result<TenantInfoEntity> result) {
+    public void getTenantInfo(@NonNull String baseurl, final EventResult<TenantInfoEntity> result) {
         String methodName = "TenantController :getTenantInfo()";
         try {
 
             if (CidaasHelper.baseurl != null && !CidaasHelper.baseurl.equals("")) {
 
-                CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+                CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> stringresult) {
                         TenantService.getShared(context).getTenantInfo(stringresult.get("DomainURL"), result);

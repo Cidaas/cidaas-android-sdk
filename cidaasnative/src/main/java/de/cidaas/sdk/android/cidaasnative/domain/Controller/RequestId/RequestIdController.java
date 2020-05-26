@@ -10,7 +10,7 @@ import java.util.Hashtable;
 
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.Service.RequestId.RequestIdService;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -78,7 +78,7 @@ public class RequestIdController {
     }
 
     //Service call for RequestID
-    public void getRequestId(final Dictionary<String, String> loginproperties, final Result<AuthRequestResponseEntity> Primaryresult, @Nullable HashMap<String, String>... extraParams) {
+    public void getRequestId(final Dictionary<String, String> loginproperties, final EventResult<AuthRequestResponseEntity> Primaryresult, @Nullable HashMap<String, String>... extraParams) {
         String methodName = "RequestIdController :getRequestId()";
         try {
 
@@ -103,7 +103,7 @@ public class RequestIdController {
         }
     }
 
-    private boolean checkNotnull(Dictionary<String, String> loginproperties, Result<AuthRequestResponseEntity> Primaryresult) {
+    private boolean checkNotnull(Dictionary<String, String> loginproperties, EventResult<AuthRequestResponseEntity> Primaryresult) {
         String methodName = "RequestIdController:checkNotnull() ";
         if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL").equals("")
                 || !((Hashtable) loginproperties).containsKey("DomainURL")) {

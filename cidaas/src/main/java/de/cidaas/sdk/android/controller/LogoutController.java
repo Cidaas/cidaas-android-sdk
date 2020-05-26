@@ -4,7 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
@@ -33,7 +33,7 @@ public class LogoutController {
         return shared;
     }
 
-    public void getLogoutURL(@NonNull String baseurl, String access_token_hint, String post_logout_redirect_uri, Result<String> result) {
+    public void getLogoutURL(@NonNull String baseurl, String access_token_hint, String post_logout_redirect_uri, EventResult<String> result) {
         try {
             String LogoutURL = "";
             if (access_token_hint != null && !access_token_hint.equals("")) {

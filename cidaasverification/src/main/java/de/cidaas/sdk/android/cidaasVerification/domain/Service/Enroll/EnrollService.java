@@ -12,7 +12,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Enroll.EnrollRespons
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -52,7 +52,7 @@ public class EnrollService {
 
     //call enroll Service
     public void callEnrollService(@NonNull String enrollURL, Map<String, String> headers, EnrollEntity enrollEntity,
-                                  final Result<EnrollResponse> enrollCallback) {
+                                  final EventResult<EnrollResponse> enrollCallback) {
         final String methodName = "EnrollService:-callEnrollService()";
         try {
             //call service
@@ -83,7 +83,7 @@ public class EnrollService {
 
     //call enroll Service
     public void callEnrollServiceForFaceOrVoice(MultipartBody.Part fileToSend, @NonNull String enrollURL, Map<String, String> headers, HashMap<String, RequestBody> enrollHashmap,
-                                                final Result<EnrollResponse> enrollCallback) {
+                                                final EventResult<EnrollResponse> enrollCallback) {
         final String methodName = "EnrollService:-callEnrollServiceForFaceOrVoice()";
         try {
             //call service

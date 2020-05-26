@@ -12,7 +12,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.UpdateFCMToken.Updat
 import de.cidaas.sdk.android.cidaasVerification.data.Service.Helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasVerification.domain.Service.Settings.SettingsService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -47,13 +47,13 @@ public class SettingsController {
     }
 
     //--------------------------------------------Settings--------------------------------------------------------------
-    public void getConfiguredMFAList(String sub, final Result<ConfiguredMFAList> settingsResult) {
+    public void getConfiguredMFAList(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
         checkConfiguredMFAList(sub, settingsResult);
     }
 
 
     //-------------------------------------checkScannedEntity-----------------------------------------------------------
-    private void checkConfiguredMFAList(String sub, final Result<ConfiguredMFAList> settingsResult) {
+    private void checkConfiguredMFAList(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
         String methodName = "SettingsController:-checkConfiguredMFAList()";
         try {
             if (sub != null && !sub.equals("")) {
@@ -71,11 +71,11 @@ public class SettingsController {
 
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addProperties(final String sub, final Result<ConfiguredMFAList> configuredMFAListResult) {
+    private void addProperties(final String sub, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
         String methodName = "SettingsController:-addProperties()";
         try {
             //App properties
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -103,7 +103,7 @@ public class SettingsController {
     }
 
     //-------------------------------------------Call settings Service-----------------------------------------------------------
-    private void callSettings(String baseurl, final GetMFAListEntity getMFAListEntity, final Result<ConfiguredMFAList> configuredMFAListResult) {
+    private void callSettings(String baseurl, final GetMFAListEntity getMFAListEntity, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
         String methodName = "SettingsController:-callSettings()";
         try {
             String configuredListURL = VerificationURLHelper.getShared().getConfiguredListURL(baseurl);
@@ -142,7 +142,7 @@ public class SettingsController {
     public void addPropertiesForFCM(final String newFCMToken) {
         final String methodName = "SettingsController:-addPropertiesForFCM()";
         if (newFCMToken != null && !newFCMToken.equals("")) {
-            CidaasProperties.getShared(context).checkCidaasProperties(new Result<Dictionary<String, String>>() {
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get("DomainURL");
@@ -177,7 +177,7 @@ public class SettingsController {
             Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
 
             //Settings Service call
-            SettingsService.getShared(context).updateFCMToken(updateFCMTokenURL, headers, updateFCMTokenEntity, new Result<UpdateFCMTokenResponseEntity>() {
+            SettingsService.getShared(context).updateFCMToken(updateFCMTokenURL, headers, updateFCMTokenEntity, new EventResult<UpdateFCMTokenResponseEntity>() {
                 @Override
                 public void success(UpdateFCMTokenResponseEntity result) {
                     DBHelper.getShared().setFCMToken(updateFCMTokenEntity.getPush_id());

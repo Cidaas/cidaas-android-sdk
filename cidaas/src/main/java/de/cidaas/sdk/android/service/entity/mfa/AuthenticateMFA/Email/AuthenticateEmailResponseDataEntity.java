@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.service.entity.mfaAuthenticateMFA.Email;
+package de.cidaas.sdk.android.service.entity.mfa.AuthenticateMFA.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

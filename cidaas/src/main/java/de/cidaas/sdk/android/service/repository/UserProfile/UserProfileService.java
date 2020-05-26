@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
@@ -60,7 +60,7 @@ public class UserProfileService {
     }
 
     //-----------------------------------------------------------------Get Internal UserProfile Info------------------------------------------------------
-    public void getInternalUserProfileInfo(String baseurl, String AccessToken, String sub, final Result<UserprofileResponseEntity> callback) {
+    public void getInternalUserProfileInfo(String baseurl, String AccessToken, String sub, final EventResult<UserprofileResponseEntity> callback) {
         //Local Variables
         String methodName = "UserProfileService :getInternalUserProfileInfo()";
         try {
@@ -89,7 +89,7 @@ public class UserProfileService {
     }
 
     public void serviceForGetInternalUserProfileInfo(String internalUserProfileUrl, Map<String, String> headers,
-                                                     final Result<UserprofileResponseEntity> callback) {
+                                                     final EventResult<UserprofileResponseEntity> callback) {
         final String methodName = "UserProfileService :getInternalUserProfileInfo()";
         try {
             //Call Service-getRequestId

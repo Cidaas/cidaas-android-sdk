@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Scanned.ScannedRespo
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -50,7 +50,7 @@ public class ScannedService {
 
     //call Scanned Service
     public void callScannedService(@NonNull String scannedURL, Map<String, String> headers, ScannedEntity scannedEntity,
-                                   final Result<ScannedResponse> scannedCallback) {
+                                   final EventResult<ScannedResponse> scannedCallback) {
         final String methodName = "ScannedService:-callScannedService()";
         try {
             //call service

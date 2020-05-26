@@ -11,7 +11,7 @@ import de.cidaas.sdk.android.cidaasVerification.data.Entity.Delete.DeleteRespons
 import de.cidaas.sdk.android.cidaasVerification.data.Service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasVerification.data.Service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -50,7 +50,7 @@ public class DeleteService {
 
     //call For Delete and Delete All Service
     public void callDeleteService(@NonNull String deleteURL, Map<String, String> headers, DeleteEntity deleteEntity,
-                                  final Result<DeleteResponse> deleteCallback) {
+                                  final EventResult<DeleteResponse> deleteCallback) {
         final String methodName = "DeleteService:-callDeleteService()";
         try {
             //call service

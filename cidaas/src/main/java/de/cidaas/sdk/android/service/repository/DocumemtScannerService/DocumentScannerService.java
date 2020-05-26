@@ -11,7 +11,7 @@ import java.util.Map;
 
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -64,7 +64,7 @@ public class DocumentScannerService {
 
 
     //Get Deduplication info
-    public void sendDocumentToService(String baseurl, File photoDoc, String accessToken, DeviceInfoEntity deviceInfoEntityFromparam, final Result<DocumentScannerServiceResultEntity> callback) {
+    public void sendDocumentToService(String baseurl, File photoDoc, String accessToken, DeviceInfoEntity deviceInfoEntityFromparam, final EventResult<DocumentScannerServiceResultEntity> callback) {
         //Local Variables
         final String methodName = "DocumentScannerService :sendDocumentToService()";
         try {

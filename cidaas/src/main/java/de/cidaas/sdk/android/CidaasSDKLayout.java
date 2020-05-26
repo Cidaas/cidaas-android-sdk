@@ -35,7 +35,7 @@ import de.cidaas.sdk.android.controller.LoginController;
 import de.cidaas.sdk.android.controller.LogoutController;
 import de.cidaas.sdk.android.entities.SocialAccessTokenEntity;
 import de.cidaas.sdk.android.helper.CidaasSDKHelper;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -96,7 +96,7 @@ public class CidaasSDKLayout extends RelativeLayout {
     private static boolean displayLoader = false;
 
 
-    public Result<AccessTokenEntity> logincallback;
+    public EventResult<AccessTokenEntity> logincallback;
 
 
     Dictionary<String, String> loginProperties = new Hashtable<>();
@@ -115,14 +115,14 @@ public class CidaasSDKLayout extends RelativeLayout {
         CidaasHelper.baseurl = DomainURL;
 
 
-        saveLoginProperties(new Result<Dictionary<String, String>>() {
+        saveLoginProperties(new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> loginResult) {
 
                 loginProperties = loginResult;
                 DomainURL = loginResult.get("DomainURL");
 
-                checkPKCEFlow(loginResult, new Result<Dictionary<String, String>>() {
+                checkPKCEFlow(loginResult, new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> result) {
                         DBHelper.getShared().addLoginProperties(result);
@@ -206,7 +206,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         try {
 
 
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
+            checkSavedProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
@@ -230,7 +230,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                                 stringComponents = stringComponents[1].split("&");
                                 if (stringComponents.length > 0) {
                                     CidaasSDKLayout.GLOBAL_INITIAL_CODE_VERIFIER = CidaasSDKLayout.GLOBAL_CODE_VERIFIER;
-                                    AccessTokenController.getShared(GLOBAL_CONTEXT).getAccessTokenByCode(stringComponents[0], new Result<AccessTokenEntity>() {
+                                    AccessTokenController.getShared(GLOBAL_CONTEXT).getAccessTokenByCode(stringComponents[0], new EventResult<AccessTokenEntity>() {
                                         @Override
                                         public void success(AccessTokenEntity result) {
                                             hideLoader();
@@ -299,11 +299,11 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     //Get Login URL without any Argument
-    public void getLoginURL(final Result<String> callback) {
+    public void getLoginURL(final EventResult<String> callback) {
         try {
             //Check requestId is not null
 
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
+            checkSavedProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
 
@@ -311,7 +311,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
                     //This is to generate the Code Challenge
 
-                    LoginController.getShared(GLOBAL_CONTEXT).getLoginURL(DomainURL, result, null, new Result<String>() {
+                    LoginController.getShared(GLOBAL_CONTEXT).getLoginURL(DomainURL, result, null, new EventResult<String>() {
                         @Override
                         public void success(String result) {
 
@@ -486,7 +486,7 @@ public class CidaasSDKLayout extends RelativeLayout {
     private void googleSDKFlow() {
         try {
             showLoader();
-            iCidaasGoogle.login(new Result<AccessTokenEntity>() {
+            iCidaasGoogle.login(new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     hideLoader();
@@ -530,7 +530,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             showLoader();
 
 
-            iCidaasFacebook.login(new Result<AccessTokenEntity>() {
+            iCidaasFacebook.login(new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     hideLoader();
@@ -573,7 +573,7 @@ public class CidaasSDKLayout extends RelativeLayout {
     private void login(RelativeLayout relativeLayout) {
         try {
 
-            getLoginURL(new Result<String>() {
+            getLoginURL(new EventResult<String>() {
                 @Override
                 public void success(String result) {
                     String url = result;
@@ -605,7 +605,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     //Login with WEBVIEW
-    public void loginWithEmbeddedBrowser(final RelativeLayout relativeLayout, final Result<AccessTokenEntity> loginResultcallback) {
+    public void loginWithEmbeddedBrowser(final RelativeLayout relativeLayout, final EventResult<AccessTokenEntity> loginResultcallback) {
         try {
 
             webViewInstance = getWebViewInstance();
@@ -645,7 +645,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
             final Dictionary<String, String> loginProperties = new Hashtable<>();
-            checkSavedProperties(new Result<Dictionary<String, String>>() {
+            checkSavedProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
 
@@ -719,7 +719,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     //GetAccessToken bySocial
-    public void getAccessTokenBySocialWithLoader(final String token, final String provider, String DomainUrl, final String viewType, final Result<AccessTokenEntity> accessTokenCallback, final HashMap<String, String>... extraParams) {
+    public void getAccessTokenBySocialWithLoader(final String token, final String provider, String DomainUrl, final String viewType, final EventResult<AccessTokenEntity> accessTokenCallback, final HashMap<String, String>... extraParams) {
         showLoader();
 
         SocialAccessTokenEntity socialAccessTokenEntity = new SocialAccessTokenEntity();
@@ -728,7 +728,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         socialAccessTokenEntity.setProvider(provider);
         socialAccessTokenEntity.setViewType(viewType);
 
-        Cidaas.getInstance(GLOBAL_Activity).getAccessTokenBySocial(socialAccessTokenEntity, new Result<AccessTokenEntity>() {
+        Cidaas.getInstance(GLOBAL_Activity).getAccessTokenBySocial(socialAccessTokenEntity, new EventResult<AccessTokenEntity>() {
             @Override
             public void success(AccessTokenEntity result) {
                 hideLoader();
@@ -807,10 +807,10 @@ public class CidaasSDKLayout extends RelativeLayout {
         getLoginCode(URL);
     }
 
-    private void saveLoginProperties(final Result<Dictionary<String, String>> result) {
+    private void saveLoginProperties(final EventResult<Dictionary<String, String>> result) {
         final String methodName = "CidaasSDKLayout:saveLoginProperties()";
         try {
-            readFromFile(new Result<Dictionary<String, String>>() {
+            readFromFile(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
                     if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
@@ -840,14 +840,14 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     //ReadFromXML File
-    private void readFromFile(final Result<Dictionary<String, String>> loginPropertiesResult) {
+    private void readFromFile(final EventResult<Dictionary<String, String>> loginPropertiesResult) {
         FileHelper fileHelper = FileHelper.getShared(GLOBAL_CONTEXT);
-        fileHelper.readProperties(GLOBAL_CONTEXT.getAssets(), "Cidaas.xml", new Result<Dictionary<String, String>>() {
+        fileHelper.readProperties(GLOBAL_CONTEXT.getAssets(), "Cidaas.xml", new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(final Dictionary<String, String> loginProperties) {
 
                 //on successfully completion of file reading add it to LocalDB(shared Preference) and call requestIdByloginProperties
-                checkPKCEFlow(loginProperties, new Result<Dictionary<String, String>>() {
+                checkPKCEFlow(loginProperties, new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> savedLoginProperties) {
                         loginPropertiesResult.success(savedLoginProperties);
@@ -876,7 +876,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     //Method to check the pkce flow and save it to DB
-    private void checkPKCEFlow(Dictionary<String, String> loginproperties, Result<Dictionary<String, String>> savedResult) {
+    private void checkPKCEFlow(Dictionary<String, String> loginproperties, EventResult<Dictionary<String, String>> savedResult) {
         String methodName = "checkPKCEFlow";
         try {
 
@@ -934,7 +934,7 @@ public class CidaasSDKLayout extends RelativeLayout {
     }
 
 
-    public void checkSavedProperties(final Result<Dictionary<String, String>> result) {
+    public void checkSavedProperties(final EventResult<Dictionary<String, String>> result) {
         String methodName = "checkSavedProperties";
         if (DomainURL != null && !DomainURL.equals("")) {
 
@@ -959,7 +959,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 result.success(loginProperties);
             } else {
                 //Read File from asset to get URL
-                readFromFile(new Result<Dictionary<String, String>>() {
+                readFromFile(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> savedLoginProperties) {
                         //Call requestIdBy LoginProperties parameter
@@ -992,7 +992,7 @@ public class CidaasSDKLayout extends RelativeLayout {
     }
 
     //Logout
-    public void logout(final String sub, final String post_logout_redirect_url, final Result<String> response) {
+    public void logout(final String sub, final String post_logout_redirect_url, final EventResult<String> response) {
         String methodName = "logout";
         try {
             //StorageHelper.setConfig(context);
@@ -1001,11 +1001,11 @@ public class CidaasSDKLayout extends RelativeLayout {
             //  CidaasSDKEntity.cidaasSDKEntityInstance.readInputs(context);
 
             // Get Access Token for service call
-            AccessTokenController.getShared(GLOBAL_CONTEXT).getAccessToken(sub, new Result<AccessTokenEntity>() {
+            AccessTokenController.getShared(GLOBAL_CONTEXT).getAccessToken(sub, new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     //Call Logout method
-                    LogoutController.getShared(GLOBAL_CONTEXT).getLogoutURL(CidaasHelper.baseurl, result.getAccess_token(), post_logout_redirect_url, new Result<String>() {
+                    LogoutController.getShared(GLOBAL_CONTEXT).getLogoutURL(CidaasHelper.baseurl, result.getAccess_token(), post_logout_redirect_url, new EventResult<String>() {
                         @Override
                         public void success(String result) {
                             //Clear cookies
@@ -1065,7 +1065,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
 
-          /* LogoutController.getShared(GLOBAL_CONTEXT).logout(Cidaas.baseurl,);
+          /* LogoutController.getShared(GLOBAL_CONTEXT).logout(CidaasHelper.baseurl,);
 
             CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.removeAllCookie();

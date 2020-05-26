@@ -12,7 +12,7 @@ import java.util.Map;
 
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -61,7 +61,7 @@ public class OauthService {
 
 
     //Get Login URL
-    public void getLoginUrl(String requestId, @NonNull String DomainURL, final Result<String> callback) {
+    public void getLoginUrl(String requestId, @NonNull String DomainURL, final EventResult<String> callback) {
         try {
             //Local Variables
             String finalUrl = "";
@@ -90,7 +90,7 @@ public class OauthService {
     }
 
 
-    public void getUserinfo(String AccessToken, String DomainURL, final Result<UserinfoEntity> callback) {
+    public void getUserinfo(String AccessToken, String DomainURL, final EventResult<UserinfoEntity> callback) {
         final String methodName = "OauthService:-getUserinfo()";
         try {
             //Local Variables

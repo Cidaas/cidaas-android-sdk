@@ -14,7 +14,7 @@ import de.cidaas.sdk.android.cidaasVerification.domain.Controller.Authentication
 import de.cidaas.sdk.android.cidaasVerification.domain.Helper.TOTPGenerator.GoogleAuthenticator;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.helper.AuthenticationType;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.UsageType;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -49,7 +49,7 @@ public class PasswordlessLoginController {
 
     //--------------------------------------------Login--------------------------------------------------------------
     public void loginVerification(final LoginRequest loginRequest, final String verificationType,
-                                  final Result<LoginCredentialsResponseEntity> loginCredentialsResult) {
+                                  final EventResult<LoginCredentialsResponseEntity> loginCredentialsResult) {
         initiateLogin(loginRequest, verificationType, loginCredentialsResult);
     }
 
@@ -62,7 +62,7 @@ public class PasswordlessLoginController {
      */
 
     //--------------------------------------------Initiate Login--------------------------------------------------------------
-    private void initiateLogin(final LoginRequest loginRequest, final String verificationType, final Result<LoginCredentialsResponseEntity>
+    private void initiateLogin(final LoginRequest loginRequest, final String verificationType, final EventResult<LoginCredentialsResponseEntity>
             loginCredentialsResult) {
         String methodName = "PasswordlessLoginController:-initiateLogin()";
         try {
@@ -72,7 +72,7 @@ public class PasswordlessLoginController {
                 InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), requestId, loginRequest.getUsageType(),
                         verificationType);
 
-                initiate(initiateEntity, new Result<InitiateResponse>() {
+                initiate(initiateEntity, new EventResult<InitiateResponse>() {
                     @Override
                     public void success(InitiateResponse initiateResult) {
                         // handle Authenticate entity and call authenticate
@@ -106,7 +106,7 @@ public class PasswordlessLoginController {
 
 
     public void handleTypesForAuthentication(InitiateResponse initiateResult, final LoginRequest loginRequest, String requestId,
-                                             final String verificationType, final Result<LoginCredentialsResponseEntity> loginCredentialsResult) {
+                                             final String verificationType, final EventResult<LoginCredentialsResponseEntity> loginCredentialsResult) {
         String methodName = "PasswordlessLoginController:handleTypesForAuthentication()";
         try {
             AuthenticateEntity authenticateEntity;
@@ -171,10 +171,10 @@ public class PasswordlessLoginController {
      */
 
     public void authenticateVerification(final AuthenticateEntity authenticateEntity, final String verificationType, final String requestId,
-                                         final LoginRequest loginRequest, final Result<LoginCredentialsResponseEntity> loginCredentialsResult) {
+                                         final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> loginCredentialsResult) {
         final String methodName = "PasswordlessLoginController:authenticateVerification()";
         try {
-            AuthenticateController.getShared(context).authenticateVerification(authenticateEntity, new Result<AuthenticateResponse>() {
+            AuthenticateController.getShared(context).authenticateVerification(authenticateEntity, new EventResult<AuthenticateResponse>() {
                 @Override
                 public void success(AuthenticateResponse result) {
                     //Sdk continue Call
@@ -209,7 +209,7 @@ public class PasswordlessLoginController {
      * @param verificationContinueEntity
      * @param loginCredentialsResponseEntityResult 1.Call Resume call to get Access Token
      */
-    private void verificationContinue(VerificationContinue verificationContinueEntity, Result<LoginCredentialsResponseEntity> loginCredentialsResponseEntityResult) {
+    private void verificationContinue(VerificationContinue verificationContinueEntity, EventResult<LoginCredentialsResponseEntity> loginCredentialsResponseEntityResult) {
         VerificationContinueController.getShared(context).verificationContinue(verificationContinueEntity, loginCredentialsResponseEntityResult);
     }
 
@@ -218,7 +218,7 @@ public class PasswordlessLoginController {
      * @param initiateResponseResult 1. Call Initiate to start the authentication Flow
      */
     //-------------------------------------------------------INITIATE CALL--------------------------------------------------------------
-    private void initiate(InitiateEntity initiateEntity, Result<InitiateResponse> initiateResponseResult) {
+    private void initiate(InitiateEntity initiateEntity, EventResult<InitiateResponse> initiateResponseResult) {
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResponseResult);
     }
 

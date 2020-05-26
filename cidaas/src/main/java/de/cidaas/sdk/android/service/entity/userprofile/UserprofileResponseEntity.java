@@ -8,9 +8,9 @@ import java.io.Serializable;
 public class UserprofileResponseEntity implements Serializable {
     boolean success;
     int status;
-    de.cidaas.sdk.android.Service.Entity.UserProfile.UseprofileResponseDataEntity data;
+    UseprofileResponseDataEntity data;
 
-    public void setData(de.cidaas.sdk.android.Service.Entity.UserProfile.UseprofileResponseDataEntity data) {
+    public void setData(UseprofileResponseDataEntity data) {
         this.data = data;
     }
 
@@ -30,7 +30,7 @@ public class UserprofileResponseEntity implements Serializable {
         this.status = status;
     }
 
-    public de.cidaas.sdk.android.Service.Entity.UserProfile.UseprofileResponseDataEntity getData() {
+    public UseprofileResponseDataEntity getData() {
         return data;
     }
 

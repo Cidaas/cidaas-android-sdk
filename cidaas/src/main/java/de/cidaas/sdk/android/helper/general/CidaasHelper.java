@@ -10,7 +10,7 @@ import android.provider.Settings;
 import java.util.Dictionary;
 
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.properties.CidaasProperties;
 
@@ -95,7 +95,7 @@ public class CidaasHelper {
         //Store Device info for Later Purposes
         DBHelper.getShared().addDeviceInfo(deviceInfoEntity);
 
-        CidaasProperties.getShared(context).saveCidaasProperties(new Result<Dictionary<String, String>>() {
+        CidaasProperties.getShared(context).saveCidaasProperties(new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
                 CidaasHelper.baseurl = result.get("DomainURL");

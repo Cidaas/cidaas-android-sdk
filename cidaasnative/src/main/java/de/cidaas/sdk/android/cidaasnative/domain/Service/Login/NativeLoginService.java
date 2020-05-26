@@ -12,7 +12,7 @@ import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;
 import de.cidaas.sdk.android.cidaasnative.data.Service.ICidaasNativeService;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.helper.enums.Result;
+import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
@@ -55,7 +55,7 @@ public class NativeLoginService {
 
     //----------------------------------------------------------Login With Credentials-----------------------------------------------------------------------------
     public void loginWithCredentials(final String baseurl, final LoginCredentialsRequestEntity loginCredentialsRequestEntity,
-                                     final Result<LoginCredentialsResponseEntity> callback) {
+                                     final EventResult<LoginCredentialsResponseEntity> callback) {
         //Local Variables
 
         String methodName = "LoginService :serviceForLoginWithCredentials()";
@@ -80,7 +80,7 @@ public class NativeLoginService {
     }
 
     private void serviceForLoginWithCredentials(String loginUrl, LoginCredentialsRequestEntity loginCredentialsRequestEntity, Map<String, String> headers,
-                                                final Result<LoginCredentialsResponseEntity> callback) {
+                                                final EventResult<LoginCredentialsResponseEntity> callback) {
         final String methodName = "Error :LoginService :serviceForLoginWithCredentials()";
         try {
             final ICidaasNativeService CidaasNativeService = service.getInstance();
