@@ -1,0 +1,55 @@
+/*
+package com.example.widasrnarayanan.cidaas_sdk_androidv2;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+
+import Cidaas;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ResetPasswordCodeConfirmationActivity extends AppCompatActivity {
+
+    String resetRequestId;
+    Cidaas de.cidaas;
+    EditText codeTextbox;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reset_password_code_confirmation);
+
+         codeTextbox=findViewById(R.id.resetPasswordCode);
+
+        Intent intent=getIntent();
+        resetRequestId=intent.getStringExtra("resetRequestId");
+
+        de.cidaas=new Cidaas(this);
+    }
+
+    public void verifyCode(View view){
+        String verificationCode=codeTextbox.getText().toString();
+
+
+   */
+/*     de.cidaas.resetPasswordValidateCode(resetRequestId, verificationCode, new Result<ResetPasswordValidateCodeResponseEntity>() {
+            @Override
+            public void success(ResetPasswordValidateCodeResponseEntity result) {
+                Intent intent=new Intent(ResetPasswordCodeConfirmationActivity.this,ResetNewPasswordActivty.class);
+                intent.putExtra("ExchangeId",result.getData().getExchangeId());
+                intent.putExtra("ResetRequestId",result.getData().getResetRequestId());
+                startActivity(intent);
+                Toast.makeText(ResetPasswordCodeConfirmationActivity.this, "Success", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Toast.makeText(ResetPasswordCodeConfirmationActivity.this, "Fails"+error.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+   *//*
+ }
+}
+*/

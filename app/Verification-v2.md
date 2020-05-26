@@ -1,6 +1,6 @@
 # Passwordless or Multifactor Authentication
 
-Cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practice to enable multiple factors during login, to ensure that user identities and accesses are not compromised. To improve convenience, cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication methods available in cidaas. 
+Cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practice to enable multiple factors during login, to ensure that user identities and accesses are not compromised. To improve convenience, de.cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication methods available in de.cidaas.
 
 ## Table of Contents
 <!--ts-->
@@ -103,7 +103,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithFaceRecognition(photo: photo, passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithFaceRecognition(photo: photo, passwordlessEntity: passwordlessEntity) {
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -134,7 +134,7 @@ cidaas.loginWithFaceRecognition(photo: photo, passwordlessEntity: passwordlessEn
 
 #### Voice Recognition
 
-Biometric plays an important role in the modern world. cidaas can record your user's voice, extract unique features and use that to verify. To use Voice Recognition for passwordless login, you need to configure it first.
+Biometric plays an important role in the modern world. de.cidaas can record your user's voice, extract unique features and use that to verify. To use Voice Recognition for passwordless login, you need to configure it first.
 
 #### Configure Voice Recognition
 
@@ -179,7 +179,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithVoiceRecognition(voice: audioData, passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithVoiceRecognition(voice: audioData, passwordlessEntity: passwordlessEntity) {
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -257,7 +257,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithTouchId(passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithTouchId(passwordlessEntity: passwordlessEntity) {
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -330,7 +330,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithPatternRecognition(pattern: "RED[1,2,3], passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithPatternRecognition(pattern: "RED[1,2,3], passwordlessEntity: passwordlessEntity) {
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -404,7 +404,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithSmartPush(passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithSmartPush(passwordlessEntity: passwordlessEntity) {
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -440,7 +440,7 @@ You can configure passwordless login with an OTP that has to be valid only for a
 To configure TOTP verification, call **configureTOTP()**.
 
 ```swift
-cidaas.configureTOTP(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
+de.cidaas.configureTOTP(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -473,7 +473,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithTOTP(passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithTOTP(passwordlessEntity: passwordlessEntity) {
     switch $0 { 
         case .success(let loginWithSuccess):
             // your success code here
@@ -541,7 +541,7 @@ To receive a verification code via Email, call **configureEmail()**.
 Once you receive your verification code via Email, you need to verify that code. For that verification, call **enrollEmail()**.
 
 ```swift
-cidaas.enrollEmail(code: "658144") {
+de.cidaas.enrollEmail(code: "658144") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -576,7 +576,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithEmail(passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithEmail(passwordlessEntity: passwordlessEntity) {
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -605,7 +605,7 @@ cidaas.loginWithEmail(passwordlessEntity: passwordlessEntity) {
 Once you receive your verification code via Email, you need to verify the code. For that verification, call **verifyEmail()**.
 
 ```swift
-cidaas.verifyEmail(code: "123123") {
+de.cidaas.verifyEmail(code: "123123") {
     switch $0 {
         case .success(let verifySuccess):
             // your success code here
@@ -643,7 +643,7 @@ To use SMS as a passwordless login, you need to configure SMS physical verificat
 To receive a verification code via SMS, call **configureSMS()**.
 
 ```swift
-cidaas.configureSMS(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
+de.cidaas.configureSMS(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -672,7 +672,7 @@ cidaas.configureSMS(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
 Once you receive your verification code via SMS, you need to verify the code. For that verification, call **enrollSMS()**.
 
 ```swift
-cidaas.enrollSMS(code: "123123") {
+de.cidaas.enrollSMS(code: "123123") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -707,7 +707,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.mobile = "+919876543210" // must starts with country code
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithSMS(passwordlessEntity: passwordlessEntity) {
+de.cidaas.loginWithSMS(passwordlessEntity: passwordlessEntity) {
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -736,7 +736,7 @@ cidaas.loginWithSMS(passwordlessEntity: passwordlessEntity) {
 Once you receive your verification code via SMS, you need to verify the code. For that verification, call **verifySMS()**.
 
 ```swift
-cidaas.verifySMS(code: "123123") {
+de.cidaas.verifySMS(code: "123123") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -775,7 +775,7 @@ To use IVR as a passwordless login, you need to configure IVR physical verificat
 To receive a verification code via IVR, call **configureIVR()**.
 
 ```swift
-cidaas.configureIVR(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
+de.cidaas.configureIVR(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -804,7 +804,7 @@ cidaas.configureIVR(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
 Once you receive your verification code for IVR verification call, you need to verify the code. For that verification, call **enrollIVR()**.
 
 ```swift
-cidaas.enrollIVR(code: "123123") {
+de.cidaas.enrollIVR(code: "123123") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -839,7 +839,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.mobile = "+919876543210" // must starts with country code
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithIVR(passwordlessEntity: passwordlessEntity){
+de.cidaas.loginWithIVR(passwordlessEntity: passwordlessEntity){
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here
@@ -868,7 +868,7 @@ cidaas.loginWithIVR(passwordlessEntity: passwordlessEntity){
 Once you receive your verification code via IVR, you need to verify the code. For that verification, call **verifyIVR()**.
 
 ```swift
-cidaas.verifyIVR(code: "123123") {
+de.cidaas.verifyIVR(code: "123123") {
     switch $0 {
         case .success(let verifySuccess):
             // your success code here
@@ -907,7 +907,7 @@ To use Backupcode for passwordless login, you need to configure Backupcode physi
 To configure or view the Backupcode, call **configureBackupcode()**.
 
 ```swift
-cidaas.configureBackupcode(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
+de.cidaas.configureBackupcode(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -947,7 +947,7 @@ let passwordlessEntity = PasswordlessEntity()
 passwordlessEntity.email = "xxx@gmail.com"
 passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
 
-cidaas.loginWithBackupcode(code: "63537876", passwordlessEntity: passwordlessEntity){
+de.cidaas.loginWithBackupcode(code: "63537876", passwordlessEntity: passwordlessEntity){
     switch $0 {
         case .success(let loginWithSuccess):
             // your success code here

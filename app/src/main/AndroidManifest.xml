@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.widasrnarayanan.cidaas_sdk_androidv2">
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".MyApp"
+        android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.MyApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_38002"
         android:label="@string/app_name"
@@ -20,20 +21,32 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".StartingPage"
+            android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.StartingPage"
             android:label="@string/title_activity_starting_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".ConfigureActivity" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="widas.in"
+                    android:pathPattern="/samp" />
+            </intent-filter>
+        </activity>
+        <activity android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.ConfigureActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".Main2Activity"
+            android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.Main2Activity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MainActivity">
+        <activity android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.MainActivity">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -48,7 +61,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- //Todo Change the custom scheme -->
+            <!--  Change the custom scheme -->
             <!--
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -68,7 +81,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="com.cidaas.authenticator" />
+                <data android:scheme="com.de.cidaas.authenticator" />
             </intent-filter>
             -->
         </activity>
@@ -76,13 +89,13 @@
         <activity android:name=".ForgotPassword" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SuccessfulLogin" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.RegisterActivity" />
         <activity android:name=".ConsentUrlActivity" />
         <activity android:name=".MFAListActivity" />
         <activity android:name=".EmailMFAActivity" />
         <activity android:name=".ResetPasswordCodeConfirmationActivity" />
         <activity android:name=".ResetNewPasswordActivty" />
-        <activity android:name=".ChangeOldPasswordActivity" />
+        <activity android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.ChangeOldPasswordActivity" />
         <activity android:name=".SMSMFAActivity" />
         <activity android:name=".IVRMFAActivity" />
         <activity android:name=".BackupCodeMFAActivity" />
@@ -91,7 +104,7 @@
         <activity android:name=".EmailAccountVerification" />
 
         <service
-            android:name=".FCM.MyFirebaseMessagingService"
+            android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.FCM.MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -100,7 +113,7 @@
         </service>
 
         <activity android:name=".EnrollMFA.EnrollPattern" />
-        <activity android:name=".EnrollMFA.EnrollFace" />
+        <activity android:name="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.EnrollMFA.EnrollFace" />
         <activity android:name=".EnrollMFA.FaceDetection" />
         <activity android:name=".IVRConfigActivity" />
     </application>

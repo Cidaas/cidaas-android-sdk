@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Main2Activity">
+    tools:context="de.cidaas.widasrnarayanan.cidaas_sdk_androidv2.Main2Activity">
 
     <RelativeLayout
         android:id="@+id/relative_layout_for_button"
