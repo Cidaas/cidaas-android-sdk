@@ -41,7 +41,7 @@ public class PasswordlessLoginController {
                 shared = new PasswordlessLoginController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("PasswordlessLoginController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("PasswordlessLoginController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

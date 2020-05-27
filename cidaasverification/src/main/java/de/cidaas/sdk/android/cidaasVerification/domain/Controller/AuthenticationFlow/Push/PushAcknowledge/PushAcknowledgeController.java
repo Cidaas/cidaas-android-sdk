@@ -39,7 +39,7 @@ public class PushAcknowledgeController {
                 shared = new PushAcknowledgeController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("PushAcknowledgeController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("PushAcknowledgeController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

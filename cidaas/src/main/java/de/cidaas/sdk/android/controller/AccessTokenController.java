@@ -37,7 +37,7 @@ public class AccessTokenController {
                 shared = new AccessTokenController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("AccessTokenController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("AccessTokenController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
@@ -70,7 +70,7 @@ public class AccessTokenController {
         String methodName = "AccessToken Controller :getAccessWithCode()";
         try {
             //Log File
-            LogFile.getInstance(context).addInfoLog("Info of ", " Info Baseurl" + baseurl + " code" + code);
+            LogFile.getShared(context).addInfoLog("Info of ", " Info Baseurl" + baseurl + " code" + code);
             AccessTokenService.getShared(context).getAccessTokenByCode(baseurl, code, new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(final AccessTokenEntity result) {
@@ -113,7 +113,7 @@ public class AccessTokenController {
     public void getAccessToken(String sub, final EventResult<AccessTokenEntity> callback) {
         String methodName = "AccessToken Controller :getAccessToken()";
         try {
-            LogFile.getInstance(context).addInfoLog("Info " + methodName, " Info Sub:-" + sub);
+            LogFile.getShared(context).addInfoLog("Info " + methodName, " Info Sub:-" + sub);
 
             if (sub != null && !sub.equals("")) {
                 final AccessTokenModel accessTokenModel = DBHelper.getShared().getAccessToken(sub);
@@ -132,7 +132,7 @@ public class AccessTokenController {
     private void getAccessToken(String sub, EventResult<AccessTokenEntity> callback, AccessTokenModel accessTokenModel) {
         String methodName = "AccessToken Controller :getAccessToken()";
         try {
-            LogFile.getInstance(context).addInfoLog("Info " + methodName, " Info Sub:-" + sub + " AccessToken" + accessTokenModel.getAccess_token() +
+            LogFile.getShared(context).addInfoLog("Info " + methodName, " Info Sub:-" + sub + " AccessToken" + accessTokenModel.getAccess_token() +
                     "refreshToken:-" + accessTokenModel.getRefresh_token() + "ExpiresIn:-" + accessTokenModel.getExpires_in());
 
             long milliseconds = System.currentTimeMillis();
@@ -154,7 +154,7 @@ public class AccessTokenController {
         String methodName = "AccessToken Controller :getAccessTokenByRefreshToken()";
         try {
             //Log Info message
-            LogFile.getInstance(context).addInfoLog("Info " + methodName, " Info RefreshToken:-" + refreshToken);
+            LogFile.getShared(context).addInfoLog("Info " + methodName, " Info RefreshToken:-" + refreshToken);
 
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
@@ -220,7 +220,7 @@ public class AccessTokenController {
         try {
 
 //Log info Message
-            LogFile.getInstance(context).addInfoLog("Info of AccessToken Controller :getAccessTokenBySocial()",
+            LogFile.getShared(context).addInfoLog("Info of AccessToken Controller :getAccessTokenBySocial()",
                     " Info TokenOrCode:-" + socialTokenEntity.getToken() + "provider:-" + socialTokenEntity.getProvider() + "requestId:-" + socialTokenEntity.getRequestId() +
                             "viewType:-" + socialTokenEntity.getViewType() + "DomainURL:-" + socialTokenEntity.getDomainURL());
 
@@ -277,7 +277,7 @@ public class AccessTokenController {
         String methodName = "AccessToken Controller :conversionToAccessTokenModel()";
         try {
             //Log Info message
-            LogFile.getInstance(context).addInfoLog("Info " + methodName, " Info AccessToken:-" + accessTokenEntity.getAccess_token() +
+            LogFile.getShared(context).addInfoLog("Info " + methodName, " Info AccessToken:-" + accessTokenEntity.getAccess_token() +
                     "refreshToken:-" + accessTokenEntity.getRefresh_token() + "ExpiresIn:-" + accessTokenEntity.getExpires_in());
 
 
@@ -305,7 +305,7 @@ public class AccessTokenController {
 
         try {
             //Log Success Message
-            LogFile.getInstance(context).addInfoLog("Info" + methodName, " Success AccessToken:-" + accessTokenEntity.getAccess_token() +
+            LogFile.getShared(context).addInfoLog("Info" + methodName, " Success AccessToken:-" + accessTokenEntity.getAccess_token() +
                     "refreshToken:-" + accessTokenEntity.getRefresh_token() + "ExpiresIn:-" + accessTokenEntity.getExpires_in());
 
             //Save accessToken Locally
