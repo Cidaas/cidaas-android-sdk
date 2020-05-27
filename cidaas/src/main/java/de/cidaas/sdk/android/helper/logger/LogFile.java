@@ -23,14 +23,13 @@ public class LogFile {
     private static LogFile instance;
     private final Context mContext;
 
-    private String failure_log_filename = "cidaas_sdk_failure_log";
-    private String success_log_filename = "cidaas_sdk_success_log";
-    private String info_log_filename = "cidaas_sdk_info_log";
+    private static final String FAILURE_LOG_FILENAME = "cidaas_sdk_failure_log";
+    private static final String SUCCESS_LOG_FILENAME = "cidaas_sdk_success_log";
+    private static final String INFO_LOG_FILENAME = "cidaas_sdk_info_log";
 
     private LogFile(Context context) {
         this.mContext = context;
     }
-
 
     public static LogFile getInstance(Context context) {
         if (instance == null) {
@@ -42,9 +41,9 @@ public class LogFile {
     @TargetApi(Build.VERSION_CODES.M)
     public void addFailureLog(String message) {
         try {
-            addRecordToLog(failure_log_filename, message);
+            addRecordToLog(FAILURE_LOG_FILENAME, message);
         } catch (IOException e) {
-            Timber.e(e, "Error during addFailureLog ");
+            Timber.d(e, "Error during addFailureLog ");
         }
     }
 
@@ -52,9 +51,9 @@ public class LogFile {
     public void addSuccessLog(String methodName, String message) {
         String loggerMessage = "S:- " + methodName + "Success Message:- " + message;
         try {
-            addRecordToLog(success_log_filename, loggerMessage);
+            addRecordToLog(SUCCESS_LOG_FILENAME, loggerMessage);
         } catch (IOException e) {
-            Timber.e(e, "Error during addSuccessLog ");
+            Timber.d(e, "Error during addSuccessLog ");
         }
     }
 
@@ -62,32 +61,23 @@ public class LogFile {
     public void addInfoLog(String methodName, String message) {
         String loggerMessage = "I:- " + methodName + "Info Message:- " + message;
         try {
-            addRecordToLog(info_log_filename, loggerMessage);
+            addRecordToLog(INFO_LOG_FILENAME, loggerMessage);
         } catch (IOException e) {
-            Timber.e(e, "Error during addInfoLog ");
+            Timber.d(e, "Error during addInfoLog ");
         }
-    }
-
-    private String getFormattedDate() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c.getTime());
-        return formattedDate;
     }
 
     private void addRecordToLog(String filename, String message) throws IOException {
         if (checkLogEnabledAndPermission()) {
-            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                File logFileDir = getLogFileDirectory();
-                File logFile = getLogFile(filename, logFileDir);
-                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(logFile, true))) {
-                    bufferedWriter.write("Time:-" + getFormattedDate() + " " + message + "\r\n");
-                    bufferedWriter.append(message);
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
-                } catch (Exception e) {
-                    Timber.d(e, "Error during buffer writing");
-                }
+            File logFileDir = getLogFileDirectory();
+            File logFile = getLogFile(filename, logFileDir);
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(logFile, true))) {
+                bufferedWriter.write("Time:-" + getFormattedDate() + " " + message + "\r\n");
+                bufferedWriter.append(message);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+            } catch (Exception e) {
+                Timber.d(e, "Error during buffer writing");
             }
         } else {
             Timber.i("Log is not enabled or no permissions");
@@ -95,8 +85,9 @@ public class LogFile {
     }
 
     private boolean checkLogEnabledAndPermission() {
-        return DBHelper.getShared().getEnableLog() &&
-                ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return DBHelper.getShared().getEnableLog()
+                && ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     private File getLogFile(String filename, File logFileDir) throws IOException {
@@ -119,5 +110,12 @@ public class LogFile {
             logFileDir.mkdirs();
         }
         return logFileDir;
+    }
+
+    private String getFormattedDate() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(calendar.getTime());
+        return formattedDate;
     }
 }
