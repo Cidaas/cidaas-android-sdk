@@ -42,7 +42,7 @@ public class PushRejectService {
                 shared = new PushRejectService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("PushRejectService instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("PushRejectService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

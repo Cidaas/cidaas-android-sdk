@@ -40,7 +40,7 @@ public class ScannedController {
                 shared = new ScannedController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("ScannedController instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("ScannedController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

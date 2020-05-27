@@ -44,7 +44,7 @@ public class SettingsService {
                 shared = new SettingsService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("SettingsService instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("SettingsService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
@@ -56,7 +56,7 @@ public class SettingsService {
         final String methodName = "SettingsService:-getConfigurationList()";
         try {
 
-            LogFile.getShared(context).addInfoLog(methodName, getMFAListEntity.getSub());
+            LogFile.getInstance(context).addInfoLog(methodName, getMFAListEntity.getSub());
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.getConfiguredMFAList(settingsURL, headers, getMFAListEntity).enqueue(new Callback<ConfiguredMFAList>() {
@@ -64,7 +64,7 @@ public class SettingsService {
                 public void onResponse(Call<ConfiguredMFAList> call, Response<ConfiguredMFAList> response) {
                     if (response.isSuccessful()) {
 
-                        LogFile.getShared(context).addSuccessLog(methodName, response.toString() + "Sub:-" + getMFAListEntity.getSub()
+                        LogFile.getInstance(context).addSuccessLog(methodName, response.toString() + "Sub:-" + getMFAListEntity.getSub()
                         );
                         if (response.code() == 200) {
                             configuredMFAListResult.success(response.body());

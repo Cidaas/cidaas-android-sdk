@@ -39,7 +39,7 @@ public class InitiateController {
                 shared = new InitiateController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("InitiateController instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("InitiateController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

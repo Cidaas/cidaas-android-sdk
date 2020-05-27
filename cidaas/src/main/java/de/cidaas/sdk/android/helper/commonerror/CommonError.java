@@ -63,7 +63,7 @@ public class CommonError {
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
 
-            LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + response.message() +
+            LogFile.getInstance(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + response.message() +
                     " ErrorCode:- " + commonErrorEntity.getError().getCode() + "error message:-" + commonErrorEntity.getError().getError());
 
 

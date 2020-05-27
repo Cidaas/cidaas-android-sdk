@@ -50,7 +50,7 @@ public class ChangePasswordController {
                 shared = new ChangePasswordController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("ChangePasswordController instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("ChangePasswordController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

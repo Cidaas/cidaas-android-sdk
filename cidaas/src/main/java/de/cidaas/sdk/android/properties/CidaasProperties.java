@@ -90,7 +90,7 @@ public class CidaasProperties {
                     //Return File Reading Error
                     String loggerMessage = "Read From File failure : "
                             + "Error Code - " + error.getErrorCode() + ", Error Message - " + error.getErrorMessage() + ", Status Code - " + error.getStatusCode();
-                    LogFile.getShared(context).addFailureLog(loggerMessage);
+                    LogFile.getInstance(context).addFailureLog(loggerMessage);
                     loginPropertiesResult.failure(error);
                 }
             });
@@ -121,7 +121,7 @@ public class CidaasProperties {
     //Get WebAuth error
     public WebAuthError getAuthError(String errorMessage, String methodName) {
         String loggerMessage = methodName + "Error Code - " + WebAuthErrorCode.READ_PROPERTIES_ERROR + ", Error Message - " + errorMessage;
-        LogFile.getShared(context).addFailureLog(loggerMessage);
+        LogFile.getInstance(context).addFailureLog(loggerMessage);
         return WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName);
     }
 

@@ -42,7 +42,7 @@ public class AuthenticatedHistoryService {
                 shared = new AuthenticatedHistoryService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("AuthenticatedHistoryService instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("AuthenticatedHistoryService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

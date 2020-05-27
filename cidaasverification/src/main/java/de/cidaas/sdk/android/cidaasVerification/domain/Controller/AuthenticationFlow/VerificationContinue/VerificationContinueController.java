@@ -43,7 +43,7 @@ public class VerificationContinueController {
                 shared = new VerificationContinueController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("VerificationContinueController instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("VerificationContinueController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

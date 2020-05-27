@@ -42,7 +42,7 @@ public class DeleteService {
                 shared = new DeleteService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("DeleteService instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("DeleteService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
