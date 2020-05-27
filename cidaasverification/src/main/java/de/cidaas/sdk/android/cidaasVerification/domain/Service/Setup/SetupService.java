@@ -41,7 +41,7 @@ public class SetupService {
                 shared = new SetupService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("SetupService instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("SetupService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

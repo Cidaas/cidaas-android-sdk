@@ -101,7 +101,7 @@ public class LocationDetails implements LocationListener {
             getLocationAfterPermission();
         } else {
             Timber.i("Location permission Denied");
-            LogFile.getShared(mContext).addFailureLog("Location Permission Denied");
+            LogFile.getInstance(mContext).addFailureLog("Location Permission Denied");
         }
     }
 
@@ -193,7 +193,7 @@ public class LocationDetails implements LocationListener {
             }
         } else {
             Timber.i("Location permission Denied");
-            LogFile.getShared(mContext).addFailureLog("Location Permission Denied");
+            LogFile.getInstance(mContext).addFailureLog("Location Permission Denied");
         }
         // return latitude
         return Lat;
@@ -213,7 +213,7 @@ public class LocationDetails implements LocationListener {
             }
         } else {
             Timber.i("Location permission Denied");
-            LogFile.getShared(mContext).addFailureLog("Location Permission Denied");
+            LogFile.getInstance(mContext).addFailureLog("Location Permission Denied");
         }
 
         // return longitude
