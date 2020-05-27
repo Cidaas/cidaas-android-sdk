@@ -27,20 +27,16 @@ import timber.log.Timber;
 public class LogFile {
 
     public static FileHandler logger = null;
+    //Shared Instances
+    public static LogFile shared;
+    //Variables to Check permission
+    static boolean isExternalStorageAvailable = false;
+    static boolean isExternalStorageWriteable = false;
+    static String state = Environment.getExternalStorageState();
     private static String failure_log_filename = "cidaas_sdk_failure_log";
     private static String success_log_filename = "cidaas_sdk_success_log";
     private static String info_log_filename = "cidaas_sdk_info_log";
     private final Context mContext;
-
-    //Variables to Check permission
-    static boolean isExternalStorageAvailable = false;
-    static boolean isExternalStorageWriteable = false;
-
-
-    static String state = Environment.getExternalStorageState();
-
-    //Shared Instances
-    public static LogFile shared;
 
     public LogFile(Context context) {
         this.mContext = context;
@@ -134,20 +130,15 @@ public class LogFile {
                                 logFile.delete();
                             }
                         }
-                        try {
-                            //BufferedWriter for performance, true to set append to file flag
-                            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
 
-
+                        //BufferedWriter for performance, true to set append to file flag
+                        try (BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true))) {
                             buf.write("Time:-" + getTime() + " " + message + "\r\n");
                             buf.append(message);
                             buf.newLine();
                             buf.flush();
-                            buf.close();
                         } catch (Exception e) {
-                            //  Auto-generated catch block
                             Timber.d(e.getMessage());
-                            //e.printStackTrace();
                         }
                     }
 
