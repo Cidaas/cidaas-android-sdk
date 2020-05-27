@@ -118,7 +118,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
         String loggerMessage = "File not found Error :- " + methodName + " ErrorCode :- " + WebAuthError.shared.errorCode + " Error Message:- " + context.getString(R.string.FILE_NOT_FOUND);
         ;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
@@ -139,7 +139,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
         String loggerMessage = "No Content in Files Exception :- " + methodName + "ErrorCode :- " + WebAuthError.shared.errorCode + " Error Message:- " +
                 context.getString(R.string.NO_CONTENT_IN_FILE);
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
@@ -161,7 +161,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = "Property Missing Error :-" + methodName + "ErrorCode :- " + WebAuthError.shared.errorCode + " Error Message:- " + errorDetails;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         WebAuthError.shared.setErrorEntity(errorEntity);
 
@@ -183,7 +183,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
 
         String loggerMessage = "Cidaas Property Missing Error :-" + methodName + "ErrorCode :- " + WebAuthError.shared.errorCode + " Error Message:- " + errorDetails;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         WebAuthError.shared.setErrorEntity(errorEntity);
 
@@ -230,7 +230,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = methodName + " :- " + "ErrorCode : " + errorCode + " " + "Error Message - " + errorMessage + " StatusCode:- " + statusCode;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
 
@@ -254,7 +254,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
         String loggerMessage = methodName + " :- " + "ErrorCode : " + errorCode + " " + "Error Message - " + errorMessage + "StatusCode:- " + statusCode +
                 "ErrorResponse From Server:" + errorResponse;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
 
@@ -280,7 +280,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
 
         String loggerMessage = methodName + " :- " + "ErrorCode : " + errorCode + " " + "Error Message - " + errorMessage + "StatusCode:- " + statusCode;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
 
@@ -303,7 +303,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = methodName + " :- " + "ErrorCode : " + errorCode + " " + "Error Message - FCM TOKEN FAILURE " + " Empty response" + "StatusCode:- " + statusCode;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
 
@@ -324,7 +324,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
         WebAuthError.shared.setErrorEntity(errorEntity);
         String loggerMessage = methodName + " :- " + "ErrorCode : " + errorCode + " " + "Error Message - " + " Empty response" + "StatusCode:- " + statusCode;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
 
@@ -347,7 +347,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = methodName + " :- " + "ErrorCode : " + errorCode + " " + "Error Message - " + errorMessage + " StatusCode:- " + statusCode;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
 
@@ -369,7 +369,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = methodName + " :- " + "ErrorCode : " + errorCode + " " + "Error Message - " + errorMessage;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         Timber.d(loggerMessage);
 
@@ -517,7 +517,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
         String loggerMessage = "Device Verification Failure Exception:-" + methodName + " ErrorCode :- " + WebAuthError.shared.errorCode
                 + " Error Message:- " + errorEntity.getError();
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
@@ -536,7 +536,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
         String loggerMessage = "Device Verification Failure Exception:-" + methodName + " ErrorCode :- " + WebAuthError.shared.errorCode
                 + " Error Message:- " + errorEntity.getError();
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         WebAuthError.shared.setErrorEntity(errorEntity);
         return WebAuthError.shared;
@@ -557,7 +557,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = "CustomException:-" + methodName + " ErrorCode :- " + errorCode + " " + "Error Message:- " + errorMessage;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         return WebAuthError.shared;
     }
@@ -577,7 +577,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = "Finger print Exception:-" + methodName + " ErrorCode :- " + WebAuthError.shared.errorCode + " Error Message:- " + errorMessage;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         return WebAuthError.shared;
     }
@@ -598,7 +598,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = "Finger print Error:-" + methodName + " ErrorCode :- " + ErrorCode + " " + "Error Message:- " + errorMessage;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         return WebAuthError.shared;
     }
@@ -618,7 +618,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         WebAuthError.shared.setErrorEntity(errorEntity);
 
         String loggerMessage = "Facebook OnCancel Exception :- ErrorCode :- " + errorCode + " Error Message:- " + WebAuthError.shared.ErrorMessage;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         return WebAuthError.shared;
     }
@@ -640,7 +640,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
 
         String loggerMessage = "Google Signin error:- ErrorCode :- " + errorCode + " Error Message:- " + WebAuthError.shared.ErrorMessage;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
 
         return WebAuthError.shared;
     }
@@ -661,7 +661,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
 
         String loggerMessage = methodName + " :- " + " ErrorCode : " + errorCode + " " + "Error Response From Json" + errorMessage + " Empty response" + "StatusCode:- " + statusCode;
-        LogFile.getInstance(context).addFailureLog(loggerMessage);
+        LogFile.getShared(context).addFailureLog(loggerMessage);
         Timber.d(loggerMessage);
 
 

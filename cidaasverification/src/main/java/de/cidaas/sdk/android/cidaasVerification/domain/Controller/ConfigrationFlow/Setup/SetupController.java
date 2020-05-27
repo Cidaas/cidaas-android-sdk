@@ -42,7 +42,7 @@ public class SetupController {
                 shared = new SetupController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("SetupController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("SetupController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

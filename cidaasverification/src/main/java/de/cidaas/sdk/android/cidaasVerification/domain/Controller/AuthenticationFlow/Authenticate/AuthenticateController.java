@@ -46,7 +46,7 @@ public class AuthenticateController {
                 shared = new AuthenticateController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("AuthenticateController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("AuthenticateController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
@@ -65,7 +65,7 @@ public class AuthenticateController {
 
             if (authenticateEntity.getVerificationType() != null && !authenticateEntity.getVerificationType().equals("") &&
                     authenticateEntity.getExchange_id() != null && !authenticateEntity.getExchange_id().equals("")) {
-                LogFile.getInstance(context).addInfoLog(methodName, " Verification Type:- " + authenticateEntity.getVerificationType() +
+                LogFile.getShared(context).addInfoLog(methodName, " Verification Type:- " + authenticateEntity.getVerificationType() +
                         "ExchangeId:- " + authenticateEntity.getExchange_id());
                 // Handle Verification
                 handleVerificationTypes(authenticateEntity, authenticateResult);

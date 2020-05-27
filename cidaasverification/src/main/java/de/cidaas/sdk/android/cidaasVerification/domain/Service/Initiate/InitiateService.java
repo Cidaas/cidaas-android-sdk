@@ -42,7 +42,7 @@ public class InitiateService {
                 shared = new InitiateService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("InitiateService instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("InitiateService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

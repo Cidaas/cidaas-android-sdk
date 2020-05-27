@@ -45,7 +45,7 @@ public class EnrollService {
                 shared = new EnrollService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("EnrollService instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("EnrollService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

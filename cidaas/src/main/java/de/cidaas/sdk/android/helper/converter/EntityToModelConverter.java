@@ -76,7 +76,7 @@ public class EntityToModelConverter {
         } catch (Exception e) {
             // Handle Error
             callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(), methodName));
-            LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
+            LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 
@@ -124,7 +124,7 @@ public class EntityToModelConverter {
         } catch (Exception e) {
             // Handle Error
             callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(), "Methodname"));
-            LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
+            LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
 
