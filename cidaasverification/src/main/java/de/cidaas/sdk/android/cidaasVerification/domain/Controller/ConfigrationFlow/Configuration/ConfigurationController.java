@@ -41,7 +41,7 @@ public class ConfigurationController {
                 shared = new ConfigurationController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("ConfigurationController instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("ConfigurationController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

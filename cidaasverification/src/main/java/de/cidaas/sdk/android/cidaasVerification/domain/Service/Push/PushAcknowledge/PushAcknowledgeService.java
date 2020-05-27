@@ -42,7 +42,7 @@ public class PushAcknowledgeService {
                 shared = new PushAcknowledgeService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("PushAcknowledgeService instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("PushAcknowledgeService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

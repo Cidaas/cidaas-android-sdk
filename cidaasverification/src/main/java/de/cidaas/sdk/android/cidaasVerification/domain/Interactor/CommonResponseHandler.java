@@ -25,7 +25,7 @@ public class CommonResponseHandler<T> {
                 shared = new CommonResponseHandler(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getShared(contextFromCidaas).addFailureLog("CommonResponseHandler instance Creation Exception:-" + e.getMessage());
+            LogFile.getInstance(contextFromCidaas).addFailureLog("CommonResponseHandler instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
