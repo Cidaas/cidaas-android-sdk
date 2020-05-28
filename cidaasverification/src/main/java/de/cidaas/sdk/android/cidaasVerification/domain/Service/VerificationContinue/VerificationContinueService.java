@@ -42,7 +42,7 @@ public class VerificationContinueService {
                 shared = new VerificationContinueService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("VerificationContinueService instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("VerificationContinueService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

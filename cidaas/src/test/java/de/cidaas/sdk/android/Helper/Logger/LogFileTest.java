@@ -18,27 +18,32 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class LogFileTest {
-    private FileHandler logger;
-    private LogFile shared;
-    private LogFile logFile;
+    FileHandler logger;
+    LogFile shared;
+    LogFile logFile;
 
-    private Context context;
+    Context context;
 
     @Before
     public void setUp() {
-        context = mock(Context.class);
+        //context= RuntimeEnvironment.application;
+        Context context = mock(Context.class);
+
         when(context.checkPermission(eq(Manifest.permission.WRITE_EXTERNAL_STORAGE), anyInt(), anyInt())).thenReturn(
                 PackageManager.PERMISSION_GRANTED);
     }
 
+
     @Test
     public void testGetShared() throws Exception {
-        LogFile result = LogFile.getInstance(context);
+        LogFile result = LogFile.getShared(context);
         Assert.assertTrue(result instanceof LogFile);
     }
 
     @Test
     public void testAddRecordToLog() throws Exception {
-        LogFile.getInstance(context).addFailureLog("message");
+        LogFile.getShared(context).addFailureLog("message");
     }
 }
+
+//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

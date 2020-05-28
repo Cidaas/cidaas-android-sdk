@@ -42,7 +42,7 @@ public class PendingNotificationService {
                 shared = new PendingNotificationService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("PendingNotificationService instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("PendingNotificationService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

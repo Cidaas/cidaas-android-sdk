@@ -46,7 +46,7 @@ public class AuthenticateService {
                 shared = new AuthenticateService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("AuthenticateService instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("AuthenticateService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
@@ -57,7 +57,7 @@ public class AuthenticateService {
         final String methodName = "AuthenticateService:-callAuthenticateService()";
         try {
 
-            LogFile.getInstance(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
+            LogFile.getShared(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
                     " ExchangeId:- " + authenticateEntity.getExchange_id() + " PassCode:- " + authenticateEntity.getPass_code());
 
             //call service
@@ -68,7 +68,7 @@ public class AuthenticateService {
                     if (response.isSuccessful()) {
                         authenticateCallback.success(response.body());
 
-                        LogFile.getInstance(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
+                        LogFile.getShared(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
                                 " Status id:- " + response.body().getData().getStatus_id() + " ExchangeId:- " + response.body().getData().getExchange_id());
                     } else {
                         authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
@@ -95,7 +95,7 @@ public class AuthenticateService {
         try {
             //call service
 
-            LogFile.getInstance(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
+            LogFile.getShared(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
                     " ExchangeId:- " + authenticateHashmap.get("exchange_id"));
 
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
@@ -106,7 +106,7 @@ public class AuthenticateService {
 
                         authenticateCallback.success(response.body());
 
-                        LogFile.getInstance(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
+                        LogFile.getShared(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
                                 " Status id:- " + response.body().getData().getStatus_id() + " ExchangeId:- " + response.body().getData().getExchange_id());
                     } else {
                         authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(
@@ -119,7 +119,7 @@ public class AuthenticateService {
                             Timber.d(e.getMessage() + errorResponse + e.getMessage());
                         }
 
-                        LogFile.getInstance(context).addFailureLog(errorResponse);
+                        LogFile.getShared(context).addFailureLog(errorResponse);
                     }
                 }
 

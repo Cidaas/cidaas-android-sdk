@@ -39,7 +39,7 @@ public class AuthenticatedHistoryController {
                 shared = new AuthenticatedHistoryController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("AuthenticatedHistoryController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("AuthenticatedHistoryController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
@@ -60,7 +60,7 @@ public class AuthenticatedHistoryController {
                 if (authenticatedHistoryEntity.getStart_time() != null && !authenticatedHistoryEntity.getStart_time().equals("") &&
                         authenticatedHistoryEntity.getEnd_time() != null && !authenticatedHistoryEntity.getEnd_time().equals("")) {
 
-                    LogFile.getInstance(context).addInfoLog(methodName, "Verification Type:" + authenticatedHistoryEntity.getVerification_type() +
+                    LogFile.getShared(context).addInfoLog(methodName, "Verification Type:" + authenticatedHistoryEntity.getVerification_type() +
                             "Sub:" + authenticatedHistoryEntity.getSub());
                     addProperties(authenticatedHistoryEntity, authenticatedHistoryResult);
                 } else {

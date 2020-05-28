@@ -42,7 +42,7 @@ public class ScannedService {
                 shared = new ScannedService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("ScannedService instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("ScannedService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

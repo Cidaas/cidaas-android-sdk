@@ -114,21 +114,22 @@ public class FileHelper {
             if (dictObject.size() == 3) {
                 result.success(dictObject);
             } else {
-                throw new Exception();
+                throw new Exception("File is Corrupted,All properties are missing");
             }
 
         } catch (Exception e) {
 
             if (e instanceof FileNotFoundException) {
                 webAuthError = webAuthError.fileNotFoundException(methodName);
-                LogFile.getInstance(context).addFailureLog(webAuthError.getErrorMessage() + webAuthError.getErrorCode());
+                LogFile.getShared(context).addFailureLog(webAuthError.getErrorMessage() + webAuthError.getErrorCode());
                 result.failure(webAuthError);
             } else if (e instanceof XPathExpressionException || e instanceof NullPointerException) {
                 webAuthError = webAuthError.noContentInFileException(methodName);
-                LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
+                LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
                 result.failure(webAuthError);
             } else {
-                LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
+                //webAuthError.ErrorMessage=e.getMessage();
+                LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
                 result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()", WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
             }
 
@@ -145,7 +146,7 @@ public class FileHelper {
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(new ByteArrayInputStream(inputStream));
         } catch (Exception e) {
-            LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.PARSE_XML);
+            LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.PARSE_XML);
             return null;
 
         }
