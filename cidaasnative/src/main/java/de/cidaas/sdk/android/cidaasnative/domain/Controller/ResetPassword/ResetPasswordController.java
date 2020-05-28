@@ -182,7 +182,7 @@ public class ResetPasswordController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetpasswordResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error:" + methodName));
+                    resetpasswordResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error:" + methodName));
                 }
             });
         } catch (Exception e) {

@@ -67,7 +67,7 @@ public class UserLoginInfoController {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(error.getErrorMessage(), "Error:" + methodName));
+                        result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException(error.getErrorMessage(), "Error:" + methodName));
                     }
                 });
             } else {

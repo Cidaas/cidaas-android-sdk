@@ -2,12 +2,12 @@ package de.cidaas.sdk.android.cidaasnative.domain.Service.ResetPassword;
 
 import android.content.Context;
 
-import com.example.cidaasv2.R;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Hashtable;
 import java.util.Map;
 
+import de.cidaas.sdk.android.cidaasnative.R;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetNewPassword.ResetNewPasswordResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetNewPassword.ResetPasswordEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordRequestEntity;

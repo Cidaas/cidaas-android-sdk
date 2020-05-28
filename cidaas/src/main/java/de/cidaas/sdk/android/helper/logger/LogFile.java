@@ -94,7 +94,7 @@ public class LogFile {
         File logFile = new File(logFileDir, filename + ".txt");
         if (!logFile.exists()) {
             logFile.createNewFile();
-        } else if (logFile.length() > 10000000l) { // emptied when bigger than 10mb
+        } else if (logFile.length() > 10000000L) { // emptied when bigger than 10mb
             Timber.d("more than 10mb, file emptied");
             logFile.delete();
             logFile.createNewFile();

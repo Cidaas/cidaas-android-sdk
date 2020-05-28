@@ -9,7 +9,6 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.cidaasv2.BuildConfig;
 
 import java.io.File;
 import java.util.HashMap;
@@ -36,13 +35,7 @@ import de.cidaas.sdk.android.service.entity.documentscanner.DocumentScannerServi
 import de.cidaas.sdk.android.service.entity.userlogininfo.UserLoginInfoEntity;
 import de.cidaas.sdk.android.service.entity.userlogininfo.UserLoginInfoResponseEntity;
 
-/*import com.example.cidaasv2.Interface.IOAuthWebLogin;*/
 
-/**
- * Created by widasrnarayanan on 16/1/18.
- */
-/*
-implements IOAuthWebLogin*/
 
 public class Cidaas {
 

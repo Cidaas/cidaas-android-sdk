@@ -87,7 +87,7 @@ public class DeduplicationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deduplicaionResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName));
+                    deduplicaionResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName));
                 }
             });
         } catch (Exception e) {
@@ -118,7 +118,7 @@ public class DeduplicationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    deduplicaionResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName));
+                    deduplicaionResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName));
                 }
             });
         } catch (Exception e) {

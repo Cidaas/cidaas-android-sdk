@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.cidaasfacebook;
+package de.cidaas.sdk.android.helper.general;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,7 +15,6 @@ import java.util.Arrays;
 import de.cidaas.sdk.android.CidaasSDKLayout;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
-import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.interfaces.ICidaasFacebook;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import timber.log.Timber;
