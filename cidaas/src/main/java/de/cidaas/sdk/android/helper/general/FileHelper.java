@@ -1,6 +1,5 @@
 package de.cidaas.sdk.android.helper.general;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 
@@ -30,25 +29,27 @@ import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
 
-/**
- * Created by widasrnarayanan on 16/1/18.
- */
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class FileHelper {
 
+    private static final String CLIENT_ID = "ClientId";
+    private static final String DOMAIN_URL = "DomainURL";
+    private static final String REDIRECT_URL = "RedirectURL";
+    private static final String CLIENT_SECRET = "ClientSecret";
     //Shared Instances
-    public static FileHelper shared;
-    public Context context;
-    WebAuthError webAuthError;
+    private static FileHelper instance;
+    private Context context;
+    private WebAuthError webAuthError;
 
     public static FileHelper getShared(Context context) {
-        if (shared == null) {
-            shared = new FileHelper(context);
+        if (instance == null) {
+            instance = new FileHelper(context);
         }
-        return shared;
+        return instance;
     }
 
-    FileHelper(Context context) {
+    private FileHelper(Context context) {
         this.context = context;
         webAuthError = WebAuthError.getShared(this.context);
     }
@@ -57,18 +58,14 @@ public class FileHelper {
     public void readProperties(AssetManager assetManager, String fileNameFromBase, EventResult<Dictionary<String, String>> result) {
         String methodName = "FileHelper: readProperties()";
         InputStream inputStream;
-        AssetManager asstManager = assetManager;
-        String fileName = fileNameFromBase;
         Dictionary<String, String> dictObject = new Hashtable<>();
 
         // check the file name
-
-        Activity activity;
         try {
 
-            inputStream = assetManager.open(fileName);
+            inputStream = assetManager.open(fileNameFromBase);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            byte buf[] = new byte[1024];
+            byte[] buf = new byte[1024];
             int len;
             try {
                 while ((len = inputStream.read(buf)) != -1) {
@@ -87,37 +84,37 @@ public class FileHelper {
             NodeList nodeList = xml.getElementsByTagName("item");
             String xmlString = null;
             for (int i = 0; i < nodeList.getLength(); i++) {
-                if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("ClientId")) {
+                if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase(CLIENT_ID)) {
                     xmlString = nodeList.item(i).getTextContent().trim();
                     //Assign Value in a string Dictionary
-                    if (xmlString != null && xmlString != "") {
-                        dictObject.put("ClientId", xmlString);
+                    if (isNotEmpty(xmlString)) {
+                        dictObject.put(CLIENT_ID, xmlString);
                     } else {
-                        throw new Exception("Property ClientID Cannot be null");
+                        throw new Exception("property clientid cannot be null");
                     }
-                } else if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("DomainURL")) {
+                } else if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase(DOMAIN_URL)) {
                     xmlString = nodeList.item(i).getTextContent().trim();
-                    if (xmlString != null && xmlString != "") {
-                        dictObject.put("DomainURL", xmlString);
+                    if (isNotEmpty(xmlString)) {
+                        dictObject.put(DOMAIN_URL, xmlString);
                     } else {
-                        throw new Exception("Property DomainURL Cannot be null");
+                        throw new Exception("property domainurl cannot be null");
                     }
-                } else if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("RedirectURL")) {
+                } else if (nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase(REDIRECT_URL)) {
                     xmlString = nodeList.item(i).getTextContent().trim();
-                    if (xmlString != null && xmlString != "") {
-                        dictObject.put("RedirectURL", xmlString);
+                    if (isNotEmpty(xmlString)) {
+                        dictObject.put(REDIRECT_URL, xmlString);
                     } else {
-                        throw new Exception("Property RedirectURL Cannot be null");
+                        throw new Exception("property redirecturl cannot be null");
                     }
                 } else {
                     webAuthError.propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty", "Error" + methodName);
                     result.failure(webAuthError);
                 }
             }
-            if (dictObject.size() != 0) {
+            if (dictObject.size() == 3) {
                 result.success(dictObject);
             } else {
-                throw new Exception("File is Corrupted,All properties are missing");
+                throw new Exception();
             }
 
         } catch (Exception e) {
@@ -131,7 +128,6 @@ public class FileHelper {
                 LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
                 result.failure(webAuthError);
             } else {
-                //webAuthError.ErrorMessage=e.getMessage();
                 LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
                 result.failure(WebAuthError.getShared(context).methodException("Exception :FileHelper :readProperties()", WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
             }
@@ -146,10 +142,8 @@ public class FileHelper {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         try {
-
-            byte[] Docfile = inputStream;
             DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(new ByteArrayInputStream(Docfile));
+            return builder.parse(new ByteArrayInputStream(inputStream));
         } catch (Exception e) {
             LogFile.getInstance(context).addFailureLog(e.getMessage() + WebAuthErrorCode.PARSE_XML);
             return null;
@@ -158,22 +152,25 @@ public class FileHelper {
     }
 
     //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, @NonNull String ClientSecret, EventResult<Dictionary<String, String>> callback) {
+    public void paramsToDictionaryConverter(@NonNull String domainUrl, @NonNull String clientId, @NonNull String redirectURL, @NonNull String clientSecret, EventResult<Dictionary<String, String>> callback) {
         try {
-            Dictionary<String, String> loginProperties = new Hashtable<>();
-            if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("") && ClientSecret != null && !ClientSecret.equals("")) {
+
+            if (isNotEmpty(clientId)
+                    && isNotEmpty(domainUrl)
+                    && isNotEmpty(redirectURL)
+                    && isNotEmpty(clientSecret)) {
 
 
-                CidaasHelper.baseurl = DomainUrl;
+                CidaasHelper.baseurl = domainUrl;
 
                 //Disable PKCE Flow
                 DBHelper.getShared().setEnablePKCE(false);
                 CidaasHelper.ENABLE_PKCE = false;
-
-                loginProperties.put("ClientId", ClientId);
-                loginProperties.put("DomainURL", DomainUrl);
-                loginProperties.put("RedirectURL", RedirectURL);
-                loginProperties.put("ClientSecret", ClientSecret);
+                Dictionary<String, String> loginProperties = new Hashtable<>();
+                loginProperties.put(CLIENT_ID, clientId);
+                loginProperties.put(DOMAIN_URL, domainUrl);
+                loginProperties.put(REDIRECT_URL, redirectURL);
+                loginProperties.put(CLIENT_SECRET, clientSecret);
 
                 DBHelper.getShared().addLoginProperties(loginProperties);
 
@@ -189,17 +186,19 @@ public class FileHelper {
 
 
     //Convert parameter into a Dictionary Object
-    public void paramsToDictionaryConverter(@NonNull String DomainUrl, @NonNull String ClientId, @NonNull String RedirectURL, EventResult<Dictionary<String, String>> callback) {
+    public void paramsToDictionaryConverter(@NonNull String domainUrl, @NonNull String clientId, @NonNull String redirectURL, EventResult<Dictionary<String, String>> callback) {
         String methodName = "FileHelper :paramsToDictionaryConverter()";
         try {
             Dictionary<String, String> loginProperties = new Hashtable<>();
-            if (ClientId != null && !ClientId.equals("") && DomainUrl != null && !DomainUrl.equals("") && RedirectURL != null && !RedirectURL.equals("")) {
+            if (isNotEmpty(clientId)
+                    && isNotEmpty(domainUrl)
+                    && isNotEmpty(redirectURL)) {
 
-                CidaasHelper.baseurl = DomainUrl;
+                CidaasHelper.baseurl = domainUrl;
 
-                loginProperties.put("ClientId", ClientId);
-                loginProperties.put("DomainURL", DomainUrl);
-                loginProperties.put("RedirectURL", RedirectURL);
+                loginProperties.put(CLIENT_ID, clientId);
+                loginProperties.put(DOMAIN_URL, domainUrl);
+                loginProperties.put(REDIRECT_URL, redirectURL);
 
                 DBHelper.getShared().addLoginProperties(loginProperties);
                 callback.success(loginProperties);

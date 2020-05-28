@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.cidaasfacebook;
+package de.cidaas.sdk.android.helper.general;
 
 import org.junit.Test;
 

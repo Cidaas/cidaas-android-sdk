@@ -2,13 +2,13 @@ package de.cidaas.sdk.android.service.repository.DocumemtScannerService;
 
 import android.content.Context;
 
-import com.example.cidaasv2.R;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
 
+import de.cidaas.sdk.android.R;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;

@@ -2,8 +2,7 @@ package de.cidaas.sdk.android.helper.extension;
 
 import android.content.Context;
 
-import com.example.cidaasv2.R;
-
+import de.cidaas.sdk.android.R;
 import de.cidaas.sdk.android.entities.ErrorEntity;
 import de.cidaas.sdk.android.helper.enums.HttpStatusCode;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;

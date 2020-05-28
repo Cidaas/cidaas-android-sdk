@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-import com.example.cidaasv2.R;
 
 import java.util.Dictionary;
 import java.util.HashMap;

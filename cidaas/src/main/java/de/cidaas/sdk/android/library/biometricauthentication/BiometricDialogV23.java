@@ -10,8 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.example.cidaasv2.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import de.cidaas.sdk.android.R;
 
 
 public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClickListener {

@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.cidaasfacebook;
+package de.cidaas.sdk.android.helper.general;
 
 /**
  * Created by ganesh on 16/06/17.
