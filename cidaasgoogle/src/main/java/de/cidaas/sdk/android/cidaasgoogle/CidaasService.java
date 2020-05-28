@@ -6,9 +6,9 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.cidaas.sdk.android.cidaasgoogle.Entity.GoogleSettingsEntity;
-import de.cidaas.sdk.android.cidaasgoogle.Interface.ICidaasGoogleService;
-import de.cidaas.sdk.android.cidaasgoogle.Interface.IGoogleAccessTokenEntity;
+import de.cidaas.sdk.android.cidaasgoogle.entity.GoogleSettingsEntity;
+import de.cidaas.sdk.android.cidaasgoogle.iInterface.ICidaasGoogleService;
+import de.cidaas.sdk.android.cidaasgoogle.iInterface.IGoogleAccessTokenEntity;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import retrofit2.Call;

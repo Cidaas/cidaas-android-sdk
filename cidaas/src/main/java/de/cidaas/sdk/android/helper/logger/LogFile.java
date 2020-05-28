@@ -31,7 +31,7 @@ public class LogFile {
         this.mContext = context;
     }
 
-    public static LogFile getInstance(Context context) {
+    public static LogFile getShared(Context context) {
         if (instance == null) {
             instance = new LogFile(context);
         }

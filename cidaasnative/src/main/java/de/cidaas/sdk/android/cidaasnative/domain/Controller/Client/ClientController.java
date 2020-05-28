@@ -46,7 +46,7 @@ public class ClientController {
                 shared = new ClientController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("ClientController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("ClientController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
@@ -55,7 +55,7 @@ public class ClientController {
     public void getClientInfo(@NonNull final String requestId, final EventResult<ClientInfoEntity> clientInfoEntityResult) {
         final String methodName = "Client Controller :getClientInfo()";
         try {
-            LogFile.getInstance(context).addInfoLog("Info " + methodName, " Info requestId:-" + requestId);
+            LogFile.getShared(context).addInfoLog("Info " + methodName, " Info requestId:-" + requestId);
             if (CidaasHelper.baseurl != null && !CidaasHelper.baseurl.equals("") && requestId != null && !requestId.equals("")) {
 
                 CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {

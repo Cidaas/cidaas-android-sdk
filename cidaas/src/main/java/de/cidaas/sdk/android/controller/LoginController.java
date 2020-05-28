@@ -318,7 +318,7 @@ public class LoginController {
                 // hideLoader();
                 String loggerMessage = "Request-Id params to dictionary conversion failure : " + "Error Code - ";
                 //+error.errorCode + ", Error Message - " + error.getErrorMessage() + ", Status Code - " +  error.statusCode;
-                LogFile.getInstance(context).addFailureLog(loggerMessage);
+                LogFile.getShared(context).addFailureLog(loggerMessage);
             }
         } catch (Exception e) {
 
@@ -386,9 +386,9 @@ public class LoginController {
                     CidaasHelper.baseurl = loginproperties.get("DomainURL");
                     CidaasHelper.IS_SETURL_CALLED = true;
                     result.success("SetURL is Successfully configured " + methodNameFromApp);
-                    LogFile.getInstance(context).addSuccessLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                    LogFile.getShared(context).addSuccessLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
                             + " Method Name:- " + methodNameFromApp);
-                    LogFile.getInstance(context).addInfoLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                    LogFile.getShared(context).addInfoLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
                             + " Method Name:- " + methodNameFromApp);
                 } else {
                     String errorMessage = "Saving Failed in LocalDB";

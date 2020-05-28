@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.cidaasgoogle.Entity;
+package de.cidaas.sdk.android.cidaasgoogle.entity;
 
 public class GoogleSettingsEntity {
 

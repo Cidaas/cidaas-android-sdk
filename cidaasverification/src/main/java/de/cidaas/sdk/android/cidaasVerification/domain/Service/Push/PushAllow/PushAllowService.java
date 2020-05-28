@@ -43,7 +43,7 @@ public class PushAllowService {
                 shared = new PushAllowService(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("PushAllowService instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("PushAllowService instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

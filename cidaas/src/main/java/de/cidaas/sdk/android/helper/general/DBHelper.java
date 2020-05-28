@@ -81,7 +81,7 @@ public class DBHelper {
             editor.putBoolean(logEnableStatus, enableLog);
             editor.commit();
         } catch (Exception e) {
-            String s = e.getMessage();
+
         }
     }
 

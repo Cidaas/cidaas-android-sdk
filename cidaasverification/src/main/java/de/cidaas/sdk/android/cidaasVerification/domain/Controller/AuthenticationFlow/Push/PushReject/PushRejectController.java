@@ -39,7 +39,7 @@ public class PushRejectController {
                 shared = new PushRejectController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("PushRejectController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("PushRejectController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }

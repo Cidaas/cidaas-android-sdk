@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.cidaasgoogle.Interface;
+package de.cidaas.sdk.android.cidaasgoogle.iInterface;
 
 
 import de.cidaas.sdk.android.cidaasgoogle.GoogleAccessTokenEntity;

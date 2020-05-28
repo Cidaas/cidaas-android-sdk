@@ -39,7 +39,7 @@ public class PendingNotificationController {
                 shared = new PendingNotificationController(contextFromCidaas);
             }
         } catch (Exception e) {
-            LogFile.getInstance(contextFromCidaas).addFailureLog("PendingNotificationController instance Creation Exception:-" + e.getMessage());
+            LogFile.getShared(contextFromCidaas).addFailureLog("PendingNotificationController instance Creation Exception:-" + e.getMessage());
         }
         return shared;
     }
