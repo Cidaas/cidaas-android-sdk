@@ -39,7 +39,7 @@ public class CidaasProperties {
             if (!CidaasHelper.baseurl.equals("") && CidaasHelper.baseurl != null) {
                 result.success(DBHelper.getShared().getLoginProperties(CidaasHelper.baseurl));
             } else {
-                result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("CidaasHelper.Baseurl must not be empty", "CidaasProperties:saveCidaasProperties()"));
+                result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("CidaasHelper.Baseurl must not be empty", "CidaasProperties:saveCidaasProperties()"));
             }
 
         } else {

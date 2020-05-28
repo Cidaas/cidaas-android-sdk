@@ -65,7 +65,7 @@ public class AccountVerificationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    EventResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName));
+                    EventResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName));
                 }
             });
         } catch (Exception e) {
@@ -127,7 +127,7 @@ public class AccountVerificationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :" + methodName));
+                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error :" + methodName));
                 }
             });
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class AccountVerificationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :" + methodName));
+                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error :" + methodName));
                 }
             });
         } catch (Exception e) {

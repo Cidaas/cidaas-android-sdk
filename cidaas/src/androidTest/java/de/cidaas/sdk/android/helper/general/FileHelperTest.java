@@ -8,13 +8,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.w3c.dom.Document;
 
-import java.io.IOException;
 import java.util.Dictionary;
 
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -23,12 +19,10 @@ import de.cidaas.sdk.android.helper.extension.WebAuthError;
 @RunWith(AndroidJUnit4.class)
 public class FileHelperTest {
 
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
     private static final String CIDAAS_XML = "cidaas.xml";
     private static final String CIDAAS_MISSING_PROPERTIES = "cidaas_missingproperties.xml";
     private static final String CIDAAS_EMPTY_PROPERTIES = "cidaas_emptyproperties.xml";
+    private static final String CIDAAS_UNKNOWN_PROPERTIES = "cidaas_unknownproperties.xml";
     private static final String CIDAAS_EMPTY_FILE = "cidaas_emptyfile.xml";
     private static final String CIDAAS_NO_FILE = "not_exist.xml";
 
@@ -46,7 +40,7 @@ public class FileHelperTest {
     private AssetManager assetManager;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         // Context of the app under test.
         context = ApplicationProvider.getApplicationContext();
         fileHelper = FileHelper.getShared(context);
@@ -60,7 +54,7 @@ public class FileHelperTest {
     }
 
     @Test
-    public void testReadProperties() throws Exception {
+    public void testReadProperties() {
         fileHelper.readProperties(assetManager, CIDAAS_XML, new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
@@ -71,103 +65,153 @@ public class FileHelperTest {
 
             @Override
             public void failure(WebAuthError error) {
-                // Must not be called
-                Assert.assertTrue(false);
+                Assert.assertTrue("Must not be called", false);
             }
         });
     }
 
     @Test
-    public void readMissingProperties() throws Exception {
-
-        expectedEx.expect(RuntimeException.class);
-        expectedEx.expectMessage("Employee ID is null");
+    public void readMissingProperties() {
         fileHelper.readProperties(assetManager, CIDAAS_MISSING_PROPERTIES, new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
-                // Must not be called
-                Assert.assertTrue(false);
+                Assert.assertTrue("Must not be called", false);
             }
 
             @Override
             public void failure(WebAuthError error) {
-                error.getError();
+                Assert.assertTrue("Should be get errormessage 'properties must be set'",
+                        error.getErrorEntity().getError().equalsIgnoreCase("All properties (" + CLIENT_ID + ", " + REDIRECT_URL + " AND " + DOMAIN_URL + ") must be set"));
             }
         });
-
     }
 
     @Test
-    public void testCidsReadProperties() throws Exception {
-
-        fileHelper.readProperties(assetManager, "cidaas123.xml", new EventResult<Dictionary<String, String>>() {
+    public void readEmptyProperties() {
+        fileHelper.readProperties(assetManager, CIDAAS_EMPTY_PROPERTIES, new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
-                Assert.assertEquals("DomainURL", "DomainURL");
+                Assert.assertTrue("Must not be called", false);
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Assert.assertEquals("DomainURL", "DomainURL");
+                Assert.assertTrue("Should be get errormessage 'properties cannot be null or empty'",
+                        error.getDetailedErrorMessage().equalsIgnoreCase("property -" + DOMAIN_URL + "- cannot be null or empty"));
             }
         });
-
     }
 
     @Test
-    public void idsReadProperties() throws Exception {
-
-        fileHelper.readProperties(assetManager, "cidaas123.xml", new EventResult<Dictionary<String, String>>() {
+    public void readUnknownProperties() {
+        fileHelper.readProperties(assetManager, CIDAAS_UNKNOWN_PROPERTIES, new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
-                Assert.assertEquals("DomainURL", "DomainURL");
+                Assert.assertTrue("Must not be called", false);
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Assert.assertEquals("DomainURL", "DomainURL");
+                Assert.assertTrue("Should be get errormessage 'unknown property'",
+                        error.getDetailedErrorMessage().equalsIgnoreCase("invalid property entry for: UNKNOWN"));
             }
         });
-
     }
 
     @Test
-    public void testParseXML() throws Exception {
-        Document result = fileHelper.parseXML(new byte[]{(byte) 0});
-        Assert.assertEquals(null, result);
+    public void readEmptyFile() {
+        fileHelper.readProperties(assetManager, CIDAAS_EMPTY_FILE, new EventResult<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                Assert.assertTrue("Must not be called", false);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue("Should be get errormessage 'No content in property file.'",
+                        error.getErrorEntity().getError().equalsIgnoreCase("No content in property file."));
+            }
+        });
     }
 
     @Test
-    public void testParamsToDictionaryConverter() throws Exception {
+    public void readNoFile() {
+        fileHelper.readProperties(assetManager, CIDAAS_NO_FILE, new EventResult<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                Assert.assertTrue("Must not be called", false);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertTrue("Should be get errormessage 'Property file is missing.'",
+                        error.getErrorEntity().getError().equalsIgnoreCase("Property file is missing."));
+            }
+        });
+    }
+
+
+    @Test
+    public void testFourParamsToDictionaryConverter() throws Exception {
 
         fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "RedirectURL", "ClientSecret", new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
-
+                Assert.assertEquals(4, result.size());
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Assert.assertEquals("Error", error.getErrorMessage());
+                Assert.assertTrue("Must not be called", false);
             }
         });
     }
 
     @Test
-    public void testParamsToConverter() throws Exception {
+    public void testThreeParamsToDictionaryConverter() throws Exception {
 
-        fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "RedirectURL", "", new EventResult<Dictionary<String, String>>() {
+        fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "RedirectURL", new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
-
+                Assert.assertEquals(3, result.size());
             }
 
             @Override
             public void failure(WebAuthError error) {
-                Assert.assertEquals("One of the property is missing.", error.getErrorMessage());
+                Assert.assertTrue("Must not be called", false);
+            }
+        });
+    }
+
+    @Test
+    public void testFourParamsToConverterWithEmptyField() throws Exception {
+
+        fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "RedirectURL", "", new EventResult<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                Assert.assertTrue("Must not be called", false);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertEquals("DomainURL or ClientId or Redirect is missing.", error.getErrorMessage());
+            }
+        });
+    }
+
+    @Test
+    public void testThreeParamsToConverterWithEmptyField() throws Exception {
+
+        fileHelper.paramsToDictionaryConverter("DomainUrl", "ClientId", "", new EventResult<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> result) {
+                Assert.assertTrue("Must not be called", false);
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                Assert.assertEquals("DomainURL or ClientId or Redirect is missing.", error.getErrorMessage());
             }
         });
     }
 }
-
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

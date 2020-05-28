@@ -70,7 +70,7 @@ public class ClientController {
                     }
                 });
             } else {
-                clientInfoEntityResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :" + methodName));
+                clientInfoEntityResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error :" + methodName));
             }
 
         } catch (Exception e) {
