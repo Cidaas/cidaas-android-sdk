@@ -1,7 +1,7 @@
 package de.cidaas.sdk.android.cidaasgoogle;
 
 
-import de.cidaas.sdk.android.cidaasgoogle.Interface.ICidaasGoogleService;
+import de.cidaas.sdk.android.cidaasgoogle.iInterface.ICidaasGoogleService;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;

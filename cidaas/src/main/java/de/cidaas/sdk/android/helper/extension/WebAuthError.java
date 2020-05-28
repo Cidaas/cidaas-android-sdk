@@ -625,11 +625,11 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
 
 
     //Google Error Exception
-    public WebAuthError googleError() {
+    public WebAuthError googleError(String errorMessage) {
 
         WebAuthError.shared.setErrorCode(WebAuthErrorCode.GOOGLE_ERROR);
         WebAuthError.shared.setStatusCode(HttpStatusCode.EXPECTATION_FAILED);
-        WebAuthError.shared.setErrorMessage(context.getString(R.string.GOOGLE_SIGNIN_ERROR));
+        WebAuthError.shared.setErrorMessage(context.getString(R.string.GOOGLE_SIGNIN_ERROR) + errorMessage);
 
         ErrorEntity errorEntity = new ErrorEntity();
         errorEntity.setCode(WebAuthErrorCode.GOOGLE_ERROR);

@@ -3,17 +3,13 @@ package de.cidaas.sdk.android.cidaasgoogle;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,8 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.cidaas.sdk.android.CidaasSDKLayout;
-import de.cidaas.sdk.android.cidaasgoogle.Entity.GoogleSettingsEntity;
-import de.cidaas.sdk.android.cidaasgoogle.Interface.IGoogleAccessTokenEntity;
+import de.cidaas.sdk.android.cidaasgoogle.entity.GoogleSettingsEntity;
+import de.cidaas.sdk.android.cidaasgoogle.iInterface.IGoogleAccessTokenEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -33,11 +29,11 @@ import de.cidaas.sdk.android.interfaces.ICidaasGoogle;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 
 
-public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, ICidaasGoogle {
+public class CidaasGoogle implements ICidaasGoogle {
 
 
     private static CidaasGoogle cidaasGoogleInstance;
-    private GoogleApiClient client;
+    private GoogleSignInClient mGoogleSignInClient;
     Activity activity;
     public static final int REQ_CODE = 9001;
     private GoogleSignInOptions signInOptions;
@@ -66,8 +62,10 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
                 .requestServerAuthCode(googleSettingsEntity.getClientId())
                 .requestEmail()
                 .build();
-        client = new GoogleApiClient.Builder(activity, this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, signInOptions).build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(activity, signInOptions);
+       /* client = new GoogleApiClient.Builder(activity, this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, signInOptions).build();*/
 
         CidaasSDKLayout.iCidaasGoogle = new ICidaasGoogle() {
             @Override
@@ -77,7 +75,7 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
 
             @Override
             public void logout() {
-
+                signOut();
             }
 
 
@@ -91,21 +89,12 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
     }
 
     private void signOut() {
-        Auth.GoogleSignInApi.signOut(client);
+        mGoogleSignInClient.signOut();
     }
-
-    public void onStart() {
-        client.connect();
-    }
-
-    public void onStop() {
-        client.disconnect();
-    }
-
 
     private void requestGoogleAccount(int signInCode) {
-        Intent intent = Auth.GoogleSignInApi.getSignInIntent(client);
-        activity.startActivityForResult(intent, signInCode);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        activity.startActivityForResult(signInIntent, signInCode);
     }
 
     private void getGoogleAccessToken(GoogleSettingsEntity googleSettingsEntity, final IGoogleAccessTokenEntity iGoogleAccessTokenEntity) {
@@ -161,29 +150,10 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
         return googleSettingsEntity;
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
 
     public void authorize(int requestCode, int resultCode, Intent data) {
 
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-
-      /*  ErrorEntity errorEntity = new ErrorEntity();
-        errorEntity.setStatus(500);
-        errorEntity.setMessage("Error occured");*/
 
         if (result.isSuccess() == true) {
             final GoogleSignInAccount signInAccount = result.getSignInAccount();
@@ -203,11 +173,11 @@ public class CidaasGoogle implements GoogleApiClient.OnConnectionFailedListener,
                     }
                 });
             } else {
-                localAccessTokenEntityResult.failure(WebAuthError.getShared(activity).googleError());
+                localAccessTokenEntityResult.failure(WebAuthError.getShared(activity).googleError(result.getStatus().toString()));
             }
         } else {
 
-            localAccessTokenEntityResult.failure(WebAuthError.getShared(activity).googleError());
+            localAccessTokenEntityResult.failure(WebAuthError.getShared(activity).googleError(result.getStatus().toString()));
         }
     }
 

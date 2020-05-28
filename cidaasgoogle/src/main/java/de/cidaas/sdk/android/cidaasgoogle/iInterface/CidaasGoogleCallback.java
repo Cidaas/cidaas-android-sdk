@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.cidaasgoogle.Interface;
+package de.cidaas.sdk.android.cidaasgoogle.iInterface;
 
 /**
  * Created by ganesh on 15/06/17.
