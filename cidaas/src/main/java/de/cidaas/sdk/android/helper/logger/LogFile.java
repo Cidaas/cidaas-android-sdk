@@ -12,44 +12,30 @@ import androidx.core.content.ContextCompat;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.text.DecimalFormat;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.logging.FileHandler;
 
 import de.cidaas.sdk.android.helper.general.DBHelper;
 import timber.log.Timber;
 
-/**
- * Created by widasrnarayanan on 22/1/18.
- */
-
 public class LogFile {
-
-    public static FileHandler logger = null;
-    private static String failure_log_filename = "cidaas_sdk_failure_log";
-    private static String success_log_filename = "cidaas_sdk_success_log";
-    private static String info_log_filename = "cidaas_sdk_info_log";
+    private static LogFile instance;
     private final Context mContext;
 
     private static final String FAILURE_LOG_FILENAME = "cidaas_sdk_failure_log";
     private static final String SUCCESS_LOG_FILENAME = "cidaas_sdk_success_log";
     private static final String INFO_LOG_FILENAME = "cidaas_sdk_info_log";
 
-    static String state = Environment.getExternalStorageState();
-
-    //Shared Instances
-    public static LogFile shared;
-
-    public LogFile(Context context) {
+    private LogFile(Context context) {
         this.mContext = context;
     }
 
-    public static LogFile getInstance(Context context) {
+    public static LogFile getShared(Context context) {
         if (instance == null) {
             instance = new LogFile(context);
         }
-        return shared;
+        return instance;
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -59,12 +45,11 @@ public class LogFile {
         } catch (IOException e) {
             Timber.d(e, "Error during addFailureLog ");
         }
-        // Timber.d("Size : " + hrSize);
-        return moreThanTenMB;
     }
 
-
-    public String getTime() {
+    @TargetApi(Build.VERSION_CODES.M)
+    public void addSuccessLog(String methodName, String message) {
+        String loggerMessage = "S:- " + methodName + "Success Message:- " + message;
         try {
             addRecordToLog(SUCCESS_LOG_FILENAME, loggerMessage);
         } catch (IOException e) {
@@ -72,8 +57,9 @@ public class LogFile {
         }
     }
 
-
-    public void addRecordTolog(String filename, String message) {
+    @TargetApi(Build.VERSION_CODES.M)
+    public void addInfoLog(String methodName, String message) {
+        String loggerMessage = "I:- " + methodName + "Info Message:- " + message;
         try {
             addRecordToLog(INFO_LOG_FILENAME, loggerMessage);
         } catch (IOException e) {
@@ -93,8 +79,8 @@ public class LogFile {
             } catch (Exception e) {
                 Timber.d(e, "Error during buffer writing");
             }
-        } catch (Exception e) {
-            Timber.d("Add record to log" + e.getMessage());
+        } else {
+            Timber.i("Log is not enabled or no permissions");
         }
     }
 
@@ -104,36 +90,26 @@ public class LogFile {
                 && Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
-
-    //Add records to a log file
-    @TargetApi(Build.VERSION_CODES.M)
-    public void addSuccessLog(String methodName, String message) {
-        try {
-
-            String loggerMessage = "S:- " + methodName + "Success Message:- " + message;
-
-            // Timber.i(loggerMessage);
-            addRecordTolog(success_log_filename, loggerMessage);
-
-        } catch (Exception e) {
-
-            Timber.d(e.getMessage());   // Handle Exception
+    private File getLogFile(String filename, File logFileDir) throws IOException {
+        File logFile = new File(logFileDir, filename + ".txt");
+        if (!logFile.exists()) {
+            logFile.createNewFile();
+        } else if (logFile.length() > 10000000l) { // emptied when bigger than 10mb
+            Timber.d("more than 10mb, file emptied");
+            logFile.delete();
+            logFile.createNewFile();
         }
+        return logFile;
     }
 
-
-    //Add records to a log file
-    @TargetApi(Build.VERSION_CODES.M)
-    public void addInfoLog(String methodName, String message) {
-        try {
-
-            String loggerMessage = "S:- " + methodName + "Info Message:- " + message;
-
-            addRecordTolog(info_log_filename, loggerMessage);
-
-        } catch (Exception e) {
-            Timber.d(e.getMessage());
+    private File getLogFileDirectory() {
+        // TODO Check if Environment.DIRECTORY_DOCUMENTS ok for us (https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/58)
+        File storageDirectory = mContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File logFileDir = new File(storageDirectory, "cidaas/");
+        if (!logFileDir.exists()) {
+            logFileDir.mkdirs();
         }
+        return logFileDir;
     }
 
     private String getFormattedDate() {
