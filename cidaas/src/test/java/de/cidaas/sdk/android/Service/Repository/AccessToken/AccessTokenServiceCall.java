@@ -5,6 +5,7 @@ import android.content.Context;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -22,7 +23,7 @@ import de.cidaas.sdk.android.service.repository.AccessToken.AccessTokenService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
-
+@Ignore
 public class AccessTokenServiceCall {
 
     Context context = Mockito.mock(Context.class);

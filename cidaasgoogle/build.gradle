@@ -1,10 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
+    enableJacoco(project, 'Debug')
     compileSdkVersion 29
-
-
-
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 29
@@ -38,6 +36,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(':cidaas')
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
 
 
     //For Google

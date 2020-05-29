@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,6 +31,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
 @RunWith(RobolectricTestRunner.class)
+@Ignore
 public class ChangePasswordServiceTest {
     @Mock
     CidaassdkService service;

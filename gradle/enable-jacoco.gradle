@@ -1,0 +1,61 @@
+ext.enableJacoco = { Project project, String variant ->
+    project.plugins.apply('jacoco')
+    final capVariant = variant.capitalize()
+    StringBuilder folderSb = new StringBuilder(variant.length() + 1)
+    for (int i = 0; i < variant.length(); i++) {
+        char c = variant.charAt(i)
+        if (Character.isUpperCase(c)) {
+            folderSb.append('/')
+            folderSb.append(Character.toLowerCase(c))
+        } else {
+            folderSb.append(c)
+        }
+    }
+    final folder = folderSb.toString()
+    project.android.testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
+    project.jacoco {
+        toolVersion = '0.8.5'
+    }
+    project.tasks.create(
+            name: 'jacocoTestReport',
+            type: JacocoReport,
+            dependsOn: "test${capVariant}UnitTest"
+    ) {
+        def buildDir = project.buildDir
+        def coverageSourceDirs = [
+                "src/main/java"
+        ]
+        def fileFilter = [
+                '**/R.class',
+                '**/R$*.class',
+                '**/*$ViewInjector*.*',
+                '**/*$ViewBinder*.*',
+                '**/BuildConfig.*',
+                '**/Manifest*.*'
+        ]
+        def javaClasses = fileTree(
+                dir: "$buildDir/intermediates/javac/$folder",
+                excludes: fileFilter
+        )
+        group = "Reporting"
+        description = "Generate Jacoco coverage reports for the ${project.name} with the " +
+                "$variant variant."
+        classDirectories = files([ javaClasses ])
+        additionalSourceDirs = files(coverageSourceDirs)
+        sourceDirectories = files(coverageSourceDirs)
+        executionData = files("${project.buildDir}/jacoco/test${capVariant}UnitTest.exec")
+        reports {
+            html.enabled = true
+            html.destination file("${project.buildDir}/coverage/report/html")
+
+            xml.enabled = true
+            xml.destination file("${project.buildDir}/coverage/report/xml")
+        }
+    }
+}
