@@ -18,34 +18,20 @@ import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.properties.CidaasProperties;
-import timber.log.Timber;
 
 public class RegistrationController {
-
-
     private Context context;
+    private static RegistrationController shared;
+    private RegistrationSetupResultDataEntity[] registerFields;
+    private RegistrationSetupResponseEntity validateRegistrationFilelds = new RegistrationSetupResponseEntity();
 
-    public static RegistrationController shared;
-    public RegistrationSetupResultDataEntity[] registerFields;
-
-
-    String accvid;
-
-    RegistrationSetupResponseEntity validateRegistrationFilelds = new RegistrationSetupResponseEntity();
-
-    public RegistrationController(Context contextFromCidaas) {
-
+    private RegistrationController(Context contextFromCidaas) {
         context = contextFromCidaas;
     }
 
     public static RegistrationController getShared(Context contextFromCidaas) {
-        try {
-
-            if (shared == null) {
-                shared = new RegistrationController(contextFromCidaas);
-            }
-        } catch (Exception e) {
-            Timber.i(e.getMessage());
+        if (shared == null) {
+            shared = new RegistrationController(contextFromCidaas);
         }
         return shared;
     }
@@ -79,7 +65,6 @@ public class RegistrationController {
         String methodName = "RegistrationController :controlForGetRegistrationFields()";
         try {
             String baseurl = loginPropertiesResult.get("DomainURL");
-            String clientId = loginPropertiesResult.get("ClientId");
             String language;
 
             if (!requestId.equals("")) {
@@ -153,91 +138,33 @@ public class RegistrationController {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-                    String language;
 
                     if (!requestId.equals("")) {
                         if (registerFields != null) {
                             if (registerFields.length > 0) {
                                 for (RegistrationSetupResultDataEntity dataEntity : registerFields) {
 
-                                    if (dataEntity.getFieldKey().equals("email")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getEmail().equals("")) {
-                                            String errorMessage = "Email must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
-                                            return;
-                                        }
-                                    }
-
-                                    if (dataEntity.getFieldKey().equals("given_name")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals("")) {
-                                            String errorMessage = "given_name must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
-                                            return;
-                                        }
-
-                                    }
-
-                                    if (dataEntity.getFieldKey().equals("family_name")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getFamily_name().equals("")) {
-                                            String errorMessage = "family_name must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
-                                            return;
-
-                                        }
-
-                                    }
-
-                                    if (dataEntity.getFieldKey().equals("mobile_number")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getMobile_number().equals("")) {
-                                            String errorMessage = "mobile_number must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
-                                            return;
-                                        }
-                                    }
-
-                                    if (dataEntity.getFieldKey().equals("password")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getPassword().equals("")) {
-                                            String errorMessage = "password must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
-                                            return;
-                                        }
-                                    }
+                                    checkNotNull(dataEntity, "email", registrationEntity.getEmail());
+                                    checkNotNull(dataEntity, "given_name", registrationEntity.getGiven_name());
+                                    checkNotNull(dataEntity, "family_name", registrationEntity.getFamily_name());
+                                    checkNotNull(dataEntity, "mobile_number", registrationEntity.getMobile_number());
+                                    checkNotNull(dataEntity, "password", registrationEntity.getPassword());
+                                    checkNotNull(dataEntity, "username", registrationEntity.getUsername());
+                                    checkNotNull(dataEntity, "birthdate", registrationEntity.getBirthdate().toString());
 
                                     if (dataEntity.getFieldKey().equals("password_echo")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getGiven_name().equals("")) {
+                                        if (dataEntity.isRequired() && registrationEntity.getPassword_echo().equals("")) {
                                             String errorMessage = "password_echo must not be empty";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
                                             return;
 
                                         }
-                                        if (!registrationEntity.getPassword().equals(registrationEntity.getPassword_echo())) {
+                                        if (!registrationEntity.getPassword_echo().equals(registrationEntity.getPassword())) {
 
                                             String errorMessage = "Password and password_echo must be same";
                                             registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
                                             return;
-
                                         }
-
-                                    }
-
-                                    if (dataEntity.getFieldKey().equals("username")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getUsername().equals("")) {
-                                            String errorMessage = "username must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
-                                            return;
-
-                                        }
-
-                                    }
-
-                                    if (dataEntity.getFieldKey().equals("birthdate")) {
-                                        if (dataEntity.isRequired() && registrationEntity.getBirthdate().equals("")) {
-                                            String errorMessage = "birthdate must not be empty";
-                                            registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
-                                            return;
-                                        }
-
                                     }
 
                                     if (registrationEntity.getProvider() != null && !registrationEntity.getProvider().equals("")) {
@@ -253,7 +180,7 @@ public class RegistrationController {
                                             for (int i = 0; i < registrationEntity.getCustomFields().size(); i++) {
                                                 if (registrationEntity.getCustomFields().keys().hasMoreElements()) {
 
-                                                    // registrationEntity.getCustomFields().get()
+                                                    //TODO handle custom fields https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/59
 
                                                 }
                                             }
@@ -261,11 +188,7 @@ public class RegistrationController {
 
                                     }
                                 }
-                            } else {
-
                             }
-                        } else {
-
                         }
 
                         final RegisterNewUserRequestEntity registerNewUserRequestEntity;
@@ -284,6 +207,15 @@ public class RegistrationController {
                         registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
                     }
 
+                }
+
+                private void checkNotNull(RegistrationSetupResultDataEntity dataEntity, String key, String registrationEntityValue) {
+                    if (dataEntity.getFieldKey().equals(key)
+                            && dataEntity.isRequired()
+                            && registrationEntityValue.equals("")) {
+                        String errorMessage = key + " must not be empty";
+                        registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                    }
                 }
 
                 @Override
@@ -327,139 +259,4 @@ public class RegistrationController {
             result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
-
-
-
-   /* public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String requestId, @NonNull final String verificationMedium,
-                                          finalEventResult<InitiateAccountVerificationResponseEntity>EventResult)
-    {
-        final String methodName="RegistrationController :initiateAccountVerificationService()";
-        try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
-
-                    InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity = new InitiateAccountVerificationRequestEntity();
-                    initiateAccountVerificationRequestEntity.setProcessingType("CODE");
-                    initiateAccountVerificationRequestEntity.setVerificationMedium(verificationMedium);
-                    initiateAccountVerificationRequestEntity.setSub(sub);
-                    initiateAccountVerificationRequestEntity.setRequestId(requestId);
-                    initiateAccountVerificationService(baseurl, initiateAccountVerificationRequestEntity,EventResult);
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                   EventResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("",methodName));
-                }
-            });
-        }
-        catch (Exception e)
-        {
-   EventResult.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
-        }
-    }
-
-
-    //Service call To  register New User Account Verification via Email Setup
-    public void initiateAccountVerificationService(@NonNull String baseurl,@NonNull InitiateAccountVerificationRequestEntity registrationEntity,
-                                                    finalEventResult<InitiateAccountVerificationResponseEntity> result)
-    {
-        String methodName="RegistrationController :initiateAccountVerificationService()";
-        try{
-
-            if (registrationEntity.getRequestId() != null && !registrationEntity.getRequestId().equals("") &&
-                    registrationEntity.getProcessingType() != null && !registrationEntity.getProcessingType().equals("") &&
-                    registrationEntity.getVerificationMedium() != null && !registrationEntity.getVerificationMedium().equals("") &&
-                    registrationEntity.getSub() != null && !registrationEntity.getSub().equals("")
-                    && baseurl != null && !baseurl.equals("")) {
-
-                // Service call
-           RegistrationService.getShared(context).initiateAccountVerification(baseurl, registrationEntity,new EventResult<InitiateAccountVerificationResponseEntity>() {
-                    @Override
-                    public void success(InitiateAccountVerificationResponseEntity serviceresult) {
-                        accvid=serviceresult.getData().getAccvid();
-                        result.success(serviceresult);
-                    }
-
-                    @Override
-                    public void failure(WebAuthError error) {
-                        result.failure(error);
-                    }
-                });
-            }
-            else
-            {
-                String errorMessage="Verification medium , sub or processing type must not be null";
-                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage,methodName));
-            }
-        }
-        catch (Exception e)
-        {
- result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName,WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
-        }
-    }
-
-    public void verifyAccountVerificationService(@NonNull final String code,@NonNull final String accvid,finalEventResult<VerifyAccountResponseEntity> result)
-    {
-        final String methodName="RegistrationController :verifyAccountVerificationService()";
-        try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = lpresult.get("DomainURL");
-                    String clientId = lpresult.get("ClientId");
-
-                    if (code != null && !code.equals("") && accvid != null && !accvid.equals("")) {
-                        verifyAccountVerificationService(baseurl, code, accvid, result);
-                    }
-                    else {
-                        result.failure(WebAuthError.getShared(context).propertyMissingException("Verification Code or accvid must not be empty",methodName));
-                    }
-
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error :"+methodName));
-                }
-            });
-        }
-        catch (Exception e)
-        {
-  result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
-        }
-    }
-
-        //Service call To  register New User Account Verification via Email Setup
-    public void verifyAccountVerificationService(@NonNull String baseurl, @NonNull String code, String accvid,
-                                                 finalEventResult<VerifyAccountResponseEntity> result)
-    {
-        String methodName="RegistrationController :verifyAccountVerificationService()";
-        try{
-
-            if (accvid != null && !accvid.equals("") && code != null && !code.equals("") &&
-                    baseurl != null && !baseurl.equals("")) {
-
-                VerifyAccountRequestEntity registrationEntity=new VerifyAccountRequestEntity();
-                registrationEntity.setCode(code);
-                registrationEntity.setAccvid(accvid);
-
-                //Service call
-                RegistrationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity, result);
-            }
-            else
-            {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("ACCVID or CODE or BASEURL must not be null",
-                        "Error :"+methodName));
-            }
-        }
-        catch (Exception e)
-        {
-    result.failure(WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,e.getMessage()));
-        }
-    }*/
-
 }
