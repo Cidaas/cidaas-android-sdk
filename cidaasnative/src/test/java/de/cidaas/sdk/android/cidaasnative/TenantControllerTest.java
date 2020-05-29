@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -22,6 +23,7 @@ import timber.log.Timber;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
+@Ignore
 public class TenantControllerTest {
     Context context;
 

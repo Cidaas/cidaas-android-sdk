@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.doThrow;
 
 
 @RunWith(RobolectricTestRunner.class)
+@Ignore
 public class TenantServiceTest {
 
     CidaassdkService service;

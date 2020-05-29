@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -22,6 +23,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import timber.log.Timber;
 
+@Ignore
 public class ClientServiceTestCall {
 
     private final CountDownLatch latch = new CountDownLatch(1);

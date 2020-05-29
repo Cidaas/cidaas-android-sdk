@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -27,8 +28,8 @@ import timber.log.Timber;
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
 
-@RunWith(RobolectricTestRunner.class)
-
+//@RunWith(RobolectricTestRunner.class)
+@Ignore
 public class AccessTokenServiceTest {
     Context context;
     AccessTokenService accessTokenService;

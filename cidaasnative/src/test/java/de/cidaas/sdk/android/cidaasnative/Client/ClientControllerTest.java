@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -20,7 +21,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
 @RunWith(RobolectricTestRunner.class)
-
+@Ignore
 public class ClientControllerTest {
 
     Context context;

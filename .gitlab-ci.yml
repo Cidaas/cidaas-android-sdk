@@ -16,21 +16,18 @@ variables:
 
 image: docker:git
 
-#gradle_build:
-#    stage: build
-#    variables:
-#      DOCKER_DRIVER: overlay2
-#      DOCKER_TLS_CERTDIR: ""
-#    script: 
-#      - export GRADLE_USER_HOME=`pwd`/.gradle
-#      - docker run 
-#        --volume /var/run/docker.sock:/var/run/docker.sock
-#        --volume "$PWD":/code
-#        --rm -v "$PWD":/code gradle gradle test
-#      - cat cidaas-sdk-android/target/site/jacoco-aggregate-ut/index.html
-#    artifacts:
-#        paths:
-#            - cidaas-sdk-android/target/site/jacoco-aggregate-ut
+codecoverage:
+    image: thyrlian/android-sdk
+    stage: test
+    variables:
+      DOCKER_DRIVER: overlay2
+      DOCKER_TLS_CERTDIR: ""
+    script: 
+      - export GRADLE_USER_HOME=`pwd`/.gradle
+      - ./gradlew build test --continue > /dev/null 2>&1 || FAILED=true #Continue with the nex step even on test failures
+      - ./gradlew jacocoFullReport #! can only be executed after the build & test stage are finished
+    artifacts:
+        paths: [build/reports/jacoco/jacocoFullReport/*]
 
 code_quality_json:
   stage: test
@@ -85,6 +82,7 @@ code_quality_html:
       --volume "$PWD":/code
       --volume /var/run/docker.sock:/var/run/docker.sock
       --volume /tmp/cc:/tmp/cc
+      --volume /.codeclimate.yml:/.codeclimate.yml
       codeclimate/codeclimate engines:install > /dev/null
     # Run code climate
     - docker run
@@ -93,6 +91,7 @@ code_quality_html:
       --volume "$PWD":/code
       --volume /var/run/docker.sock:/var/run/docker.sock
       --volume /tmp/cc:/tmp/cc
+      --volume /.codeclimate.yml:/.codeclimate.yml
       codeclimate/codeclimate analyze /code -f html > codeclimate.html
   artifacts:
     paths: [codeclimate.html]
@@ -107,24 +106,28 @@ create_codequality_badges:
   stage: badges
   dependencies:
     - code_quality_json
+    - codecoverage
   script:
+    # Parse the codeclimate report for badges
     - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/calculate_codeclimate_metrics.py .
     - rm -rf codequality
     - python3 calculate_codeclimate_metrics.py gl-code-quality-report.json
 
-    # Parse the code coverage
-    #     - mv codecoverage/target/site/jacoco-aggregate-ut/index.html .
-    #     - git clone ${QUALITY_BASE_REPO}
-    #     - cp codequality/src/count_lines_java_code.py .
-    #     - rm -rf codequality
-    #     - python3  count_lines_java_code.py
+    # Parse the code coverage for badges
+    - ls -lah
+    - cp build/reports/jacoco/jacocoFullReport/html/index.html .
+    - git clone ${QUALITY_BASE_REPO}
+    - cp codequality/src/count_lines_java_code.py .
+    - rm -rf codequality
+    - python3 count_lines_java_code.py
 
+    # Using anybadge to create the badges
     - pip install anybadge
-
+    # Setup the color ranges for the badges
     - export BADGE_COLOR_RANGE_MINOR="10=green 20=yellow 50=orange 100=red 200=brightred"
     - export BADGE_COLOR_RANGE_MAJOR="1=green 10=yellow 40=orange 100=red 150=brightred"
-    - export BADGE_COLOR_RANGE_CRITICAL="1=green 5=yellow 20=orange 40=red 80=brightred"
+    - export BADGE_COLOR_RANGE_CRITICAL="1=green 3=yellow 5=orange 10=red 20=brightred"
     - export BADGE_COLOR_RANGE_FIXME="1=green 10=yellow 30=orange 50=red 100=brightred"
     - export BADGE_COLOR_RANGE_TOTAL="1=green 50=yellow 100=orange 200=red 300=brightred"
 
@@ -152,12 +155,13 @@ create_codequality_badges:
     - export DUPLICATION_ISSUES=$(cat duplication_issues.txt)
     - anybadge -l duplications -v $DUPLICATION_ISSUES -m "%d" -u -f duplication_issues.svg $BADGE_COLOR_RANGE_CRITICAL
 
-    #     - export LOC=$(cat loc.txt)
-    #     - anybadge -l LoC -v $LOC -f loc.svg --color=green
+    - export LOC=$(cat loc.txt)
+    - anybadge -l LoC -v $LOC -f loc.svg --color=green
 
-    #     - export CLASSES=$(cat classes.txt)
-    #     - anybadge -l Classes -v $CLASSES -f classes.svg --color=green
+    - export CLASSES=$(cat classes.txt)
+    - anybadge -l Classes -v $CLASSES -f classes.svg --color=green
 
+    # Export the created .svg's to the public directory
     - mkdir public
     - mv *.svg public
   artifacts:
@@ -170,8 +174,13 @@ pages:
   dependencies:
     - code_quality_html
     - create_codequality_badges
+    - codecoverage
   script:
-    - mv codeclimate.html public/index.html
+    - mv codeclimate.html public/codeclimate.html
+    - cd public
+    - mkdir jacoco
+    - cd ..
+    - mv build/reports/jacoco/jacocoFullReport/* public/jacoco/
   artifacts:
     paths:
       - public
