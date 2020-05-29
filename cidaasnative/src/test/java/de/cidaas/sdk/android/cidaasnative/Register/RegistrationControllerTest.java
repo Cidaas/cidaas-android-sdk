@@ -29,7 +29,7 @@ public class RegistrationControllerTest {
     @Before
     public void setUp() {
         context = RuntimeEnvironment.application;
-        registrationController = new RegistrationController(context);
+        registrationController = RegistrationController.getShared(context);
     }
 
     @Test
