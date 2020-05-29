@@ -120,8 +120,6 @@ public class RegistrationController {
                             }
                         });
             } else {
-                String errorMessage = "RequestId must not be empty";
-
                 result.failure(WebAuthError.getShared(context).propertyMissingException("Accepted Language or requestId must not be null", methodName));
             }
         } catch (Exception e) {
