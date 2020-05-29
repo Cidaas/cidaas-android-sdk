@@ -43,7 +43,7 @@ public class BiometricManagerV23 {
     private Cipher cipher;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
-    private FingerprintManagerCompat.CryptoObject cryptoObject;
+    // private FingerprintManagerCompat.CryptoObject cryptoObject;
     private FingerprintManager.CryptoObject cryptoObjectManger;
 
 

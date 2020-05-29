@@ -649,7 +649,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 public void success(Dictionary<String, String> lpresult) {
 
 
-                    if (CidaasSDKHelper.isInternetAvailable(GLOBAL_CONTEXT) == false) {
+                    if (!CidaasSDKHelper.isInternetAvailable(GLOBAL_CONTEXT)) {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.no_internet_bg));
                         webViewInstance.setVisibility(GONE);
                         imageViewInstance.setVisibility(VISIBLE);
@@ -661,7 +661,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         buttonInstance.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (CidaasSDKHelper.isInternetAvailable(GLOBAL_CONTEXT) == false) {
+                                if (!CidaasSDKHelper.isInternetAvailable(GLOBAL_CONTEXT)) {
                                     GLOBAL_CONTEXT.startActivity(new Intent(Settings.ACTION_SETTINGS));
                                 } else {
                                     relativeLayout.removeAllViews();
@@ -1010,10 +1010,12 @@ public class CidaasSDKLayout extends RelativeLayout {
                             //Clear cookies
 
                             CookieManager cookieManager = CookieManager.getInstance();
-                            cookieManager.removeAllCookie();
+                            cookieManager.removeAllCookies(value -> {
+                                //Cookies are removed
+                            });
 
 
-                            //Logoout From Social
+                            //Logout From Social
                             if (iCidaasFacebook != null) {
                                 iCidaasFacebook.logout();
                             }
@@ -1035,9 +1037,11 @@ public class CidaasSDKLayout extends RelativeLayout {
                         @Override
                         public void failure(WebAuthError error) {
                             CookieManager cookieManager = CookieManager.getInstance();
-                            cookieManager.removeAllCookie();
+                            cookieManager.removeAllCookies(value -> {
+                                //cookies are removed
+                            });
 
-                            //Logoout From Social
+                            //Logout From Social
                             if (iCidaasFacebook != null) {
                                 iCidaasFacebook.logout();
                             }
@@ -1064,25 +1068,6 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
 
-          /* LogoutController.getShared(GLOBAL_CONTEXT).logout(CidaasHelper.baseurl,);
-
-            CookieManager cookieManager = CookieManager.getInstance();
-            cookieManager.removeAllCookie();
-
-            //Logoout From Social
-            if (iCidaasFacebook != null) {
-                iCidaasFacebook.logout();
-            }
-            if (iCidaasGoogle != null) {
-                iCidaasGoogle.logout();
-            }
-
-            //Clear in Shared Preferences
-            DBHelper.getShared().removeUserInfo(sub);
-
-            // StorageHelper.sharedInstance.deleteUserDetails(userId);
-
-            response.success("User Logged out");*/
         } catch (Exception e) {
             response.failure(WebAuthError.getShared(GLOBAL_CONTEXT).methodException("Exception:" + methodName, WebAuthErrorCode.LOGOUT_ERROR, e.getMessage()));
         }
