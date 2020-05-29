@@ -24,7 +24,10 @@ codecoverage:
       DOCKER_TLS_CERTDIR: ""
     script: 
       - export GRADLE_USER_HOME=`pwd`/.gradle
-      - ./gradlew build test --continue > /dev/null 2>&1 || FAILED=true #Continue with the nex step even on test failures
+      - ./gradlew build --exclude-task test --continue > /dev/null 2>&1 || BUILDFAILED=true #Continue with the nex step even on test failures
+      - if [ $BUILDFAILED ]; then ./gradlew build --exclude-task test --continue; fi # Show the build output if it failed
+      - ./gradlew test --continue > /dev/null 2>&1 || TESTFAILED=true #Continue with the nex step even on test failures
+      - if [ $TESTFAILED ]; then ./gradlew test --continue; fi
       - ./gradlew jacocoFullReport #! can only be executed after the build & test stage are finished
     artifacts:
         paths: [build/reports/jacoco/jacocoFullReport/*]
