@@ -14,8 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
-
 import com.example.cidaasv2.R;
 
 import java.io.IOException;
@@ -44,7 +42,7 @@ public class BiometricManagerV23 {
     private Cipher cipher;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
-    private FingerprintManagerCompat.CryptoObject cryptoObject;
+    // private FingerprintManagerCompat.CryptoObject cryptoObject;
     private FingerprintManager.CryptoObject cryptoObjectManger;
 
 

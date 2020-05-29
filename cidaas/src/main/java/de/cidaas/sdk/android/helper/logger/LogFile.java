@@ -103,7 +103,7 @@ public class LogFile {
     }
 
     private File getLogFileDirectory() {
-        // TODO Check if Environment.DIRECTORY_DOCUMENTS ok for us (https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/58)
+        //  Environment.DIRECTORY_DOCUMENTS is ok for  (https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/58)
         File storageDirectory = mContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File logFileDir = new File(storageDirectory, "cidaas/");
         if (!logFileDir.exists()) {
