@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.example.cidaasv2.R;
+import de.cidaas.sdk.android.R;
 
 
 public class BioMetricAlertDialog extends AlertDialog implements View.OnClickListener {

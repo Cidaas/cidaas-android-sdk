@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.cidaasv2.R;
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -32,6 +32,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+import de.cidaas.sdk.android.R;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M)

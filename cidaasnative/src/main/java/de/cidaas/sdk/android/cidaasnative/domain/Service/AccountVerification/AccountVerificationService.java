@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
+import de.cidaas.sdk.android.cidaasnative.R;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.AccountVerificationListResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AccountVerification.InitiateAccountVerificationResponseEntity;
@@ -78,7 +79,7 @@ public class AccountVerificationService {
 
                 serviceForInitiateAccountVerification(initiateAccountVerificationUrl, initiateAccountVerificationRequestEntity, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(com.example.cidaasv2.R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
                 return;
             }
 
@@ -143,7 +144,7 @@ public class AccountVerificationService {
                 //Service
                 serviceForVerifyAccountVerification(verifyAccountVerificationUrl, verifyAccountRequestEntity, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(com.example.cidaasv2.R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
                 return;
             }
 
@@ -208,7 +209,7 @@ public class AccountVerificationService {
                 //Service
                 serviceForGetAccountVerificationList(verifyAccountListUrl, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(com.example.cidaasv2.R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
                 return;
             }
 

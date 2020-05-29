@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
+import de.cidaas.sdk.android.cidaasnative.R;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsResponseErrorEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
@@ -71,7 +72,7 @@ public class NativeLoginService {
                 serviceForLoginWithCredentials(loginUrl, loginCredentialsRequestEntity, headers, callback);
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(com.example.cidaasv2.R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
                 return;
             }
         } catch (Exception e) {

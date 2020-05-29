@@ -2,11 +2,11 @@ package de.cidaas.sdk.android.cidaasnative.domain.Service.Tenant;
 
 import android.content.Context;
 
-import com.example.cidaasv2.R;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
+import de.cidaas.sdk.android.cidaasnative.R;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;

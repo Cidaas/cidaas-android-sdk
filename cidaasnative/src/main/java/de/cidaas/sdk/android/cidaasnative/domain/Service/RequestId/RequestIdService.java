@@ -4,7 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
-import com.example.cidaasv2.R;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URLEncoder;
@@ -14,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import de.cidaas.sdk.android.Cidaas;
+import de.cidaas.sdk.android.cidaasnative.R;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.Service.Helper.NativeURLHelper;

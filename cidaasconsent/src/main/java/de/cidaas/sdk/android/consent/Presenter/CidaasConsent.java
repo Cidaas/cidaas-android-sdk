@@ -14,7 +14,6 @@ import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 
 
-//import com.example.cidaasv2.Service.Entity.AuthRequest.AuthRequestResponseEntity;
 
 public class CidaasConsent {
 

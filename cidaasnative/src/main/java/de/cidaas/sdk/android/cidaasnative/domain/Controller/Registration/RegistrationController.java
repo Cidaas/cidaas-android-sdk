@@ -64,7 +64,7 @@ public class RegistrationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    registerFieldsresult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName));
+                    registerFieldsresult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName));
                 }
             });
         } catch (Exception e) {
@@ -288,7 +288,7 @@ public class RegistrationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    registerFieldsresult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName));
+                    registerFieldsresult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName));
                 }
             });
         } catch (Exception e) {

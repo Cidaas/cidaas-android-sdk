@@ -158,7 +158,7 @@ public class SettingsController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    WebAuthError.getShared(context).CidaaspropertyMissingException("", methodName);
+                    WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName);
                 }
             });
 

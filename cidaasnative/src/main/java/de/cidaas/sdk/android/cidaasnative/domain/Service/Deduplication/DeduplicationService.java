@@ -2,11 +2,11 @@ package de.cidaas.sdk.android.cidaasnative.domain.Service.Deduplication;
 
 import android.content.Context;
 
-import com.example.cidaasv2.R;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
+import de.cidaas.sdk.android.cidaasnative.R;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.RegisterDeduplication.RegisterDeduplicationEntity;
 import de.cidaas.sdk.android.cidaasnative.data.Service.CidaasNativeService;

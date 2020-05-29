@@ -2,8 +2,7 @@ package de.cidaas.sdk.android.helper.extension;
 
 import android.content.Context;
 
-import com.example.cidaasv2.R;
-
+import de.cidaas.sdk.android.R;
 import de.cidaas.sdk.android.entities.ErrorEntity;
 import de.cidaas.sdk.android.helper.enums.HttpStatusCode;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -117,7 +116,6 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         errorEntity.setError(context.getString(R.string.FILE_NOT_FOUND));
 
         String loggerMessage = "File not found Error :- " + methodName + " ErrorCode :- " + WebAuthError.shared.errorCode + " Error Message:- " + context.getString(R.string.FILE_NOT_FOUND);
-        ;
         LogFile.getShared(context).addFailureLog(loggerMessage);
 
         WebAuthError.shared.setErrorEntity(errorEntity);
@@ -168,8 +166,7 @@ public class WebAuthError extends Error implements IOAuthExcepiton {
         return WebAuthError.shared;
     }
 
-    //CidaasPropertyMissingException
-    public WebAuthError CidaaspropertyMissingException(String errorDetails, String methodName) {
+    public WebAuthError cidaasPropertyMissingException(String errorDetails, String methodName) {
 
         WebAuthError.shared.setErrorCode(WebAuthErrorCode.CIDAAS_PROPERTY_MISSING);
         WebAuthError.shared.setStatusCode(HttpStatusCode.EXPECTATION_FAILED);

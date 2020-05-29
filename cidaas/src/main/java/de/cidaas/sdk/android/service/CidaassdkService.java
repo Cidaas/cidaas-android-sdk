@@ -2,11 +2,10 @@ package de.cidaas.sdk.android.service;
 
 import android.content.Context;
 
-import com.example.cidaasv2.BuildConfig;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import de.cidaas.sdk.android.BuildConfig;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.helper.general.DBHelper;
 import okhttp3.Interceptor;
