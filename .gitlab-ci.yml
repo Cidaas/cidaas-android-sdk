@@ -1,6 +1,7 @@
 stages:
-  - build
   - test
+  - build
+  - quality
   - badges
   - deploy
 
@@ -16,7 +17,7 @@ variables:
 
 image: docker:git
 
-codecoverage:
+test:
     image: thyrlian/android-sdk
     stage: test
     variables:
@@ -24,16 +25,46 @@ codecoverage:
       DOCKER_TLS_CERTDIR: ""
     script: 
       - export GRADLE_USER_HOME=`pwd`/.gradle
-      - ./gradlew build --exclude-task test --continue > /dev/null 2>&1 || BUILDFAILED=true #Continue with the nex step even on test failures
-      - if [ $BUILDFAILED ]; then ./gradlew build --exclude-task test --continue; fi # Show the build output if it failed
-      - ./gradlew test --continue > /dev/null 2>&1 || TESTFAILED=true #Continue with the nex step even on test failures
-      - if [ $TESTFAILED ]; then ./gradlew test --continue; fi
+      - ./gradlew build --exclude-task test --continue
+      - ./gradlew test --continue
+
+codecoverage:
+    image: thyrlian/android-sdk
+    stage: quality
+    variables:
+      DOCKER_DRIVER: overlay2
+      DOCKER_TLS_CERTDIR: ""
+    script: 
+      - export GRADLE_USER_HOME=`pwd`/.gradle
+      - ./gradlew build --exclude-task test --continue || BUILDFAILED=true #Continue with the nex step even on test failures
+      - ./gradlew test --continue || TESTFAILED=true #Continue with the nex step even on test failures
       - ./gradlew jacocoFullReport #! can only be executed after the build & test stage are finished
+      - cat build/reports/jacoco/jacocoFullReport/html/index.html
     artifacts:
         paths: [build/reports/jacoco/jacocoFullReport/*]
 
+dependency_scanning:
+  image: docker:stable
+  stage: quality
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+  artifacts:
+    reports:
+      dependency_scanning: gl-dependency-scanning-report.json
+    paths: [gl-dependency-scanning-report.json]
+
 code_quality_json:
-  stage: test
+  stage: quality
   allow_failure: true
   variables:
     DOCKER_DRIVER: overlay2
@@ -43,9 +74,7 @@ code_quality_json:
     - docker pull "$CODE_QUALITY_IMAGE"
     # Clone the .codeclimate.yml from the code quality base repo
     - git clone ${QUALITY_BASE_REPO}
-    - ls -lah
     - cp codequality/conf/codeclimate/rules/java/.codeclimate.yml .
-    - ls -lah
     - rm -rf codequality
     # Run the codeclimate image from gitlab
     - docker run
@@ -66,18 +95,18 @@ code_quality_json:
     - if: '$CI_COMMIT_TAG || $CI_COMMIT_BRANCH'
 
 code_quality_html:
-  stage: test
+  stage: quality
   allow_failure: true
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
+    CONTAINERID: ""
   script:
     - docker pull codeclimate/codeclimate
     # Clone the .codeclimate.yml from the code quality base repo
     - git clone ${QUALITY_BASE_REPO}
     - cp codequality/conf/codeclimate/rules/java/.codeclimate.yml .
     - rm -rf codequality
-    - cat .codeclimate.yml
     # Install the code climate engines
     - docker run
       --env SOURCE_CODE="$PWD"
@@ -85,8 +114,8 @@ code_quality_html:
       --volume "$PWD":/code
       --volume /var/run/docker.sock:/var/run/docker.sock
       --volume /tmp/cc:/tmp/cc
-      --volume /.codeclimate.yml:/.codeclimate.yml
-      codeclimate/codeclimate engines:install > /dev/null
+      -d codeclimate/codeclimate engines:install > /dev/null
+    # Get container ID
     # Run code climate
     - docker run
       --env SOURCE_CODE="$PWD"
@@ -94,7 +123,6 @@ code_quality_html:
       --volume "$PWD":/code
       --volume /var/run/docker.sock:/var/run/docker.sock
       --volume /tmp/cc:/tmp/cc
-      --volume /.codeclimate.yml:/.codeclimate.yml
       codeclimate/codeclimate analyze /code -f html > codeclimate.html
   artifacts:
     paths: [codeclimate.html]
@@ -110,24 +138,34 @@ create_codequality_badges:
   dependencies:
     - code_quality_json
     - codecoverage
+    - dependency_scanning
   script:
-    # Parse the codeclimate report for badges
+    # Get the quality base repo
     - git clone ${QUALITY_BASE_REPO}
+    
+    # Parse the codeclimate report for badges
     - cp codequality/src/calculate_codeclimate_metrics.py .
-    - rm -rf codequality
     - python3 calculate_codeclimate_metrics.py gl-code-quality-report.json
 
-    # Parse the code coverage for badges
+    # Parse the code coverage report for badges
     - ls -lah
     - cp build/reports/jacoco/jacocoFullReport/html/index.html .
-    - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/count_lines_java_code.py .
-    - rm -rf codequality
     - python3 count_lines_java_code.py
+    
+    # Parse the dependency vulnerability report
+    - ls -lah
+    - cp build/reports/jacoco/jacocoFullReport/html/index.html .
+    - cp codequality/src/calculate_dependency_scan_metrics.py .
+    - python3 calculate_dependency_scan_metrics.py gl-dependency-scanning-report.json
+    
+    # Cleanup
+    - rm -rf codequality
 
     # Using anybadge to create the badges
     - pip install anybadge
     # Setup the color ranges for the badges
+    - export BADGE_COLOR_VULNERABILITIES="0=green 1=yellow 2=orange 3=red 4=brightred"
     - export BADGE_COLOR_RANGE_MINOR="10=green 20=yellow 50=orange 100=red 200=brightred"
     - export BADGE_COLOR_RANGE_MAJOR="1=green 10=yellow 40=orange 100=red 150=brightred"
     - export BADGE_COLOR_RANGE_CRITICAL="1=green 3=yellow 5=orange 10=red 20=brightred"
@@ -163,6 +201,12 @@ create_codequality_badges:
 
     - export CLASSES=$(cat classes.txt)
     - anybadge -l Classes -v $CLASSES -f classes.svg --color=green
+    
+    - export TOTAL_VULNERABILITIES=$(cat total_vulnerabilities.txt)
+    - anybadge -l library_vulnerabilities -v $TOTAL_VULNERABILITIES -m "%d" -u -f total_vulnerabilities.svg $BADGE_COLOR_VULNERABILITIES
+    
+    - export VULNERABLE_DEPENDENCIES=$(cat vulnerable_dependencies.txt)
+    - anybadge -l vulnerable_libraries -v $VULNERABLE_DEPENDENCIES -m "%d" -u -f vulnerable_dependencies.svg $BADGE_COLOR_VULNERABILITIES
 
     # Export the created .svg's to the public directory
     - mkdir public
@@ -176,14 +220,16 @@ pages:
   stage: deploy
   dependencies:
     - code_quality_html
+    - code_quality_json
     - create_codequality_badges
     - codecoverage
+    - dependency_scanning
   script:
     - mv codeclimate.html public/codeclimate.html
-    - cd public
-    - mkdir jacoco
-    - cd ..
+    - mkdir -p public/jacoco/
     - mv build/reports/jacoco/jacocoFullReport/* public/jacoco/
+    - mv gl-code-quality-report.json public/gl-code-quality-report.json
+    - mv gl-dependency-scanning-report.json public/gl-dependency-scanning-report.json
   artifacts:
     paths:
       - public
