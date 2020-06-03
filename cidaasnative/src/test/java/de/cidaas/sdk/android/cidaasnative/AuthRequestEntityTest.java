@@ -2,7 +2,7 @@ package de.cidaas.sdk.android.cidaasnative;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.authrequest.AuthRequestEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

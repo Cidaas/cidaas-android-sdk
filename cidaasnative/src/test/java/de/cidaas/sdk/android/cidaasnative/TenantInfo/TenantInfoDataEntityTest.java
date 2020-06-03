@@ -3,7 +3,7 @@ package de.cidaas.sdk.android.cidaasnative.TenantInfo;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoDataEntity;
 
 public class TenantInfoDataEntityTest {
     TenantInfoDataEntity tenantInfoDataEntity = new TenantInfoDataEntity();

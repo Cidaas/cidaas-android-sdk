@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordRequestEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordValidateCode.ResetPasswordValidateCodeResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Controller.ResetPassword.ResetPasswordController;
+import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.ResetPasswordRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.controller.resetpassword.ResetPasswordController;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 

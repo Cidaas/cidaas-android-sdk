@@ -3,8 +3,8 @@ package de.cidaas.sdk.android.cidaasnative.MFAList;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.MFAList.MFAListResponseDataEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.MFAList.MFAListResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.mfalist.MFAListResponseDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.mfalist.MFAListResponseEntity;
 
 public class MFAListResponseEntityTest {
     //Field data of type MFAListResponseDataEntity[] - was not mocked since Mockito doesn't mock arrays

@@ -554,7 +554,7 @@ public class LoginController {
                                 @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         final String methodName = "LoginController :loginWithSocial()";
         try {
-            getSocialLoginURL(requestId, provider, new EventResult<String>() {
+            getSocialLoginURL(provider, requestId, new EventResult<String>() {
                 @Override
                 public void success(String socialLoginURL) {
                     logincallback = callbacktoMain;

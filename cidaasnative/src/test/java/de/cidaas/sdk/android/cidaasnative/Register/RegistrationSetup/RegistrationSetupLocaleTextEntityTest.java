@@ -3,8 +3,8 @@ package de.cidaas.sdk.android.cidaasnative.Register.RegistrationSetup;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupAttributesEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupLocaleTextEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupAttributesEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupLocaleTextEntity;
 
 public class RegistrationSetupLocaleTextEntityTest {
 

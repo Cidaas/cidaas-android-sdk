@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.AuthRequest.AuthRequestResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.RequestId.RequestIDEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.authrequest.AuthRequestResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.requestid.RequestIDEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

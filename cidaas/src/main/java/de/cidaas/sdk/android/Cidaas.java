@@ -9,7 +9,6 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 import java.io.File;
 import java.util.HashMap;
 
@@ -122,7 +121,7 @@ public class Cidaas {
     }
 
     public void getAccessTokenFromRefreshToken(String refershtoken, EventResult<AccessTokenEntity> result) {
-        AccessTokenController.getShared(context).getAccessToken(refershtoken, result);
+        AccessTokenController.getShared(context).getAccessTokenByRefreshToken(refershtoken, result);
     }
 
     public void getAccessTokenBySocial(SocialAccessTokenEntity socialAccessTokenEntity, EventResult<AccessTokenEntity> result) {

@@ -5,8 +5,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsErrorDataEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsResponseErrorEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsErrorDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsResponseErrorEntity;
 
 public class LoginCredentialsResponseErrorEntityTest {
 

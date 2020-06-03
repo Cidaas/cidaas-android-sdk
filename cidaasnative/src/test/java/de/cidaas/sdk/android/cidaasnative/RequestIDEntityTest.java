@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.RequestId.RequestIDEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.requestid.RequestIDEntity;
 
 public class RequestIDEntityTest {
 

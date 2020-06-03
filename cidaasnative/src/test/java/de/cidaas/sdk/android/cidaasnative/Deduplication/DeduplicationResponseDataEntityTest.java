@@ -3,8 +3,8 @@ package de.cidaas.sdk.android.cidaasnative.Deduplication;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationList;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.DeduplicationList;
+import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.DeduplicationResponseDataEntity;
 
 public class DeduplicationResponseDataEntityTest {
     //Field deduplicationList of type DeduplicationList[] - was not mocked since Mockito doesn't mock arrays
