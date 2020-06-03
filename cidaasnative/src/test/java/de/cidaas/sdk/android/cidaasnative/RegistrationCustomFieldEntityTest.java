@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationCustomFieldEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationCustomFieldEntity;
 
 public class RegistrationCustomFieldEntityTest {
 

@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.consent.data.Entity.ResumeConsent.ResumeConsentResponseDataEntity;
-import de.cidaas.sdk.android.consent.data.Entity.ResumeConsent.ResumeConsentResponseEntity;
+import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResponseDataEntity;
+import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResponseEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

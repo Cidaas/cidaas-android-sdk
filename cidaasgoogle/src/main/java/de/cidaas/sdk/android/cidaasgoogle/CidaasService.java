@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasgoogle.entity.GoogleSettingsEntity;
-import de.cidaas.sdk.android.cidaasgoogle.iInterface.ICidaasGoogleService;
-import de.cidaas.sdk.android.cidaasgoogle.iInterface.IGoogleAccessTokenEntity;
+import de.cidaas.sdk.android.cidaasgoogle.interfaces.ICidaasGoogleService;
+import de.cidaas.sdk.android.cidaasgoogle.interfaces.IGoogleAccessTokenEntity;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import retrofit2.Call;

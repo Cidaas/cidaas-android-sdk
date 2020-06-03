@@ -3,7 +3,7 @@ package de.cidaas.sdk.android.cidaasnative;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginEntity;
 
 public class LoginEntityTest {
 

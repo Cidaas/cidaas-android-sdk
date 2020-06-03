@@ -3,7 +3,7 @@ package de.cidaas.sdk.android.cidaasnative.Client;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.clientinfo.ClientInfoDataEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

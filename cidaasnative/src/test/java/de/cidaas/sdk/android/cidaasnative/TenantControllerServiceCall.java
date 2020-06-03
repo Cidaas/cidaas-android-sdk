@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 
 import java.util.concurrent.CountDownLatch;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Controller.Tenant.TenantController;
+import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.controller.tenant.TenantController;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;

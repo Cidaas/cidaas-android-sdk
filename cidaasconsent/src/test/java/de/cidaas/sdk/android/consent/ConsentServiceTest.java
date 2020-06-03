@@ -13,9 +13,9 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import de.cidaas.sdk.android.consent.Domain.Service.Consent.ConsentService;
-import de.cidaas.sdk.android.consent.data.Entity.ResumeConsent.ResumeConsentEntity;
-import de.cidaas.sdk.android.consent.data.Entity.ResumeConsent.ResumeConsentResponseEntity;
+import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentEntity;
+import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResponseEntity;
+import de.cidaas.sdk.android.consent.domain.service.consent.ConsentService;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;

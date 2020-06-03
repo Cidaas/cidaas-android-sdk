@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegisterNewUserCustomValue;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegisterNewUserCustomValue;
 
 public class RegisterNewUserCustomValueTest {
 

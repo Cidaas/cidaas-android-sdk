@@ -2,7 +2,7 @@ package de.cidaas.sdk.android.cidaasnative.MFAList;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.MFAList.MFAListResponseDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.mfalist.MFAListResponseDataEntity;
 
 import static junit.framework.Assert.assertTrue;
 

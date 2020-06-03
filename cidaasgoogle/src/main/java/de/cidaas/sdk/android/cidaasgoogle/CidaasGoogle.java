@@ -20,7 +20,7 @@ import java.io.InputStream;
 
 import de.cidaas.sdk.android.CidaasSDKLayout;
 import de.cidaas.sdk.android.cidaasgoogle.entity.GoogleSettingsEntity;
-import de.cidaas.sdk.android.cidaasgoogle.iInterface.IGoogleAccessTokenEntity;
+import de.cidaas.sdk.android.cidaasgoogle.interfaces.IGoogleAccessTokenEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;

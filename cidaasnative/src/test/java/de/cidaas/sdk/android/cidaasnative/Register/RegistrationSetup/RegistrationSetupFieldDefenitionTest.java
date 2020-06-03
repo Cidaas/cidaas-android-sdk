@@ -3,7 +3,7 @@ package de.cidaas.sdk.android.cidaasnative.Register.RegistrationSetup;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupFieldDefenition;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupFieldDefenition;
 
 public class RegistrationSetupFieldDefenitionTest {
     RegistrationSetupFieldDefenition registrationSetupFieldDefenition = new RegistrationSetupFieldDefenition();

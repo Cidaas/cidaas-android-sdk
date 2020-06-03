@@ -5,8 +5,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoDataEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoEntity;
 
 public class TenantInfoEntityTest {
 

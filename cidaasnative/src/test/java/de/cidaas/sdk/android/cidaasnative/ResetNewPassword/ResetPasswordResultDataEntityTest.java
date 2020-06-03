@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ResetPassword.ResetPasswordResultDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.ResetPasswordResultDataEntity;
 
 public class ResetPasswordResultDataEntityTest {
 

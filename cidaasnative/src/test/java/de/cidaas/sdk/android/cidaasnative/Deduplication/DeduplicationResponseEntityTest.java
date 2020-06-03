@@ -5,8 +5,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseDataEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Deduplication.DeduplicationResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.DeduplicationResponseDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.DeduplicationResponseEntity;
 
 public class DeduplicationResponseEntityTest {
 

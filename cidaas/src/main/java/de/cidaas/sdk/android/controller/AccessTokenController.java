@@ -122,6 +122,8 @@ public class AccessTokenController {
                 } else {
                     callback.failure(WebAuthError.getShared(context).noUserFoundException("Error:" + methodName));
                 }
+            } else {
+                callback.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", methodName));
             }
 
         } catch (Exception e) {
@@ -132,8 +134,6 @@ public class AccessTokenController {
     private void getAccessToken(String sub, EventResult<AccessTokenEntity> callback, AccessTokenModel accessTokenModel) {
         String methodName = "AccessToken Controller :getAccessToken()";
         try {
-            LogFile.getShared(context).addInfoLog("Info " + methodName, " Info Sub:-" + sub + " AccessToken" + accessTokenModel.getAccess_token() +
-                    "refreshToken:-" + accessTokenModel.getRefresh_token() + "ExpiresIn:-" + accessTokenModel.getExpires_in());
 
             long milliseconds = System.currentTimeMillis();
             long currentSeconds = milliseconds / 1000;
