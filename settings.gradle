@@ -1,1 +1,1 @@
-include ':cidaas', ':cidaasgoogle', ':cidaasfacebook', ':cidaasverification', ':cidaasconsent', ':cidaasnative', ':app'
+include ':cidaas', ':cidaasgoogle', ':cidaasfacebook', ':cidaasverification', ':cidaasconsent', ':cidaasnative'
