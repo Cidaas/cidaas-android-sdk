@@ -61,7 +61,6 @@ public class EnrollService {
                 @Override
                 public void onResponse(Call<EnrollResponse> call, Response<EnrollResponse> response) {
                     if (response.isSuccessful()) {
-                        //Todo Add UserDevice Id After Successful Configuration
                         enrollCallback.success(response.body());
                     } else {
                         enrollCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
@@ -93,7 +92,6 @@ public class EnrollService {
                 @Override
                 public void onResponse(Call<EnrollResponse> call, Response<EnrollResponse> response) {
                     if (response.isSuccessful()) {
-                        //Todo Add UserDevice Id After Successful Configuration
                         enrollCallback.success(response.body());
                     } else {
                         enrollCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ENROLL_VERIFICATION_FAILURE,
