@@ -167,41 +167,6 @@ public class ConsentService {
         }
     }
 
-
-
- /*   public void acceptConsent(String baseurl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
-                              finalEventResult<ConsentManagementAcceptResponseEntity> callback)
-    {
-        String methodName="Consent Service :acceptConsent()";
-        try
-        {
-            if(baseurl!=null && !baseurl.equals("")){
-
-                //Construct URL For RequestId
-                String consentAcceptUrl=baseurl+ VerificationURLHelper.getShared().getAcceptConsent();
-
-                //Header Generation
-                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
-
-                //Service call to accept consent
-                serviceCallForAcceptConsent(consentAcceptUrl, consentManagementAcceptedRequestEntity, headers, callback);
-
-            }
-            else {
-                callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
-                        ,"Error :"+methodName));
-                return;
-            }
-
-        }
-        catch (Exception e)
-        {
-           callback.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName,
-                   WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,e.getMessage()));
-        }
-    }*/
-
-
     public void acceptConsent(String consentAcceptUrl, ConsentManagementAcceptedRequestEntity consentManagementAcceptedRequestEntity,
                               Map<String, String> headers, final EventResult<ConsentManagementAcceptResponseEntity> callback) {
         final String methodName = "Consent Service :serviceCallForAcceptConsent()";
@@ -235,37 +200,6 @@ public class ConsentService {
             callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, e.getMessage()));
         }
     }
-
-  /*  //------------------------------------------------------------------------Resume Consent-------------------------------------------------------------
-    public void resumeConsent(final String baseurl, final ResumeConsentEntity resumeConsentEntity, finalEventResult<ResumeConsentResponseEntity> callback)
-    {
-        //Local Variables
-        String methodName = "Consent Service :resumeConsent()";
-        try{
-
-            if(baseurl!=null && !baseurl.equals("")){
-
-                //Construct URL For RequestId
-                String resumeConsentUrl=baseurl+URLHelper.getShared().getResumeConsentURL()+ resumeConsentEntity.getTrack_id();
-
-                //Header generation
-                Map<String, String> headers = Headers.getShared(context).getHeaders(null,false, URLHelper.contentTypeJson);
-
-                //service call resume consent
-                serviceCallForResumeConsent(resumeConsentEntity,  resumeConsentUrl, headers,callback);
-            }
-            else
-            {
-              callback.failure( WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :"+methodName));
-              return;
-            }
-
-        }
-        catch (Exception e)
-        {
-            callback.failure( WebAuthError.getShared(context).methodException("Exception :"+methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE,e.getMessage()));
-        }
-    }*/
 
     //----------------------------------------------------------------ServiceCallForResumeConsent--------------------------------------------------------
     public void resumeConsent(String resumeConsentUrl, ResumeConsentEntity resumeConsentEntity, Map<String, String> headers,

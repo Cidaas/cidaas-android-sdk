@@ -64,8 +64,7 @@ public class CidaasGoogle implements ICidaasGoogle {
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(activity, signInOptions);
-       /* client = new GoogleApiClient.Builder(activity, this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, signInOptions).build();*/
+
 
         CidaasSDKLayout.iCidaasGoogle = new ICidaasGoogle() {
             @Override

@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.cidaasverification.data.entity.settings.others;
+package de.cidaas.sdk.android.cidaasverification.data.entity.updatefcmtoken;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

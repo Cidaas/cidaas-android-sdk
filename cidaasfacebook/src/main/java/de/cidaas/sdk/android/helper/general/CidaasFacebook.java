@@ -60,7 +60,7 @@ public class CidaasFacebook implements ICidaasFacebook {
         try {
             LoginManager.getInstance().logOut();
         } catch (Exception e) {
-            //result.failure(WebAuthError.getShared(activity).customException(400,"Exception: CidaasFacebook: signIn"+e.getMessage(),400));
+
             Timber.e(e.getMessage());
         }
     }

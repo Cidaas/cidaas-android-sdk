@@ -75,40 +75,6 @@ public class CidaasVerification {
 
     }
 
-
-    //-----------------------------------------_Common For Cidaas Instances-------------------------------------------------------------------------
-
-/*
-
-    public boolean isENABLE_PKCE() {
-        return CidaasHelper.getShared(context).isENABLE_PKCE();
-    }
-
-    public void setENABLE_PKCE(boolean ENABLE_PKCE)
-    {
-        CidaasHelper.getShared(context).setENABLE_PKCE(ENABLE_PKCE);
-    }
-
-
-    //enableLog
-
-    public boolean isLogEnable()
-    {
-        return CidaasHelper.getShared(context).isLogEnable();
-    }
-
-    public String enableLog()
-    {
-        return CidaasHelper.getShared(context).enableLog();
-    }
-
-
-    //-----------------------------------------END_OF_Common For Cidaas Instances-------------------------------------------------------------------------
-
-
-
-*/
-
     //------------------------------------------CALL FOR AUTHENTICATOR AND WEB TO MOBILE FLOW ONLY----------------------------------------------------------------------
 
     //-------------------------------------------------------SCANNED CALL COMMON--------------------------------------------------------------
@@ -186,22 +152,6 @@ public class CidaasVerification {
     public void updateFCMToken(String FCMToken) {
         SettingsController.getShared(context).updateFCMToken(FCMToken);
     }
-
-  /*  public void updateFCMToken(@NonNull final String sub,@NonNull final String FCMToken)
-    {
-        VerificationSettingsController.getShared(context).updateFCMToken(sub ,FCMToken, new EventResult<Object>() {
-            @Override
-            public void success(Object result) {
-                LogFile.getShared(context).addFailureLog("Update FCM Token Success");
-            }
-
-            @Override
-            public void failure(WebAuthError error) {
-                LogFile.getShared(context).addFailureLog("Update FCM Token Error" + error.getMessage());
-            }
-        });
-    }*/
-
     //------------------------------------------CALL FOR SDK ONLY----------------------------------------------------------------------
 
     //------------------------------------------SETUP CALL--------------------------------------------------------------
@@ -350,14 +300,6 @@ public class CidaasVerification {
         PasswordlessLoginController.getShared(context).loginVerification(loginRequest, verificationType, loginCredentialsResult);
     }
 
-    /* public void listenTOTP(String sub) {
-         TOTPConfigurationController.getShared(context).ListenTOTP(sub);
-     }
-
-     public void cancelListenTOTP() {
-         TOTPConfigurationController.getShared(context).cancelTOTP();
-     }
- */
     //Set FCM Token For Update
     public void setFCMToken(String FCMToken) {
         //Store Device info for Later Purposes
