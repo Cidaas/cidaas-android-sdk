@@ -25,8 +25,8 @@ test:
       DOCKER_TLS_CERTDIR: ""
     script: 
       - export GRADLE_USER_HOME=`pwd`/.gradle
-      - ./gradlew build --exclude-task test --continue
-      - ./gradlew test --continue
+      - ./gradlew build --exclude-task test
+      - ./gradlew test
 
 codecoverage:
     image: thyrlian/android-sdk
@@ -148,14 +148,11 @@ create_codequality_badges:
     - python3 calculate_codeclimate_metrics.py gl-code-quality-report.json
 
     # Parse the code coverage report for badges
-    - ls -lah
     - cp build/reports/jacoco/jacocoFullReport/html/index.html .
     - cp codequality/src/count_lines_java_code.py .
     - python3 count_lines_java_code.py
     
     # Parse the dependency vulnerability report
-    - ls -lah
-    - cp build/reports/jacoco/jacocoFullReport/html/index.html .
     - cp codequality/src/calculate_dependency_scan_metrics.py .
     - python3 calculate_dependency_scan_metrics.py gl-dependency-scanning-report.json
     
