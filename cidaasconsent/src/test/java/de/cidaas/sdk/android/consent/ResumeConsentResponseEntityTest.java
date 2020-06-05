@@ -2,6 +2,7 @@ package de.cidaas.sdk.android.consent;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResponseDataEntity;
@@ -9,6 +10,7 @@ import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResp
 
 import static junit.framework.TestCase.assertTrue;
 
+@Ignore
 public class ResumeConsentResponseEntityTest {
 
     ResumeConsentResponseDataEntity data;

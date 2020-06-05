@@ -1,11 +1,13 @@
 package de.cidaas.sdk.android.consent;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResponseDataEntity;
 
 import static junit.framework.TestCase.assertTrue;
 
+@Ignore
 public class ResumeConsentResponseDataEntityTest {
     ResumeConsentResponseDataEntity resumeConsentResponseDataEntity = new ResumeConsentResponseDataEntity();
 
