@@ -24,11 +24,11 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntit
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.GetMFAListEntity;
-import de.cidaas.sdk.android.cidaasverification.data.entity.settings.others.UpdateFCMTokenEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnotification.PendingNotificationEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnotification.PendingNotificationResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.setup.SetupEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.setup.SetupResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.updatefcmtoken.UpdateFCMTokenEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.updatefcmtoken.UpdateFCMTokenResponseEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.userlist.ConfiguredMFAListEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.verificationcontinue.VerificationContinue;

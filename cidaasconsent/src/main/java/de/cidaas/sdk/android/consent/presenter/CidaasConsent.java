@@ -35,11 +35,6 @@ public class CidaasConsent {
 
     // -----------------------------------------------------***** CONSENT MANAGEMENT *****---------------------------------------------------------------
 
- /*   public void getConsentDetails(@NonNull final String consentName, finalEventResult<ConsentDetailsResultEntity> consentResult) {
-        ConsentController.getShared(context).getConsentDetails(consentName, consentResult);
-    }
-*/
-
     public void loginAfterConsent(@NonNull final ConsentEntity consentEntity, final EventResult<LoginCredentialsResponseEntity> loginresult) {
         ConsentController.getShared(context).acceptConsent(consentEntity, loginresult);
     }

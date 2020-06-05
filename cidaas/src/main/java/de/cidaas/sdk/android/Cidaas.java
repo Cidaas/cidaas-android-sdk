@@ -33,7 +33,7 @@ import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.entity.documentscanner.DocumentScannerServiceResultEntity;
 import de.cidaas.sdk.android.service.entity.userlogininfo.UserLoginInfoEntity;
 import de.cidaas.sdk.android.service.entity.userlogininfo.UserLoginInfoResponseEntity;
-
+import rx.android.BuildConfig;
 
 
 public class Cidaas {
@@ -56,9 +56,6 @@ public class Cidaas {
     public static final String FIDO_VERSION = "U2F_V2";
 
     public WebAuthError webAuthError = null;
-
-    //saved Properties for Global Access
-    //  Dictionary<String, String> savedProperties;
 
     //To check the Loader
     private boolean displayLoader = false;
@@ -140,8 +137,7 @@ public class Cidaas {
     }
 
     //Resume After open App From Broswer
-    public void handleToken(String code) {   /*,Result<AccessTokenEntity> callbacktoMain*/
-
+    public void handleToken(String code) {
         LoginController.getShared(context).handleToken(code);
     }
 
@@ -226,52 +222,3 @@ public class Cidaas {
     }
 
 }
-
-// -----------------------------------------------------***** GET MFA LIST *****---------------------------------------------------------------
-/*
-    @Override
-    public void getMFAList(final String sub, finalEventResult<MFAListResponseEntity> mfaresult) {
-        VerificationSettingsController.getShared(context).getmfaList(sub, mfaresult);
-    }
-
-
-    public void getMFAListByEmail(final String email, finalEventResult<MFAListResponseEntity> mfaresult) {
-        VerificationSettingsController.getShared(context).getmfaListByEmail(email, mfaresult);
-    }
- */   // -----------------------------------------------------***** PASSWORD LESS LOGIN AND MFA SERVICE CALL *****---------------------------------------------------------------
-
-
-// ****** DONE LOGIN WITH EMAIL AND VERIFY EMAIL *****----------------------------------------------------------------------
-
-/*
-
-  /*  //---------------------------------------DELETE CALL-------------------------------------------------------------------------------------------------
-    //Delete call
-    public void deleteVerificationByType(@NonNull final String verificationType, @NonNull final String sub, finalEventResult<DeleteMFAResponseEntity> deleteResult)
-    {
-        VerificationSettingsController.getShared(context).deleteMFA(verificationType,sub,deleteResult);
-    }
-
-    //Delete call
-    public void deleteVerificationByDevice( @NonNull final String sub,finalEventResult<DeleteMFAResponseEntity> result)
-    {
-        VerificationSettingsController.getShared(context).deleteAllMFA(sub,result);
-    }
-
-    //Deny Call
-    public void denyNotification(@NonNull final String sub, @NonNull final String reason, @NonNull final String statusId, finalEventResult<DenyNotificationResponseEntity> result)
-    {
-        VerificationSettingsController.getShared(context).denyNotification(sub,reason,statusId, result);
-    }
-
-    //Get Pending Notification
-    public void getPendingNotificationList(@NonNull final String sub,  finalEventResult<NotificationEntity> result)
-    {
-        VerificationSettingsController.getShared(context).getPendingNotification(sub, result);
-    }
-
-    //Get user List Notification
-    public void getConfigurationList(@NonNull final String sub,  finalEventResult<ConfiguredMFAListEntity> result,final String... baseURL)
-    {
-        VerificationSettingsController.getShared(context).getConfiguredMFAList(sub,result,baseURL);
-    }*/
