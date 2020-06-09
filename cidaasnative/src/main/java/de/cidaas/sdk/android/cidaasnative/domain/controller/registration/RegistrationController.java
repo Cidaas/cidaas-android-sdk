@@ -171,20 +171,6 @@ public class RegistrationController {
                                         return;
 
                                     }
-
-
-                                    if (registrationEntity.getCustomFields() != null) {
-                                        if (registrationEntity.getCustomFields().size() > 0) {
-                                            for (int i = 0; i < registrationEntity.getCustomFields().size(); i++) {
-                                                if (registrationEntity.getCustomFields().keys().hasMoreElements()) {
-
-                                                    //TODO handle custom fields https://gitlab.widas.de/cidaas-public-devkits/cidaas-public-devkit-documentation/-/issues/59
-
-                                                }
-                                            }
-                                        }
-
-                                    }
                                 }
                             }
                         }
