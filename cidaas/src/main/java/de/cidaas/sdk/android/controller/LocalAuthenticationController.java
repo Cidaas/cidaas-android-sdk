@@ -12,8 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.cidaasv2.R;
-
+import de.cidaas.sdk.android.R;
 import de.cidaas.sdk.android.entities.LocalAuthenticationEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;

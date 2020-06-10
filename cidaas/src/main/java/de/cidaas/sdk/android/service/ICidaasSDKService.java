@@ -22,7 +22,6 @@ import retrofit2.http.HeaderMap;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
-import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**
@@ -96,10 +95,6 @@ public interface ICidaasSDKService {
     //Get TenantInfo
     @GET
     Call<UserprofileResponseEntity> getInternalUserProfileInfo(@Url String url, @HeaderMap Map<String, String> headers);
-
-
-    @GET
-    Call<de.cidaas.sdk.android.Service.Entity.UserList.ConfiguredMFAListEntity> getConfiguredMFAList(@Url String url, @HeaderMap Map<String, String> headers, @Query("sub") String sub, @Query("userDeviceId") String userDeviceId);
 
     //Construct URL
     @GET

@@ -4,13 +4,14 @@ import android.content.Context;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.concurrent.CountDownLatch;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.TenantInfo.TenantInfoEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Controller.Tenant.TenantController;
+import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.controller.tenant.TenantController;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -18,6 +19,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import timber.log.Timber;
 
+@Ignore
 public class TenantControllerServiceCall {
 
 

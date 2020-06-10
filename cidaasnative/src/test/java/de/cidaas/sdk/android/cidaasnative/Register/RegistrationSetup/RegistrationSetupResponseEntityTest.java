@@ -3,8 +3,8 @@ package de.cidaas.sdk.android.cidaasnative.Register.RegistrationSetup;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResponseEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResultDataEntity;
 
 public class RegistrationSetupResponseEntityTest {
     //Field data of type RegistrationSetupResultDataEntity[] - was not mocked since Mockito doesn't mock arrays

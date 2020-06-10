@@ -5,9 +5,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupFieldDefenition;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupLocaleTextEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupResultDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupFieldDefenition;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupLocaleTextEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResultDataEntity;
 
 public class RegistrationSetupResultDataEntityTest {
     String dataType;

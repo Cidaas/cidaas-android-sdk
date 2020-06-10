@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoDataEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.clientinfo.ClientInfoDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.clientinfo.ClientInfoEntity;
 
 import static junit.framework.TestCase.assertTrue;
 

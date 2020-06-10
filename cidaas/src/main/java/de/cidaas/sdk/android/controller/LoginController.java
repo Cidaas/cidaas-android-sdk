@@ -165,7 +165,7 @@ public class LoginController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    callbackResult.failure(WebAuthError.getShared(context).CidaaspropertyMissingException("", "Error" + methodName));
+                    callbackResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error" + methodName));
                 }
             });
 
@@ -392,12 +392,12 @@ public class LoginController {
                             + " Method Name:- " + methodNameFromApp);
                 } else {
                     String errorMessage = "Saving Failed in LocalDB";
-                    result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage, methodName));
+                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException(errorMessage, methodName));
                 }
 
             } else {
                 String errorMessage = "Login properties in null";
-                result.failure(WebAuthError.getShared(context).CidaaspropertyMissingException(errorMessage, methodName));
+                result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException(errorMessage, methodName));
             }
         } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).methodException(methodName, WebAuthErrorCode.CIDAAS_PROPERTY_MISSING, e.getMessage()));
@@ -554,7 +554,7 @@ public class LoginController {
                                 @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
         final String methodName = "LoginController :loginWithSocial()";
         try {
-            getSocialLoginURL(requestId, provider, new EventResult<String>() {
+            getSocialLoginURL(provider, requestId, new EventResult<String>() {
                 @Override
                 public void success(String socialLoginURL) {
                     logincallback = callbacktoMain;

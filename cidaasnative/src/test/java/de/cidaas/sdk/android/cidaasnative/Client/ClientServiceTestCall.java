@@ -4,14 +4,15 @@ import android.content.Context;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.concurrent.CountDownLatch;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.ClientInfo.ClientInfoEntity;
-import de.cidaas.sdk.android.cidaasnative.domain.Service.Client.ClientService;
+import de.cidaas.sdk.android.cidaasnative.data.entity.clientinfo.ClientInfoEntity;
+import de.cidaas.sdk.android.cidaasnative.domain.service.Client.ClientService;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
@@ -22,6 +23,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import timber.log.Timber;
 
+@Ignore
 public class ClientServiceTestCall {
 
     private final CountDownLatch latch = new CountDownLatch(1);

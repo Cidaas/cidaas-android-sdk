@@ -1,9 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
+    enableJacoco(project, 'Debug')
     compileSdkVersion 28
-
-
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 28
@@ -25,13 +24,13 @@ android {
         sourceCompatibility = 1.8
     }
     buildToolsVersion = '29.0.2'
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

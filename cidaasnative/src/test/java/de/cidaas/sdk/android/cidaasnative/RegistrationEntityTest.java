@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationCustomFieldEntity;
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationCustomFieldEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationEntity;
 
 public class RegistrationEntityTest {
 

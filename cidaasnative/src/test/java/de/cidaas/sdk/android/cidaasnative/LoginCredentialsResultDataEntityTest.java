@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Login.LoginCredentialsResultDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsResultDataEntity;
 
 public class LoginCredentialsResultDataEntityTest {
 

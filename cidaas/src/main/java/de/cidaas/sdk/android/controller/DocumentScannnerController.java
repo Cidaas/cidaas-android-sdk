@@ -53,7 +53,7 @@ public class DocumentScannnerController {
 
     @NonNull
     private File file() throws IOException {
-        File sdDir = Environment.getExternalStorageDirectory();
+        File sdDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File pictureFileDir = new File(sdDir, "Cidaas-Faces-docs");
         if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
 
@@ -78,7 +78,7 @@ public class DocumentScannnerController {
             // Toast.makeText(FaceSetupActivity.this, imageFile.toString(), Toast.LENGTH_SHORT).show();
             if (imageFile == null) {
                 // Toast.makeText(FaceSetupActivity.this, "NUll Image", Toast.LENGTH_SHORT).show();
-                File sdDir = Environment.getExternalStorageDirectory();
+                File sdDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
                 File pictureFileDir = new File(sdDir, "Cidaas-Faces-docs");
                 if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
                     Toast.makeText(context, "File Storage Permission Denied.Please enable it",

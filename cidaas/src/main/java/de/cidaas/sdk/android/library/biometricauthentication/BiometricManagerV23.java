@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 
-import com.example.cidaasv2.R;
-
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -34,6 +32,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+import de.cidaas.sdk.android.R;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M)
@@ -44,7 +43,7 @@ public class BiometricManagerV23 {
     private Cipher cipher;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
-    private FingerprintManagerCompat.CryptoObject cryptoObject;
+    // private FingerprintManagerCompat.CryptoObject cryptoObject;
     private FingerprintManager.CryptoObject cryptoObjectManger;
 
 

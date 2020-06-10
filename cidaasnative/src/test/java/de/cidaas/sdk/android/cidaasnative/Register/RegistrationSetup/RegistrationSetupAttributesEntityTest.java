@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.cidaas.sdk.android.cidaasnative.data.Entity.Register.RegistrationSetup.RegistrationSetupAttributesEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupAttributesEntity;
 
 public class RegistrationSetupAttributesEntityTest {
     RegistrationSetupAttributesEntity registrationSetupAttributesEntity = new RegistrationSetupAttributesEntity();

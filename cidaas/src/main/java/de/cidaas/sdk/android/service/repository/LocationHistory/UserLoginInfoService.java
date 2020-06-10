@@ -2,11 +2,11 @@ package de.cidaas.sdk.android.service.repository.LocationHistory;
 
 import android.content.Context;
 
-import com.example.cidaasv2.R;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
+import de.cidaas.sdk.android.R;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
