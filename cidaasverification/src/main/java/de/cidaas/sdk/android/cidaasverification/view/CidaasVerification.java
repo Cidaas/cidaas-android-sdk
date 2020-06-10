@@ -252,13 +252,13 @@ public class CidaasVerification {
 
     public void initiateEmail(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
         InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
-                AuthenticationType.SMS);
+                AuthenticationType.EMAIL);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
 
     public void initiateSMS(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
         InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
-                AuthenticationType.EMAIL);
+                AuthenticationType.SMS);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
 
