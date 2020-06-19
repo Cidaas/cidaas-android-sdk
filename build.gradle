@@ -24,6 +24,12 @@ plugins {
     id "com.palantir.jacoco-full-report" version "0.4.0"
 }
 
+subprojects {
+    if (name.startsWith('cidaas')) {
+        apply plugin: 'com.palantir.jacoco-full-report'
+    }
+}
+
 def allTestDestination = "$buildDir/JACOCO/"
 
 allprojects {
