@@ -23,11 +23,13 @@ buildscript {
 }
 
 
+/*
 subprojects {
     if (name.startsWith('cidaas')) {
         apply plugin: 'com.palantir.jacoco-full-report'
     }
 }
+*/
 
 def allTestDestination = "$buildDir/JACOCO/"
 
@@ -42,3 +44,4 @@ allprojects {
     }
 }
 apply from: rootProject.file('gradle/enable-jacoco.gradle')
+apply plugin: 'com.palantir.jacoco-full-report'
