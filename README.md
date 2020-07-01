@@ -125,7 +125,7 @@ Cidaas cidaas =new Cidaas(your Activity Context);
 You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
 
 ```java
- cidaas.loginWithBrowser(your Activity Context, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
+ cidaas.loginWithBrowser(your Activity Context, "NullableColorParameterInColorCode", new EventResult<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
 		//Your Success Code
@@ -142,7 +142,7 @@ You can login using your native browser and redirects to the App once successful
 You can also perform social login using your native browser and redirects to the App once successfully logged in. To perform social login call ****loginWithSocial()****.
 
 ```java
-   cidaas.loginWithSocial(your Activity Context, yourSocialProvider, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
+   cidaas.loginWithSocial(your Activity Context, yourSocialProvider, "NullableColorParameterInColorCode", new EventResult<AccessTokenEntity>() {
          @Override
          public void success(AccessTokenEntity result) {
 		//Your Success Code
@@ -200,7 +200,7 @@ You can use embedded browser to login with cidaas , For this do the following st
 ```Java
  RelativeLayout relativeLayout=findViewById(R.id.relative_layout_for_webView);
  
- cidaasSDKLayout.login(relativeLayout, new Result<AccessTokenEntity>() {
+ cidaasSDKLayout.login(relativeLayout, new EventResult<AccessTokenEntity>() {
  @Override
  public void success(AccessTokenEntity result) {
       //Your Success Code
@@ -212,4 +212,5 @@ You can use embedded browser to login with cidaas , For this do the following st
    }
   }); 
 ```
+
 
