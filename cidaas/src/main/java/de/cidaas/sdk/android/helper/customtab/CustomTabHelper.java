@@ -6,11 +6,12 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.text.TextUtils;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 public class CustomTabHelper {
@@ -25,12 +26,12 @@ public class CustomTabHelper {
     }
 
 
-    private static String sPackageNameToUse;
+    //Known Browsers with Custom Tabs support
     private static final String TAG = "CustomTabsHelper";
-    static final String STABLE_PACKAGE = "com.android.chrome";
-    static final String BETA_PACKAGE = "com.chrome.beta";
-    static final String DEV_PACKAGE = "com.chrome.dev";
-    static final String LOCAL_PACKAGE = "com.google.android.apps.chrome";
+    private static final String CHROME_STABLE = "com.android.chrome";
+    private static final String CHROME_SYSTEM = "com.google.android.apps.chrome";
+    private static final String CHROME_BETA = "com.android.chrome.beta";
+    private static final String CHROME_DEV = "com.android.chrome.dev";
     private static final String EXTRA_CUSTOM_TABS_KEEP_ALIVE =
             "android.support.customtabs.extra.KEEP_ALIVE";
     private static final String ACTION_CUSTOM_TABS_CONNECTION =
@@ -39,49 +40,40 @@ public class CustomTabHelper {
     public String getPackageNameToUse(Context context) {
 
 
-        if (sPackageNameToUse != null) return sPackageNameToUse;
-
         PackageManager pm = context.getPackageManager();
-        // Get default VIEW intent handler.
-        Intent activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"));
-        ResolveInfo defaultViewHandlerInfo = pm.resolveActivity(activityIntent, 0);
-        String defaultViewHandlerPackageName = null;
-        if (defaultViewHandlerInfo != null) {
-            defaultViewHandlerPackageName = defaultViewHandlerInfo.activityInfo.packageName;
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"));
+        ResolveInfo webHandler = pm.resolveActivity(browserIntent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PackageManager.MATCH_ALL : PackageManager.MATCH_DEFAULT_ONLY);
+        String defaultBrowser = null;
+        if (webHandler != null) {
+            defaultBrowser = webHandler.activityInfo.packageName;
         }
 
-        // Get all apps that can handle VIEW intents.
-        List<ResolveInfo> resolvedActivityList = pm.queryIntentActivities(activityIntent, 0);
-        List<String> packagesSupportingCustomTabs = new ArrayList<>();
+        List<ResolveInfo> resolvedActivityList = pm.queryIntentActivities(browserIntent, 0);
+        List<String> customTabsBrowsers = new ArrayList<>();
         for (ResolveInfo info : resolvedActivityList) {
             Intent serviceIntent = new Intent();
             serviceIntent.setAction(ACTION_CUSTOM_TABS_CONNECTION);
             serviceIntent.setPackage(info.activityInfo.packageName);
             if (pm.resolveService(serviceIntent, 0) != null) {
-                packagesSupportingCustomTabs.add(info.activityInfo.packageName);
+                customTabsBrowsers.add(info.activityInfo.packageName);
             }
         }
-
-        // Now packagesSupportingCustomTabs contains all apps that can handle both VIEW intents
-        // and service calls.
-        if (packagesSupportingCustomTabs.isEmpty()) {
-            sPackageNameToUse = null;
-        } else if (packagesSupportingCustomTabs.size() == 1) {
-            sPackageNameToUse = packagesSupportingCustomTabs.get(0);
-        } else if (!TextUtils.isEmpty(defaultViewHandlerPackageName)
-                && !hasSpecializedHandlerIntents(context, activityIntent)
-                && packagesSupportingCustomTabs.contains(defaultViewHandlerPackageName)) {
-            sPackageNameToUse = defaultViewHandlerPackageName;
-        } else if (packagesSupportingCustomTabs.contains(STABLE_PACKAGE)) {
-            sPackageNameToUse = STABLE_PACKAGE;
-        } else if (packagesSupportingCustomTabs.contains(BETA_PACKAGE)) {
-            sPackageNameToUse = BETA_PACKAGE;
-        } else if (packagesSupportingCustomTabs.contains(DEV_PACKAGE)) {
-            sPackageNameToUse = DEV_PACKAGE;
-        } else if (packagesSupportingCustomTabs.contains(LOCAL_PACKAGE)) {
-            sPackageNameToUse = LOCAL_PACKAGE;
+        if (customTabsBrowsers.contains(defaultBrowser)) {
+            return defaultBrowser;
+        } else if (customTabsBrowsers.contains(CHROME_STABLE)) {
+            return CHROME_STABLE;
+        } else if (customTabsBrowsers.contains(CHROME_SYSTEM)) {
+            return CHROME_SYSTEM;
+        } else if (customTabsBrowsers.contains(CHROME_BETA)) {
+            return CHROME_BETA;
+        } else if (customTabsBrowsers.contains(CHROME_DEV)) {
+            return CHROME_DEV;
+        } else if (!customTabsBrowsers.isEmpty()) {
+            return customTabsBrowsers.get(0);
+        } else {
+            return null;
         }
-        return sPackageNameToUse;
     }
 
 
