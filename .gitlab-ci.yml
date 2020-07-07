@@ -181,7 +181,6 @@ pages:
     - code_quality_json
     - create_codequality_badges
     - codecoverage
-    - dependency_scanning
   script:
     - mv codeclimate.html public/codeclimate.html
     - mkdir -p public/jacoco/
