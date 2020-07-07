@@ -112,7 +112,7 @@ create_codequality_badges:
     - code_quality_json
     - codecoverage
   script:
-    # Parse the codeclimate report for badges
+  # Parse the codeclimate report for badges
     - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/calculate_codeclimate_metrics.py .
     - rm -rf codequality
@@ -120,6 +120,7 @@ create_codequality_badges:
 
     # Parse the code coverage for badges
     - ls -lah
+    - ls -ll /target/site/jacoco/
     - cp target/site/jacoco/index.html .
     - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/count_lines_java_code.py .
