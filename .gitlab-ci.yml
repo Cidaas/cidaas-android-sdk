@@ -187,7 +187,6 @@ pages:
     - mkdir -p public/jacoco/
     - mv build/reports/jacoco/jacocoFullReport/* public/jacoco/
     - mv gl-code-quality-report.json public/gl-code-quality-report.json
-    - mv gl-dependency-scanning-report.json public/gl-dependency-scanning-report.json
   artifacts:
     paths:
       - public
