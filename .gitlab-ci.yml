@@ -41,7 +41,7 @@ codecoverage:
       - ./gradlew jacocoFullReport #! can only be executed after the build & test stage are finished
       - cat build/reports/jacoco/jacocoFullReport/html/index.html
     artifacts:
-        paths: [build/reports/jacoco/jacocoFullReport/*]
+        paths: [build/reports/jacoco/jacocoFullReport/html/*]
 
 code_quality_json:
   stage: test
