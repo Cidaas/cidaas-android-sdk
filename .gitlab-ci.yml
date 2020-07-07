@@ -111,24 +111,24 @@ create_codequality_badges:
   dependencies:
     - code_quality_json
     - codecoverage
-    - dependency_scanning
   script:
-    # Get the quality base repo
-    - git clone ${QUALITY_BASE_REPO}
-    
     # Parse the codeclimate report for badges
+    - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/calculate_codeclimate_metrics.py .
+    - rm -rf codequality
     - python3 calculate_codeclimate_metrics.py gl-code-quality-report.json
 
-    # Parse the code coverage report for badges
-    - cp build/reports/jacoco/jacocoFullReport/html/index.html .
+    # Parse the code coverage for badges
+    - ls -lah
+    - cp target/site/jacoco/index.html .
+    - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/count_lines_java_code.py .
+    - rm -rf codequality
     - python3 count_lines_java_code.py
 
     # Using anybadge to create the badges
     - pip install anybadge
     # Setup the color ranges for the badges
-    - export BADGE_COLOR_VULNERABILITIES="0=green 1=yellow 2=orange 3=red 4=brightred"
     - export BADGE_COLOR_RANGE_MINOR="10=green 20=yellow 50=orange 100=red 200=brightred"
     - export BADGE_COLOR_RANGE_MAJOR="1=green 10=yellow 40=orange 100=red 150=brightred"
     - export BADGE_COLOR_RANGE_CRITICAL="1=green 3=yellow 5=orange 10=red 20=brightred"
@@ -158,18 +158,12 @@ create_codequality_badges:
 
     - export DUPLICATION_ISSUES=$(cat duplication_issues.txt)
     - anybadge -l duplications -v $DUPLICATION_ISSUES -m "%d" -u -f duplication_issues.svg $BADGE_COLOR_RANGE_CRITICAL
-
+    
     - export LOC=$(cat loc.txt)
     - anybadge -l LoC -v $LOC -f loc.svg --color=green
 
     - export CLASSES=$(cat classes.txt)
     - anybadge -l Classes -v $CLASSES -f classes.svg --color=green
-    
-    - export TOTAL_VULNERABILITIES=$(cat total_vulnerabilities.txt)
-    - anybadge -l library_vulnerabilities -v $TOTAL_VULNERABILITIES -m "%d" -u -f total_vulnerabilities.svg $BADGE_COLOR_VULNERABILITIES
-    
-    - export VULNERABLE_DEPENDENCIES=$(cat vulnerable_dependencies.txt)
-    - anybadge -l vulnerable_libraries -v $VULNERABLE_DEPENDENCIES -m "%d" -u -f vulnerable_dependencies.svg $BADGE_COLOR_VULNERABILITIES
 
     # Export the created .svg's to the public directory
     - mkdir public
@@ -177,6 +171,7 @@ create_codequality_badges:
   artifacts:
     paths:
       - public/*.svg
+
 
 pages:
   image: maven:3-jdk-8
