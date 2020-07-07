@@ -1,7 +1,6 @@
 stages:
   - test
   - build
-  - quality
   - badges
   - deploy
 
@@ -30,7 +29,7 @@ test:
 
 codecoverage:
     image: thyrlian/android-sdk
-    stage: quality
+    stage: test
     variables:
       DOCKER_DRIVER: overlay2
       DOCKER_TLS_CERTDIR: ""
