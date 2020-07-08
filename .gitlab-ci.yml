@@ -33,7 +33,7 @@ codecoverage:
 
 dependency_scanning:
   image: docker:stable
-  stage: test
+  stage: quality
   variables:
     DOCKER_DRIVER: overlay2
   allow_failure: true
