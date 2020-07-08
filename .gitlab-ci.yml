@@ -16,17 +16,6 @@ variables:
 
 image: docker:git
 
-test:
-    image: thyrlian/android-sdk
-    stage: test
-    variables:
-      DOCKER_DRIVER: overlay2
-      DOCKER_TLS_CERTDIR: ""
-    script: 
-      - export GRADLE_USER_HOME=`pwd`/.gradle
-      - ./gradlew build --exclude-task test
-      - ./gradlew test
-
 codecoverage:
     image: thyrlian/android-sdk
     stage: test
@@ -51,11 +40,9 @@ code_quality_json:
     CODE_QUALITY_IMAGE: "registry.gitlab.com/gitlab-org/ci-cd/codequality:latest"
   script:
     - docker pull "$CODE_QUALITY_IMAGE"
-    # Clone the .codeclimate.yml from the code quality base repo
     - git clone ${QUALITY_BASE_REPO}
     - cp codequality/conf/codeclimate/rules/js/.codeclimate.yml .
     - rm -rf codequality
-    # Run the codeclimate image from gitlab
     - docker run
       --env SOURCE_CODE="$PWD"
       --env CODECLIMATE_CODE="$PWD/app"
