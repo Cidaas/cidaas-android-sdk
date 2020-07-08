@@ -45,7 +45,7 @@ dependency_scanning:
         --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
         --volume "$PWD:/code"
         --volume /var/run/docker.sock:/var/run/docker.sock
-        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:13-0-stable" /code
   artifacts:
     reports:
       dependency_scanning: gl-dependency-scanning-report.json
