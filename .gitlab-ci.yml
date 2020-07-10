@@ -29,27 +29,6 @@ codecoverage:
       - cat build/reports/jacoco/jacocoFullReport/html/index.html
     artifacts:
         paths: [build/reports/jacoco/jacocoFullReport/html/*]
-        
-
-dependency_scanning:
-  image: docker:stable
-  stage: test
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-        --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
-        --volume "$PWD:/code"
-        --volume /var/run/docker.sock:/var/run/docker.sock
-        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest" /code
-  artifacts:
-    reports:
-      dependency_scanning: gl-dependency-scanning-report.json
-    paths: [gl-dependency-scanning-report.json]
 
         
 
@@ -120,32 +99,24 @@ create_codequality_badges:
   dependencies:
     - code_quality_json
     - codecoverage
-    - dependency_scanning
   script:
-    # Get the quality base repo
-    - git clone ${QUALITY_BASE_REPO}
-    
     # Parse the codeclimate report for badges
+    - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/calculate_codeclimate_metrics.py .
+    - rm -rf codequality
     - python3 calculate_codeclimate_metrics.py gl-code-quality-report.json
 
-    # Parse the code coverage report for badges
-    - cp /builds/cidaas-public-devkits/cidaas-public-sdks/cidaas-sdk-javascript-v2/coverage/lcov-report/index.html .
-    - cp /builds/cidaas-public-devkits/cidaas-public-sdks/cidaas-sdk-javascript-v2/coverage/lcov-report/loc.txt .
+    # Parse the code coverage for badges
+    - ls -lah
+    - cp target/site/jacoco/index.html .
+    - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/count_lines_java_code.py .
-    - python3 count_lines_java_code.py
-    
-    # Parse the dependency vulnerability report
-    - cp codequality/src/calculate_dependency_scan_metrics.py .
-    - python3 calculate_dependency_scan_metrics.py gl-dependency-scanning-report.json
-    
-    # Cleanup
     - rm -rf codequality
+    - python3 count_lines_java_code.py
 
     # Using anybadge to create the badges
     - pip install anybadge
     # Setup the color ranges for the badges
-    - export BADGE_COLOR_VULNERABILITIES="0=green 1=yellow 2=orange 3=red 4=brightred"
     - export BADGE_COLOR_RANGE_MINOR="10=green 20=yellow 50=orange 100=red 200=brightred"
     - export BADGE_COLOR_RANGE_MAJOR="1=green 10=yellow 40=orange 100=red 150=brightred"
     - export BADGE_COLOR_RANGE_CRITICAL="1=green 3=yellow 5=orange 10=red 20=brightred"
@@ -176,15 +147,11 @@ create_codequality_badges:
     - export DUPLICATION_ISSUES=$(cat duplication_issues.txt)
     - anybadge -l duplications -v $DUPLICATION_ISSUES -m "%d" -u -f duplication_issues.svg $BADGE_COLOR_RANGE_CRITICAL
     
-    - mv /builds/cidaas-public-devkits/cidaas-public-sdks/cidaas-sdk-javascript-v2/coverage/lcov-report/loc.txt /builds/cidaas-public-devkits/cidaas-public-sdks/cidaas-sdk-javascript-v2/loc.txt
     - export LOC=$(cat loc.txt)
     - anybadge -l LoC -v $LOC -f loc.svg --color=green
-    
-    - export TOTAL_VULNERABILITIES=$(cat total_vulnerabilities.txt)
-    - anybadge -l library_vulnerabilities -v $TOTAL_VULNERABILITIES -m "%d" -u -f total_vulnerabilities.svg $BADGE_COLOR_VULNERABILITIES
-    
-    - export VULNERABLE_DEPENDENCIES=$(cat vulnerable_dependencies.txt)
-    - anybadge -l vulnerable_libraries -v $VULNERABLE_DEPENDENCIES -m "%d" -u -f vulnerable_dependencies.svg $BADGE_COLOR_VULNERABILITIES
+
+    - export CLASSES=$(cat classes.txt)
+    - anybadge -l Classes -v $CLASSES -f classes.svg --color=green
 
     # Export the created .svg's to the public directory
     - mkdir public
@@ -192,22 +159,19 @@ create_codequality_badges:
   artifacts:
     paths:
       - public/*.svg
-      
-      
+
 pages:
   stage: deploy
   dependencies:
     - code_quality_html
-    - code_quality_json
     - create_codequality_badges
     - codecoverage
-    - dependency_scanning
   script:
     - mv codeclimate.html public/codeclimate.html
-    - mkdir -p public/jest/
-    - mv /builds/cidaas-public-devkits/cidaas-public-sdks/cidaas-sdk-javascript-v2/coverage/lcov-report/* public/jest/
-    - mv gl-code-quality-report.json public/gl-code-quality-report.json
-    - mv gl-dependency-scanning-report.json public/gl-dependency-scanning-report.json
+    - cd public
+    - mkdir jacoco
+    - cd ..
+    - mv target/site/jacoco/* public/jacoco/
   artifacts:
     paths:
       - public
