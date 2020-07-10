@@ -108,7 +108,7 @@ create_codequality_badges:
 
     # Parse the code coverage for badges
     - ls -lah
-    - cp target/site/jacoco/index.html .
+    - cp /builds/cidaas-public-devkits/cidaas-public-sdks/cidaas-sdk-javascript-v2/coverage/lcov-report/index.html .
     - git clone ${QUALITY_BASE_REPO}
     - cp codequality/src/count_lines_java_code.py .
     - rm -rf codequality
