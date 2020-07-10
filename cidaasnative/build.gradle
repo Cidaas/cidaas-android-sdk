@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 
 android {
-    enableJacoco(project, 'Debug')
     compileSdkVersion 29
     testOptions.unitTests.includeAndroidResources = true
     buildToolsVersion "29.0.2"
@@ -19,6 +18,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            enableJacoco(project, 'Debug')
+            testCoverageEnabled true
         }
     }
     compileOptions {
