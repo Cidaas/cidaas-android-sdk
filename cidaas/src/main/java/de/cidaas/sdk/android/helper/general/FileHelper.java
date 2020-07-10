@@ -126,6 +126,22 @@ public class FileHelper {
     }
 
     private void handleNodeListEntry(Dictionary<String, String> dictObject, String key, String xmlString, EventResult<Dictionary<String, String>> result) {
+
+        if (key.equalsIgnoreCase(DOMAIN_URL) || key.equalsIgnoreCase(REDIRECT_URL)) {
+            if (checkUrl(xmlString)) {
+                checkEmptyAndAddString(dictObject, key, xmlString, result);
+            } else {
+                String errorMessage = "Property -" + key + "- must be a valid URL";
+                LogFile.getShared(context).addFailureLog(errorMessage + WebAuthErrorCode.READ_PROPERTIES_ERROR);
+                result.failure(error().propertyMissingException(errorMessage, "readProperties"));
+            }
+        } else {
+            checkEmptyAndAddString(dictObject, key, xmlString, result);
+        }
+
+    }
+
+    private void checkEmptyAndAddString(Dictionary<String, String> dictObject, String key, String xmlString, EventResult<Dictionary<String, String>> result) {
         if (isNotEmpty(xmlString)) {
             dictObject.put(key, xmlString);
         } else {
@@ -133,6 +149,10 @@ public class FileHelper {
             LogFile.getShared(context).addFailureLog(errorMessage + WebAuthErrorCode.READ_PROPERTIES_ERROR);
             result.failure(error().propertyMissingException(errorMessage, "readProperties"));
         }
+    }
+
+    private boolean checkUrl(String urlString) {
+        return urlString.contains("://");
     }
 
     private void fillDictionary(String domainUrl, String clientId, String redirectURL, String clientSecret, EventResult<Dictionary<String, String>> callback) {

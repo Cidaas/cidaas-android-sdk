@@ -979,4 +979,32 @@ Here, **code** is the key you would get from your saved Backup codes
     }
 }
 ```
+
+
+##### Login History 
+
+To know the Login history of a user you can call the following methods
+
+```Java
+        UserLoginInfoEntity userLoginInfoEntity=new UserLoginInfoEntity();
+        userLoginInfoEntity.setStartDate("2019-03-04T00:00:00.000Z");
+        userLoginInfoEntity.setEndDate("2019-03-11T00:00:00.000Z");
+        userLoginInfoEntity.setVerificationType("Your Verification type");
+        userLoginInfoEntity.setSub(your sub);
+
+        cidaas.getUserLoginInfo(userLoginInfoEntity, new EventResult<UserLoginInfoResponseEntity>() {
+            @Override
+            public void success(UserLoginInfoResponseEntity result) {
+                //Your Success Code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                //Your Failure code
+            }
+        });
+```
+
+> ##### Note:- The Date must be in IST format and verification type means TOTP,Face,Voice et
+
 >>>>>>> development

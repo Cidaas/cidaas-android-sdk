@@ -125,36 +125,105 @@ Cidaas cidaas =new Cidaas(your Activity Context);
 You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
 
 ```java
- cidaas.loginWithBrowser(your Activity Context, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
-         @Override
-         public void success(AccessTokenEntity result) {
-		//Your Success Code
-         }
+cidaas.loginWithBrowser(your Activity Context, "NullableColorParameterInColorCode", new EventResult<AccessTokenEntity>() {
+     @Override
+     public void success(AccessTokenEntity result) {
+    	//Your Success Code
+     }
 
-         @Override
-         public void failure(WebAuthError error) {
+     @Override
+     public void failure(WebAuthError error) {
 		//Your Failure Code
-         }
-     });
+     }
+});
+```
+
+You can get the url for the login and you can load in your favorite browser for this you can call 
+
+```java
+Cidaas.getInstance(your context).getLoginURL(new EventResult<String>() {
+    @Override
+    public void success(String result) {
+        //Your Success code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+        //Your Failure code
+    }
+});
 ```
 
 #### Social Login
 You can also perform social login using your native browser and redirects to the App once successfully logged in. To perform social login call ****loginWithSocial()****.
 
 ```java
-   cidaas.loginWithSocial(your Activity Context, yourSocialProvider, "NullableColorParameterInColorCode", new Result<AccessTokenEntity>() {
-         @Override
-         public void success(AccessTokenEntity result) {
-		//Your Success Code
-         }
+cidaas.loginWithSocial(your Activity Context, your_Social_Provider, "Nullable_Color_Parameter_In_Color_Code", new EventResult<AccessTokenEntity>() {
+    @Override
+    public void success(AccessTokenEntity result) {
+        //Your Success Code
+    }
 
-         @Override
-         public void failure(WebAuthError error) {
+    @Override
+    public void failure(WebAuthError error) {
 		//Your Failure Code
-         }
+    }
  });
 ```
 where social provider may be either facebook, google, linkedin or any other providers
+
+You can get the url for the social login and you can load in your favorite browser for this you can call 
+
+```java
+Cidaas.getInstance(your context).getSocialLoginURL(your requestid,your_social_provider,new EventResult<String>() {
+    @Override
+    public void success(String result) {
+       //Your Success Code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+       	//Your Failure Code
+    }
+});
+
+```
+where social provider may be either facebook, google, linkedin or any other providers
+
+#### Register in Browser
+
+To Register in Browser , you can call the following method
+
+```java
+Cidaas.getInstance(your context).RegisterWithBrowser(your activity context, "Nullable_Color_Parameter_In_Color_Code", new EventResult<AccessTokenEntity>() {
+    @Override
+    public void success(AccessTokenEntity result) {
+         //Your Success Code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+    	//Your Failure Code
+    }
+});
+```        
+
+You can get the url for the registeration and you can load in your favorite browser for this you can call 
+
+```java
+Cidaas.getInstance(your context).getRegistrationURL(new EventResult<String>() {
+    @Override
+    public void success(String result) {
+         //Your Success Code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+          //Your Failure Code
+    }
+});
+
+```
 
 Use [customScheme](https://developer.android.com/training/app-links/deep-linking) or [App Link](https://developer.android.com/studio/write/app-link-indexing) to return back the control from browser to App.
 
@@ -179,6 +248,95 @@ If you use app links, configure your Domain setup and resume the SDK from your a
  	 cidaas.handleToken(token);
 }
 ```
+#### Common Methods
+##### Getting AccessToken
+
+You can get the access token for the current user using the following call
+
+```Java
+cidaas.getAccessToken(your sub, new EventResult<AccessTokenEntity>() {
+ @Override
+ public void success(AccessTokenEntity result) {
+      //Your Success Code
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+       //Your Failure Code
+   }
+  }); 
+```
+
+By Default the access token is renewed when you call the getAccessTokenMethod , If you want to renew token manually you need to call the Following method
+
+```Java
+cidaas.getAccessTokenFromRefreshToken(refreshtokem, new EventResult<AccessTokenEntity>() {
+   @Override
+   public void success(AccessTokenEntity result) {
+      // Your Success Code                
+   }
+
+   @Override
+   public void failure(WebAuthError error) {
+      // Your Failure Code
+    }
+  });
+        
+```
+
+##### Enable PKCE flow
+
+  By Default PKCE flow is enabled , If you want to disable the PKCE flow , you can call the following method
+  
+  ```Java
+Cidaas.getInstance(your context).setENABLE_PKCE(false);
+```
+> ##### Note:- If you Disable the PKCE flow, you must use add the 'ClientSecret' in your Cidaas.xml
+
+
+To know whether the PKCE is enabled or not, use the following method
+ ```Java
+ Cidaas.getInstance(your context).isENABLE_PKCE();
+ ```
+it will return a boolean value ,return true if PKCE is enabled and false if disabled
+
+##### Enable Log
+
+  By Default Log is disabled , If you want to enable the log , you can call the following method
+  
+  ```Java
+  Cidaas.getInstance(your context).enableLog();
+        
+```
+To disable the Log
+
+  ```Java
+Cidaas.getInstance(your context).disableLog();
+        
+```
+
+To know whether the Log is enabled or not, use the following method
+ ```Java
+Cidaas.getInstance(your context).isLogEnable();
+ ```
+it will return a boolean value ,return true if Log is enabled and false if disabled
+
+##### User information
+
+```Java
+Cidaas.getInstance(your Context).getUserInfo("your sub", new EventResult<UserinfoEntity>() {
+ @Override
+   public void success(UserinfoEntity result) {
+      //Your Success Code
+     }
+
+ @Override
+  public void failure(WebAuthError error) {
+      //Your Failure code
+     }
+});
+```        
+
 
 ### Embedded Browser Login
 
@@ -200,7 +358,7 @@ You can use embedded browser to login with cidaas , For this do the following st
 ```Java
  RelativeLayout relativeLayout=findViewById(R.id.relative_layout_for_webView);
  
- cidaasSDKLayout.login(relativeLayout, new Result<AccessTokenEntity>() {
+ cidaasSDKLayout.login(relativeLayout, new EventResult<AccessTokenEntity>() {
  @Override
  public void success(AccessTokenEntity result) {
       //Your Success Code
@@ -213,3 +371,27 @@ You can use embedded browser to login with cidaas , For this do the following st
   }); 
 ```
 
+##### Get Access Token From social
+
+You can get the Accesstoken from Social Login provider by calling the following method
+
+```Java
+SocialAccessTokenEntity socialAccessTokenEntity = new SocialAccessTokenEntity();
+socialAccessTokenEntity.setToken(your token);
+socialAccessTokenEntity.setDomainURL(your DomainURL);
+socialAccessTokenEntity.setProvider(your provider);
+socialAccessTokenEntity.setViewType(your viewType);
+
+Cidaas.getInstance(your activity context).getAccessTokenBySocial(socialAccessTokenEntity, new EventResult<AccessTokenEntity>() {
+    @Override
+    public void success(AccessTokenEntity result) {
+        //Your Success Code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+       //Your Failure code
+    }
+ });
+
+```
