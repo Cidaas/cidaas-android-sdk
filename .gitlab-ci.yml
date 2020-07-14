@@ -16,7 +16,7 @@ variables:
 image: docker:git
 
 dependency_scanning:
-  stage: quality
+  stage: test
   image: docker:stable
   variables:
     DOCKER_DRIVER: overlay2
