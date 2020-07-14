@@ -34,7 +34,6 @@ dependency_scanning:
     reports:
       dependency_scanning: gl-dependency-scanning-report.json
 
-
 codecoverage:
     image: thyrlian/android-sdk
     stage: test
