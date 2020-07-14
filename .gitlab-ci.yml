@@ -94,6 +94,9 @@ code_quality_html:
   artifacts:
     paths: [codeclimate.html]
   dependencies: []
+  only:
+      - development
+  
 
 create_codequality_badges:
   image: python:3-stretch
