@@ -9,7 +9,7 @@ services:
     command: ["dockerd-entrypoint.sh"]
 
 variables:
-  DOCKER_TLS_CERTDIR: ""
+  DOCKER_TLS_CERTDIR: "/certs"
   QUALITY_BASE_REPO: https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.widas.de/widas/codequality.git
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
