@@ -23,7 +23,7 @@ android {
         debug {
             enableJacoco(project, 'Debug')
             testCoverageEnabled true
-            //
+
         }
     }
 
