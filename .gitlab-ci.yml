@@ -16,8 +16,8 @@ variables:
 image: docker:git
 
 dependency_scanning:
-  stage: test
   image: docker:stable
+  stage: test
   variables:
     DOCKER_DRIVER: overlay2
   allow_failure: true
