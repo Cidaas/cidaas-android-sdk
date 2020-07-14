@@ -29,8 +29,6 @@ codecoverage:
       - cat build/reports/jacoco/jacocoFullReport/html/index.html
     artifacts:
         paths: [build/reports/jacoco/jacocoFullReport/html/*]
-    only:
-        - development
         
 
 code_quality_json:
@@ -57,8 +55,6 @@ code_quality_json:
       codequality: gl-code-quality-report.json
     paths: [gl-code-quality-report.json]
   dependencies: []
-  only:
-      - development
 
 
 code_quality_html:
@@ -94,9 +90,6 @@ code_quality_html:
   artifacts:
     paths: [codeclimate.html]
   dependencies: []
-  only:
-      - development
-  
 
 create_codequality_badges:
   image: python:3-stretch
@@ -165,8 +158,6 @@ create_codequality_badges:
   artifacts:
     paths:
       - public/*.svg
-  only:
-      - development    
 
 
 pages:
