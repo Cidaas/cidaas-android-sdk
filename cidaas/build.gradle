@@ -18,11 +18,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            testCoverageEnabled true
+            testCoverageEnabled false
         }
         debug {
             enableJacoco(project, 'Debug')
             testCoverageEnabled true
+
         }
     }
 
