@@ -31,6 +31,7 @@ dependency_scanning:
         --volume /var/run/docker.sock:/var/run/docker.sock
         "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest" /code
   artifacts:
+    paths: [gl-dependency-scanning-report.json]
     reports:
       dependency_scanning: gl-dependency-scanning-report.json
 
