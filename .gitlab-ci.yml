@@ -117,6 +117,7 @@ create_codequality_badges:
   dependencies:
     - code_quality_json
     - codecoverage
+    - dependency_scanning
   script:
   # Parse the codeclimate report for badges
     - git clone ${QUALITY_BASE_REPO}
