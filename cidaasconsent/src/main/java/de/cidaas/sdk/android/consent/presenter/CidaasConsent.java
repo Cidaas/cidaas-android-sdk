@@ -28,7 +28,7 @@ public class CidaasConsent {
         return cidaasConsentInstance;
     }
 
-    private CidaasConsent(Context yourActivityContext) {
+    public CidaasConsent(Context yourActivityContext) {
         this.context = yourActivityContext;
         CidaasHelper.getShared(yourActivityContext).initialiseObject();
     }
