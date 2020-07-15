@@ -33,6 +33,7 @@ The steps here will guide you through setting up and managing authentication and
     minSdkVersion 21
 
 ### Steps for integrate native Android SDKs:
+> ##### Note:- If you Already integrate the Cidaas 1.0.0 , Please check the migration guide here(/migration.md)
 ### Installation
 
 
@@ -86,9 +87,9 @@ Refacter-> Migrate to AndroidX
  
  Create an asset folder by right click the app module goto new->folder->Assets folder and click the finish button
 
-Create an xml file named as <b>Cidaas.xml</b> inside the asset folder and fill all the inputs in key value pair. The inputs are below mentioned.
+Create an xml file named as <b>cidaas.xml</b> inside the asset folder and fill all the inputs in key value pair. The inputs are below mentioned.
 
-> ##### Note:- The File name must be Cidaas.xml 
+> ##### Note:- The File name must be cidaas.xml 
 
 A sample XML file would look like this :
 
@@ -299,7 +300,7 @@ cidaas.getAccessTokenFromRefreshToken(refreshtokem, new EventResult<AccessTokenE
   ```Java
 Cidaas.getInstance(your context).setENABLE_PKCE(false);
 ```
-> ##### Note:- If you Disable the PKCE flow, you must use add the 'ClientSecret' in your Cidaas.xml
+> ##### Note:- If you Disable the PKCE flow, you must use add the 'ClientSecret' in your cidaas.xml
 
 
 To know whether the PKCE is enabled or not, use the following method
