@@ -8,8 +8,9 @@
 
 The steps here will guide you to handle the migration changes
 
+> ##### Note:- The Cidaas.xml will be renamed to cidaas.xml 
+>
 Before the Cidaas Will available as a single package , now it is split into multiple sub-modules for your convenience 
-
 
 ## Cidaas Native
 The following Methods under Cidaas are now available in Cidaas Native 
@@ -113,6 +114,23 @@ The following Methods under Cidaas are now available in Cidaas Verification
  
  * [Consent](#consent-management)
       <!--ts-->
-     * [Get Consent details](/PureNative.md#getting-consent-details)
-     * [Login after Consent](/PureNative.md#login-after-consent)
+     * [Get Consent details](/Consent.md#getting-consent-details)
+     * [Login after Consent](/Consent.md#login-after-consent)
      <!--te-->
+     
+     
+  #Cidaas
+  
+  The following methods are available in Cidaas 
+  
+  
+  * [Native Browser Login](#native-browser-login)
+         <!--ts-->
+         * [Classic Login](#classic-login)
+         * [Social Login](#social-login)
+         <!--te-->
+     *  [Embedded Browser Login](#embedded-browser-login)
+     * [Native UI Integration](/PureNative.md)
+     * [Verification v2](/Verification-v2.md)
+     <!--te-->
+     
