@@ -33,6 +33,7 @@ The steps here will guide you through setting up and managing authentication and
     minSdkVersion 21
 
 ### Steps for integrate native Android SDKs:
+> ##### Note:- If you Already integrate the Cidaas 1.0.0 , Please check the migration guide here(/migration.md)
 ### Installation
 
 
@@ -65,7 +66,15 @@ implementation 'com.github.Cidaas:cidaas-v2-sdk-android:cidaasnative:1.0.4'
 
 This will add only the Cidaas native features
 
+For now we need to implement only Cidaas Core Functions 
 
+So please Add
+
+ ```java
+dependencies {
+implementation 'com.github.Cidaas:cidaas-v2-sdk-android:cidaas:1.0.4'
+}
+ ```
 
 > ##### Note:- This Library is developed in AndroidX so AndroidX migration is necessary
 

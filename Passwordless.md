@@ -1,6 +1,6 @@
 # Passwordless or Multifactor Authentication
 
-de.cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, de.cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in de.cidaas.
+Cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, de.cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in de.cidaas.
 
 ## Table of Contents
 <!--ts-->
@@ -54,6 +54,22 @@ de.cidaas provides numerous options to ensure safe and diverse mechanisms for lo
     * [Configuration](#configure-backupcode)
     * [Usage](#login-via-backupcode)
     <!--te--> 
+    
+    
+    
+#### Initialisation
+
+The first step of integrating cidaas sdk With Verification Feature is the initialisation process.
+```java
+
+CidaasVerification cidaasNative = CidaasNative.getInstance(your Activity Context);
+
+or
+
+CidaasVerification cidaasVerification=new CidaasVerification(Your Application Context);
+
+```
+
     
 #### Device Verification
     
