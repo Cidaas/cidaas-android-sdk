@@ -1,7 +1,5 @@
 stages:
   - test
-  - build
-  - quality
   - badges
   - deploy
 
@@ -11,41 +9,15 @@ services:
     command: ["dockerd-entrypoint.sh"]
 
 variables:
-  DOCKER_TLS_CERTDIR: ""
+  DOCKER_TLS_CERTDIR: "/certs"
   QUALITY_BASE_REPO: https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.widas.de/widas/codequality.git
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 image: docker:git
 
-test:
-    image: thyrlian/android-sdk
-    stage: test
-    variables:
-      DOCKER_DRIVER: overlay2
-      DOCKER_TLS_CERTDIR: ""
-    script: 
-      - export GRADLE_USER_HOME=`pwd`/.gradle
-      - ./gradlew build --exclude-task test
-      - ./gradlew test
-
-codecoverage:
-    image: thyrlian/android-sdk
-    stage: quality
-    variables:
-      DOCKER_DRIVER: overlay2
-      DOCKER_TLS_CERTDIR: ""
-    script: 
-      - export GRADLE_USER_HOME=`pwd`/.gradle
-      - ./gradlew build --exclude-task test --continue || BUILDFAILED=true #Continue with the nex step even on test failures
-      - ./gradlew test --continue || TESTFAILED=true #Continue with the nex step even on test failures
-      - ./gradlew jacocoFullReport #! can only be executed after the build & test stage are finished
-      - cat build/reports/jacoco/jacocoFullReport/html/index.html
-    artifacts:
-        paths: [build/reports/jacoco/jacocoFullReport/*]
-
 dependency_scanning:
   image: docker:stable
-  stage: quality
+  stage: test
   variables:
     DOCKER_DRIVER: overlay2
   allow_failure: true
@@ -57,26 +29,40 @@ dependency_scanning:
         --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
         --volume "$PWD:/code"
         --volume /var/run/docker.sock:/var/run/docker.sock
-        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest" /code
   artifacts:
+    paths: [gl-dependency-scanning-report.json]
     reports:
       dependency_scanning: gl-dependency-scanning-report.json
-    paths: [gl-dependency-scanning-report.json]
+
+codecoverage:
+    image: thyrlian/android-sdk
+    stage: test
+    variables:
+      DOCKER_DRIVER: overlay2
+      DOCKER_TLS_CERTDIR: ""
+    script:
+      - export GRADLE_USER_HOME=`pwd`/.gradle
+      - ./gradlew build --exclude-task test --continue || BUILDFAILED=true #Continue with the nex step even on test failures
+      - ./gradlew test --continue || TESTFAILED=true #Continue with the nex step even on test failures
+      - ./gradlew jacocoFullReport #! can only be executed after the build & test stage are finished
+      - cat build/reports/jacoco/jacocoFullReport/html/index.html
+    artifacts:
+        paths: [build/reports/jacoco/jacocoFullReport/html/*]
+
 
 code_quality_json:
-  stage: quality
+  stage: test
   allow_failure: true
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-    CODE_QUALITY_IMAGE: "registry.gitlab.com/gitlab-org/ci-cd/codequality:0.85.9"
+    CODE_QUALITY_IMAGE: "registry.gitlab.com/gitlab-org/ci-cd/codequality:latest"
   script:
     - docker pull "$CODE_QUALITY_IMAGE"
-    # Clone the .codeclimate.yml from the code quality base repo
     - git clone ${QUALITY_BASE_REPO}
-    - cp codequality/conf/codeclimate/rules/java/.codeclimate.yml .
+    - cp codequality/conf/codeclimate/rules/js/.codeclimate.yml .
     - rm -rf codequality
-    # Run the codeclimate image from gitlab
     - docker run
       --env SOURCE_CODE="$PWD"
       --env CODECLIMATE_CODE="$PWD/app"
@@ -92,7 +78,7 @@ code_quality_json:
 
 
 code_quality_html:
-  stage: quality
+  stage: test
   allow_failure: true
   variables:
     DOCKER_DRIVER: overlay2
@@ -124,10 +110,6 @@ code_quality_html:
   artifacts:
     paths: [codeclimate.html]
   dependencies: []
-  rules:
-    - if: '$CODE_QUALITY_DISABLED'
-      when: never
-    - if: '$CI_COMMIT_TAG || $CI_COMMIT_BRANCH'
 
 create_codequality_badges:
   image: python:3-stretch
@@ -137,10 +119,8 @@ create_codequality_badges:
     - codecoverage
     - dependency_scanning
   script:
-    # Get the quality base repo
+  # Parse the codeclimate report for badges
     - git clone ${QUALITY_BASE_REPO}
-    
-    # Parse the codeclimate report for badges
     - cp codequality/src/calculate_codeclimate_metrics.py .
     - python3 calculate_codeclimate_metrics.py gl-code-quality-report.json
 

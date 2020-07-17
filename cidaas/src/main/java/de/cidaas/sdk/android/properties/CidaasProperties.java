@@ -43,7 +43,7 @@ public class CidaasProperties {
             }
 
         } else {
-            readFromFile("Cidaas.xml", result);
+            readFromFile("cidaas.xml", result);
         }
 
     }
@@ -62,10 +62,10 @@ public class CidaasProperties {
                     }
                 } else {
                     //Read File from asset to get URL
-                    readFromFile("Cidaas.xml", result);
+                    readFromFile("cidaas.xml", result);
                 }
             } else {
-                readFromFile("Cidaas.xml", result);
+                readFromFile("cidaas.xml", result);
                 // result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL must not be null"));
             }
         } catch (Exception e) {
