@@ -61,7 +61,7 @@ code_quality_json:
   script:
     - docker pull "$CODE_QUALITY_IMAGE"
     - git clone ${QUALITY_BASE_REPO}
-    - cp codequality/conf/codeclimate/rules/js/.codeclimate.yml .
+    - cp codequality/conf/codeclimate/rules/java/.codeclimate.yml .
     - rm -rf codequality
     - docker run
       --env SOURCE_CODE="$PWD"
