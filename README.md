@@ -146,6 +146,7 @@ cidaas.loginWithBrowser(your Activity Context, "NullableColorParameterInColorCod
      }
 });
 ```
+Add Deep link or app link (#add-custom-scheme)
 
 You can get the url for the login and you can load in your favorite browser for this you can call 
 
@@ -233,28 +234,52 @@ Cidaas.getInstance(your context).getRegistrationURL(new EventResult<String>() {
 });
 
 ```
+#### Add custom scheme
 
 Use [customScheme](https://developer.android.com/training/app-links/deep-linking) or [App Link](https://developer.android.com/studio/write/app-link-indexing) to return back the control from browser to App.
 
     Note : Don't forget to add the custom scheme url in your App's redirect url section
 
 
-If you use deep link or custom scheme, add intent in manifest and resume the SDK from your activite's **onCreate** method
+
+If you use deep link or custom scheme, After adding intent-filter in the manifest file , add  **android:launchMode="singleTop"** in the activity you redirected, For example if you redirect you link from browser to mainactivity
 
 ```java
-String token = getIntent().getDataString();
-if (token != null) {
-	cidaas.handleToken(token);
+ <activity android:name=".MainActivity" android:launchMode="singleTop">
+ ```
+ and resume the SDK from your activity
+```java
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String token = intent.getDataString();
+        if (token != null) {
+            cidaas.handleToken(token);
+            
+        } else {
+           //your else part
+        }
+    }
+
 }
 ```
 
-If you use app links, configure your Domain setup and resume the SDK from your activite's **onCreate** method
+If you use app links, configure your Domain setup and resume the SDK from your activity
 
 
 ```java
- String token = getIntent().getDataString();
- if (token != null) {
- 	 cidaas.handleToken(token);
+  @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String token = intent.getDataString();
+        if (token != null) {
+            cidaas.handleToken(token);
+            
+        } else {
+           //your else part
+        }
+    }
 }
 ```
 #### Common Methods
