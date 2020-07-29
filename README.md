@@ -45,7 +45,7 @@ Add the following Gradle configuration to your Android project:
 allprojects {
     repositories {
         ...
-		maven { url 'https://jitpack.io' }
+		maven { url 'https:jitpack.io' }
 	}
 }
 ```		
@@ -60,7 +60,7 @@ This will add all the subproject of cidaas SDK, if you need specific subproject 
 
  ```java
 dependencies {
-implementation 'com.github.Cidaas:cidaas-v2-sdk-android:cidaasnative:1.0.4'
+    implementation 'com.github.Cidaas:cidaas-v2-sdk-android:cidaasnative:1.0.4'
 }
  ```
 
@@ -72,7 +72,7 @@ So please Add
 
  ```java
 dependencies {
-implementation 'com.github.Cidaas:cidaas-v2-sdk-android:cidaas:1.0.4'
+    implementation 'com.github.Cidaas:cidaas-v2-sdk-android:cidaas:1.0.4'
 }
  ```
 
@@ -116,11 +116,11 @@ You can get this by creating your App in App settings section of cidaas Admin po
 The first step of integrating cidaas sdk is the initialisation process.
 ```java
 
-Cidaas cidaas = Cidaas.getInstance(your Activity Context);
+Cidaas cidaas = Cidaas.getInstance(yourActivityContext);
 
-or
+    or
 
-Cidaas cidaas =new Cidaas(your Activity Context);
+Cidaas cidaas =new Cidaas(yourActivityContext);
 
 ```
 
@@ -134,7 +134,7 @@ Cidaas cidaas =new Cidaas(your Activity Context);
 You can login using your native browser and redirects to the App once successfully logged in. To login with your native browser call ****loginWithBrowser()****.
 
 ```java
-cidaas.loginWithBrowser(your Activity Context, "NullableColorParameterInColorCode", new EventResult<AccessTokenEntity>() {
+cidaas.loginWithBrowser(yourActivityContext, "NullableColorParameterInColorCode", new EventResult<AccessTokenEntity>() {
      @Override
      public void success(AccessTokenEntity result) {
     	//Your Success Code
@@ -151,7 +151,7 @@ Add Deep link or app link (#add-custom-scheme)
 You can get the url for the login and you can load in your favorite browser for this you can call 
 
 ```java
-Cidaas.getInstance(your context).getLoginURL(new EventResult<String>() {
+Cidaas.getInstance(yourContext).getLoginURL(new EventResult<String>() {
     @Override
     public void success(String result) {
         //Your Success code
@@ -168,7 +168,7 @@ Cidaas.getInstance(your context).getLoginURL(new EventResult<String>() {
 You can also perform social login using your native browser and redirects to the App once successfully logged in. To perform social login call ****loginWithSocial()****.
 
 ```java
-cidaas.loginWithSocial(your Activity Context, your_Social_Provider, "Nullable_Color_Parameter_In_Color_Code", new EventResult<AccessTokenEntity>() {
+cidaas.loginWithSocial(yourActivityContext, "requestID",your_Social_Provider, "Nullable_Color_Parameter_In_Color_Code", new EventResult<AccessTokenEntity>() {
     @Override
     public void success(AccessTokenEntity result) {
         //Your Success Code
@@ -185,7 +185,7 @@ where social provider may be either facebook, google, linkedin or any other prov
 You can get the url for the social login and you can load in your favorite browser for this you can call 
 
 ```java
-Cidaas.getInstance(your context).getSocialLoginURL(your requestid,your_social_provider,new EventResult<String>() {
+Cidaas.getInstance(yourContext).getSocialLoginURL(yourRequestid,your_social_provider,new EventResult<String>() {
     @Override
     public void success(String result) {
        //Your Success Code
@@ -198,14 +198,14 @@ Cidaas.getInstance(your context).getSocialLoginURL(your requestid,your_social_pr
 });
 
 ```
-where social provider may be either facebook, google, linkedin or any other providers
+where social provider may be either "facebook", "google", "linkedin" or any other providers
 
 #### Register in Browser
 
 To Register in Browser , you can call the following method
 
 ```java
-Cidaas.getInstance(your context).RegisterWithBrowser(your activity context, "Nullable_Color_Parameter_In_Color_Code", new EventResult<AccessTokenEntity>() {
+Cidaas.getInstance(yourContext).RegisterWithBrowser(youraAtivityContext, "Nullable_Color_Parameter_In_Color_Code", new EventResult<AccessTokenEntity>() {
     @Override
     public void success(AccessTokenEntity result) {
          //Your Success Code
@@ -221,7 +221,7 @@ Cidaas.getInstance(your context).RegisterWithBrowser(your activity context, "Nul
 You can get the url for the registeration and you can load in your favorite browser for this you can call 
 
 ```java
-Cidaas.getInstance(your context).getRegistrationURL(new EventResult<String>() {
+Cidaas.getInstance(yourContext).getRegistrationURL(new EventResult<String>() {
     @Override
     public void success(String result) {
          //Your Success Code
@@ -288,7 +288,7 @@ If you use app links, configure your Domain setup and resume the SDK from your a
 You can get the access token for the current user using the following call
 
 ```Java
-cidaas.getAccessToken(your sub, new EventResult<AccessTokenEntity>() {
+cidaas.getAccessToken(yourSub, new EventResult<AccessTokenEntity>() {
  @Override
  public void success(AccessTokenEntity result) {
       //Your Success Code
@@ -304,7 +304,7 @@ cidaas.getAccessToken(your sub, new EventResult<AccessTokenEntity>() {
 By Default the access token is renewed when you call the getAccessTokenMethod , If you want to renew token manually you need to call the Following method
 
 ```Java
-cidaas.getAccessTokenFromRefreshToken(refreshtokem, new EventResult<AccessTokenEntity>() {
+cidaas.getAccessTokenFromRefreshToken(refreshToken, new EventResult<AccessTokenEntity>() {
    @Override
    public void success(AccessTokenEntity result) {
       // Your Success Code                
@@ -323,14 +323,14 @@ cidaas.getAccessTokenFromRefreshToken(refreshtokem, new EventResult<AccessTokenE
   By Default PKCE flow is enabled , If you want to disable the PKCE flow , you can call the following method
   
   ```Java
-Cidaas.getInstance(your context).setENABLE_PKCE(false);
+Cidaas.getInstance(yourContext).setENABLE_PKCE(false);
 ```
 > ##### Note:- If you Disable the PKCE flow, you must use add the 'ClientSecret' in your cidaas.xml
 
 
 To know whether the PKCE is enabled or not, use the following method
  ```Java
- Cidaas.getInstance(your context).isENABLE_PKCE();
+ Cidaas.getInstance(yourContext).isENABLE_PKCE();
  ```
 it will return a boolean value ,return true if PKCE is enabled and false if disabled
 
@@ -339,26 +339,26 @@ it will return a boolean value ,return true if PKCE is enabled and false if disa
   By Default Log is disabled , If you want to enable the log , you can call the following method
   
   ```Java
-  Cidaas.getInstance(your context).enableLog();
+  Cidaas.getInstance(yourContext).enableLog();
         
 ```
 To disable the Log
 
   ```Java
-Cidaas.getInstance(your context).disableLog();
+Cidaas.getInstance(yourContext).disableLog();
         
 ```
 
 To know whether the Log is enabled or not, use the following method
  ```Java
-Cidaas.getInstance(your context).isLogEnable();
+Cidaas.getInstance(yourContext).isLogEnable();
  ```
 it will return a boolean value ,return true if Log is enabled and false if disabled
 
 ##### User information
 
 ```Java
-Cidaas.getInstance(your Context).getUserInfo("your sub", new EventResult<UserinfoEntity>() {
+Cidaas.getInstance(yourContext).getUserInfo("yourSub", new EventResult<UserinfoEntity>() {
  @Override
    public void success(UserinfoEntity result) {
       //Your Success Code
@@ -378,11 +378,11 @@ You can use embedded browser to login with cidaas , For this do the following st
 1. Create an instance for CidaasSDKLayout using the activity context.
 
 ```Java
-  CidaasSDKLayout cidaasSDKLayout=CidaasSDKLayout.getInstance(this);
+  CidaasSDKLayout cidaasSDKLayout = CidaasSDKLayout.getInstance(this);
   
-  or
+     or
   
-  CidaasSDKLayout cidaasSDKLayout= new CidaasSDKLayout(this);
+  CidaasSDKLayout cidaasSDKLayout = new CidaasSDKLayout(this);
 
 ```
 2.Call ****loginWithEmbeddedBrowser()**** .
@@ -392,7 +392,7 @@ You can use embedded browser to login with cidaas , For this do the following st
 ```Java
  RelativeLayout relativeLayout=findViewById(R.id.relative_layout_for_webView);
  
- cidaasSDKLayout.login(relativeLayout, new EventResult<AccessTokenEntity>() {
+ cidaasSDKLayout.loginWithEmbeddedBrowser(relativeLayout, new EventResult<AccessTokenEntity>() {
  @Override
  public void success(AccessTokenEntity result) {
       //Your Success Code
@@ -416,7 +416,7 @@ socialAccessTokenEntity.setDomainURL(your DomainURL);
 socialAccessTokenEntity.setProvider(your provider);
 socialAccessTokenEntity.setViewType(your viewType);
 
-Cidaas.getInstance(your activity context).getAccessTokenBySocial(socialAccessTokenEntity, new EventResult<AccessTokenEntity>() {
+Cidaas.getInstance(yourActivityContext).getAccessTokenBySocial(socialAccessTokenEntity, new EventResult<AccessTokenEntity>() {
     @Override
     public void success(AccessTokenEntity result) {
         //Your Success Code
