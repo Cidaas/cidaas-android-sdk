@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -841,7 +840,7 @@ public class CidaasSDKLayout extends RelativeLayout {
     //ReadFromXML File
     private void readFromFile(final EventResult<Dictionary<String, String>> loginPropertiesResult) {
         FileHelper fileHelper = FileHelper.getShared(GLOBAL_CONTEXT);
-        fileHelper.readProperties(GLOBAL_CONTEXT.getAssets(), "Cidaas.xml", new EventResult<Dictionary<String, String>>() {
+        fileHelper.readProperties(GLOBAL_CONTEXT.getAssets(), "cidaas.xml", new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(final Dictionary<String, String> loginProperties) {
 

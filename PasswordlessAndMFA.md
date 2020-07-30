@@ -1,6 +1,7 @@
-# Passwordless or Multifactor Authentication
+# Passwordless and Multifactor Authentication
 
-de.cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to ensure there is no misuse of authentication mechanism. To improve convenience, de.cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in de.cidaas.
+Cidaas provides numerous options to ensure safe and diverse mechanisms for login. It is a good practise to enable multiple factors during login, to improve the login security of your users.  
+To improve convenience, cidaas offers passwordless mechanisms as well. Depending on the end user's comfort, you can offer any of the multi-factor authentication available in cidaas.
 
 ## Table of Contents
 <!--ts-->
@@ -55,6 +56,22 @@ de.cidaas provides numerous options to ensure safe and diverse mechanisms for lo
     * [Usage](#login-via-backupcode)
     <!--te--> 
     
+    
+    
+#### Initialisation
+
+The first step of integrating the cidaas android sdk and to sue the verification feature is the initialisation process:
+```java
+
+CidaasVerification cidaasNative = CidaasNative.getInstance(your Activity Context);
+
+or
+
+CidaasVerification cidaasVerification=new CidaasVerification(Your Application Context);
+
+```
+
+    
 #### Device Verification
     
 For TOTP, Pattern, Touch ID, Smart Push, Face and Voice verification, you need to verify the device to provide more security. For that call **setremoteMessage()** from your MyFirebaseMessagingService's onMessageReceived method.
@@ -68,7 +85,7 @@ For TOTP, Pattern, Touch ID, Smart Push, Face and Voice verification, you need t
 
 #### Email
 
-To setup a passwordless login, where user types only an Email, you need to configure your Email first and verify. By default, when you verify your Email during account verification, you are setup for passwordless login.
+To setup the passwordless login, where the user verifies himself via an email code, you will need to configure his email first and verify it. By default, when you verify an email during account verification, you are setup for passwordless login.
 
 
 #### Configure Email
@@ -103,7 +120,7 @@ de.cidaas.configureEmail("your sub", new Result < SetupEmailMFAResponseEntity > 
 
 #### Verify Email by entering code
 
-Once you received your verification code via Email, you need to verify that code. For that verification, call
+Once the user has received his verification code via email, he will need to verify that code. For that verification, call
  **enrollEmail()**.
  
 ```java
@@ -136,7 +153,7 @@ de.cidaas.enrollEmail("your_code","your_status_id", new Result < EnrollEmailMFAR
 
 #### Login via Email
 
-Once you have configured for Email login, you can also login with your Email via Passwordless authentication. To receive a verification code via Email, call **loginWithEmail()**.
+Once the user has verified his email & configured it to be able to use it for login, he can also login with his email via the passwordless authentication process. To receive a verification code via email, call **loginWithEmail()**.
 ```java
 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
 passwordlessEntity.setUsageType(UsageType.MFA);
@@ -172,7 +189,7 @@ de.cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < Log
 
 #### Verify Email by entering code
 
-Once you received your verification code via Email, you need to verify the code. For that verification, call **verifyEmail()**.
+Once the user received his verification code via Email, you will need to verify the code. For that verification, call **verifyEmail()**.
 ```java
 
 de.cidaas.verifyEmail("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
@@ -205,7 +222,7 @@ de.cidaas.verifyEmail("your_code","your_statusId", new Result < LoginCredentials
 
 #### SMS
 
-To use SMS as a passwordless login, you need to configure SMS physical verification first, and verify your mobile number. If you already verified your mobile number using SMS during account verification, it is by default setup for passwordless login.
+To use SMS for the passwordless login, the user will need to configure the SMS physical verification first and then verify his mobile number. If has already verified his mobile number using the SMS during account verification, it is by default setup for passwordless login.
 
 
 #### Configure SMS
@@ -242,7 +259,7 @@ de.cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
 
 #### Verify SMS by entering code
 
-Once you received your verification code via SMS, you need to verify the code. For that verification, call **enrollSMS()**.
+Once you have received the verification code via SMS, you need to verify the code. For that verification, call **enrollSMS()**.
 
 ```java
 de.cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFAResponseEntity > () {
@@ -274,7 +291,7 @@ de.cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFARespon
 
 #### Login via SMS
 
-Once you configured SMS, you can also login with SMS via Passwordless authentication. To receive a verification code via SMS, call **loginWithSMS()**.
+Once you configured SMS, you can also login with SMS via passwordless authentication. To receive the verification code via SMS, call **loginWithSMS()**.
 ```java
 
 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -342,11 +359,11 @@ de.cidaas.verifySMS("your_code","your_statusId", new Result < LoginCredentialsRe
 
 #### IVR
 
-To use IVR as a passwordless login, you need to configure IVR physical verification first and verify your mobile number. If you already verify your mobile number through account verification via IVR, it is already configured.
+To use IVR for the passwordless login, you need to configure the IVR physical verification first and verify the users mobile number. If you already have verified the users mobile number through the account verification via IVR, it is already configured.
 
 #### Configure IVR
 
-To receive a verification code via IVR, call **configureIVR()**.
+To receive the verification code via IVR, call **configureIVR()**.
 ```java
 de.cidaas.configureIVR(sub, new Result < SetupIVRMFAResponseEntity > () {
  @Override
@@ -375,7 +392,7 @@ de.cidaas.configureIVR(sub, new Result < SetupIVRMFAResponseEntity > () {
 
 #### Verify IVR by entering code
 
-Once you received your verification code via IVR verification call, you need to verify the code. For that verification, call **enrollIVR()**.
+Once you have received the verification code via IVR verification call, you need to verify the code. For that verification, call **enrollIVR()**.
 
 ```java
 
@@ -408,7 +425,7 @@ de.cidaas.enrollIVR("your_code","your_statusId", new Result < EnrollIVRMFARespon
 
 #### Login via IVR
 
-Once you configured IVR, you can also login with IVR via Passwordless authentication. To receive a verification code via IVR verification call, call **loginWithIVR()**.
+Once you configured IVR, you can also login with IVR via passwordless authentication. To receive the verification code via IVR verification call, call **loginWithIVR()**.
 
 ```java
 
@@ -443,7 +460,7 @@ de.cidaas.loginWithIVR(PasswordlessEntity passwordlessEntity, new Result < Login
 
 #### Verify IVR by entering code
 
-Once you received your verification code via IVR, you need to verify the code. For that verification, call **verifyIVR()**.
+Once you received the verification code via IVR, you need to verify the code. For that verification, call **verifyIVR()**.
 
 ```java
 
@@ -480,11 +497,11 @@ public void failure(WebAuthError error) {
 
 #### BackupCode
 
-To use Backupcode as a passwordless login, you need to configure Backupcode physical verification first.
+To use a backupcode as a passwordless login, you need to configure backupcode physical verification first.
 
 #### Configure BackupCode
 
-To configure or view the Backupcode, call **configureBackupcode()**.
+To configure or view the backupcode, call **configureBackupcode()**.
 ```java
 
 de.cidaas.configureBackupcode(sub, new Result < SetupBackupcodeMFAResponseEntity > () {
@@ -521,7 +538,7 @@ de.cidaas.configureBackupcode(sub, new Result < SetupBackupcodeMFAResponseEntity
 
 #### Login via Backupcode
 
-Once you configured Backupcode, you can also login with Backupcode via Passwordless authentication. To login with Backupcode, call **loginWithBackupcode()**.
+Once you have configured backupcode, you can also login with backupcode with the passwordless authentication process. To login with backupcode, call **loginWithBackupcode()**.
 
 ```java
 
@@ -564,11 +581,11 @@ de.cidaas.loginWithBackupcode("yourverificationCode",PasswordlessEntity password
 
 #### TOTP
 
-You can configure passwordless login with an OTP that has to be valid only for a fixed duration. To use TOTP as a passwordless login, you need to configure TOTP physical verification first.
+You can configure passwordless login with an OTP that has to be valid only for a fixed duration. To use the TOTP as a passwordless login, you need to configure TOTP physical verification first.
 
 #### Configure TOTP
 
-To configure TOTP verification, call **configureTOTP()**.
+To configure the TOTP verification, call **configureTOTP()**.
 
 ```java
 
@@ -602,7 +619,7 @@ de.cidaas.configureTOTP("Your Sub", new Result < EnrollTOTPMFAResponseEntity > (
 
 #### Login via TOTP
 
-Once you configured TOTP, you can also login with TOTP via Passwordless authentication. To login, call **loginWithTOTP()**.
+Once you have configured TOTP, you can also login with TOTP via the passwordless authentication. To login, call **loginWithTOTP()**.
 
 ```java
 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -644,11 +661,11 @@ de.cidaas.loginWithTOTP(PasswordlessEntity passwordlessEntity, new Result < Logi
 
 #### Pattern Recognition
 
-If you want to offer a passwordless login after securing it with the secure pattern that user can define on their device, you can use this option. To use Pattern Recognition as a passwordless login, you need to configure it first.
+If you want to offer a passwordless login after securing it with the secure pattern that user can define on their device, you can use this option. To use the pattern recognition as a passwordless login, you need to configure it first.
 
 #### Configure Pattern Recognition
 
-To configure Pattern Recognition, call **configurePatternRecognition()**.
+To configure the pattern recognition, call **configurePatternRecognition()**.
 
 ```java
 de.cidaas.configurePatternRecognition("RED[1,2,3]", "Your Sub", new Result < EnrollPatternMFAResponseEntity > () {
@@ -677,7 +694,7 @@ de.cidaas.configurePatternRecognition("RED[1,2,3]", "Your Sub", new Result < Enr
 
 #### Login via Pattern Recognition
 
-Once you have configured Pattern Recognition, you can also login with Pattern Recognition via Passwordless authentication. To login, call **loginWithPatternRecognition()**.
+Once you have configured pattern recognition, you can login with pattern recognition via the passwordless authentication. To login, call **loginWithPatternRecognition()**.
 
 ```java
 
@@ -719,11 +736,11 @@ de.cidaas.loginWithPatternRecognition("RED[1,2,3]", PasswordlessEntity passwordl
 
 #### Fingerprint Verification
 
-You may want to allow users to use their Fingerprint on their mobile devices or computer peripheral to be used for passwordless login.To do this Fingerprint Verification as a passwordless login, you need to configure it first.
+You may want to allow users to use their fingerprint on their mobile devices or computer peripheral to be used for passwordless login. To do this fingerprint verification for the passwordless login, you need to configure it first.
 
 #### Configure fingerprint Verification
 
-To configure fingerprint Verification, call **configureFingerprint()**.
+To configure the fingerprint verification, call **configureFingerprint()**.
 
 ```java
 
@@ -755,7 +772,7 @@ de.cidaas.configureFingerprint("Your Sub", new Result < EnrollFingerprintMFAResp
 
 #### Login via Fingerprint Verification
 
-Once you configured fingerprint  Verification, you can also login with fingerprint Id Verification via Passwordless authentication. To login, call **loginWithFingerprint()**.
+Once you have configured fingerprint verification, you can also login with the fingerprint Id Verification via passwordless authentication. To login, call **loginWithFingerprint()**.
 
 ```java
 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -796,11 +813,11 @@ de.cidaas.loginWithFingerprint(PasswordlessEntity passwordlessEntity, new Result
 
 ### SmartPush Notification
 
-SmartPush notification can be used when you would like users to recieve a number on their device and use that to authenticate instead of password. To use SmartPush Notification as a passwordless login, you need to configure it first.
+SmartPush notification can be used when you would like users to receive a number on their device and use this to authenticate instead of using a password. To use the smart push notification as a passwordless login, you need to configure it first.
 
 #### Configure SmartPush Notification
 
-To configure SmartPush Notification, call **configureSmartPush()**.
+To configure smart push Notification, call **configureSmartPush()**.
 
 ```java
 
@@ -832,7 +849,7 @@ To configure SmartPush Notification, call **configureSmartPush()**.
 
 #### Login via SmartPush Notification
 
-Once you configured SmartPush Notification, you can also login with SmartPush Notification via Passwordless authentication. To login, call **loginWithSmartPush()**.
+Once you have configured the smart push notification, you can also login with smart push notification via passwordless authentication. To login, call **loginWithSmartPush()**.
 
 ```java
 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -874,7 +891,7 @@ de.cidaas.loginWithSmartPush(PasswordlessEntity passwordlessEntity, new Result <
 
 #### Face Recognition
 
-Biometrics plays an important role in the modern world. de.cidaas can register a user's face, extract unique features from it, and use that to identify when they present their face for identification. To use Face Recognition as a passwordless login, you need to configure it first.
+Biometrics plays an important role in the modern world. Cidaas can register the user's face, extract unique features from it, and use that to identify when they present their face for identification. To use face recognition as a passwordless login, you need to configure it first.
 
 #### Configure Face Recognition
 
@@ -910,7 +927,7 @@ de.cidaas.configureFaceRecognition(File photo, "Your Sub", new Result < EnrollFa
 
 #### Login via Face Recognition
 
-Once you configured Face Recognition, you can also login with Face Recognition via Passwordless authentication. To login, call **loginWithFaceRecognition()**.
+Once the user has configured the face recognition, he can login with face recognition via passwordless authentication. To login, call **loginWithFaceRecognition()**.
 
 ```java
 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -951,11 +968,11 @@ de.cidaas.loginWithFaceRecognition(File photo, PasswordlessEntity passwordlessEn
 
 #### Voice Recognition
 
-Biometric plays an important role in the modern world. de.cidaas can record your user's voice, extract unique features and use that to verify. To use Voice Recognition as a passwordless login, you need to configure it first.
+Biometric plays an important role in the modern world. Cidaas can record your user's voice, extract unique features and use that to verify. To use voice recognition as a passwordless login, you need to configure it first.
  
 #### Configure Voice Recognition
 
-To configure Voice Recognition, call **configureVoiceRecognition()**.
+To configure voice recognition, call **configureVoiceRecognition()**.
 
 ```java
 
@@ -987,7 +1004,7 @@ To configure Voice Recognition, call **configureVoiceRecognition()**.
 
 #### Login via Voice Recognition
 
-Once you configured Voice Recognition, you can also login with Voice Recognition via Passwordless authentication. To login, call **loginWithVoiceRecognition()**.
+Once you have configured the voice recognition, you can login with voice recognition via passwordless authentication. To login, call **loginWithVoiceRecognition()**.
 
 ```java
 PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
@@ -1026,3 +1043,30 @@ de.cidaas.loginWithVoiceRecognition(File voice,PasswordlessEntity passwordlessEn
     }
 }
 ```
+
+
+##### Login History
+
+To know the Login history of a user you can call the following methods:
+
+```Java
+        UserLoginInfoEntity userLoginInfoEntity=new UserLoginInfoEntity();
+        userLoginInfoEntity.setStartDate("2019-03-04T00:00:00.000Z");
+        userLoginInfoEntity.setEndDate("2019-03-11T00:00:00.000Z");
+        userLoginInfoEntity.setVerificationType("Your Verification type");
+        userLoginInfoEntity.setSub(your sub);
+
+        cidaas.getUserLoginInfo(userLoginInfoEntity, new EventResult<UserLoginInfoResponseEntity>() {
+            @Override
+            public void success(UserLoginInfoResponseEntity result) {
+                //Your Success Code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                //Your Failure code
+            }
+        });
+```
+
+> ##### Note:- The Date must be in IST format and verification type means TOTP,Face,Voice et
