@@ -1,8 +1,8 @@
 # Cidaas Android SDK V2
 
-[![Build Status](https://travis-ci.org/Cidaas/de.cidaas-sdk-android-v2.svg?branch=development)](https://travis-ci.org/Cidaas/de.cidaas-sdk-android-v2)
-[![codecov.io](https://codecov.io/gh/Cidaas/de.cidaas-sdk-android-v2/branch/development/graph/badge.svg)](https://codecov.io/gh/Cidaas/de.cidaas-sdk-android-v2/branch/development)
-[![jitpack](https://jitpack.io/v/Cidaas/de.cidaas-sdk-android-v2.svg)](https://jitpack.io/#Cidaas/de.cidaas-sdk-android-v2)
+[![Build Status](https://travis-ci.org/Cidaas/de.cidaas-android-sdk.svg?branch=development)](https://travis-ci.org/Cidaas/de.cidaas-android-sdk)
+[![codecov.io](https://codecov.io/gh/Cidaas/de.cidaas-android-sdk/branch/development/graph/badge.svg)](https://codecov.io/gh/Cidaas/de.cidaas-android-sdk/branch/development)
+[![jitpack](https://jitpack.io/v/Cidaas/de.cidaas-android-sdk.svg)](https://jitpack.io/#Cidaas/de.cidaas-android-sdk)
 [![Platform](https://img.shields.io/badge/Platforms-android-4E4E4E.svg?colorA=28a745)](#installation)
 
 
@@ -60,55 +60,55 @@ The following methods under the former `cidaas` package are now available in `ci
 
 The following methods from the former `cidaas` package are now available in `cidaasverification`
 
-* [Face](/Verification.md)
+* [Face](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [Voice](/Verification.md)
+* [Voice](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [Fingerprint](/Verification.md)
+* [Fingerprint](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [Pattern](/Verification.md)
+* [Pattern](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [Smart Push](/Verification.md)
+* [Smart Push](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [TOTP](/Verification.md)
+* [TOTP](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [Email](/Verification.md)
+* [Email](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [SMS](/Verification.md)
+* [SMS](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [IVR](/Verification.md)
+* [IVR](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te-->
-* [Backupcode](/Verification.md)
+* [Backupcode](/PasswordlessAndMFA.md)
     <!--ts-->
-    * [Configuration](/Verification.md)
-    * [Usage](/Verification.md)
+    * [Configuration](/PasswordlessAndMFA.md)
+    * [Usage](/PasswordlessAndMFA.md)
     <!--te--> 
     
 ## Cidaas Consent
@@ -132,6 +132,6 @@ The following methods are available in the `cidaas` package
          <!--te-->
      *  [Embedded Browser Login](#embedded-browser-login)
      * [Native UI Integration](/PureNative.md)
-     * [Verification v2](/Verification.md)
+     * [Verification v2](/PasswordlessAndMFA.md)
      <!--te-->
      

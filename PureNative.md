@@ -41,7 +41,7 @@ The steps here will guide you through setting up and managing authentication and
     * [Get Consent details](#getting-consent-details)
     * [Login after Consent](#login-after-consent)
     <!--te-->
-* [Passwordless or Multifactor Authentication](/app/Passwordless.md)
+* [Passwordless and Multifactor Authentication](/PasswordlessAndMFA.md)
 <!--te-->
 
 
