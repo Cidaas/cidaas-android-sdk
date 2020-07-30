@@ -6,14 +6,16 @@
 [![Platform](https://img.shields.io/badge/Platforms-android-4E4E4E.svg?colorA=28a745)](#installation)
 
 
-The steps here will guide you to handle the migration changes
+The steps here will guide you through the migration changes
 
 > ##### Note:- The Cidaas.xml will be renamed to cidaas.xml 
 >
-Before the Cidaas Will available as a single package , now it is split into multiple sub-modules for your convenience 
+In the old version of the SDK < 2.1.0, the cidaas SDK was available as a single package. Now it is split into multiple sub-modules for your convenience - you can choose which part to include and which not
+
+### Here you can see how the SDK is structured:
 
 ## Cidaas Native
-The following Methods under Cidaas are now available in Cidaas Native 
+The following methods under the former `cidaas` package are now available in `cidaasnative`
 
 <!--ts-->
 * [Getting RequestId](/PureNative.md#getting-request-id)
@@ -56,61 +58,61 @@ The following Methods under Cidaas are now available in Cidaas Native
 
 ## Cidaas Verification
 
-The following Methods under Cidaas are now available in Cidaas Verification
+The following methods from the former `cidaas` package are now available in `cidaasverification`
 
-* [Face](/Verification-v2.md#face-recognition)
+* [Face](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-face-recognition)
-    * [Usage](/Verification-v2.md#login-via-face-recognition)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [Voice](/Verification-v2.md#voice-recognition)
+* [Voice](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-voice-recognition)
-    * [Usage](/Verification-v2.md#login-via-voice-recognition)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [Fingerprint](/Verification-v2.md#fingerprint-verification)
+* [Fingerprint](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-fingerprint)
-    * [Usage](/Verification-v2.md#login-via-fingerprint-verification)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [Pattern](/Verification-v2.md#pattern-recognition)
+* [Pattern](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-pattern-recognition)
-    * [Usage](/Verification-v2.md#login-via-pattern-recognition)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [Smart Push](/Verification-v2.md#smartpush-notification)
+* [Smart Push](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-smartpush-notification)
-    * [Usage](/Verification-v2.md#login-via-smartpush-notification)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [TOTP](/Verification-v2.md#totp)
+* [TOTP](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-totp)
-    * [Usage](/Verification-v2.md#login-via-totp)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [Email](/Verification-v2.md#email)
+* [Email](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-email)
-    * [Usage](/Verification-v2.md#login-via-email)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [SMS](/Verification-v2.md#sms)
+* [SMS](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-sms)
-    * [Usage](/Verification-v2.md#login-via-sms)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [IVR](/Verification-v2.md#ivr)
+* [IVR](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-ivr)
-    * [Usage](/Verification-v2.md#login-via-ivr)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te-->
-* [Backupcode](/Verification-v2.md#backupcode)
+* [Backupcode](/Verification.md)
     <!--ts-->
-    * [Configuration](/Verification-v2.md#configure-backupcode)
-    * [Usage](/Verification-v2.md#login-via-backupcode)
+    * [Configuration](/Verification.md)
+    * [Usage](/Verification.md)
     <!--te--> 
     
 ## Cidaas Consent
- The following Methods under Cidaas are now available in Cidaas Consent
+The following methods from the former `cidaas` package are now available in `cidaasconsent`
  
  * [Consent](#consent-management)
       <!--ts-->
@@ -119,9 +121,8 @@ The following Methods under Cidaas are now available in Cidaas Verification
      <!--te-->
      
      
-  #Cidaas
-  
-  The following methods are available in Cidaas 
+## Cidaas
+The following methods are available in the `cidaas` package
   
   
   * [Native Browser Login](#native-browser-login)
@@ -131,6 +132,6 @@ The following Methods under Cidaas are now available in Cidaas Verification
          <!--te-->
      *  [Embedded Browser Login](#embedded-browser-login)
      * [Native UI Integration](/PureNative.md)
-     * [Verification v2](/Verification-v2.md)
+     * [Verification v2](/Verification.md)
      <!--te-->
      
