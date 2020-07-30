@@ -41,14 +41,14 @@ The steps here will guide you through setting up and managing authentication and
     * [Get Consent details](#getting-consent-details)
     * [Login after Consent](#login-after-consent)
     <!--te-->
-* [Passwordless or Multifactor Authentication](/app/Passwordless.md)
+* [Passwordless and Multifactor Authentication](/PasswordlessAndMFA.md)
 <!--te-->
 
 
 
 #### Initialisation
 
-The first step of integrating cidaas sdk With Native UI Feature is the initialisation process.
+The first step of integrating the cidaas sdk using the native UI feature is the initialisation process.
 ```java
 
 CidaasNative cidaasNative = CidaasNative.getInstance(your Activity Context);
@@ -62,7 +62,7 @@ CidaasNative cidaasNative =new CidaasNative(your Activity Context);
 
 #### Getting Request Id
 
-First, You have to  get RequestId and use this in your subsequent calls. Server provides a unique Id based on urls configured for your application. Henceforth, in all requests like login, registration, you have to pass requestId, which is utilized to identify your client between two consecutive independant calls. To get the requestId, call
+First, you will have to get the requestId and use this in your subsequent calls. The backend system provides a unique id based on urls configured for your application. Henceforth, in all requests like login, registration, you have to pass this requestId, which is utilized to identify your client between two consecutive independent calls. To get the requestId, call
 
 ****getRequestId()****.
 ```java
@@ -101,7 +101,7 @@ cidaasNative.getRequestId(new Result < AuthRequestResponseEntity > () {
 
 #### Getting Tenant Info
 
-Sometimes you may want to lookup different types of login available ('Email', 'Mobile', 'Username') for a particular tenant. To get the tenant information, call ****getTenantInfo()****.
+Sometimes you may want to lookup which different types of login are available ('Email', 'Mobile', 'Username') for a particular tenant. To get the tenant information, call ****getTenantInfo()****.
 
 
 ```java
@@ -143,7 +143,7 @@ cidaasNative.getTenantInfo(new Result < TenantInfoEntity > () {
 
 #### Get Client Info
 
-Once you get tenant information, if you want to find client information you can call the following method. It contains client name, logo url specified for the client in the Admin's Apps section and details of what all social providers are configured for the App. To get the client information, call ****getClientInfo()****.
+Once you get the tenant information, if you want to find the client information you can call the following method. It contains the client name and the logo url specified for the client in the admin's apps section and details of what all social providers are configured for the app. To get the client information, call ****getClientInfo()****.
 
 ```java
 cidaasNative.getClientInfo("your RequestId", new Result < ClientInfoEntity > () {
@@ -187,7 +187,7 @@ cidaasNative.getClientInfo("your RequestId", new Result < ClientInfoEntity > () 
 #### Registration
 #### Getting Registration Fields
 
-Before registration, you may want to know what all are the fields that you must show to your user. For getting these fields, call  ****getRegistrationFields()****.
+Before registration, you may want to know what the fields are that you must show to your user to register. For getting these fields, call  ****getRegistrationFields()****.
 
 ```java
 cidaasNative.getRegistrationFields("Your_RequestId","Your_locale" ,new Result < RegistrationSetupResponseEntity > () {
@@ -314,20 +314,21 @@ cidaasNative.registerUser("Your_requestId", registrationEntity, new Result < Reg
 }
 ```
 
-After you get the successful response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** in the data of success respone. At that time, you have to follow the following steps
+After you get the response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** in the data of success respone. At that time, you have to follow the following steps
 
 #### De-duplication
- User de-duplication is a process that eliminates redundant copies of user thus reducing storage overhead as well as other inefficiencies. This process can be triggered during registion itself by following next steps.
+User de-duplication is a process that eliminates redundant copies of users, thus reducing storage overhead as well as other inefficiencies. This process can be triggered during registration itself by following next steps.
 
-When a user is being registered system does a de-duplication check, to verify if that is already existing. System then shows the list of potential duplicate users whose data seems to match most of the information entered during this registration. System then gives an option to the user to use one of the found duplicate record or reject all of them and register this new values as a fresh user.
+When a user is being registered, the system does a de-duplication check to verify if the user is already existing. The system then shows the list of potential duplicate users whose data seems to match most of the information entered during this registration.  
+It then gives the option to the user to use one of the found duplicate record or reject all of them and register the new values as a fresh user.
 
-In order to implement above functionality few of the below methods have to be called.
+In order to implement above functionality, the methods mentioned below have to be called.
 
 #### Get Deduplication Details
 
-To get the list of similar users, call ****getDeduplicationDetails()**** . If this method is used, system uses some heuristic algorithms and finds out any similar user exists in system and returns them.
+To get the list of similar users, call ****getDeduplicationDetails()**** . If this method is used, system uses some heuristic algorithms and finds out if any similar user exists in the system and returns them.
 
-> #### Note :- You can get the track id from thein the data of success respone of registerUser().
+> #### Note :- You can get the track id from the data of the success respone of registerUser().
 
 ```java
  cidaasNative.getDeduplicationDetails("your_track_id", new Result < DeduplicationResponseEntity > () {
@@ -387,7 +388,7 @@ To get the list of similar users, call ****getDeduplicationDetails()**** . If th
 
 #### Register User
 
-While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****registerUser()**** method can be called to ignore shown result and register details in registration form as a new user.
+While registering the user, if the system has found any similar users who have already registered, this list is shown to the user. He can then decide whether to use one of the existing logins, or choose to ignore all shown details. ****registerUser()**** method can be called to ignore the shown result and register details in registration form as a new user.
 
 ```java
 cidaasNative.registerUser("your track id", new Result < RegisterDeduplicationEntity > () {
@@ -421,7 +422,7 @@ cidaasNative.registerUser("your track id", new Result < RegisterDeduplicationEnt
 
 #### Login With Deduplication
 
-While registering user, if system found similar users already registered,that list is shown to user. User can decide whether to use one of the existing logins, or choose to ignore all shown details. ****loginWithDeduplication()**** method can be called to use one of those existing logins shown by the system. Note that, System will still use the secure authentication and verifications that were setup for earlier user, before login.
+While registering user, if the system found any similar users who have already registered, this list is shown to user. He can decide whether to use one of the existing logins, or choose to ignore all shown details. The ****loginWithDeduplication()**** method can be called to use one of those existing logins shown by the system. Note that the system will still use the secure authentication and verifications that were setup for earlier user, before login.
 
 ```java
 cidaasNative.loginWithDeduplication("your_requestId","your_sub", "your_password", new Result < LoginCredentialsResponseEntity > () {
@@ -455,11 +456,11 @@ cidaasNative.loginWithDeduplication("your_requestId","your_sub", "your_password"
 ```
 #### Account Verification
 
-In order to avoid misuse of user registration functions, it is a good practise to include account verification along with it. Once registering is done, you can verify your account either by Email, SMS or IVR verification call. To do this, first you have to initiate the account verification. You can invoke any of the following as it suits your use case.
+In order to avoid misuse of user registration functions, it is a good practise to include account verification along with it. Once the registration is done, you can verify your account either by email, SMS or IVR verification call. To do this, first you have to initiate the account verification. You can invoke any of the following as it suits your use case.
 
 #### Initiate Email verification
 
-This method is to be used when you want to receive a verification code via Email:
+This method has to be used when you want to receive a verification code via email:
 
 **initiateEmailVerification()**.
 
@@ -479,7 +480,7 @@ public void failure(WebAuthError error) {
 ```
 #### Initiate SMS verification
 
-If you would like to receive a verification code via SMS, call  **initiateSMSVerification()**.
+If you would like to receive the verification code via SMS, call  **initiateSMSVerification()**.
 
 ```java
 
@@ -544,7 +545,7 @@ public void failure(WebAuthError error) {
 
 #### Verify Account
 
-Once you received your verification code via any of the mediums like Email, SMS or IVR, you need to verify the code. For that verification, call **verifyAccount()**.
+Once you have received your verification code via any of the mediums like email, SMS or IVR, you need to verify the code. For that verification, call **verifyAccount()**.
 ```java
 
 cidaasNative.verifyAccount("your code", new Result < RegisterUserAccountVerifyResponseEntity > () {
@@ -618,7 +619,7 @@ public void failure(WebAuthError error) {
 
 #### MFA List
 
-To get the List of physical verifications configured by the user, call ****getMFAList()****.
+To get the list of physical verifications which are configured by the user, call ****getMFAList()****.
 
 
 ```java
@@ -653,13 +654,13 @@ To get the List of physical verifications configured by the user, call ****getMF
 
 #### Set Remote Message
 
-For device verification , we send one push notification to you For that you need to register your FCM Token(Firebase cloud Messaging) in your app in admin UI and
- For that you need to call, ****setFCMToken()****.
+For device verification, the backend system sends one push notification to you. For that you need to register your FCM Token(Firebase cloud Messaging) in your app inside the admin UI.  
+You need to call ****setFCMToken()****.
  ```java
   cidaasVerification.setFCMToken(refreshedToken);
   ```
 
-  Then in the FirebaseMessagingService extented class, in the onMessageReceived() method,you need to set the remotemessage recieved here using ****setRemoteMessage()****.
+ Then in the FirebaseMessagingService extended class, in the onMessageReceived() method, you will need to set the remote message received here using ****setRemoteMessage()****.
 
    ```java
   cidaasVerification.setFCMToken(refreshedToken);
@@ -669,11 +670,11 @@ For device verification , we send one push notification to you For that you need
 
 #### Forgot Password
 
-There is an option to reset password if you forget password.
+There is the option to reset the password if the user forgot his password.
 
 #### Initiate Reset Password
 
-For resetting password, you will get a verification code either via Email or SMS. For email you need to call
+For resetting the password, the app will get a verification code either via email or SMS. For email you need to call
 
 ****initiateResetPasswordByEmail()****.
 ```java
@@ -704,7 +705,7 @@ public void failure(WebAuthError error) {
 
 ```
 
-For resetting password, you will get a verification code either via Email or SMS. For email you need to call
+To reset the password via SMS, you need to call
 
 ****initiateResetPasswordBySMS()****.
 ```java
@@ -736,7 +737,7 @@ public void failure(WebAuthError error) {
 ```
 #### Handle Reset Password
 
-Once verification code received, verify that code by calling ****handleResetPassword()****.
+Once the verification code is received, verify that code by calling ****handleResetPassword()****.
 ```java
 
 cidaasNative.handleResetPassword("your verificaton code","your_rprq", new Result < ResetPasswordValidateCodeResponseEntity > () {
@@ -768,7 +769,7 @@ public void failure(WebAuthError error) {
 
 #### Reset Password
 
-Once code is verified, reset your password with your new password. To reset your password, call ****resetPassword()****.
+Once the code is verified, reset your password with your new password. To reset your password, call ****resetPassword()****.
 
 ```java
 
