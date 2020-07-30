@@ -1,8 +1,7 @@
 # Cidaas Android SDK
 
-[![Build Status](https://travis-ci.org/Cidaas/de.cidaas-android-sdk.svg?branch=development)](https://travis-ci.org/Cidaas/de.cidaas-android-sdk)
-[![codecov.io](https://codecov.io/gh/Cidaas/de.cidaas-android-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/Cidaas/de.cidaas-android-sdk/branch/master)
-[![jitpack](https://jitpack.io/v/Cidaas/de.cidaas-android-sdk.svg)](https://jitpack.io/#Cidaas/de.cidaas-android-sdk)
+[![](https://jitpack.io/v/Cidaas/cidaas-android-sdk.svg)](https://jitpack.io/#Cidaas/cidaas-android-sdk)
+[![codecov](https://codecov.io/gh/Cidaas/cidaas-android-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/Cidaas/cidaas-android-sdk)
 [![Platform](https://img.shields.io/badge/Platforms-android-4E4E4E.svg?colorA=28a745)](#installation)
 
 
