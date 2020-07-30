@@ -375,7 +375,8 @@ Cidaas.getInstance(yourContext).getUserInfo("yourSub", new EventResult<UserinfoE
 ### Embedded Browser Login
 
 You can use embedded browser to login with cidaas , For this do the following steps
-1. Create an instance for CidaasSDKLayout using the activity context.
+1. You have to add '< uses-permission  android:name="android.permission.ACCESS_NETWORK_STATE"/>' in your manifest file.
+2. Create an instance for CidaasSDKLayout using the activity context.
 
 ```Java
   CidaasSDKLayout cidaasSDKLayout = CidaasSDKLayout.getInstance(this);
@@ -385,9 +386,9 @@ You can use embedded browser to login with cidaas , For this do the following st
   CidaasSDKLayout cidaasSDKLayout = new CidaasSDKLayout(this);
 
 ```
-2.Call ****loginWithEmbeddedBrowser()**** .
+3.Call ****loginWithEmbeddedBrowser()**** .
 
-3.Pass the relative layout as argument
+4.Pass the relative layout as argument
 
 ```Java
  RelativeLayout relativeLayout=findViewById(R.id.relative_layout_for_webView);
@@ -406,15 +407,15 @@ You can use embedded browser to login with cidaas , For this do the following st
 ```
 
 ##### Get Access Token From social
+If you have access token for google or facebook, then you can use following method to get the access token of cidaas.
 
-You can get the Accesstoken from Social Login provider by calling the following method
 
 ```Java
 SocialAccessTokenEntity socialAccessTokenEntity = new SocialAccessTokenEntity();
-socialAccessTokenEntity.setToken(your token);
-socialAccessTokenEntity.setDomainURL(your DomainURL);
-socialAccessTokenEntity.setProvider(your provider);
-socialAccessTokenEntity.setViewType(your viewType);
+socialAccessTokenEntity.setToken(yourtoken);
+socialAccessTokenEntity.setDomainURL(yourDomainURL);
+socialAccessTokenEntity.setProvider(yourprovider);
+socialAccessTokenEntity.setViewType(yourviewType);
 
 Cidaas.getInstance(yourActivityContext).getAccessTokenBySocial(socialAccessTokenEntity, new EventResult<AccessTokenEntity>() {
     @Override
@@ -429,3 +430,4 @@ Cidaas.getInstance(yourActivityContext).getAccessTokenBySocial(socialAccessToken
  });
 
 ```
+here yourviewType is "login" and provider is "google" or "facebook" 
