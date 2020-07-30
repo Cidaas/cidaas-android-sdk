@@ -132,6 +132,6 @@ The following methods are available in the `cidaas` package
          <!--te-->
      *  [Embedded Browser Login](#embedded-browser-login)
      * [Native UI Integration](/PureNative.md)
-     * [Verification v2](/PasswordlessAndMFA.md)
+     * [Passwordless Authentication and MFA](/PasswordlessAndMFA.md)
      <!--te-->
      
