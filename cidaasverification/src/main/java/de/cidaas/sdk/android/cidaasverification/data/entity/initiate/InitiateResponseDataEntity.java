@@ -1,10 +1,12 @@
 package de.cidaas.sdk.android.cidaasverification.data.entity.initiate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.excangeid.ExchangeIDEntity;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InitiateResponseDataEntity implements Serializable {
 
     ExchangeIDEntity exchange_id;

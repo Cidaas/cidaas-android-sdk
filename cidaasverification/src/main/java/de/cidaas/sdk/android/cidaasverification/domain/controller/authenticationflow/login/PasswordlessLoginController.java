@@ -69,7 +69,7 @@ public class PasswordlessLoginController {
 
             if (loginRequest.getRequestId() != null && !loginRequest.getRequestId().equals("")) {
                 final String requestId = loginRequest.getRequestId();
-                InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), requestId, loginRequest.getUsageType(),
+                InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getEmail(), requestId, loginRequest.getUsageType(),
                         verificationType);
 
                 initiate(initiateEntity, new EventResult<InitiateResponse>() {

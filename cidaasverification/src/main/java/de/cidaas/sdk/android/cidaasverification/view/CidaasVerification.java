@@ -245,19 +245,19 @@ public class CidaasVerification {
     }
 
     public void initiateIVR(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
-        InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
+        InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getEmail(), loginRequest.getRequestId(), loginRequest.getUsageType(),
                 AuthenticationType.IVR);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
 
     public void initiateEmail(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
-        InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
+        InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getEmail(), loginRequest.getRequestId(), loginRequest.getUsageType(),
                 AuthenticationType.EMAIL);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
 
     public void initiateSMS(LoginRequest loginRequest, EventResult<InitiateResponse> initiateResult) {
-        InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getRequestId(), loginRequest.getUsageType(),
+        InitiateEntity initiateEntity = new InitiateEntity(loginRequest.getSub(), loginRequest.getEmail(), loginRequest.getRequestId(), loginRequest.getUsageType(),
                 AuthenticationType.SMS);
         InitiateController.getShared(context).initiateVerification(initiateEntity, initiateResult);
     }
