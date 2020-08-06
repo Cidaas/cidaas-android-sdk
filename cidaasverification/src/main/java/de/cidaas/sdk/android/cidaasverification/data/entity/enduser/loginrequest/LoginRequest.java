@@ -17,6 +17,9 @@ public class LoginRequest implements Serializable {
 
     private String pass_code = "";
     private String sub = "";
+    private String email = "";
+    private String mobile = "";
+    private String username = "";
 
     //For face and voice
     private File fileToSend;
@@ -114,6 +117,30 @@ public class LoginRequest implements Serializable {
         this.requestId=requestId;
     }*/
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getRequestId() {
         return requestId;
     }
@@ -179,19 +206,18 @@ public class LoginRequest implements Serializable {
     }
 
     //For Passwordless Email
-    public static LoginRequest getPasswordlessEmailRequestEntity(@NonNull String sub, @NonNull String requestId) {
+    public static LoginRequest getPasswordlessEmailRequestEntity(@NonNull String email, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
         return loginRequest;
     }
 
     //For Passwordless SMS
-    public static LoginRequest getPasswordlessSMSRequestEntity(@NonNull String sub, @NonNull String requestId) {
+    public static LoginRequest getPasswordlessSMSRequestEntity(@NonNull String email, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
 
@@ -199,9 +225,9 @@ public class LoginRequest implements Serializable {
     }
 
     //For Passwordless IVR
-    public static LoginRequest getPasswordlessIVRRequestEntity(@NonNull String sub, @NonNull String requestId) {
+    public static LoginRequest getPasswordlessIVRRequestEntity(@NonNull String email, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
 
@@ -210,16 +236,16 @@ public class LoginRequest implements Serializable {
 
     /**
      * @param pass_code
-     * @param sub
+     * @param email
      * @param requestId
      * @return
      */
 
     //For Passwordless Pattern
-    public static LoginRequest getPasswordlessPatternLoginRequestEntity(@NonNull String pass_code, @NonNull String sub, @NonNull String requestId) {
+    public static LoginRequest getPasswordlessPatternLoginRequestEntity(@NonNull String pass_code, @NonNull String email, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPass_code(pass_code);
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
 
@@ -228,19 +254,19 @@ public class LoginRequest implements Serializable {
     }
 
     //For Passwordless SmartPush
-    public static LoginRequest getPasswordlessSmartPushLoginRequestEntity(@NonNull String sub, @NonNull String requestId) {
+    public static LoginRequest getPasswordlessSmartPushLoginRequestEntity(@NonNull String email, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
         loginRequest.setRequestId(requestId);
+        loginRequest.setEmail(email);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
 
         return loginRequest;
     }
 
     //For Passwordless TOTP
-    public static LoginRequest getPasswordlessTOTPRequestEntity(@NonNull String sub, @NonNull String requestId) {
+    public static LoginRequest getPasswordlessTOTPRequestEntity(@NonNull String email, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
 
@@ -248,9 +274,9 @@ public class LoginRequest implements Serializable {
     }
 
     //For Passwordless Face
-    public static LoginRequest getPasswordlessFaceLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull File fileToSend) {
+    public static LoginRequest getPasswordlessFaceLoginRequestEntity(@NonNull String email, @NonNull String requestId, @NonNull File fileToSend) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setFileToSend(fileToSend);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
@@ -259,9 +285,9 @@ public class LoginRequest implements Serializable {
     }
 
     //For Passwordless Voice
-    public static LoginRequest getPasswordlessVoiceLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull File fileToSend) {
+    public static LoginRequest getPasswordlessVoiceLoginRequestEntity(@NonNull String email, @NonNull String requestId, @NonNull File fileToSend) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setFileToSend(fileToSend);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
@@ -270,9 +296,9 @@ public class LoginRequest implements Serializable {
     }
 
     //For Passwordless Fingerprint
-    public static LoginRequest getPasswordlessFingerprintLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull FingerPrintEntity fingerPrintEntity) {
+    public static LoginRequest getPasswordlessFingerprintLoginRequestEntity(@NonNull String email, @NonNull String requestId, @NonNull FingerPrintEntity fingerPrintEntity) {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        loginRequest.setEmail(email);
         loginRequest.setRequestId(requestId);
         loginRequest.setFingerPrintEntity(fingerPrintEntity);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
@@ -280,7 +306,8 @@ public class LoginRequest implements Serializable {
         return loginRequest;
     }
 
-    //For Passwordless Email
+    //-------------------------------------------------------------------_MFA--------------------------------------------------------------
+    //For MFA Email
     public static LoginRequest getMFAEmailRequestEntity(@NonNull String sub, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setSub(sub);
@@ -290,7 +317,7 @@ public class LoginRequest implements Serializable {
         return loginRequest;
     }
 
-    //For Passwordless SMS
+    //For MFA SMS
     public static LoginRequest getMFASMSRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull String trackId) {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setSub(sub);
@@ -301,7 +328,7 @@ public class LoginRequest implements Serializable {
         return loginRequest;
     }
 
-    //For Passwordless IVR
+    //For MFA IVR
     public static LoginRequest getMFAIVRRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull String trackId) {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setSub(sub);
@@ -382,5 +409,14 @@ public class LoginRequest implements Serializable {
         loginRequest.setTrackId(trackId);
 
         return loginRequest;
+    }
+
+
+    private boolean checkNotNullPasswordless(String username, String email, String mobile) {
+        if ((username != null && !username.equals("")) || (email != null && !email.equals("")) || (mobile != null && !mobile.equals(""))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

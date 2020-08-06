@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class InitiateEntity implements Serializable {
 
     private String sub = "";
+    private String email = "";
     private String request_id = "";
     private String usage_type = "";
     private String device_id = "";
@@ -16,17 +17,18 @@ public class InitiateEntity implements Serializable {
 
     //For Pattern
 
-    public InitiateEntity(String sub, String request_id, String usage_type, String verificationType) {
+    public InitiateEntity(String sub, String email, String request_id, String usage_type, String verificationType) {
         this.sub = sub;
         this.request_id = request_id;
-        // this.medium_id = medium_id;
+        this.email = email;
         this.usage_type = usage_type;
         this.verificationType = verificationType;
     }
 
 
-    public InitiateEntity(String sub, String request_id, String usage_type, String verificationType, String device_id, String push_id) {
+    public InitiateEntity(String sub, String email, String request_id, String usage_type, String verificationType, String device_id, String push_id) {
         this.sub = sub;
+        this.email = email;
         this.request_id = request_id;
         this.verificationType = verificationType;
         this.usage_type = usage_type;
@@ -44,6 +46,14 @@ public class InitiateEntity implements Serializable {
 
     public String getSub() {
         return sub;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setSub(String sub) {

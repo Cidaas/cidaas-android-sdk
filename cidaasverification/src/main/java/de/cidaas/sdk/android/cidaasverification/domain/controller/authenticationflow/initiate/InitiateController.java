@@ -11,6 +11,7 @@ import de.cidaas.sdk.android.cidaasverification.data.service.helper.Verification
 import de.cidaas.sdk.android.cidaasverification.domain.service.initiate.InitiateService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
+import de.cidaas.sdk.android.helper.enums.UsageType;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
@@ -57,17 +58,33 @@ public class InitiateController {
         try {
             if (initiateEntity.getVerificationType() != null && !initiateEntity.getVerificationType().equals("")) {
                 if (initiateEntity.getRequest_id() != null && !initiateEntity.getRequest_id().equals("") &&
-                        initiateEntity.getSub() != null && !initiateEntity.getSub().equals("") &&
                         initiateEntity.getUsage_type() != null && !initiateEntity.getUsage_type().equals("")) {
-                    addProperties(initiateEntity, initiateResult);
+                    if (initiateEntity.getUsage_type().equals(UsageType.MFA)) {
+                        if (initiateEntity.getSub() != null && !initiateEntity.getSub().equals("")) {
+                            addProperties(initiateEntity, initiateResult);
+                        } else {
+                            initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null",
+                                    "Error:" + methodName));
+                            return;
+                        }
+                    } else {
+                        if (initiateEntity.getEmail() != null && !initiateEntity.getEmail().equals("") && initiateEntity.getUsage_type().equals(UsageType.PASSWORDLESS)) {
+                            addProperties(initiateEntity, initiateResult);
+                        } else {
+                            initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("Email must not be null",
+                                    "Error:" + methodName));
+                            return;
+                        }
+                    }
+
                 } else {
-                    initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("requestId or sub or UsageType must not be null",
+                    initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("requestId or UsageType must not be null",
                             "Error:" + methodName));
                     return;
                 }
 
             } else {
-                initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("MediumId or Verification type must not be null",
+                initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type must not be null",
                         "Error:" + methodName));
                 return;
             }
