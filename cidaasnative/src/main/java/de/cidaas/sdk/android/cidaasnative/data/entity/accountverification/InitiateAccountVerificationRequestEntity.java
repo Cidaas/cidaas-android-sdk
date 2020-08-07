@@ -7,7 +7,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InitiateAccountVerificationRequestEntity implements Serializable {
     String requestId;
-    String sub;
+    String email;
     String verificationMedium;
     String processingType;
 
@@ -37,11 +37,11 @@ public class InitiateAccountVerificationRequestEntity implements Serializable {
         this.processingType = processingType;
     }
 
-    public String getSub() {
-        return sub;
+    public String getEmail() {
+        return email;
     }
 
-    public void setSub(String sub) {
-        this.sub = sub;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -289,7 +289,7 @@ public class CidaasNative {
     // -----------------------------------------------------***** Initiate Verification *****---------------------------------------------------------------
 
 
-    public void initiateEmailVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
+    public void initiateEmailVerification(@NonNull final String email, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
                                           final HashMap<String, String>... extraParams) {
         try {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
@@ -298,7 +298,7 @@ public class CidaasNative {
                     getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateEmailVerification(sub, result.getData().getRequestId(), EventResult);
+                            initiateEmailVerification(email, result.getData().getRequestId(), EventResult);
                         }
 
                         @Override
@@ -319,9 +319,9 @@ public class CidaasNative {
     }
 
 
-    public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
+    public void initiateEmailVerification(@NonNull final String email, @NonNull final String requestId,
                                           final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "email", EventResult);
+        AccountVerificationController.getShared(context).initiateAccountVerificationService(email, requestId, "email", EventResult);
     }
 
     public void initiateSMSVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
