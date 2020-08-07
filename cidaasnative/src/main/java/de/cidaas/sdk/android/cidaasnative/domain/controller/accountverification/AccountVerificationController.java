@@ -44,7 +44,7 @@ public class AccountVerificationController {
         return shared;
     }
 
-    public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String requestId, @NonNull final String verificationMedium,
+    public void initiateAccountVerificationService(@NonNull final String email, @NonNull final String requestId, @NonNull final String verificationMedium,
                                                    final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
         final String methodName = "AccountVerificationController :initiateAccountVerificationService()";
         try {
@@ -57,7 +57,7 @@ public class AccountVerificationController {
                     InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity = new InitiateAccountVerificationRequestEntity();
                     initiateAccountVerificationRequestEntity.setProcessingType("CODE");
                     initiateAccountVerificationRequestEntity.setVerificationMedium(verificationMedium);
-                    initiateAccountVerificationRequestEntity.setSub(sub);
+                    initiateAccountVerificationRequestEntity.setEmail(email);
                     initiateAccountVerificationRequestEntity.setRequestId(requestId);
                     initiateAccountVerificationService(baseurl, initiateAccountVerificationRequestEntity, EventResult);
 
@@ -83,7 +83,7 @@ public class AccountVerificationController {
             if (registrationEntity.getRequestId() != null && !registrationEntity.getRequestId().equals("") &&
                     registrationEntity.getProcessingType() != null && !registrationEntity.getProcessingType().equals("") &&
                     registrationEntity.getVerificationMedium() != null && !registrationEntity.getVerificationMedium().equals("") &&
-                    registrationEntity.getSub() != null && !registrationEntity.getSub().equals("")
+                    registrationEntity.getEmail() != null && !registrationEntity.getEmail().equals("")
                     && baseurl != null && !baseurl.equals("")) {
 
                 // Service call

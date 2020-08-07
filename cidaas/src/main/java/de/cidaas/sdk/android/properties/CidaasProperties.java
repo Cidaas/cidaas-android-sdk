@@ -55,7 +55,7 @@ public class CidaasProperties {
                 final Dictionary<String, String> loginProperties = DBHelper.getShared().getLoginProperties(CidaasHelper.baseurl);
                 if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
                     //check here for already saved properties
-                    if (checkNotnull(result, loginProperties, "Check de.cidaas saved properties failure : ")) {
+                    if (checkNotnull(result, loginProperties, "Check cidaas saved properties failure : ")) {
                         return;
                     } else {
                         result.success(loginProperties);
