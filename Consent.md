@@ -1,6 +1,6 @@
 # Consent Management
 
-The steps here will guide you through setting up and managing Consent in your apps using cidaas SDK.
+The steps here will guide you through setting up and managing the consent in your app using the cidaas android SDK.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ The steps here will guide you through setting up and managing Consent in your ap
 
 #### Initialisation
 
-The first step of integrating consent in cidaas sdk is the initialisation process.
+The first step of integrating the consent management with the cidaas sdk is the initialisation process.
 ```java
 
 CidaasConsent cidaasConsent= CidaasConsent.getInstance(your Application Context);
@@ -28,7 +28,7 @@ CidaasConsent cidaasConsent =new CidaasConsent(your Application Context);
 
 #### Consent Management
 
-Once user has successfully logged in, you may want your user's to accept the terms and conditions. You can configure different consent forms during setup, and present that to the user after login.
+Once user has logged in successfully, you may want your user's to accept your custom terms and conditions. You can configure different consent forms during setup, and present that to the user after login.
 
 #### Getting Consent Details
 
@@ -67,7 +67,7 @@ cidaasConsent.getConsentDetails(consentName,new Result < ConsentDetailsResultEnt
 
 #### Login After Consent
 
-For accept the consent you need to call ****loginAfterConsent()****
+Once the user has given his consent, you need to call ****loginAfterConsent()****
 
 ```java
 cidaasConsent.loginAfterConsent(ConsentEntity consentEntity, new Result < LoginCredentialsResponseEntity > () {
