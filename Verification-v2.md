@@ -101,21 +101,21 @@ To configure Face Recognition, call **configureFaceRecognition()**.
 
 Once you configure Face Recognition, you can login with Face Recognition for Passwordless authentication. To login, call **loginWithFaceRecognition()**.
 
-```swift
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.email = "xxx@gmail.com"
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+```java
+ LoginRequest loginRequest= LoginRequest.getPasswordlessFaceLoginRequestEntity("raja.narayanan@widas.in",result.getData().getRequestId(),your face image file);
 
-de.cidaas.loginWithFaceRecognition(photo: photo, passwordlessEntity: passwordlessEntity) {
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+
+  CidaasVerification.getInstance(getApplicationContext()).loginWithFaceRecognition(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+  @Override
+  public void success(LoginCredentialsResponseEntity result) {
+                   // Your Success code
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+       //Your Failure code
+        }
+  });
 ```
 
 **Response:**
@@ -175,23 +175,22 @@ To configure Voice Recognition, call **configureVoiceRecognition()**.
 
 #### Login via Voice Recognition
 
-Once you configure Voice Recognition, you can login with Voice Recognition as Passwordless authentication. To login, call **loginWithVoiceRecognition()**.
+Once you configure Voice Recognition, you can login with Voice Recognition as Passwordless authentication. To login, call **loginWithVoice()**.
 
-```swift
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.email = "xxx@gmail.com"
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+```java
+   LoginRequest loginRequest= LoginRequest.getPasswordlessVoiceLoginRequestEntity("raja.narayanan@widas.in",result.getData().getRequestId(),your voice file);
 
-de.cidaas.loginWithVoiceRecognition(voice: audioData, passwordlessEntity: passwordlessEntity) {
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+  CidaasVerification.getInstance(getApplicationContext()).loginWithVoice(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+  @Override
+  public void success(LoginCredentialsResponseEntity result) {
+                   // Your Success code
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+       //Your Failure code
+        }
+  });
 ```
 
 **Response:**
@@ -256,20 +255,21 @@ To configure Fingerprint Verification, call **configureFingerprint()**.
 Once you have configured Fingerprint Verification, you can also login with Fingerprint Verification for Passwordless authentication. To login, call **loginWithFingerprint()**.
 
 ```java
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.email = "xxx@gmail.com"
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+  FingerPrintEntity fingerPrintEntity=new FingerPrintEntity(getApplicationContext(),"your title","your subtitle","your description","your negative button String");
+                 
+  LoginRequest loginRequest= LoginRequest.getPasswordlessFingerprintLoginRequestEntity("raja.narayanan@widas.in",result.getData().getRequestId(),fingerPrintEntity);
 
-de.cidaas.loginWithTouchId(passwordlessEntity: passwordlessEntity) {
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+  CidaasVerification.getInstance(getApplicationContext()).loginWithFingerprint(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+  @Override
+  public void success(LoginCredentialsResponseEntity result) {
+                   // Your Success code
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+       //Your Failure code
+        }
+  });
 ```
 
 **Response:**
@@ -328,21 +328,21 @@ To configure Pattern Recognition, call **configurePatternRecognition()**.
 
 Once you have configured Pattern Recognition, you can also login with Pattern Recognition for Passwordless authentication. To login, call **loginWithPatternRecognition()**.
 
-```swift
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.email = "xxx@gmail.com"
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+```java
 
-de.cidaas.loginWithPatternRecognition(pattern: "RED[1,2,3], passwordlessEntity: passwordlessEntity) {
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+  LoginRequest loginRequest= LoginRequest.getPasswordlessPatternLoginRequestEntity("Your pattern code","youremailid","your requestId");
+
+  CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+  @Override
+  public void success(LoginCredentialsResponseEntity result) {
+                   // Your Success code
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+       //Your Failure code
+        }
+  });
 ```
 
 **Response:**
@@ -403,20 +403,19 @@ CidaasVerification.getInstance(this).configureSmartPush(configurationRequest, ne
 Once you configure SmartPush Notification, you can also login with SmartPush Notification for Passwordless authentication. To login, call **loginWithSmartPush()**.
 
 ```swift
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.email = "xxx@gmail.com"
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+  LoginRequest loginRequest= LoginRequest.getPasswordlessSmartPushLoginRequestEntity("your_email_id","your requestId");
 
-de.cidaas.loginWithSmartPush(passwordlessEntity: passwordlessEntity) {
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+  CidaasVerification.getInstance(getApplicationContext()).loginWithSmartPush(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+  @Override
+  public void success(LoginCredentialsResponseEntity result) {
+                   // Your Success code
+  }
+
+  @Override
+  public void failure(WebAuthError error) {
+       //Your Failure code
+        }
+  });
 ```
 
 **Response:**
@@ -443,7 +442,7 @@ You can configure passwordless login with an OTP that has to be valid only for a
 To configure TOTP verification, call **configureTOTP()**.
 
 ```swift
-de.cidaas.configureTOTP(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
+cidaas.configureTOTP(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -543,17 +542,19 @@ To receive a verification code via Email, call **configureEmail()**.
 
 Once you receive your verification code via Email, you need to verify that code. For that verification, call **enrollEmail()**.
 
-```swift
-de.cidaas.enrollEmail(code: "658144") {
-    switch $0 {
-        case .success(let configureSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
+```sjava
+ 
+   CidaasVerification.getInstance(this).enrollEmail("verification_code", "your sub", "exchangeId", new EventResult<EnrollResponse>() {
+    @Override
+    public void success(EnrollResponse result) {
+                  //Your success code        
     }
-}
+
+    @Override
+    public void failure(WebAuthError error) {
+      // Your Failure code
+    }
+});
 ```
 Here, **code** is the key you would get from the Email
 
@@ -574,21 +575,20 @@ Here, **code** is the key you would get from the Email
 
 Once you have configured for Email login, you can also login with your Email for Passwordless authentication. To receive a verification code via Email, call **loginWithEmail()**.
 
-```swift
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.email = "xxx@gmail.com"
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+```java
+ LoginRequest loginRequest=LoginRequest.getPasswordlessEmailRequestEntity("your email",your requestId);
+       
+        CidaasVerification.getInstance(this).initiateEmail(loginRequest, new EventResult<InitiateResponse>() {
+            @Override
+            public void success(InitiateResponse result) {
+               // Your success code
+            }
 
-de.cidaas.loginWithEmail(passwordlessEntity: passwordlessEntity) {
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+            @Override
+            public void failure(WebAuthError error) {
+               //Your failure code
+            }
+        });
 ```
 
 **Response:**
@@ -705,21 +705,20 @@ Here, **code** is the key you would get from the SMS
 
 Once you configure SMS, you can also login with SMS for Passwordless authentication. To receive a verification code via SMS, call **loginWithSMS()**.
 
-```swift
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.mobile = "+919876543210" // must starts with country code
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+```java
+ LoginRequest loginRequest=LoginRequest.getPasswordlessSMSRequestEntity("your email",your requestId);
+       
+        CidaasVerification.getInstance(this).initiateSMS(loginRequest, new EventResult<InitiateResponse>() {
+            @Override
+            public void success(InitiateResponse result) {
+               // Your success code
+            }
 
-de.cidaas.loginWithSMS(passwordlessEntity: passwordlessEntity) {
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+            @Override
+            public void failure(WebAuthError error) {
+               //Your failure code
+            }
+        });
 ```
 
 **Response:**
@@ -736,19 +735,21 @@ de.cidaas.loginWithSMS(passwordlessEntity: passwordlessEntity) {
 
 #### Verify SMS
 
-Once you receive your verification code via SMS, you need to verify the code. For that verification, call **verifySMS()**.
+Once you receive your verification code via SMS, you need to verify the code. For that verification, call **verifyCode()**.
 
 ```swift
-de.cidaas.verifySMS(code: "123123") {
-    switch $0 {
-        case .success(let configureSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+CidaasVerification.getInstance(this).verifyCode(verification code, exchangeId, AuthenticationType.SMS, requestId, UsageType.PASSWORDLESS, new EventResult<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+             //Your success code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                //Your failure code
+            }
+        });
 ```
 Here, **code** is the key you would get from the SMS
 
@@ -777,8 +778,8 @@ To use IVR as a passwordless login, you need to configure IVR physical verificat
 
 To receive a verification code via IVR, call **configureIVR()**.
 
-```swift
-de.cidaas.configureIVR(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
+```java
+cidaas.configureIVR(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -806,8 +807,8 @@ de.cidaas.configureIVR(sub: "7dfb2122-fa5e-4f7a-8494-dadac9b43f9d") {
 
 Once you receive your verification code for IVR verification call, you need to verify the code. For that verification, call **enrollIVR()**.
 
-```swift
-de.cidaas.enrollIVR(code: "123123") {
+```java
+cidaas.enrollIVR(code: "123123") {
     switch $0 {
         case .success(let configureSuccess):
             // your success code here
@@ -838,20 +839,19 @@ Here, **code** is the key you would get from the IVR verification call
 Once you configure IVR, you can also login with IVR for Passwordless authentication. To receive a verification code via IVR verification call, call **loginWithIVR()**.
 
 ```swift
-let passwordlessEntity = PasswordlessEntity()
-passwordlessEntity.mobile = "+919876543210" // must starts with country code
-passwordlessEntity.usageType = UsageTypes.PASSWORDLESS.rawValue
+ LoginRequest loginRequest=LoginRequest.getPasswordlessIVRRequestEntity("your email",your requestId);
+       
+        CidaasVerification.getInstance(this).initiateSMS(loginRequest, new EventResult<InitiateResponse>() {
+            @Override
+            public void success(InitiateResponse result) {
+               // Your success code
+            }
 
-de.cidaas.loginWithIVR(passwordlessEntity: passwordlessEntity){
-    switch $0 {
-        case .success(let loginWithSuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+            @Override
+            public void failure(WebAuthError error) {
+               //Your failure code
+            }
+        });
 ```
 
 **Response:**
@@ -870,17 +870,19 @@ de.cidaas.loginWithIVR(passwordlessEntity: passwordlessEntity){
 
 Once you receive your verification code via IVR, you need to verify the code. For that verification, call **verifyIVR()**.
 
-```swift
-de.cidaas.verifyIVR(code: "123123") {
-    switch $0 {
-        case .success(let verifySuccess):
-            // your success code here
-        break
-        case .failure(let error):
-            // your failure code here
-        break
-    }
-}
+```java
+CidaasVerification.getInstance(this).verifyCode(verification code, exchangeId, AuthenticationType.IVR, requestId, UsageType.PASSWORDLESS, new EventResult<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+
+             //Your success code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                //Your failure code
+            }
+        });
 ```
 Here, **code** is the key you would get from the IVR verification call
 
@@ -1007,4 +1009,3 @@ To know the Login history of a user you can call the following methods
 
 > ##### Note:- The Date must be in IST format and verification type means TOTP,Face,Voice et
 
->>>>>>> development
