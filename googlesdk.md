@@ -5,10 +5,10 @@ The steps here will guide you through setting up google sign in via native app i
 ## Table of Contents
 
 <!--ts-->
-* [Consent](#google-native-sdk)
+* [Google Native SDK](#google-native-sdk)
      <!--ts-->
-    * [Creating app](#getting-consent-details)
-    * [Login after Consent](#login-after-consent)
+    * [Creating app](#creating-google-app)
+    * [Steps to be followed in code](#steps-to-be-followed-in-code)
     <!--te-->
 <!--te-->
 
