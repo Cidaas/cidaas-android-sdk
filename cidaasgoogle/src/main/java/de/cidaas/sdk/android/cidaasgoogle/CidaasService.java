@@ -45,7 +45,7 @@ public class CidaasService {
             queryMap.put("redirect_uri", URLEncoder.encode(googleSettingsEntity.getRedirectUrl(), "utf-8"));
             queryMap.put("code", URLEncoder.encode(googleSettingsEntity.getCode(), "utf-8"));
         } catch (Exception ex) {
-
+            WebAuthError.getShared(globalContext).customException(WebAuthErrorCode.GOOGLE_ERROR, "Please set all properties", methodName);
         }
 
         iCidaasGoogleService.getGoogleAccessToken(base_url, content_type, queryMap).enqueue(new Callback<GoogleAccessTokenEntity>() {

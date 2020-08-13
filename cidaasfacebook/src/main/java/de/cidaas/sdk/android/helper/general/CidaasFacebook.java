@@ -23,6 +23,7 @@ public class CidaasFacebook implements ICidaasFacebook {
 
     private CallbackManager callbackManager;
     private Activity activity;
+    String requestIdFromCIdaas;
 
 
     private static CidaasFacebook cidaasFacebookInstance;
@@ -46,9 +47,14 @@ public class CidaasFacebook implements ICidaasFacebook {
 
 
     @Override
-    public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
+    public void login(String requestId, EventResult<AccessTokenEntity> accessTokenEntityResult) {
         signOut();
-        signIn(accessTokenEntityResult);
+        if (requestId != null && requestId != "") {
+            requestIdFromCIdaas = requestId;
+            signIn(accessTokenEntityResult);
+        } else {
+            accessTokenEntityResult.failure(WebAuthError.getShared(activity).propertyMissingException("Request ID must not be null", "Facebook Login"));
+        }
     }
 
     @Override
@@ -76,9 +82,7 @@ public class CidaasFacebook implements ICidaasFacebook {
                 public void onSuccess(LoginResult loginResult) {
                     String access_token = AccessToken.getCurrentAccessToken().getToken();
                     if (access_token != null || !access_token.equals("")) {
-
-
-                        CidaasSDKLayout.getInstance(CidaasFacebook.this.activity).getAccessTokenBySocialWithLoader(access_token, "facebook", CidaasHelper.baseurl, "login", result);
+                        CidaasSDKLayout.getInstance(CidaasFacebook.this.activity).getAccessTokenBySocialWithLoader(access_token, "facebook", CidaasHelper.baseurl, "login", requestIdFromCIdaas, result);
                     }
                 }
 
@@ -101,6 +105,7 @@ public class CidaasFacebook implements ICidaasFacebook {
     }
 
     public void authorize(int requestCode, int resultCode, Intent data) {
+
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
