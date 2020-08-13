@@ -10,6 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +38,7 @@ public class CidaasGoogle implements ICidaasGoogle {
     Activity activity;
     public static final int REQ_CODE = 9001;
     private GoogleSignInOptions signInOptions;
+    String requestId = "";
 
     EventResult<AccessTokenEntity> localAccessTokenEntityResult;
 
@@ -62,23 +64,25 @@ public class CidaasGoogle implements ICidaasGoogle {
                 .requestServerAuthCode(googleSettingsEntity.getClientId())
                 .requestEmail()
                 .build();
+
+
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(activity, signInOptions);
 
 
-        CidaasSDKLayout.iCidaasGoogle = new ICidaasGoogle() {
+       /* CidaasSDKLayout.iCidaasGoogle = new ICidaasGoogle() {
             @Override
-            public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
+            public void login(requestId,EventResult<AccessTokenEntity> accessTokenEntityResult) {
                 signIn(accessTokenEntityResult);
             }
 
             @Override
             public void logout() {
                 signOut();
-            }
+            }*/
 
 
-        };
+        //}
     }
 
 
@@ -131,9 +135,10 @@ public class CidaasGoogle implements ICidaasGoogle {
 
                 googleSettingsEntity.setClientId(web.get("client_id").toString());
                 googleSettingsEntity.setClientSecret(web.get("client_secret").toString());
+                googleSettingsEntity.setGrantType("authorization_code");
                 JSONArray redidecturis = web.getJSONArray("redirect_uris");
                 googleSettingsEntity.setRedirectUrl(redidecturis.get(0).toString());
-                googleSettingsEntity.setGrantType("authorization_code");
+
             } else {
                 WebAuthError.getShared(activity).customException(
                         WebAuthErrorCode.GOOGLE_ERROR, "Place the correct google service json from web", "CidaasGoogle:readFileInputs");
@@ -157,13 +162,19 @@ public class CidaasGoogle implements ICidaasGoogle {
         if (result.isSuccess() == true) {
             final GoogleSignInAccount signInAccount = result.getSignInAccount();
             if (signInAccount != null) {
-                googleSettingsEntity.setCode(signInAccount.getServerAuthCode());
+
+
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                GoogleSignInAccount account = task.getResult();
+
+                googleSettingsEntity.setCode(account.getServerAuthCode());
+
                 getGoogleAccessToken(googleSettingsEntity, new IGoogleAccessTokenEntity() {
                     @Override
                     public void onSuccess(GoogleAccessTokenEntity tokenEntity) {
 
                         CidaasSDKLayout.getInstance(CidaasGoogle.this.activity).getAccessTokenBySocialWithLoader(tokenEntity.getAccess_token(),
-                                "google", CidaasHelper.baseurl, "login", localAccessTokenEntityResult);
+                                "google", CidaasHelper.baseurl, "login", requestId, localAccessTokenEntityResult);
                     }
 
                     @Override
@@ -181,8 +192,14 @@ public class CidaasGoogle implements ICidaasGoogle {
     }
 
     @Override
-    public void login(EventResult<AccessTokenEntity> accessTokenEntityResult) {
-        signIn(accessTokenEntityResult);
+    public void login(String requestIdFromUser, EventResult<AccessTokenEntity> accessTokenEntityResult) {
+        requestId = requestIdFromUser;
+        if (requestIdFromUser != null && !requestIdFromUser.equals("")) {
+            signIn(accessTokenEntityResult);
+        } else {
+
+            accessTokenEntityResult.failure(WebAuthError.getShared(activity).propertyMissingException("Request ID must not be null", "google-login"));
+        }
     }
 
     @Override

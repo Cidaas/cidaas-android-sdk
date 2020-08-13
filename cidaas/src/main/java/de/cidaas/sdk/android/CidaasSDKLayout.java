@@ -483,8 +483,9 @@ public class CidaasSDKLayout extends RelativeLayout {
 
     private void googleSDKFlow() {
         try {
+
             showLoader();
-            iCidaasGoogle.login(new EventResult<AccessTokenEntity>() {
+            iCidaasGoogle.login(CidaasSDKLayout.GLOBAL_PRE_AUTH_CODE, new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     hideLoader();
@@ -528,7 +529,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             showLoader();
 
 
-            iCidaasFacebook.login(new EventResult<AccessTokenEntity>() {
+            iCidaasFacebook.login("requestId", new EventResult<AccessTokenEntity>() {
                 @Override
                 public void success(AccessTokenEntity result) {
                     hideLoader();
@@ -717,7 +718,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     //GetAccessToken bySocial
-    public void getAccessTokenBySocialWithLoader(final String token, final String provider, String DomainUrl, final String viewType, final EventResult<AccessTokenEntity> accessTokenCallback, final HashMap<String, String>... extraParams) {
+    public void getAccessTokenBySocialWithLoader(final String token, final String provider, String DomainUrl, final String viewType, final String requestId, final EventResult<AccessTokenEntity> accessTokenCallback, final HashMap<String, String>... extraParams) {
         showLoader();
 
         SocialAccessTokenEntity socialAccessTokenEntity = new SocialAccessTokenEntity();
@@ -725,6 +726,7 @@ public class CidaasSDKLayout extends RelativeLayout {
         socialAccessTokenEntity.setDomainURL(DomainURL);
         socialAccessTokenEntity.setProvider(provider);
         socialAccessTokenEntity.setViewType(viewType);
+        socialAccessTokenEntity.setRequestId(requestId);
 
         Cidaas.getInstance(GLOBAL_Activity).getAccessTokenBySocial(socialAccessTokenEntity, new EventResult<AccessTokenEntity>() {
             @Override

@@ -5,7 +5,7 @@ import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 
 public interface ICidaasFacebook {
 
-    public void login(EventResult<AccessTokenEntity> accessTokenEntityResult);
+    public void login(String equestId, EventResult<AccessTokenEntity> accessTokenEntityResult);
 
     public void logout();
 }
