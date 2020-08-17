@@ -28,6 +28,8 @@ This SDK was renamed from ```cidaas -v2-sdk-android``` to ```cidaas-android-sdk`
     *  [Embedded Browser Login](#embedded-browser-login)
     * [Native UI Integration](/PureNative.md)
     * [Passwordless and MFA](/PasswordlessAndMFA.md)
+    * [Google SDK](/googlesdk.md)
+    * [Facebook SDK](/Facebooksd.md)
     <!--te-->
 
 ## Requirements
