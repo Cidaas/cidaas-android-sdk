@@ -1,6 +1,6 @@
 include:
   - project: 'widas/codequality'
-    ref: master
+    ref: ci_templates
     file: 'ci_templates/android.gitlab-ci.yml'
 
 stages:

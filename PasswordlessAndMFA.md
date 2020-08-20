@@ -63,11 +63,11 @@ To improve convenience, cidaas offers passwordless mechanisms as well. Depending
 The first step of integrating the cidaas android sdk and to sue the verification feature is the initialisation process:
 ```java
 
-CidaasVerification cidaasNative = CidaasNative.getInstance(your Activity Context);
+CidaasVerification cidaasNative = CidaasNative.getInstance(your_Activity_Context);
 
 or
 
-CidaasVerification cidaasVerification=new CidaasVerification(Your Application Context);
+CidaasVerification cidaasVerification = new CidaasVerification(Your_Application_Context);
 
 ```
 
@@ -93,17 +93,19 @@ To setup the passwordless login, where the user verifies himself via an email co
 To receive a verification code via Email, call **configureEmail()**.
 ```java
 
-de.cidaas.configureEmail("your sub", new Result < SetupEmailMFAResponseEntity > () {
-  @Override
-  public void success(SetupEmailMFAResponseEntity result) {
-    //Your success code here
-  }
+cidaasVerification.setupEmail("subID", new EventResult<SetupResponse>() {
+            @Override
+            public void success(SetupResponse result) {
+               // your success code here
+            }
 
-  @Override
-  public void failure(WebAuthError error) 
-    //Your failure code here
-  }
-});
+            @Override
+            public void failure(WebAuthError error) {
+               // your failure code
+
+            }
+        });
+
 ```
 
 **Response:**
@@ -124,18 +126,19 @@ Once the user has received his verification code via email, he will need to veri
  **enrollEmail()**.
  
 ```java
-de.cidaas.enrollEmail("your_code","your_status_id", new Result < EnrollEmailMFAResponseEntity > () {
+cidaasVerification.enrollEmail("your-code", "subID", "exchangeID", new EventResult<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse result) {
+              //Your Success Code
+            }
 
-  @Override
-  public void success(EnrollEmailMFAResponseEntity result) {
-      //Your success code here
-  }
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
 
-  @Override
-  public void failure(WebAuthError error) {
-     //Your failure code here
-  }
-});
+            }
+        });
+
 
 ```
 **Response:**
@@ -155,24 +158,19 @@ de.cidaas.enrollEmail("your_code","your_status_id", new Result < EnrollEmailMFAR
 
 Once the user has verified his email & configured it to be able to use it for login, he can also login with his email via the passwordless authentication process. To receive a verification code via email, call **loginWithEmail()**.
 ```java
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+LoginRequest loginRequest=LoginRequest.getPasswordlessEmailRequestEntity("email","requestID");
 
-de.cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
+        CidaasVerification.getInstance(this).initiateEmail(loginRequest, new EventResult<InitiateResponse>() {
+            @Override
+            public void success(InitiateResponse result) {
+               //Your Success Code
+            }
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+            }
+        });
 
-  @Override
-  public void success(LoginCredentialsResponseEntity result) {
-   //Your success code here
-  }
-
-  @Override
-  public void failure(WebAuthError error) {
-    //Your failure code here
-  }
-}); 
 
 ```
 **Response:**
@@ -192,17 +190,18 @@ de.cidaas.loginWithEmail(PasswordlessEntity passwordlessEntity, new Result < Log
 Once the user received his verification code via Email, you will need to verify the code. For that verification, call **verifyEmail()**.
 ```java
 
-de.cidaas.verifyEmail("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
-  @Override
-  public void success(LoginCredentialsResponseEntity result) {
-    // Your Success code here
-  }
+CidaasVerification.getInstance(this).verifyCode("your_code", "exchangeID", AuthenticationType.EMAIL, "requestID", UsageType.PASSWORDLESS, new EventResult<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+                //Your Success Code
 
-  @Override
-  public void failure(WebAuthError error) {
-    // Your failure code here
-  }
-}); 
+            }
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+            }
+        });
+
 ```
 **Response:**
 ```json
@@ -231,17 +230,17 @@ To receive a verification code via SMS, call **configureSMS()**.
 
 ```java
 
-de.cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
-  @Override
-  public void success(SetupSMSMFAResponseEntity result) {
-    //Your success code here
-  }
+CidaasVerification.getInstance(getApplicationContext()).setupSMS("subID", new EventResult<SetupResponse>() {
+            @Override
+            public void success(SetupResponse result) {
+               //Your Success Code
+            } 
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+            }
+    });
 
-  @Override
-  public void failure(WebAuthError error) {
-    //Your failure code here
-  }
-});
     
     
 ```
@@ -262,17 +261,20 @@ de.cidaas.configureSMS(sub, new Result < SetupSMSMFAResponseEntity > () {
 Once you have received the verification code via SMS, you need to verify the code. For that verification, call **enrollSMS()**.
 
 ```java
-de.cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFAResponseEntity > () {
-  @Override
-  public void success(EnrollSMSMFAResponseEntity result) {
-    //Your success code here
-  }
+cidaasVerification.enrollSMS("your_code", "subID", "exchangeID", new EventResult<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse result) {
+               //Your Success Code
 
-  @Override
-  public void failure(WebAuthError error) {
-    //Your failure code here
-  }
-});
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+
+            }
+        });
+
     
 ```
 
@@ -294,23 +296,22 @@ de.cidaas.enrollSMS("your_code","your_statusId", new Result < EnrollSMSMFARespon
 Once you configured SMS, you can also login with SMS via passwordless authentication. To receive the verification code via SMS, call **loginWithSMS()**.
 ```java
 
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+LoginRequest loginRequest = LoginRequest.getPasswordlessEmailRequestEntity("emailID", "requestID");
 
-de.cidaas.loginWithSMS(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
-   @Override
-   public void success(LoginCredentialsResponseEntity result) {
-    //Your success code here
-   }
 
-   @Override
-   public void failure(WebAuthError error) {
-    //Your failure code here
-   }); 
+        CidaasVerification.getInstance(this).initiateSMS(loginRequest, new EventResult<InitiateResponse>() {
+            @Override
+            public void success(InitiateResponse result) {
+               //Your Success Code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+            }
+        });
     
+
 ```
 **Response:**
 
@@ -329,16 +330,18 @@ de.cidaas.loginWithSMS(PasswordlessEntity passwordlessEntity, new Result < Login
 Once you received your verification code via SMS, you need to verify the code. For that verification, call **verifySMS()**.
 
 ```java
-de.cidaas.verifySMS("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
- @Override
- public void success(LoginCredentialsResponseEntity result) {
-  // Your Success code here
- }
- @Override
- public void failure(WebAuthError error) {
-  // Your failure code here
- }
-}); 
+CidaasVerification.getInstance(this).verifyCode("your_code", "exchangeID", AuthenticationType.SMS, "requestID", UsageType.PASSWORDLESS, new EventResult<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+               //Your Success Code
+
+            }
+            @Override
+            public void failure(WebAuthError error) {
+                 // your failure code
+            }
+        }); 
+
 ```
 **Response:**
 
@@ -365,16 +368,16 @@ To use IVR for the passwordless login, you need to configure the IVR physical ve
 
 To receive the verification code via IVR, call **configureIVR()**.
 ```java
-de.cidaas.configureIVR(sub, new Result < SetupIVRMFAResponseEntity > () {
- @Override
- public void success(SetupIVRMFAResponseEntity result) {
-  //Your success code here
- }
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});  
+CidaasVerification.getInstance(getApplicationContext()).setupIVR("subID", new EventResult<SetupResponse>() {
+            @Override
+            public void success(SetupResponse result) {
+                //Your Success Code
+            }
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+            } });
+ 
 ```
 
 
@@ -396,17 +399,19 @@ Once you have received the verification code via IVR verification call, you need
 
 ```java
 
-de.cidaas.enrollIVR("your_code","your_statusId", new Result < EnrollIVRMFAResponseEntity > () {
- @Override
- public void success(EnrollIVRMFAResponseEntity result) {
-  //Your success code here
- }
+cidaasVerification.enrollIVR("your_code", "subID", "exchangeID", new EventResult<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse result) {
+               //Your Success Code
+            }
 
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});
+            @Override
+            public void failure(WebAuthError error) {
+               // your failure code
+
+            }
+        });
+
     
 ```
 
@@ -428,23 +433,21 @@ de.cidaas.enrollIVR("your_code","your_statusId", new Result < EnrollIVRMFARespon
 Once you configured IVR, you can also login with IVR via passwordless authentication. To receive the verification code via IVR verification call, call **loginWithIVR()**.
 
 ```java
+LoginRequest loginRequest = LoginRequest.getPasswordlessIVRRequestEntity("EmailID", requestId);
+CidaasVerification.getInstance(MultifactorAuthenticationActivity.this).initiateIVR(loginRequest, new EventResult<InitiateResponse>() {
+             @Override
+             public void success(InitiateResponse result) {
+                       //Your Success Code
+                    }
 
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+            @Override
+             public void failure(WebAuthError error) {
+                        // your failure code
 
-de.cidaas.loginWithIVR(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
- @Override
- public void success(LoginCredentialsResponseEntity result) {
-  //Your success code here
- }
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});  
+                    }
+                });
+            }
+ 
 ```
 **Response:**
 
@@ -464,17 +467,18 @@ Once you received the verification code via IVR, you need to verify the code. Fo
 
 ```java
 
-de.cidaas.verifyIVR("your_code","your_statusId", new Result < LoginCredentialsResponseEntity > () {
-@Override
-public void success(LoginCredentialsResponseEntity result) {
-        // Your Success code here
-}
+CidaasVerification.getInstance(this).verifyCode("your_code", "exchangeID", AuthenticationType.IVR, "requestID", UsageType.PASSWORDLESS, new EventResult<LoginCredentialsResponseEntity>() {
+            @Override
+            public void success(LoginCredentialsResponseEntity result) {
+              //Your Success Code
 
-@Override
-public void failure(WebAuthError error) {
-       // Your failure code here
-}
-});
+            }
+            @Override
+            public void failure(WebAuthError error) {
+                 // your failure code
+            }
+        });
+
     
 ```
 
@@ -504,17 +508,20 @@ To use a backupcode as a passwordless login, you need to configure backupcode ph
 To configure or view the backupcode, call **configureBackupcode()**.
 ```java
 
-de.cidaas.configureBackupcode(sub, new Result < SetupBackupcodeMFAResponseEntity > () {
- @Override
- public void success(SetupBackupcodeMFAResponseEntity result) {
-  //Your success code here
- }
+CidaasVerification.getInstance(this).setupBackupCode("subID", new EventResult<SetupResponse>() {
+            @Override
+            public void success(SetupResponse result) {
+               //Your Success Code
 
- @Override
- public void failure(WebAuthError error) {
-  //Your failure code here
- }
-});
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+               // your failure code
+
+            }
+    });
+
     
 ```
 **Response:**
@@ -542,23 +549,20 @@ Once you have configured backupcode, you can also login with backupcode with the
 
 ```java
 
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+cidaasVerification.verifyCode("your_code", "exchangeID", AuthenticationType.IVR, "requestID", UsageType.PASSWORDLESS, new EventResult<LoginCredentialsResponseEntity>() {
+           @Override
+           public void success(LoginCredentialsResponseEntity result) {
+              //Your Success Code
 
-de.cidaas.loginWithBackupcode("yourverificationCode",PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
- @Override
- public void success(LoginCredentialsResponseEntity result) {
-  //your success code here.
- }
+           }
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here.
- }
-});
+           @Override
+           public void failure(WebAuthError error) {
+                // your failure code
+
+           }
+       });
+
     
 ```
 
@@ -589,17 +593,20 @@ To configure the TOTP verification, call **configureTOTP()**.
 
 ```java
 
-de.cidaas.configureTOTP("Your Sub", new Result < EnrollTOTPMFAResponseEntity > () {
- @Override
- public void success(EnrollTOTPMFAResponseEntity result) {
-  //your success code here
- }
+ConfigurationRequest configurationRequest = new ConfigurationRequest("subID");
+        cidaasVerification.configureTOTP(configurationRequest, new EventResult<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse result) {
+               //Your Success Code
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-});
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+            }
+        });
+
     
 ```
 
@@ -622,23 +629,21 @@ de.cidaas.configureTOTP("Your Sub", new Result < EnrollTOTPMFAResponseEntity > (
 Once you have configured TOTP, you can also login with TOTP via the passwordless authentication. To login, call **loginWithTOTP()**.
 
 ```java
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+ LoginRequest loginRequest = LoginRequest.getPasswordlessTOTPRequestEntity("emailID", requestId );
+            
+   cidaasVerification.loginWithTOTP(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                       //Your Success Code
 
-de.cidaas.loginWithTOTP(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
- @Override
- public void success(LoginCredentialsResponseEntity result) {
-  //Your success code here  
- }
+                    }
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-});
+                    @Override
+                    public void failure(WebAuthError error) {
+                         // your failure code
+                    }
+      });
+
 ```
 **Response:**
 
@@ -668,17 +673,20 @@ If you want to offer a passwordless login after securing it with the secure patt
 To configure the pattern recognition, call **configurePatternRecognition()**.
 
 ```java
-de.cidaas.configurePatternRecognition("RED[1,2,3]", "Your Sub", new Result < EnrollPatternMFAResponseEntity > () {
- @Override
- public void success(EnrollPatternPMFAResponseEntity result) {
-  //your success code here
- }
+ ConfigurationRequest configurationRequest= new ConfigurationRequest("subID","RED-1234");
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-});
+  cidaasVerification.configurePattern(configurationRequest,new EventResult<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse enrollResponse) {
+               // your success code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+               // your failure code
+            }
+      });
+
 ```
 **Response:**
 
@@ -698,23 +706,21 @@ Once you have configured pattern recognition, you can login with pattern recogni
 
 ```java
 
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+    LoginRequest loginRequest = LoginRequest.getPasswordlessPatternLoginRequestEntity("RED-1234", "EMAILID", requestId);
+                
+     CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                       // your success code
+                    }
 
-de.cidaas.loginWithPatternRecognition("RED[1,2,3]", PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
- @Override
- public void success(LoginCredentialsResponseEntity result) {
-  //your success code here
- }
+                    @Override
+                    public void failure(WebAuthError error) {
+                       // your failure code
+                    }
+       });
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-});
+
 ```
 
 **Response:**
@@ -744,17 +750,22 @@ To configure the fingerprint verification, call **configureFingerprint()**.
 
 ```java
 
-de.cidaas.configureFingerprint("Your Sub", new Result < EnrollFingerprintMFAResponseEntity > () {
- @Override
- public void success(EnrollFingerprintPMFAResponseEntity result) {
-  //your success code here
- }
+final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(context,"Title","Content");
+        //msg in ur title,description
+   ConfigurationRequest configurationRequest = new ConfigurationRequest("subID",fingerPrintEntity);
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-});
+    CidaasVerification.getInstance(this).configureFingerprint(configurationRequest, new EventResult<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse result) {
+               //Your Success Code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                // your failure code
+            }
+    });
+
     
 ```
 
@@ -775,23 +786,24 @@ de.cidaas.configureFingerprint("Your Sub", new Result < EnrollFingerprintMFAResp
 Once you have configured fingerprint verification, you can also login with the fingerprint Id Verification via passwordless authentication. To login, call **loginWithFingerprint()**.
 
 ```java
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+     FingerPrintEntity fingerPrintEntity1 = new FingerPrintEntity(context, "Touch Your Finger", " Please provide fingerID");
+                
+       LoginRequest loginRequest = LoginRequest.getPasswordlessFingerprintLoginRequestEntity("EMAILID", requestId, fingerPrintEntity1);
 
-de.cidaas.loginWithFingerprint(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
- @Override
- public void success(LoginCredentialsResponseEntity result) {
-  //Your success code here  
- }
+        cidaasVerification.loginWithFingerprint(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                        //Your Success Code
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-}); 
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        // your failure code
+
+                    }
+         });
+ 
 ```
 
 **Response:**
@@ -821,17 +833,22 @@ To configure smart push Notification, call **configureSmartPush()**.
 
 ```java
 
-   de.cidaas.configureSmartPush("Your Sub", new Result < EnrollSmartPushMFAResponseEntity > () {
-    @Override
-    public void success(EnrollSmartPushPMFAResponseEntity result) {
-     //your success code here
-    }
+    ConfigurationRequest configurationRequest = new ConfigurationRequest("subID");
 
-    @Override
-    public void failure(WebAuthError error) {
-     //your failure code here
-    }
-   });
+    cidaasVerification.configureSmartPush(configurationRequest, new EventResult<EnrollResponse>() {
+            @Override
+            public void success(EnrollResponse result) {
+               
+                //Your Success Code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+               
+                    //Your Failure Code
+            }
+    });
+
     
 ```
 
@@ -852,23 +869,21 @@ To configure smart push Notification, call **configureSmartPush()**.
 Once you have configured the smart push notification, you can also login with smart push notification via passwordless authentication. To login, call **loginWithSmartPush()**.
 
 ```java
-PasswordlessEntity passwordlessEntity=new PasswordlessEntity();
-passwordlessEntity.setUsageType(UsageType.MFA);
-passwordlessEntity.setTrackId(trackid);
-passwordlessEntity.setRequestId(result.getData().getRequestId());
-passwordlessEntity.setSub(sub);
+    LoginRequest loginRequest = LoginRequest.getPasswordlessSmartPushLoginRequestEntity("EMAILID", requestId);
+                
+     cidaasVerification.loginWithSmartPush(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+                    @Override
+                    public void success(LoginCredentialsResponseEntity result) {
+                       //Your Success Code
 
-de.cidaas.loginWithSmartPush(PasswordlessEntity passwordlessEntity, new Result < LoginCredentialsResponseEntity > () {
- @Override
- public void success(LoginCredentialsResponseEntity result) {
-  //Your success code here  
- }
+                    }
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-});
+                    @Override
+                    public void failure(WebAuthError error) {
+                        // your failure code
+                    }
+       });
+
     
 ```
 
@@ -899,17 +914,20 @@ To configure Face Recognition, call **configureFaceRecognition()**.
 
 ```java
 
-de.cidaas.configureFaceRecognition(File photo, "Your Sub", new Result < EnrollFaceRecognitionMFAResponseEntity > () {
- @Override
- public void success(EnrollFaceRecognitionPMFAResponseEntity result) {
-  //your success code here
- }
+   ConfigurationRequest configurationRequest = new ConfigurationRequest("subID", file, attemptNumber);
+                
+    cidaasVerification.configureFaceRecognition(configurationRequest,new EventResult<EnrollResponse>() {
+                    @Override
+                    public void success(EnrollResponse enrollResponse) {
+                        //Your Success Code
+                    }
 
- @Override
- public void failure(WebAuthError error) {
-  //your failure code here
- }
-});
+                    @Override
+                    public void failure(WebAuthError error) {
+                         // your failure code
+                    }
+    });
+
     
 ```
 
@@ -976,17 +994,20 @@ To configure voice recognition, call **configureVoiceRecognition()**.
 
 ```java
 
-    de.cidaas.configureVoiceRecognition(File voice, "Your Sub", new Result < EnrollVoiceRecognitionMFAResponseEntity > () {
-     @Override
-     public void success(EnrollFaceRecognitionPMFAResponseEntity result) {
-      //your success code here
-     }
+    ConfigurationRequest configurationRequest = new ConfigurationRequest("subID",file, attemptNumber );
 
-     @Override
-     public void failure(WebAuthError error) {
-      //your failure code here
-     }
-    });
+     CidaasVerification.getInstance(this).configureVoiceRecognition(configurationRequest,new EventResult<EnrollResponse>() {
+                    @Override
+                    public void success(EnrollResponse enrollResponse) {
+                        //Your Success Code
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        // your failure code
+                    }
+      });
+
     
 ```
 
