@@ -73,21 +73,16 @@ You can get the requestID from the cidaas native sdk
         });
 ```
 
-After that override the onActivityResult method, Please check for request code to 9001(9001 for Google sdk ) if not call cidaasFacebook authorize method
+After that override the onActivityResult method, Please check for request code to 64206 (9001 for Google sdk ) if not call cidaasFacebook authorize method
 
 ```java
    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==9001) {
+        if(requestCode == 64206) {
             cidaasFacebook.authorize(requestCode, resultCode, data);
         }
-         else
-        {
-            cidaasFacebook.authorize(requestCode, resultCode, data);
-        }
-
-
+        
        cidaas.onActivityResult(requestCode,resultCode,data);
     }
 
