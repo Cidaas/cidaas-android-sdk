@@ -629,9 +629,9 @@ ConfigurationRequest configurationRequest = new ConfigurationRequest("subID");
 Once you have configured TOTP, you can also login with TOTP via the passwordless authentication. To login, call **loginWithTOTP()**.
 
 ```java
-            LoginRequest loginRequest = LoginRequest.getPasswordlessTOTPRequestEntity("emailID", requestId );
+ LoginRequest loginRequest = LoginRequest.getPasswordlessTOTPRequestEntity("emailID", requestId );
             
-            cidaasVerification.loginWithTOTP(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+   cidaasVerification.loginWithTOTP(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
                     @Override
                     public void success(LoginCredentialsResponseEntity result) {
                        //Your Success Code
@@ -642,7 +642,7 @@ Once you have configured TOTP, you can also login with TOTP via the passwordless
                     public void failure(WebAuthError error) {
                          // your failure code
                     }
-                });
+      });
 
 ```
 **Response:**
@@ -673,9 +673,9 @@ If you want to offer a passwordless login after securing it with the secure patt
 To configure the pattern recognition, call **configurePatternRecognition()**.
 
 ```java
-        ConfigurationRequest configurationRequest= new ConfigurationRequest("subID","RED-1234");
+ ConfigurationRequest configurationRequest= new ConfigurationRequest("subID","RED-1234");
 
-        cidaasVerification.configurePattern(configurationRequest,new EventResult<EnrollResponse>() {
+  cidaasVerification.configurePattern(configurationRequest,new EventResult<EnrollResponse>() {
             @Override
             public void success(EnrollResponse enrollResponse) {
                // your success code
@@ -685,7 +685,7 @@ To configure the pattern recognition, call **configurePatternRecognition()**.
             public void failure(WebAuthError error) {
                // your failure code
             }
-        });
+      });
 
 ```
 **Response:**
@@ -706,9 +706,9 @@ Once you have configured pattern recognition, you can login with pattern recogni
 
 ```java
 
-                LoginRequest loginRequest = LoginRequest.getPasswordlessPatternLoginRequestEntity("RED-1234", "EMAILID", requestId);
+    LoginRequest loginRequest = LoginRequest.getPasswordlessPatternLoginRequestEntity("RED-1234", "EMAILID", requestId);
                 
-                CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+     CidaasVerification.getInstance(getApplicationContext()).loginWithPattern(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
                     @Override
                     public void success(LoginCredentialsResponseEntity result) {
                        // your success code
@@ -718,7 +718,7 @@ Once you have configured pattern recognition, you can login with pattern recogni
                     public void failure(WebAuthError error) {
                        // your failure code
                     }
-                });
+       });
 
 
 ```
@@ -752,9 +752,9 @@ To configure the fingerprint verification, call **configureFingerprint()**.
 
 final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(context,"Title","Content");
         //msg in ur title,description
-        ConfigurationRequest configurationRequest = new ConfigurationRequest("subID",fingerPrintEntity);
+   ConfigurationRequest configurationRequest = new ConfigurationRequest("subID",fingerPrintEntity);
 
-        CidaasVerification.getInstance(this).configureFingerprint(configurationRequest, new EventResult<EnrollResponse>() {
+    CidaasVerification.getInstance(this).configureFingerprint(configurationRequest, new EventResult<EnrollResponse>() {
             @Override
             public void success(EnrollResponse result) {
                //Your Success Code
@@ -764,7 +764,7 @@ final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(context,"Title
             public void failure(WebAuthError error) {
                 // your failure code
             }
-        });
+    });
 
     
 ```
@@ -786,11 +786,11 @@ final FingerPrintEntity fingerPrintEntity = new FingerPrintEntity(context,"Title
 Once you have configured fingerprint verification, you can also login with the fingerprint Id Verification via passwordless authentication. To login, call **loginWithFingerprint()**.
 
 ```java
-                FingerPrintEntity fingerPrintEntity1 = new FingerPrintEntity(context, "Touch Your Finger", " Please provide fingerID");
+     FingerPrintEntity fingerPrintEntity1 = new FingerPrintEntity(context, "Touch Your Finger", " Please provide fingerID");
                 
-                LoginRequest loginRequest = LoginRequest.getPasswordlessFingerprintLoginRequestEntity("EMAILID", requestId, fingerPrintEntity1);
+       LoginRequest loginRequest = LoginRequest.getPasswordlessFingerprintLoginRequestEntity("EMAILID", requestId, fingerPrintEntity1);
 
-                cidaasVerification.loginWithFingerprint(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+        cidaasVerification.loginWithFingerprint(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
                     @Override
                     public void success(LoginCredentialsResponseEntity result) {
                         //Your Success Code
@@ -802,7 +802,7 @@ Once you have configured fingerprint verification, you can also login with the f
                         // your failure code
 
                     }
-                });
+         });
  
 ```
 
@@ -833,9 +833,9 @@ To configure smart push Notification, call **configureSmartPush()**.
 
 ```java
 
-         ConfigurationRequest configurationRequest = new ConfigurationRequest("subID");
+    ConfigurationRequest configurationRequest = new ConfigurationRequest("subID");
 
-        cidaasVerification.configureSmartPush(configurationRequest, new EventResult<EnrollResponse>() {
+    cidaasVerification.configureSmartPush(configurationRequest, new EventResult<EnrollResponse>() {
             @Override
             public void success(EnrollResponse result) {
                
@@ -847,7 +847,7 @@ To configure smart push Notification, call **configureSmartPush()**.
                
                     //Your Failure Code
             }
-        });
+    });
 
     
 ```
@@ -869,9 +869,9 @@ To configure smart push Notification, call **configureSmartPush()**.
 Once you have configured the smart push notification, you can also login with smart push notification via passwordless authentication. To login, call **loginWithSmartPush()**.
 
 ```java
-                LoginRequest loginRequest = LoginRequest.getPasswordlessSmartPushLoginRequestEntity("EMAILID", requestId);
+    LoginRequest loginRequest = LoginRequest.getPasswordlessSmartPushLoginRequestEntity("EMAILID", requestId);
                 
-                cidaasVerification.loginWithSmartPush(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
+     cidaasVerification.loginWithSmartPush(loginRequest, new EventResult<LoginCredentialsResponseEntity>() {
                     @Override
                     public void success(LoginCredentialsResponseEntity result) {
                        //Your Success Code
@@ -882,7 +882,7 @@ Once you have configured the smart push notification, you can also login with sm
                     public void failure(WebAuthError error) {
                         // your failure code
                     }
-                });
+       });
 
     
 ```
@@ -914,9 +914,9 @@ To configure Face Recognition, call **configureFaceRecognition()**.
 
 ```java
 
-                ConfigurationRequest configurationRequest = new ConfigurationRequest("subID", file, attemptNumber);
+   ConfigurationRequest configurationRequest = new ConfigurationRequest("subID", file, attemptNumber);
                 
-                cidaasVerification.configureFaceRecognition(configurationRequest,new EventResult<EnrollResponse>() {
+    cidaasVerification.configureFaceRecognition(configurationRequest,new EventResult<EnrollResponse>() {
                     @Override
                     public void success(EnrollResponse enrollResponse) {
                         //Your Success Code
@@ -926,7 +926,7 @@ To configure Face Recognition, call **configureFaceRecognition()**.
                     public void failure(WebAuthError error) {
                          // your failure code
                     }
-                });
+    });
 
     
 ```
@@ -994,9 +994,9 @@ To configure voice recognition, call **configureVoiceRecognition()**.
 
 ```java
 
-                 ConfigurationRequest configurationRequest = new ConfigurationRequest("subID",file, attemptNumber );
+    ConfigurationRequest configurationRequest = new ConfigurationRequest("subID",file, attemptNumber );
 
-                CidaasVerification.getInstance(this).configureVoiceRecognition(configurationRequest,new EventResult<EnrollResponse>() {
+     CidaasVerification.getInstance(this).configureVoiceRecognition(configurationRequest,new EventResult<EnrollResponse>() {
                     @Override
                     public void success(EnrollResponse enrollResponse) {
                         //Your Success Code
@@ -1006,7 +1006,7 @@ To configure voice recognition, call **configureVoiceRecognition()**.
                     public void failure(WebAuthError error) {
                         // your failure code
                     }
-                });
+      });
 
     
 ```
