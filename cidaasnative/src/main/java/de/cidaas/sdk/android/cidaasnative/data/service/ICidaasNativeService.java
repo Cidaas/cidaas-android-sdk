@@ -27,6 +27,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswor
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoEntity;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
@@ -56,6 +57,10 @@ public interface ICidaasNativeService {
     //Login with Credentials
     @POST
     Call<LoginCredentialsResponseEntity> loginWithCredentials(@Url String url, @HeaderMap Map<String, String> headers, @Body LoginCredentialsRequestEntity loginCredentialsRequestEntity);
+
+    //Logout
+    @GET
+    Call<Boolean> logout(@Url String url, @HeaderMap Map<String, String> headers, @Body AccessTokenEntity accessTokenEntity);
 
     //Logout for embedded Browser
     Call<LogoutResponseEntity> logoutFromEmbeddedBrowser(@Url String url, @HeaderMap Map<String, String> headers, @Query("access_token_hint") String access_token_hint, @Query("post_logout_redirect_uri") String postlogoutRedirectURL);
