@@ -39,6 +39,7 @@ public class WebAuthErrorCode {
 
     public static final int EMPTY_LOGIN_WITH_CREDENTIALS_FAILURE = 10218;
     public static final int LOGINWITH_CREDENTIALS_FAILURE = 10221;
+    public static final int LOGOUT  = 10134;
     public static final int REGISTRATION_SETUP_FAILURE = 10222;
 
 

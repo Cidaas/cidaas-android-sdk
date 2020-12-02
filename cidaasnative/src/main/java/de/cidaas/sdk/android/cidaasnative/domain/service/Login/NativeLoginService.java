@@ -13,9 +13,11 @@ import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
+import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -80,13 +82,61 @@ public class NativeLoginService {
         }
     }
 
+    public void logout(final String baseurl, final AccessTokenEntity accessTokenEntity, final EventResult<Boolean>callback){
+        String methodName = "loginService : serviceForLogout()";
+        try{
+            if (baseurl != null && !baseurl.equals("")) {
+                String logoutUrl = baseurl + NativeURLHelper.getShared().getLogoutUrl();
+
+                Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, NativeURLHelper.contentTypeJson);
+
+                // Call Service-Logout
+                serviceForLogout(logoutUrl, accessTokenEntity, headers, callback);
+            }
+
+        }catch (Exception e){
+            callback.failure((WebAuthError.getShared(context).methodException("Exception:"+methodName, WebAuthErrorCode.LOGOUT_ERROR, e.getMessage())));
+        }
+    }
+    private void serviceForLogout(String logoutUrl, AccessTokenEntity accessTokenEntity, Map<String, String> headers,final EventResult<Boolean> callback){
+        String methodName = "loginService : serviceForLogout()";
+        try {
+            final ICidaasNativeService cidaasNativeService = service.getInstance();
+            cidaasNativeService.logout(logoutUrl, headers, accessTokenEntity).enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if (response.isSuccessful()){
+                    if (response.code() == 200){
+                        callback.success(response.body());
+                    } else {
+                        callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.LOGOUT_ERROR,
+                                response.code(), "Error" + methodName));
+                    }
+                } else {
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.LOGOUT_ERROR, response
+                                , "Error :" + methodName));
+                       // callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOGOUT_ERROR, "Exception in LogoutProcess",methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable t) {
+                    callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.LOGOUT_ERROR, t.getMessage(),
+                            "Error :" + methodName));
+                }
+            });
+        } catch (Exception e) {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGOUT_ERROR, e.getMessage()));
+        }
+    }
+
     private void serviceForLoginWithCredentials(String loginUrl, LoginCredentialsRequestEntity loginCredentialsRequestEntity, Map<String, String> headers,
                                                 final EventResult<LoginCredentialsResponseEntity> callback) {
         final String methodName = "Error :LoginService :serviceForLoginWithCredentials()";
         try {
-            final ICidaasNativeService CidaasNativeService = service.getInstance();
+            final ICidaasNativeService cidaasNativeService = service.getInstance();
 
-            CidaasNativeService.loginWithCredentials(loginUrl, headers, loginCredentialsRequestEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
+            cidaasNativeService.loginWithCredentials(loginUrl, headers, loginCredentialsRequestEntity).enqueue(new Callback<LoginCredentialsResponseEntity>() {
                 @Override
                 public void onResponse(Call<LoginCredentialsResponseEntity> call, Response<LoginCredentialsResponseEntity> response) {
                     if (response.isSuccessful()) {
