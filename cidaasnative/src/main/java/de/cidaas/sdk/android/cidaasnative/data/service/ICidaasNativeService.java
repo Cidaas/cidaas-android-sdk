@@ -60,7 +60,7 @@ public interface ICidaasNativeService {
 
     //Logout
     @GET
-    Call<Boolean> logout(@Url String url, @HeaderMap Map<String, String> headers, @Body AccessTokenEntity accessTokenEntity);
+    Call<Boolean> logout(@Url String url, @HeaderMap Map<String, String> headers);
 
     //Logout for embedded Browser
     Call<LogoutResponseEntity> logoutFromEmbeddedBrowser(@Url String url, @HeaderMap Map<String, String> headers, @Query("access_token_hint") String access_token_hint, @Query("post_logout_redirect_uri") String postlogoutRedirectURL);
