@@ -90,9 +90,7 @@ public class NativeLoginController {
             @Override
             public void success(Dictionary<String, String> loginPropertiesResult) {
                 if (accessToken != null){
-                    AccessTokenEntity accessTokenEntity = new AccessTokenEntity();
-                    accessTokenEntity.setAccess_token(accessToken);
-                    NativeLoginService.getShared(context).logout(loginPropertiesResult.get("DomainURL"), accessTokenEntity, result);
+                    NativeLoginService.getShared(context).logout(loginPropertiesResult.get("DomainURL"), accessToken, result);
                 }
             }
 

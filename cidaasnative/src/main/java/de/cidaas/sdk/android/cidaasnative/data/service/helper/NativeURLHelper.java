@@ -74,8 +74,8 @@ public class NativeURLHelper {
     public String getLoginWithCredentials() {
         return loginWithCredentials;
     }
-    public String getLogoutUrl(){
-        return logoutUrl;
+    public String getLogoutUrl(String accessToken){
+        return logoutUrl + "?access_token_hint=" + accessToken;
     }
 
     public String getRegisterdeduplication() {

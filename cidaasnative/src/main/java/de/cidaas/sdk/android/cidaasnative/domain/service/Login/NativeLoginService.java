@@ -82,27 +82,27 @@ public class NativeLoginService {
         }
     }
 
-    public void logout(final String baseurl, final AccessTokenEntity accessTokenEntity, final EventResult<Boolean>callback){
+    public void logout(final String baseurl, final String accessToken, final EventResult<Boolean>callback){
         String methodName = "loginService : serviceForLogout()";
         try{
             if (baseurl != null && !baseurl.equals("")) {
-                String logoutUrl = baseurl + NativeURLHelper.getShared().getLogoutUrl();
+                String logoutUrl = baseurl + NativeURLHelper.getShared().getLogoutUrl(accessToken);
 
                 Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, NativeURLHelper.contentTypeJson);
 
                 // Call Service-Logout
-                serviceForLogout(logoutUrl, accessTokenEntity, headers, callback);
+                serviceForLogout(logoutUrl, headers, callback);
             }
 
         }catch (Exception e){
             callback.failure((WebAuthError.getShared(context).methodException("Exception:"+methodName, WebAuthErrorCode.LOGOUT_ERROR, e.getMessage())));
         }
     }
-    private void serviceForLogout(String logoutUrl, AccessTokenEntity accessTokenEntity, Map<String, String> headers,final EventResult<Boolean> callback){
+    private void serviceForLogout(String logoutUrl, Map<String, String> headers,final EventResult<Boolean> callback){
         String methodName = "loginService : serviceForLogout()";
         try {
             final ICidaasNativeService cidaasNativeService = service.getInstance();
-            cidaasNativeService.logout(logoutUrl, headers, accessTokenEntity).enqueue(new Callback<Boolean>() {
+            cidaasNativeService.logout(logoutUrl, headers).enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                     if (response.isSuccessful()){
