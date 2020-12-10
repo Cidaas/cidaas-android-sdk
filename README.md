@@ -37,6 +37,7 @@ This SDK was renamed from ```cidaas -v2-sdk-android``` to ```cidaas-android-sdk`
         * [Social Login](#social-login)
         <!--te-->
     *  [Embedded Browser Login](#embedded-browser-login)
+    * [Logout](#logout)
     * [Native UI Integration](/PureNative.md)
     * [Passwordless and MFA](/PasswordlessAndMFA.md)
     <!--te-->
@@ -59,7 +60,7 @@ Add the following Gradle configuration to your Android project:
 allprojects {
     repositories {
         ...
-		maven { url 'https:jitpack.io' }
+		maven { url 'https://jitpack.io' }
 	}
 }
 ```		
@@ -248,6 +249,25 @@ Cidaas.getInstance(yourContext).getRegistrationURL(new EventResult<String>() {
 });
 
 ```
+#### Logout
+
+To use logout, You can call following functions 
+
+```java
+    CidaasNative.getInstance(this).logout("AccessToken", new EventResult<Boolean>() {
+            @Override
+            public void success(Boolean result) {
+                 //Your Success Code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                //Your Failure Code
+            }
+        });
+```
+
+
 #### Add a custom scheme
 
 Use [customScheme](https://developer.android.com/training/app-links/deep-linking) or [App Link](https://developer.android.com/studio/write/app-link-indexing) to return the control back from the browser to the app.
