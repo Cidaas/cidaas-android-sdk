@@ -19,6 +19,7 @@ import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -102,12 +103,12 @@ public class NativeLoginService {
         String methodName = "loginService : serviceForLogout()";
         try {
             final ICidaasNativeService cidaasNativeService = service.getInstance();
-            cidaasNativeService.logout(logoutUrl, headers).enqueue(new Callback<Boolean>() {
+            cidaasNativeService.logout(logoutUrl, headers).enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()){
                     if (response.code() == 200){
-                        callback.success(response.body());
+                        callback.success(true);
                     } else {
                         callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.LOGOUT_ERROR,
                                 response.code(), "Error" + methodName));
@@ -120,7 +121,7 @@ public class NativeLoginService {
                 }
 
                 @Override
-                public void onFailure(Call<Boolean> call, Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.LOGOUT_ERROR, t.getMessage(),
                             "Error :" + methodName));
                 }
