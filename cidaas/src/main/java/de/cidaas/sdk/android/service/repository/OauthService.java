@@ -143,8 +143,10 @@ public class OauthService {
                                     response.code(), methodName));
                         }
                     } else {
+                        // callback requires
                         assert response.errorBody() != null;
                         CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, response, methodName);
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, response, methodName));
                     }
                 }
 
