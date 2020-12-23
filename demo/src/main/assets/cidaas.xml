@@ -1,7 +1,11 @@
 <resources>
-    <item name="DomainURL" type="string">https://nightlybuild.cidaas.de</item>
-    <item name="ClientId" type="string">476abe74-aea7-4cca-b17e-63bfa190d3f1</item>
-    <item name="RedirectURL">cidaasdemo://nightlybuild.cidaas.de/ios/com.cidaas.sdk.demo/callback</item>
-    <!--<item name="RedirectURL">cidaasdemo://nightlybuild.cidaas.de/ios/com.cidaas.sdk.demo/callback</item>-->
+<!--    <item name="DomainURL" type="string">https://nightlybuild.cidaas.de</item>-->
+<!--    <item name="ClientId" type="string">476abe74-aea7-4cca-b17e-63bfa190d3f1</item>-->
+<!--    <item name="RedirectURL">cidaasdemo://nightlybuild.cidaas.de/ios/com.cidaas.sdk.demo/callback</item>-->
+
+    <item name="DomainURL" type="string">https://cidaas-in-action.cidaas.de</item>
+    <item name="ClientId" type="string">b6eead9d-2240-48bc-ad03-604930ea4941</item>
+    <item name="RedirectURL">https://cidaas-in-action.cidaas.de/user-profile/editprofile</item>
+
 
 </resources>

@@ -20,6 +20,45 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/loginwithBrowser"
         android:text="logout"
+        android:id="@+id/logout"
         android:onClick="logout"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginwithcredential"
+        android:text="login with credential"
+        android:onClick="loginwithcredential"
+        android:layout_below="@+id/logout"
+        android:layout_margin="10dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/userInfo"
+        android:text="userInfo"
+        android:onClick="userInfo"
+        android:layout_below="@+id/loginwithcredential"
+        android:layout_margin="10dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginwithinternalbrowser"
+        android:text="LoginWithInternalBroswer"
+        android:onClick="LoginWithInternalBroswer"
+        android:layout_below="@+id/userInfo"
+        android:layout_margin="10dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/getsub"
+        android:text="Get Sub"
+        android:onClick="getSub"
+        android:layout_below="@+id/loginwithinternalbrowser"
+        android:layout_margin="10dp"/>
+
+
 
 </RelativeLayout>

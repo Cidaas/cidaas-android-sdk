@@ -3,6 +3,7 @@ package de.cidaas.sdk.android.service.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by widasrnarayanan on 16/1/18.
@@ -32,9 +33,23 @@ public class UserinfoEntity implements Serializable {
     private int updated_at;
 
     private int last_accessed_at;
+    private List<String> roles;
 
 
-//Getters and Setters
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+
+    public String getUser_status() {
+        return user_status;
+    }
+
+
 
     public String getName() {
         return name;

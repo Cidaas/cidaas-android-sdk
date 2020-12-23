@@ -145,6 +145,8 @@ public class OauthService {
                     } else {
                         assert response.errorBody() != null;
                         CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, response, methodName);
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, response, methodName));
+
                     }
                 }
 
