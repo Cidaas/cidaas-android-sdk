@@ -28,7 +28,7 @@ import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.loaders.ICustomLoader;
 import de.cidaas.sdk.android.library.biometricauthentication.BiometricCallback;
 import de.cidaas.sdk.android.library.biometricauthentication.BiometricEntity;
-import de.cidaas.sdk.android.service.entity.UserinfoEntity;
+import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.entity.documentscanner.DocumentScannerServiceResultEntity;
 import de.cidaas.sdk.android.service.entity.userlogininfo.UserLoginInfoEntity;
@@ -132,7 +132,7 @@ public class Cidaas {
 
     //Get userinfo Based on Access Token
     // @Override
-    public void getUserInfo(String sub, final EventResult<UserinfoEntity> callback) {
+    public void getUserInfo(String sub, final EventResult<UserInfoEntity> callback) {
         UserProfileController.getShared(context).getUserProfile(sub, callback);
     }
 

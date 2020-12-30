@@ -8,7 +8,7 @@ import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.properties.CidaasProperties;
-import de.cidaas.sdk.android.service.entity.UserinfoEntity;
+import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.repository.OauthService;
 import timber.log.Timber;
@@ -39,7 +39,7 @@ public class UserProfileController {
     }
 
 
-    public void getUserProfile(String sub, final EventResult<UserinfoEntity> callback) {
+    public void getUserProfile(String sub, final EventResult<UserInfoEntity> callback) {
         String methodName = "UserProfileController :getUserProfile()";
         try {
             if (sub != null && !sub.equals("")) {
