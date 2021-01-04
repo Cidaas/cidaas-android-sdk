@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
-import de.cidaas.sdk.android.service.entity.UserinfoEntity;
+import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import de.cidaas.sdk.android.service.repository.OauthService;
 
 
@@ -49,9 +49,9 @@ public class OauthServiceTest {
     @Test
     public void testGetUserinfo() throws Exception {
 
-        oauthService.getUserinfo("AccessToken", "", new EventResult<UserinfoEntity>() {
+        oauthService.getUserinfo("AccessToken", "", new EventResult<UserInfoEntity>() {
             @Override
-            public void success(UserinfoEntity result) {
+            public void success(UserInfoEntity result) {
 
             }
 
