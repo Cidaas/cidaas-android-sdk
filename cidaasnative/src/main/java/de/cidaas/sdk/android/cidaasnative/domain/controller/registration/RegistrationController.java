@@ -8,6 +8,7 @@ import java.util.Dictionary;
 import java.util.Locale;
 
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupRequestEntity;
@@ -74,7 +75,7 @@ public class RegistrationController {
                 registrationSetupRequestEntity = new RegistrationSetupRequestEntity();
                 registrationSetupRequestEntity.setRequestId(requestId);
 
-                if (locale == null || locale == "") {
+                if (locale == null || locale.equals("")) {
                     language = Locale.getDefault().getLanguage();
                     registrationSetupRequestEntity.setAcceptedLanguage(language);
 
@@ -243,4 +244,62 @@ public class RegistrationController {
             result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
+
+    //update User
+
+    public void updateUser(@NonNull final String access_token, final RegistrationEntity registrationEntity,
+                           final EventResult<UpdateUserResponseEntity> registerFieldsResult) {
+        final String methodName = "RegistrationController :updateUser()";
+        try {
+
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result) {
+                    String baseurl = result.get("DomainURL");
+
+                    if (access_token == null || access_token.equals("") || registrationEntity.getSub() == null || registrationEntity.getSub().equals("")) {
+                        String errorMessage = "access_token or sub must not be empty";
+
+                        registerFieldsResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                    }
+
+                    updateUserService(baseurl, access_token, registrationEntity, registerFieldsResult);
+
+                }
+
+                private void checkNotNull(RegistrationSetupResultDataEntity dataEntity, String key, String registrationEntityValue) {
+                    if (dataEntity.getFieldKey().equals(key)
+                            && dataEntity.isRequired()
+                            && registrationEntityValue.equals("")) {
+                        String errorMessage = key + " must not be empty";
+                        registerFieldsResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    registerFieldsResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName));
+                }
+            });
+        } catch (Exception e) {
+            registerFieldsResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+    //Service call To Registration Setup
+    private void updateUserService(@NonNull String baseurl, @NonNull String access_token, @NonNull RegistrationEntity registerationEntity,
+                                   final EventResult<UpdateUserResponseEntity> result) {
+        String methodName = "RegistrationController :registerWithNewUserService()";
+        try {
+
+            // Service call
+            RegistrationService.getShared(context).updateUserProfile(baseurl, access_token, registerationEntity, result);
+
+        } catch (Exception e) {
+            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+        }
+    }
+
+
 }

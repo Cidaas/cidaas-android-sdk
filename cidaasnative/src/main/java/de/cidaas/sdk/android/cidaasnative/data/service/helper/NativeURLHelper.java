@@ -32,6 +32,8 @@ public class NativeURLHelper {
 
     String registerNewUserurl = "/users-srv/register";
 
+    String updateUserProfileURL = "/users-srv/user/profile";
+
     String mfa_URL = "/verification-srv/settings/list?sub=";
     String mfaList = "/verification-srv/settings/listbydeviceid";
 
@@ -206,5 +208,7 @@ public class NativeURLHelper {
         return registrationSetup + acceptedLanguage + "&requestId=" + requestId;
     }
 
-
+    public String getUpdateUserProfileURL(String sub) {
+        return updateUserProfileURL + "/" + sub;
+    }
 }

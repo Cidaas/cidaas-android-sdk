@@ -17,6 +17,8 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.Deduplicatio
 import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.registerdeduplication.RegisterDeduplicationEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.ResetPasswordResponseEntity;
@@ -286,10 +288,15 @@ public class CidaasNative {
                              final EventResult<RegisterNewUserResponseEntity> registerFieldsresult) {
         RegistrationController.getShared(context).registerNewUser(requestId, registrationEntity, registerFieldsresult);
     }
+
+    public void updateUser(@NonNull final String access_token, final RegistrationEntity registrationEntity,
+                           final EventResult<UpdateUserResponseEntity> updateUserResponseEntity) {
+        RegistrationController.getShared(context).updateUser(access_token, registrationEntity, updateUserResponseEntity);
+    }
     // -----------------------------------------------------***** Initiate Verification *****---------------------------------------------------------------
 
 
-    public void initiateEmailVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
+    public void initiateEmailVerification(@NonNull final String sub, @NonNull final String processingType, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
                                           final HashMap<String, String>... extraParams) {
         try {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
@@ -298,7 +305,7 @@ public class CidaasNative {
                     getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateEmailVerification(sub, result.getData().getRequestId(), EventResult);
+                            initiateEmailVerification(sub, processingType, result.getData().getRequestId(), EventResult);
                         }
 
                         @Override
@@ -319,12 +326,12 @@ public class CidaasNative {
     }
 
 
-    public void initiateEmailVerification(@NonNull final String sub, @NonNull final String requestId,
+    public void initiateEmailVerification(@NonNull final String sub, @NonNull final String processingType, @NonNull final String requestId,
                                           final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "email", EventResult);
+        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, processingType, requestId, "email", EventResult);
     }
 
-    public void initiateSMSVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
+    public void initiateSMSVerification(@NonNull final String sub, @NonNull final String processingType, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
                                         final HashMap<String, String>... extraParams) {
         try {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
@@ -333,7 +340,7 @@ public class CidaasNative {
                     getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateSMSVerification(sub, result.getData().getRequestId(), EventResult);
+                            initiateSMSVerification(sub, processingType, result.getData().getRequestId(), EventResult);
                         }
 
                         @Override
@@ -354,12 +361,12 @@ public class CidaasNative {
     }
 
 
-    public void initiateSMSVerification(@NonNull final String sub, @NonNull final String requestId,
+    public void initiateSMSVerification(@NonNull final String sub, @NonNull final String processingType, @NonNull final String requestId,
                                         final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "sms", EventResult);
+        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, processingType, requestId, "sms", EventResult);
     }
 
-    public void initiateIVRVerification(@NonNull final String sub, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
+    public void initiateIVRVerification(@NonNull final String sub, @NonNull final String processingType, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
                                         final HashMap<String, String>... extraParams) {
         try {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
@@ -368,7 +375,7 @@ public class CidaasNative {
                     getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
                         @Override
                         public void success(AuthRequestResponseEntity result) {
-                            initiateIVRVerification(sub, result.getData().getRequestId(), EventResult);
+                            initiateIVRVerification(sub, processingType, result.getData().getRequestId(), EventResult);
                         }
 
                         @Override
@@ -388,8 +395,8 @@ public class CidaasNative {
         }
     }
 
-    public void initiateIVRVerification(@NonNull final String sub, @NonNull final String requestId, final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, requestId, "ivr", EventResult);
+    public void initiateIVRVerification(@NonNull final String sub, @NonNull final String processingType, @NonNull final String requestId, final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
+        AccountVerificationController.getShared(context).initiateAccountVerificationService(sub, processingType, requestId, "ivr", EventResult);
     }
 
     public void verifyAccount(@NonNull final String code, @NonNull final String accvid, final EventResult<VerifyAccountResponseEntity> result) {

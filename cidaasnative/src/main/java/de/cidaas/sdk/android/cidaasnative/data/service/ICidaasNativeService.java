@@ -15,6 +15,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsRequ
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LogoutResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.ResetPasswordRequestEntity;
@@ -34,6 +35,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -90,6 +92,11 @@ public interface ICidaasNativeService {
     //Register New User
     @POST
     Call<RegisterNewUserResponseEntity> registerNewUser(@Url String url, @HeaderMap Map<String, String> headers, @Body RegistrationEntity registrationEntity);
+
+    //update user Profile
+    @PUT
+    Call<UpdateUserResponseEntity> updateUserProfile(@Url String url, @HeaderMap Map<String, String> headers, @Body RegistrationEntity registrationEntity);
+
 
     @POST
     Call<InitiateAccountVerificationResponseEntity> initiateAccountVerification(@Url String url, @HeaderMap Map<String, String> headers,

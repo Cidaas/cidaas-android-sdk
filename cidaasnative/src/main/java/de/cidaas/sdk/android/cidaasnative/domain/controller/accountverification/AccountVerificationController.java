@@ -44,7 +44,7 @@ public class AccountVerificationController {
         return shared;
     }
 
-    public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String requestId, @NonNull final String verificationMedium,
+    public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String processingType, @NonNull final String requestId, @NonNull final String verificationMedium,
                                                    final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
         final String methodName = "AccountVerificationController :initiateAccountVerificationService()";
         try {
@@ -54,8 +54,9 @@ public class AccountVerificationController {
                     String baseurl = result.get("DomainURL");
                     String clientId = result.get("ClientId");
 
+
                     InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity = new InitiateAccountVerificationRequestEntity();
-                    initiateAccountVerificationRequestEntity.setProcessingType("CODE");
+                    initiateAccountVerificationRequestEntity.setProcessingType(processingType);
                     initiateAccountVerificationRequestEntity.setVerificationMedium(verificationMedium);
                     initiateAccountVerificationRequestEntity.setSub(sub);
                     initiateAccountVerificationRequestEntity.setRequestId(requestId);

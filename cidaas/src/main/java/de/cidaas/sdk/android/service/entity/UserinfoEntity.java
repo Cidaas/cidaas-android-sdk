@@ -13,12 +13,15 @@ public class UserinfoEntity implements Serializable {
 
 
     //Properties
+    private String _id;
+    private String profile;
     private String name;
     private String family_name;
     private String sub;
     private String given_name;
     private String email;
     private String mobile_number;
+    private String mobile_number_verified;
     private String nickname;
     private String preferred_username;
     private String website;
@@ -170,5 +173,33 @@ public class UserinfoEntity implements Serializable {
 
     public void setLast_accessed_at(int last_accessed_at) {
         this.last_accessed_at = last_accessed_at;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getMobile_number_verified() {
+        return mobile_number_verified;
+    }
+
+    public void setMobile_number_verified(String mobile_number_verified) {
+        this.mobile_number_verified = mobile_number_verified;
+    }
+
+    public String getUser_status() {
+        return user_status;
     }
 }

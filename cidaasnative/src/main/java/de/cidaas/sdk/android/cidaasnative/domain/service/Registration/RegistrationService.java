@@ -11,6 +11,8 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.Initia
 import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.InitiateAccountVerificationResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.VerifyAccountRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.VerifyAccountResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupRequestEntity;
@@ -193,6 +195,71 @@ public class RegistrationService {
                     });
         } catch (Exception e) {
             callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+        }
+    }
+
+    //----------------------------------------------------------Update User profile--------------------------------------------------------------------------
+    public void updateUserProfile(String baseurl, String access_token, final RegistrationEntity registrationEntity, final EventResult<UpdateUserResponseEntity> callback) {
+        //Local Variables
+
+        String methodName = "RegistrationService:updateUserProfile";
+        try {
+
+            if (baseurl != null && !baseurl.equals("")) {
+
+                //Construct URL For RequestId
+                String updateUserProfileURL = baseurl + NativeURLHelper.getShared().getUpdateUserProfileURL(registrationEntity.getSub());
+
+                //Header Generation
+                Map<String, String> headers = Headers.getShared(context).getHeaders(access_token, false, NativeURLHelper.contentTypeJson);
+
+                //service
+                serviceForupdateUserProfile(updateUserProfileURL, registrationEntity, headers, callback);
+
+            } else {
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                return;
+            }
+
+
+        } catch (Exception e) {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, e.getMessage()));
+        }
+    }
+
+    private void serviceForupdateUserProfile(String updateUserProfileURL, RegistrationEntity registrationEntity, Map<String, String> headers,
+                                             final EventResult<UpdateUserResponseEntity> callback) {
+        final String methodName = "RegistrationService :serviceForupdateUserProfile()";
+        try {
+            //Call Service-getRequestId
+            ICidaasNativeService cidaasNativeService = service.getInstance();
+            cidaasNativeService.updateUserProfile(updateUserProfileURL, headers, registrationEntity).enqueue(
+                    new Callback<UpdateUserResponseEntity>() {
+                        @Override
+                        public void onResponse(Call<UpdateUserResponseEntity> call, Response<UpdateUserResponseEntity> response) {
+                            if (response.isSuccessful()) {
+                                if (response.code() == 200) {
+                                    callback.success(response.body());
+                                } else {
+                                    callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE
+                                            , response.code(), "Error :" + methodName));
+                                }
+                            } else {
+                                assert response.errorBody() != null;
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE,
+                                        response, "Error :" + methodName));
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<UpdateUserResponseEntity> call, Throwable t) {
+                            callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, t.getMessage(),
+                                    "Error :" + methodName));
+                        }
+                    });
+        } catch (Exception e) {
+            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, e.getMessage()));
         }
     }
 
