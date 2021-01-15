@@ -128,6 +128,7 @@ public class CidaasNative {
         }
     }
 
+
     //Get Request Id without passing any value
     public void getRequestId(final EventResult<AuthRequestResponseEntity> resulttoReturn, @Nullable final HashMap<String, String>... extraParams) {
         try {
@@ -215,6 +216,11 @@ public class CidaasNative {
     // Login With Credentials With request Id
     public void loginWithCredentials(final String requestId, final LoginEntity loginEntity, final EventResult<LoginCredentialsResponseEntity> loginresult) {
         NativeLoginController.getShared(context).loginwithCredentials(requestId, loginEntity, loginresult);
+    }
+
+    // logout functions
+    public void logout(String accessToken, final EventResult<Boolean> logoutresult){
+        NativeLoginController.getShared(context).logout(accessToken,logoutresult);
     }
 
     // -----------------------------------------------------***** REGISTER *****---------------------------------------------------------------

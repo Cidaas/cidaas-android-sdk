@@ -20,7 +20,7 @@ import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
 import de.cidaas.sdk.android.library.locationlibrary.LocationDetails;
 import de.cidaas.sdk.android.service.CidaassdkService;
 import de.cidaas.sdk.android.service.ICidaasSDKService;
-import de.cidaas.sdk.android.service.entity.UserinfoEntity;
+import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -90,7 +90,7 @@ public class OauthService {
     }
 
 
-    public void getUserinfo(String AccessToken, String DomainURL, final EventResult<UserinfoEntity> callback) {
+    public void getUserinfo(String AccessToken, String DomainURL, final EventResult<UserInfoEntity> callback) {
         final String methodName = "OauthService:-getUserinfo()";
         try {
             //Local Variables
@@ -131,9 +131,9 @@ public class OauthService {
 
             //call Service
             ICidaasSDKService cidaassdkService = service.getInstance();
-            cidaassdkService.getUserInfo(url, headers).enqueue(new Callback<UserinfoEntity>() {
+            cidaassdkService.getUserInfo(url, headers).enqueue(new Callback<UserInfoEntity>() {
                 @Override
-                public void onResponse(Call<UserinfoEntity> call, Response<UserinfoEntity> response) {
+                public void onResponse(Call<UserInfoEntity> call, Response<UserInfoEntity> response) {
                     if (response.isSuccessful()) {
 
                         if (response.code() == 200) {
@@ -143,13 +143,15 @@ public class OauthService {
                                     response.code(), methodName));
                         }
                     } else {
+                        // callback requires
                         assert response.errorBody() != null;
                         CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, response, methodName);
+                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, response, methodName));
                     }
                 }
 
                 @Override
-                public void onFailure(Call<UserinfoEntity> call, Throwable t) {
+                public void onFailure(Call<UserInfoEntity> call, Throwable t) {
                     Timber.e("Faliure in getAccessTokenByCode id call" + t.getMessage());
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, t.getMessage(), methodName));
 

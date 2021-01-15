@@ -1,3 +1,13 @@
+# About cidaas:
+[cidaas](https://www.cidaas.com)
+ is a fast and secure Cloud Identity & Access Management solution that standardises what’s important and simplifies what’s complex.
+ ## Feature set includes:
+* Single Sign On (SSO) based on OAuth 2.0, OpenID Connect, SAML 2.0 
+* Multi-Factor-Authentication with more than 14 authentication methods, including TOTP and FIDO2 
+* Passwordless Authentication 
+* Social Login (e.g. Facebook, Google, LinkedIn and more) as well as Enterprise Identity Provider (e.g. SAML or AD) 
+* Security in Machine-to-Machine (M2M) and IoT
+
 # Cidaas Android SDK
 
 [![Build Status](https://travis-ci.org/Cidaas/de.cidaas-android-sdk.svg?branch=development)](https://travis-ci.org/Cidaas/de.cidaas-android-sdk)
@@ -7,6 +17,14 @@
 
 
 The steps here will guide you through setting up and managing authentication and authorization in your apps using the cidaas android SDK.
+
+# About cidaas:
+[cidaas](https://www.cidaas.com) is a fast and secure Cloud Identity & Access Management solution that standardises what’s important and simplifies what’s complex. The cidaas feature set includes:
+- Single Sign On (SSO) based on OAuth 2.0, OpenID Connect, SAML 2.0 
+- Multi-Factor-Authentication with more than 14 authentication methods, including TOTP and FIDO2 
+- Passwordless Authentication 
+- Social Login (e.g. Facebook, Google, LinkedIn and more) as well as Enterprise Identity Provider (e.g. SAML or AD) 
+- Security in Machine-to-Machine (M2M) and IoT
 
 ## Note:
 This SDK was renamed from ```cidaas -v2-sdk-android``` to ```cidaas-android-sdk```. To migrate from the older version <2.1.0, please refer to the [Migration guide](/Migration.md)
@@ -27,6 +45,7 @@ This SDK was renamed from ```cidaas -v2-sdk-android``` to ```cidaas-android-sdk`
         * [Social Login](#social-login)
         <!--te-->
     *  [Embedded Browser Login](#embedded-browser-login)
+    * [Logout](#logout)
     * [Native UI Integration](/PureNative.md)
     * [Passwordless and MFA](/PasswordlessAndMFA.md)
     <!--te-->
@@ -49,7 +68,7 @@ Add the following Gradle configuration to your Android project:
 allprojects {
     repositories {
         ...
-		maven { url 'https:jitpack.io' }
+		maven { url 'https://jitpack.io' }
 	}
 }
 ```		
@@ -238,6 +257,25 @@ Cidaas.getInstance(yourContext).getRegistrationURL(new EventResult<String>() {
 });
 
 ```
+#### Logout
+
+To use logout, You can call following functions 
+
+```java
+    CidaasNative.getInstance(this).logout("AccessToken", new EventResult<Boolean>() {
+            @Override
+            public void success(Boolean result) {
+                 //Your Success Code
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                //Your Failure Code
+            }
+        });
+```
+
+
 #### Add a custom scheme
 
 Use [customScheme](https://developer.android.com/training/app-links/deep-linking) or [App Link](https://developer.android.com/studio/write/app-link-indexing) to return the control back from the browser to the app.

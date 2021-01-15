@@ -23,6 +23,7 @@ public class NativeURLHelper {
     String clientUrl = "/public-srv/public/";
     String tenantUrl = "/public-srv/tenantinfo/basic";
     String loginWithCredentials = "/login-srv/login/sdk";
+    String logoutUrl = "/session/end_session";
 
     String passwordlessContinueUrl = "/login-srv/verification/sdk/login/";
     String deduplicationList = "/users-srv/deduplication/info/";
@@ -74,6 +75,9 @@ public class NativeURLHelper {
 
     public String getLoginWithCredentials() {
         return loginWithCredentials;
+    }
+    public String getLogoutUrl(String accessToken){
+        return logoutUrl + "?access_token_hint=" + accessToken;
     }
 
     public String getRegisterdeduplication() {

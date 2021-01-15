@@ -73,18 +73,41 @@ public class NativeLoginController {
                                 });
                     }
                 }
-
                 @Override
                 public void failure(WebAuthError error) {
                     result.failure(error);
                 }
             });
-
-
         } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
         }
     }
+
+    public void logout(@NonNull final String accessToken, @NonNull final EventResult<Boolean> result){
+        String methodName = "LoginController :logout()";
+        try{
+        CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+            @Override
+            public void success(Dictionary<String, String> loginPropertiesResult) {
+                if (accessToken != null){
+                    NativeLoginService.getShared(context).logout(loginPropertiesResult.get("DomainURL"), accessToken, result);
+                }
+            }
+
+            @Override
+            public void failure(WebAuthError error) {
+                result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException( error.getMessage(),"Exception: "+ methodName));
+
+            }
+
+        });
+        } catch(Exception e){
+            result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException( e.getMessage(),"Exception: "+ methodName));
+        }
+    }
+
+
+
 
     //Get Login Credentials Request Entity
     private LoginCredentialsRequestEntity getLoginCredentialsRequestEntity(String requestId, LoginEntity loginEntity, final EventResult<LoginCredentialsResponseEntity> result) {

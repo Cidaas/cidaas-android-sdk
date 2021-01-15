@@ -3,7 +3,7 @@ package de.cidaas.sdk.android.service;
 import java.util.Map;
 
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
-import de.cidaas.sdk.android.service.entity.UserinfoEntity;
+import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.entity.documentscanner.DocumentScannerServiceResultEntity;
 import de.cidaas.sdk.android.service.entity.notificationentity.getpendingnotification.NotificationEntity;
@@ -89,7 +89,7 @@ public interface ICidaasSDKService {
     //Get Registration Setup
     //get userinfo
     @GET
-    Call<UserinfoEntity> getUserInfo(@Url String url, @HeaderMap Map<String, String> headers);
+    Call<UserInfoEntity> getUserInfo(@Url String url, @HeaderMap Map<String, String> headers);
 
 
     //Get TenantInfo
