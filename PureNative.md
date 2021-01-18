@@ -16,6 +16,7 @@ The steps here will guide you through setting up and managing authentication and
     <!--ts-->
     * [Getting Registration Fields](#getting-registration-fields)
     * [Register user](#register-user)
+    * [Update user info](#update-user-info)
     <!--te-->
 * [De-duplication](#de-duplication)
     <!--ts-->
