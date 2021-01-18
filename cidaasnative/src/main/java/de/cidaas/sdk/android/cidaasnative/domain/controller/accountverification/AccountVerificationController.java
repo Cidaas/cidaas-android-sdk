@@ -44,7 +44,7 @@ public class AccountVerificationController {
         return shared;
     }
 
-    public void initiateAccountVerificationService(@NonNull final String sub, @NonNull final String processingType, @NonNull final String requestId, @NonNull final String verificationMedium,
+    public void initiateAccountVerificationService(@NonNull final InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity,
                                                    final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
         final String methodName = "AccountVerificationController :initiateAccountVerificationService()";
         try {
@@ -55,18 +55,24 @@ public class AccountVerificationController {
                     String clientId = result.get("ClientId");
 
 
-                    InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity = new InitiateAccountVerificationRequestEntity();
-                    initiateAccountVerificationRequestEntity.setProcessingType(processingType);
-                    initiateAccountVerificationRequestEntity.setVerificationMedium(verificationMedium);
-                    initiateAccountVerificationRequestEntity.setSub(sub);
-                    initiateAccountVerificationRequestEntity.setRequestId(requestId);
+                    if (initiateAccountVerificationRequestEntity.getProcessingType() == null || initiateAccountVerificationRequestEntity.getVerificationMedium() == null ||
+                            initiateAccountVerificationRequestEntity.getProcessingType().equals("")
+                            || initiateAccountVerificationRequestEntity.getRequestId() == null ||
+                            initiateAccountVerificationRequestEntity.getRequestId().equals("") || initiateAccountVerificationRequestEntity.getVerificationMedium().equals("")
+                    ) {
+
+                        String errorMessage = "Verification medium , requestId or processing type must not be null";
+                        EventResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
+                    }
+
                     initiateAccountVerificationService(baseurl, initiateAccountVerificationRequestEntity, EventResult);
+
 
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    EventResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", methodName));
+                    EventResult.failure(error);
                 }
             });
         } catch (Exception e) {
@@ -83,8 +89,8 @@ public class AccountVerificationController {
 
             if (registrationEntity.getRequestId() != null && !registrationEntity.getRequestId().equals("") &&
                     registrationEntity.getProcessingType() != null && !registrationEntity.getProcessingType().equals("") &&
-                    registrationEntity.getVerificationMedium() != null && !registrationEntity.getVerificationMedium().equals("") &&
-                    registrationEntity.getSub() != null && !registrationEntity.getSub().equals("")
+                    registrationEntity.getVerificationMedium() != null && !registrationEntity.getVerificationMedium().equals("")
+
                     && baseurl != null && !baseurl.equals("")) {
 
                 // Service call
