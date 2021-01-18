@@ -26,9 +26,7 @@ The steps here will guide you through setting up and managing authentication and
     <!--te-->
 * [Account Verification](#account-verification)
     <!--ts-->
-    * [Initiate Email verification](#initiate-email-verification)
-    * [Initiate SMS verification](#initiate-sms-verification)
-    * [Initiate IVR verification](#initiate-ivr-verification)
+    * [Initiate account verification](#initiate-account-verification)
     * [Verify Account](#verify-account)
     <!--te-->
 * [Forgot Password](#forgot-password)
