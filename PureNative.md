@@ -16,6 +16,7 @@ The steps here will guide you through setting up and managing authentication and
     <!--ts-->
     * [Getting Registration Fields](#getting-registration-fields)
     * [Register user](#register-user)
+    * [Update user info](#update-user-info)
     <!--te-->
 * [De-duplication](#de-duplication)
     <!--ts-->
@@ -25,9 +26,7 @@ The steps here will guide you through setting up and managing authentication and
     <!--te-->
 * [Account Verification](#account-verification)
     <!--ts-->
-    * [Initiate Email verification](#initiate-email-verification)
-    * [Initiate SMS verification](#initiate-sms-verification)
-    * [Initiate IVR verification](#initiate-ivr-verification)
+    * [Initiate account verification](#initiate-account-verification)
     * [Verify Account](#verify-account)
     <!--te-->
 * [Forgot Password](#forgot-password)
@@ -314,6 +313,43 @@ cidaasNative.registerUser("Your_requestId", registrationEntity, new Result < Reg
 }
 ```
 
+#### Update user info
+
+To update info about existing user, call ****updateUser()****.
+
+```java
+
+ RegistrationEntity registrationEntity=new RegistrationEntity();
+ registrationEntity.setSub(sub);
+ registrationEntity.setGiven_name("updated Name"); 
+ registrationEntity.setProvider("self");// either self or facebook or google or other login providers
+ 
+
+ CidaasNative.getInstance(getContext()).updateUser("YouraccessToken", registrationEntity, new EventResult<UpdateUserResponseEntity>() {
+    @Override
+    public void success(UpdateUserResponseEntity result) {
+        //Your Success Code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+         // Your Failure code
+    }
+});
+```
+
+**Response:**
+
+```java
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "updated":true
+    }
+}
+```
+
 After you get the response from the ****registerUser()****, You may get a suggested_action like ****"DEDUPLICATION"**** in the data of success respone. At that time, you have to follow the following steps
 
 #### De-duplication
@@ -420,6 +456,7 @@ cidaasNative.registerUser("your track id", new Result < RegisterDeduplicationEnt
 ```
 
 
+
 #### Login With Deduplication
 
 While registering user, if the system found any similar users who have already registered, this list is shown to user. He can decide whether to use one of the existing logins, or choose to ignore all shown details. The ****loginWithDeduplication()**** method can be called to use one of those existing logins shown by the system. Note that the system will still use the secure authentication and verifications that were setup for earlier user, before login.
@@ -458,13 +495,31 @@ cidaasNative.loginWithDeduplication("your_requestId","your_sub", "your_password"
 
 In order to avoid misuse of user registration functions, it is a good practise to include account verification along with it. Once the registration is done, you can verify your account either by email, SMS or IVR verification call. To do this, first you have to initiate the account verification. You can invoke any of the following as it suits your use case.
 
-#### Initiate Email verification
+#### Initiate Account verification
 
-This method has to be used when you want to receive a verification code via email:
+This method has to be used when you want to receive a verification code or Link  via email/sms/ivr:
 
-**initiateEmailVerification()**.
 
 ```java
+
+ InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity=new InitiateAccountVerificationRequestEntity();
+ initiateAccountVerificationRequestEntity.setProcessingType("LINK");// You can set CODE or LINK as processingType
+ initiateAccountVerificationRequestEntity.setRequestId("Your request id") ;
+ initiateAccountVerificationRequestEntity.setVerificationMedium("email"); //You can set email,sms,ivr
+ initiateAccountVerificationRequestEntity.setEmail("CXXXXXXX@YYYY.com"); // if your verificationMedium is email you must set the email
+ initiateAccountVerificationRequestEntity.setMobile("+91XXXXXXXXXX"); //If your VerificationMedium is SMS or IVR, you must to send the mobile number
+  
+CidaasNative.getInstance(yourContext).initiateAccountVerification(initiateAccountVerificationRequestEntity, new EventResult<InitiateAccountVerificationResponseEntity>() {
+                    @Override
+                    public void success(InitiateAccountVerificationResponseEntity result) {
+                        //Your Success Code
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        // Your Failure Code
+                    }
+                });
 cidaasNative.initiateEmailVerification("your_sub", "your_requestId", new Result < RegisterUserAccountInitiateResponseEntity > () {
 @Override
 public void success(RegisterUserAccountInitiateResponseEntity result) {
@@ -474,59 +529,6 @@ public void success(RegisterUserAccountInitiateResponseEntity result) {
 @Override
 public void failure(WebAuthError error) {
  //your failure code
-}
-});
-
-```
-#### Initiate SMS verification
-
-If you would like to receive the verification code via SMS, call  **initiateSMSVerification()**.
-
-```java
-
-
-
-cidaasNative.initiateSMSVerification("Your_sub", "Your_requestId", new Result<RegisterUserAccountInitiateResponseEntity>() {
-
-@Override
-public void success(RegisterUserAccountInitiateResponseEntity result) {
-
-//Your success code here
-
-}
-
-
-@Override
-public void failure(WebAuthError error) {
-
-//Your failure code here
-
-}
-
-});
-
-
-```
-#### Initiate IVR verification
-
-
-In order to receive a verification code via IVR verification call, call **initiateIVRVerification()**.
-
-```java
-
-cidaasNative.initiateIVRVerification("your_sub", "your_requestId", new Result < RegisterUserAccountInitiateResponseEntity > () {
-
-@Override
-public void success(RegisterUserAccountInitiateResponseEntity result) {
-//Your Success code here
-
-}
-
-@Override
-public void failure(WebAuthError error) {
-
-//Your failure code here
-
 }
 });
 
@@ -545,10 +547,10 @@ public void failure(WebAuthError error) {
 
 #### Verify Account
 
-Once you have received your verification code via any of the mediums like email, SMS or IVR, you need to verify the code. For that verification, call **verifyAccount()**.
+Once you have received your verification code via any of the mediums like email, SMS or IVR, you need to verify the code. For that verification, call **verifyAccount()**. You get get the accvid in the initate account verification call
 ```java
 
-cidaasNative.verifyAccount("your code", new Result < RegisterUserAccountVerifyResponseEntity > () {
+cidaasNative.verifyAccount("your code", "your accvid",new Result < RegisterUserAccountVerifyResponseEntity > () {
 
 @Override
 public void success(RegisterUserAccountVerifyResponseEntity result) {
