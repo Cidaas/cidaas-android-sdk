@@ -10,7 +10,11 @@ public class InitiateAccountVerificationRequestEntity implements Serializable {
     String sub;
     String verificationMedium;
     String processingType;
+    String email;
+    String mobile;
 
+    public InitiateAccountVerificationRequestEntity() {
+    }
 
     public String getRequestId() {
         return requestId;
@@ -44,4 +48,30 @@ public class InitiateAccountVerificationRequestEntity implements Serializable {
     public void setSub(String sub) {
         this.sub = sub;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    //For Email
+    public InitiateAccountVerificationRequestEntity(String requestId, String verificationMedium, String processingType, String email) {
+        this.requestId = requestId;
+        this.verificationMedium = verificationMedium;
+        this.processingType = processingType;
+        this.email = email;
+    }
+
+
 }

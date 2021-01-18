@@ -8,25 +8,43 @@ import java.util.Dictionary;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegistrationEntity implements Serializable {
-    private String first_name = "";
-    private String last_name = "";
-    private String username = "";
+    private String first_name;
+    private String last_name;
+    private String username;
 
-    private String given_name = "";
-    private String family_name = "";
+    private String given_name;
+    private String family_name;
 
-    private String password = "";
-    private String password_echo = "";
+    private String password;
+    private String password_echo;
 
-    private String mobile_number = "";
-    private String email = "";
+    private String mobile_number;
+    private String email;
+
+    private String identityId;
+    private String sub = "";
 
     private Date birthdate;
-    private String gender = "";
-    private String website = "";
-    private String provider = "";
+    private String gender;
+    private String website;
+    private String provider = "self";
     private Dictionary<String, RegistrationCustomFieldEntity> customFields;
 
+    public String getIdentityId() {
+        return identityId;
+    }
+
+    public void setIdentityId(String identityId) {
+        this.identityId = identityId;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
 
     public String getFirst_name() {
         return first_name;
