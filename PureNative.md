@@ -323,7 +323,8 @@ To update info about existing user, call ****updateUser()****.
  registrationEntity.setSub(sub);
  registrationEntity.setGiven_name("updated Name"); 
  registrationEntity.setProvider("self");// either self or facebook or google or other login providers
- 
+
+ and for updating consent, add value to key field "true" or "false" in customFields of RegistrationEntity.
 
  CidaasNative.getInstance(getContext()).updateUser("YouraccessToken", registrationEntity, new EventResult<UpdateUserResponseEntity>() {
     @Override
