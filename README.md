@@ -310,6 +310,7 @@ If you use a deep link or custom scheme, After adding the intent-filter in the m
 If you use app links, configure your Domain setup and resume the SDK from your activity
 
 
+
 ```java
   @Override
     protected void onNewIntent(Intent intent) {
@@ -325,7 +326,36 @@ If you use app links, configure your Domain setup and resume the SDK from your a
 }
 ```
 
-If you are using app links , you can able to open an app by click the link associated with domain URL
+If you are using app links , you can able to open an app by click the link associated with domain URL ,and check the redirect url has same DomainURL
+
+For example if `https://www.domain.name/SomePages` is your redirectURL added in app section of admin-UI,your manifest look like the follows
+
+```java
+  <activity android:name=".LoginActivity">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="www.domain.name" />
+            </intent-filter>
+        </activity>
+```
+
+or if you are using Android Studio , you can use [App Links Assistant](https://developer.android.com/studio/write/app-link-indexing) Go to Tools-> App links Assistant . [click here](https://developer.android.com/studio/write/app-link-indexing) for how to setup app link 
+
+Note: Don't forget to add the Digital asset link Json in your https://domain.name/.well-known/assetlinks.json file , 
+
+this is for [verify](https://developer.android.com/training/app-links/verify-site-associations) your ownership of your app and website  and this is mandatory
+
+if you enable the app link you can able to redirect to app after clicking the verification link that send in email 
+
+you can choose the activity that came first when you click the link, you can add more than one app link for different purposes, you can differ screens using the paths in the url, For different paths you can choose different screens 
+
+ 
 
 
 #### Common Methods
