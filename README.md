@@ -324,6 +324,10 @@ If you use app links, configure your Domain setup and resume the SDK from your a
     }
 }
 ```
+
+If you are using app links , you can able to open an app by click the link associated with domain URL
+
+
 #### Common Methods
 ##### Getting AccessToken
 

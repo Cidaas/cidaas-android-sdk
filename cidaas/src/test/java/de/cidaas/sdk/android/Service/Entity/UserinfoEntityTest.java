@@ -32,6 +32,12 @@ public class UserinfoEntityTest {
     }
 
     @Test
+    public void setGender() throws Exception {
+        userinfoEntity.setGender("Test");
+        Assert.assertEquals("Test", userinfoEntity.getGender());
+    }
+
+    @Test
     public void setSub() throws Exception {
         userinfoEntity.setSub("Test");
         Assert.assertEquals("Test", userinfoEntity.getSub());
