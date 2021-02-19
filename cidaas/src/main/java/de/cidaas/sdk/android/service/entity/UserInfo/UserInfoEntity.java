@@ -14,26 +14,27 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "sub",
-    "groups",
-    "name",
-    "family_name",
-    "given_name",
-    "nickname",
-    "preferred_username",
-    "birthdate",
-    "locale",
-    "updated_at",
-    "user_status",
-    "last_accessed_at",
-    "last_used_identity_id",
+        "sub",
+        "groups",
+        "name",
+        "gender",
+        "family_name",
+        "given_name",
+        "nickname",
+        "preferred_username",
+        "birthdate",
+        "locale",
+        "updated_at",
+        "user_status",
+        "last_accessed_at",
+        "last_used_identity_id",
     "provider",
     "email",
     "email_verified",
     "username",
     "address",
     "mobile_number",
-    "customFields"
+        "customFields"
 })
 public class UserInfoEntity implements Serializable {
 
@@ -43,6 +44,8 @@ public class UserInfoEntity implements Serializable {
     private List<Group> groups = null;
     @JsonProperty("name")
     private String name;
+    @JsonProperty("gender")
+    private String gender;
     @JsonProperty("family_name")
     private String familyName;
     @JsonProperty("given_name")
@@ -108,6 +111,16 @@ public class UserInfoEntity implements Serializable {
     @JsonProperty("name")
     public void setName(String name) {
         this.name = name;
+    }
+
+    @JsonProperty("gender")
+    public String getGender() {
+        return gender;
+    }
+
+    @JsonProperty("gender")
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     @JsonProperty("family_name")
@@ -279,6 +292,7 @@ public class UserInfoEntity implements Serializable {
     public void setCustomFields(CustomFields customFields) {
         this.customFields = customFields;
     }
+
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
