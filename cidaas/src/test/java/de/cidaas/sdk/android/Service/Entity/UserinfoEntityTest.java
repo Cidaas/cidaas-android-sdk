@@ -113,13 +113,14 @@ public class UserinfoEntityTest {
     @Test
     public void setUpdated_at() throws Exception {
         userinfoEntity.setUpdatedAt(17);
-        Assert.assertEquals(java.util.Optional.of(17), userinfoEntity.getUpdatedAt());
+        Assert.assertEquals(17, (long) userinfoEntity.getUpdatedAt());
     }
 
     @Test
     public void setLast_accessed_at() throws Exception {
-        userinfoEntity.setLastAccessedAt(27);
-        Assert.assertEquals(java.util.Optional.of(27), userinfoEntity.getLastAccessedAt());
+        int values = 27;
+        userinfoEntity.setLastAccessedAt(values);
+        Assert.assertEquals((values), (long) userinfoEntity.getLastAccessedAt());
     }
 
 
