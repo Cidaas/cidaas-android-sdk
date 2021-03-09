@@ -51,19 +51,19 @@ android {
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 
     //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
     //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //For Retrofit Call
-    implementation 'com.squareup.retrofit2:converter-jackson:2.8.1'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.8.1'
-    implementation 'com.squareup.okhttp3:okhttp:3.14.7'
-    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
     //For Reactive X
     implementation 'io.reactivex:rxandroid:1.2.1'
@@ -71,7 +71,7 @@ dependencies {
     implementation 'com.jakewharton.rxbinding:rxbinding:1.0.1'
 
     //For Custom Tabs
-    implementation 'androidx.browser:browser:1.2.0'
+    implementation 'androidx.browser:browser:1.3.0'
 
     //For Encryption
     implementation 'com.scottyab:aescrypt:0.0.1'
@@ -80,35 +80,40 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // common codec for TOTP Generation
-    implementation 'commons-codec:commons-codec:1.10'
+    implementation 'commons-codec:commons-codec:1.15'
 
     //Android X for finger print authentication after android pie
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0-alpha2'
     implementation 'com.android.support:appcompat-v7:28'
-    implementation 'com.google.android.material:material:1.2.0-alpha06'
+    implementation 'com.google.android.material:material:1.4.0-alpha01'
 
     //For Permission
     implementation 'pub.devrel:easypermissions:3.0.0'
 
     //Testing
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
     // testImplementation "org.robolectric:robolectric:3.8"
     //Testing
     // Required -- JUnit 4 framework
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     // Optional -- Mockito framework
 
 
-    testImplementation 'org.robolectric:robolectric:4.2'
+    testImplementation 'org.robolectric:robolectric:4.5.1'
+    // updated version of robolectric misses functions that were previously included that's why we
+    // additionally need hamcrest for a part of this this sub-project
+    testImplementation 'org.hamcrest:hamcrest:2.2'
 
-    testImplementation 'com.squareup.okhttp3:mockwebserver:3.8.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
 
-    testImplementation 'androidx.test:monitor:1.2.0'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
+    testImplementation 'androidx.test:monitor:1.3.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
     /*///For ID card Scannner
     compile 'io.card:android-sdk:5.5.1'*/
 
 }
+
+apply plugin: 'org.owasp.dependencycheck'

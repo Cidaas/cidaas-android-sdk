@@ -2,11 +2,16 @@ package de.cidaas.sdk.android.Service.Repository.AccessToken;
 
 import android.content.Context;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Matchers;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
@@ -66,6 +71,7 @@ public class AccessTokenServiceTest {
     public void testGetShared() throws Exception {
         AccessTokenService result = AccessTokenService.getShared(context);
         // Assert.assertEquals(new AccessTokenService(context), result);
+        //MatcherAssert.assertThat(new AccessTokenService(context), );
         Assert.assertThat(new AccessTokenService(context), samePropertyValuesAs(result));
     }
 
