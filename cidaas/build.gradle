@@ -10,6 +10,10 @@ android {
         versionCode 1
         versionName "0.0.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // We need this in every sub-module due to https://issuetracker.google.com/issues/158695880
+        buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
+        buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
     }
     lintOptions {
         abortOnError false

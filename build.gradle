@@ -13,10 +13,10 @@ buildscript {
     dependencies {
 
 
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.1.2'
 
 
-        classpath 'org.jacoco:org.jacoco.core:0.8.5'
+        classpath 'org.jacoco:org.jacoco.core:0.8.6'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -28,15 +28,6 @@ buildscript {
         classpath 'org.owasp:dependency-check-gradle:6.0.3'
     }
 }
-
-
-/*
-subprojects {
-    if (name.startsWith('cidaas')) {
-        apply plugin: 'com.palantir.jacoco-full-report'
-    }
-}
-*/
 
 def allTestDestination = "$buildDir/JACOCO/"
 
@@ -51,5 +42,5 @@ allprojects {
     }
 }
 apply from: rootProject.file('gradle/enable-jacoco.gradle')
-apply plugin: 'com.palantir.jacoco-full-report'
+//apply plugin: 'com.palantir.jacoco-full-report'
 apply plugin: 'org.owasp.dependencycheck'
