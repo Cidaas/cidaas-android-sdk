@@ -42,5 +42,5 @@ allprojects {
     }
 }
 apply from: rootProject.file('gradle/enable-jacoco.gradle')
-//apply plugin: 'com.palantir.jacoco-full-report'
+apply plugin: 'jacoco' // replaces "apply plugin: 'com.palantir.jacoco-full-report'" since latter is obsolete
 apply plugin: 'org.owasp.dependencycheck'
