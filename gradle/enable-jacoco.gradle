@@ -16,11 +16,13 @@ ext.enableJacoco = { Project project, String variant ->
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
+                jacoco.includeNoLocationClasses = true
+                jacoco.excludes = ['jdk.internal.*'] // see related issue https://github.com/gradle/gradle/issues/5184#issuecomment-457865951
             }
         }
     }
     project.jacoco {
-        toolVersion = '0.8.5'
+        toolVersion = '0.8.6'
     }
     project.tasks.create(
             name: 'jacocoTestReport',
