@@ -16,11 +16,13 @@ ext.enableJacoco = { Project project, String variant ->
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
+                jacoco.includeNoLocationClasses = true
+                jacoco.excludes = ['jdk.internal.*'] // see related issue https://github.com/gradle/gradle/issues/5184#issuecomment-457865951
             }
         }
     }
     project.jacoco {
-        toolVersion = '0.8.5'
+        toolVersion = '0.8.6'
     }
     project.tasks.create(
             name: 'jacocoTestReport',
@@ -46,10 +48,12 @@ ext.enableJacoco = { Project project, String variant ->
         group = "Reporting"
         description = "Generate Jacoco coverage reports for the ${project.name} with the " +
                 "$variant variant."
-        classDirectories = files([ javaClasses ])
-        additionalSourceDirs = files(coverageSourceDirs)
-        sourceDirectories = files(coverageSourceDirs)
-        executionData = files("${project.buildDir}/jacoco/test${capVariant}UnitTest.exec")
+
+        classDirectories.from = files([ javaClasses ])
+        additionalSourceDirs.from = files(coverageSourceDirs)
+        sourceDirectories.from = files(coverageSourceDirs)
+        executionData.from = files("${project.buildDir}/jacoco/test${capVariant}UnitTest.exec")
+
         reports {
             html.enabled = true
             html.destination file("${project.buildDir}/coverage/report/html")

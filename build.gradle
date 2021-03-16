@@ -11,25 +11,23 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
-        classpath 'org.jacoco:org.jacoco.core:0.8.5'
+
+
+        classpath 'com.android.tools.build:gradle:4.1.2'
+
+
+        classpath 'org.jacoco:org.jacoco.core:0.8.6'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.gms:google-services:4.3.5'
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
         classpath "gradle.plugin.com.palantir:jacoco-coverage:0.4.0"
+
+        //noinspection GradleDependency. versions > 6.0.3 do not work with our project currently
+        classpath 'org.owasp:dependency-check-gradle:6.0.3'
     }
 }
-
-
-/*
-subprojects {
-    if (name.startsWith('cidaas')) {
-        apply plugin: 'com.palantir.jacoco-full-report'
-    }
-}
-*/
 
 def allTestDestination = "$buildDir/JACOCO/"
 
@@ -43,5 +41,13 @@ allprojects {
         google()
     }
 }
+
 apply from: rootProject.file('gradle/enable-jacoco.gradle')
-apply plugin: 'com.palantir.jacoco-full-report'
+apply plugin: 'org.owasp.dependencycheck'
+
+
+
+
+
+
+
