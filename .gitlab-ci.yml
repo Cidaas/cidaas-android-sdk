@@ -1,6 +1,6 @@
 include:
   - project: 'widas/codequality'
-    ref: master
+    ref: code-coverage-failure-allow 
     file: 'ci_templates/android.gitlab-ci.yml'
   - template: Dependency-Scanning.gitlab-ci.yml
 
