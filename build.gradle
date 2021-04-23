@@ -1,23 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
+
     repositories {
         google()
+        mavenCentral()
         maven { url 'https://maven.google.com' }
         maven {url "https://plugins.gradle.org/m2/"}
-        jcenter()
-        mavenCentral()
+
 
     }
     dependencies {
-
-
-        classpath 'com.android.tools.build:gradle:4.1.2'
-
-
+        classpath 'com.android.tools.build:gradle:4.1.3'
         classpath 'org.jacoco:org.jacoco.core:0.8.6'
-
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath 'com.google.gms:google-services:4.3.5'
@@ -29,18 +24,21 @@ buildscript {
     }
 }
 
+
 def allTestDestination = "$buildDir/JACOCO/"
 
 allprojects {
 
     repositories {
+        google()
+        mavenCentral()
         maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        jcenter()
-        google()
     }
 }
+
+
 
 apply from: rootProject.file('gradle/enable-jacoco.gradle')
 apply plugin: 'org.owasp.dependencycheck'
