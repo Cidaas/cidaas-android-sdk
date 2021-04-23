@@ -38,7 +38,8 @@ allprojects {
     }
 }
 
-
+// For publishing
+apply plugin: 'maven-publish'
 
 apply from: rootProject.file('gradle/enable-jacoco.gradle')
 apply plugin: 'org.owasp.dependencycheck'
