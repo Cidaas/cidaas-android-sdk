@@ -70,7 +70,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas.cidaas-android-sdk'
                 artifactId = project.name
-                version = '3.07-SNAPSHOT'
+                version = '3.1.1-SNAPSHOT'
             }
         }
     }
