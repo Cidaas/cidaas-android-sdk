@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 28
 
     testOptions.unitTests.includeAndroidResources = true
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 28
         versionCode 1
         versionName "0.0.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
