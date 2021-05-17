@@ -35,10 +35,9 @@ The steps here will guide you through setting up and managing authentication and
     * [Handle Reset Password](#handle-reset-password)
     * [Reset Password](#reset-password)
     <!--te-->
-* [Consent](#consent-management)
+* [ChangePassword](#change-password-after-login)
      <!--ts-->
-    * [Get Consent details](#getting-consent-details)
-    * [Login after Consent](#login-after-consent)
+    * [Change password](#change-password-after-login)
     <!--te-->
 * [Passwordless and Multifactor Authentication](/PasswordlessAndMFA.md)
 <!--te-->
@@ -803,6 +802,44 @@ public void failure(WebAuthError error) {
     "status": 200,
     "data": {
         "reseted":true
+    }
+}
+```
+
+#### Change Password After Login
+
+You can change your password by calling **changePassword().**
+
+```java
+ChangePasswordRequestEntity changePasswordRequestEntity=new ChangePasswordRequestEntity();
+       
+    changePasswordRequestEntity.setIdentityId("YourIdentityId");
+    changePasswordRequestEntity.setNew_password("123456");
+    changePasswordRequestEntity.setConfirm_password("123456");
+    changePasswordRequestEntity.setOld_password("yourOldPassword");
+
+cidaasNative.changePassword("YourAccessToken",changePasswordRequestEntity, new EventResult<ChangePasswordResponseEntity>() {
+@Override
+public void success(ChangePasswordResponseEntity EventResult) {
+    //Your success code here.
+}
+
+@Override
+public void failure(WebAuthError error) {
+    //Your failure code here.
+ }
+});
+
+```
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "status": 200,
+    "data": {
+        "changed":true
     }
 }
 ```
