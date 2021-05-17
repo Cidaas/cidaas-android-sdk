@@ -82,15 +82,22 @@ public class ChangePasswordController {
         String methodName = "ChangePassword Controller :checkandChangePasswordService()";
         try {
 
-            if (changePasswordRequestEntity.getConfirm_password().isEmpty() && !changePasswordRequestEntity.getConfirm_password().equals("")
+            if (!changePasswordRequestEntity.getConfirm_password().isEmpty() && !changePasswordRequestEntity.getConfirm_password().equals("")
                     && changePasswordRequestEntity.getNew_password() != null && !changePasswordRequestEntity.getNew_password().equals("")) {
                 if (changePasswordRequestEntity.getIdentityId() != null && !changePasswordRequestEntity.getIdentityId().equals("")
-                        && changePasswordRequestEntity.getOld_password().isEmpty() && !changePasswordRequestEntity.getOld_password().equals("")
+                        && !changePasswordRequestEntity.getOld_password().isEmpty() && !changePasswordRequestEntity.getOld_password().equals("")
                 ) {
-                    if (baseurl != null && !baseurl.equals("")) {
-                        ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl, null, resetpasswordResult);
-                    } else {
-                        resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be null"
+                    if(changePasswordRequestEntity.getConfirm_password().equals(changePasswordRequestEntity.getNew_password()) ) {
+                        if (baseurl != null && !baseurl.equals("")) {
+                            ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl, null, resetpasswordResult);
+                        } else {
+                            resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be null"
+                                    , "Error :" + methodName));
+                        }
+                    }
+                    else
+                    {
+                        resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE,"Confirm Password and new password must be same"
                                 , "Error :" + methodName));
                     }
                 } else {
