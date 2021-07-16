@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.LocationEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.PushAddressEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.PushDeviceInformation;
 import de.cidaas.sdk.android.cidaasverification.data.entity.excangeid.ExchangeIDEntity;
 
@@ -19,7 +20,7 @@ public class PushAcknowledgeResponseDataEntity implements Serializable {
     private String device_id = "";
     private String push_id = "";
     private String status_id = "";
-    private LocationEntity address;
+    private PushAddressEntity address;
     private PushDeviceInformation device_info;
 
 
@@ -71,11 +72,11 @@ public class PushAcknowledgeResponseDataEntity implements Serializable {
         this.status_id = status_id;
     }
 
-    public LocationEntity getAddress() {
+    public PushAddressEntity getAddress() {
         return address;
     }
 
-    public void setAddress(LocationEntity address) {
+    public void setAddress(PushAddressEntity address) {
         this.address = address;
     }
 
