@@ -13,6 +13,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetnewpass
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.ResetPassword.ResetPasswordService;
+import de.cidaas.sdk.android.cidaasnative.view.CidaasNative;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -77,6 +78,7 @@ public class ResetPasswordController {
     public void successOfInitiateResetPassword(final String requestId, final String email, @NonNull final String resetMedium,
                                                Dictionary<String, String> loginPropertiesResult, final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         String methodName = "RegistrationController :successOfInitiateResetPassword()";
+
         try {
             String baseurl = loginPropertiesResult.get("DomainURL");
             String clientId = loginPropertiesResult.get("ClientId");
