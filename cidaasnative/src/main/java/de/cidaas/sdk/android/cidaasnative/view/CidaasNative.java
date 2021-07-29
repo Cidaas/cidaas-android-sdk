@@ -495,10 +495,14 @@ public class CidaasNative {
         }
     }
 
-    // chang
-    public void initiateResetPasswordByEmail(final String requestId, final String email,
-                                             final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+    private void initiateResetPasswordByEmail(String requestId, String email, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, email, "email", resetPasswordResponseEntityResult);
+    }
+
+    // chang
+    public void initiateResetPasswordByEMail(final String requestId, final String email,final String processingType,
+                                             final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+        ResetPasswordController.getShared(context).initiateresetPasswordServiceEmail(requestId, email,processingType, "email", resetPasswordResponseEntityResult);
     }
 
 
