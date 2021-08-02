@@ -13,6 +13,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetnewpass
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.ResetPassword.ResetPasswordService;
+import de.cidaas.sdk.android.cidaasnative.view.CidaasNative;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -77,6 +78,7 @@ public class ResetPasswordController {
     public void successOfInitiateResetPassword(final String requestId, final String email, @NonNull final String resetMedium,
                                                Dictionary<String, String> loginPropertiesResult, final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         String methodName = "RegistrationController :successOfInitiateResetPassword()";
+
         try {
             String baseurl = loginPropertiesResult.get("DomainURL");
             String clientId = loginPropertiesResult.get("ClientId");
@@ -259,4 +261,52 @@ public class ResetPasswordController {
         }
     }
 
+    public void initiateresetPasswordServiceEmail(String requestId, String email, String processingType, String resetMedium, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+        final String methodName = "RegistrationController :initiateresetPasswordService()";
+        try {
+            if (requestId != null && !requestId.equals("") && email != null && !email.equals("") && resetMedium != null && !resetMedium.equals("")) {
+                CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+                    @Override
+                    public void success(Dictionary<String, String> loginPropertiesResult) {
+                        successOfInitiateResetPasswordEmail(requestId, email,processingType, resetMedium, loginPropertiesResult, resetPasswordResponseEntityResult);
+                    }
+
+                    @Override
+                    public void failure(WebAuthError error) {
+                        resetPasswordResponseEntityResult.failure(error);
+                    }
+                });
+            } else {
+                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(
+                        "RequestID or email or Resetmedium must not be empty", "Error:" + methodName));
+            }
+        } catch (Exception e) {
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+                    WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+        }
+    }
+
+    private void successOfInitiateResetPasswordEmail(String requestId, String email,String processingType, String resetMedium, Dictionary<String, String> loginPropertiesResult, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+        String methodName = "RegistrationController :successOfInitiateResetPassword()";
+        try {
+            String baseurl = loginPropertiesResult.get("DomainURL");
+            String clientId = loginPropertiesResult.get("ClientId");
+
+            if (email != null && !email.equals("") && requestId != null && !requestId.equals("")) {
+                ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
+                resetPasswordRequestEntity.setProcessingType(processingType);
+                resetPasswordRequestEntity.setRequestId(requestId);
+                resetPasswordRequestEntity.setEmail(email);
+                resetPasswordRequestEntity.setResetMedium(resetMedium);
+
+                initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
+            } else {
+                String ErrorMessage = "RequestID or email mustnot be null";
+                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(ErrorMessage, "Error:" + methodName));
+            }
+        } catch (Exception e) {
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+                    WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+        }
+    }
 }
