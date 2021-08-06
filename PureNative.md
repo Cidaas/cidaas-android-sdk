@@ -678,7 +678,7 @@ There is the option to reset the password if the user forgot his password.
 
 For resetting the password, the app will get a verification code either via email or SMS. For email you need to call
 
-****initiateResetPasswordByEmail()****.
+****initiateResetPasswordByEMail()****.
 ```java
 cidaasNative.initiateResetPasswordByEMail("Your_requestId", "your_email_id","LINK", new EventResult < ResetPasswordResponseEntity > () {
 @Override
