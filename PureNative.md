@@ -680,7 +680,7 @@ For resetting the password, the app will get a verification code either via emai
 
 ****initiateResetPasswordByEmail()****.
 ```java
-cidaasNative.initiateResetPasswordByEmail("Your_requestId", "your_email_id", new Result < ResetPasswordResponseEntity > () {
+cidaasNative.initiateResetPasswordByEMail("Your_requestId", "your_email_id","LINK", new EventResult < ResetPasswordResponseEntity > () {
 @Override
 public void success(ResetPasswordResponseEntity result) {
    //Your success code here
