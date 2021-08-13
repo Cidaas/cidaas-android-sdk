@@ -219,7 +219,7 @@ public class ResetPasswordService {
 
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For Change Password
-                ResetNewPasswordUrl = baseurl + NativeURLHelper.getShared().getChangePasswordURl();
+                ResetNewPasswordUrl = baseurl + NativeURLHelper.getShared().getResetNewPasswordURl();
             } else {
                 callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.PROPERTY_MISSING,
                         context.getString(R.string.PROPERTY_MISSING), "Exception :ResetPasswordService :resetNewPassword()"));
