@@ -54,8 +54,26 @@ public class SettingsController {
     public void getConfiguredMFAList(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
         checkConfiguredMFAList(sub, settingsResult);
     }
+    //--------------------------------------------Settings--------------------------------------------------------------
+    public void getConfiguredMFAListupdated(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
+        checkConfiguredMFAListupdated(sub, settingsResult);
+    }
+    //-------------------------------------checkEntity-----------------------------------------------------------
+    private void checkConfiguredMFAListupdated(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
+        String methodName = "SettingsController:-checkConfiguredMFAList()";
+        try {
+            if (sub != null && !sub.equals("")) {
 
-
+                addPropertiesupdated(sub, settingsResult);
+            } else {
+                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", "Error:" + methodName));
+                return;
+            }
+        } catch (Exception e) {
+            settingsResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.MFA_LIST_FAILURE,
+                    e.getMessage()));
+        }
+    }
     //-------------------------------------checkEntity-----------------------------------------------------------
     private void checkConfiguredMFAList(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
         String methodName = "SettingsController:-checkConfiguredMFAList()";
@@ -73,6 +91,40 @@ public class SettingsController {
         }
     }
 
+    //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
+    private void addPropertiesupdated(final String sub, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
+        String methodName = "SettingsController:-addProperties()";
+        try {
+            //App properties
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String clientId = loginPropertiesResult.get("ClientId");
+
+                    //Add Properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+
+                    Map<String, String> mfalistentity = new Hashtable<>();
+                    mfalistentity.put("client_id",clientId);
+                    mfalistentity.put("sub",sub);
+                    mfalistentity.put("push_id",deviceInfoEntity.getPushNotificationId());
+                    mfalistentity.put("device_id",deviceInfoEntity.getDeviceId());
+
+                    callSettingsupdated(baseurl, mfalistentity, configuredMFAListResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    configuredMFAListResult.failure(error);
+                }
+            });
+
+        } catch (Exception e) {
+            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+                    WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
+        }
+    }
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
     private void addProperties(final String sub, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
@@ -87,31 +139,12 @@ public class SettingsController {
 
                     //Add Properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-                    //GetMFAListEntity getMFAListEntity = new GetMFAListEntity(deviceInfoEntity.getDeviceId(), deviceInfoEntity.getPushNotificationId(), clientId, sub);
-                  /*  GetMFAListEntity getMFAListEntity = new GetMFAListEntity();
-                    getMFAListEntity.setClient_id(clientId);
-                    getMFAListEntity.setDevice_id(deviceInfoEntity.getDeviceId());
-                    getMFAListEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
-                    getMFAListEntity.setSub(sub);*/
-                    //call settings call\
-                    Map<String, String> mfalistentity = new Hashtable<>();
-                    mfalistentity.put("client_id",clientId);
-                    mfalistentity.put("sub",sub);
-                    mfalistentity.put("push_id",deviceInfoEntity.getPushNotificationId());
-                    mfalistentity.put("device_id",deviceInfoEntity.getDeviceId());
-//                    JSONObject paramObject = new JSONObject();
-//                    try {
-//                        paramObject.put("client_id",clientId);
-//                        paramObject.put("sub",sub);
-//                        paramObject.put("push_id",deviceInfoEntity.getPushNotificationId());
-//                        paramObject.put("device_id",deviceInfoEntity.getDeviceId());
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+                    GetMFAListEntity getMFAListEntity = new GetMFAListEntity(deviceInfoEntity.getDeviceId(), deviceInfoEntity.getPushNotificationId(), clientId, sub);
 
-                   // callSettings(baseurl, getMFAListEntity, configuredMFAListResult);
-                   // callSettingsupdated(baseurl, paramObject.toString(), configuredMFAListResult);
-                    callSettingsupdated(baseurl, mfalistentity, configuredMFAListResult);
+
+
+                    callSettings(baseurl, getMFAListEntity, configuredMFAListResult);
+
                 }
 
                 @Override
