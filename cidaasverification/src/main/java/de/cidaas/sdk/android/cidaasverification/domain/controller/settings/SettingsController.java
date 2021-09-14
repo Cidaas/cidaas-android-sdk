@@ -94,23 +94,24 @@ public class SettingsController {
                     getMFAListEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
                     getMFAListEntity.setSub(sub);*/
                     //call settings call\
-//                    Map<String, String> mfalistentity = new Hashtable<>();
-//                    mfalistentity.put("client_id",clientId);
-//                    mfalistentity.put("sub",sub);
-//                    mfalistentity.put("push_id",deviceInfoEntity.getPushNotificationId());
-//                    mfalistentity.put("device_id",deviceInfoEntity.getDeviceId());
-                    JSONObject paramObject = new JSONObject();
-                    try {
-                        paramObject.put("client_id",clientId);
-                        paramObject.put("sub",sub);
-                        paramObject.put("push_id",deviceInfoEntity.getPushNotificationId());
-                        paramObject.put("device_id",deviceInfoEntity.getDeviceId());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    Map<String, String> mfalistentity = new Hashtable<>();
+                    mfalistentity.put("client_id",clientId);
+                    mfalistentity.put("sub",sub);
+                    mfalistentity.put("push_id",deviceInfoEntity.getPushNotificationId());
+                    mfalistentity.put("device_id",deviceInfoEntity.getDeviceId());
+//                    JSONObject paramObject = new JSONObject();
+//                    try {
+//                        paramObject.put("client_id",clientId);
+//                        paramObject.put("sub",sub);
+//                        paramObject.put("push_id",deviceInfoEntity.getPushNotificationId());
+//                        paramObject.put("device_id",deviceInfoEntity.getDeviceId());
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
 
                    // callSettings(baseurl, getMFAListEntity, configuredMFAListResult);
-                    callSettingsupdated(baseurl, paramObject.toString(), configuredMFAListResult);
+                   // callSettingsupdated(baseurl, paramObject.toString(), configuredMFAListResult);
+                    callSettingsupdated(baseurl, mfalistentity, configuredMFAListResult);
                 }
 
                 @Override
@@ -125,7 +126,7 @@ public class SettingsController {
         }
     }
 
-    private void callSettingsupdated(String baseurl, String mfalistentity, EventResult<ConfiguredMFAList> configuredMFAListResult) {
+    private void callSettingsupdated(String baseurl, Map<String, String> mfalistentity, EventResult<ConfiguredMFAList> configuredMFAListResult) {
         String methodName = "SettingsController:-callSettings()";
         try {
             String configuredListURL = VerificationURLHelper.getShared().getConfiguredListURL(baseurl);

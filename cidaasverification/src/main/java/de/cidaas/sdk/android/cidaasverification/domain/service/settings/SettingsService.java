@@ -126,12 +126,11 @@ public class SettingsService {
     }
 
 
-    public void getConfigurationListupdated(String settingsURL, Map<String, String> headers, String mfalistentity, EventResult<ConfiguredMFAList> configuredMFAListResult) {
+    public void getConfigurationListupdated(String settingsURL, Map<String, String> headers, Map<String, String> mfalistentity, EventResult<ConfiguredMFAList> configuredMFAListResult) {
         final String methodName = "SettingsService:-getConfigurationList()";
         try {
-            JSONObject jsonObject = new JSONObject(mfalistentity);
 
-            LogFile.getShared(context).addInfoLog(methodName, jsonObject.get("sub").toString());
+            LogFile.getShared(context).addInfoLog(methodName, mfalistentity.get("sub"));
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.getConfiguredMFAListupdated(settingsURL, headers, mfalistentity).enqueue(new Callback<ConfiguredMFAList>() {
@@ -139,12 +138,10 @@ public class SettingsService {
                 public void onResponse(Call<ConfiguredMFAList> call, Response<ConfiguredMFAList> response) {
                     if (response.isSuccessful()) {
 
-                        try {
-                            LogFile.getShared(context).addSuccessLog(methodName, response.toString() + "Sub:-" +jsonObject.get("sub").toString()/* getMFAListEntity.getSub()*/
+
+                            LogFile.getShared(context).addSuccessLog(methodName, response.toString() + "Sub:-" +mfalistentity.get("sub")/* getMFAListEntity.getSub()*/
                             );
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
                         if (response.code() == 200) {
                             configuredMFAListResult.success(response.body());
                         } else {

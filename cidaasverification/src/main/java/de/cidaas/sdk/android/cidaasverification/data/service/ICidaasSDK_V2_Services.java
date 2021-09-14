@@ -126,5 +126,5 @@ public interface ICidaasSDK_V2_Services {
 
 
     @POST
-    Call<ConfiguredMFAList> getConfiguredMFAListupdated(@Url String url, @HeaderMap Map<String, String> headers, @Body String mfalistentity);
+    Call<ConfiguredMFAList> getConfiguredMFAListupdated(@Url String url, @HeaderMap Map<String, String> headers, @Body Map<String, String> mfalistentity);
 }
