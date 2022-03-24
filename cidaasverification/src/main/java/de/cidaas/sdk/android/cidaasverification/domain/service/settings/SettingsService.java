@@ -4,9 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
@@ -126,46 +123,4 @@ public class SettingsService {
     }
 
 
-    public void getConfigurationListupdated(String settingsURL, Map<String, String> headers, Map<String, String> mfalistentity, EventResult<ConfiguredMFAList> configuredMFAListResult) {
-        final String methodName = "SettingsService:-getConfigurationList()";
-        try {
-
-            LogFile.getShared(context).addInfoLog(methodName, mfalistentity.get("sub"));
-            //call service
-            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
-            cidaasSDK_v2_services.getConfiguredMFAListupdated(settingsURL, headers, mfalistentity).enqueue(new Callback<ConfiguredMFAList>() {
-                @Override
-                public void onResponse(Call<ConfiguredMFAList> call, Response<ConfiguredMFAList> response) {
-                    if (response.isSuccessful()) {
-
-
-                            LogFile.getShared(context).addSuccessLog(methodName, response.toString() + "Sub:-" +mfalistentity.get("sub")/* getMFAListEntity.getSub()*/
-                            );
-
-                        if (response.code() == 200) {
-                            configuredMFAListResult.success(response.body());
-                        } else {
-
-                            ConfiguredMFAList configuredMFAList = new ConfiguredMFAList();
-                            configuredMFAList.setStatus(response.code());
-                            configuredMFAList.setSuccess(true);
-                            configuredMFAListResult.success(configuredMFAList);
-                        }
-                    } else {
-                        configuredMFAListResult.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE,
-                                response, "Error:- " + methodName));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ConfiguredMFAList> call, Throwable t) {
-                    configuredMFAListResult.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
-                }
-            });
-        } catch (Exception e) {
-            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
-                    WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
-        }
-    }
 }

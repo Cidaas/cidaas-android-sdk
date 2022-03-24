@@ -2,11 +2,7 @@ package de.cidaas.sdk.android.cidaasverification.domain.controller.settings;
 
 import android.content.Context;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
@@ -54,26 +50,8 @@ public class SettingsController {
     public void getConfiguredMFAList(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
         checkConfiguredMFAList(sub, settingsResult);
     }
-    //--------------------------------------------Settings--------------------------------------------------------------
-    public void getConfiguredMFAListupdated(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
-        checkConfiguredMFAListupdated(sub, settingsResult);
-    }
-    //-------------------------------------checkEntity-----------------------------------------------------------
-    private void checkConfiguredMFAListupdated(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
-        String methodName = "SettingsController:-checkConfiguredMFAList()";
-        try {
-            if (sub != null && !sub.equals("")) {
 
-                addPropertiesupdated(sub, settingsResult);
-            } else {
-                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", "Error:" + methodName));
-                return;
-            }
-        } catch (Exception e) {
-            settingsResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.MFA_LIST_FAILURE,
-                    e.getMessage()));
-        }
-    }
+
     //-------------------------------------checkEntity-----------------------------------------------------------
     private void checkConfiguredMFAList(String sub, final EventResult<ConfiguredMFAList> settingsResult) {
         String methodName = "SettingsController:-checkConfiguredMFAList()";
@@ -91,40 +69,6 @@ public class SettingsController {
         }
     }
 
-    //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
-    private void addPropertiesupdated(final String sub, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
-        String methodName = "SettingsController:-addProperties()";
-        try {
-            //App properties
-            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    final String clientId = loginPropertiesResult.get("ClientId");
-
-                    //Add Properties
-                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-
-                    Map<String, String> mfalistentity = new Hashtable<>();
-                    mfalistentity.put("client_id",clientId);
-                    mfalistentity.put("sub",sub);
-                    mfalistentity.put("push_id",deviceInfoEntity.getPushNotificationId());
-                    mfalistentity.put("device_id",deviceInfoEntity.getDeviceId());
-
-                    callSettingsupdated(baseurl, mfalistentity, configuredMFAListResult);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    configuredMFAListResult.failure(error);
-                }
-            });
-
-        } catch (Exception e) {
-            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
-                    WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
-        }
-    }
 
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
     private void addProperties(final String sub, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
@@ -141,8 +85,7 @@ public class SettingsController {
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
                     GetMFAListEntity getMFAListEntity = new GetMFAListEntity(deviceInfoEntity.getDeviceId(), deviceInfoEntity.getPushNotificationId(), clientId, sub);
 
-
-
+                    //call settings call
                     callSettings(baseurl, getMFAListEntity, configuredMFAListResult);
 
                 }
@@ -153,22 +96,6 @@ public class SettingsController {
                 }
             });
 
-        } catch (Exception e) {
-            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
-                    WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
-        }
-    }
-
-    private void callSettingsupdated(String baseurl, Map<String, String> mfalistentity, EventResult<ConfiguredMFAList> configuredMFAListResult) {
-        String methodName = "SettingsController:-callSettings()";
-        try {
-            String configuredListURL = VerificationURLHelper.getShared().getConfiguredListURL(baseurl);
-
-            //headers Generation
-            Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
-
-            //Settings Service call
-            SettingsService.getShared(context).getConfigurationListupdated(configuredListURL, headers, mfalistentity, configuredMFAListResult);
         } catch (Exception e) {
             configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));

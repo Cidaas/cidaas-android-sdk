@@ -99,6 +99,9 @@ public interface ICidaasSDK_V2_Services {
     @HTTP(method = "DELETE", hasBody = true)
     Call<DeleteResponse> delete(@Url String url, @HeaderMap Map<String, String> headers, @Body DeleteEntity deleteEntity);
 
+    //ConfiguredMFAList
+    @POST
+    Call<ConfiguredMFAList> getConfiguredMFAList(@Url String url, @HeaderMap Map<String, String> headers, @Body GetMFAListEntity getMFAListEntity);
 
     //For Authenticator app
     @GET
@@ -120,11 +123,5 @@ public interface ICidaasSDK_V2_Services {
     @POST
     Call<VerificationContinueResponseEntity> verificationContinue(@Url String url, @HeaderMap Map<String, String> headers, @Body VerificationContinue verificationContinueEntity);
 
-    //ConfiguredMFAList
-    @POST
-    Call<ConfiguredMFAList> getConfiguredMFAList(@Url String url, @HeaderMap Map<String, String> headers, @Body GetMFAListEntity getMFAListEntity);
 
-
-    @POST
-    Call<ConfiguredMFAList> getConfiguredMFAListupdated(@Url String url, @HeaderMap Map<String, String> headers, @Body Map<String, String> mfalistentity);
 }
