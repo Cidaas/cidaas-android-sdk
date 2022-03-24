@@ -1,6 +1,7 @@
 package de.cidaas.sdk.android.cidaasnative.data.service;
 
 import android.content.Context;
+import android.os.Build;
 
 import java.util.concurrent.TimeUnit;
 
@@ -81,7 +82,8 @@ public class CidaasNativeService {
         String ua = "Cidaas-" + CidaasHelper.APP_NAME;
         String baseUa = System.getProperty("http.agent");
         if (baseUa != null) {
-            ua = ua + "/" + CidaasHelper.APP_VERSION + "_" + BuildConfig.VERSION_NAME + " " + baseUa;
+           // ua = ua + "/" + CidaasHelper.APP_VERSION + "_" + BuildConfig.VERSION_NAME + " " + baseUa;
+            ua = ua + "/" + CidaasHelper.APP_VERSION + "_" + BuildConfig.VERSION_NAME +" Make:" + Build.BRAND+"_"+Build.DEVICE+" Model:" + Build.MODEL+ " " + baseUa;
         }
         return ua;
     }
