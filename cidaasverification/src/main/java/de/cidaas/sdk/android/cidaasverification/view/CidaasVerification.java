@@ -133,8 +133,8 @@ public class CidaasVerification {
     }
 
     //---------------------DELETE ALL CALL ------------------------------
-    public void deleteAll(EventResult<DeleteResponse> deleteResponseResult) {
-        DeleteController.getShared(context).deleteAllVerification(deleteResponseResult);
+    public void deleteAll(String baseURL, String clientId, EventResult<DeleteResponse> deleteResponseResult) {
+        DeleteController.getShared(context).deleteAllVerification(baseURL,clientId,deleteResponseResult);
     }
 
     //--------------------------------------------CONFIGURED MFA LIST CALL --------------------------------------------------------------

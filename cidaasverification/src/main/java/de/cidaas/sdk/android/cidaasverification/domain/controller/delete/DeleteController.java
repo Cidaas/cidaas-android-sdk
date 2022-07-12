@@ -17,6 +17,7 @@ import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.logger.LogFile;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
 import de.cidaas.sdk.android.properties.CidaasProperties;
+import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import de.cidaas.sdk.android.service.helperforservice.Headers.Headers;
 
 
@@ -124,41 +125,59 @@ public class DeleteController {
     }
 
     //--------------------------------------------DeleteAll--------------------------------------------------------------
-    public void deleteAllVerification(final EventResult<DeleteResponse> deleteResult) {
+    public void deleteAllVerification(String baseURL, String clientId, final EventResult<DeleteResponse> deleteResult) {
+//        DeleteEntity deleteEntity = new DeleteEntity();
+//        callDeleteAll(deleteEntity, deleteResult);
+
         DeleteEntity deleteEntity = new DeleteEntity();
-        callDeleteAll(deleteEntity, deleteResult);
+        UserInfoEntity userInfoEntity = new UserInfoEntity();
+        DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+        deleteEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+        deleteEntity.setDevice_id(deviceInfoEntity.getDeviceId());
+        deleteEntity.setSub(userInfoEntity.getSub());
+        deleteEntity.setClient_id(clientId);
+        callDeleteAll(baseURL,deleteEntity, deleteResult);
+
     }
 
 
     //--------------------------------------------callDeleteAll--------------------------------------------------------------
-    private void callDeleteAll(final DeleteEntity deleteEntity, final EventResult<DeleteResponse> deleteResult) {
+    private void callDeleteAll(String baseURL, final DeleteEntity deleteEntity,final EventResult<DeleteResponse> deleteResult) {
         String methodName = "DeleteController:-callDeleteAll()";
         try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    String clientId = loginPropertiesResult.get("ClientId");
+            String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseURL, deleteEntity.getDevice_id());
+            //String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseurl, deviceInfoEntity.getDeviceId());
 
-                    //Add Delete Properties
-                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-                    deleteEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
-                    deleteEntity.setClient_id(clientId);
+            //headers Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
 
-                    String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseurl, deviceInfoEntity.getDeviceId());
-
-                    //headers Generation
-                    Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
-
-                    //Delete Service call
-                    DeleteService.getShared(context).callDeleteService(deleteAllUrl, headers, deleteEntity, deleteResult);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    deleteResult.failure(error);
-                }
-            });
+            //Delete Service call
+            DeleteService.getShared(context).callDeleteService(deleteAllUrl, headers, deleteEntity, deleteResult);
+//            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+//                @Override
+//                public void success(Dictionary<String, String> loginPropertiesResult) {
+//                    final String baseurl = loginPropertiesResult.get("DomainURL");
+//                    String clientId = loginPropertiesResult.get("ClientId");
+//
+//                    //Add Delete Properties
+//                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+//                    deleteEntity.setPush_id(deviceInfoEntity.getPushNotificationId());
+//                    deleteEntity.setClient_id(clientId);
+//
+//                    String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseurl, deviceInfoEntity.getDeviceId());
+//
+//                    //headers Generation
+//                    Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
+//
+//                    //Delete Service call
+//                    DeleteService.getShared(context).callDeleteService(deleteAllUrl, headers, deleteEntity, deleteResult);
+//                }
+//
+//                @Override
+//                public void failure(WebAuthError error) {
+//                    deleteResult.failure(error);
+//                }
+//            });
         } catch (Exception e) {
             deleteResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
                     e.getMessage()));
