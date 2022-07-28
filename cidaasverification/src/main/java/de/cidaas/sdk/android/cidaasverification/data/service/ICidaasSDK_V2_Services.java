@@ -8,6 +8,8 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.Authent
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryDataEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.enroll.EnrollEntity;
@@ -114,6 +116,12 @@ public interface ICidaasSDK_V2_Services {
     //AuthenticatedHistory List
     @POST
     Call<AuthenticatedHistoryResponse> getAuthenticatedHistory(@Url String url, @HeaderMap Map<String, String> headers, @Body AuthenticatedHistoryEntity authenticatedHistoryEntity);
+
+    //AuthenticatedHistory List
+    @POST
+    Call<UserAuthenticatedHistoryResponse> getAuthenticatedHistoryDetail(@Url String url, @HeaderMap Map<String, String> headers, @Body UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity);
+
+
 
     //Update FCM List
     @POST

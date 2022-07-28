@@ -225,7 +225,7 @@ public class AuthenticateController {
                     authenticateHashmap.put("client_id", StringtoRequestBody(clientId));
                     authenticateHashmap.put("push_id", StringtoRequestBody(deviceInfoEntity.getPushNotificationId()));
                     authenticateHashmap.put("face_attempt", StringtoRequestBody("" + authenticateEntity.getFace_attempt() + ""));
-
+                    authenticateHashmap.put("sub", StringtoRequestBody(authenticateEntity.getSub()));
 
                     //call authenticate call
                     callAuthenticateForFaceandVoice(baseurl, filetosend, authenticateHashmap, authenticateEntity.getVerificationType(), authenticateResult);

@@ -10,6 +10,8 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.Authent
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryDataEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.enduser.configurerequest.ConfigurationRequest;
@@ -147,7 +149,10 @@ public class CidaasVerification {
                                         EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryList(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
-
+    public void getAuthenticatedHistoryDetail(UserAuthenticatedHistoryDataEntity userAuthenticatedHistoryDataEntity,
+                                              EventResult<UserAuthenticatedHistoryResponse> userAuthenticatedHistoryResponseEventResult) {
+        AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryListDetail(userAuthenticatedHistoryDataEntity, userAuthenticatedHistoryResponseEventResult);
+    }
     //-------------------------------------------------------UPDATE FCMTOKEN CALL--------------------------------------------------------------
     public void updateFCMToken(String FCMToken) {
         SettingsController.getShared(context).updateFCMToken(FCMToken);
@@ -267,7 +272,7 @@ public class CidaasVerification {
         AuthenticateEntity authenticateEntity = new AuthenticateEntity(exchange_id, code, verificationType);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsageType(usageType);
-        PasswordlessLoginController.getShared(context).authenticateVerification(authenticateEntity, verificationType, requestId, loginRequest, loginResult);
+   //     PasswordlessLoginController.getShared(context).authenticateVerification(authenticateEntity, verificationType, requestId, loginRequest, loginResult);
     }
 
     public void loginWithPattern(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
@@ -305,5 +310,6 @@ public class CidaasVerification {
         //Store Device info for Later Purposes
         DBHelper.getShared().setFCMToken(FCMToken);
     }
+
 
 }

@@ -19,6 +19,10 @@ public class AuthenticateEntity implements Serializable {
     private String pass_code = "";
     private String verificationType = "";
 
+
+
+    private String sub = "";
+
     @JsonIgnore
     private FingerPrintEntity fingerPrintEntity;
 
@@ -26,8 +30,7 @@ public class AuthenticateEntity implements Serializable {
     private File fileToSend;
     private int face_attempt = 0;
 
-    public AuthenticateEntity() {
-    }
+
 
 
     //For Pattern,push
@@ -48,11 +51,16 @@ public class AuthenticateEntity implements Serializable {
 
     //For Face And voice
 
-    public AuthenticateEntity(String exchange_id, String verificationType, File fileToSend, int face_attempt) {
+    public AuthenticateEntity(String exchange_id, String verificationType, File fileToSend, int face_attempt, String sub) {
         this.exchange_id = exchange_id;
         this.verificationType = verificationType;
         this.fileToSend = fileToSend;
         this.face_attempt = face_attempt;
+        this.sub=sub;
+    }
+
+    public AuthenticateEntity() {
+
     }
 
     @JsonIgnore
@@ -65,7 +73,13 @@ public class AuthenticateEntity implements Serializable {
     public void setFingerPrintEntity(FingerPrintEntity fingerPrintEntity) {
         this.fingerPrintEntity = fingerPrintEntity;
     }
+    public String getSub() {
+        return sub;
+    }
 
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
     public String getVerificationType() {
         return verificationType;
     }
