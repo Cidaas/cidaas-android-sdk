@@ -58,6 +58,13 @@ public class AuthenticateEntity implements Serializable {
         this.face_attempt = face_attempt;
         this.sub=sub;
     }
+    public AuthenticateEntity(String exchange_id, String verificationType, File fileToSend, int face_attempt) {
+        this.exchange_id = exchange_id;
+        this.verificationType = verificationType;
+        this.fileToSend = fileToSend;
+        this.face_attempt = face_attempt;
+
+    }
 
     public AuthenticateEntity() {
 

@@ -272,7 +272,7 @@ public class CidaasVerification {
         AuthenticateEntity authenticateEntity = new AuthenticateEntity(exchange_id, code, verificationType);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsageType(usageType);
-   //     PasswordlessLoginController.getShared(context).authenticateVerification(authenticateEntity, verificationType, requestId, loginRequest, loginResult);
+        PasswordlessLoginController.getShared(context).authenticateVerification(authenticateEntity, verificationType, requestId, loginRequest, loginResult);
     }
 
     public void loginWithPattern(final LoginRequest loginRequest, final EventResult<LoginCredentialsResponseEntity> authenticateResponseResult) {
