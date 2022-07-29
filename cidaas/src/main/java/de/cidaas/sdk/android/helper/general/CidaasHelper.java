@@ -65,10 +65,10 @@ public class CidaasHelper {
         //Add Device info
         deviceInfoEntity = new DeviceInfoEntity();
         deviceInfoEntity.setDeviceId(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
-        deviceInfoEntity.setDeviceModel(MODEL);
+        deviceInfoEntity.setDeviceModel(android.os.Build.MODEL);
         deviceInfoEntity.setDeviceVersion(String.valueOf(Build.VERSION.RELEASE));
-        deviceInfoEntity.setDeviceMake(Build.MANUFACTURER);
-
+        deviceInfoEntity.setDeviceMake(Build.MANUFACTURER+" "+Build.BRAND);
+        deviceInfoEntity.setDeviceType("MOBILE");
 
         if (DBHelper.getShared().getFCMToken() != null && !DBHelper.getShared().getFCMToken().equals("")) {
             deviceInfoEntity.setPushNotificationId(DBHelper.getShared().getFCMToken());

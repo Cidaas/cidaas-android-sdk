@@ -149,6 +149,10 @@ public class CidaasVerification {
                                         EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryList(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
+    public void getAuthenticatedHistoryNew(AuthenticatedHistoryEntity authenticatedHistoryEntity,
+                                        EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+        AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryListNew(authenticatedHistoryEntity, authenticatedHistoryResult);
+    }
     public void getAuthenticatedHistoryDetail(UserAuthenticatedHistoryDataEntity userAuthenticatedHistoryDataEntity,
                                               EventResult<UserAuthenticatedHistoryResponse> userAuthenticatedHistoryResponseEventResult) {
         AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryListDetail(userAuthenticatedHistoryDataEntity, userAuthenticatedHistoryResponseEventResult);
