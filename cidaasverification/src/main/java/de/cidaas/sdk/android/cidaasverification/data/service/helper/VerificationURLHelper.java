@@ -41,7 +41,8 @@ public class VerificationURLHelper {
     private String getPendingNotificationURL = "/verification-srv/v2/setup/device/pending/auth/list";
 
     private String getAuthentictedHistoryURL = "/verification-srv/v2/setup/device/authenticated/list";
-
+    private String userHistoryURL = "/verification-srv/v2/device/mfa/history";
+    private String userHistoryDetailURL = "/verification-srv/v2/device/mfa/timeline";
     //Update FCM Token
     private String updateFCMTokenURL = "/verification-srv/v2/setup/device/update/pushid";
 
@@ -103,6 +104,15 @@ public class VerificationURLHelper {
 
     public String getAuthentictedHistoryURL(String baseurl) {
         return baseurl + getAuthentictedHistoryURL;
+       // return baseurl + userHistoryURL;
+    }
+    public String getAuthentictedHistoryURLNew(String baseurl) {
+        //return baseurl + getAuthentictedHistoryURL;
+         return baseurl + userHistoryURL;
+    }
+    public String getAuthentictedHistoryDetailURL(String baseurl) {
+        // return baseurl + getAuthentictedHistoryURL;
+        return baseurl + userHistoryDetailURL;
     }
 
     public String getUpdateFCMTokenURL(String baseurl) {
