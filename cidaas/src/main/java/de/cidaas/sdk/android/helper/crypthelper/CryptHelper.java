@@ -29,7 +29,7 @@ public final class AESCrypt {
     private static final String HASH_ALGORITHM = "SHA-256";
 
     //AESCrypt-ObjC uses blank IV (not the best security, but the aim here is compatibility)
-    private static final byte[] ivBytes = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    private static final byte[] ivBytes = randomBytes(16);
 
     //togglable log option (please turn off in live!)
     public static boolean DEBUG_LOG_ENABLED = false;
@@ -192,6 +192,17 @@ public final class AESCrypt {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    /**
+    * generate random bytes with SecureRandom
+    * @param length
+    */
+     private static byte[] randomBytes(int length) throws GeneralSecurityException {
+        SecureRandom random = new SecureRandom();
+        byte[] b = new byte[length];
+        random.nextBytes(b);
+        return b;
     }
 
     private AESCrypt() {
