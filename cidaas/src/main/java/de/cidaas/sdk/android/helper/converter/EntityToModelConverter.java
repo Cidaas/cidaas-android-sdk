@@ -2,8 +2,6 @@ package de.cidaas.sdk.android.helper.converter;
 
 import android.content.Context;
 
-import com.scottyab.aescrypt.AESCrypt;
-
 import java.util.UUID;
 
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -13,6 +11,8 @@ import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.logger.LogFile;
 import de.cidaas.sdk.android.models.dbmodel.AccessTokenModel;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
+import de.cidaas.sdk.android.helper.crypthelper.AESCrypt;
+
 
 /**
  * Created by widasrnarayanan on 13/2/18.
