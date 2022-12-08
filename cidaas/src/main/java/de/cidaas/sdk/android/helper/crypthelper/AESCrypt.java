@@ -12,16 +12,11 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Encrypt and decrypt messages using AES 256 bit encryption that are compatible with AESCrypt-ObjC and AESCrypt Ruby.
- * <p/>
- * Created by scottab on 04/10/2014.
- */
 public final class AESCrypt {
 
     private static final String TAG = "AESCrypt";
 
-    //AESCrypt-ObjC uses CBC and PKCS7Padding
+    //AESCrypt-ObjC uses GCM and PKCS7Padding
     private static final String AES_MODE = "AES/GCM/PKCS7Padding";
     private static final String CHARSET = "UTF-8";
 
