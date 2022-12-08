@@ -22,7 +22,7 @@ public final class AESCrypt {
     private static final String TAG = "AESCrypt";
 
     //AESCrypt-ObjC uses CBC and PKCS7Padding
-    private static final String AES_MODE = "AES/CBC/PKCS7Padding";
+    private static final String AES_MODE = "AES/GCM/PKCS7Padding";
     private static final String CHARSET = "UTF-8";
 
     //AESCrypt-ObjC uses SHA-256 (and so a 256-bit key)
@@ -84,6 +84,28 @@ public final class AESCrypt {
         }
     }
 
+
+    /**
+     * More flexible AES encrypt that doesn't encode
+     * @param key AES key typically 128, 192 or 256 bit
+     * @param iv Initiation Vector
+     * @param message in bytes (assumed it's already been decoded)
+     * @return Encrypted cipher text (not encoded)
+     * @throws GeneralSecurityException if something goes wrong during encryption
+     */
+    public static byte[] encrypt(final SecretKeySpec key, final byte[] iv, final byte[] message)
+            throws GeneralSecurityException {
+        final Cipher cipher = Cipher.getInstance(AES_MODE);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+        byte[] cipherText = cipher.doFinal(message);
+
+        log("cipherText", cipherText);
+
+        return cipherText;
+    }
+
+
     /**
      * Decrypt and decode ciphertext using 256-bit AES with key generated from password
      *
@@ -117,6 +139,31 @@ public final class AESCrypt {
             throw new GeneralSecurityException(e);
         }
     }
+
+
+    /**
+     * More flexible AES decrypt that doesn't encode
+     *
+     * @param key AES key typically 128, 192 or 256 bit
+     * @param iv Initiation Vector
+     * @param decodedCipherText in bytes (assumed it's already been decoded)
+     * @return Decrypted message cipher text (not encoded)
+     * @throws GeneralSecurityException if something goes wrong during encryption
+     */
+    public static byte[] decrypt(final SecretKeySpec key, final byte[] iv, final byte[] decodedCipherText)
+            throws GeneralSecurityException {
+            final Cipher cipher = Cipher.getInstance(AES_MODE);
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+            byte[] decryptedBytes = cipher.doFinal(decodedCipherText);
+
+            log("decryptedBytes", decryptedBytes);
+
+            return decryptedBytes;
+    }
+
+
+
 
     private static void log(String what, byte[] bytes) {
         if (DEBUG_LOG_ENABLED)
