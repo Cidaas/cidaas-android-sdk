@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -193,7 +194,7 @@ public final class AESCrypt {
     * generate random bytes with SecureRandom
     * @param length
     */
-     private static byte[] randomBytes(int length) throws GeneralSecurityException {
+     private static byte[] randomBytes(int length) {
         SecureRandom random = new SecureRandom();
         byte[] b = new byte[length];
         random.nextBytes(b);
