@@ -14,7 +14,16 @@ public class DeviceInfoEntity implements Parcelable {
     private String deviceModel;
     private String deviceVersion;
     private String pushNotificationId;
+    private String deviceType;
 
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
     public String getPushNotificationId() {
         return pushNotificationId;
     }
@@ -67,6 +76,7 @@ public class DeviceInfoEntity implements Parcelable {
         dest.writeString(this.deviceMake);
         dest.writeString(this.deviceModel);
         dest.writeString(this.deviceVersion);
+        dest.writeString(this.deviceType);
     }
 
     public DeviceInfoEntity() {
@@ -78,6 +88,7 @@ public class DeviceInfoEntity implements Parcelable {
         this.deviceModel = in.readString();
         this.deviceVersion = in.readString();
         this.pushNotificationId = in.readString();
+        this.deviceType = in.readString();
     }
 
     public static final Parcelable.Creator<DeviceInfoEntity> CREATOR = new Parcelable.Creator<DeviceInfoEntity>() {
@@ -91,4 +102,6 @@ public class DeviceInfoEntity implements Parcelable {
             return new DeviceInfoEntity[size];
         }
     };
+
+
 }
