@@ -18,7 +18,8 @@ public final class AESCrypt {
     private static final String TAG = "AESCrypt";
 
     //AESCrypt-ObjC uses GCM and PKCS7Padding
-    private static final String AES_MODE = "AES/GCM/PKCS7Padding";
+    //private static final String AES_MODE = "AES/GCM/PKCS7Padding";
+    private static final String AES_MODE = "AES/GCM/NOPadding";
     private static final String CHARSET = "UTF-8";
 
     //AESCrypt-ObjC uses SHA-256 (and so a 256-bit key)
