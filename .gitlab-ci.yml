@@ -2,7 +2,7 @@ include:
   - project: 'widas/codequality'
     ref: code-coverage-failure-allow 
     file: 'ci_templates/android.gitlab-ci.yml'
-  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 stages:
   - test
