@@ -25,8 +25,8 @@ public final class AESCrypt {
     //AESCrypt-ObjC uses SHA-256 (and so a 256-bit key)
     private static final String HASH_ALGORITHM = "SHA-256";
 
-    //AESCrypt-ObjC uses blank IV (not the best security, but the aim here is compatibility)
-    private static final byte[] ivBytes = randomBytes(16);
+    //AESCrypt-ObjC uses 16 bytes of IV
+    private static final int ivLength = 16;
 
     //togglable log option (please turn off in live!)
     public static boolean DEBUG_LOG_ENABLED = false;
@@ -68,10 +68,10 @@ public final class AESCrypt {
 
             log("message", message);
 
-            byte[] cipherText = encrypt(key, ivBytes, message.getBytes(CHARSET));
+            byte[] cipherTextAndIv = encrypt(key, message.getBytes(CHARSET));
 
             //NO_WRAP is important as was getting \n at the end
-            String encoded = Base64.encodeToString(cipherText, Base64.NO_WRAP);
+            String encoded = Base64.encodeToString(cipherTextAndIv, Base64.NO_WRAP);
             log("Base64.NO_WRAP", encoded);
             return encoded;
         } catch (UnsupportedEncodingException e) {
@@ -85,21 +85,25 @@ public final class AESCrypt {
     /**
      * More flexible AES encrypt that doesn't encode
      * @param key AES key typically 128, 192 or 256 bit
-     * @param iv Initiation Vector
      * @param message in bytes (assumed it's already been decoded)
-     * @return Encrypted cipher text (not encoded)
+     * @return Encrypted cipher text (not encoded) and iv for decrypt
      * @throws GeneralSecurityException if something goes wrong during encryption
      */
-    public static byte[] encrypt(final SecretKeySpec key, final byte[] iv, final byte[] message)
+    public static byte[] encrypt(final SecretKeySpec key, final byte[] message)
             throws GeneralSecurityException {
         final Cipher cipher = Cipher.getInstance(AES_MODE);
+        final byte[] iv = randomBytes(ivLength);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
         cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
         byte[] cipherText = cipher.doFinal(message);
 
         log("cipherText", cipherText);
 
-        return cipherText;
+        byte[] cipherTextAndIv = new byte[cipherText.length + ivLength];
+        System.arraycopy(iv, 0, cipherTextAndIv, 0, ivLength);
+        System.arraycopy(cipherText, 0, cipherTextAndIv, ivLength, cipherText.length);
+
+        return cipherTextAndIv;
     }
 
 
@@ -121,7 +125,7 @@ public final class AESCrypt {
             byte[] decodedCipherText = Base64.decode(base64EncodedCipherText, Base64.NO_WRAP);
             log("decodedCipherText", decodedCipherText);
 
-            byte[] decryptedBytes = decrypt(key, ivBytes, decodedCipherText);
+            byte[] decryptedBytes = decrypt(key, decodedCipherText);
 
             log("decryptedBytes", decryptedBytes);
             String message = new String(decryptedBytes, CHARSET);
@@ -142,17 +146,23 @@ public final class AESCrypt {
      * More flexible AES decrypt that doesn't encode
      *
      * @param key AES key typically 128, 192 or 256 bit
-     * @param iv Initiation Vector
      * @param decodedCipherText in bytes (assumed it's already been decoded)
      * @return Decrypted message cipher text (not encoded)
      * @throws GeneralSecurityException if something goes wrong during encryption
      */
-    public static byte[] decrypt(final SecretKeySpec key, final byte[] iv, final byte[] decodedCipherText)
+    public static byte[] decrypt(final SecretKeySpec key, final byte[] decodedCipherText)
             throws GeneralSecurityException {
             final Cipher cipher = Cipher.getInstance(AES_MODE);
+
+            byte[] iv = new byte[ivLength];
+            System.arraycopy(decodedCipherText, 0, iv, 0, ivLength);
+
+            byte[] decodedCipherTextWithoutIv = new byte[decodedCipherText.length - ivLength];
+            System.arraycopy(decodedCipherText, ivLength, decodedCipherTextWithoutIv, 0, decodedCipherTextWithoutIv.length);
+
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
             cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
-            byte[] decryptedBytes = cipher.doFinal(decodedCipherText);
+            byte[] decryptedBytes = cipher.doFinal(decodedCipherTextWithoutIv);
 
             log("decryptedBytes", decryptedBytes);
 
