@@ -23,8 +23,8 @@ public class LoginEntityTest {
 
     @Test
     public void setPassword() {
-        loginEntity.setPassword("Password");
-        Assert.assertEquals("Password", loginEntity.getPassword());
+        loginEntity.setPassword("");
+        Assert.assertEquals("", loginEntity.getPassword());
     }
 
 }

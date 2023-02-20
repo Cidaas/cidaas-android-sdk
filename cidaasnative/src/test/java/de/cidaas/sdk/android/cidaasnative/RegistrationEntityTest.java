@@ -62,8 +62,8 @@ public class RegistrationEntityTest {
 
     @Test
     public void setPassword() {
-        registrationEntity.setPassword("Password");
-        Assert.assertEquals("Password", registrationEntity.getPassword());
+        registrationEntity.setPassword("");
+        Assert.assertEquals("", registrationEntity.getPassword());
     }
 
     @Test
