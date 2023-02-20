@@ -115,8 +115,6 @@ public class TOTP {
                 String fmtTime = String.format("%1$-11s", testTime[i]);
                 String utcTime = df.format(new Date(testTime[i] * 1000));
                 System.out.print("|  " + fmtTime + "  |  " + utcTime + "  | " + steps + " |");
-                System.out.println(generateTOTP(seed, steps, "6", "HmacSHA1") + "| SHA1   |");
-                System.out.print("|  " + fmtTime + "  |  " + utcTime + "  | " + steps + " |");
                 System.out.println(generateTOTP(seed32, steps, "6", "HmacSHA256") + "| SHA256 |");
                 System.out.print("|  " + fmtTime + "  |  " + utcTime + "  | " + steps + " |");
                 System.out.println(generateTOTP(seed64, steps, "6", "HmacSHA512") + "| SHA512 |");
