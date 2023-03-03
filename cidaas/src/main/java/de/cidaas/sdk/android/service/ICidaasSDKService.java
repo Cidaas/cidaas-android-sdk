@@ -6,6 +6,8 @@ import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.entity.documentscanner.DocumentScannerServiceResultEntity;
+import de.cidaas.sdk.android.service.entity.notificationentity.DenyNotification.DenyNotificationRequestEntity;
+import de.cidaas.sdk.android.service.entity.notificationentity.DenyNotification.DenyNotificationResponseEntity;
 import de.cidaas.sdk.android.service.entity.notificationentity.getpendingnotification.NotificationEntity;
 import de.cidaas.sdk.android.service.entity.socialprovider.SocialProviderEntity;
 import de.cidaas.sdk.android.service.entity.userlogininfo.UserLoginInfoEntity;
@@ -63,8 +65,8 @@ public interface ICidaasSDKService {
 
     // Deny Notification
     @POST
-    Call<de.cidaas.sdk.android.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationResponseEntity> denyNotificationService(@Url String url, @Header("Content-Type") String content_type,
-                                                                                                                                          @Header("access_token") String access_token, @HeaderMap Map<String, String> headers, @Body de.cidaas.sdk.android.Service.Entity.NotificationEntity.DenyNotification.DenyNotificationRequestEntity denyRequest);
+    Call<DenyNotificationResponseEntity> denyNotificationService(@Url String url, @Header("Content-Type") String content_type, @Header("access_token") String access_token, 
+                                                                 @HeaderMap Map<String, String> headers, @Body DenyNotificationRequestEntity denyRequest);
 
 
     //Pending Notification

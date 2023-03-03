@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.Service.Entity.NotificationEntity.DenyNotification;
+package de.cidaas.sdk.android.service.entity.notificationentity.DenyNotification;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

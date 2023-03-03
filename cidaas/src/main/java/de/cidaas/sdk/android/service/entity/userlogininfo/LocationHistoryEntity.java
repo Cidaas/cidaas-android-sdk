@@ -1,4 +1,4 @@
-package de.cidaas.sdk.android.Service.Entity.UserLoginInfo;
+package de.cidaas.sdk.android.service.entity.userlogininfo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
