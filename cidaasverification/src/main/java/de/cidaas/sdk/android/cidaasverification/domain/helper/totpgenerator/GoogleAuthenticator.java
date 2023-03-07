@@ -28,6 +28,6 @@ public class GoogleAuthenticator {
         //String key = Hex.encodeHexString(bytes);
         long time = (System.currentTimeMillis() / 1000) / 30;
         String hexTime = Long.toHexString(time);
-        return TOTP.generateTOTP(String.valueOf(hexKey), hexTime, "6");
+        return TOTP.generateTOTP256(String.valueOf(hexKey), hexTime, "6");
     }
 }

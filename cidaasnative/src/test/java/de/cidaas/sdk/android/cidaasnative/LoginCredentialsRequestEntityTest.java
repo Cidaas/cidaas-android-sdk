@@ -19,8 +19,8 @@ public class LoginCredentialsRequestEntityTest {
 
     @Test
     public void setPassword() {
-        loginCredentialsRequestEntity.setPassword("Password");
-        Assert.assertEquals("Password", loginCredentialsRequestEntity.getPassword());
+        loginCredentialsRequestEntity.setPassword("");
+        Assert.assertEquals("", loginCredentialsRequestEntity.getPassword());
     }
 
     @Test

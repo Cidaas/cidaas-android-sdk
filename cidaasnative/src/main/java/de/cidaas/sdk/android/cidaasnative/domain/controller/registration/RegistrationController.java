@@ -147,9 +147,13 @@ public class RegistrationController {
                                     checkNotNull(dataEntity, "given_name", registrationEntity.getGiven_name());
                                     checkNotNull(dataEntity, "family_name", registrationEntity.getFamily_name());
                                     checkNotNull(dataEntity, "mobile_number", registrationEntity.getMobile_number());
-                                    checkNotNull(dataEntity, "password", registrationEntity.getPassword());
                                     checkNotNull(dataEntity, "username", registrationEntity.getUsername());
                                     checkNotNull(dataEntity, "birthdate", registrationEntity.getBirthdate().toString());
+                                    if (dataEntity.getFieldKey().equals("password")
+                                            && dataEntity.isRequired()
+                                            && registrationEntity.getPassword().isEmpty()) {
+                                        registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException("password must not be empty", methodName));
+                                    }
 
                                     if (dataEntity.getFieldKey().equals("password_echo")) {
                                         if (dataEntity.isRequired() && registrationEntity.getPassword_echo().equals("")) {
@@ -197,7 +201,7 @@ public class RegistrationController {
                 private void checkNotNull(RegistrationSetupResultDataEntity dataEntity, String key, String registrationEntityValue) {
                     if (dataEntity.getFieldKey().equals(key)
                             && dataEntity.isRequired()
-                            && registrationEntityValue.equals("")) {
+                            && registrationEntityValue.isEmpty()) {
                         String errorMessage = key + " must not be empty";
                         registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
                     }
