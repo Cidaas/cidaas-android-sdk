@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "0.0.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
 
         // We need this in every sub-module due to https://issuetracker.google.com/issues/158695880
         buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")

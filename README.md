@@ -70,6 +70,8 @@ dependencies {
  ```
 This will add all the subproject of cidaas SDK, if you only need a specific subproject for your use case, just add it's name before the version. E.g.:
 
+If you have R8 activated (minifyEnabled:true) for your App, please update consumer-rules.pro in respective SDK modules to use SDK features.
+
 
  ```java
 dependencies {
