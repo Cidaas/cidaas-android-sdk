@@ -8,6 +8,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.Authent
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponseNew;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryDataEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
@@ -116,6 +117,9 @@ public interface ICidaasSDK_V2_Services {
     //AuthenticatedHistory List
     @POST
     Call<AuthenticatedHistoryResponse> getAuthenticatedHistory(@Url String url, @HeaderMap Map<String, String> headers, @Body AuthenticatedHistoryEntity authenticatedHistoryEntity);
+
+    @POST
+    Call<AuthenticatedHistoryResponseNew> getAuthenticatedHistoryNew(@Url String url, @HeaderMap Map<String, String> headers, @Body AuthenticatedHistoryEntity authenticatedHistoryEntity);
 
     //AuthenticatedHistory List
     @POST
