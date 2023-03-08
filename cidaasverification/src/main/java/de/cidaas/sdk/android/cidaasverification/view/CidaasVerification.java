@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.Authent
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponseNew;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryDataEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
@@ -150,7 +151,7 @@ public class CidaasVerification {
         AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryList(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
     public void getAuthenticatedHistoryNew(AuthenticatedHistoryEntity authenticatedHistoryEntity,
-                                        EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+                                           EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
         AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryListNew(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
     public void getAuthenticatedHistoryDetail(UserAuthenticatedHistoryDataEntity userAuthenticatedHistoryDataEntity,

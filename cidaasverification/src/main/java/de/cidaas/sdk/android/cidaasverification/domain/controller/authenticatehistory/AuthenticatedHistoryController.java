@@ -7,6 +7,7 @@ import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponseNew;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryDataEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
@@ -50,7 +51,7 @@ public class AuthenticatedHistoryController {
     public void getauthenticatedHistoryList(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
         checkAuthenticatedHistoryEntity(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
-    public void getauthenticatedHistoryListNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    public void getauthenticatedHistoryListNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
         checkAuthenticatedHistoryEntityNew(authenticatedHistoryEntity, authenticatedHistoryResult);
     }
 
@@ -64,7 +65,7 @@ public class AuthenticatedHistoryController {
         try {
 
 
-                    addPropertiesDetail(authenticatedHistoryEntity, authenticatedHistoryResult);
+            addPropertiesDetail(authenticatedHistoryEntity, authenticatedHistoryResult);
 
 
         } catch (Exception e) {
@@ -73,7 +74,7 @@ public class AuthenticatedHistoryController {
         }
     }
 
-    private void checkAuthenticatedHistoryEntityNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    private void checkAuthenticatedHistoryEntityNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
         String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
         try {
             if (authenticatedHistoryEntity.getVerification_type() != null && !authenticatedHistoryEntity.getVerification_type().equals("") &&
@@ -195,7 +196,7 @@ public class AuthenticatedHistoryController {
                     e.getMessage()));
         }
     }
-    private void addPropertiesNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    private void addPropertiesNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
         String methodName = "AuthenticatedHistoryController:-addProperties()";
         try {
 
@@ -259,7 +260,7 @@ public class AuthenticatedHistoryController {
                     e.getMessage()));
         }
     }
-    private void callAuthenticatedHistoryNew(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
+    private void callAuthenticatedHistoryNew(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
         String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryURLNew(baseurl);
@@ -268,7 +269,7 @@ public class AuthenticatedHistoryController {
             Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
 
             //AuthenticatedHistory Service call
-            AuthenticatedHistoryService.getShared(context).callAuthenticatedHistoryService(authenticatedHistoryUrl, headers, authenticatedHistoryEntity, authenticatedHistoryResult);
+            AuthenticatedHistoryService.getShared(context).callAuthenticatedHistoryServiceNew(authenticatedHistoryUrl, headers, authenticatedHistoryEntity, authenticatedHistoryResult);
         } catch (Exception e) {
             authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
