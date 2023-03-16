@@ -80,7 +80,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.1.11'
+                version = '3.1.15'
                 artifact(sourceJar)
             }
         }
