@@ -10,15 +10,15 @@ import java.util.List;
 public class UserLoginInfoDataEntity implements Serializable {
 
     @JsonProperty("data")
-    private List<de.cidaas.sdk.android.Service.Entity.UserLoginInfo.UserLoginInfoResponseDataEntity> data;
+    private List<UserLoginInfoResponseDataEntity> data;
     private int count;
 
 
-    public List<de.cidaas.sdk.android.Service.Entity.UserLoginInfo.UserLoginInfoResponseDataEntity> getData() {
+    public List<UserLoginInfoResponseDataEntity> getData() {
         return data;
     }
 
-    public void setData(List<de.cidaas.sdk.android.Service.Entity.UserLoginInfo.UserLoginInfoResponseDataEntity> data) {
+    public void setData(List<UserLoginInfoResponseDataEntity> data) {
         this.data = data;
     }
 
