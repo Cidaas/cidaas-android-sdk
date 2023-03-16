@@ -8,6 +8,7 @@ import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponseNew;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryDataEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
@@ -49,7 +50,34 @@ public class AuthenticatedHistoryService {
         return shared;
     }
 
+    public void callAuthenticatedHistoryServiceNew(@NonNull String authenticatedHistoryURL, Map<String, String> headers, AuthenticatedHistoryEntity authenticatedHistoryEntity,
+                                                   final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryCallback) {
+        final String methodName = "AuthenticatedHistoryService:-callAuthenticatedHistoryService()";
+        try {
+            //call service
+            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
+            cidaasSDK_v2_services.getAuthenticatedHistoryNew(authenticatedHistoryURL, headers, authenticatedHistoryEntity).enqueue(new Callback<AuthenticatedHistoryResponseNew>() {
+                @Override
+                public void onResponse(Call<AuthenticatedHistoryResponseNew> call, Response<AuthenticatedHistoryResponseNew> response) {
+                    if (response.isSuccessful()) {
+                        authenticatedHistoryCallback.success(response.body());
+                    } else {
+                        authenticatedHistoryCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                                response, "Error:- " + methodName));
+                    }
+                }
 
+                @Override
+                public void onFailure(Call<AuthenticatedHistoryResponseNew> call, Throwable t) {
+                    authenticatedHistoryCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                            t.getMessage(), "Error:- " + methodName));
+                }
+            });
+        } catch (Exception e) {
+            authenticatedHistoryCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
     //call AuthenticatedHistory Service
     public void callAuthenticatedHistoryService(@NonNull String authenticatedHistoryURL, Map<String, String> headers, AuthenticatedHistoryEntity authenticatedHistoryEntity,
                                                 final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryCallback) {

@@ -135,8 +135,8 @@ public class DeduplicationController {
         try {
             String baseurl = result.get("DomainURL");
             String clientId = result.get("ClientId");
-            if (loginEntity.getUsername() != null && !loginEntity.getUsername().equals("") && loginEntity.getPassword() != null &&
-                    !loginEntity.getPassword().equals("")) {
+            if (loginEntity.getUsername() != null && !loginEntity.getUsername().isEmpty() && loginEntity.getPassword() != null &&
+                    !loginEntity.getPassword().isEmpty()) {
 
 
                 LoginCredentialsRequestEntity loginCredentialsRequestEntity = new LoginCredentialsRequestEntity();

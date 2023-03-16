@@ -48,9 +48,6 @@ public class TOTP {
             = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
 
 
-    public static String generateTOTP(String key, String time, String returnDigits) {
-        return generateTOTP(key, time, returnDigits, "HmacSHA1");
-    }
 
     public static String generateTOTP256(String key, String time, String returnDigits) {
         return generateTOTP(key, time, returnDigits, "HmacSHA256");
@@ -117,8 +114,6 @@ public class TOTP {
                     steps = "0" + steps;
                 String fmtTime = String.format("%1$-11s", testTime[i]);
                 String utcTime = df.format(new Date(testTime[i] * 1000));
-                System.out.print("|  " + fmtTime + "  |  " + utcTime + "  | " + steps + " |");
-                System.out.println(generateTOTP(seed, steps, "6", "HmacSHA1") + "| SHA1   |");
                 System.out.print("|  " + fmtTime + "  |  " + utcTime + "  | " + steps + " |");
                 System.out.println(generateTOTP(seed32, steps, "6", "HmacSHA256") + "| SHA256 |");
                 System.out.print("|  " + fmtTime + "  |  " + utcTime + "  | " + steps + " |");
