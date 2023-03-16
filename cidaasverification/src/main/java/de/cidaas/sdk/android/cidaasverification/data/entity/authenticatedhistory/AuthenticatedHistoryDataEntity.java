@@ -7,10 +7,68 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticatedHistoryDataEntity implements Serializable {
 
+    public String getFinalstatus() {
+        return finalstatus;
+    }
+
+    public void setFinalstatus(String finalstatus) {
+        this.finalstatus = finalstatus;
+    }
+
+    String finalstatus ="";
+
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+    }
+
+    boolean authenticated;
+
+    public String getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    String createdTime ="";
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    String status ="";
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    String address ="";
     private String _id = "";
     private String sub = "";
     private String status_id = "";
     private String auth_time;
+
+    public String getVerification_type() {
+        return verification_type;
+    }
+
+    public void setVerification_type(String verification_type) {
+        this.verification_type = verification_type;
+    }
+
+    private String verification_type;
     private LocationDetailsTrackingEntity location_details;
     private PushDeviceInformation device_info;
 
