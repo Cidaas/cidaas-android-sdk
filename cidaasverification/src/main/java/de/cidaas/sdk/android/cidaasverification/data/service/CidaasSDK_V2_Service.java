@@ -40,7 +40,7 @@ public class CidaasSDK_V2_Service {
         final String HEADER_USER_AGENT = "User-Agent";
 
         okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(40, TimeUnit.SECONDS)
                 .connectTimeout(100, TimeUnit.SECONDS)
                 .addNetworkInterceptor(new Interceptor() {
                     @Override

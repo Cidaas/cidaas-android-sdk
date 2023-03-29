@@ -57,7 +57,7 @@ public class CidaasNativeService {
      /*   final String HEADER_LOCATION_LATITUDE="Lat";
         final String HEADER_LOCATION_LONGITUDE="Long";*/
         okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(40, TimeUnit.SECONDS)
                 .connectTimeout(100, TimeUnit.SECONDS)
                 .addNetworkInterceptor(chain -> {
                     Request originalRequest = chain.request();
