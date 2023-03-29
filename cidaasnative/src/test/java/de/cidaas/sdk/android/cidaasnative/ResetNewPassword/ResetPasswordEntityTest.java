@@ -24,8 +24,8 @@ public class ResetPasswordEntityTest {
 
     @Test
     public void setPassord() {
-        resetPasswordEntity.setPassword("Password");
-        Assert.assertEquals("Password", resetPasswordEntity.getPassword());
+        resetPasswordEntity.setPassword("");
+        Assert.assertEquals("", resetPasswordEntity.getPassword());
     }
 
     @Test
