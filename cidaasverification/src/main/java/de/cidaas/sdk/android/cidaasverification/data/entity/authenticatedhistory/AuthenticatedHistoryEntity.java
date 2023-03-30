@@ -6,6 +6,28 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticatedHistoryEntity implements Serializable {
+
+
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String id ="";
+    private String status ="";
     private String device_id = "";
     private String push_id = "";
     private String client_id = "";
@@ -21,6 +43,9 @@ public class AuthenticatedHistoryEntity implements Serializable {
     public AuthenticatedHistoryEntity() {
     }
 
+    public AuthenticatedHistoryEntity(String id) {
+        this.id = id;
+    }
     //mandatory parameters
     public AuthenticatedHistoryEntity(String sub, int skip, int take, String verification_type, String start_time, String end_time) {
         this.sub = sub;
@@ -29,6 +54,15 @@ public class AuthenticatedHistoryEntity implements Serializable {
         this.verification_type = verification_type;
         this.start_time = start_time;
         this.end_time = end_time;
+    }
+    public AuthenticatedHistoryEntity(String sub, int skip, int take, String verification_type, String start_time, String end_time,String status) {
+        this.sub = sub;
+        this.skip = skip;
+        this.take = take;
+        this.verification_type = verification_type;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.status =status;
     }
 
     public String getSub() {
