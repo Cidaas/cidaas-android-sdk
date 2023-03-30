@@ -17,6 +17,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswor
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -96,14 +97,14 @@ public class ResetPasswordService {
             }
             //check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", NativeURLHelper.contentTypeJson);
-            headers.put("user-agent", "de.cidaas-android");
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon", LocationDetails.getShared(context).getLongitude());
+            headers.put(NativeConstants.CONTENT_TYPE, NativeURLHelper.contentTypeJson);
+            headers.put(NativeConstants.USER_AGENT, "de.cidaas-android");
+            headers.put(NativeConstants.DEVICE_ID, deviceInfoEntity.getDeviceId());
+            headers.put(NativeConstants.DEVICE_MAKE, deviceInfoEntity.getDeviceMake());
+            headers.put(NativeConstants.DEVICE_MODEL, deviceInfoEntity.getDeviceModel());
+            headers.put(NativeConstants.DEVICE_VERSION, deviceInfoEntity.getDeviceVersion());
+            headers.put(NativeConstants.DEVICE_LATTITUDE, LocationDetails.getShared(context).getLatitude());
+            headers.put(NativeConstants.DEVICE_LONGITUDE, LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasNativeService cidaasNativeService = service.getInstance();
@@ -163,14 +164,14 @@ public class ResetPasswordService {
 
             // - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", NativeURLHelper.contentTypeJson);
-            headers.put("user-agent", "de.cidaas-android");
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon", LocationDetails.getShared(context).getLongitude());
+            headers.put(NativeConstants.CONTENT_TYPE, NativeURLHelper.contentTypeJson);
+            headers.put(NativeConstants.USER_AGENT, "de.cidaas-android");
+            headers.put(NativeConstants.DEVICE_ID, deviceInfoEntity.getDeviceId());
+            headers.put(NativeConstants.DEVICE_MAKE, deviceInfoEntity.getDeviceMake());
+            headers.put(NativeConstants.DEVICE_MODEL, deviceInfoEntity.getDeviceModel());
+            headers.put(NativeConstants.DEVICE_VERSION, deviceInfoEntity.getDeviceVersion());
+            headers.put(NativeConstants.DEVICE_LATTITUDE, LocationDetails.getShared(context).getLatitude());
+            headers.put(NativeConstants.DEVICE_LONGITUDE, LocationDetails.getShared(context).getLongitude());
             serviceForResetPasswordValidateCode(resetpasswordValidateCodeUrl, resetPasswordValidateCodeRequestEntity, headers, callback);
 
         } catch (Exception e) {
@@ -234,13 +235,13 @@ public class ResetPasswordService {
 
             //- check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", NativeURLHelper.contentTypeJson);
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon", LocationDetails.getShared(context).getLongitude());
+            headers.put(NativeConstants.CONTENT_TYPE, NativeURLHelper.contentTypeJson);
+            headers.put(NativeConstants.DEVICE_ID, deviceInfoEntity.getDeviceId());
+            headers.put(NativeConstants.DEVICE_MAKE, deviceInfoEntity.getDeviceMake());
+            headers.put(NativeConstants.DEVICE_MODEL, deviceInfoEntity.getDeviceModel());
+            headers.put(NativeConstants.DEVICE_VERSION, deviceInfoEntity.getDeviceVersion());
+            headers.put(NativeConstants.DEVICE_LATTITUDE, LocationDetails.getShared(context).getLatitude());
+            headers.put(NativeConstants.DEVICE_LONGITUDE, LocationDetails.getShared(context).getLongitude());
             serviceCallForResetNewPassword(ResetNewPasswordUrl, resetPasswordEntity, headers, callback);
 
         } catch (Exception e) {

@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushacknowledge
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushacknowledge.PushAcknowledgeResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.push.pushacknowledge.PushAcknowledgeService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -61,12 +62,12 @@ public class PushAcknowledgeController {
 
             } else {
                 pushAcknowledgeResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type or ExchangeId must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_ACKNOWLEDGE_FAILURE, e.getMessage()));
         }
     }
@@ -79,8 +80,8 @@ public class PushAcknowledgeController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    String clientId = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
 
                     //App properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
@@ -99,7 +100,7 @@ public class PushAcknowledgeController {
             });
 
         } catch (Exception e) {
-            pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_ACKNOWLEDGE_FAILURE, e.getMessage()));
         }
     }
@@ -118,7 +119,7 @@ public class PushAcknowledgeController {
             PushAcknowledgeService.getShared(context).callPushAcknowledgeService(pushAcknowledgeUrl, headers, pushAcknowledgeEntity, pushAcknowledgeResult);
 
         } catch (Exception e) {
-            pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushAcknowledgeResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_ACKNOWLEDGE_FAILURE, e.getMessage()));
         }
     }

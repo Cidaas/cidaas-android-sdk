@@ -11,6 +11,7 @@ import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
 import de.cidaas.sdk.android.service.CidaassdkService;
 import de.cidaas.sdk.android.service.ICidaasSDKService;
@@ -72,11 +73,11 @@ public class UserLoginInfoService {
                 serviceForUserLoginInfo(UserLoginInfoURL, userLoginInfoEntity, headers, callback);
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
                     e.getMessage()));
         }
     }
@@ -100,7 +101,7 @@ public class UserLoginInfoService {
                             callback.success(userLoginInfoResponseEntity);
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         assert response.errorBody() != null;
@@ -112,12 +113,12 @@ public class UserLoginInfoService {
                 @Override
                 public void onFailure(Call<UserLoginInfoResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
-                            t.getMessage(), "Error :" + methodName));
+                            t.getMessage(), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE,
                     e.getMessage()));
         }
     }

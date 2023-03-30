@@ -4,6 +4,8 @@ package de.cidaas.sdk.android.cidaasverification.domain.helper.totpgenerator;
  * Created by ganesh on 14/02/18.
  */
 
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
+
 import java.lang.reflect.UndeclaredThrowableException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -123,7 +125,7 @@ public class TOTP {
                         .println("+---------------+-----------------------+" + "------------------+--------+--------+");
             }
         } catch (final Exception e) {
-            System.out.println("Error : " + e);
+            System.out.println(VerificationConstants.ERROR_LOGGING_PREFIX + e);
         }
     }
 }

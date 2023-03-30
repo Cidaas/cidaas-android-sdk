@@ -15,6 +15,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.Verify
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -79,12 +80,12 @@ public class AccountVerificationService {
 
                 serviceForInitiateAccountVerification(initiateAccountVerificationUrl, initiateAccountVerificationRequestEntity, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -106,22 +107,22 @@ public class AccountVerificationService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                            response.code(), "Error :" + methodName));
+                                            response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                        response, "Error :" + methodName));
+                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<InitiateAccountVerificationResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                    t.getMessage(), "Error :" + methodName));
+                                    t.getMessage(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -144,12 +145,12 @@ public class AccountVerificationService {
                 //Service
                 serviceForVerifyAccountVerification(verifyAccountVerificationUrl, verifyAccountRequestEntity, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -170,23 +171,23 @@ public class AccountVerificationService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            response.code(), "Error :" + methodName));
+                                            response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 assert response.errorBody() != null;
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                        response, "Error :" + methodName));
+                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<VerifyAccountResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                    t.getMessage(), "Error :" + methodName));
+                                    t.getMessage(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -209,12 +210,12 @@ public class AccountVerificationService {
                 //Service
                 serviceForGetAccountVerificationList(verifyAccountListUrl, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -234,23 +235,23 @@ public class AccountVerificationService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            response.code(), "Error :" + methodName));
+                                            response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 assert response.errorBody() != null;
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                        response, "Error :" + methodName));
+                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<AccountVerificationListResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                    t.getMessage(), "Error :" + methodName));
+                                    t.getMessage(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

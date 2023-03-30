@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.helper.converter.EntityToModelConverter;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.logger.LogFile;
 import de.cidaas.sdk.android.models.dbmodel.AccessTokenModel;
@@ -83,7 +84,7 @@ public class AccessTokenController {
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -105,7 +106,7 @@ public class AccessTokenController {
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -120,14 +121,14 @@ public class AccessTokenController {
                 if (accessTokenModel != null) {
                     getAccessToken(sub, callback, accessTokenModel);
                 } else {
-                    callback.failure(WebAuthError.getShared(context).noUserFoundException("Error:" + methodName));
+                    callback.failure(WebAuthError.getShared(context).noUserFoundException(CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             } else {
                 callback.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", methodName));
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -145,7 +146,7 @@ public class AccessTokenController {
                 getAccessTokenByRefreshToken(accessTokenModel.getRefresh_token(), callback);
             }
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -178,7 +179,7 @@ public class AccessTokenController {
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -208,7 +209,7 @@ public class AccessTokenController {
                 accessTokenEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("", "Error" + methodName));
             }
         } catch (Exception e) {
-            accessTokenEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
+            accessTokenEntityResult.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
                     e.getMessage()));
         }
     }
@@ -247,7 +248,7 @@ public class AccessTokenController {
 
             return socialTokenEntity;
         } catch (Exception e) {
-            accessTokenResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
+            accessTokenResult.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
                     e.getMessage()));
             return null;
         }
@@ -265,10 +266,10 @@ public class AccessTokenController {
 
                 conversionToAccessTokenModel(accessTokenEntity, result);
             } else {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or accessToken or refreshToken must not be null", "Error :" + methodName));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub or accessToken or refreshToken must not be null", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SET_ACCESS_TOKEN, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SET_ACCESS_TOKEN, e.getMessage()));
         }
     }
 
@@ -295,7 +296,7 @@ public class AccessTokenController {
             });
 
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SET_ACCESS_TOKEN, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SET_ACCESS_TOKEN, e.getMessage()));
         }
     }
 
@@ -319,7 +320,7 @@ public class AccessTokenController {
 
             result.success(loginCredentialsResponseEntity);
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SET_ACCESS_TOKEN, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SET_ACCESS_TOKEN, e.getMessage()));
         }
     }
 }

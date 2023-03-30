@@ -12,6 +12,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsResp
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -75,11 +76,11 @@ public class NativeLoginService {
                 serviceForLoginWithCredentials(loginUrl, loginCredentialsRequestEntity, headers, callback);
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
         }
     }
 
@@ -115,7 +116,7 @@ public class NativeLoginService {
                     }
                 } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.LOGOUT_ERROR, response
-                                , "Error :" + methodName));
+                                , NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                        // callback.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.LOGOUT_ERROR, "Exception in LogoutProcess",methodName));
                     }
                 }
@@ -123,11 +124,11 @@ public class NativeLoginService {
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.LOGOUT_ERROR, t.getMessage(),
-                            "Error :" + methodName));
+                            NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGOUT_ERROR, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGOUT_ERROR, e.getMessage()));
         }
     }
 
@@ -159,10 +160,10 @@ public class NativeLoginService {
 
                             callback.failure(WebAuthError.getShared(context).loginFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
                                     loginCredentialsResponseErrorEntity.getError().getError(), loginCredentialsResponseErrorEntity.getStatus(),
-                                    loginCredentialsResponseErrorEntity.getError(), "Error :" + methodName));
+                                    loginCredentialsResponseErrorEntity.getError(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                         } catch (Exception e) {
-                            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
+                            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE,
                                     e.getMessage()));
                             // Timber.e("response"+response.message()+e.getMessage());
                         }
@@ -173,11 +174,11 @@ public class NativeLoginService {
                 @Override
                 public void onFailure(Call<LoginCredentialsResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
         }
     }
 

@@ -16,6 +16,7 @@ import de.cidaas.sdk.android.helper.customtab.CustomTabHelper;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -121,11 +122,11 @@ public class LoginController {
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
                         } else {
-                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error:" + methodName));
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException(CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callbackResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or RedirectURL or Challenge must not be empty"
-                                , "Error :" + methodName));
+                                , CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
@@ -136,7 +137,7 @@ public class LoginController {
             });
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
@@ -206,7 +207,7 @@ public class LoginController {
             // : Handle Exception
 
             callbacktoMain.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
         }
 
 
@@ -235,7 +236,7 @@ public class LoginController {
             }
             customTabsIntent.launchUrl(activityContext, Uri.parse(url));
         } catch (Exception e) {
-            WebAuthError.getShared(context).methodException("Exception:" + methodName, WebAuthErrorCode.SAVE_LOGIN_PROPERTIES, e.getMessage());
+            WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SAVE_LOGIN_PROPERTIES, e.getMessage());
         }
     }
 
@@ -494,11 +495,11 @@ public class LoginController {
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
                         } else {
-                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error:" + methodName));
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException(CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callbackResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or RedirectURL or Challenge must not be empty"
-                                , "Error :" + methodName));
+                                , CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
@@ -509,7 +510,7 @@ public class LoginController {
             });
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
@@ -544,7 +545,7 @@ public class LoginController {
             // : Handle Exception
 
             callbacktoMain.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
         }
 
 

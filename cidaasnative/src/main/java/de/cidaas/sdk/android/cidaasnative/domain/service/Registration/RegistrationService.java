@@ -20,6 +20,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -90,13 +91,13 @@ public class RegistrationService {
                 serviceForGetRegistrationSetup(RegistrationUrl, headers, callback);
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
 
@@ -112,22 +113,22 @@ public class RegistrationService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, response
-                                , "Error :" + methodName));
+                                , NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RegistrationSetupResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
 
@@ -152,13 +153,13 @@ public class RegistrationService {
                 serviceForRegisterNewUser(RegisterNewUserUrl, registerNewUserRequestEntity, headers, callback);
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
 
@@ -177,12 +178,12 @@ public class RegistrationService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE
-                                            , response.code(), "Error :" + methodName));
+                                            , response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 assert response.errorBody() != null;
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                        response, "Error :" + methodName));
+                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                             }
                         }
@@ -190,11 +191,11 @@ public class RegistrationService {
                         @Override
                         public void onFailure(Call<RegisterNewUserResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, t.getMessage(),
-                                    "Error :" + methodName));
+                                    NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
 
@@ -217,13 +218,13 @@ public class RegistrationService {
                 serviceForupdateUserProfile(updateUserProfileURL, registrationEntity, headers, callback);
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, e.getMessage()));
         }
     }
 
@@ -242,12 +243,12 @@ public class RegistrationService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE
-                                            , response.code(), "Error :" + methodName));
+                                            , response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 assert response.errorBody() != null;
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE,
-                                        response, "Error :" + methodName));
+                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                             }
                         }
@@ -255,11 +256,11 @@ public class RegistrationService {
                         @Override
                         public void onFailure(Call<UpdateUserResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, t.getMessage(),
-                                    "Error :" + methodName));
+                                    NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE, e.getMessage()));
         }
     }
 
@@ -280,12 +281,12 @@ public class RegistrationService {
 
                 serviceForInitiateAccountVerification(initiateAccountVerificationUrl, initiateAccountVerificationRequestEntity, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -307,22 +308,22 @@ public class RegistrationService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                            response.code(), "Error :" + methodName));
+                                            response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                        response, "Error :" + methodName));
+                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<InitiateAccountVerificationResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
-                                    t.getMessage(), "Error :" + methodName));
+                                    t.getMessage(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -345,12 +346,12 @@ public class RegistrationService {
                 //Service
                 serviceForVerifyAccountVerification(verifyAccountVerificationUrl, verifyAccountRequestEntity, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -371,23 +372,23 @@ public class RegistrationService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                            response.code(), "Error :" + methodName));
+                                            response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 assert response.errorBody() != null;
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                        response, "Error :" + methodName));
+                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<VerifyAccountResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                    t.getMessage(), "Error :" + methodName));
+                                    t.getMessage(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
