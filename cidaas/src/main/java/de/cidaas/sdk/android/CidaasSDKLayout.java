@@ -283,7 +283,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
                 @Override
                 public void failure(WebAuthError error) {
-
+                    LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(error.getErrorMessage());
                 }
             });
 
@@ -342,9 +342,6 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     class CidaasWebViewClient extends WebViewClient {
-        public CidaasWebViewClient() {
-
-        }
 
         @Override
         public boolean shouldOverrideUrlLoading(final WebView webView, final String url) {

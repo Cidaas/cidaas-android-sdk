@@ -76,9 +76,6 @@ public class OauthService {
                 callback.failure(webAuthError.loginURLMissingException("getLoginUrl"));
             }
 
-
-            baseUrl = loginProperties.get("DomainURL");
-
             // Construct URl Checking,Add Parameter(FieldMap) pending
             urlComponents = new URLHelper();
             // finalUrl = urlComponents.constructURL(loginProperties.get("DomainURL"),loginProperties.get("ClientId"));
@@ -98,7 +95,6 @@ public class OauthService {
             String baseUrl = "";
 
             Map<String, String> headers = new Hashtable<>();
-            Map<String, String> querymap = new Hashtable<>();
 
             //get Device Information
             DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
@@ -127,7 +123,9 @@ public class OauthService {
 
             //Assign Url
             // Perform Null Check
-            url = loginProperties.get("DomainURL") + URLHelper.getShared().getUserInfoURL();
+            if (null != loginProperties){
+                url = loginProperties.get("DomainURL") + URLHelper.getShared().getUserInfoURL();
+            }
 
             //call Service
             ICidaasSDKService cidaassdkService = service.getInstance();

@@ -74,7 +74,7 @@ public class CidaasFacebook implements ICidaasFacebook {
 
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    String access_token = AccessToken.getCurrentAccessToken().getToken();
+                    String access_token = AccessToken.getCurrentAccessToken() == null?null:AccessToken.getCurrentAccessToken().getToken();
                     if (access_token != null || !access_token.equals("")) {
 
 
