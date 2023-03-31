@@ -199,6 +199,7 @@ public class CidaasSDKLayout extends RelativeLayout {
     }
 
     //Get LoginCode
+    //NOSONAR
     private void getLoginCode(final String urlFromCode) {
         final String methodName = "cidaasSDKLayout:getLoginCode()";
         try {
