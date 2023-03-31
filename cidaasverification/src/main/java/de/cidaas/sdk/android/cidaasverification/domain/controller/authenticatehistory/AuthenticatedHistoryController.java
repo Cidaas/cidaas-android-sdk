@@ -62,7 +62,7 @@ public class AuthenticatedHistoryController {
     }
     //-------------------------------------checkAuthenticatedHistoryEntity-----------------------------------------------------------
     private void checkAuthenticatedHistoryEntityDetail(final UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity, final EventResult<UserAuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_ENTITY;
         try {
 
 
@@ -76,7 +76,7 @@ public class AuthenticatedHistoryController {
     }
 
     private void checkAuthenticatedHistoryEntityNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_ENTITY;
         try {
             if (authenticatedHistoryEntity.getVerification_type() != null && !authenticatedHistoryEntity.getVerification_type().equals("") &&
                     authenticatedHistoryEntity.getSub() != null && !authenticatedHistoryEntity.getSub().equals("")
@@ -105,7 +105,7 @@ public class AuthenticatedHistoryController {
 
     //-------------------------------------checkAuthenticatedHistoryEntity-----------------------------------------------------------
     private void checkAuthenticatedHistoryEntity(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_ENTITY;
         try {
             if (authenticatedHistoryEntity.getVerification_type() != null && !authenticatedHistoryEntity.getVerification_type().equals("") &&
                     authenticatedHistoryEntity.getSub() != null && !authenticatedHistoryEntity.getSub().equals("")
@@ -133,7 +133,7 @@ public class AuthenticatedHistoryController {
     }
 
     private void addPropertiesDetail(UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity, EventResult<UserAuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-addProperties()";
+        String methodName = VerificationConstants.METHOD_ADD_PROPERTIES;
         try {
 
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
@@ -166,7 +166,7 @@ public class AuthenticatedHistoryController {
     }
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
     private void addProperties(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-addProperties()";
+        String methodName = VerificationConstants.METHOD_ADD_PROPERTIES;
         try {
 
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
@@ -198,7 +198,7 @@ public class AuthenticatedHistoryController {
         }
     }
     private void addPropertiesNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-addProperties()";
+        String methodName = VerificationConstants.METHOD_ADD_PROPERTIES;
         try {
 
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
@@ -231,7 +231,7 @@ public class AuthenticatedHistoryController {
     }
     //-------------------------------------------Call authenticatedHistory Service-----------------------------------------------------------
     private void callAuthenticatedHistoryDetail(String baseurl, final UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity, final EventResult<UserAuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY;
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryDetailURL(baseurl);
 
@@ -247,7 +247,7 @@ public class AuthenticatedHistoryController {
     }
     //-------------------------------------------Call authenticatedHistory Service-----------------------------------------------------------
     private void callAuthenticatedHistory(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY;
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryURL(baseurl);
 
@@ -262,7 +262,7 @@ public class AuthenticatedHistoryController {
         }
     }
     private void callAuthenticatedHistoryNew(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY;
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryURLNew(baseurl);
 

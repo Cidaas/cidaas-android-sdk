@@ -91,7 +91,6 @@ public class EnrollController {
                     break;
                 }
                 case AuthenticationType.FACE: {
-                    Bitmap finalimg = BitmapFactory.decodeFile(enrollEntity.getFileToSend().getAbsolutePath());
 
                     RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), enrollEntity.getFileToSend());
                     MultipartBody.Part photo = MultipartBody.Part.createFormData("photo", "de.cidaas.png", requestFile);
@@ -136,7 +135,6 @@ public class EnrollController {
                 public void success(String result) {
                     //Todo Check set pass code as device id and call enroll call
 
-                    // enrollEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
                     addProperties(enrollEntity, enrollResult);
                 }
 

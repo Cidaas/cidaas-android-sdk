@@ -146,7 +146,6 @@ public class DeleteController {
         String methodName = "DeleteController:-callDeleteAll()";
         try {
             String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseURL, deleteEntity.getDevice_id());
-            //String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseurl, deviceInfoEntity.getDeviceId());
 
             //headers Generation
             Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);

@@ -2,6 +2,8 @@ package de.cidaas.sdk.android.cidaasnative.util;
 
 public class NativeConstants {
 
+    private NativeConstants(){}
+
     public static final String ERROR_LOGGING_PREFIX = "Error :";
     public static final String EXCEPTION_LOGGING_PREFIX = "Exception :";
     public static final String DEVICE_VERSION = "device-version";

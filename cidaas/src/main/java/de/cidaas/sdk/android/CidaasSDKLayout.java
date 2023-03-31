@@ -76,7 +76,6 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     private static String GLOBAL_CODE_VERIFIER = "";
-    private static String GLOBAL_CODE_CHALLENGE = "";
     private static String GLOBAL_INITIAL_CODE_VERIFIER = "";
     private static String GLOBAL_PRE_AUTH_CODE = "";
 
@@ -129,8 +128,8 @@ public class CidaasSDKLayout extends RelativeLayout {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
-                                + error.getErrorCode() + ", Error Message - " + error.getErrorMessage() + ", Status Code - " + error.getStatusCode()
+                        String loggerMessage = "Cidaas constructor failure : " + CidaasConstants.ERROR_CODE
+                                + error.getErrorCode() + ", Error Message - " + error.getErrorMessage() + CidaasConstants.STATUS_CODE + error.getStatusCode()
                                 + "CidaasSDKLayout:init()";
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(loggerMessage);
 
@@ -140,8 +139,8 @@ public class CidaasSDKLayout extends RelativeLayout {
 
             @Override
             public void failure(WebAuthError error) {
-                String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
-                        + error.getErrorCode() + ", Error Message - " + error.getErrorMessage() + ", Status Code - " + error.getStatusCode();
+                String loggerMessage = "Cidaas constructor failure : " + CidaasConstants.ERROR_CODE
+                        + error.getErrorCode() + CidaasConstants.ERROR_MESSAGE + error.getErrorMessage() + CidaasConstants.STATUS_CODE + error.getStatusCode();
                 LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(loggerMessage);
             }
         });
@@ -214,7 +213,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
                     if (url.contains("code=")) {
 
-                        if (url.contains(result.get("RedirectURL")) && !isAlreadyEvaluated) {
+                        if (url.contains(result.get(CidaasConstants.REDIRECT_URL)) && !isAlreadyEvaluated) {
 
                             isAlreadyEvaluated = true;
 
@@ -223,7 +222,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
                             // replace redirect url with empty string
-                            url = url.replace(result.get("RedirectURL"), "");
+                            url = url.replace(result.get(CidaasConstants.REDIRECT_URL), "");
                             String[] stringComponents = url.split("code=");
                             if (stringComponents.length > 1) {
                                 stringComponents = stringComponents[1].split("&");
@@ -289,8 +288,8 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
         } catch (Exception e) {
-            String loggerMessage = "Cidaas constructor failure : " + "Error Code - "
-                    + e.getLocalizedMessage() + ", Error Message - " + e.getMessage() + ", Status Code - " + e.getCause();
+            String loggerMessage = "Cidaas constructor failure : " + CidaasConstants.ERROR_CODE
+                    + e.getLocalizedMessage() + CidaasConstants.ERROR_MESSAGE + e.getMessage() + CidaasConstants.STATUS_CODE + e.getCause();
             Timber.e(e.getMessage());
             LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(loggerMessage);
         }
@@ -320,8 +319,8 @@ public class CidaasSDKLayout extends RelativeLayout {
                         @Override
                         public void failure(WebAuthError error) {
                             callback.failure(error);
-                            String loggerMessage = "Login URL service failure : " + "Error Code - "
-                                    + error.getErrorCode() + ", Error Message - " + error.getErrorMessage() + ", Status Code - " + error.getStatusCode();
+                            String loggerMessage = "Login URL service failure : " + CidaasConstants.ERROR_CODE
+                                    + error.getErrorCode() + CidaasConstants.ERROR_MESSAGE + error.getErrorMessage() + CidaasConstants.STATUS_CODE + error.getStatusCode();
                             LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(loggerMessage);
                         }
                     });
@@ -432,7 +431,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             Timber.i("FacebookURL" + url);
 
 
-            if (url.contains(loginProperties.get("RedirectURL"))) {
+            if (url.contains(loginProperties.get(CidaasConstants.REDIRECT_URL))) {
                 view.setVisibility(GONE);
             } else {
                 view.setVisibility(VISIBLE);
@@ -666,7 +665,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                                 }
                             }
                         });
-                    } else if (lpresult.get("DomainURL") == "") {
+                    } else if (lpresult.get(CidaasConstants.DOMAIN_URL) == "") {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("AuthorizationURL is missing");
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(textViewInstance.getText().toString());
@@ -674,7 +673,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         imageViewInstance.setVisibility(VISIBLE);
                         textViewInstance.setVisibility(VISIBLE);
                         buttonInstance.setVisibility(GONE);
-                    } else if (lpresult.get("RedirectURL") == "") {
+                    } else if (lpresult.get(CidaasConstants.REDIRECT_URL) == "") {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("RedirectURI is missing");
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(textViewInstance.getText().toString());
@@ -682,7 +681,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         imageViewInstance.setVisibility(VISIBLE);
                         textViewInstance.setVisibility(VISIBLE);
                         buttonInstance.setVisibility(GONE);
-                    } else if (lpresult.get("ClientId") == "") {
+                    } else if (lpresult.get(CidaasConstants.CLIENT_ID) == "") {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("Client Id is missing");
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(textViewInstance.getText().toString());
@@ -697,7 +696,6 @@ public class CidaasSDKLayout extends RelativeLayout {
                         buttonInstance.setVisibility(GONE);
                         login(relativeLayout);
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Login loaded Sucessfully");
-                        //loginwithNativeBrowser(GLOBAL_CONTEXT.getApplicationContext());
                     }
                 }
 
@@ -809,16 +807,16 @@ public class CidaasSDKLayout extends RelativeLayout {
             readFromFile(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    if (loginProperties.get("DomainURL").equals("") || loginProperties.get("DomainURL") == null || loginProperties == null) {
+                    if (loginProperties.get(CidaasConstants.DOMAIN_URL).equals("") || loginProperties.get(CidaasConstants.DOMAIN_URL) == null || loginProperties == null) {
                         result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).propertyMissingException("Domain URL must not be null", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
-                    if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
+                    if (loginProperties.get(CidaasConstants.CLIENT_ID).equals("") || loginProperties.get(CidaasConstants.CLIENT_ID) == null || loginProperties == null) {
                         result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).propertyMissingException("ClientId must not be null", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
-                    if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
+                    if (loginProperties.get(CidaasConstants.REDIRECT_URL).equals("") || loginProperties.get(CidaasConstants.REDIRECT_URL) == null || loginProperties == null) {
                         result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).propertyMissingException("Redirect URL must not be null", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
-                    CidaasHelper.baseurl = loginProperties.get("DomainURL");
+                    CidaasHelper.baseurl = loginProperties.get(CidaasConstants.DOMAIN_URL);
                     DBHelper.getShared().addLoginProperties(loginProperties);
                     result.success(loginProperties);
 
@@ -847,7 +845,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     @Override
                     public void success(Dictionary<String, String> savedLoginProperties) {
                         loginPropertiesResult.success(savedLoginProperties);
-                        DomainURL = savedLoginProperties.get("DomainURL");
+                        DomainURL = savedLoginProperties.get(CidaasConstants.DOMAIN_URL);
                         DBHelper.getShared().addLoginProperties(savedLoginProperties);
 
                     }
@@ -879,40 +877,39 @@ public class CidaasSDKLayout extends RelativeLayout {
             webAuthError = WebAuthError.getShared(GLOBAL_CONTEXT);
 
             //Check all the login Properties are Correct
-            if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL") == ""
-                    || !((Hashtable) loginproperties).containsKey("DomainURL")) {
+            if (loginproperties.get(CidaasConstants.DOMAIN_URL) == null || loginproperties.get(CidaasConstants.DOMAIN_URL) == ""
+                    || !((Hashtable) loginproperties).containsKey(CidaasConstants.DOMAIN_URL)) {
                 webAuthError = webAuthError.propertyMissingException("DomainURL must not be null", methodName);
 
                 savedResult.failure(webAuthError);
 
                 return;
             }
-            if ( null == loginproperties.get("ClientId") || loginproperties.get("ClientId").equals("")
+            if ( null == loginproperties.get(CidaasConstants.CLIENT_ID) || loginproperties.get(CidaasConstants.CLIENT_ID).equals("")
                     || !((Hashtable) loginproperties).containsKey("ClientId")) {
                 webAuthError = webAuthError.propertyMissingException("ClientId must not be null", methodName);
                 savedResult.failure(webAuthError);
                 return;
             }
-            if (!((Hashtable) loginproperties).containsKey("RedirectURL") || null == loginproperties.get("RedirectURL")
-                    || loginproperties.get("RedirectURL").equals("")) {
+            if (!((Hashtable) loginproperties).containsKey(CidaasConstants.REDIRECT_URL) || null == loginproperties.get(CidaasConstants.REDIRECT_URL)
+                    || loginproperties.get(CidaasConstants.REDIRECT_URL).equals("")) {
                 webAuthError = webAuthError.propertyMissingException("RedirectURL must not be null", methodName);
                 savedResult.failure(webAuthError);
                 return;
             }
 
 
-            //  savedProperties = loginproperties;
             //Get enable Pkce Flag
             ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
 
             // Check Client Secret if the PKCE Flow is Disabled
             if (!ENABLE_PKCE) {
-                if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret") == "" ||
-                        !((Hashtable) loginproperties).containsKey("ClientSecret")) {
+                if (loginproperties.get(CidaasConstants.CLIENT_SECRET) == null || loginproperties.get(CidaasConstants.CLIENT_SECRET) == "" ||
+                        !((Hashtable) loginproperties).containsKey(CidaasConstants.CLIENT_SECRET)) {
                     webAuthError = webAuthError.propertyMissingException("ClientSecret must not be null", methodName);
                     savedResult.failure(webAuthError);
                 } else {
-                    loginproperties.put("ClientSecret", loginproperties.get("ClientSecret"));
+                    loginproperties.put(CidaasConstants.CLIENT_SECRET, loginproperties.get(CidaasConstants.CLIENT_SECRET));
                 }
             }/* else {
                 //Create Challenge And Verifier
@@ -940,12 +937,12 @@ public class CidaasSDKLayout extends RelativeLayout {
             if (loginProperties != null && !loginProperties.isEmpty() && loginProperties.size() > 0) {
                 //check here for already saved properties
 
-                if (loginProperties.get("RedirectURL").equals("") || loginProperties.get("RedirectURL") == null || loginProperties == null) {
+                if ( loginProperties.get(CidaasConstants.REDIRECT_URL) == null || loginProperties.get(CidaasConstants.REDIRECT_URL).equals("")) {
                     webAuthError = webAuthError.propertyMissingException("RedirectURL must not be null", methodName);
                     result.failure(webAuthError);
                     return;
                 }
-                if (loginProperties.get("ClientId").equals("") || loginProperties.get("ClientId") == null || loginProperties == null) {
+                if (loginProperties.get(CidaasConstants.CLIENT_ID) == null || loginProperties.get(CidaasConstants.CLIENT_ID).equals("")) {
                     webAuthError = webAuthError.propertyMissingException("ClientId must not be null", methodName);
                     result.failure(webAuthError);
                     return;
@@ -1023,7 +1020,6 @@ public class CidaasSDKLayout extends RelativeLayout {
                             //Clear in Shared Preferences
                             DBHelper.getShared().removeUserInfo(sub);
 
-                            // StorageHelper.sharedInstance.deleteUserDetails(userId);
 
                             response.success("User Logged out");
 

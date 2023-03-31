@@ -285,13 +285,7 @@ public class LoginRequest implements Serializable {
 
     //For Passwordless SmartPush
     public static LoginRequest getMFASmartPushLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull String trackId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.MFA);
-        loginRequest.setTrackId(trackId);
-
-        return loginRequest;
+        return getMFAIVRRequestEntity(sub, requestId, trackId);
     }
 
     //For Passwordless TOTP

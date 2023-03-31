@@ -59,7 +59,7 @@ public class AuthenticateService {
         try {
 
             LogFile.getShared(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
-                    " ExchangeId:- " + authenticateEntity.getExchange_id() + " PassCode:- " + authenticateEntity.getPass_code());
+                    VerificationConstants.EXCHANGE_ID + authenticateEntity.getExchange_id() + " PassCode:- " + authenticateEntity.getPass_code());
 
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
@@ -70,7 +70,7 @@ public class AuthenticateService {
                         authenticateCallback.success(response.body());
 
                         LogFile.getShared(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
-                                " Status id:- " + response.body().getData().getStatus_id() + " ExchangeId:- " + response.body().getData().getExchange_id());
+                                " Status id:- " + response.body().getData().getStatus_id() + VerificationConstants.EXCHANGE_ID + response.body().getData().getExchange_id());
                     } else {
                         authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
                                 response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
@@ -97,7 +97,7 @@ public class AuthenticateService {
             //call service
 
             LogFile.getShared(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
-                    " ExchangeId:- " + authenticateHashmap.get("exchange_id"));
+                    VerificationConstants.EXCHANGE_ID + authenticateHashmap.get("exchange_id"));
 
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.authenticateWithMultipart(authenticateURL, headers, fileToSend, authenticateHashmap).enqueue(new Callback<AuthenticateResponse>() {
@@ -108,7 +108,7 @@ public class AuthenticateService {
                         authenticateCallback.success(response.body());
 
                         LogFile.getShared(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
-                                " Status id:- " + response.body().getData().getStatus_id() + " ExchangeId:- " + response.body().getData().getExchange_id());
+                                " Status id:- " + response.body().getData().getStatus_id() + VerificationConstants.EXCHANGE_ID + response.body().getData().getExchange_id());
                     } else {
                         authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(
                                 WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));

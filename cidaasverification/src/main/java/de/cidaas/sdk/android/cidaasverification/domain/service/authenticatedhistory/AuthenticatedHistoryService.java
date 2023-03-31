@@ -53,7 +53,7 @@ public class AuthenticatedHistoryService {
 
     public void callAuthenticatedHistoryServiceNew(@NonNull String authenticatedHistoryURL, Map<String, String> headers, AuthenticatedHistoryEntity authenticatedHistoryEntity,
                                                    final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryCallback) {
-        final String methodName = "AuthenticatedHistoryService:-callAuthenticatedHistoryService()";
+        final String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_SERVICE;
         try {
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
@@ -82,7 +82,7 @@ public class AuthenticatedHistoryService {
     //call AuthenticatedHistory Service
     public void callAuthenticatedHistoryService(@NonNull String authenticatedHistoryURL, Map<String, String> headers, AuthenticatedHistoryEntity authenticatedHistoryEntity,
                                                 final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryCallback) {
-        final String methodName = "AuthenticatedHistoryService:-callAuthenticatedHistoryService()";
+        final String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_SERVICE;
         try {
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
@@ -113,7 +113,7 @@ public class AuthenticatedHistoryService {
     public void callAuthenticatedHistoryServiceDetail(String authenticatedHistoryUrl, Map<String, String> headers,
                                                       UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity,
                                                       final EventResult<UserAuthenticatedHistoryResponse> authenticatedHistoryCallback) {
-        final String methodName = "AuthenticatedHistoryService:-callAuthenticatedHistoryService()";
+        final String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_SERVICE;
         try {
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();

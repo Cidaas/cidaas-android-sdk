@@ -137,7 +137,6 @@ public class AuthenticateController {
                 @Override
                 public void success(String result) {
                     //call authenticate call
-                    // authenticateEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
                     addProperties(authenticateEntity, authenticateResult);
                 }
 

@@ -89,8 +89,6 @@ public class TOTP {
 
 
     public static void main(String[] args) {
-        // Seed for HMAC-SHA1 - 20 bytes
-        String seed = "3132333435363738393031323334353637383930";
         // Seed for HMAC-SHA256 - 32 bytes
         String seed32 = "3132333435363738393031323334353637383930" + "313233343536373839303132";
         // Seed for HMAC-SHA512 - 64 bytes
