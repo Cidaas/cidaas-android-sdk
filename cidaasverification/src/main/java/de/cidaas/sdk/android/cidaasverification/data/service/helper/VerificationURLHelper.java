@@ -104,14 +104,11 @@ public class VerificationURLHelper {
 
     public String getAuthentictedHistoryURL(String baseurl) {
         return baseurl + getAuthentictedHistoryURL;
-       // return baseurl + userHistoryURL;
     }
     public String getAuthentictedHistoryURLNew(String baseurl) {
-        //return baseurl + getAuthentictedHistoryURL;
          return baseurl + userHistoryURL;
     }
     public String getAuthentictedHistoryDetailURL(String baseurl) {
-        // return baseurl + getAuthentictedHistoryURL;
         return baseurl + userHistoryDetailURL;
     }
 

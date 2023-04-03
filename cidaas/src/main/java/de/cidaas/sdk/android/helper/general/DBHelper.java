@@ -38,7 +38,6 @@ public class DBHelper {
     private static String user_storage_key = "cidaas_user_details_";
     private static String user_storage_info = "cidaas_user_info_";
     private static ObjectMapper shared_objectMapper = new ObjectMapper();
-    private static Activity context;
 
     public static DBHelper dbHelper = null;
 

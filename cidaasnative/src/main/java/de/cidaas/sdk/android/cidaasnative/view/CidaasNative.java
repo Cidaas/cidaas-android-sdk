@@ -38,6 +38,7 @@ import de.cidaas.sdk.android.cidaasnative.domain.controller.registration.Registr
 import de.cidaas.sdk.android.cidaasnative.domain.controller.requestid.RequestIdController;
 import de.cidaas.sdk.android.cidaasnative.domain.controller.resetpassword.ResetPasswordController;
 import de.cidaas.sdk.android.cidaasnative.domain.controller.tenant.TenantController;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -104,7 +105,7 @@ public class CidaasNative {
             });
 
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getRequestId()", WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_REQUEST_ID_MESSAGE, WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
         }
     }
 
@@ -125,7 +126,7 @@ public class CidaasNative {
             });
 
         } catch (Exception e) {
-            Primaryresult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getRequestId()", WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
+            Primaryresult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_REQUEST_ID_MESSAGE, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -150,7 +151,7 @@ public class CidaasNative {
             });
 
         } catch (Exception e) {
-            resulttoReturn.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :getRequestId()", WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
+            resulttoReturn.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_REQUEST_ID_MESSAGE, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -302,114 +303,9 @@ public class CidaasNative {
     }
     // -----------------------------------------------------***** Initiate Verification *****---------------------------------------------------------------
 
-/*
-
-    public void initiateEmailVerification(@NonNull final String email, @NonNull final String processingType, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
-                                          final HashMap<String, String>... extraParams) {
-        try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateEmailVerification(email, processingType, result.getData().getRequestId(), EventResult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            EventResult.failure(error);
-                        }
-                    }, extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    EventResult.failure(error);
-                }
-            });
-        } catch (Exception e) {
-            EventResult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateEmailVerification()", WebAuthErrorCode.INITIATE_EMAIL_MFA_FAILURE, e.getMessage()));
-        }
-    }
-*/
-
     public void initiateAccountVerification(@NonNull final InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity, final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
         AccountVerificationController.getShared(context).initiateAccountVerificationService(initiateAccountVerificationRequestEntity, EventResult);
     }
-
-   /* public void initiateEmailVerification(@NonNull final String email, @NonNull final String processingType, @NonNull final String requestId,
-                                          final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(email, processingType, requestId, "email", EventResult);
-    }
-
-    public void initiateSMSVerification(@NonNull final String mobileNumber, @NonNull final String processingType, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
-                                        final HashMap<String, String>... extraParams) {
-        try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateSMSVerification(mobileNumber, processingType, result.getData().getRequestId(), EventResult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            EventResult.failure(error);
-                        }
-                    }, extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    EventResult.failure(error);
-                }
-            });
-        } catch (Exception e) {
-            EventResult.failure(WebAuthError.getShared(context).methodException("Exception :Cidaas :initiateSMSVerification()", WebAuthErrorCode.INITIATE_SMS_MFA_FAILURE, e.getMessage()));
-        }
-    }
-
-
-    public void initiateSMSVerification(@NonNull final String mobileNumber, @NonNull final String processingType, @NonNull final String requestId,
-                                        final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(mobileNumber, processingType, requestId, "sms", EventResult);
-    }
-
-    public void initiateIVRVerification(@NonNull final String mobileNumber, @NonNull final String processingType, final EventResult<InitiateAccountVerificationResponseEntity> EventResult,
-                                        final HashMap<String, String>... extraParams) {
-        try {
-            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
-                @Override
-                public void success(Dictionary<String, String> loginProperties) {
-                    getRequestId(loginProperties, new EventResult<AuthRequestResponseEntity>() {
-                        @Override
-                        public void success(AuthRequestResponseEntity result) {
-                            initiateIVRVerification(mobileNumber, processingType, result.getData().getRequestId(), EventResult);
-                        }
-
-                        @Override
-                        public void failure(WebAuthError error) {
-                            EventResult.failure(error);
-                        }
-                    }, extraParams);
-                }
-
-                @Override
-                public void failure(WebAuthError error) {
-                    EventResult.failure(error);
-                }
-            });
-        } catch (Exception e) {
-            EventResult.failure(WebAuthError.getShared(context).methodException("initiateIVRVerification", WebAuthErrorCode.INITIATE_IVR_MFA_FAILURE, e.getMessage()));
-        }
-    }
-
-    public void initiateIVRVerification(@NonNull final String mobileNumber, @NonNull final String processingType, @NonNull final String requestId, final EventResult<InitiateAccountVerificationResponseEntity> EventResult) {
-        AccountVerificationController.getShared(context).initiateAccountVerificationService(mobileNumber, processingType, requestId, "ivr", EventResult);
-    }*/
 
     public void verifyAccount(@NonNull final String code, @NonNull final String accvid, final EventResult<VerifyAccountResponseEntity> result) {
         AccountVerificationController.getShared(context).verifyAccountVerificationService(code, accvid, result);
@@ -450,7 +346,7 @@ public class CidaasNative {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty", "Error :Cidaas :loginWithDeduplication()"));
+                    loginresult.failure(WebAuthError.getShared(context).propertyMissingException(NativeConstants.DOMAIN_REDIRECT_URL_CLIENT_ID_EMPTY_MESSAGE, "Error :Cidaas :loginWithDeduplication()"));
                 }
             });
         } catch (Exception e) {
@@ -487,7 +383,7 @@ public class CidaasNative {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty", "Error :Cidaas :initiateResetPasswordByEmail()"));
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(NativeConstants.DOMAIN_REDIRECT_URL_CLIENT_ID_EMPTY_MESSAGE, "Error :Cidaas :initiateResetPasswordByEmail()"));
                 }
             });
         } catch (Exception e) {
@@ -527,7 +423,7 @@ public class CidaasNative {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or ClientId or RedirectURL must not be empty", "Exception :Cidaas :initiateResetPasswordBySMS()"));
+                    resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(NativeConstants.DOMAIN_REDIRECT_URL_CLIENT_ID_EMPTY_MESSAGE, "Exception :Cidaas :initiateResetPasswordBySMS()"));
                 }
             });
         } catch (Exception e) {

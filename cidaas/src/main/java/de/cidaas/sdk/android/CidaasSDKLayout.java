@@ -369,7 +369,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             super.onLoadResource(view, url);
             Log.d("URL", url);
 
-            if (url.contains("code=")) {
+            if (url.contains(CidaasConstants.CODE_EQUAL)) {
                 getLoginCode(url);
 
             }
@@ -426,7 +426,6 @@ public class CidaasSDKLayout extends RelativeLayout {
             showLoader();
             Log.d("Fb", url);
 
-            // Log.d("Original URL", webViewInstance.getOriginalUrl());
             Timber.i("FacebookURL" + url);
 
 
@@ -436,7 +435,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 view.setVisibility(VISIBLE);
             }
 
-            if (url.contains("code=")) {
+            if (url.contains(CidaasConstants.CODE_EQUAL)) {
                 getLoginCode(url);
 
             }
@@ -458,16 +457,9 @@ public class CidaasSDKLayout extends RelativeLayout {
             // hide loader
             hideLoader();
 
-            if (url.contains("code=")) {
+            if (url.contains(CidaasConstants.CODE_EQUAL)) {
                 getLoginCode(url);
 
-            } else {
-//                if (url.contains(CidaasSDKEntity.cidaasSDKEntityInstance.getRedirectURI())) {
-//                    view.setVisibility(GONE);
-//                }
-//                else {
-//                    view.setVisibility(VISIBLE);
-//                }
             }
         }
 
@@ -564,7 +556,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
 
     // Get Login
-    private void login(RelativeLayout relativeLayout) {
+    private void login() {
         try {
 
             getLoginURL(new EventResult<String>() {
@@ -631,14 +623,10 @@ public class CidaasSDKLayout extends RelativeLayout {
             relativeLayout.addView(imageViewInstance, image);
             relativeLayout.addView(textViewInstance, textView);
             relativeLayout.addView(buttonInstance, button);
-//        relativeLayout.addView(webViewInstance);
-
-//            iAccessTokenEntity = accessTokenEntity;
 
             logincallback = loginResultcallback;
 
 
-            final Dictionary<String, String> loginProperties = new Hashtable<>();
             checkSavedProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
@@ -693,7 +681,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         imageViewInstance.setVisibility(GONE);
                         textViewInstance.setVisibility(GONE);
                         buttonInstance.setVisibility(GONE);
-                        login(relativeLayout);
+                        login();
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Login loaded Sucessfully");
                     }
                 }
@@ -910,13 +898,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 } else {
                     loginproperties.put(CidaasConstants.CLIENT_SECRET, loginproperties.get(CidaasConstants.CLIENT_SECRET));
                 }
-            }/* else {
-                //Create Challenge And Verifier
-                OAuthChallengeGenerator generator = new OAuthChallengeGenerator();
-                savedProperties.put("Verifier", generator.getCodeVerifier());
-                savedProperties.put("Challenge", generator.getCodeChallenge(savedProperties.get("Verifier")));
-                savedProperties.put("Method", generator.codeChallengeMethod);
-            }*/
+            }
             DBHelper.getShared().addLoginProperties(loginproperties);
             savedResult.success(loginproperties);
         } catch (Exception e) {
@@ -987,11 +969,6 @@ public class CidaasSDKLayout extends RelativeLayout {
     public void logout(final String sub, final String post_logout_redirect_url, final EventResult<String> response) {
         String methodName = "logout";
         try {
-            //StorageHelper.setConfig(context);
-            //CidaasSDK.assetManager = context.getAssets();
-            //CidaasSDK.configurationFileName = StorageHelper.getPropertyFileName();
-            //  CidaasSDKEntity.cidaasSDKEntityInstance.readInputs(context);
-
             // Get Access Token for service call
             AccessTokenController.getShared(GLOBAL_CONTEXT).getAccessToken(sub, new EventResult<AccessTokenEntity>() {
                 @Override
@@ -1043,8 +1020,6 @@ public class CidaasSDKLayout extends RelativeLayout {
 
                             //Clear in Shared Preferences
                             DBHelper.getShared().removeUserInfo(sub);
-
-                            // StorageHelper.sharedInstance.deleteUserDetails(userId);
 
                             response.success("User Logged out");
                             hideLoader();

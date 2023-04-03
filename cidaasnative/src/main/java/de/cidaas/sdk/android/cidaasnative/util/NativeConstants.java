@@ -18,4 +18,7 @@ public class NativeConstants {
     public static final String DOMAIN_URL = "DomainURL";
     public static final String CLIENT_ID = "ClientId";
     public static final String REDIRECT_URL = "RedirectURL";
+
+    public static final String DOMAIN_REDIRECT_URL_CLIENT_ID_EMPTY_MESSAGE = "DomainURL or ClientId or RedirectURL must not be empty";
+    public static final String EXCEPTION_REQUEST_ID_MESSAGE = "Exception :Cidaas :getRequestId()";
 }
