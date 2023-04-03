@@ -206,7 +206,7 @@ public class AccessTokenController {
                     }
                 });
             } else {
-                accessTokenEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("", "Error" + methodName));
+                accessTokenEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
             accessTokenEntityResult.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
@@ -228,21 +228,21 @@ public class AccessTokenController {
 
             if (socialTokenEntity.getToken() == null || socialTokenEntity.getToken().equals("") ||
                     socialTokenEntity.getViewType() == null || socialTokenEntity.getViewType().equals("")) {
-                accessTokenResult.failure(WebAuthError.getShared(context).propertyMissingException("Token or viewtype must not be empty", "Error" + methodName));
+                accessTokenResult.failure(WebAuthError.getShared(context).propertyMissingException("Token or viewtype must not be empty", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 return null;
             }
 
 
             if (socialTokenEntity.getDomainURL() == null || socialTokenEntity.getDomainURL().equals("") ||
                     socialTokenEntity.getProvider() == null || socialTokenEntity.getProvider().equals("")) {
-                accessTokenResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or provider must not be empty", "Error" + methodName));
+                accessTokenResult.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL or provider must not be empty", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 return null;
             }
 
 
             if (socialTokenEntity.getRequestId() == null || socialTokenEntity.getRequestId().equals("")) {
 
-                accessTokenResult.failure(WebAuthError.getShared(context).propertyMissingException("RequestId must not be empty", "Error" + methodName));
+                accessTokenResult.failure(WebAuthError.getShared(context).propertyMissingException("RequestId must not be empty", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 return null;
             }
 

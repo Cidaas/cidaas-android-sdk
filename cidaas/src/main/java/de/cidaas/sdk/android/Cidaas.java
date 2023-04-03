@@ -58,7 +58,7 @@ public class Cidaas {
     public WebAuthError webAuthError = null;
 
     //To check the Loader
-    private boolean displayLoader = false;
+    private final boolean displayLoader = false;
 
     // Confirm it must be a static one
     //Extra parameter that is passed in URL

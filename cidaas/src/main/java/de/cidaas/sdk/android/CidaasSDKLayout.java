@@ -52,15 +52,6 @@ public class CidaasSDKLayout extends RelativeLayout {
 
     private static CidaasSDKLayout cidaasInstance;
 
-    public static CidaasSDKLayout getInstance(Context YourActivitycontext) {
-        if (cidaasInstance == null) {
-            cidaasInstance = new CidaasSDKLayout(YourActivitycontext);
-        }
-
-        return cidaasInstance;
-    }
-
-
     private static Context GLOBAL_CONTEXT;
     private static Activity GLOBAL_Activity;
 
@@ -99,6 +90,13 @@ public class CidaasSDKLayout extends RelativeLayout {
 
     Dictionary<String, String> loginProperties = new Hashtable<>();
 
+    public static CidaasSDKLayout getInstance(Context YourActivitycontext) {
+        if (cidaasInstance == null) {
+            cidaasInstance = new CidaasSDKLayout(YourActivitycontext);
+        }
+
+        return cidaasInstance;
+    }
 
     public CidaasSDKLayout(Context context) {
         super(context);
@@ -212,7 +210,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     String url = urlFromCode;
 
 
-                    if (url.contains("code=")) {
+                    if (url.contains(CidaasConstants.CODE_EQUAL)) {
 
                         if (url.contains(result.get(CidaasConstants.REDIRECT_URL)) && !isAlreadyEvaluated) {
 
@@ -224,7 +222,7 @@ public class CidaasSDKLayout extends RelativeLayout {
 
                             // replace redirect url with empty string
                             url = url.replace(result.get(CidaasConstants.REDIRECT_URL), "");
-                            String[] stringComponents = url.split("code=");
+                            String[] stringComponents = url.split(CidaasConstants.CODE_EQUAL);
                             if (stringComponents.length > 1) {
                                 stringComponents = stringComponents[1].split("&");
                                 if (stringComponents.length > 0) {
@@ -267,12 +265,12 @@ public class CidaasSDKLayout extends RelativeLayout {
                                 LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Invalid URL");
                             }
                         } else {
-                            String removable_string = result.get("DomainURL") + "/user-ui/#/login?code=";
+                            String removable_string = result.get(CidaasConstants.DOMAIN_URL) + "/user-ui/#/login?code=";
                             String pre_string = url.replace(removable_string, "");
                             String[] com = pre_string.split("&");
                             if (com.length > 0) {
                                 String pre_auth_code = com[0];
-                                if (!CidaasSDKLayout.GLOBAL_PRE_AUTH_CODE.equals("")) {
+                                if (!"".equals(CidaasSDKLayout.GLOBAL_PRE_AUTH_CODE)) {
                                     CidaasSDKLayout.GLOBAL_PRE_AUTH_CODE = pre_auth_code;
                                 }
                                 CidaasSDKLayout.GLOBAL_INITIAL_CODE_VERIFIER = CidaasSDKLayout.GLOBAL_CODE_VERIFIER;
@@ -489,7 +487,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     if (logincallback != null) {
                         logincallback.success(result);
                     } else {
-                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Callback must not be empty");
+                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(CidaasConstants.CALLBACK_MUST_NOT_BE_EMPTY);
 
                     }
                 }
@@ -500,7 +498,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     if (logincallback != null) {
                         logincallback.failure(error);
                     } else {
-                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Callback must not be empty");
+                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(CidaasConstants.CALLBACK_MUST_NOT_BE_EMPTY);
 
                     }
                     LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(error.getErrorMessage());
@@ -513,7 +511,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             if (logincallback != null) {
                 logincallback.failure(WebAuthError.getShared(GLOBAL_CONTEXT).methodException("Exception: CidaasSDKLayout: googleksdkflow():- ", 417, e.getMessage()));
             } else {
-                LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Callback must not be empty");
+                LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(CidaasConstants.CALLBACK_MUST_NOT_BE_EMPTY);
 
             }
             LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Exception: CidaasSDKLayout: googlesdkflow():- " + e.getMessage());
@@ -533,7 +531,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     if (logincallback != null) {
                         logincallback.success(result);
                     } else {
-                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Callback must not be empty");
+                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(CidaasConstants.CALLBACK_MUST_NOT_BE_EMPTY);
 
                     }
 
@@ -545,7 +543,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     if (logincallback != null) {
                         logincallback.failure(error);
                     } else {
-                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Callback must not be empty");
+                        LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(CidaasConstants.CALLBACK_MUST_NOT_BE_EMPTY);
 
                     }
                     LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(error.getErrorMessage());
@@ -557,7 +555,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             if (logincallback != null) {
                 logincallback.failure(WebAuthError.getShared(GLOBAL_CONTEXT).methodException("Exception: CidaasSDKLayout: facebooksdkflow():- ", 417, e.getMessage()));
             } else {
-                LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Callback must not be empty");
+                LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(CidaasConstants.CALLBACK_MUST_NOT_BE_EMPTY);
 
             }
             LogFile.getShared(GLOBAL_CONTEXT).addFailureLog("Exception: CidaasSDKLayout: facebooksdkflow():- " + e.getMessage());
@@ -666,7 +664,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                                 }
                             }
                         });
-                    } else if (lpresult.get(CidaasConstants.DOMAIN_URL) == "") {
+                    } else if ("".equals(lpresult.get(CidaasConstants.DOMAIN_URL))) {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("AuthorizationURL is missing");
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(textViewInstance.getText().toString());
@@ -682,7 +680,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         imageViewInstance.setVisibility(VISIBLE);
                         textViewInstance.setVisibility(VISIBLE);
                         buttonInstance.setVisibility(GONE);
-                    } else if (lpresult.get(CidaasConstants.CLIENT_ID) == "") {
+                    } else if ("".equals(lpresult.get(CidaasConstants.CLIENT_ID) )) {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("Client Id is missing");
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(textViewInstance.getText().toString());

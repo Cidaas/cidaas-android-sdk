@@ -73,7 +73,7 @@ public class LoginController {
         codeChallenge = generator.getCodeChallenge(codeVerifier);
 
         savedProperties.put("Verifier", codeVerifier);
-        savedProperties.put("Challenge", codeChallenge);
+        savedProperties.put(CidaasConstants.CHALLENGE, codeChallenge);
         savedProperties.put("Method", generator.codeChallengeMethod);
 
         DBHelper.getShared().addChallengeProperties(savedProperties);
@@ -104,16 +104,16 @@ public class LoginController {
                         challengeProperties = challengePropertiesfromparam;
                     }
 
-                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get("Challenge") == null || challengeProperties.get("Challenge") == "") {
+                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CLIENT_SECRET) == "") {
                         generateChallenge();
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     }
 
 
                     String authzURL = urlList.get("authorization_endpoint");
-                    String clientId = loginProperties.get("ClientId");
-                    String redirectURL = loginProperties.get("RedirectURL");
-                    String challenge = challengeProperties.get("Challenge");
+                    String clientId = loginProperties.get(CidaasConstants.CLIENT_ID);
+                    String redirectURL = loginProperties.get(CidaasConstants.REDIRECT_URL);
+                    String challenge = challengeProperties.get(CidaasConstants.CHALLENGE);
 
                     // Here the Error may occur due to Challange is empty
                     if (clientId != null && !clientId.equals("") && redirectURL != null && !redirectURL.equals("") && challenge != null && !challenge.equals("")) {
@@ -477,16 +477,16 @@ public class LoginController {
                         challengeProperties = challengePropertiesfromparam;
                     }
 
-                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get("Challenge") == null || challengeProperties.get("Challenge") == "") {
+                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CHALLENGE) == "") {
                         generateChallenge();
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     }
 
 
                     String authzURL = urlList.get("authorization_endpoint");
-                    String clientId = loginProperties.get("ClientId");
-                    String redirectURL = loginProperties.get("RedirectURL");
-                    String challenge = challengeProperties.get("Challenge");
+                    String clientId = loginProperties.get(CidaasConstants.CLIENT_ID);
+                    String redirectURL = loginProperties.get(CidaasConstants.REDIRECT_URL);
+                    String challenge = challengeProperties.get(CidaasConstants.CHALLENGE);
 
                     // Here the Error may occur due to Challange is empty
                     if (clientId != null && !clientId.equals("") && redirectURL != null && !redirectURL.equals("") && challenge != null && !challenge.equals("")) {

@@ -77,8 +77,6 @@ public class OauthService {
             }
 
             // Construct URl Checking,Add Parameter(FieldMap) pending
-            urlComponents = new URLHelper();
-            // finalUrl = urlComponents.constructURL(loginProperties.get("DomainURL"),loginProperties.get("ClientId"));
             callback.success(finalUrl);
         } catch (Exception e) {
             Timber.d(e.getMessage());
