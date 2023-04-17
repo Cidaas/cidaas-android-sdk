@@ -660,7 +660,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                         imageViewInstance.setVisibility(VISIBLE);
                         textViewInstance.setVisibility(VISIBLE);
                         buttonInstance.setVisibility(GONE);
-                    } else if (lpresult.get(CidaasConstants.REDIRECT_URL) == "") {
+                    } else if ("".equals(lpresult.get(CidaasConstants.REDIRECT_URL))) {
                         imageViewInstance.setImageDrawable(GLOBAL_CONTEXT.getResources().getDrawable(R.drawable.settings));
                         textViewInstance.setText("RedirectURI is missing");
                         LogFile.getShared(GLOBAL_CONTEXT).addFailureLog(textViewInstance.getText().toString());
