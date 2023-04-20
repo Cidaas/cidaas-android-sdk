@@ -60,7 +60,7 @@ public class RequestIdController {
 
       /*  if(!ENABLE_PKCE && !clientSecret.equals("") && clientSecret!=null)
         {
-            savedProperties.put("ClientSecret",clientSecret);
+            savedProperties.put(NativeConstants.CLIENT_SECRET,clientSecret);
         }
 */
         DBHelper.getShared().addChallengeProperties(savedProperties);
@@ -124,13 +124,13 @@ public class RequestIdController {
 
         CidaasHelper.ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
         if (!CidaasHelper.ENABLE_PKCE) {
-            if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret").equals("") || loginproperties == null
-                    || !((Hashtable) loginproperties).containsKey("ClientSecret")) {
+            if (loginproperties.get(NativeConstants.CLIENT_SECRET) == null || loginproperties.get(NativeConstants.CLIENT_SECRET).equals("") || loginproperties == null
+                    || !((Hashtable) loginproperties).containsKey(NativeConstants.CLIENT_SECRET)) {
                 Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("PKCE flow is disabled ,ClientSecret must not be null",
                         NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return true;
             } else {
-                clientSecret = loginproperties.get("ClientSecret");
+                clientSecret = loginproperties.get(NativeConstants.CLIENT_SECRET);
             }
         }
         return false;

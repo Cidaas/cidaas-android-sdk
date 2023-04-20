@@ -93,7 +93,7 @@ public class AccountVerificationService {
     private void serviceForInitiateAccountVerification(String initiateAccountVerificationUrl,
                                                        InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity,
                                                        Map<String, String> headers, final EventResult<InitiateAccountVerificationResponseEntity> callback) {
-        final String methodName = "AccountVerificationService :verifyAccountVerification()";
+        final String methodName = NativeConstants.METHOD_VERIFY_ACCOUNT_VERFICATION;
         try {
             //Call Service-getRequestId
             ICidaasNativeService cidaasNativeService = service.getInstance();
@@ -132,7 +132,7 @@ public class AccountVerificationService {
                                           final EventResult<VerifyAccountResponseEntity> callback) {
         //Local Variables
 
-        String methodName = "AccountVerificationService :verifyAccountVerification()";
+        String methodName = NativeConstants.METHOD_VERIFY_ACCOUNT_VERFICATION;
         try {
 
             if (baseurl != null && !baseurl.equals("")) {
@@ -157,7 +157,7 @@ public class AccountVerificationService {
 
     private void serviceForVerifyAccountVerification(String verifyAccountVerificationUrl, VerifyAccountRequestEntity
             verifyAccountRequestEntity, Map<String, String> headers, final EventResult<VerifyAccountResponseEntity> callback) {
-        final String methodName = "AccountVerificationService :verifyAccountVerification()";
+        final String methodName = NativeConstants.METHOD_VERIFY_ACCOUNT_VERFICATION;
         try {
             //Call Service-getRequestId
             ICidaasNativeService cidaasNativeService = service.getInstance();
@@ -221,7 +221,7 @@ public class AccountVerificationService {
     }
 
     private void serviceForGetAccountVerificationList(String verifyAccountVerificationUrl, Map<String, String> headers, final EventResult<AccountVerificationListResponseEntity> callback) {
-        final String methodName = "AccountVerificationService :verifyAccountVerification()";
+        final String methodName = NativeConstants.METHOD_VERIFY_ACCOUNT_VERFICATION;
         try {
             //Call Service-getRequestId
             ICidaasNativeService cidaasNativeService = service.getInstance();

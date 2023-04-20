@@ -81,9 +81,9 @@ public class UserProfileController {
 
     public void getUserConfigurationList() {
         try {
-
+            //getUserConfigurationList
         } catch (Exception e) {
-
+            //Exception getUserConfigurationList
         }
     }
 

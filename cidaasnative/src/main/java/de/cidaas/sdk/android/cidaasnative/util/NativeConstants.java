@@ -18,7 +18,12 @@ public class NativeConstants {
     public static final String DOMAIN_URL = "DomainURL";
     public static final String CLIENT_ID = "ClientId";
     public static final String REDIRECT_URL = "RedirectURL";
+    public static final String CLIENT_SECRET = "ClientSecret";
 
     public static final String DOMAIN_REDIRECT_URL_CLIENT_ID_EMPTY_MESSAGE = "DomainURL or ClientId or RedirectURL must not be empty";
     public static final String EXCEPTION_REQUEST_ID_MESSAGE = "Exception :Cidaas :getRequestId()";
+    public static final String ERROR_RESET_PASSWORD_INITIATE = "Error :ResetPasswordService :initiateresetPassword()";
+    public static final String EXCEPTION_RESET_PASSWORD_NEW = "Exception :ResetPasswordService :resetNewPassword()";
+    public static final String METHOD_VERIFY_ACCOUNT_VERFICATION = "AccountVerificationService :verifyAccountVerification()";
+    public static final String METHOD_VERIFY_ACCOUNT_VERFICATION_REGISTRATION_SERVICE = "RegistrationService :verifyAccountVerification()";
 }

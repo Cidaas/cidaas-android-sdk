@@ -25,15 +25,7 @@ checks:
 plugins:
   sonar-java:
     enabled: true
-    config:
-      sonar:
-        issue:
-          ignore:
-            multicriteria:
-              e1:
-                ruleKey:
-                  squid:
-                    S00108
+
   pmd:
     enabled: true
     config:

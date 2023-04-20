@@ -294,7 +294,7 @@ public class RegistrationService {
     private void serviceForInitiateAccountVerification(String initiateAccountVerificationUrl,
                                                        InitiateAccountVerificationRequestEntity initiateAccountVerificationRequestEntity,
                                                        Map<String, String> headers, final EventResult<InitiateAccountVerificationResponseEntity> callback) {
-        final String methodName = "RegistrationService :verifyAccountVerification()";
+        final String methodName = NativeConstants.METHOD_VERIFY_ACCOUNT_VERFICATION_REGISTRATION_SERVICE;
         try {
             //Call Service-getRequestId
             ICidaasNativeService cidaasNativeService = service.getInstance();
@@ -333,7 +333,7 @@ public class RegistrationService {
                                           final EventResult<VerifyAccountResponseEntity> callback) {
         //Local Variables
 
-        String methodName = "RegistrationService :verifyAccountVerification()";
+        String methodName = NativeConstants.METHOD_VERIFY_ACCOUNT_VERFICATION_REGISTRATION_SERVICE;
         try {
 
             if (baseurl != null && !baseurl.equals("")) {
@@ -358,7 +358,7 @@ public class RegistrationService {
 
     private void serviceForVerifyAccountVerification(String verifyAccountVerificationUrl, VerifyAccountRequestEntity
             verifyAccountRequestEntity, Map<String, String> headers, final EventResult<VerifyAccountResponseEntity> callback) {
-        final String methodName = "RegistrationService :verifyAccountVerification()";
+        final String methodName = NativeConstants.METHOD_VERIFY_ACCOUNT_VERFICATION_REGISTRATION_SERVICE;
         try {
             //Call Service-getRequestId
             ICidaasNativeService cidaasNativeService = service.getInstance();

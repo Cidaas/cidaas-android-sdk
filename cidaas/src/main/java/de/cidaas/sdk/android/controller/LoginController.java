@@ -150,7 +150,7 @@ public class LoginController {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     if (provider != null && !provider.equals("") && requestId != null && !requestId.equals("")) {
-                        String finalURL = URLHelper.getShared().constructSocialURL(result.get("DomainURL"), provider, requestId);
+                        String finalURL = URLHelper.getShared().constructSocialURL(result.get(CidaasConstants.DOMAIN_URL), provider, requestId);
 
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
@@ -384,12 +384,12 @@ public class LoginController {
 
 
                 if (DBHelper.getShared().addLoginProperties(loginproperties)) {
-                    CidaasHelper.baseurl = loginproperties.get("DomainURL");
+                    CidaasHelper.baseurl = loginproperties.get(CidaasConstants.DOMAIN_URL);
                     CidaasHelper.IS_SETURL_CALLED = true;
                     result.success("SetURL is Successfully configured " + methodNameFromApp);
-                    LogFile.getShared(context).addSuccessLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                    LogFile.getShared(context).addSuccessLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get(CidaasConstants.DOMAIN_URL)
                             + " Method Name:- " + methodNameFromApp);
-                    LogFile.getShared(context).addInfoLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                    LogFile.getShared(context).addInfoLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get(CidaasConstants.DOMAIN_URL)
                             + " Method Name:- " + methodNameFromApp);
                 } else {
                     String errorMessage = "Saving Failed in LocalDB";

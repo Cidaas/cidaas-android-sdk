@@ -87,9 +87,9 @@ public class AccessTokenService {
                 // generate Body Parameter
                 querymap.put("grant_type", "authorization_code");
                 querymap.put("code", Code);
-                querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
-                querymap.put("client_id", loginProperties.get("ClientId"));
-                querymap.put("code_verifier", challengeProperties.get("Verifier"));
+                querymap.put("redirect_uri", loginProperties.get(CidaasConstants.REDIRECT_URL));
+                querymap.put("client_id", loginProperties.get(CidaasConstants.CLIENT_ID));
+                querymap.put("code_verifier", challengeProperties.get(CidaasConstants.VERIFIER));
 
                 //Service call
                 serviceForGetAccessTokenByCode(getAccessTokenUrl, headers, querymap, acessTokencallback);
@@ -169,8 +169,8 @@ public class AccessTokenService {
                 }
 
                 //Check Verifier,If null set it as empty String
-                if (challengeProperties.get("Verifier") == null) {
-                    challengeProperties.put("Verifier", "");
+                if (challengeProperties.get(CidaasConstants.VERIFIER) == null) {
+                    challengeProperties.put(CidaasConstants.VERIFIER, "");
                 }
 
                 //Add Body Parameter
@@ -178,7 +178,7 @@ public class AccessTokenService {
                 querymap.put("grant_type", "refresh_token");
                 querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
                 querymap.put("client_id", loginProperties.get("ClientId"));
-                querymap.put("code_verifier", challengeProperties.get("Verifier"));
+                querymap.put("code_verifier", challengeProperties.get(CidaasConstants.VERIFIER));
                 querymap.put("refresh_token", refreshToken);
 
                 //Service call

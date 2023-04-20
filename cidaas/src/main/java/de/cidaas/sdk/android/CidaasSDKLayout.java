@@ -961,7 +961,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 ((Activity) GLOBAL_CONTEXT).finish();
             }
         } catch (Exception e) {
-
+            //Exception onBackPressed()
         }
     }
 
@@ -1048,7 +1048,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                 //call facebook activity result
             }
         } catch (Exception e) {
-
+            //Exception authroze()
         }
     }
 

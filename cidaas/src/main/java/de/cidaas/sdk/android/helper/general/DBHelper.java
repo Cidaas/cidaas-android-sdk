@@ -57,7 +57,7 @@ public class DBHelper {
             editor.putBoolean(PKCE_ENABLE_STATUS, enablePKCE);
             editor.commit();
         } catch (Exception e) {
-
+            //Exception enabling PKCE
         }
     }
 
@@ -80,7 +80,7 @@ public class DBHelper {
             editor.putBoolean(LOG_ENABLE_STATUS, enableLog);
             editor.commit();
         } catch (Exception e) {
-
+            //Exception enabling Log
         }
     }
 
