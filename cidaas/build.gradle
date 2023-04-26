@@ -66,9 +66,9 @@ dependencies {
     //For Retrofit Call
     implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.8.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
 
     //For Reactive X
     implementation 'io.reactivex:rxandroid:1.2.1'
