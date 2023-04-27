@@ -181,9 +181,10 @@ public class RegistrationService {
                                             , response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
-                                assert response.errorBody() != null;
-                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
-                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
+                                if( response.errorBody() != null ){
+                                    callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+                                            response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
+                                }
 
                             }
                         }
@@ -246,10 +247,10 @@ public class RegistrationService {
                                             , response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
-                                assert response.errorBody() != null;
-                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE,
-                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
-
+                                if(response.errorBody() != null){
+                                    callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.USER_PROFILE_UPDATE_FAILURE,
+                                            response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
+                                }
                             }
                         }
 

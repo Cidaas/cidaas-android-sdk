@@ -21,5 +21,7 @@ public final class CidaasConstants {
     public static final String METHOD_READ_PROPERTIES = "readProperties";
 
     public static final String CALLBACK_MUST_NOT_BE_EMPTY = "Callback must not be empty";
+    public static final String CIDAAS_CONSTRUCTOR_FAILURE = "Cidaas constructor failure : ";
+    public static final String CLIENTID_MUST_NOT_BE_NULL = "ClientId must not be null";
 
 }

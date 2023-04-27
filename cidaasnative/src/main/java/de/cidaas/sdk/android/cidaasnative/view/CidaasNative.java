@@ -452,7 +452,7 @@ public class CidaasNative {
 
     // change the sub to access token
     public void changePassword(String accessToken, final ChangePasswordRequestEntity changePasswordRequestEntity, final EventResult<ChangePasswordResponseEntity> result) {
-        if(!accessToken.isEmpty() && !accessToken.equals("") && accessToken != null  ) {
+        if(accessToken != null && !accessToken.isEmpty()) {
             changePasswordRequestEntity.setAccess_token(accessToken);
             ChangePasswordController.getShared(context).changePassword(changePasswordRequestEntity, result);
         }

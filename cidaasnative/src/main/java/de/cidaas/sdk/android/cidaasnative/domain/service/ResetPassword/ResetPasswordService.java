@@ -92,7 +92,7 @@ public class ResetPasswordService {
             //This is only for testing purpose
             if (deviceInfoEntityFromParam == null) {
                 deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            } else if (deviceInfoEntityFromParam != null) {
+            } else {
                 deviceInfoEntity = deviceInfoEntityFromParam;
             }
             //check Construct Headers pending,Null Checking Pending
@@ -119,9 +119,10 @@ public class ResetPasswordService {
                                     "Service failure but successful response", NativeConstants.ERROR_RESET_PASSWORD_INITIATE));
                         }
                     } else {
-                        assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
-                                response, NativeConstants.ERROR_RESET_PASSWORD_INITIATE));
+                        if(response.errorBody() != null){
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
+                                    response, NativeConstants.ERROR_RESET_PASSWORD_INITIATE));
+                        }
                     }
                 }
 
@@ -195,9 +196,10 @@ public class ResetPasswordService {
                                         "Service failure but successful response", NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
                             }
                         } else {
-                            assert response.errorBody() != null;
-                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
-                                    response, NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
+                            if(response.errorBody() != null){
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
+                                        response, NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
+                            }
                         }
                     }
 
@@ -265,9 +267,10 @@ public class ResetPasswordService {
                                         "Service failure but successful response", NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
                             }
                         } else {
-                            assert response.errorBody() != null;
-                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE, response,
-                                    NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
+                            if( response.errorBody() != null){
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE, response,
+                                        NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
+                            }
                         }
                     }
 

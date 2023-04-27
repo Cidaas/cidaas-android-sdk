@@ -72,7 +72,7 @@ public class AccountVerificationService {
         String methodName = "AccountVerificationService :initiateAccountVerification()";
         try {
 
-            if (baseurl != null || !baseurl.equals("")) {
+            if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
                 String initiateAccountVerificationUrl = baseurl + NativeURLHelper.getShared().getRegisterUserAccountInitiate();
 
@@ -174,9 +174,10 @@ public class AccountVerificationService {
                                             response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
-                                assert response.errorBody() != null;
-                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
+                                if(null != response.errorBody()){
+                                    callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+                                            response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
+                                }
                             }
                         }
 
@@ -238,9 +239,11 @@ public class AccountVerificationService {
                                             response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
-                                assert response.errorBody() != null;
-                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
-                                        response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
+                                if (null != response.errorBody()){
+                                    callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE,
+                                            response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
+                                }
+
                             }
                         }
 
