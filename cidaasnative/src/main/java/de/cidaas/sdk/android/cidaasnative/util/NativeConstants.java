@@ -1,6 +1,6 @@
 package de.cidaas.sdk.android.cidaasnative.util;
 
-public class NativeConstants {
+public final class NativeConstants {
 
     private NativeConstants(){}
 

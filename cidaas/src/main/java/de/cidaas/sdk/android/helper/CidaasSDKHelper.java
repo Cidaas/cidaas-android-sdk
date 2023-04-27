@@ -5,9 +5,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 
-public class CidaasSDKHelper {
+public final class CidaasSDKHelper {
     public static String codeChallengeMethod = "S256";
     public static String contentType = "application/x-www-form-urlencoded";
+
+    private CidaasSDKHelper() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
 
     public static boolean isInternetAvailable(final Context context) {

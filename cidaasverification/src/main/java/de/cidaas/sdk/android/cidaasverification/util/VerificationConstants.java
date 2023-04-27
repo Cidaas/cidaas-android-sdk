@@ -1,6 +1,6 @@
 package de.cidaas.sdk.android.cidaasverification.util;
 
-public class VerificationConstants {
+public final class VerificationConstants {
 
     private VerificationConstants(){}
 

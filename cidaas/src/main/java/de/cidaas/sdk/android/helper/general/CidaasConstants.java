@@ -1,6 +1,6 @@
 package de.cidaas.sdk.android.helper.general;
 
-public class CidaasConstants {
+public final class CidaasConstants {
 
     //SONAR
     private CidaasConstants(){}

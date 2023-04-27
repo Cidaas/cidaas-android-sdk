@@ -104,7 +104,7 @@ public class LoginController {
                         challengeProperties = challengePropertiesfromparam;
                     }
 
-                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CLIENT_SECRET) == "") {
+                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CLIENT_SECRET).equals("")) {
                         generateChallenge();
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     }
@@ -477,7 +477,7 @@ public class LoginController {
                         challengeProperties = challengePropertiesfromparam;
                     }
 
-                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CHALLENGE) == "") {
+                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CHALLENGE).equals("")) {
                         generateChallenge();
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     }

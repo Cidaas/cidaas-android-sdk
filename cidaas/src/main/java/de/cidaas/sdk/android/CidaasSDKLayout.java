@@ -794,13 +794,13 @@ public class CidaasSDKLayout extends RelativeLayout {
             readFromFile(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginProperties) {
-                    if (loginProperties.get(CidaasConstants.DOMAIN_URL).equals("") || loginProperties.get(CidaasConstants.DOMAIN_URL) == null || loginProperties == null) {
+                    if (loginProperties == null || loginProperties.get(CidaasConstants.DOMAIN_URL) == null || loginProperties.get(CidaasConstants.DOMAIN_URL).equals("")) {
                         result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).propertyMissingException("Domain URL must not be null", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
-                    if (loginProperties.get(CidaasConstants.CLIENT_ID).equals("") || loginProperties.get(CidaasConstants.CLIENT_ID) == null || loginProperties == null) {
+                    if (loginProperties == null || loginProperties.get(CidaasConstants.CLIENT_ID) == null || loginProperties.get(CidaasConstants.CLIENT_ID).equals("")) {
                         result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).propertyMissingException("ClientId must not be null", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
-                    if (loginProperties.get(CidaasConstants.REDIRECT_URL).equals("") || loginProperties.get(CidaasConstants.REDIRECT_URL) == null || loginProperties == null) {
+                    if (loginProperties == null || loginProperties.get(CidaasConstants.REDIRECT_URL) == null || loginProperties.get(CidaasConstants.REDIRECT_URL).equals("")) {
                         result.failure(WebAuthError.getShared(GLOBAL_CONTEXT).propertyMissingException("Redirect URL must not be null", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                     CidaasHelper.baseurl = loginProperties.get(CidaasConstants.DOMAIN_URL);
@@ -864,7 +864,7 @@ public class CidaasSDKLayout extends RelativeLayout {
             webAuthError = WebAuthError.getShared(GLOBAL_CONTEXT);
 
             //Check all the login Properties are Correct
-            if (loginproperties.get(CidaasConstants.DOMAIN_URL) == null || loginproperties.get(CidaasConstants.DOMAIN_URL) == ""
+            if (loginproperties.get(CidaasConstants.DOMAIN_URL) == null || loginproperties.get(CidaasConstants.DOMAIN_URL).equals("")
                     || !((Hashtable) loginproperties).containsKey(CidaasConstants.DOMAIN_URL)) {
                 webAuthError = webAuthError.propertyMissingException("DomainURL must not be null", methodName);
 

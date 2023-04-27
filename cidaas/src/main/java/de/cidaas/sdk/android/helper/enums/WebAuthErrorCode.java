@@ -4,7 +4,7 @@ package de.cidaas.sdk.android.helper.enums;
  * Created by widasrnarayanan on 16/1/18.
  */
 
-public class WebAuthErrorCode {
+public final class WebAuthErrorCode {
 
     //General
     public static final int DEFAULT = 10000;
@@ -211,6 +211,10 @@ public class WebAuthErrorCode {
 
 
     public static final int TIME_OUT_ERROR = 10133;
+
+    private WebAuthErrorCode() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
 
 }

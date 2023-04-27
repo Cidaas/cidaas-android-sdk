@@ -1,6 +1,6 @@
 package de.cidaas.sdk.android.consent.helper;
 
-public class ConsentConstants {
+public final class ConsentConstants {
 
     private ConsentConstants(){}
 

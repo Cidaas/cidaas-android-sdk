@@ -1,6 +1,10 @@
 package de.cidaas.sdk.android.helper.enums;
 
-public class UsageType {
+public final class UsageType {
     public static final String PASSWORDLESS = "PASSWORDLESS_AUTHENTICATION";
     public static final String MFA = "MULTIFACTOR_AUTHENTICATION";
+
+    private UsageType() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 }

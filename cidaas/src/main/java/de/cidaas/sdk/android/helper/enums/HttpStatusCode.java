@@ -23,4 +23,8 @@ public class HttpStatusCode {
     public static final int BAD_GATEWAY = 502;
     public static final int SERVICE_UNAVAILABLE = 503;
 
+    private HttpStatusCode() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
 }
