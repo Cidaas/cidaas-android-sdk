@@ -81,7 +81,7 @@ public class PushAcknowledgeController {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
-                    String clientId = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
                     //App properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();

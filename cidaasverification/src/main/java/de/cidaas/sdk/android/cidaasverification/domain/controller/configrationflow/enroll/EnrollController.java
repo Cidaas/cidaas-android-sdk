@@ -158,8 +158,8 @@ public class EnrollController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    String clientId = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
                     //App properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();

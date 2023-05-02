@@ -140,7 +140,7 @@ public class AuthenticatedHistoryController {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
-                    final String clientId = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
 
                     //App properties
@@ -173,7 +173,7 @@ public class AuthenticatedHistoryController {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
-                    final String clientId = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
 
                     //App properties
@@ -205,7 +205,7 @@ public class AuthenticatedHistoryController {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
-                    final String clientId = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
 
                     //App properties
