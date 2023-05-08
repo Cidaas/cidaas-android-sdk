@@ -46,9 +46,10 @@ dependencies {
 
     //For Retrofit Call
     implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava:2.8.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -86,7 +87,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.1.17'
+                version = '3.1.18'
                 artifact(sourceJar)
             }
         }
