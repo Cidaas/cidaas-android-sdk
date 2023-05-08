@@ -25,6 +25,7 @@ checks:
 plugins:
   sonar-java:
     enabled: true
+
   pmd:
     enabled: true
     config:

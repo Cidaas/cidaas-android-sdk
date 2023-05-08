@@ -13,6 +13,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.Authent
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.helper.biometrichandler.BiometricHandler;
 import de.cidaas.sdk.android.cidaasverification.domain.service.authenticate.AuthenticateService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.AuthenticationType;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -71,12 +72,12 @@ public class AuthenticateController {
                 handleVerificationTypes(authenticateEntity, authenticateResult);
             } else {
                 authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException(
-                        "ExchangeId or Verification Type must not be null", "Error:" + methodName));
+                        "ExchangeId or Verification Type must not be null", VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -115,14 +116,14 @@ public class AuthenticateController {
 
                         addProperties(authenticateEntity, authenticateResult);
                     } else {
-                        authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", "Error:" + methodName));
+                        authenticateResult.failure(WebAuthError.getShared(context).propertyMissingException("Passcode must not be empty", VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                         return;
                     }
                 }
             }
 
         } catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -136,7 +137,6 @@ public class AuthenticateController {
                 @Override
                 public void success(String result) {
                     //call authenticate call
-                    // authenticateEntity.setPass_code(DBHelper.getShared().getDeviceInfo().getDeviceId());
                     addProperties(authenticateEntity, authenticateResult);
                 }
 
@@ -147,7 +147,7 @@ public class AuthenticateController {
             });
 
         } catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -161,8 +161,8 @@ public class AuthenticateController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    final String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
                     //App properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
@@ -181,7 +181,7 @@ public class AuthenticateController {
             });
 
         } catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -199,7 +199,7 @@ public class AuthenticateController {
             AuthenticateService.getShared(context).callAuthenticateService(authenticateUrl, headers, authenticateEntity, authenticateResult);
 
         } catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -211,8 +211,8 @@ public class AuthenticateController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    final String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
                     //Change To Hashmap and Add Properties
                     HashMap<String, RequestBody> authenticateHashmap = new HashMap<>();
@@ -239,7 +239,7 @@ public class AuthenticateController {
             });
 
         } catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -258,7 +258,7 @@ public class AuthenticateController {
             //Authenticate Service call
             AuthenticateService.getShared(context).callAuthenticateServiceForFaceOrVoice(file, authenticateUrl, headers, authenticateHashmap, authenticateResult);
         } catch (Exception e) {
-            authenticateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            authenticateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }

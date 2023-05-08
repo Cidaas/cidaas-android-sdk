@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntit
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.scanned.ScannedService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -61,11 +62,11 @@ public class ScannedController {
                 addProperties(scannedEntity, scannedResult);
             } else {
                 scannedResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub or ExchangeId must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            scannedResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -100,7 +101,7 @@ public class ScannedController {
             });
 
         } catch (Exception e) {
-            scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            scannedResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -117,7 +118,7 @@ public class ScannedController {
             //Scanned Service call
             ScannedService.getShared(context).callScannedService(scannedUrl, headers, scannedEntity, scannedResult);
         } catch (Exception e) {
-            scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            scannedResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

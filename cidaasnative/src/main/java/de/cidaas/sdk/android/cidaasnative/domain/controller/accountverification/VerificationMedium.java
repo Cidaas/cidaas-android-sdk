@@ -5,4 +5,8 @@ public class VerificationMedium {
     public static final String SMS = "sms";
     public static final String IVR = "ivr";
 
+    private VerificationMedium() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
 }

@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.verificationcontinue
 import de.cidaas.sdk.android.cidaasverification.data.entity.verificationcontinue.VerificationContinueResponseEntity;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.verificationcontinue.VerificationContinueService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.controller.AccessTokenController;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
@@ -64,14 +65,14 @@ public class VerificationContinueController {
                 if (verificationContinueEntity.getStatus_id() == null || verificationContinueEntity.getStatus_id().equals("")
                         && verificationContinueEntity.getRequestId() == null || verificationContinueEntity.getRequestId().equals("")) {
                     VerificationContinueResult.failure(WebAuthError.getShared(context).propertyMissingException("Status_id or RequestId must not be null",
-                            "Error:" + methodName));
+                            VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     return;
                 }
 
                 if (verificationContinueEntity.getUsageType().equals(UsageType.MFA)) {
                     if (verificationContinueEntity.getTrackId() == null || verificationContinueEntity.getTrackId().equals("")) {
                         VerificationContinueResult.failure(WebAuthError.getShared(context).propertyMissingException("TrackId must not be null",
-                                "Error:" + methodName));
+                                VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                         return;
                     }
                 }
@@ -79,11 +80,11 @@ public class VerificationContinueController {
                 addProperties(verificationContinueEntity, VerificationContinueResult);
             } else {
                 VerificationContinueResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            VerificationContinueResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+            VerificationContinueResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
                     e.getMessage()));
         }
     }
@@ -115,7 +116,7 @@ public class VerificationContinueController {
                 }
             });
         } catch (Exception e) {
-            verificationContinueResponseResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            verificationContinueResponseResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.RESUME_LOGIN_FAILURE, e.getMessage()));
         }
     }
@@ -145,7 +146,7 @@ public class VerificationContinueController {
                 }
             });
         } catch (Exception e) {
-            verificationContinueResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+            verificationContinueResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
                     e.getMessage()));
         }
     }
@@ -169,7 +170,7 @@ public class VerificationContinueController {
                 }
             });
         } catch (Exception e) {
-            verificationContinueResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+            verificationContinueResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
                     e.getMessage()));
         }
     }

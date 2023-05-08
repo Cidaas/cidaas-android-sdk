@@ -10,6 +10,10 @@ import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginCredentialsResponseEntity implements Serializable {
+
+    private boolean success;
+    private int status;
+    private AccessTokenEntity data;
     public boolean isSuccess() {
         return success;
     }
@@ -33,9 +37,5 @@ public class LoginCredentialsResponseEntity implements Serializable {
     public void setData(AccessTokenEntity data) {
         this.data = data;
     }
-
-    private boolean success;
-    private int status;
-    private AccessTokenEntity data;
 
 }

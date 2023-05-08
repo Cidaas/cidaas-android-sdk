@@ -12,6 +12,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.Initia
 import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.VerifyAccountRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.accountverification.VerifyAccountResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.AccountVerification.AccountVerificationService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -51,8 +52,8 @@ public class AccountVerificationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
+                    String clientId = result.get(NativeConstants.CLIENT_ID);
 
 
                     if (initiateAccountVerificationRequestEntity.getProcessingType() == null || initiateAccountVerificationRequestEntity.getVerificationMedium() == null ||
@@ -76,7 +77,7 @@ public class AccountVerificationController {
                 }
             });
         } catch (Exception e) {
-            EventResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+            EventResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 
@@ -111,7 +112,7 @@ public class AccountVerificationController {
                 result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 
@@ -121,8 +122,8 @@ public class AccountVerificationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = lpresult.get("DomainURL");
-                    String clientId = lpresult.get("ClientId");
+                    String baseurl = lpresult.get(NativeConstants.DOMAIN_URL);
+                    String clientId = lpresult.get(NativeConstants.CLIENT_ID);
 
                     if (code != null && !code.equals("") && accvid != null && !accvid.equals("")) {
                         verifyAccountVerificationService(baseurl, code, accvid, result);
@@ -134,11 +135,11 @@ public class AccountVerificationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error :" + methodName));
+                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 
@@ -158,10 +159,10 @@ public class AccountVerificationController {
                 AccountVerificationService.getShared(context).verifyAccountVerification(baseurl, registrationEntity, result);
             } else {
                 result.failure(WebAuthError.getShared(context).propertyMissingException("ACCVID or CODE or BASEURL must not be null",
-                        "Error :" + methodName));
+                        NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 
@@ -171,8 +172,8 @@ public class AccountVerificationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> lpresult) {
-                    String baseurl = lpresult.get("DomainURL");
-                    String clientId = lpresult.get("ClientId");
+                    String baseurl = lpresult.get(NativeConstants.DOMAIN_URL);
+                    String clientId = lpresult.get(NativeConstants.CLIENT_ID);
 
                     if (sub != null && !sub.equals("")) {
                         getAccountVerificationList(baseurl, sub, result);
@@ -184,11 +185,11 @@ public class AccountVerificationController {
 
                 @Override
                 public void failure(WebAuthError error) {
-                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error :" + methodName));
+                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 
@@ -203,10 +204,10 @@ public class AccountVerificationController {
                 AccountVerificationService.getShared(context).getAccountVerificationList(baseurl, sub, result);
             } else {
                 result.failure(WebAuthError.getShared(context).propertyMissingException("SUB or BASEURL must not be null",
-                        "Error :" + methodName));
+                        NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 }

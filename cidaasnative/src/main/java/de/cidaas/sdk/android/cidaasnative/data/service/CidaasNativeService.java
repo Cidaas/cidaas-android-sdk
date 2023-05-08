@@ -54,20 +54,17 @@ public class CidaasNativeService {
     public OkHttpClient getOKHttpClient() {
         OkHttpClient okHttpClient;
         final String HEADER_USER_AGENT = "User-Agent";
-     /*   final String HEADER_LOCATION_LATITUDE="Lat";
-        final String HEADER_LOCATION_LONGITUDE="Long";*/
         okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(40, TimeUnit.SECONDS)
                 .connectTimeout(100, TimeUnit.SECONDS)
                 .addNetworkInterceptor(chain -> {
                     Request originalRequest = chain.request();
                     Request requestWithUserAgent = originalRequest.newBuilder()
-                            .header(HEADER_USER_AGENT, createCustomUserAgent(originalRequest))
+                            .header(HEADER_USER_AGENT, createCustomUserAgent())
                             /*.addHeader(HEADER_LOCATION_LATITUDE,getLat())
                             .header(HEADER_LOCATION_LONGITUDE,getLong())*/
                             .build();
                     for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
-                        //    Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                         DBHelper.getShared().setUserAgent("User-Agent : " + String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                     }
 
@@ -77,7 +74,7 @@ public class CidaasNativeService {
         return okHttpClient;
     }
 
-    private String createCustomUserAgent(Request originalRequest) {
+    private String createCustomUserAgent() {
         // App name can be also retrieved programmatically, but no need to do it for this sample needs
         String ua = "Cidaas-" + CidaasHelper.APP_NAME;
         String baseUa = System.getProperty("http.agent");

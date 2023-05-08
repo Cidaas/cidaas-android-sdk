@@ -8,25 +8,14 @@ import java.io.Serializable;
 public class RegistrationCustomFieldEntity implements Serializable {
 
     public String key = "";
-    //public RegisterNewUserCustomValue value;
 
     public Object value;
 
     public String id = "";
     public String dataType = "";
-    // public Object value;
     public boolean internal = false;
     public boolean readOnly = false;
     public String lastUpdateFrom = "";
-    // public String key ="";
-
-   /* public RegisterNewUserCustomValue getValue() {
-        return value;
-    }*/
-
-    /*public void setValue(RegisterNewUserCustomValue value) {
-        this.value = value;
-    }*/
 
     public Object getValue() {
         return value;

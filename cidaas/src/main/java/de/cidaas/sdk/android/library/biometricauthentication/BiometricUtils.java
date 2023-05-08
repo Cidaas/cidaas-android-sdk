@@ -12,11 +12,15 @@ import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 
 
 @SuppressLint({"MissingPermission"})
-public class BiometricUtils {
+public final class BiometricUtils {
 
 
     public static boolean isBiometricPromptEnabled() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P);
+    }
+
+    private BiometricUtils() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
 

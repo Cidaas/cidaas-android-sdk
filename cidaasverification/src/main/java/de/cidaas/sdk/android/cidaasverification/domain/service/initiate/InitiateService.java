@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.initiate.InitiateEnt
 import de.cidaas.sdk.android.cidaasverification.data.entity.initiate.InitiateResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -61,18 +62,18 @@ public class InitiateService {
                         initiateCallback.success(response.body());
                     } else {
                         initiateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
-                                response, "Error:- " + methodName));
+                                response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<InitiateResponse> call, Throwable t) {
                     initiateCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
+                            t.getMessage(), VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            initiateCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
+            initiateCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

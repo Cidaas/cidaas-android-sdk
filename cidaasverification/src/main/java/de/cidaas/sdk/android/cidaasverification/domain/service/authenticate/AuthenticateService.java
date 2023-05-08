@@ -11,6 +11,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.Authent
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticate.AuthenticateResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -58,7 +59,7 @@ public class AuthenticateService {
         try {
 
             LogFile.getShared(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
-                    " ExchangeId:- " + authenticateEntity.getExchange_id() + " PassCode:- " + authenticateEntity.getPass_code());
+                    VerificationConstants.EXCHANGE_ID + authenticateEntity.getExchange_id() + " PassCode:- " + authenticateEntity.getPass_code());
 
             //call service
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
@@ -69,21 +70,21 @@ public class AuthenticateService {
                         authenticateCallback.success(response.body());
 
                         LogFile.getShared(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
-                                " Status id:- " + response.body().getData().getStatus_id() + " ExchangeId:- " + response.body().getData().getExchange_id());
+                                " Status id:- " + response.body().getData().getStatus_id() + VerificationConstants.EXCHANGE_ID + response.body().getData().getExchange_id());
                     } else {
                         authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
-                                response, "Error:- " + methodName));
+                                response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthenticateResponse> call, Throwable t) {
                     authenticateCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
+                            t.getMessage(), VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            authenticateCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            authenticateCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -96,7 +97,7 @@ public class AuthenticateService {
             //call service
 
             LogFile.getShared(context).addInfoLog(methodName, " AuthenticateURL:- " + authenticateURL +
-                    " ExchangeId:- " + authenticateHashmap.get("exchange_id"));
+                    VerificationConstants.EXCHANGE_ID + authenticateHashmap.get("exchange_id"));
 
             ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
             cidaasSDK_v2_services.authenticateWithMultipart(authenticateURL, headers, fileToSend, authenticateHashmap).enqueue(new Callback<AuthenticateResponse>() {
@@ -107,10 +108,10 @@ public class AuthenticateService {
                         authenticateCallback.success(response.body());
 
                         LogFile.getShared(context).addSuccessLog(methodName, " Sub:- " + response.body().getData().getSub() +
-                                " Status id:- " + response.body().getData().getStatus_id() + " ExchangeId:- " + response.body().getData().getExchange_id());
+                                " Status id:- " + response.body().getData().getStatus_id() + VerificationConstants.EXCHANGE_ID + response.body().getData().getExchange_id());
                     } else {
                         authenticateCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(
-                                WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, response, "Error:- " + methodName));
+                                WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                         // Handle proper error message
                         String errorResponse = "NO message";
                         try {
@@ -126,11 +127,11 @@ public class AuthenticateService {
                 @Override
                 public void onFailure(Call<AuthenticateResponse> call, Throwable t) {
                     authenticateCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
+                            t.getMessage(), VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            authenticateCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            authenticateCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.AUTHENTICATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }

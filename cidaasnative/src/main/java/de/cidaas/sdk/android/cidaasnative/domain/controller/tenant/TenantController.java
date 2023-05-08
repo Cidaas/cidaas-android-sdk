@@ -8,6 +8,7 @@ import java.util.Dictionary;
 
 import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.Tenant.TenantService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -49,7 +50,7 @@ public class TenantController {
                 CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> stringresult) {
-                        TenantService.getShared(context).getTenantInfo(stringresult.get("DomainURL"), result);
+                        TenantService.getShared(context).getTenantInfo(stringresult.get(NativeConstants.DOMAIN_URL), result);
                     }
 
                     @Override
@@ -58,10 +59,10 @@ public class TenantController {
                     }
                 });
             } else {
-                result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL Must not be empty", "Error:" + methodName));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("DomainURL Must not be empty", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.TENANT_INFO_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.TENANT_INFO_FAILURE, e.getMessage()));
         }
     }
 

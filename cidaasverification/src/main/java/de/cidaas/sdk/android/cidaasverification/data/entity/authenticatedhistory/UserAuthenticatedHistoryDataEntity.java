@@ -16,8 +16,6 @@ public class UserAuthenticatedHistoryDataEntity implements Serializable {
 
     }
     public UserAuthenticatedHistoryDataEntity(String status_id) {
-        this.push_id = push_id;
-        this.client_id = client_id;
         this.status_id = status_id;
 
     }

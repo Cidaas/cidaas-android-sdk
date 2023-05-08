@@ -7,6 +7,7 @@ import java.util.Dictionary;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.properties.CidaasProperties;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.entity.userlogininfo.UserLoginInfoEntity;
@@ -67,16 +68,16 @@ public class UserLoginInfoController {
 
                     @Override
                     public void failure(WebAuthError error) {
-                        result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException(error.getErrorMessage(), "Error:" + methodName));
+                        result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException(error.getErrorMessage(), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 });
             } else {
                 // handle Faliure
-                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be empty", "Error:" + methodName));
+                result.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be empty", CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
             // handle Faliure Exception
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.USER_LOGIN_INFO_SERVICE_FAILURE, e.getMessage()));
         }
     }
 

@@ -47,11 +47,10 @@ public class CidaasSDK_V2_Service {
                     public Response intercept(Chain chain) throws IOException {
                         Request originalRequest = chain.request();
                         Request requestWithUserAgent = originalRequest.newBuilder()
-                                .header(HEADER_USER_AGENT, createCustomUserAgent(originalRequest))
+                                .header(HEADER_USER_AGENT, createCustomUserAgent())
 
                                 .build();
                         for (int i = 0; i < requestWithUserAgent.headers().size(); i++) {
-                            //  Timber.d("User-Agent : "+String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                             DBHelper.getShared().setUserAgent("User-Agent : " + String.format("%s: %s", requestWithUserAgent.headers().name(i), requestWithUserAgent.headers().value(i)));
                         }
 
@@ -72,7 +71,7 @@ public class CidaasSDK_V2_Service {
         return iCidaasSDK_v2_services;
     }
 
-    private String createCustomUserAgent(Request originalRequest) {
+    private String createCustomUserAgent() {
         // App name can be also retrieved programmatically, but no need to do it for this sample needs
         String ua = "Cidaas-" + CidaasHelper.APP_NAME;
         String baseUa = System.getProperty("http.agent");

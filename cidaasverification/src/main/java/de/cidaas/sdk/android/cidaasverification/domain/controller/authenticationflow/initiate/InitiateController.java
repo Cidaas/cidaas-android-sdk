@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.initiate.InitiateEnt
 import de.cidaas.sdk.android.cidaasverification.data.entity.initiate.InitiateResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.initiate.InitiateService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -62,18 +63,18 @@ public class InitiateController {
                     addProperties(initiateEntity, initiateResult);
                 } else {
                     initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("requestId or sub or UsageType must not be null",
-                            "Error:" + methodName));
+                            VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     return;
                 }
 
             } else {
                 initiateResult.failure(WebAuthError.getShared(context).propertyMissingException("MediumId or Verification type must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            initiateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            initiateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -91,7 +92,7 @@ public class InitiateController {
             //call initiate call
             callInitiate(initiateEntity, initiateResult);
         } catch (Exception e) {
-            initiateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
+            initiateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -103,7 +104,7 @@ public class InitiateController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
 
                     String initiateUrl = VerificationURLHelper.getShared().getInitiateURL(baseurl, initiateEntity.getVerificationType());
 
@@ -120,7 +121,7 @@ public class InitiateController {
                 }
             });
         } catch (Exception e) {
-            initiateResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
+            initiateResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INITIATE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

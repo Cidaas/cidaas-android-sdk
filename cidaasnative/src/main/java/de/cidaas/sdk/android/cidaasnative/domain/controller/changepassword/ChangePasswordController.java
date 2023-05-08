@@ -9,6 +9,7 @@ import java.util.Dictionary;
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.changepassword.ChangePasswordRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.changepassword.ChangePasswordResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.ChangePassword.ChangePasswordService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -61,7 +62,7 @@ public class ChangePasswordController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
                     checkandChangePasswordService(baseurl, changePasswordRequestEntity, resetpasswordResult);
                 }
 
@@ -92,25 +93,25 @@ public class ChangePasswordController {
                             ChangePasswordService.getShared(context).changePassword(changePasswordRequestEntity, baseurl, null, resetpasswordResult);
                         } else {
                             resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Baseurl must not be null"
-                                    , "Error :" + methodName));
+                                    , NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     }
                     else
                     {
                         resetpasswordResult.failure(WebAuthError.getShared(context).customException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE,"Confirm Password and new password must be same"
-                                , "Error :" + methodName));
+                                , NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 } else {
                     resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Confirm Password or new password must not be null"
-                            , "Error :" + methodName));
+                            , NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
 
             } else {
                 resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("Confirm Password or new password  must not be null"
-                        , "Error :" + methodName));
+                        , NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
         }
     }

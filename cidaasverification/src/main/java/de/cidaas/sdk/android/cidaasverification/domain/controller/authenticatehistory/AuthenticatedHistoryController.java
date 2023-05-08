@@ -12,6 +12,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.authenticatedhistory.AuthenticatedHistoryService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -61,7 +62,7 @@ public class AuthenticatedHistoryController {
     }
     //-------------------------------------checkAuthenticatedHistoryEntity-----------------------------------------------------------
     private void checkAuthenticatedHistoryEntityDetail(final UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity, final EventResult<UserAuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_ENTITY;
         try {
 
 
@@ -69,13 +70,13 @@ public class AuthenticatedHistoryController {
 
 
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
 
     private void checkAuthenticatedHistoryEntityNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_ENTITY;
         try {
             if (authenticatedHistoryEntity.getVerification_type() != null && !authenticatedHistoryEntity.getVerification_type().equals("") &&
                     authenticatedHistoryEntity.getSub() != null && !authenticatedHistoryEntity.getSub().equals("")
@@ -88,23 +89,23 @@ public class AuthenticatedHistoryController {
                     addPropertiesNew(authenticatedHistoryEntity, authenticatedHistoryResult);
                 } else {
                     authenticatedHistoryResult.failure(WebAuthError.getShared(context).propertyMissingException("StartDate or EndDate  must not be null",
-                            "Error:" + methodName));
+                            VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     return;
                 }
             } else {
                 authenticatedHistoryResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub  must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
 
     //-------------------------------------checkAuthenticatedHistoryEntity-----------------------------------------------------------
     private void checkAuthenticatedHistoryEntity(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-checkAuthenticatedHistoryEntity()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY_ENTITY;
         try {
             if (authenticatedHistoryEntity.getVerification_type() != null && !authenticatedHistoryEntity.getVerification_type().equals("") &&
                     authenticatedHistoryEntity.getSub() != null && !authenticatedHistoryEntity.getSub().equals("")
@@ -117,29 +118,29 @@ public class AuthenticatedHistoryController {
                     addProperties(authenticatedHistoryEntity, authenticatedHistoryResult);
                 } else {
                     authenticatedHistoryResult.failure(WebAuthError.getShared(context).propertyMissingException("StartDate or EndDate  must not be null",
-                            "Error:" + methodName));
+                            VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     return;
                 }
             } else {
                 authenticatedHistoryResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub  must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
 
     private void addPropertiesDetail(UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity, EventResult<UserAuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-addProperties()";
+        String methodName = VerificationConstants.METHOD_ADD_PROPERTIES;
         try {
 
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    final String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
 
                     //App properties
@@ -159,20 +160,20 @@ public class AuthenticatedHistoryController {
             });
 
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
     //-------------------------------------Add Device info and pushnotificationId-------------------------------------------------------
     private void addProperties(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-addProperties()";
+        String methodName = VerificationConstants.METHOD_ADD_PROPERTIES;
         try {
 
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    final String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
 
                     //App properties
@@ -192,19 +193,19 @@ public class AuthenticatedHistoryController {
             });
 
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
     private void addPropertiesNew(final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-addProperties()";
+        String methodName = VerificationConstants.METHOD_ADD_PROPERTIES;
         try {
 
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    final String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    final String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
 
                     //App properties
@@ -224,13 +225,13 @@ public class AuthenticatedHistoryController {
             });
 
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
     //-------------------------------------------Call authenticatedHistory Service-----------------------------------------------------------
     private void callAuthenticatedHistoryDetail(String baseurl, final UserAuthenticatedHistoryDataEntity authenticatedHistoryEntity, final EventResult<UserAuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY;
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryDetailURL(baseurl);
 
@@ -240,13 +241,13 @@ public class AuthenticatedHistoryController {
             //AuthenticatedHistory Service call
             AuthenticatedHistoryService.getShared(context).callAuthenticatedHistoryServiceDetail(authenticatedHistoryUrl, headers, authenticatedHistoryEntity, authenticatedHistoryResult);
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
     //-------------------------------------------Call authenticatedHistory Service-----------------------------------------------------------
     private void callAuthenticatedHistory(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponse> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY;
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryURL(baseurl);
 
@@ -256,12 +257,12 @@ public class AuthenticatedHistoryController {
             //AuthenticatedHistory Service call
             AuthenticatedHistoryService.getShared(context).callAuthenticatedHistoryService(authenticatedHistoryUrl, headers, authenticatedHistoryEntity, authenticatedHistoryResult);
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
     private void callAuthenticatedHistoryNew(String baseurl, final AuthenticatedHistoryEntity authenticatedHistoryEntity, final EventResult<AuthenticatedHistoryResponseNew> authenticatedHistoryResult) {
-        String methodName = "AuthenticatedHistoryController:-authenticatedHistory()";
+        String methodName = VerificationConstants.METHOD_AUTHENTICATED_HISTORY;
         try {
             String authenticatedHistoryUrl = VerificationURLHelper.getShared().getAuthentictedHistoryURLNew(baseurl);
 
@@ -271,7 +272,7 @@ public class AuthenticatedHistoryController {
             //AuthenticatedHistory Service call
             AuthenticatedHistoryService.getShared(context).callAuthenticatedHistoryServiceNew(authenticatedHistoryUrl, headers, authenticatedHistoryEntity, authenticatedHistoryResult);
         } catch (Exception e) {
-            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+            authenticatedHistoryResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
