@@ -29,6 +29,7 @@ public class CidaasHelper {
     public DeviceInfoEntity deviceInfoEntity;
 
     public static String baseurl = "";
+    public static int cidaasVersion;
 
     //Comomon Varivale
     public static String APP_NAME = "de.cidaas";
@@ -98,7 +99,7 @@ public class CidaasHelper {
         CidaasProperties.getShared(context).saveCidaasProperties(new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> result) {
-                CidaasHelper.baseurl = result.get("DomainURL");
+                CidaasHelper.cidaasVersion = result.get("CidaasVersion") != null ? Integer.parseInt(result.get("CidaasVersion")) : 2;
             }
 
             @Override
