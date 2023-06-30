@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.Gson;
+
 import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryEntity;
@@ -11,6 +13,10 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.AuthenticatedHistoryResponseNew;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryDataEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.deviceslist.DevicesListEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceListResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceMfaDataEntitiy;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DevicesMfaResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
@@ -137,6 +143,69 @@ public class AuthenticatedHistoryService {
             });
         } catch (Exception e) {
             authenticatedHistoryCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+    public void callGetDevicesRemoveService(@NonNull String authenticatedHistoryURL, Map<String, String> headers, DeviceMfaDataEntitiy deviceMfaDataEntitiy,
+                                            final EventResult<DevicesMfaResponse> authenticatedHistoryCallback) {
+        final String methodName = "AuthenticatedHistoryService:-GetDevicesService()";
+        try {
+            //call service
+            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
+            cidaasSDK_v2_services.getDevicesRemove(authenticatedHistoryURL, headers, deviceMfaDataEntitiy).enqueue(new Callback<DevicesMfaResponse>() {
+                @Override
+                public void onResponse(Call<DevicesMfaResponse> call, Response<DevicesMfaResponse> response) {
+                    if (response.isSuccessful()) {
+                        authenticatedHistoryCallback.success(response.body());
+                    } else {
+                        authenticatedHistoryCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                                response, "Error:- " + methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<DevicesMfaResponse> call, Throwable t) {
+                    authenticatedHistoryCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                            t.getMessage(), "Error:- " + methodName));
+                }
+            });
+        } catch (Exception e) {
+            authenticatedHistoryCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+    public void callGetDevicesService(@NonNull String authenticatedHistoryURL, Map<String, String> headers, DevicesListEntity devicesListEntity,
+                                      final EventResult<DeviceListResponse> authenticatedHistoryCallback) {
+        final String methodName = "AuthenticatedHistoryService:-GetDevicesService()";
+        try {
+            //call service
+            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
+            cidaasSDK_v2_services.getDevicesList(authenticatedHistoryURL, headers, devicesListEntity).enqueue(new Callback<DeviceListResponse>() {
+                @Override
+                public void onResponse(Call<DeviceListResponse> call, Response<DeviceListResponse> response) {
+
+                    if (response.isSuccessful()) {
+                        LogFile.getShared(context).addInfoLog("multidevice api ", "response successful");
+
+                        LogFile.getShared(context).addAPILog("Multidevices api success body: "+ new Gson().toJson(response.body())+"\n");
+                        authenticatedHistoryCallback.success(response.body());
+                    } else {
+                        LogFile.getShared(context).addInfoLog("multidevice api ", "response unsuccessful");
+                        authenticatedHistoryCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                                response, "Error:- " + methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<DeviceListResponse> call, Throwable t) {
+                    LogFile.getShared(context).addInfoLog("multidevice api response ","failure case");
+                    authenticatedHistoryCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                            t.getMessage(), "Error:- " + methodName));
+                }
+            });
+        } catch (Exception e) {
+            LogFile.getShared(context).addInfoLog("multidevice api response ","exception - " );
+            authenticatedHistoryCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

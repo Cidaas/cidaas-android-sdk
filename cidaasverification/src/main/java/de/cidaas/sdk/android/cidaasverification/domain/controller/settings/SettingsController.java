@@ -84,7 +84,7 @@ public class SettingsController {
 
                     //Add Properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-                    GetMFAListEntity getMFAListEntity = new GetMFAListEntity(deviceInfoEntity.getDeviceId(), deviceInfoEntity.getPushNotificationId(), clientId, sub);
+                    GetMFAListEntity getMFAListEntity = new GetMFAListEntity(deviceInfoEntity.getDeviceId(), deviceInfoEntity.getPushNotificationId(), clientId, sub,"");
 
                     //call settings call
                     callSettings(baseurl, getMFAListEntity, configuredMFAListResult);
@@ -190,6 +190,71 @@ public class SettingsController {
             });
         } catch (Exception e) {
             WebAuthError.getShared(context).methodException(methodName, WebAuthErrorCode.UPDATE_FCM_TOKEN, e.getMessage());
+        }
+    }
+
+    public void getConfiguredMFAListThirdParty(String baseurl, String sub, String linkeddeviceid, String clientid, final EventResult<ConfiguredMFAList> settingsResult) {
+        checkConfiguredMFAListThirdParty(baseurl, sub,linkeddeviceid,clientid, settingsResult);
+    }
+    private void checkConfiguredMFAListThirdParty(String baseurl, String sub, String linkeddeviceid, String clientid, final EventResult<ConfiguredMFAList> settingsResult) {
+        String methodName = "SettingsController:-checkConfiguredMFAList()";
+        try {
+            if (sub != null && !sub.equals("")) {
+
+                addPropertiesThirdParty(baseurl,sub,linkeddeviceid,clientid, settingsResult);
+            } else {
+                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", "Error:" + methodName));
+                return;
+            }
+        } catch (Exception e) {
+            settingsResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.MFA_LIST_FAILURE,
+                    e.getMessage()));
+        }
+    }
+    private void callSettingsThirdParty(String baseurl, final GetMFAListEntity getMFAListEntity, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
+        String methodName = "SettingsController:-callSettings()";
+        try {
+            String configuredListURL = VerificationURLHelper.getShared().getConfiguredListURL(baseurl);
+
+            //headers Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
+
+            //Settings Service call
+            SettingsService.getShared(context).getConfigurationListThirdParty(configuredListURL, headers, getMFAListEntity, configuredMFAListResult);
+
+        } catch (Exception e) {
+            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+                    WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
+        }
+    }
+    private void addPropertiesThirdParty(String baseurl, final String sub, String linkeddeviceid, String clientid, final EventResult<ConfiguredMFAList> configuredMFAListResult) {
+        String methodName = "SettingsController:-addProperties()";
+        try {
+            //App properties
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    // final String baseurl = loginPropertiesResult.get("DomainURL");
+                    //final String clientId = loginPropertiesResult.get("ClientId");
+
+                    //Add Properties
+                    DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
+                    GetMFAListEntity getMFAListEntity = new GetMFAListEntity(deviceInfoEntity.getDeviceId(), deviceInfoEntity.getPushNotificationId(), clientid, sub,linkeddeviceid);
+                    getMFAListEntity.setLinked_device_id(linkeddeviceid);
+                    //call settings call
+                    //callSettings(baseurl, getMFAListEntity, configuredMFAListResult);
+                    callSettingsThirdParty(baseurl, getMFAListEntity, configuredMFAListResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    configuredMFAListResult.failure(error);
+                }
+            });
+
+        } catch (Exception e) {
+            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+                    WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 
