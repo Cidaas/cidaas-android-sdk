@@ -17,6 +17,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswor
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -79,7 +80,7 @@ public class ResetPasswordService {
                 resetpasswordUrl = baseurl + NativeURLHelper.getShared().getInitiateResetPassword();
             } else {
                 callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE)
-                        , "Error :ResetPasswordService :initiateresetPassword()"));
+                        , NativeConstants.ERROR_RESET_PASSWORD_INITIATE));
                 return;
             }
 
@@ -91,19 +92,19 @@ public class ResetPasswordService {
             //This is only for testing purpose
             if (deviceInfoEntityFromParam == null) {
                 deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
-            } else if (deviceInfoEntityFromParam != null) {
+            } else {
                 deviceInfoEntity = deviceInfoEntityFromParam;
             }
             //check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", NativeURLHelper.contentTypeJson);
-            headers.put("user-agent", "de.cidaas-android");
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon", LocationDetails.getShared(context).getLongitude());
+            headers.put(NativeConstants.CONTENT_TYPE, NativeURLHelper.contentTypeJson);
+            headers.put(NativeConstants.USER_AGENT, "de.cidaas-android");
+            headers.put(NativeConstants.DEVICE_ID, deviceInfoEntity.getDeviceId());
+            headers.put(NativeConstants.DEVICE_MAKE, deviceInfoEntity.getDeviceMake());
+            headers.put(NativeConstants.DEVICE_MODEL, deviceInfoEntity.getDeviceModel());
+            headers.put(NativeConstants.DEVICE_VERSION, deviceInfoEntity.getDeviceVersion());
+            headers.put(NativeConstants.DEVICE_LATTITUDE, LocationDetails.getShared(context).getLatitude());
+            headers.put(NativeConstants.DEVICE_LONGITUDE, LocationDetails.getShared(context).getLongitude());
 
             //Call Service-getRequestId
             ICidaasNativeService cidaasNativeService = service.getInstance();
@@ -115,19 +116,20 @@ public class ResetPasswordService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
-                                    "Service failure but successful response", "Error :ResetPasswordService :initiateresetPassword()"));
+                                    "Service failure but successful response", NativeConstants.ERROR_RESET_PASSWORD_INITIATE));
                         }
                     } else {
-                        assert response.errorBody() != null;
-                        callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
-                                response, "Error :ResetPasswordService :initiateresetPassword()"));
+                        if(response.errorBody() != null){
+                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
+                                    response, NativeConstants.ERROR_RESET_PASSWORD_INITIATE));
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResetPasswordResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INITIATE_RESET_PASSWORD_FAILURE,
-                            t.getMessage(), "Error :ResetPasswordService :initiateresetPassword()"));
+                            t.getMessage(), NativeConstants.ERROR_RESET_PASSWORD_INITIATE));
 
                 }
             });
@@ -151,7 +153,7 @@ public class ResetPasswordService {
                 resetpasswordValidateCodeUrl = baseurl + NativeURLHelper.getShared().getResetPasswordValidateCode();
             } else {
                 callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
-                        "Exception :ResetPasswordService :resetNewPassword()"));
+                        NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
                 return;
             }
 
@@ -163,14 +165,14 @@ public class ResetPasswordService {
 
             // - check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", NativeURLHelper.contentTypeJson);
-            headers.put("user-agent", "de.cidaas-android");
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon", LocationDetails.getShared(context).getLongitude());
+            headers.put(NativeConstants.CONTENT_TYPE, NativeURLHelper.contentTypeJson);
+            headers.put(NativeConstants.USER_AGENT, "de.cidaas-android");
+            headers.put(NativeConstants.DEVICE_ID, deviceInfoEntity.getDeviceId());
+            headers.put(NativeConstants.DEVICE_MAKE, deviceInfoEntity.getDeviceMake());
+            headers.put(NativeConstants.DEVICE_MODEL, deviceInfoEntity.getDeviceModel());
+            headers.put(NativeConstants.DEVICE_VERSION, deviceInfoEntity.getDeviceVersion());
+            headers.put(NativeConstants.DEVICE_LATTITUDE, LocationDetails.getShared(context).getLatitude());
+            headers.put(NativeConstants.DEVICE_LONGITUDE, LocationDetails.getShared(context).getLongitude());
             serviceForResetPasswordValidateCode(resetpasswordValidateCodeUrl, resetPasswordValidateCodeRequestEntity, headers, callback);
 
         } catch (Exception e) {
@@ -191,19 +193,20 @@ public class ResetPasswordService {
                                 callback.success(response.body());
                             } else {
                                 callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
-                                        "Service failure but successful response", "Exception :ResetPasswordService :resetNewPassword()"));
+                                        "Service failure but successful response", NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
                             }
                         } else {
-                            assert response.errorBody() != null;
-                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
-                                    response, "Exception :ResetPasswordService :resetNewPassword()"));
+                            if(response.errorBody() != null){
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
+                                        response, NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResetPasswordValidateCodeResponseEntity> call, Throwable t) {
                         callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE,
-                                t.getMessage(), "Exception :ResetPasswordService :resetNewPassword()"));
+                                t.getMessage(), NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
 
                     }
                 });
@@ -222,7 +225,7 @@ public class ResetPasswordService {
                 ResetNewPasswordUrl = baseurl + NativeURLHelper.getShared().getResetNewPasswordURl();
             } else {
                 callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.PROPERTY_MISSING,
-                        context.getString(R.string.PROPERTY_MISSING), "Exception :ResetPasswordService :resetNewPassword()"));
+                        context.getString(R.string.PROPERTY_MISSING), NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
                 return;
             }
 
@@ -234,17 +237,17 @@ public class ResetPasswordService {
 
             //- check Construct Headers pending,Null Checking Pending
             //Add headers
-            headers.put("Content-Type", NativeURLHelper.contentTypeJson);
-            headers.put("device-id", deviceInfoEntity.getDeviceId());
-            headers.put("device-make", deviceInfoEntity.getDeviceMake());
-            headers.put("device-model", deviceInfoEntity.getDeviceModel());
-            headers.put("device-version", deviceInfoEntity.getDeviceVersion());
-            headers.put("lat", LocationDetails.getShared(context).getLatitude());
-            headers.put("lon", LocationDetails.getShared(context).getLongitude());
+            headers.put(NativeConstants.CONTENT_TYPE, NativeURLHelper.contentTypeJson);
+            headers.put(NativeConstants.DEVICE_ID, deviceInfoEntity.getDeviceId());
+            headers.put(NativeConstants.DEVICE_MAKE, deviceInfoEntity.getDeviceMake());
+            headers.put(NativeConstants.DEVICE_MODEL, deviceInfoEntity.getDeviceModel());
+            headers.put(NativeConstants.DEVICE_VERSION, deviceInfoEntity.getDeviceVersion());
+            headers.put(NativeConstants.DEVICE_LATTITUDE, LocationDetails.getShared(context).getLatitude());
+            headers.put(NativeConstants.DEVICE_LONGITUDE, LocationDetails.getShared(context).getLongitude());
             serviceCallForResetNewPassword(ResetNewPasswordUrl, resetPasswordEntity, headers, callback);
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :ResetPasswordService :resetNewPassword()",
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_RESET_PASSWORD_NEW,
                     WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE, e.getMessage()));
         }
     }
@@ -261,19 +264,20 @@ public class ResetPasswordService {
                                 callback.success(response.body());
                             } else {
                                 callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,
-                                        "Service failure but successful response", "Exception :ResetPasswordService :resetNewPassword()"));
+                                        "Service failure but successful response", NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
                             }
                         } else {
-                            assert response.errorBody() != null;
-                            callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE, response,
-                                    "Exception :ResetPasswordService :resetNewPassword()"));
+                            if( response.errorBody() != null){
+                                callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE, response,
+                                        NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResetNewPasswordResponseEntity> call, Throwable t) {
                         callback.failure(WebAuthError.getShared(context).serviceCallFailureException(
-                                WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE, t.getMessage(), "Exception :ResetPasswordService :resetNewPassword()"));
+                                WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE, t.getMessage(), NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
 
                     }
                 });

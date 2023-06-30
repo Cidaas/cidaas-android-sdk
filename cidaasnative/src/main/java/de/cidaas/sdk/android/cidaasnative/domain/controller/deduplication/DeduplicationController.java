@@ -12,6 +12,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsRequ
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.Deduplication.DeduplicationService;
 import de.cidaas.sdk.android.cidaasnative.domain.service.Login.NativeLoginService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -52,7 +53,7 @@ public class DeduplicationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
                     DeduplicationService.getShared(context).getDeduplicationList(baseurl, trackId, deduplicaionResult);
                 }
 
@@ -62,7 +63,7 @@ public class DeduplicationController {
                 }
             });
         } catch (Exception e) {
-            deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception:" + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE
+            deduplicaionResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE
                     , e.getMessage()));
         }
     }
@@ -74,8 +75,8 @@ public class DeduplicationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
+                    String clientId = result.get(NativeConstants.CLIENT_ID);
                     if (trackId != null && !trackId.equals("")) {
                         DeduplicationService.getShared(context).registerDeduplication(baseurl, trackId, deduplicaionResult);
                     } else {
@@ -91,7 +92,7 @@ public class DeduplicationController {
                 }
             });
         } catch (Exception e) {
-            deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception:" + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE
+            deduplicaionResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE
                     , e.getMessage()));
         }
 
@@ -122,7 +123,7 @@ public class DeduplicationController {
                 }
             });
         } catch (Exception e) {
-            deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            deduplicaionResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX+ methodName,
                     WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
         }
     }
@@ -133,8 +134,8 @@ public class DeduplicationController {
                                           final EventResult<LoginCredentialsResponseEntity> deduplicaionResult) {
         String methodName = "DeduplicationController :loginCredenditalsWithSub()";
         try {
-            String baseurl = result.get("DomainURL");
-            String clientId = result.get("ClientId");
+            String baseurl = result.get(NativeConstants.DOMAIN_URL);
+            String clientId = result.get(NativeConstants.CLIENT_ID);
             if (loginEntity.getUsername() != null && !loginEntity.getUsername().isEmpty() && loginEntity.getPassword() != null &&
                     !loginEntity.getPassword().isEmpty()) {
 
@@ -152,7 +153,7 @@ public class DeduplicationController {
                 deduplicaionResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
             }
         } catch (Exception e) {
-            deduplicaionResult.failure(WebAuthError.getShared(context).methodException("Exception:" + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
+            deduplicaionResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
                     e.getMessage()));
         }
     }

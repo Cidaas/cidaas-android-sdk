@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushacknowledge
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushacknowledge.PushAcknowledgeResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -61,18 +62,18 @@ public class PushAcknowledgeService {
                         pushAcknowledgeCallback.success(response.body());
                     } else {
                         pushAcknowledgeCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.PUSH_ACKNOWLEDGE_FAILURE,
-                                response, "Error:- " + methodName));
+                                response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<PushAcknowledgeResponse> call, Throwable t) {
                     pushAcknowledgeCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.PUSH_ACKNOWLEDGE_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
+                            t.getMessage(), VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            pushAcknowledgeCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            pushAcknowledgeCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_ACKNOWLEDGE_FAILURE, e.getMessage()));
         }
     }

@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnoti
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnotification.PendingNotificationResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -62,18 +63,18 @@ public class PendingNotificationService {
                         pendingNotificationCallback.success(response.body());
                     } else {
                         pendingNotificationCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
-                                response, "Error:- " + methodName));
+                                response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<PendingNotificationResponse> call, Throwable t) {
                     pendingNotificationCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
+                            t.getMessage(), VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            pendingNotificationCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
+            pendingNotificationCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName, WebAuthErrorCode.PENDING_NOTIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

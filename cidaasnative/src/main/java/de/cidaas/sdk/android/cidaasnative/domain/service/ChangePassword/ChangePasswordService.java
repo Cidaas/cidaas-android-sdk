@@ -12,6 +12,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.changepasswo
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -79,12 +80,12 @@ public class ChangePasswordService {
 
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
         }
     }
 
@@ -103,23 +104,23 @@ public class ChangePasswordService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE,
-                                            response.code(), "Error :" + methodName));
+                                            response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, response,
-                                        "Error :" + methodName));
+                                        NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<ChangePasswordResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, t.getMessage(),
-                                    "Error :" + methodName));
+                                    NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CHANGE_PASSWORD_FAILURE, e.getMessage()));
         }
     }
 }

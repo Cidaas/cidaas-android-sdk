@@ -4,7 +4,7 @@ package de.cidaas.sdk.android.cidaasverification.domain.helper.totpgenerator;
  * Created by ganesh on 14/02/18.
  */
 
-public class Utilities {
+public final class Utilities {
 
     public static final String ZXING_MARKET =
             "market://search?q=pname:com.google.zxing.client.android";

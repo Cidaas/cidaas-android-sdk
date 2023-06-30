@@ -109,7 +109,7 @@ public class CidaasHelper {
     }
 
 
-    public boolean isENABLE_PKCE() {
+    public static boolean isENABLE_PKCE() {
         ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
         return ENABLE_PKCE;
     }

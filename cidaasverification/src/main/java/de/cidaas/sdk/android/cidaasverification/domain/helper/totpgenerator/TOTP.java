@@ -4,6 +4,8 @@ package de.cidaas.sdk.android.cidaasverification.domain.helper.totpgenerator;
  * Created by ganesh on 14/02/18.
  */
 
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
+
 import java.lang.reflect.UndeclaredThrowableException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -87,8 +89,6 @@ public class TOTP {
 
 
     public static void main(String[] args) {
-        // Seed for HMAC-SHA1 - 20 bytes
-        String seed = "3132333435363738393031323334353637383930";
         // Seed for HMAC-SHA256 - 32 bytes
         String seed32 = "3132333435363738393031323334353637383930" + "313233343536373839303132";
         // Seed for HMAC-SHA512 - 64 bytes
@@ -123,7 +123,7 @@ public class TOTP {
                         .println("+---------------+-----------------------+" + "------------------+--------+--------+");
             }
         } catch (final Exception e) {
-            System.out.println("Error : " + e);
+            System.out.println(VerificationConstants.ERROR_LOGGING_PREFIX + e);
         }
     }
 }

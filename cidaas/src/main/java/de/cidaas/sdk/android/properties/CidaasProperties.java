@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.general.FileHelper;
@@ -108,7 +109,7 @@ public class CidaasProperties {
                 return;
             } else {
                 //Saved in Shared preference
-                CidaasHelper.baseurl = loginProperties.get("DomainURL");
+                CidaasHelper.baseurl = loginProperties.get(CidaasConstants.DOMAIN_URL);
                 DBHelper.getShared().addLoginProperties(loginProperties);
                 savedResult.success(loginProperties);
             }
@@ -128,8 +129,8 @@ public class CidaasProperties {
     //Check the Conditions If Condition fails return true otherwise return false
     private boolean checkNotnull(EventResult<Dictionary<String, String>> result, Dictionary<String, String> loginProperties, String title) {
 
-        if (loginProperties.get("DomainURL") == null || loginProperties.get("DomainURL").equals("") || loginProperties == null
-                || !((Hashtable) loginProperties).containsKey("DomainURL")) {
+        if (loginProperties.get(CidaasConstants.DOMAIN_URL) == null || loginProperties.get(CidaasConstants.DOMAIN_URL).equals("") || loginProperties == null
+                || !((Hashtable) loginProperties).containsKey(CidaasConstants.DOMAIN_URL)) {
             result.failure(getAuthError("Domain URL must not be empty", title));
             return true;
         }

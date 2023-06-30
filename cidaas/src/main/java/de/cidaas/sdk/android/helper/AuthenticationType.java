@@ -17,4 +17,8 @@ public class AuthenticationType {
     public static final String SMS = "SMS";
     public static final String IVR = "IVR";
     public static final String BACKUPCODE = "BACKUPCODE";
+
+    private AuthenticationType() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 }

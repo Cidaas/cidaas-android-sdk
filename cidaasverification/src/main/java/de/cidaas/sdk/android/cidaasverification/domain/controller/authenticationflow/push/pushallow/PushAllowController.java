@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushallow.PushA
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushallow.PushAllowResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.push.pushallow.PushAllowService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -60,12 +61,12 @@ public class PushAllowController {
                 addProperties(pushAllowEntity, pushAllowResult);
             } else {
                 pushAllowResult.failure(WebAuthError.getShared(context).propertyMissingException("Verification type or ExchangeId must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            pushAllowResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushAllowResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_ALLOW_FAILURE, e.getMessage()));
         }
     }
@@ -79,8 +80,8 @@ public class PushAllowController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
                     //App properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
@@ -99,7 +100,7 @@ public class PushAllowController {
             });
 
         } catch (Exception e) {
-            pushAllowResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushAllowResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_ALLOW_FAILURE, e.getMessage()));
         }
     }
@@ -116,7 +117,7 @@ public class PushAllowController {
             //PushAllow Service call
             PushAllowService.getShared(context).callPushAllowService(pushAllowUrl, headers, pushAllowEntity, pushAllowResult);
         } catch (Exception e) {
-            pushAllowResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushAllowResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_ALLOW_FAILURE, e.getMessage()));
         }
     }

@@ -9,6 +9,7 @@ import java.util.Dictionary;
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.Login.NativeLoginService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.controller.AccessTokenController;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -59,7 +60,7 @@ public class NativeLoginController {
                 public void success(Dictionary<String, String> loginPropertiesResult) {
                     LoginCredentialsRequestEntity loginCredentialsRequestEntity = getLoginCredentialsRequestEntity(requestId, loginEntity, result);
                     if (loginCredentialsRequestEntity != null) {
-                        NativeLoginService.getShared(context).loginWithCredentials(loginPropertiesResult.get("DomainURL"), loginCredentialsRequestEntity,
+                        NativeLoginService.getShared(context).loginWithCredentials(loginPropertiesResult.get(NativeConstants.DOMAIN_URL), loginCredentialsRequestEntity,
                                 new EventResult<LoginCredentialsResponseEntity>() {
                                     @Override
                                     public void success(LoginCredentialsResponseEntity serviceresult) {
@@ -79,7 +80,7 @@ public class NativeLoginController {
                 }
             });
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
         }
     }
 
@@ -90,7 +91,7 @@ public class NativeLoginController {
             @Override
             public void success(Dictionary<String, String> loginPropertiesResult) {
                 if (accessToken != null){
-                    NativeLoginService.getShared(context).logout(loginPropertiesResult.get("DomainURL"), accessToken, result);
+                    NativeLoginService.getShared(context).logout(loginPropertiesResult.get(NativeConstants.DOMAIN_URL), accessToken, result);
                 }
             }
 
@@ -131,11 +132,11 @@ public class NativeLoginController {
             } else {
 
                 String errorMessage = "Username or password or RequestId must not be empty";
-                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error :" + errorMessage));
+                result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, NativeConstants.ERROR_LOGGING_PREFIX + errorMessage));
                 return null;
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_CREDENTIALS_FAILURE, e.getMessage()));
             return null;
         }
     }

@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushreject.Push
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushreject.PushRejectResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.push.pushreject.PushRejectService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -62,12 +63,12 @@ public class PushRejectController {
                 addProperties(pushRejectEntity, pushRejectResult);
             } else {
                 pushRejectResult.failure(WebAuthError.getShared(context).propertyMissingException("Reason or Verification type or ExchangeId must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            pushRejectResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.PUSH_REJECT_FAILURE,
+            pushRejectResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.PUSH_REJECT_FAILURE,
                     e.getMessage()));
         }
     }
@@ -80,8 +81,8 @@ public class PushRejectController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
-                    String clientId = loginPropertiesResult.get("ClientId");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
+                    String clientId = loginPropertiesResult.get(VerificationConstants.CLIENT_ID);
 
                     //App properties
                     DeviceInfoEntity deviceInfoEntity = DBHelper.getShared().getDeviceInfo();
@@ -101,7 +102,7 @@ public class PushRejectController {
 
 
         } catch (Exception e) {
-            pushRejectResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushRejectResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_REJECT_FAILURE, e.getMessage()));
         }
     }
@@ -118,7 +119,7 @@ public class PushRejectController {
             //PushReject Service call
             PushRejectService.getShared(context).callPushRejectService(pushRejectUrl, headers, pushRejectEntity, pushRejectResult);
         } catch (Exception e) {
-            pushRejectResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pushRejectResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.PUSH_REJECT_FAILURE, e.getMessage()));
         }
     }

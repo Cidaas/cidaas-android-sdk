@@ -11,6 +11,7 @@ import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
 import de.cidaas.sdk.android.service.CidaassdkService;
 import de.cidaas.sdk.android.service.ICidaasSDKService;
@@ -78,12 +79,12 @@ public class UserProfileService {
                 serviceForGetInternalUserProfileInfo(InternalUserProfileUrl, headers, callback);
             } else {
                 callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
-                        "Error :" + methodName));
+                        CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
                     e.getMessage()));
         }
     }
@@ -102,24 +103,24 @@ public class UserProfileService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         assert response.errorBody() != null;
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE, response
-                                , "Error :" + methodName));
+                                , CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserprofileResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
-                            t.getMessage(), "Error :" + methodName));
+                            t.getMessage(), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception:" + methodName, WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.INTERNAL_USER_PROFILE_FAILURE,
                     e.getMessage()));
         }
     }

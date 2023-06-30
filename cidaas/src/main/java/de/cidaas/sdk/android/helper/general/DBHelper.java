@@ -26,19 +26,18 @@ public class DBHelper {
     // Set Enable Log
     public static SharedPreferences preferences;
     private static SharedPreferences.Editor editor;
-    private static final String LoginProperties = "Login_Properties";
-    private static final String ChallengeProperties = " Challenge_Properties";
-    private static final String DeviceInfo = "Device_info";
-    private static final String FCMTokenInfo = "FCMTOKEN_info";
-    private static final String SecretInfo = "Secret_info";
-    private static final String UserAgent = "UserAgent";
-    private static final String userDeviceInfo = "User_device_Info";
-    private static final String pkceEnableStatus = "OAuthEnablePkce";
-    private static final String logEnableStatus = "OAuthEnableLog";
+    private static final String LOGIN_PROPERTIES = "Login_Properties";
+    private static final String CHALLENGE_PROPERTIES = " Challenge_Properties";
+    private static final String DEVICE_INFO = "Device_info";
+    private static final String FCMTOKEN_INFO = "FCMTOKEN_info";
+    private static final String SECRET_INFO = "Secret_info";
+    private static final String USER_AGENT = "UserAgent";
+    private static final String USER_DEVICE_INFO = "User_device_Info";
+    private static final String PKCE_ENABLE_STATUS = "OAuthEnablePkce";
+    private static final String LOG_ENABLE_STATUS = "OAuthEnableLog";
     private static String user_storage_key = "cidaas_user_details_";
     private static String user_storage_info = "cidaas_user_info_";
     private static ObjectMapper shared_objectMapper = new ObjectMapper();
-    private static Activity context;
 
     public static DBHelper dbHelper = null;
 
@@ -55,10 +54,10 @@ public class DBHelper {
 
     public void setEnablePKCE(boolean enablePKCE) {
         try {
-            editor.putBoolean(pkceEnableStatus, enablePKCE);
+            editor.putBoolean(PKCE_ENABLE_STATUS, enablePKCE);
             editor.commit();
         } catch (Exception e) {
-
+            //Exception enabling PKCE
         }
     }
 
@@ -67,7 +66,7 @@ public class DBHelper {
     public boolean getEnablePKCE() {
         boolean result = false;
         try {
-            result = preferences.getBoolean(logEnableStatus, true);
+            result = preferences.getBoolean(LOG_ENABLE_STATUS, true);
         } catch (Exception e) {
             result = false;
         }
@@ -78,10 +77,10 @@ public class DBHelper {
     //Set Enable Log
     public void setEnableLog(boolean enableLog) {
         try {
-            editor.putBoolean(logEnableStatus, enableLog);
+            editor.putBoolean(LOG_ENABLE_STATUS, enableLog);
             editor.commit();
         } catch (Exception e) {
-
+            //Exception enabling Log
         }
     }
 
@@ -89,7 +88,7 @@ public class DBHelper {
     public boolean getEnableLog() {
         boolean result = false;
         try {
-            result = preferences.getBoolean(pkceEnableStatus, true);
+            result = preferences.getBoolean(PKCE_ENABLE_STATUS, true);
         } catch (Exception e) {
             result = false;
         }
@@ -110,7 +109,7 @@ public class DBHelper {
     public void addSecret(String secret, String sub) {
         boolean result = false;
         try {
-            editor.putString(SecretInfo + sub, secret);
+            editor.putString(SECRET_INFO + sub, secret);
             editor.commit();
         } catch (Exception e) {
             result = false;
@@ -122,7 +121,7 @@ public class DBHelper {
     public String getSecret(String sub) {
         String secret;
         try {
-            secret = preferences.getString(SecretInfo + sub, "");
+            secret = preferences.getString(SECRET_INFO + sub, "");
         } catch (Exception e) {
             secret = "";
         }
@@ -135,7 +134,7 @@ public class DBHelper {
         String secret;
         try {
 
-            editor.remove(SecretInfo + sub);
+            editor.remove(SECRET_INFO + sub);
             editor.commit();
             secret = "success";
         } catch (Exception e) {
@@ -149,7 +148,7 @@ public class DBHelper {
     public void setUserAgent(String userAgent) {
         boolean result = false;
         try {
-            editor.putString(UserAgent, userAgent);
+            editor.putString(USER_AGENT, userAgent);
             editor.commit();
         } catch (Exception e) {
             result = false;
@@ -161,7 +160,7 @@ public class DBHelper {
     public String getUserAgent() {
         String userAgent;
         try {
-            userAgent = preferences.getString(UserAgent, "");
+            userAgent = preferences.getString(USER_AGENT, "");
         } catch (Exception e) {
             userAgent = "";
         }
@@ -173,7 +172,7 @@ public class DBHelper {
         boolean result = false;
         try {
             String jsonString = shared_objectMapper.writeValueAsString(challengepropObj);
-            editor.putString(ChallengeProperties, jsonString);
+            editor.putString(CHALLENGE_PROPERTIES, jsonString);
             result = editor.commit();
         } catch (Exception e) {
             result = false;
@@ -186,7 +185,7 @@ public class DBHelper {
 
         Dictionary<String, String> challengeProperties = new Hashtable<>();
         try {
-            String jsonString = preferences.getString(ChallengeProperties, (new JSONObject().toString()));
+            String jsonString = preferences.getString(CHALLENGE_PROPERTIES, (new JSONObject().toString()));
             JSONObject jsonObject = new JSONObject(jsonString);
             Iterator<String> keysItr = jsonObject.keys();
             while (keysItr.hasNext()) {
@@ -206,7 +205,7 @@ public class DBHelper {
         boolean result = false;
         try {
             String jsonString = shared_objectMapper.writeValueAsString(loginpropObj);
-            editor.putString(LoginProperties + loginpropObj.get("DomainURL"), jsonString);
+            editor.putString(LOGIN_PROPERTIES + loginpropObj.get("DomainURL"), jsonString);
             result = editor.commit();
             return result;
         } catch (Exception e) {
@@ -217,11 +216,11 @@ public class DBHelper {
 
 
     //Get Login Object
-    public Dictionary<String, String> getLoginProperties(String DomainURL) {
+    public Dictionary<String, String> getLoginProperties(String domainURL) {
 
         Dictionary<String, String> loginProperties = new Hashtable<>();
         try {
-            String jsonString = preferences.getString(LoginProperties + DomainURL, (new JSONObject().toString()));
+            String jsonString = preferences.getString(LOGIN_PROPERTIES + domainURL, (new JSONObject().toString()));
             JSONObject jsonObject = new JSONObject(jsonString);
             Iterator<String> keysItr = jsonObject.keys();
             while (keysItr.hasNext()) {
@@ -241,7 +240,7 @@ public class DBHelper {
         boolean result = false;
         try {
             String jsonString = shared_objectMapper.writeValueAsString(deviceInfoEntity);
-            editor.putString(DeviceInfo, jsonString);
+            editor.putString(DEVICE_INFO, jsonString);
             result = editor.commit();
         } catch (Exception e) {
             result = false;
@@ -250,7 +249,7 @@ public class DBHelper {
 
     //get Device info
     public DeviceInfoEntity getDeviceInfo() {
-        String jsonString = preferences.getString(DeviceInfo, "");
+        String jsonString = preferences.getString(DEVICE_INFO, "");
         DeviceInfoEntity deviceInfoEntity;
         try {
             deviceInfoEntity = shared_objectMapper.readValue(jsonString, DeviceInfoEntity.class);
@@ -265,7 +264,7 @@ public class DBHelper {
     public void setFCMToken(String fcmToken) {
         boolean result = false;
         try {
-            editor.putString(FCMTokenInfo, fcmToken);
+            editor.putString(FCMTOKEN_INFO, fcmToken);
             editor.commit();
 
             //Add fcm token
@@ -281,13 +280,13 @@ public class DBHelper {
 
     //get Device info
     public String getFCMToken() {
-        String FCMToken;
+        String fcmtoken;
         try {
-            FCMToken = preferences.getString(FCMTokenInfo, "");
+            fcmtoken = preferences.getString(FCMTOKEN_INFO, "");
         } catch (Exception e) {
-            FCMToken = "";
+            fcmtoken = "";
         }
-        return FCMToken;
+        return fcmtoken;
     }
 
 
@@ -295,7 +294,7 @@ public class DBHelper {
     public void setUserDeviceId(String userDeviceId, String domainURL) {
         boolean result = true;
         try {
-            editor.putString(userDeviceInfo + domainURL, userDeviceId);
+            editor.putString(USER_DEVICE_INFO + domainURL, userDeviceId);
             editor.commit();
         } catch (Exception e) {
             result = false;
@@ -303,10 +302,10 @@ public class DBHelper {
     }
 
     //get Device info
-    public String getUserDeviceId(String DomainURL) {
+    public String getUserDeviceId(String domainURL) {
         String userDeviceId;
         try {
-            userDeviceId = preferences.getString(userDeviceInfo + DomainURL, "");
+            userDeviceId = preferences.getString(USER_DEVICE_INFO + domainURL, "");
         } catch (Exception e) {
             userDeviceId = "";
         }

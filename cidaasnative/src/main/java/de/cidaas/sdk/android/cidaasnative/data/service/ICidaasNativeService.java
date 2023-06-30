@@ -125,10 +125,4 @@ public interface ICidaasNativeService {
     @GET
     Call<RegistrationSetupResponseEntity> getRegistrationSetup(@Url String url, @HeaderMap Map<String, String> headers);
 
-    /*//Resume Login
-    @POST
-    Call<ResumeLoginResponseEntity> resumeLogin(@Url String url, @HeaderMap Map<String,String>headers, @Body ResumeLoginRequestEntity resumeLoginRequestEntity);
-*/
-
-
 }

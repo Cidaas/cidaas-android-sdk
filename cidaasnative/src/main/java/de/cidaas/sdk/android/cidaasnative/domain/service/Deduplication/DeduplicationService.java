@@ -12,6 +12,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.registerdedu
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -80,11 +81,11 @@ public class DeduplicationService {
                 serviceCallForDeduplicationList(callback, DeduplicationUrl, headers);
 
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
         }
     }
 
@@ -101,23 +102,23 @@ public class DeduplicationService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, response
-                                , "Error :"));
+                                , NativeConstants.ERROR_LOGGING_PREFIX));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<DeduplicationResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                            t.getMessage(), "Error :" + methodName));
+                            t.getMessage(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
         }
     }
 
@@ -139,11 +140,11 @@ public class DeduplicationService {
                 //ServiceCall
                 serviceCallForRegisterDeduplication(registerDeduplicationUrl, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
         }
     }
 
@@ -160,23 +161,23 @@ public class DeduplicationService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                                response, "Error :" + methodName));
+                                response, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RegisterDeduplicationEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE,
-                            t.getMessage(), "Error :" + methodName));
+                            t.getMessage(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DEDUPLICATION_LIST_FAILURE, e.getMessage()));
         }
     }
 

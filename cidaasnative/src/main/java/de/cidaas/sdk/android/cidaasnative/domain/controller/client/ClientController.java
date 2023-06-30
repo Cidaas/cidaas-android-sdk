@@ -8,6 +8,7 @@ import java.util.Dictionary;
 
 import de.cidaas.sdk.android.cidaasnative.data.entity.clientinfo.ClientInfoEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.Client.ClientService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -61,7 +62,7 @@ public class ClientController {
                 CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> stringresult) {
-                        ClientService.getShared(context).getClientInfo(requestId, stringresult.get("DomainURL"), clientInfoEntityResult);
+                        ClientService.getShared(context).getClientInfo(requestId, stringresult.get(NativeConstants.DOMAIN_URL), clientInfoEntityResult);
                     }
 
                     @Override
@@ -70,11 +71,11 @@ public class ClientController {
                     }
                 });
             } else {
-                clientInfoEntityResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error :" + methodName));
+                clientInfoEntityResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
 
         } catch (Exception e) {
-            clientInfoEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CLIENT_INFO_FAILURE,
+            clientInfoEntityResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CLIENT_INFO_FAILURE,
                     e.getMessage()));
         }
     }

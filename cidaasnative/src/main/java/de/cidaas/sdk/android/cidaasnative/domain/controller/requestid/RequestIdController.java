@@ -10,6 +10,7 @@ import java.util.Hashtable;
 
 import de.cidaas.sdk.android.cidaasnative.data.entity.authrequest.AuthRequestResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.RequestId.RequestIdService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -59,7 +60,7 @@ public class RequestIdController {
 
       /*  if(!ENABLE_PKCE && !clientSecret.equals("") && clientSecret!=null)
         {
-            savedProperties.put("ClientSecret",clientSecret);
+            savedProperties.put(NativeConstants.CLIENT_SECRET,clientSecret);
         }
 */
         DBHelper.getShared().addChallengeProperties(savedProperties);
@@ -92,44 +93,44 @@ public class RequestIdController {
                 generateChallenge();
             }
 
-            CidaasHelper.baseurl = loginproperties.get("DomainURL");
+            CidaasHelper.baseurl = loginproperties.get(NativeConstants.DOMAIN_URL);
             DBHelper.getShared().addLoginProperties(loginproperties);
 
             //Service call
             RequestIdService.getShared(context).getRequestID(loginproperties, Primaryresult, extraParams);
         } catch (Exception e) {
-            Primaryresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
+            Primaryresult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
                     e.getMessage()));
         }
     }
 
     private boolean checkNotnull(Dictionary<String, String> loginproperties, EventResult<AuthRequestResponseEntity> Primaryresult) {
         String methodName = "RequestIdController:checkNotnull() ";
-        if (loginproperties.get("DomainURL") == null || loginproperties.get("DomainURL").equals("")
-                || !((Hashtable) loginproperties).containsKey("DomainURL")) {
-            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("DomainURL must not be null", "Error:" + methodName));
+        if (loginproperties.get(NativeConstants.DOMAIN_URL) == null || loginproperties.get(NativeConstants.DOMAIN_URL).equals("")
+                || !((Hashtable) loginproperties).containsKey(NativeConstants.DOMAIN_URL)) {
+            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("DomainURL must not be null", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             return true;
         }
-        if (loginproperties.get("ClientId").equals(null) || loginproperties.get("ClientId").equals("")
-                || !((Hashtable) loginproperties).containsKey("ClientId")) {
-            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("ClientId must not be null", "Error:" + methodName));
+        if (loginproperties.get(NativeConstants.CLIENT_ID) == null || loginproperties.get(NativeConstants.CLIENT_ID).equals("")
+                || !((Hashtable) loginproperties).containsKey(NativeConstants.CLIENT_ID)) {
+            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("ClientId must not be null", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             return true;
         }
-        if (!((Hashtable) loginproperties).containsKey("RedirectURL") || loginproperties.get("RedirectURL").equals(null)
+        if (!((Hashtable) loginproperties).containsKey("RedirectURL") || null == loginproperties.get("RedirectURL")
                 || loginproperties.get("RedirectURL").equals("")) {
-            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("RedirectURL must not be null", "Error:" + methodName));
+            Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("RedirectURL must not be null", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             return true;
         }
 
         CidaasHelper.ENABLE_PKCE = DBHelper.getShared().getEnablePKCE();
         if (!CidaasHelper.ENABLE_PKCE) {
-            if (loginproperties.get("ClientSecret") == null || loginproperties.get("ClientSecret").equals("") || loginproperties == null
-                    || !((Hashtable) loginproperties).containsKey("ClientSecret")) {
+            if (loginproperties.get(NativeConstants.CLIENT_SECRET) == null || loginproperties.get(NativeConstants.CLIENT_SECRET).equals("") || loginproperties == null
+                    || !((Hashtable) loginproperties).containsKey(NativeConstants.CLIENT_SECRET)) {
                 Primaryresult.failure(CidaasProperties.getShared(context).getAuthError("PKCE flow is disabled ,ClientSecret must not be null",
-                        "Error:" + methodName));
+                        NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return true;
             } else {
-                clientSecret = loginproperties.get("ClientSecret");
+                clientSecret = loginproperties.get(NativeConstants.CLIENT_SECRET);
             }
         }
         return false;

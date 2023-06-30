@@ -14,6 +14,7 @@ import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.general.GenralHelper;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
@@ -86,21 +87,21 @@ public class AccessTokenService {
                 // generate Body Parameter
                 querymap.put("grant_type", "authorization_code");
                 querymap.put("code", Code);
-                querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
-                querymap.put("client_id", loginProperties.get("ClientId"));
-                querymap.put("code_verifier", challengeProperties.get("Verifier"));
+                querymap.put("redirect_uri", loginProperties.get(CidaasConstants.REDIRECT_URL));
+                querymap.put("client_id", loginProperties.get(CidaasConstants.CLIENT_ID));
+                querymap.put("code_verifier", challengeProperties.get(CidaasConstants.VERIFIER));
 
                 //Service call
                 serviceForGetAccessTokenByCode(getAccessTokenUrl, headers, querymap, acessTokencallback);
 
             } else {
                 acessTokencallback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
-                        "Error :" + methodName));
+                        CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            acessTokencallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
+            acessTokencallback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
                     e.getMessage()));
         }
     }
@@ -119,22 +120,22 @@ public class AccessTokenService {
                             acessTokencallback.success(response.body());
                         } else {
                             acessTokencallback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE
-                                    , response.code(), "Error :" + methodName));
+                                    , response.code(), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         acessTokencallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response,
-                                "Error :" + methodName));
+                                CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AccessTokenEntity> call, Throwable t) {
                     acessTokencallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            acessTokencallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
+            acessTokencallback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE,
                     e.getMessage()));
         }
     }
@@ -163,13 +164,13 @@ public class AccessTokenService {
 
                 //Get Properties From DB
                 if (loginProperties == null) {
-                    callback.failure(WebAuthError.getShared(context).loginURLMissingException("Error :" + methodName));
+                    callback.failure(WebAuthError.getShared(context).loginURLMissingException(CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     return;
                 }
 
                 //Check Verifier,If null set it as empty String
-                if (challengeProperties.get("Verifier") == null) {
-                    challengeProperties.put("Verifier", "");
+                if (challengeProperties.get(CidaasConstants.VERIFIER) == null) {
+                    challengeProperties.put(CidaasConstants.VERIFIER, "");
                 }
 
                 //Add Body Parameter
@@ -177,14 +178,14 @@ public class AccessTokenService {
                 querymap.put("grant_type", "refresh_token");
                 querymap.put("redirect_uri", loginProperties.get("RedirectURL"));
                 querymap.put("client_id", loginProperties.get("ClientId"));
-                querymap.put("code_verifier", challengeProperties.get("Verifier"));
+                querymap.put("code_verifier", challengeProperties.get(CidaasConstants.VERIFIER));
                 querymap.put("refresh_token", refreshToken);
 
                 //Service call
                 serviceForAccessTokenService(url, headers, querymap, callback);
             }
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -203,23 +204,23 @@ public class AccessTokenService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response.code(),
-                                    "Error :" + methodName));
+                                    CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response,
-                                "Error :" + methodName));
+                                CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AccessTokenEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -241,7 +242,7 @@ public class AccessTokenService {
             serviceForGetAccessTokenBySocial(getAccessTokenBySocialURL, headers, callback);
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -262,24 +263,24 @@ public class AccessTokenService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response.code(),
-                                    "Error :" + methodName));
+                                    CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
 
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, response,
-                                "Error :" + methodName));
+                                CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SocialProviderEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
