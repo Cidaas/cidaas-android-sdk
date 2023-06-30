@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.clientinfo.ClientInfoEntit
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -68,12 +69,12 @@ public class ClientService {
                 //Service call
                 ServiceForClient(clienttUrl, headers, callback);
             } else {
-                callback.failure(WebAuthError.getShared(context).propertyMissingException("RequestId or baseurl must not be empty", "Error :" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException("RequestId or baseurl must not be empty", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CLIENT_INFO_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CLIENT_INFO_FAILURE, e.getMessage()));
         }
     }
 
@@ -90,11 +91,11 @@ public class ClientService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.CLIENT_INFO_FAILURE, response.code(),
-                                    "Error :" + methodName));
+                                    NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CLIENT_INFO_FAILURE, response,
-                                "Error :" + methodName));
+                                NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                     }
                 }
@@ -102,7 +103,7 @@ public class ClientService {
                 @Override
                 public void onFailure(Call<ClientInfoEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CLIENT_INFO_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            NativeConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });

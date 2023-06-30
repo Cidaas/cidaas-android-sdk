@@ -16,6 +16,7 @@ import de.cidaas.sdk.android.helper.customtab.CustomTabHelper;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.helper.general.DBHelper;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -72,7 +73,7 @@ public class LoginController {
         codeChallenge = generator.getCodeChallenge(codeVerifier);
 
         savedProperties.put("Verifier", codeVerifier);
-        savedProperties.put("Challenge", codeChallenge);
+        savedProperties.put(CidaasConstants.CHALLENGE, codeChallenge);
         savedProperties.put("Method", generator.codeChallengeMethod);
 
         DBHelper.getShared().addChallengeProperties(savedProperties);
@@ -103,16 +104,16 @@ public class LoginController {
                         challengeProperties = challengePropertiesfromparam;
                     }
 
-                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get("Challenge") == null || challengeProperties.get("Challenge") == "") {
+                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CLIENT_SECRET).equals("")) {
                         generateChallenge();
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     }
 
 
                     String authzURL = urlList.get("authorization_endpoint");
-                    String clientId = loginProperties.get("ClientId");
-                    String redirectURL = loginProperties.get("RedirectURL");
-                    String challenge = challengeProperties.get("Challenge");
+                    String clientId = loginProperties.get(CidaasConstants.CLIENT_ID);
+                    String redirectURL = loginProperties.get(CidaasConstants.REDIRECT_URL);
+                    String challenge = challengeProperties.get(CidaasConstants.CHALLENGE);
 
                     // Here the Error may occur due to Challange is empty
                     if (clientId != null && !clientId.equals("") && redirectURL != null && !redirectURL.equals("") && challenge != null && !challenge.equals("")) {
@@ -121,11 +122,11 @@ public class LoginController {
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
                         } else {
-                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error:" + methodName));
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException(CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callbackResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or RedirectURL or Challenge must not be empty"
-                                , "Error :" + methodName));
+                                , CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
@@ -136,7 +137,7 @@ public class LoginController {
             });
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
@@ -149,7 +150,7 @@ public class LoginController {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     if (provider != null && !provider.equals("") && requestId != null && !requestId.equals("")) {
-                        String finalURL = URLHelper.getShared().constructSocialURL(result.get("DomainURL"), provider, requestId);
+                        String finalURL = URLHelper.getShared().constructSocialURL(result.get(CidaasConstants.DOMAIN_URL), provider, requestId);
 
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
@@ -206,7 +207,7 @@ public class LoginController {
             // : Handle Exception
 
             callbacktoMain.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
         }
 
 
@@ -235,7 +236,7 @@ public class LoginController {
             }
             customTabsIntent.launchUrl(activityContext, Uri.parse(url));
         } catch (Exception e) {
-            WebAuthError.getShared(context).methodException("Exception:" + methodName, WebAuthErrorCode.SAVE_LOGIN_PROPERTIES, e.getMessage());
+            WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SAVE_LOGIN_PROPERTIES, e.getMessage());
         }
     }
 
@@ -383,12 +384,12 @@ public class LoginController {
 
 
                 if (DBHelper.getShared().addLoginProperties(loginproperties)) {
-                    CidaasHelper.baseurl = loginproperties.get("DomainURL");
+                    CidaasHelper.baseurl = loginproperties.get(CidaasConstants.DOMAIN_URL);
                     CidaasHelper.IS_SETURL_CALLED = true;
                     result.success("SetURL is Successfully configured " + methodNameFromApp);
-                    LogFile.getShared(context).addSuccessLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                    LogFile.getShared(context).addSuccessLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get(CidaasConstants.DOMAIN_URL)
                             + " Method Name:- " + methodNameFromApp);
-                    LogFile.getShared(context).addInfoLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get("DomainURL")
+                    LogFile.getShared(context).addInfoLog(methodName, "SetURL is Successfully configured Baseurl:-" + loginproperties.get(CidaasConstants.DOMAIN_URL)
                             + " Method Name:- " + methodNameFromApp);
                 } else {
                     String errorMessage = "Saving Failed in LocalDB";
@@ -476,16 +477,16 @@ public class LoginController {
                         challengeProperties = challengePropertiesfromparam;
                     }
 
-                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get("Challenge") == null || challengeProperties.get("Challenge") == "") {
+                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CHALLENGE).equals("")) {
                         generateChallenge();
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     }
 
 
                     String authzURL = urlList.get("authorization_endpoint");
-                    String clientId = loginProperties.get("ClientId");
-                    String redirectURL = loginProperties.get("RedirectURL");
-                    String challenge = challengeProperties.get("Challenge");
+                    String clientId = loginProperties.get(CidaasConstants.CLIENT_ID);
+                    String redirectURL = loginProperties.get(CidaasConstants.REDIRECT_URL);
+                    String challenge = challengeProperties.get(CidaasConstants.CHALLENGE);
 
                     // Here the Error may occur due to Challange is empty
                     if (clientId != null && !clientId.equals("") && redirectURL != null && !redirectURL.equals("") && challenge != null && !challenge.equals("")) {
@@ -494,11 +495,11 @@ public class LoginController {
                         if (finalURL != null && !finalURL.equals("")) {
                             callbackResult.success(finalURL);
                         } else {
-                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException("Error:" + methodName));
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException(CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callbackResult.failure(WebAuthError.getShared(context).propertyMissingException("ClientId or RedirectURL or Challenge must not be empty"
-                                , "Error :" + methodName));
+                                , CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
@@ -509,7 +510,7 @@ public class LoginController {
             });
         } catch (Exception e) {
             callbackResult.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
@@ -544,7 +545,7 @@ public class LoginController {
             // : Handle Exception
 
             callbacktoMain.failure(WebAuthError.getShared(context)
-                    .methodException("Exception :" + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
         }
 
 

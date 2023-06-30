@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.verificationcontinue
 import de.cidaas.sdk.android.cidaasverification.data.entity.verificationcontinue.VerificationContinueResponseEntity;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -62,18 +63,18 @@ public class VerificationContinueService {
                         verificationContinueCallback.success(response.body());
                     } else {
                         verificationContinueCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                response, "Error:- " + methodName));
+                                response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<VerificationContinueResponseEntity> call, Throwable t) {
                     verificationContinueCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
+                            t.getMessage(), VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            verificationContinueCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
+            verificationContinueCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE,
                     e.getMessage()));
         }
     }

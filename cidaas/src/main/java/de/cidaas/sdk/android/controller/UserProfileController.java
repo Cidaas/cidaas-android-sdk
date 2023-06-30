@@ -7,6 +7,7 @@ import java.util.Dictionary;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.properties.CidaasProperties;
 import de.cidaas.sdk.android.service.entity.UserInfo.UserInfoEntity;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
@@ -69,20 +70,20 @@ public class UserProfileController {
 
             } else {
                 String errorMessage = "Sub must not be null";
-                callback.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error:" + methodName));
+                callback.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.USER_INFO_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
 
     public void getUserConfigurationList() {
         try {
-
+            //getUserConfigurationList
         } catch (Exception e) {
-
+            //Exception getUserConfigurationList
         }
     }
 

@@ -15,6 +15,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResultDataEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.Registration.RegistrationService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
@@ -56,7 +57,7 @@ public class RegistrationController {
             });
         } catch (Exception e) {
 
-            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
                     e.getMessage()));
         }
     }
@@ -65,7 +66,7 @@ public class RegistrationController {
                                                  final EventResult<RegistrationSetupResponseEntity> registerFieldsresult) {
         String methodName = "RegistrationController :controlForGetRegistrationFields()";
         try {
-            String baseurl = loginPropertiesResult.get("DomainURL");
+            String baseurl = loginPropertiesResult.get(NativeConstants.DOMAIN_URL);
             String language;
 
             if (!requestId.equals("")) {
@@ -88,10 +89,10 @@ public class RegistrationController {
 
             } else {
                 String errorMessage = "RequestId must not be empty";
-                registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error:" + methodName));
+                registerFieldsresult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
                     e.getMessage()));
         }
     }
@@ -124,7 +125,7 @@ public class RegistrationController {
                 result.failure(WebAuthError.getShared(context).propertyMissingException("Accepted Language or requestId must not be null", methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
 
@@ -136,7 +137,7 @@ public class RegistrationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
 
                     if (!requestId.equals("")) {
                         if (registerFields != null) {
@@ -213,7 +214,7 @@ public class RegistrationController {
                 }
             });
         } catch (Exception e) {
-            registerFieldsresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+            registerFieldsresult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
                     e.getMessage()));
         }
     }
@@ -245,7 +246,7 @@ public class RegistrationController {
                 result.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
 
@@ -259,7 +260,7 @@ public class RegistrationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
 
                     if (access_token == null || access_token.equals("") || registrationEntity.getSub() == null || registrationEntity.getSub().equals("")) {
                         String errorMessage = "access_token or sub must not be empty";
@@ -286,7 +287,7 @@ public class RegistrationController {
                 }
             });
         } catch (Exception e) {
-            registerFieldsResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
+            registerFieldsResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE,
                     e.getMessage()));
         }
     }
@@ -301,7 +302,7 @@ public class RegistrationController {
             RegistrationService.getShared(context).updateUserProfile(baseurl, access_token, registerationEntity, result);
 
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REGISTRATION_SETUP_FAILURE, e.getMessage()));
         }
     }
 

@@ -38,11 +38,6 @@ import rx.android.BuildConfig;
 
 public class Cidaas {
 
-    private static final int MY_SCAN_REQUEST_CODE = 3;
-    private static final int LOCAL_AUTH_REQUEST_CODE = 303;
-    private static final int LOCAL_REQUEST_CODE = 302;
-    private static final int RESULT_OK = -1;
-
 
     EventResult<LocalAuthenticationEntity> localAuthenticationEntityCallback;
 
@@ -57,8 +52,6 @@ public class Cidaas {
 
     public WebAuthError webAuthError = null;
 
-    //To check the Loader
-    private boolean displayLoader = false;
 
     // Confirm it must be a static one
     //Extra parameter that is passed in URL

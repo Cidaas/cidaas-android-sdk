@@ -11,6 +11,7 @@ import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.helper.urlhelper.URLHelper;
 import de.cidaas.sdk.android.service.CidaassdkService;
 import de.cidaas.sdk.android.service.ICidaasSDKService;
@@ -65,12 +66,12 @@ public class LoginService {
                 serviceForGetURLList(openIdurl, headers, callback);
             } else {
                 callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
-                        "Error :" + methodName));
+                        CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE, e.getMessage()));
         }
 
     }
@@ -88,23 +89,23 @@ public class LoginService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.RESUME_LOGIN_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         assert response.errorBody() != null;
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_LOGIN_FAILURE, response
-                                , "Error :" + methodName));
+                                , CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Object> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_LOGIN_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESUME_LOGIN_FAILURE, e.getMessage()));
         }
     }
 

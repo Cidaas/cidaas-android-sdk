@@ -14,6 +14,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetnewpass
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.domain.service.ResetPassword.ResetPasswordService;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.cidaasnative.view.CidaasNative;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -67,10 +68,10 @@ public class ResetPasswordController {
                 });
             } else {
                 resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(
-                        "RequestID or email or Resetmedium must not be empty", "Error:" + methodName));
+                        "RequestID or email or Resetmedium must not be empty", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -81,8 +82,8 @@ public class ResetPasswordController {
         String methodName = "RegistrationController :successOfInitiateResetPassword()";
 
         try {
-            String baseurl = loginPropertiesResult.get("DomainURL");
-            String clientId = loginPropertiesResult.get("ClientId");
+            String baseurl = loginPropertiesResult.get(NativeConstants.DOMAIN_URL);
+            String clientId = loginPropertiesResult.get(NativeConstants.CLIENT_ID);
 
             if (email != null && !email.equals("") && requestId != null && !requestId.equals("")) {
                 ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
@@ -94,10 +95,10 @@ public class ResetPasswordController {
                 initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
             } else {
                 String ErrorMessage = "RequestID or email mustnot be null";
-                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(ErrorMessage, "Error:" + methodName));
+                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(ErrorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -116,10 +117,10 @@ public class ResetPasswordController {
             } else {
 
                 resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException("RequestId or Baseurl must not be null",
-                        "Error:" + methodName));
+                        NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -133,7 +134,7 @@ public class ResetPasswordController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
                     successOfResetPasswordValidateCode(baseurl, verificationCode, rprq, resetpasswordResult);
                 }
 
@@ -143,7 +144,7 @@ public class ResetPasswordController {
                 }
             });
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE, e.getMessage()));
         }
     }
@@ -165,7 +166,7 @@ public class ResetPasswordController {
                         "Error" + methodName));
             }
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE, e.getMessage()));
         }
     }
@@ -177,19 +178,19 @@ public class ResetPasswordController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
+                    String baseurl = result.get(NativeConstants.DOMAIN_URL);
+                    String clientId = result.get(NativeConstants.CLIENT_ID);
 
                     notNullChecking(baseurl, resetPasswordEntity, resetpasswordResult);
                 }
 
                 @Override
                 public void failure(WebAuthError error) {
-                    resetpasswordResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", "Error:" + methodName));
+                    resetpasswordResult.failure(WebAuthError.getShared(context).cidaasPropertyMissingException("", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,
                     e.getMessage()));
         }
     }
@@ -208,19 +209,19 @@ public class ResetPasswordController {
                         ResetPasswordController.getShared(context).resetNewPassword(baseurl, resetPasswordEntity, resetpasswordResult);
                     } else {
                         String errorMessage = "resetRequestId and ExchangeId must not be null";
-                        resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error:" + methodName));
+                        resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 } else {
                     String errorMessage = "Password and confirmPassword must  be same";
-                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error:" + methodName));
+                    resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
 
             } else {
                 String errorMessage = "Password or confirmPassword must not be empty";
-                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, "Error:" + methodName));
+                resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException(errorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESET_NEWPASSWORD_FAILURE,
                     e.getMessage()));
         }
     }
@@ -254,10 +255,10 @@ public class ResetPasswordController {
                 String errorMessage = "ExchangeId or Exchange ID must not be empty";
 
                 resetpasswordResult.failure(WebAuthError.getShared(context).propertyMissingException(
-                        errorMessage, "Error:" + methodName));
+                        errorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetpasswordResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetpasswordResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.RESET_PASSWORD_VALIDATE_CODE_FAILURE, e.getMessage()));
         }
     }
@@ -279,10 +280,10 @@ public class ResetPasswordController {
                 });
             } else {
                 resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(
-                        "RequestID or email or Resetmedium must not be empty", "Error:" + methodName));
+                        "RequestID or email or Resetmedium must not be empty", NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -290,8 +291,8 @@ public class ResetPasswordController {
     private void successOfInitiateResetPasswordEmail(String requestId, String email,String processingType, String resetMedium, Dictionary<String, String> loginPropertiesResult, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         String methodName = "RegistrationController :successOfInitiateResetPassword()";
         try {
-            String baseurl = loginPropertiesResult.get("DomainURL");
-            String clientId = loginPropertiesResult.get("ClientId");
+            String baseurl = loginPropertiesResult.get(NativeConstants.DOMAIN_URL);
+            String clientId = loginPropertiesResult.get(NativeConstants.CLIENT_ID);
 
             if (email != null && !email.equals("") && requestId != null && !requestId.equals("")) {
                 ResetPasswordRequestEntity resetPasswordRequestEntity = new ResetPasswordRequestEntity();
@@ -303,10 +304,10 @@ public class ResetPasswordController {
                 initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
             } else {
                 String ErrorMessage = "RequestID or email mustnot be null";
-                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(ErrorMessage, "Error:" + methodName));
+                resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(ErrorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+            resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.VERIFY_ACCOUNT_VERIFICATION_FAILURE, e.getMessage()));
         }
     }

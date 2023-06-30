@@ -17,6 +17,7 @@ import de.cidaas.sdk.android.entities.LocalAuthenticationEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.library.biometricauthentication.BiometricCallback;
 import de.cidaas.sdk.android.library.biometricauthentication.BiometricEntity;
 import de.cidaas.sdk.android.library.biometricauthentication.BiometricManager;
@@ -89,7 +90,7 @@ public class LocalAuthenticationController {
                         "Error" + methodName));
             }
         } catch (Exception e) {
-            result.failure(new WebAuthError(context).methodException("Exception :" + methodName, WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
+            result.failure(new WebAuthError(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
         }
     }
 
@@ -144,7 +145,7 @@ public class LocalAuthenticationController {
                 "Call back must not be null", 417));
             }*/
         } catch (Exception e) {
-            localAuthenticationEntityCallback.failure(new WebAuthError(context).methodException("Exception :" + methodName,
+            localAuthenticationEntityCallback.failure(new WebAuthError(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.LOCAL_AUHTHENTICATION_FAILED, e.getMessage()));
         }
     }

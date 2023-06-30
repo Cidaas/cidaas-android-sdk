@@ -15,6 +15,7 @@ import de.cidaas.sdk.android.consent.data.entity.consentdetails.ConsentDetailsRe
 import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentEntity;
 import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResponseEntity;
 import de.cidaas.sdk.android.consent.domain.service.consent.ConsentService;
+import de.cidaas.sdk.android.consent.helper.ConsentConstants;
 import de.cidaas.sdk.android.consent.helper.ConsentURLHelper;
 import de.cidaas.sdk.android.controller.AccessTokenController;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
@@ -78,7 +79,7 @@ public class ConsentController {
                 return;
             }
         } catch (Exception e) {
-            consentresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,
+            consentresult.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,
                     e.getMessage()));
         }
     }
@@ -89,8 +90,8 @@ public class ConsentController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> result) {
-                    String baseurl = result.get("DomainURL");
-                    String clientId = result.get("ClientId");
+                    String baseurl = result.get(ConsentConstants.DOMAIN_URL);
+                    String clientId = result.get(ConsentConstants.CLIENT_ID);
 
                     String consentDetailsURL = ConsentURLHelper.getShared().getConsent_details(baseurl, consentName);
 
@@ -109,7 +110,7 @@ public class ConsentController {
             });
 
         } catch (Exception e) {
-            consentresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE, e.getMessage()));
+            consentresult.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE, e.getMessage()));
         }
     }
 
@@ -132,7 +133,7 @@ public class ConsentController {
                         "Sub or ConsentName or ConsentVersion must not be null and isAccept must be true", methodName));
             }
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,
+            loginresult.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,
                     e.getMessage()));
         }
     }
@@ -161,7 +162,7 @@ public class ConsentController {
             });
 
         } catch (Exception e) {
-            loginResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,
+            loginResult.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX+ methodName, WebAuthErrorCode.CONSENT_DETAILS_FAILURE,
                     e.getMessage()));
         }
     }
@@ -189,7 +190,7 @@ public class ConsentController {
                 }
             });
         } catch (Exception e) {
-            loginresult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,
+            loginresult.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE,
                     e.getMessage()));
         }
     }
@@ -245,10 +246,10 @@ public class ConsentController {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     if (consentDetailsV2Entity.getClient_id() == null || consentDetailsV2Entity.getClient_id().equals("")) {
-                        consentDetailsV2Entity.setClient_id(result.get("ClientId"));
-                        serviceForGetConsentDetailsV2(result.get("DomainURL"), consentDetailsV2Entity, consentDetails);
+                        consentDetailsV2Entity.setClient_id(result.get(ConsentConstants.CLIENT_ID));
+                        serviceForGetConsentDetailsV2(result.get(ConsentConstants.DOMAIN_URL), consentDetailsV2Entity, consentDetails);
                     } else {
-                        serviceForGetConsentDetailsV2(result.get("DomainURL"), consentDetailsV2Entity, consentDetails);
+                        serviceForGetConsentDetailsV2(result.get(ConsentConstants.DOMAIN_URL), consentDetailsV2Entity, consentDetails);
                     }
                 }
 
@@ -311,10 +312,10 @@ public class ConsentController {
                 @Override
                 public void success(Dictionary<String, String> result) {
                     if (acceptConsentV2Entity.getClient_id() == null || acceptConsentV2Entity.getClient_id().equals("")) {
-                        acceptConsentV2Entity.setClient_id(result.get("ClientId"));
-                        serviceForAcceptConsentV2(result.get("DomainURL"), acceptConsentV2Entity, consentDetails);
+                        acceptConsentV2Entity.setClient_id(result.get(ConsentConstants.CLIENT_ID));
+                        serviceForAcceptConsentV2(result.get(ConsentConstants.DOMAIN_URL), acceptConsentV2Entity, consentDetails);
                     } else {
-                        serviceForAcceptConsentV2(result.get("DomainURL"), acceptConsentV2Entity, consentDetails);
+                        serviceForAcceptConsentV2(result.get(ConsentConstants.DOMAIN_URL), acceptConsentV2Entity, consentDetails);
                     }
                 }
 

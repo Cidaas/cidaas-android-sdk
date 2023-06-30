@@ -52,9 +52,10 @@ dependencies {
 
     //For Retrofit Call
     implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava:2.8.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 }
 
 // Because the components are created only during the afterEvaluate phase, you must

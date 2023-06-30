@@ -32,8 +32,7 @@ public class CustomTabHelper {
     private static final String CHROME_SYSTEM = "com.google.android.apps.chrome";
     private static final String CHROME_BETA = "com.android.chrome.beta";
     private static final String CHROME_DEV = "com.android.chrome.dev";
-    private static final String EXTRA_CUSTOM_TABS_KEEP_ALIVE =
-            "android.support.customtabs.extra.KEEP_ALIVE";
+
     private static final String ACTION_CUSTOM_TABS_CONNECTION =
             "android.support.customtabs.action.CustomTabsService";
 

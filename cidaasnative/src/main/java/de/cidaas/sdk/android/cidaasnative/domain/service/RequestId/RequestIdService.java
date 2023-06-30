@@ -18,6 +18,7 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.authrequest.AuthRequestRes
 import de.cidaas.sdk.android.cidaasnative.data.service.CidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.ICidaasNativeService;
 import de.cidaas.sdk.android.cidaasnative.data.service.helper.NativeURLHelper;
+import de.cidaas.sdk.android.cidaasnative.util.NativeConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -64,7 +65,7 @@ public class RequestIdService {
         String methodName = "RequestIdService :getRequestID()";
         try {
 
-            if (loginProperties.get("DomainURL") != null && !loginProperties.get("DomainURL").equals("")) {
+            if (loginProperties.get(NativeConstants.DOMAIN_URL) != null && !loginProperties.get(NativeConstants.DOMAIN_URL).equals("")) {
 
                 //Header Generation
                 Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, NativeURLHelper.contentType);
@@ -73,7 +74,7 @@ public class RequestIdService {
                 Dictionary<String, String> challengeProperties = DBHelper.getShared().getChallengeProperties();
 
                 //Construct URL For RequestId
-                String requestidURL = loginProperties.get("DomainURL") + NativeURLHelper.getShared().getRequest_id_url();
+                String requestidURL = loginProperties.get(NativeConstants.DOMAIN_URL) + NativeURLHelper.getShared().getRequest_id_url();
 
                 String codeChallenge = "";
                 String clientSecret = " ";
@@ -88,7 +89,7 @@ public class RequestIdService {
 
                 Map<String, String> authRequestEntityMap = new HashMap<>();
 
-                authRequestEntityMap.put("client_id", URLEncoder.encode(loginProperties.get("ClientId"), "utf-8"));
+                authRequestEntityMap.put(NativeConstants.CLIENT_ID, URLEncoder.encode(loginProperties.get(NativeConstants.CLIENT_ID), "utf-8"));
                 authRequestEntityMap.put("redirect_uri", URLEncoder.encode(loginProperties.get("RedirectURL"), "utf-8"));
                 authRequestEntityMap.put("response_type", "code");
                 authRequestEntityMap.put("nonce", UUID.randomUUID().toString());
@@ -102,10 +103,10 @@ public class RequestIdService {
                 serviceForGetRequestId(requestidURL, authRequestEntityMap, headers, callback);
             } else {
                 callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
-                        "Error :" + methodName));
+                        NativeConstants.ERROR_LOGGING_PREFIX + methodName));
             }
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
         }
     }
 
@@ -126,23 +127,23 @@ public class RequestIdService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         assert response.errorBody() != null;
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, response
-                                , "Error :" + methodName));
+                                , NativeConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<AuthRequestResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, t.getMessage(),
-                            "Exception :" + methodName));
+                            NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(NativeConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.REQUEST_ID_SERVICE_FAILURE, e.getMessage()));
         }
     }
 

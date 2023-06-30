@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.setup.SetupEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.setup.SetupResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.setup.SetupService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.controller.AccessTokenController;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
@@ -61,12 +62,12 @@ public class SetupController {
                 addProperties(setupEntity, setupResult);
             } else {
                 setupResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
+            setupResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -115,7 +116,7 @@ public class SetupController {
 
 
         } catch (Exception e) {
-            setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
+            setupResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -135,7 +136,7 @@ public class SetupController {
             SetupService.getShared(context).callSetupService(setupUrl, headers, setupEntity, setupResult);
 
         } catch (Exception e) {
-            setupResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
+            setupResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.SETUP_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
