@@ -52,6 +52,9 @@ public class VerificationURLHelper {
     //Login Continue call MFA
     private String mfaContinueCallUrl = "/login-srv/precheck/continue/sdk/";
 
+    private String userDevices = "/verification-srv/v2/manage/mfa/device/list";
+    private String userDevicesUnlink = "/verification-srv/v2/manage/mfa/device/unlink";
+
 
     public String getSetupURL(String baseurl, String verificationType) {
         return baseurl + setupURL + (verificationType.toLowerCase());
@@ -125,5 +128,13 @@ public class VerificationURLHelper {
 
     public String getMfaContinueCallUrl(String baseurl, String trackId) {
         return baseurl + mfaContinueCallUrl + trackId;
+    }
+    public String getDevicesList(String baseurl) {
+        //return baseurl + getAuthentictedHistoryURL;
+        return baseurl + userDevices;
+    }
+    public String getDevicesRemove(String baseurl) {
+        //return baseurl + getAuthentictedHistoryURL;
+        return baseurl + userDevicesUnlink;
     }
 }

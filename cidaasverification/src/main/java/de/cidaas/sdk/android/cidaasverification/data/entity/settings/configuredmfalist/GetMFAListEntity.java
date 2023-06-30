@@ -11,6 +11,16 @@ public class GetMFAListEntity implements Serializable {
     private String client_id = "";
     private String sub = "";
 
+    private String linked_device_id = "";
+
+    public String getLinked_device_id() {
+        return linked_device_id;
+    }
+
+    public void setLinked_device_id(String linked_device_id) {
+        this.linked_device_id = linked_device_id;
+    }
+
     public String getDevice_id() {
         return device_id;
     }
@@ -45,10 +55,11 @@ public class GetMFAListEntity implements Serializable {
 
     //No need For Developer
 
-    public GetMFAListEntity(String device_id, String push_id, String client_id, String sub) {
+    public GetMFAListEntity(String device_id, String push_id, String client_id, String sub, String linked_device_id) {
         this.device_id = device_id;
         this.push_id = push_id;
         this.client_id = client_id;
         this.sub = sub;
+        this.linked_device_id = linked_device_id;
     }
 }

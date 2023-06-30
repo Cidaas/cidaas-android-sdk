@@ -26,6 +26,7 @@ public class LogFile {
     private static final String FAILURE_LOG_FILENAME = "cidaas_sdk_failure_log";
     private static final String SUCCESS_LOG_FILENAME = "cidaas_sdk_success_log";
     private static final String INFO_LOG_FILENAME = "cidaas_sdk_info_log";
+    private static final String API_LOG_FILENAME = "cidaas_sdk_api_log";
 
     private LogFile(Context context) {
         this.mContext = context;
@@ -117,5 +118,14 @@ public class LogFile {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formattedDate = df.format(calendar.getTime());
         return formattedDate;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void addAPILog(String message) {
+        try {
+            addRecordToLog(API_LOG_FILENAME, message);
+        } catch (IOException e) {
+            Timber.d(e, "Error during addFailureLog ");
+        }
     }
 }

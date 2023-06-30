@@ -4,6 +4,9 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.Gson;
+
+import java.util.Arrays;
 import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
@@ -119,6 +122,53 @@ public class SettingsService {
             });
         } catch (Exception e) {
             result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.UPDATE_FCM_TOKEN, e.getMessage()));
+        }
+    }
+
+    public void getConfigurationListThirdParty(String configuredListURL, Map<String, String> headers, GetMFAListEntity getMFAListEntity, EventResult<ConfiguredMFAList> configuredMFAListResult) {
+
+
+        final String methodName = "SettingsService:-getConfigurationList()";
+        try {
+
+            LogFile.getShared(context).addInfoLog(methodName, getMFAListEntity.getSub());
+            LogFile.getShared(context).addAPILog("other_devices configuration list API url: "+configuredListURL);
+            LogFile.getShared(context).addAPILog("other_devices configuration list API headers"+ Arrays.asList(headers));
+            LogFile.getShared(context).addAPILog("other_devices configuration list API params: "+new Gson().toJson(getMFAListEntity));
+            //call service
+            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
+            cidaasSDK_v2_services.getConfiguredMFAList(configuredListURL, headers, getMFAListEntity).enqueue(new Callback<ConfiguredMFAList>() {
+                @Override
+                public void onResponse(Call<ConfiguredMFAList> call, Response<ConfiguredMFAList> response) {
+                    if (response.isSuccessful()) {
+
+                        LogFile.getShared(context).addSuccessLog(methodName, response.toString() + "Sub:-" + getMFAListEntity.getSub()
+                        );
+                        if (response.code() == 200) {
+                            configuredMFAListResult.success(response.body());
+                            LogFile.getShared(context).addAPILog("other_devices configuration list api success body: "+ new Gson().toJson(response.body())+"\n");
+                        } else {
+
+                            ConfiguredMFAList configuredMFAList = new ConfiguredMFAList();
+                            configuredMFAList.setStatus(response.code());
+                            configuredMFAList.setSuccess(true);
+                            configuredMFAListResult.success(configuredMFAList);
+                        }
+                    } else {
+                        configuredMFAListResult.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE,
+                                response, "Error:- " + methodName));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ConfiguredMFAList> call, Throwable t) {
+                    configuredMFAListResult.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE,
+                            t.getMessage(), "Error:- " + methodName));
+                }
+            });
+        } catch (Exception e) {
+            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName,
+                    WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
 

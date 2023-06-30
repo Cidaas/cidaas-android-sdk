@@ -15,6 +15,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.deviceslist.DevicesListEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.enduser.configurerequest.ConfigurationRequest;
 import de.cidaas.sdk.android.cidaasverification.data.entity.enduser.loginrequest.LoginRequest;
 import de.cidaas.sdk.android.cidaasverification.data.entity.enroll.EnrollEntity;
@@ -27,6 +28,9 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushallow.PushA
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushallow.PushAllowResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushreject.PushRejectEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushreject.PushRejectResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceListResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceMfaDataEntitiy;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DevicesMfaResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
@@ -315,6 +319,17 @@ public class CidaasVerification {
         //Store Device info for Later Purposes
         DBHelper.getShared().setFCMToken(FCMToken);
     }
+    public void getDevicesList(DevicesListEntity devicesListEntity,
+                               EventResult<DeviceListResponse> deviceListResponseEventResult) {
+        //   AuthenticatedHistoryController.getShared(context).getauthenticatedHistoryListNew(authenticatedHistoryEntity, authenticatedHistoryResult);
+        AuthenticatedHistoryController.getShared(context).getDevicesList(devicesListEntity, deviceListResponseEventResult);
+    }
+    public void getDevicesRemove(DeviceMfaDataEntitiy deviceMfaDataEntitiy, EventResult<DevicesMfaResponse> devicesMfaResponseEventResult) {
+        AuthenticatedHistoryController.getShared(context).getDevicesRemove(deviceMfaDataEntitiy, devicesMfaResponseEventResult);
 
+    }
+    public void getConfiguredMFAListThirdParty(String baseurl, String sub, String linkeddeviceid, String clientid, EventResult<ConfiguredMFAList> configuredMFAListResult) {
+        SettingsController.getShared(context).getConfiguredMFAListThirdParty(baseurl,sub,linkeddeviceid,clientid, configuredMFAListResult);
+    }
 
 }

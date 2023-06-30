@@ -13,6 +13,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory
 import de.cidaas.sdk.android.cidaasverification.data.entity.authenticatedhistory.UserAuthenticatedHistoryResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.deviceslist.DevicesListEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.enroll.EnrollEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.enroll.EnrollResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.initiate.InitiateEntity;
@@ -23,6 +24,9 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushallow.PushA
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushallow.PushAllowResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushreject.PushRejectEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.push.pushreject.PushRejectResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceListResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceMfaDataEntitiy;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DevicesMfaResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
@@ -134,6 +138,12 @@ public interface ICidaasSDK_V2_Services {
     //Resume Login
     @POST
     Call<VerificationContinueResponseEntity> verificationContinue(@Url String url, @HeaderMap Map<String, String> headers, @Body VerificationContinue verificationContinueEntity);
+
+    @POST
+    Call<DeviceListResponse> getDevicesList(@Url String url, @HeaderMap Map<String, String> headers, @Body DevicesListEntity authenticatedHistoryEntity);
+
+    @POST
+    Call<DevicesMfaResponse> getDevicesRemove(@Url String url, @HeaderMap Map<String, String> headers, @Body DeviceMfaDataEntitiy authenticatedHistoryEntity);
 
 
 }
