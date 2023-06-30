@@ -33,6 +33,8 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceMfaDat
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DevicesMfaResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnotification.PendingNotificationResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.setup.SetupEntity;
@@ -330,6 +332,10 @@ public class CidaasVerification {
     }
     public void getConfiguredMFAListThirdParty(String baseurl, String sub, String linkeddeviceid, String clientid, EventResult<ConfiguredMFAList> configuredMFAListResult) {
         SettingsController.getShared(context).getConfiguredMFAListThirdParty(baseurl,sub,linkeddeviceid,clientid, configuredMFAListResult);
+    }
+
+    public void setUpCancel(SetUpCancelEntity setUpCancelEntity, EventResult<SetUpCancelResponse> setUpCancelResponseResult) {
+        ScannedController.getShared(context).setUpCancel(setUpCancelEntity, setUpCancelResponseResult);
     }
 
 }

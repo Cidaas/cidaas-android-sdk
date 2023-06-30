@@ -8,6 +8,8 @@ import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
@@ -77,5 +79,32 @@ public class ScannedService {
                     e.getMessage()));
         }
     }
+    public void callSetUpCancelService(@NonNull String scannedURL, Map<String, String> headers, SetUpCancelEntity scannedEntity,
+                                       final EventResult<SetUpCancelResponse> scannedCallback) {
+        final String methodName = "ScannedService:-callScannedService()";
+        try {
+            //call service
+            ICidaasSDK_V2_Services cidaasSDK_v2_services = service.getInstance();
+            cidaasSDK_v2_services.setUpCancel(scannedURL, headers, scannedEntity).enqueue(new Callback<SetUpCancelResponse>() {
+                @Override
+                public void onResponse(Call<SetUpCancelResponse> call, Response<SetUpCancelResponse> response) {
+                    if (response.isSuccessful()) {
+                        scannedCallback.success(response.body());
+                    } else {
+                        scannedCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                                response, "Error:- " + methodName));
+                    }
+                }
 
+                @Override
+                public void onFailure(Call<SetUpCancelResponse> call, Throwable t) {
+                    scannedCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                            t.getMessage(), "Error:- " + methodName));
+                }
+            });
+        } catch (Exception e) {
+            scannedCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
 }

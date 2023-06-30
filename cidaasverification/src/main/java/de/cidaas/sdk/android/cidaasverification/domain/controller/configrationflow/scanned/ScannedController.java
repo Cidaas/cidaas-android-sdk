@@ -7,6 +7,8 @@ import java.util.Map;
 
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.scanned.ScannedService;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
@@ -118,6 +120,64 @@ public class ScannedController {
             ScannedService.getShared(context).callScannedService(scannedUrl, headers, scannedEntity, scannedResult);
         } catch (Exception e) {
             scannedResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+    public void setUpCancel(SetUpCancelEntity setUpCancelEntity, EventResult<SetUpCancelResponse> setUpCancelResponseResult) {
+
+        String methodName = "ScannedController:-checkScannedEntity()";
+        try {
+
+            addPropertiesSetUpCancel(setUpCancelEntity, setUpCancelResponseResult);
+
+        } catch (Exception e) {
+            setUpCancelResponseResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+    private void addPropertiesSetUpCancel(SetUpCancelEntity setUpCancelEntity, EventResult<SetUpCancelResponse> setUpCancelResponseResult) {
+        String methodName = "ScannedController:-addProperties()";
+        try {
+
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> loginPropertiesResult) {
+                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String clientId = loginPropertiesResult.get("ClientId");
+
+
+
+                    //call scanned call
+                    callScannedSetUpCancel(baseurl, setUpCancelEntity, setUpCancelResponseResult);
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    setUpCancelResponseResult.failure(error);
+                }
+            });
+
+        } catch (Exception e) {
+            setUpCancelResponseResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
+                    e.getMessage()));
+        }
+    }
+
+    private void callScannedSetUpCancel(String baseurl, SetUpCancelEntity setUpCancelEntity, EventResult<SetUpCancelResponse> setUpCancelResponseResult) {
+
+        String methodName = "ScannedController:-scanned()";
+        try {
+            String scannedUrl = VerificationURLHelper.getShared().getSetUpCancelURL(baseurl, setUpCancelEntity.getVerificationType());
+
+            //headers Generation
+            Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
+
+            //Scanned Service call
+            ScannedService.getShared(context).callSetUpCancelService(scannedUrl, headers, setUpCancelEntity, setUpCancelResponseResult);
+        } catch (Exception e) {
+            setUpCancelResponseResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.SCANNED_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

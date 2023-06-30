@@ -29,6 +29,8 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DeviceMfaDat
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.DevicesMfaResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.ScannedResponse;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelEntity;
+import de.cidaas.sdk.android.cidaasverification.data.entity.scanned.SetUpCancelResponse;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.ConfiguredMFAList;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.configuredmfalist.GetMFAListEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnotification.PendingNotificationEntity;
@@ -145,5 +147,7 @@ public interface ICidaasSDK_V2_Services {
     @POST
     Call<DevicesMfaResponse> getDevicesRemove(@Url String url, @HeaderMap Map<String, String> headers, @Body DeviceMfaDataEntitiy authenticatedHistoryEntity);
 
+    @POST
+    Call<SetUpCancelResponse> setUpCancel(@Url String url, @HeaderMap Map<String, String> headers, @Body SetUpCancelEntity setUpCancelEntity);
 
 }
