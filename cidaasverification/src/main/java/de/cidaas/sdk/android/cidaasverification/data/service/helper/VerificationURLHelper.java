@@ -54,7 +54,7 @@ public class VerificationURLHelper {
 
     private String userDevices = "/verification-srv/v2/manage/mfa/device/list";
     private String userDevicesUnlink = "/verification-srv/v2/manage/mfa/device/unlink";
-
+    String setUpCancelURL = "/verification-srv/v2/setup/cancel/";
 
     public String getSetupURL(String baseurl, String verificationType) {
         return baseurl + setupURL + (verificationType.toLowerCase());
@@ -133,5 +133,8 @@ public class VerificationURLHelper {
     public String getDevicesRemove(String baseurl) {
         //return baseurl + getAuthentictedHistoryURL;
         return baseurl + userDevicesUnlink;
+    }
+    public String getSetUpCancelURL(String baseurl, String verificationType) {
+        return baseurl + setUpCancelURL + (verificationType);
     }
 }
