@@ -10,6 +10,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.CidaasSDK_V2_Service;
 import de.cidaas.sdk.android.cidaasverification.data.service.ICidaasSDK_V2_Services;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -62,18 +63,18 @@ public class DeleteService {
                         deleteCallback.success(response.body());
                     } else {
                         deleteCallback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
-                                response, "Error:- " + methodName));
+                                response, VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<DeleteResponse> call, Throwable t) {
                     deleteCallback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
-                            t.getMessage(), "Error:- " + methodName));
+                            t.getMessage(), VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            deleteCallback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
+            deleteCallback.failure(WebAuthError.getShared(context).methodException(VerificationConstants.ERROR_LOGGING_PREFIX + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

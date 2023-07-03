@@ -61,7 +61,7 @@ public class FileHelper {
             } else {
                 String errorMessage = "All properties (" + CLIENT_ID + ", " + REDIRECT_URL + " AND " + DOMAIN_URL + ") must be set";
                 LogFile.getShared(context).addFailureLog(errorMessage + WebAuthErrorCode.READ_PROPERTIES_ERROR);
-                result.failure(error().methodException("readProperties", WebAuthErrorCode.READ_PROPERTIES_ERROR, errorMessage));
+                result.failure(error().methodException(CidaasConstants.METHOD_READ_PROPERTIES, WebAuthErrorCode.READ_PROPERTIES_ERROR, errorMessage));
             }
         } catch (Exception e) {
             handleException(result, e);
@@ -104,7 +104,7 @@ public class FileHelper {
             } else if (getNodeNameValue(node).equalsIgnoreCase(REDIRECT_URL)) {
                 handleNodeListEntry(dictObject, REDIRECT_URL, getNodeContent(node), result);
             } else {
-                webAuthError.invalidPropertiesException("invalid property entry for: " + getNodeNameValue(node), "readProperties");
+                webAuthError.invalidPropertiesException("invalid property entry for: " + getNodeNameValue(node), CidaasConstants.METHOD_READ_PROPERTIES);
                 result.failure(webAuthError);
             }
         }
@@ -121,7 +121,7 @@ public class FileHelper {
             LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.READ_PROPERTIES_ERROR);
             result.failure(webAuthError);
         } else {
-            result.failure(error().methodException("readProperties", WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
+            result.failure(error().methodException(CidaasConstants.METHOD_READ_PROPERTIES, WebAuthErrorCode.READ_PROPERTIES_ERROR, e.getMessage()));
         }
     }
 
@@ -133,7 +133,7 @@ public class FileHelper {
             } else {
                 String errorMessage = "Property -" + key + "- must be a valid URL";
                 LogFile.getShared(context).addFailureLog(errorMessage + WebAuthErrorCode.READ_PROPERTIES_ERROR);
-                result.failure(error().propertyMissingException(errorMessage, "readProperties"));
+                result.failure(error().propertyMissingException(errorMessage, CidaasConstants.METHOD_READ_PROPERTIES));
             }
         } else {
             checkEmptyAndAddString(dictObject, key, xmlString, result);
@@ -147,7 +147,7 @@ public class FileHelper {
         } else {
             String errorMessage = "property -" + key + "- cannot be null or empty";
             LogFile.getShared(context).addFailureLog(errorMessage + WebAuthErrorCode.READ_PROPERTIES_ERROR);
-            result.failure(error().propertyMissingException(errorMessage, "readProperties"));
+            result.failure(error().propertyMissingException(errorMessage, CidaasConstants.METHOD_READ_PROPERTIES));
         }
     }
 

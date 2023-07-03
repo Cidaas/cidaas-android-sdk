@@ -19,7 +19,6 @@ public class InitiateEntity implements Serializable {
     public InitiateEntity(String sub, String request_id, String usage_type, String verificationType) {
         this.sub = sub;
         this.request_id = request_id;
-        // this.medium_id = medium_id;
         this.usage_type = usage_type;
         this.verificationType = verificationType;
     }

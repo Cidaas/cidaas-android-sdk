@@ -11,6 +11,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.updatefcmtoken.Updat
 import de.cidaas.sdk.android.cidaasverification.data.entity.updatefcmtoken.UpdateFCMTokenResponseEntity;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.settings.SettingsService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -60,11 +61,11 @@ public class SettingsController {
 
                 addProperties(sub, settingsResult);
             } else {
-                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", "Error:" + methodName));
+                settingsResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub must not be null", VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
         } catch (Exception e) {
-            settingsResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.MFA_LIST_FAILURE,
+            settingsResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.MFA_LIST_FAILURE,
                     e.getMessage()));
         }
     }
@@ -97,7 +98,7 @@ public class SettingsController {
             });
 
         } catch (Exception e) {
-            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -114,7 +115,7 @@ public class SettingsController {
             //Settings Service call
             SettingsService.getShared(context).getConfigurationList(configuredListURL, headers, getMFAListEntity, configuredMFAListResult);
         } catch (Exception e) {
-            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            configuredMFAListResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }

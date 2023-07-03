@@ -14,6 +14,7 @@ import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentEnti
 import de.cidaas.sdk.android.consent.data.entity.resumeconsent.ResumeConsentResponseEntity;
 import de.cidaas.sdk.android.consent.data.service.ICidaasConsentSDKService;
 import de.cidaas.sdk.android.consent.domain.service.CidaasConsentSDKService;
+import de.cidaas.sdk.android.consent.helper.ConsentConstants;
 import de.cidaas.sdk.android.helper.commonerror.CommonError;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -75,23 +76,23 @@ public class ConsentService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.CONSENT_STRING_FAILURE, response.code(),
-                                    "Error :" + methodName));
+                                    ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CONSENT_STRING_FAILURE, response,
-                                "Error :" + methodName));
+                                ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ConsentDetailsResultEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
 
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
         }
     }
 
@@ -112,22 +113,22 @@ public class ConsentService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.CONSENT_STRING_FAILURE, response.code(),
-                                    "Error :" + methodName));
+                                    ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.CONSENT_STRING_FAILURE, response,
-                                "Error :" + methodName));
+                                ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ConsentDetailsResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.CONSENT_STRING_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.CONSENT_STRING_FAILURE, e.getMessage()));
         }
     }
 
@@ -148,22 +149,22 @@ public class ConsentService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response.code(),
-                                            "Error :" + methodName));
+                                            ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response,
-                                        "Error :" + methodName));
+                                        ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<AcceptConsentV2ResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, t.getMessage(),
-                                    "Error :" + methodName));
+                                    ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, e.getMessage()));
         }
     }
 
@@ -182,22 +183,22 @@ public class ConsentService {
                                     callback.success(response.body());
                                 } else {
                                     callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response.code(),
-                                            "Error :" + methodName));
+                                            ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                                 }
                             } else {
                                 callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, response,
-                                        "Error :" + methodName));
+                                        ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<ConsentManagementAcceptResponseEntity> call, Throwable t) {
                             callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, t.getMessage(),
-                                    "Error :" + methodName));
+                                    ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCEPT_CONSENT_FAILURE, e.getMessage()));
         }
     }
 
@@ -216,22 +217,22 @@ public class ConsentService {
                             callback.success(response.body());
                         } else {
                             callback.failure(WebAuthError.getShared(context).emptyResponseException(WebAuthErrorCode.RESUME_CONSENT_FAILURE,
-                                    response.code(), "Error :" + methodName));
+                                    response.code(), ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                         }
                     } else {
                         callback.failure(CommonError.getShared(context).generateCommonErrorEntity(WebAuthErrorCode.RESUME_CONSENT_FAILURE, response,
-                                "Error :" + methodName));
+                                ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResumeConsentResponseEntity> call, Throwable t) {
                     callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.RESUME_CONSENT_FAILURE, t.getMessage(),
-                            "Error :" + methodName));
+                            ConsentConstants.ERROR_LOGGING_PREFIX + methodName));
                 }
             });
         } catch (Exception e) {
-            callback.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE, e.getMessage()));
+            callback.failure(WebAuthError.getShared(context).methodException(ConsentConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.RESUME_CONSENT_FAILURE, e.getMessage()));
         }
     }
 }

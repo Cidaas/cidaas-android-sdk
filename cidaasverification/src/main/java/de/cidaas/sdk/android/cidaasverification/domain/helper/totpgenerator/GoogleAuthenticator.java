@@ -10,6 +10,10 @@ import org.apache.commons.codec.binary.Hex;
 import java.security.SecureRandom;
 
 public class GoogleAuthenticator {
+
+    private GoogleAuthenticator() {
+        throw new IllegalStateException("Utility class");
+    }
     public static String getRandomSecretKey() {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[20];
@@ -25,7 +29,6 @@ public class GoogleAuthenticator {
         byte[] b = normalizedBase32Key.getBytes();
         byte[] bytes = base32.decode(normalizedBase32Key);
         char[] hexKey = Hex.encodeHex(bytes);
-        //String key = Hex.encodeHexString(bytes);
         long time = (System.currentTimeMillis() / 1000) / 30;
         String hexTime = Long.toHexString(time);
         return TOTP.generateTOTP256(String.valueOf(hexKey), hexTime, "6");

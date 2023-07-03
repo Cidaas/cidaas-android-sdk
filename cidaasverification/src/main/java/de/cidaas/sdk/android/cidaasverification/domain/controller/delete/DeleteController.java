@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteEntity;
 import de.cidaas.sdk.android.cidaasverification.data.entity.delete.DeleteResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.delete.DeleteService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -62,12 +63,12 @@ public class DeleteController {
                 addProperties(deleteEntity, deleteResult);
             } else {
                 deleteResult.failure(WebAuthError.getShared(context).propertyMissingException("VerificationType or Sub must not be null",
-                        "Error:" + methodName));
+                        VerificationConstants.ERROR_LOGGING_PREFIX + methodName));
                 return;
             }
 
         } catch (Exception e) {
-            deleteResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
+            deleteResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -101,7 +102,7 @@ public class DeleteController {
             });
 
         } catch (Exception e) {
-            deleteResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
+            deleteResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -119,7 +120,7 @@ public class DeleteController {
             DeleteService.getShared(context).callDeleteService(deleteUrl, headers, deleteEntity, deleteResult);
 
         } catch (Exception e) {
-            deleteResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
+            deleteResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }
@@ -145,7 +146,6 @@ public class DeleteController {
         String methodName = "DeleteController:-callDeleteAll()";
         try {
             String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseURL, deleteEntity.getDevice_id());
-            //String deleteAllUrl = VerificationURLHelper.getShared().getDeleteAllURL(baseurl, deviceInfoEntity.getDeviceId());
 
             //headers Generation
             Map<String, String> headers = Headers.getShared(context).getHeaders(null, false, URLHelper.contentTypeJson);
@@ -154,7 +154,7 @@ public class DeleteController {
             DeleteService.getShared(context).callDeleteService(deleteAllUrl, headers, deleteEntity, deleteResult);
 
         } catch (Exception e) {
-            deleteResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
+            deleteResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DELETE_VERIFICATION_FAILURE,
                     e.getMessage()));
         }
     }

@@ -20,8 +20,6 @@ public class AuthenticatedHistoryResponseNew implements Serializable {
     public void setData(AuthenticatedHistoryResponseDataList data) {
         this.data = data;
     }
-//    @JsonProperty("data")
-//    private List<AuthenticatedHistoryDataEntity> data;
 
     public boolean isSuccess() {
         return success;
@@ -38,12 +36,4 @@ public class AuthenticatedHistoryResponseNew implements Serializable {
     public void setStatus(int status) {
         this.status = status;
     }
-
-//    public List<AuthenticatedHistoryDataEntity> getData() {
-//        return data;
-//    }
-//
-//    public void setData(List<AuthenticatedHistoryDataEntity> data) {
-//        this.data = data;
-//    }
 }

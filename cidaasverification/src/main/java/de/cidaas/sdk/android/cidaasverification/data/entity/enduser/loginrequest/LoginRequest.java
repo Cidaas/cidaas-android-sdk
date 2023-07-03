@@ -36,84 +36,6 @@ public class LoginRequest implements Serializable {
     public LoginRequest() {
     }
 
-
-
-  /*  //For Pattern only
-    public LoginRequest(String pass_code, String sub, String requestId,String usageType) {
-        this.pass_code = pass_code;
-        this.sub = sub;
-        this.requestId=requestId;
-        this.usageType = usageType;
-    }
-
-
-    //For Push only
-    public LoginRequest(String sub,String requestId) {
-        this.sub = sub;
-        this.usageType = UsageType.PASSWORDLESS;
-        this.requestId=requestId;
-    }
-
-    //For Face and Voice
-    public LoginRequest(String sub, File fileToSend,String requestId, String usageType) {
-        this.sub = sub;
-        this.fileToSend = fileToSend;
-        this.usageType = usageType;
-        this.requestId=requestId;
-    }
-
-
-    //For Fingerprint
-    public LoginRequest(String sub, FingerPrintEntity fingerPrintEntity,String requestId,String usageType) {
-        this.sub = sub;
-        this.fingerPrintEntity = fingerPrintEntity;
-        this.usageType = usageType;
-        this.requestId=requestId;
-    }
-
-    //--------------------------------- For MFA ----------------------------------------------------
-
-    // For Pattern
-    public LoginRequest(String pass_code, String sub, String usageType,String requestId, String trackId) {
-        this.pass_code = pass_code;
-        this.sub = sub;
-        this.usageType = usageType;
-        this.trackId = trackId;
-        this.requestId=requestId;
-    }
-
-
-    //For Smartpush
-    public LoginRequest(String sub, String trackId,String requestId) {
-        this.sub = sub;
-        this.trackId = trackId;
-        this.usageType = UsageType.MFA;
-        this.requestId=requestId;
-    }
-
-
-//For Face And Voice
-    //
-    public LoginRequest(String sub, File fileToSend, String usageType,String requestId, String trackId) {
-        this.sub = sub;
-        this.fileToSend = fileToSend;
-        this.usageType = usageType;
-        this.trackId = trackId;
-        this.requestId=requestId;
-    }
-
-
-    //For Fingerprint
-
-
-    public LoginRequest(String sub, FingerPrintEntity fingerPrintEntity, String requestId,String trackId,String usageType) {
-        this.sub = sub;
-        this.fingerPrintEntity = fingerPrintEntity;
-        this.usageType = usageType;
-        this.trackId = trackId;
-        this.requestId=requestId;
-    }*/
-
     public String getRequestId() {
         return requestId;
     }
@@ -178,34 +100,28 @@ public class LoginRequest implements Serializable {
         this.trackId = trackId;
     }
 
-    //For Passwordless Email
-    public static LoginRequest getPasswordlessEmailRequestEntity(@NonNull String sub, @NonNull String requestId) {
+    public static LoginRequest getPasswordlessRequestEntity(@NonNull String sub, @NonNull String requestId) {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setSub(sub);
         loginRequest.setRequestId(requestId);
         loginRequest.setUsageType(UsageType.PASSWORDLESS);
 
         return loginRequest;
+    }
+
+    //For Passwordless Email
+    public static LoginRequest getPasswordlessEmailRequestEntity(@NonNull String sub, @NonNull String requestId) {
+        return getPasswordlessRequestEntity(sub, requestId);
     }
 
     //For Passwordless SMS
     public static LoginRequest getPasswordlessSMSRequestEntity(@NonNull String sub, @NonNull String requestId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
-        return loginRequest;
+        return getPasswordlessRequestEntity(sub, requestId);
     }
 
     //For Passwordless IVR
     public static LoginRequest getPasswordlessIVRRequestEntity(@NonNull String sub, @NonNull String requestId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
-        return loginRequest;
+        return getPasswordlessRequestEntity(sub, requestId);
     }
 
     /**
@@ -217,87 +133,50 @@ public class LoginRequest implements Serializable {
 
     //For Passwordless Pattern
     public static LoginRequest getPasswordlessPatternLoginRequestEntity(@NonNull String pass_code, @NonNull String sub, @NonNull String requestId) {
-        LoginRequest loginRequest = new LoginRequest();
+        LoginRequest loginRequest = getPasswordlessRequestEntity(sub,requestId);
         loginRequest.setPass_code(pass_code);
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
         return loginRequest;
-
     }
 
     //For Passwordless SmartPush
     public static LoginRequest getPasswordlessSmartPushLoginRequestEntity(@NonNull String sub, @NonNull String requestId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
-        return loginRequest;
+        return getPasswordlessRequestEntity(sub, requestId);
     }
 
     //For Passwordless TOTP
     public static LoginRequest getPasswordlessTOTPRequestEntity(@NonNull String sub, @NonNull String requestId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
-        return loginRequest;
+        return getPasswordlessRequestEntity(sub, requestId);
     }
 
     //For Passwordless Face
     public static LoginRequest getPasswordlessFaceLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull File fileToSend) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
+        LoginRequest loginRequest = getPasswordlessRequestEntity(sub,requestId);
         loginRequest.setFileToSend(fileToSend);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
         return loginRequest;
     }
 
     //For Passwordless Voice
     public static LoginRequest getPasswordlessVoiceLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull File fileToSend) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setFileToSend(fileToSend);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
-        return loginRequest;
+        return getPasswordlessFaceLoginRequestEntity(sub, requestId, fileToSend);
     }
 
     //For Passwordless Fingerprint
     public static LoginRequest getPasswordlessFingerprintLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull FingerPrintEntity fingerPrintEntity) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
+        LoginRequest loginRequest = getPasswordlessRequestEntity(sub,requestId);
         loginRequest.setFingerPrintEntity(fingerPrintEntity);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
         return loginRequest;
     }
 
     //For Passwordless Email
     public static LoginRequest getMFAEmailRequestEntity(@NonNull String sub, @NonNull String requestId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.PASSWORDLESS);
-
-        return loginRequest;
+        return getPasswordlessRequestEntity(sub, requestId);
     }
 
     //For Passwordless SMS
     public static LoginRequest getMFASMSRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull String trackId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
+        LoginRequest loginRequest = getPasswordlessRequestEntity(sub,requestId);
         loginRequest.setUsageType(UsageType.MFA);
         loginRequest.setTrackId(trackId);
-
         return loginRequest;
     }
 
@@ -328,24 +207,12 @@ public class LoginRequest implements Serializable {
 
     //For Passwordless SmartPush
     public static LoginRequest getMFASmartPushLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull String trackId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.MFA);
-        loginRequest.setTrackId(trackId);
-
-        return loginRequest;
+        return getMFAIVRRequestEntity(sub, requestId, trackId);
     }
 
     //For Passwordless TOTP
     public static LoginRequest getMFATOTPRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull String trackId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.MFA);
-        loginRequest.setTrackId(trackId);
-
-        return loginRequest;
+        return getMFASmartPushLoginRequestEntity(sub, requestId, trackId);
     }
 
     //For MFA Face
@@ -362,14 +229,7 @@ public class LoginRequest implements Serializable {
 
     //For MFA Voice
     public static LoginRequest getMFAVoiceLoginRequestEntity(@NonNull String sub, @NonNull String requestId, @NonNull File fileToSend, @NonNull String trackId) {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setSub(sub);
-        loginRequest.setFileToSend(fileToSend);
-        loginRequest.setRequestId(requestId);
-        loginRequest.setUsageType(UsageType.MFA);
-        loginRequest.setTrackId(trackId);
-
-        return loginRequest;
+        return getMFAFaceLoginRequestEntity(sub, requestId, fileToSend,trackId);
     }
 
     //For MFA Fingerprint

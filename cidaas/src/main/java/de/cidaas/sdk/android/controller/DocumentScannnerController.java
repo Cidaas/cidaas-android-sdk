@@ -16,6 +16,7 @@ import java.util.Dictionary;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.CidaasConstants;
 import de.cidaas.sdk.android.properties.CidaasProperties;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import de.cidaas.sdk.android.service.entity.documentscanner.DocumentScannerServiceResultEntity;
@@ -153,7 +154,7 @@ public class DocumentScannnerController {
                 resultEntityResult.failure(WebAuthError.getShared(context).propertyMissingException("Photo or sub must not be null", "Error" + methodName));
             }
         } catch (Exception e) {
-            resultEntityResult.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, e.getMessage()));
+            resultEntityResult.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, e.getMessage()));
 
         }
     }
@@ -169,7 +170,7 @@ public class DocumentScannnerController {
                 result.failure(WebAuthError.getShared(context).propertyMissingException("Base URL or AccessToken must not be null", "Error" + methodName));
             }
         } catch (Exception e) {
-            result.failure(WebAuthError.getShared(context).methodException("Exception :" + methodName, WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, e.getMessage()));
+            result.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.DOCUMENT_VERIFICATION_FAILURE, e.getMessage()));
 
         }
     }

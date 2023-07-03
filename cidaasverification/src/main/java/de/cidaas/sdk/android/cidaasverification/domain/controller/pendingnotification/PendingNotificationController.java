@@ -9,6 +9,7 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnoti
 import de.cidaas.sdk.android.cidaasverification.data.entity.settings.pendingnotification.PendingNotificationResponse;
 import de.cidaas.sdk.android.cidaasverification.data.service.helper.VerificationURLHelper;
 import de.cidaas.sdk.android.cidaasverification.domain.service.pendingnotification.PendingNotificationService;
+import de.cidaas.sdk.android.cidaasverification.util.VerificationConstants;
 import de.cidaas.sdk.android.entities.DeviceInfoEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -62,7 +63,7 @@ public class PendingNotificationController {
             CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                 @Override
                 public void success(Dictionary<String, String> loginPropertiesResult) {
-                    final String baseurl = loginPropertiesResult.get("DomainURL");
+                    final String baseurl = loginPropertiesResult.get(VerificationConstants.DOMAIN_URL);
                     final String clientId = loginPropertiesResult.get("ClientId");
 
                     //Add Properties
@@ -82,7 +83,7 @@ public class PendingNotificationController {
             });
 
         } catch (Exception e) {
-            pendingNotificaitonResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pendingNotificaitonResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
@@ -99,7 +100,7 @@ public class PendingNotificationController {
             //PendingNotification Service call
             PendingNotificationService.getShared(context).callPendingNotificationService(configuredListURL, headers, pendingNotificationEntity, pendingNotificationResult);
         } catch (Exception e) {
-            pendingNotificationResult.failure(WebAuthError.getShared(context).methodException("Exception:-" + methodName,
+            pendingNotificationResult.failure(WebAuthError.getShared(context).methodException(VerificationConstants.EXCEPTION_LOGGING_PREFIX + methodName,
                     WebAuthErrorCode.MFA_LIST_VERIFICATION_FAILURE, e.getMessage()));
         }
     }
