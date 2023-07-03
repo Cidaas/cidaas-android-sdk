@@ -33,4 +33,15 @@ public class EnrollResponse implements Serializable {
     public void setData(EnrollResponseDataEntity data) {
         this.data = data;
     }
+
+
+    EnrollResponseDataErrorEntity errordata;
+
+    public EnrollResponseDataErrorEntity getErrordata() {
+        return errordata;
+    }
+
+    public void setErrordata(EnrollResponseDataErrorEntity errordata) {
+        this.errordata = errordata;
+    }
 }
