@@ -150,7 +150,12 @@ public class ResetPasswordService {
 
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For RequestId
-                resetpasswordValidateCodeUrl = baseurl + NativeURLHelper.getShared().getResetPasswordValidateCode();
+                if (CidaasHelper.cidaasVersion < 3) {
+                    resetpasswordValidateCodeUrl = baseurl + NativeURLHelper.getShared().getResetPasswordValidateCode();
+                } else {
+                    resetpasswordValidateCodeUrl = baseurl + NativeURLHelper.getShared().getResetPasswordValidateCodeV3();
+                }
+                
             } else {
                 callback.failure(WebAuthError.getShared(context).propertyMissingException(context.getString(R.string.EMPTY_BASE_URL_SERVICE),
                         NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
@@ -222,7 +227,12 @@ public class ResetPasswordService {
 
             if (baseurl != null && !baseurl.equals("")) {
                 //Construct URL For Change Password
-                ResetNewPasswordUrl = baseurl + NativeURLHelper.getShared().getResetNewPasswordURl();
+                if (CidaasHelper.cidaasVersion < 3) {
+                    ResetNewPasswordUrl = baseurl + NativeURLHelper.getShared().getResetNewPasswordURl();
+                } else {
+                    ResetNewPasswordUrl = baseurl + NativeURLHelper.getShared().getResetNewPasswordV3();
+                }
+                
             } else {
                 callback.failure(WebAuthError.getShared(context).serviceCallFailureException(WebAuthErrorCode.PROPERTY_MISSING,
                         context.getString(R.string.PROPERTY_MISSING), NativeConstants.EXCEPTION_RESET_PASSWORD_NEW));
