@@ -24,6 +24,7 @@ import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.helper.general.CidaasHelper;
 import de.cidaas.sdk.android.library.locationlibrary.LocationDetails;
 import retrofit2.Call;
 import retrofit2.Callback;
