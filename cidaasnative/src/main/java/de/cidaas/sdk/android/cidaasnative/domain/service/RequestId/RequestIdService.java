@@ -89,7 +89,7 @@ public class RequestIdService {
 
                 Map<String, String> authRequestEntityMap = new HashMap<>();
 
-                authRequestEntityMap.put(NativeConstants.CLIENT_ID, URLEncoder.encode(loginProperties.get(NativeConstants.CLIENT_ID), "utf-8"));
+                authRequestEntityMap.put("client_id", URLEncoder.encode(loginProperties.get(NativeConstants.CLIENT_ID), "utf-8"));
                 authRequestEntityMap.put("redirect_uri", URLEncoder.encode(loginProperties.get("RedirectURL"), "utf-8"));
                 authRequestEntityMap.put("response_type", "code");
                 authRequestEntityMap.put("nonce", UUID.randomUUID().toString());
