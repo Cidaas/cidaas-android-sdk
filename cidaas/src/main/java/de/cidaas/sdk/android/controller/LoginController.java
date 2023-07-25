@@ -104,7 +104,7 @@ public class LoginController {
                         challengeProperties = challengePropertiesfromparam;
                     }
 
-                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null || challengeProperties.get(CidaasConstants.CLIENT_SECRET).equals("")) {
+                    if (challengeProperties.size() == 0 || challengeProperties.isEmpty() || challengeProperties.get(CidaasConstants.CHALLENGE) == null) {
                         generateChallenge();
                         challengeProperties = DBHelper.getShared().getChallengeProperties();
                     }
