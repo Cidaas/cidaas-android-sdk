@@ -254,6 +254,25 @@ Cidaas.getInstance(yourContext).getRegistrationURL(new EventResult<String>() {
 });
 
 ```
+#### Get Request Id
+
+To get request id, You can call following method 
+
+```java
+    CidaasNative.getInstance(yourContext).getRequestId(new EventResult<AuthRequestResponseEntity>() {
+    @Override
+    public void success(AuthRequestResponseEntity result) {
+        //Your Success Code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+        //Your Failure Code
+    }
+});
+
+```
+
 #### Logout
 
 To use logout, You can call following functions 
@@ -271,7 +290,6 @@ To use logout, You can call following functions
             }
         });
 ```
-
 
 #### Add a custom scheme
 
