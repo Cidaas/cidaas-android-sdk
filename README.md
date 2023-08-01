@@ -137,9 +137,9 @@ A sample XML file would look like this :
 ``` 
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<item name="DomainURL" type="string">DomainURL</item>
-	<item name="ClientId" type="string">ClientId</item>
-	<item name="RedirectURL">RedirectURL</item>
+    <item name="DomainURL" type="string">DomainURL</item>
+    <item name="ClientId" type="string">ClientId</item>
+    <item name="RedirectURL">RedirectURL</item>
     <item name="CidaasVersion">3</item>
 </resources> 
 
