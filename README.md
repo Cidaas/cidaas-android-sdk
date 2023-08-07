@@ -128,7 +128,6 @@ A sample XML file would look like this :
 
 Cidaas V3 has response handling adjustment on some of cidaas service call. To migrate to cidaas V3, you need to do the following:
 
-* ensure that you use at least cidaas version: 3.97.0. You can find out the cidaas version from [cidaas service portal](https://cspace.cidaas.com/service-portal/dashboard) and ask our customer service if it need to be updated.
 + ensure that you use at least cidaas-android-sdk version: 3.1.26
 * add CidaasVersion  to **cidaas.xml**
 
