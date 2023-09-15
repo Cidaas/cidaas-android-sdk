@@ -30,6 +30,7 @@ This SDK was renamed from ```cidaas -v2-sdk-android``` to ```cidaas-android-sdk`
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Getting started](#getting-started)
+* [Migrating to Cidaas V3](#migrating-to-cidaas-v3)
 * [Getting Client Id and urls](#getting-client-id-and-urls)
 * [Initialisation](#initialisation)
 * [Usage](#usage)
@@ -123,8 +124,28 @@ A sample XML file would look like this :
 
 ```
 
-Following sections will help you to generate some of the information that is needed for XML.
+## Migrating to Cidaas V3
 
+Cidaas V3 has response handling adjustment on some of cidaas service call. To migrate to cidaas V3, you need to do the following:
+
+* ensure that you use at least cidaas version: 3.97.0. You can find out the cidaas version from cidaas service portal, and ask our customer service if it need to be updated.
+* ensure that you use at least cidaas-android-sdk version: 3.1.26
+* add CidaasVersion  to **cidaas.xml**
+
+A sample XML file would look like this :
+
+``` 
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="DomainURL" type="string">DomainURL</item>
+    <item name="ClientId" type="string">ClientId</item>
+    <item name="RedirectURL">RedirectURL</item>
+    <item name="CidaasVersion">3</item>
+</resources> 
+
+```
+
+Without Providing CidaasVersion, your application will use response handling of Cidaas V2 by default.
 
 ### Getting client Id and urls
 
@@ -254,6 +275,25 @@ Cidaas.getInstance(yourContext).getRegistrationURL(new EventResult<String>() {
 });
 
 ```
+#### Get Request Id
+
+To get request id, You can call following method 
+
+```java
+    CidaasNative.getInstance(yourContext).getRequestId(new EventResult<AuthRequestResponseEntity>() {
+    @Override
+    public void success(AuthRequestResponseEntity result) {
+        //Your Success Code
+    }
+
+    @Override
+    public void failure(WebAuthError error) {
+        //Your Failure Code
+    }
+});
+
+```
+
 #### Logout
 
 To use logout, You can call following functions 
@@ -271,7 +311,6 @@ To use logout, You can call following functions
             }
         });
 ```
-
 
 #### Add a custom scheme
 
