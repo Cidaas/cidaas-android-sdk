@@ -58,8 +58,9 @@ public class ScannedController {
     private void checkScannedEntity(final ScannedEntity scannedEntity, final EventResult<ScannedResponse> scannedResult) {
         String methodName = "ScannedController:-checkScannedEntity()";
         try {
-            if (scannedEntity.getVerificationType() != null && !scannedEntity.getVerificationType().equals("") && scannedEntity.getSub() != null &&
-                    !scannedEntity.getSub().equals("") && scannedEntity.getExchange_id() != null && !scannedEntity.getExchange_id().equals("")) {
+            if (scannedEntity.getVerificationType() != null && !scannedEntity.getVerificationType().equals("") &&
+                   // scannedEntity.getSub() != null && !scannedEntity.getSub().equals("") &&
+                    scannedEntity.getExchange_id() != null && !scannedEntity.getExchange_id().equals("")) {
 
                 addProperties(scannedEntity, scannedResult);
             } else {
