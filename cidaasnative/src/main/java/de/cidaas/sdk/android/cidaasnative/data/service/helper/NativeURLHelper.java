@@ -52,6 +52,8 @@ public class NativeURLHelper {
     String ResetPasswordValidateCode = "/users-srv/resetpassword/validatecode";
     String ResetNewPasswordURl = "/users-srv/resetpassword/accept";
     String ChangePasswordURl = "/users-srv/changepassword";
+    String resetPasswordValidateCodeV3 = "/password-srv/resetpassword?action=validatecode";
+    String resetNewPasswordV3 = "/password-srv/resetpassword?action=acceptreset";
 
 
     String RegisterUserAccountInitiate = "/verification-srv/account/initiate/sdk";
@@ -194,6 +196,14 @@ public class NativeURLHelper {
 
     public String getResetPasswordValidateCode() {
         return ResetPasswordValidateCode;
+    }
+
+    public String getResetPasswordValidateCodeV3() {
+        return resetPasswordValidateCodeV3;
+    }    
+    
+    public String getResetNewPasswordV3() {
+        return resetNewPasswordV3;
     }
 
     public String getInitiateResetPassword() {

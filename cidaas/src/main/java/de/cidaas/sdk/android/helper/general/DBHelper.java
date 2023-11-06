@@ -252,7 +252,27 @@ public class DBHelper {
         String jsonString = preferences.getString(DEVICE_INFO, "");
         DeviceInfoEntity deviceInfoEntity;
         try {
-            deviceInfoEntity = shared_objectMapper.readValue(jsonString, DeviceInfoEntity.class);
+            // parse jsonObject instead of Jackson readValue() as Jackson also map stability from Parcelable to jsonString as of Android 14
+            JSONObject jsonObject = new JSONObject(jsonString);
+            deviceInfoEntity = new DeviceInfoEntity();
+            if (jsonObject.has("deviceId")) {
+                deviceInfoEntity.setDeviceId(jsonObject.getString("deviceId"));
+            }
+            if (jsonObject.has("deviceMake")) {
+                deviceInfoEntity.setDeviceMake(jsonObject.getString("deviceMake"));
+            }
+            if (jsonObject.has("deviceModel")) {
+                deviceInfoEntity.setDeviceModel(jsonObject.getString("deviceModel"));
+            }
+            if (jsonObject.has("deviceType")) {
+                deviceInfoEntity.setDeviceType(jsonObject.getString("deviceType"));
+            }
+            if (jsonObject.has("deviceVersion")) {
+                deviceInfoEntity.setDeviceVersion(jsonObject.getString("deviceVersion"));
+            }
+            if (jsonObject.has("pushNotificationId")) {
+                deviceInfoEntity.setPushNotificationId(jsonObject.getString("pushNotificationId"));
+            }
         } catch (Exception e) {
             deviceInfoEntity = null;
         }

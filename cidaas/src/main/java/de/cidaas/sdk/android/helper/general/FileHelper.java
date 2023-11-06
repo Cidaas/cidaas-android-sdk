@@ -35,6 +35,7 @@ public class FileHelper {
     private static final String DOMAIN_URL = "DomainURL";
     private static final String REDIRECT_URL = "RedirectURL";
     private static final String CLIENT_SECRET = "ClientSecret";
+    private static final String CIDAAS_VERSION = "CidaasVersion";
     //Shared Instances
     private static FileHelper instance;
     private Context context;
@@ -56,7 +57,7 @@ public class FileHelper {
         try (InputStream inputStream = assetManager.open(fileNameFromBase)) {
             Document document = parseXML(inputStream);
             Dictionary<String, String> dictObject = documentToDictionary(result, document);
-            if (dictObject.size() == 3) {
+            if (dictObject.get(CLIENT_ID) != null && dictObject.get(REDIRECT_URL) != null && dictObject.get(DOMAIN_URL) != null) {
                 result.success(dictObject);
             } else {
                 String errorMessage = "All properties (" + CLIENT_ID + ", " + REDIRECT_URL + " AND " + DOMAIN_URL + ") must be set";
@@ -103,6 +104,8 @@ public class FileHelper {
                 handleNodeListEntry(dictObject, DOMAIN_URL, getNodeContent(node), result);
             } else if (getNodeNameValue(node).equalsIgnoreCase(REDIRECT_URL)) {
                 handleNodeListEntry(dictObject, REDIRECT_URL, getNodeContent(node), result);
+            } else if (getNodeNameValue(node).equalsIgnoreCase(CIDAAS_VERSION)) {
+                handleNodeListEntry(dictObject, CIDAAS_VERSION, getNodeContent(node), result);
             } else {
                 webAuthError.invalidPropertiesException("invalid property entry for: " + getNodeNameValue(node), CidaasConstants.METHOD_READ_PROPERTIES);
                 result.failure(webAuthError);
