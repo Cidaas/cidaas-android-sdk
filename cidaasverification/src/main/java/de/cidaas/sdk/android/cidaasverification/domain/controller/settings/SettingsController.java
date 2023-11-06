@@ -127,7 +127,7 @@ public class SettingsController {
 
         if (newFCMToken != null && !newFCMToken.equals("")) {
             //Check for DB if it is null or empty save it in DB
-            if (deviceInfoEntity.getPushNotificationId() == null || deviceInfoEntity.getPushNotificationId().equals("")) {
+            if (deviceInfoEntity.getPushNotificationId() == "null" ||deviceInfoEntity.getPushNotificationId() == null || deviceInfoEntity.getPushNotificationId().equals("")) {
                 DBHelper.getShared().setFCMToken(newFCMToken);
             } else if (deviceInfoEntity.getPushNotificationId().equals(newFCMToken)) {
                 //No problem  New and Old FCM id is same
