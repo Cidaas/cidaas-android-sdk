@@ -34,6 +34,7 @@ public class DBHelper {
     private static final String USER_AGENT = "UserAgent";
     private static final String USER_DEVICE_INFO = "User_device_Info";
     private static final String PKCE_ENABLE_STATUS = "OAuthEnablePkce";
+    private static final String ENCRYPTED_STRING = "EncryptedString";
     private static final String LOG_ENABLE_STATUS = "OAuthEnableLog";
     private static String user_storage_key = "cidaas_user_details_";
     private static String user_storage_info = "cidaas_user_info_";
@@ -73,7 +74,28 @@ public class DBHelper {
 
         return result;
     }
+//SET ENCRYPTED DATA
+    public void setEncryptedData(String encryptedString) {
+        try {
+            editor.putString(ENCRYPTED_STRING, encryptedString);
+            editor.commit();
+        } catch (Exception e) {
+            //Exception on ENCRYPTED_STRING
+        }
+    }
 
+
+    //Get ENCRYPTED DATA
+    public String getEncryptedData() {
+        String result = "";
+        try {
+            result = preferences.getString(ENCRYPTED_STRING, "");
+        } catch (Exception e) {
+            result = "";
+        }
+
+        return result;
+    }
     //Set Enable Log
     public void setEnableLog(boolean enableLog) {
         try {

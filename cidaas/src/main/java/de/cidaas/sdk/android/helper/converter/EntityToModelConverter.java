@@ -1,8 +1,19 @@
 package de.cidaas.sdk.android.helper.converter;
 
 import android.content.Context;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
+import android.util.Base64;
+import android.util.Log;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.UUID;
+
+import javax.crypto.Cipher;
 
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
@@ -21,6 +32,7 @@ import de.cidaas.sdk.android.helper.crypthelper.AESCrypt;
 public class EntityToModelConverter {
     //Convert AccessTokenEntity to Model
     Context context;
+    private String KEY_ALIAS="Salt+Key";
     public static EntityToModelConverter sharedinstance;
 
     public EntityToModelConverter(Context contextFromCidaas) {
@@ -40,7 +52,9 @@ public class EntityToModelConverter {
     public void accessTokenEntityToAccessTokenModel(AccessTokenEntity accessTokenEntity, String userId, EventResult<AccessTokenModel> callback) {
         String methodName = "accessTokenEntityToAccessTokenModel";
         try {
-            String EncryptedToken = "";
+            String EncryptedToken,EncryptedRefreshToken = "";
+
+
 
             AccessTokenModel.getShared().setExpires_in(accessTokenEntity.getExpires_in());
             AccessTokenModel.getShared().setId_token(accessTokenEntity.getId_token());
@@ -50,7 +64,50 @@ public class EntityToModelConverter {
 
             //Additional Details to store token in Local DB
             AccessTokenModel.getShared().setUserId(userId);
-            AccessTokenModel.getShared().setSalt(UUID.randomUUID().toString());
+            //AccessTokenModel.getShared().setSalt();
+            String salt = UUID.randomUUID().toString();
+            String key =  UUID.randomUUID().toString();
+
+            byte[] encData = (salt+","+key).getBytes("UTF-8");
+
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+
+            //Delete if already exist
+            if (keyStore.containsAlias(KEY_ALIAS)) {
+
+                keyStore.deleteEntry(KEY_ALIAS);
+            }
+
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(
+                    KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
+
+            KeyGenParameterSpec keyGenParameterSpec = new KeyGenParameterSpec.Builder(
+                     KEY_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                    .setDigests(KeyProperties.DIGEST_SHA256,KeyProperties.DIGEST_SHA512)
+                    .setKeySize(2048)
+                    .build();
+
+            keyPairGenerator.initialize(keyGenParameterSpec);
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+            PublicKey publicKey = keyStore.getCertificate(KEY_ALIAS).getPublicKey();
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+            // Store the encrypted data securely in SharedPreferences
+            byte[] encryptedData = cipher.doFinal(encData);
+
+
+            String encryptedString = Base64.encodeToString(encryptedData, Base64.DEFAULT);
+
+            Log.d("Encypted Strng",encryptedString);
+
+
+            DBHelper.getShared().setEncryptedData(encryptedString);
+
 
             //AccessTokenModel.getShared().setKey(UUID.randomUUID().toString());
             //Convert Milliseconds into seconds
@@ -58,12 +115,15 @@ public class EntityToModelConverter {
 
             //Encrypt the AccessToken
             try {
-                EncryptedToken = AESCrypt.encrypt(AccessTokenModel.getShared().getSalt(), accessTokenEntity.getAccess_token());
+                EncryptedToken = AESCrypt.encrypt(salt, accessTokenEntity.getAccess_token());
+                EncryptedRefreshToken = AESCrypt.encrypt(key,accessTokenEntity.getRefresh_token());
+
             } catch (Exception e) {
                 EncryptedToken = "";
             }
             if (EncryptedToken != "") {
                 AccessTokenModel.getShared().setAccess_token(EncryptedToken);
+                AccessTokenModel.getShared().setRefresh_token(EncryptedRefreshToken);
                 AccessTokenModel.getShared().setEncrypted(true);
             } else {
                 //   AccessTokenModel.getShared().setAccess_token(accessTokenEntity.getAccess_token());
@@ -88,6 +148,27 @@ public class EntityToModelConverter {
         try {
             AccessTokenEntity accessTokenEntity = new AccessTokenEntity();
 
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+
+            // Retrieve the private key
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(KEY_ALIAS, null);
+
+            // Decrypt the stored data using the private key
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+            // Retrieve the encrypted data from SharedPreferences
+            String encString = DBHelper.getShared().getEncryptedData();
+            byte[] encryData = Base64.decode(encString, Base64.DEFAULT);
+
+            byte[] decryptedData = cipher.doFinal(encryData);
+
+            // Convert the decrypted data to a string and return it
+            String decryptedString = new String(decryptedData, "UTF-8");
+
+            String salt=decryptedString.split(",")[0];
+            String key=decryptedString.split(",")[1];
 
             if (accessTokenModel.getAccess_token() != null && !accessTokenModel.getAccess_token().equals("")) {
                 accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
@@ -111,7 +192,8 @@ public class EntityToModelConverter {
 
             //Decrypt the AccessToken
             if (accessTokenModel.isEncrypted()) {
-                accessTokenEntity.setAccess_token(AESCrypt.decrypt(accessTokenModel.getSalt(), accessTokenEntity.getAccess_token()));
+                accessTokenEntity.setAccess_token(AESCrypt.decrypt(salt, accessTokenEntity.getAccess_token()));
+                accessTokenEntity.setRefresh_token(AESCrypt.decrypt(key,accessTokenEntity.getRefresh_token()));
 
             } else {
               /*  if(accessTokenModel.getPlainToken()==null || (accessTokenModel.getPlainToken().equals("")))
