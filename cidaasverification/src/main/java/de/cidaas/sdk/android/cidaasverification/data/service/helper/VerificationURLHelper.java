@@ -31,9 +31,14 @@ public class VerificationURLHelper {
     //V2-Verification-Authenticate
     private String authenticateURL = "/verification-srv/v2/authenticate/authenticate/";
 
-    //V2-Verification-Delete
-    private String deleteURL = "/verification-srv/v2/setup/device/configured/remove/";
-    private String deleteAllURL = "/verification-srv/v2/setup/device/configured/removeallbydeviceid/";
+    //V2-Verification-Delete - working in 3.1.28
+//    private String deleteURL = "/verification-srv/v2/setup/device/configured/remove/";
+//    private String deleteAllURL = "/verification-srv/v2/setup/device/configured/removeallbydeviceid/";
+
+    //Go lang changed url
+
+    private String deleteURL = "/verification-actions-srv/setup/device/";
+    private String deleteAllURL = "/verification-actions-srv/setup/device/";
 
     //V2-Verification-Get Details
     private String getConfiguredListURL = "/verification-srv/v2/setup/device/configured/list";
