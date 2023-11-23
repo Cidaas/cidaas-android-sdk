@@ -1,6 +1,7 @@
 package de.cidaas.sdk.android.cidaasnative.view;
 
 import android.content.Context;
+import android.content.res.Configuration;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,6 +53,7 @@ public class CidaasNative {
 
     private Context context;
     public static CidaasNative cidaasNativeInstance;
+    public static String locale;
 
     //Confirm it must be a static one
     //Extra parameter that is passed in URL
@@ -73,6 +75,15 @@ public class CidaasNative {
         //2.Enable log
         //3.add devi0ce info and FCM token
         //4.Set Base url
+        Configuration configuration = context.getResources().getConfiguration();
+
+        // For API level 24 and above, use getLocales()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            locale=configuration.getLocales().get(0).getLanguage();
+        } else {
+            // For older versions, use locale
+            locale=configuration.locale.getLanguage();
+        }
 
     }
 
@@ -392,13 +403,13 @@ public class CidaasNative {
     }
 
     private void initiateResetPasswordByEmail(String requestId, String email, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
-        ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, email, "email", resetPasswordResponseEntityResult);
+        ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, email, "email", locale,resetPasswordResponseEntityResult);
     }
 
     // chang
     public void initiateResetPasswordByEMail(final String requestId, final String email,final String processingType,
                                              final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
-        ResetPasswordController.getShared(context).initiateresetPasswordServiceEmail(requestId, email,processingType, "email", resetPasswordResponseEntityResult);
+        ResetPasswordController.getShared(context).initiateresetPasswordServiceEmail(requestId, email,processingType, "email",locale, resetPasswordResponseEntityResult);
     }
 
 
@@ -433,7 +444,7 @@ public class CidaasNative {
 
     public void initiateResetPasswordBySMS(final String requestId, final String mobileNumber,
                                            final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
-        ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, mobileNumber, "sms", resetPasswordResponseEntityResult);
+        ResetPasswordController.getShared(context).initiateresetPasswordService(requestId, mobileNumber, "sms", locale,resetPasswordResponseEntityResult);
     }
 
 

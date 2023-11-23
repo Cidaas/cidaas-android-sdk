@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdk 31
 
     testOptions.unitTests.includeAndroidResources = true
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 23
+        targetSdkVersion 31
         versionCode 1
         versionName "0.0.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -86,7 +86,7 @@ dependencies {
 
     //Android X for finger print authentication after android pie
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta01'
-    implementation 'com.android.support:appcompat-v7:28'
+    implementation 'com.android.support:appcompat-v7:31'
     implementation 'com.google.android.material:material:1.4.0-alpha02'
 
     //For Permission
@@ -131,7 +131,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.1.28'
+                version = '3.2.0'
                 artifact(sourceJar)
             }
         }

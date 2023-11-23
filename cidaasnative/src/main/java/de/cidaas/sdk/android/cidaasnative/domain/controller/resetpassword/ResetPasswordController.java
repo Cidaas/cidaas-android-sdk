@@ -50,7 +50,7 @@ public class ResetPasswordController {
     }
 
     //----------------------------------------initiateresetPasswordService------------------------------------------------------------------
-    public void initiateresetPasswordService(final String requestId, final String email, @NonNull final String resetMedium,
+    public void initiateresetPasswordService(final String requestId, final String email, @NonNull final String resetMedium,@NonNull final String locale,
                                              final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         final String methodName = "RegistrationController :initiateresetPasswordService()";
         try {
@@ -58,7 +58,7 @@ public class ResetPasswordController {
                 CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> loginPropertiesResult) {
-                        successOfInitiateResetPassword(requestId, email, resetMedium, loginPropertiesResult, resetPasswordResponseEntityResult);
+                        successOfInitiateResetPassword(requestId, email, resetMedium, loginPropertiesResult,locale, resetPasswordResponseEntityResult);
                     }
 
                     @Override
@@ -78,7 +78,7 @@ public class ResetPasswordController {
 
     //----------------------------------------successOfInitiateResetPassword------------------------------------------------------------------
     public void successOfInitiateResetPassword(final String requestId, final String email, @NonNull final String resetMedium,
-                                               Dictionary<String, String> loginPropertiesResult, final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+                                               Dictionary<String, String> loginPropertiesResult,String locale, final EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         String methodName = "RegistrationController :successOfInitiateResetPassword()";
 
         try {
@@ -92,7 +92,7 @@ public class ResetPasswordController {
                 resetPasswordRequestEntity.setEmail(email);
                 resetPasswordRequestEntity.setResetMedium(resetMedium);
 
-                initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
+                initiateresetPasswordService(baseurl, resetPasswordRequestEntity,locale, resetPasswordResponseEntityResult);
             } else {
                 String ErrorMessage = "RequestID or email mustnot be null";
                 resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(ErrorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));
@@ -104,7 +104,7 @@ public class ResetPasswordController {
     }
 
     //initiateResetResetPasswordService
-    public void initiateresetPasswordService(@NonNull String baseurl, @NonNull ResetPasswordRequestEntity resetPasswordRequestEntity,
+    public void initiateresetPasswordService(@NonNull String baseurl, @NonNull ResetPasswordRequestEntity resetPasswordRequestEntity,@NonNull String locale,
                                              final EventResult<ResetPasswordResponseEntity> resetpasswordResult) {
         String methodName = "RegistrationController :initiateresetPasswordService()";
         try {
@@ -112,7 +112,7 @@ public class ResetPasswordController {
             if (resetPasswordRequestEntity.getRequestId() != null && !resetPasswordRequestEntity.getRequestId().equals("")
                     && baseurl != null && !baseurl.equals("")) {
 
-                ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl, null,
+                ResetPasswordService.getShared(context).initiateresetPassword(resetPasswordRequestEntity, baseurl, null,locale,
                         resetpasswordResult);
             } else {
 
@@ -263,14 +263,14 @@ public class ResetPasswordController {
         }
     }
 
-    public void initiateresetPasswordServiceEmail(String requestId, String email, String processingType, String resetMedium, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+    public void initiateresetPasswordServiceEmail(String requestId, String email, String processingType, String resetMedium,String locale, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         final String methodName = "RegistrationController :initiateresetPasswordService()";
         try {
             if (requestId != null && !requestId.equals("") && email != null && !email.equals("") && resetMedium != null && !resetMedium.equals("")) {
                 CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
                     @Override
                     public void success(Dictionary<String, String> loginPropertiesResult) {
-                        successOfInitiateResetPasswordEmail(requestId, email,processingType, resetMedium, loginPropertiesResult, resetPasswordResponseEntityResult);
+                        successOfInitiateResetPasswordEmail(requestId, email,processingType, resetMedium, loginPropertiesResult,locale, resetPasswordResponseEntityResult);
                     }
 
                     @Override
@@ -288,7 +288,7 @@ public class ResetPasswordController {
         }
     }
 
-    private void successOfInitiateResetPasswordEmail(String requestId, String email,String processingType, String resetMedium, Dictionary<String, String> loginPropertiesResult, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
+    private void successOfInitiateResetPasswordEmail(String requestId, String email,String processingType, String resetMedium, Dictionary<String, String> loginPropertiesResult,String locale, EventResult<ResetPasswordResponseEntity> resetPasswordResponseEntityResult) {
         String methodName = "RegistrationController :successOfInitiateResetPassword()";
         try {
             String baseurl = loginPropertiesResult.get(NativeConstants.DOMAIN_URL);
@@ -301,7 +301,7 @@ public class ResetPasswordController {
                 resetPasswordRequestEntity.setEmail(email);
                 resetPasswordRequestEntity.setResetMedium(resetMedium);
 
-                initiateresetPasswordService(baseurl, resetPasswordRequestEntity, resetPasswordResponseEntityResult);
+                initiateresetPasswordService(baseurl, resetPasswordRequestEntity,locale, resetPasswordResponseEntityResult);
             } else {
                 String ErrorMessage = "RequestID or email mustnot be null";
                 resetPasswordResponseEntityResult.failure(WebAuthError.getShared(context).propertyMissingException(ErrorMessage, NativeConstants.ERROR_LOGGING_PREFIX + methodName));

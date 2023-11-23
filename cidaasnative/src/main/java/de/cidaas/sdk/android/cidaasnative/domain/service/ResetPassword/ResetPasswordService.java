@@ -70,7 +70,7 @@ public class ResetPasswordService {
         return shared;
     }
 
-    public void initiateresetPassword(ResetPasswordRequestEntity resetPasswordRequestEntity, String baseurl, DeviceInfoEntity deviceInfoEntityFromParam,
+    public void initiateresetPassword(ResetPasswordRequestEntity resetPasswordRequestEntity, String baseurl, DeviceInfoEntity deviceInfoEntityFromParam,String locale,
                                       final EventResult<ResetPasswordResponseEntity> callback) {
         //Local Variables
         String resetpasswordUrl = "";
@@ -104,6 +104,7 @@ public class ResetPasswordService {
             headers.put(NativeConstants.DEVICE_MAKE, deviceInfoEntity.getDeviceMake());
             headers.put(NativeConstants.DEVICE_MODEL, deviceInfoEntity.getDeviceModel());
             headers.put(NativeConstants.DEVICE_VERSION, deviceInfoEntity.getDeviceVersion());
+            headers.put(NativeConstants.ACCEPT_LANGUAGE,locale);
             headers.put(NativeConstants.DEVICE_LATTITUDE, LocationDetails.getShared(context).getLatitude());
             headers.put(NativeConstants.DEVICE_LONGITUDE, LocationDetails.getShared(context).getLongitude());
 

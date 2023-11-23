@@ -38,7 +38,7 @@ public class ResetPasswordControllerTest {
 
     @Test
     public void testInitiateresetPasswordService() throws Exception {
-        resetPasswordController.initiateresetPasswordService("baseurl", new ResetPasswordRequestEntity(), null);
+        resetPasswordController.initiateresetPasswordService("baseurl", new ResetPasswordRequestEntity(),"en",null);
     }
 
     @Test
