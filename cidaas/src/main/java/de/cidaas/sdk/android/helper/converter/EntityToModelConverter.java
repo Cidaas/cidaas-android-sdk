@@ -99,8 +99,6 @@ public class EntityToModelConverter {
             if (certificate != null) {
                 publicKey = certificate.getPublicKey();
             } else {
-
-
                 callback.failure(WebAuthError.getShared(context).accessTokenException("Access token Conversion failed","accessTokenEntityToAccessTokenModel" ));
                 LogFile.getShared(context).addFailureLog("accessTokenEntityToAccessTokenModel \"Certificate not found in the KeyStore.\"" + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
             }
