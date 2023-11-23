@@ -11,6 +11,7 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.util.UUID;
 
 import javax.crypto.Cipher;
@@ -93,7 +94,16 @@ public class EntityToModelConverter {
             keyPairGenerator.initialize(keyGenParameterSpec);
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
-            PublicKey publicKey = keyStore.getCertificate(KEY_ALIAS).getPublicKey();
+            PublicKey publicKey=null;
+            Certificate certificate= keyStore.getCertificate(KEY_ALIAS);
+            if (certificate != null) {
+                publicKey = certificate.getPublicKey();
+            } else {
+
+
+                callback.failure(WebAuthError.getShared(context).accessTokenException("Access token Conversion failed","accessTokenEntityToAccessTokenModel" ));
+                LogFile.getShared(context).addFailureLog("accessTokenEntityToAccessTokenModel \"Certificate not found in the KeyStore.\"" + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
+            }
             // null check
             if(publicKey!=null) {
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
