@@ -94,7 +94,7 @@ public class EntityToModelConverter {
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
             PublicKey publicKey = keyStore.getCertificate(KEY_ALIAS).getPublicKey();
-            //Todo null check
+            // null check
             if(publicKey!=null) {
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
                 cipher.init(Cipher.ENCRYPT_MODE, publicKey);
