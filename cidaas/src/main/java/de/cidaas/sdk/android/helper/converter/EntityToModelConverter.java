@@ -32,7 +32,7 @@ import de.cidaas.sdk.android.helper.crypthelper.AESCrypt;
 public class EntityToModelConverter {
     //Convert AccessTokenEntity to Model
     Context context;
-    private String KEY_ALIAS="Salt+Key";
+    private String KEY_ALIAS="Salt";
     public static EntityToModelConverter sharedinstance;
 
     public EntityToModelConverter(Context contextFromCidaas) {
@@ -65,10 +65,10 @@ public class EntityToModelConverter {
             //Additional Details to store token in Local DB
             AccessTokenModel.getShared().setUserId(userId);
             //AccessTokenModel.getShared().setSalt();
-            String salt = UUID.randomUUID().toString();
-            String key =  UUID.randomUUID().toString();
+            String accessToken_salt = UUID.randomUUID().toString();
+            String refreshToken_salt =  UUID.randomUUID().toString();
 
-            byte[] encData = (salt+","+key).getBytes("UTF-8");
+            byte[] encData = (accessToken_salt+","+refreshToken_salt).getBytes("UTF-8");
 
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
@@ -94,20 +94,26 @@ public class EntityToModelConverter {
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
             PublicKey publicKey = keyStore.getCertificate(KEY_ALIAS).getPublicKey();
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            //Todo null check
+            if(publicKey!=null) {
+                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            // Store the encrypted data securely in SharedPreferences
-            byte[] encryptedData = cipher.doFinal(encData);
-
-
-            String encryptedString = Base64.encodeToString(encryptedData, Base64.DEFAULT);
-
-            Log.d("Encypted Strng",encryptedString);
+                // Store the encrypted data securely in SharedPreferences
+                byte[] encryptedData = cipher.doFinal(encData);
 
 
-            DBHelper.getShared().setEncryptedData(encryptedString);
+                String encryptedString = Base64.encodeToString(encryptedData, Base64.DEFAULT);
 
+                Log.d("Encypted Strng", encryptedString);
+
+
+                DBHelper.getShared().setEncryptedData(encryptedString);
+            }
+            else{
+                callback.failure(WebAuthError.getShared(context).accessTokenException("Access token Conversion failed","accessTokenEntityToAccessTokenModel" ));
+                LogFile.getShared(context).addFailureLog("accessTokenEntityToAccessTokenModel public key is Null" + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
+            }
 
             //AccessTokenModel.getShared().setKey(UUID.randomUUID().toString());
             //Convert Milliseconds into seconds
@@ -115,8 +121,8 @@ public class EntityToModelConverter {
 
             //Encrypt the AccessToken
             try {
-                EncryptedToken = AESCrypt.encrypt(salt, accessTokenEntity.getAccess_token());
-                EncryptedRefreshToken = AESCrypt.encrypt(key,accessTokenEntity.getRefresh_token());
+                EncryptedToken = AESCrypt.encrypt(accessToken_salt, accessTokenEntity.getAccess_token());
+                EncryptedRefreshToken = AESCrypt.encrypt(refreshToken_salt,accessTokenEntity.getRefresh_token());
 
             } catch (Exception e) {
                 EncryptedToken = "";
@@ -154,58 +160,64 @@ public class EntityToModelConverter {
             // Retrieve the private key
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(KEY_ALIAS, null);
 
-            // Decrypt the stored data using the private key
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            if(privateKey!=null) {
+                // Decrypt the stored data using the private key
+                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-            // Retrieve the encrypted data from SharedPreferences
-            String encString = DBHelper.getShared().getEncryptedData();
-            byte[] encryData = Base64.decode(encString, Base64.DEFAULT);
+                // Retrieve the encrypted data from SharedPreferences
+                String encString = DBHelper.getShared().getEncryptedData();
+                byte[] encryData = Base64.decode(encString, Base64.DEFAULT);
 
-            byte[] decryptedData = cipher.doFinal(encryData);
+                byte[] decryptedData = cipher.doFinal(encryData);
 
-            // Convert the decrypted data to a string and return it
-            String decryptedString = new String(decryptedData, "UTF-8");
+                // Convert the decrypted data to a string and return it
+                String decryptedString = new String(decryptedData, "UTF-8");
 
-            String salt=decryptedString.split(",")[0];
-            String key=decryptedString.split(",")[1];
+                String accessToken_salt = decryptedString.split(",")[0];
+                String refreshToken_salt = decryptedString.split(",")[1];
 
-            if (accessTokenModel.getAccess_token() != null && !accessTokenModel.getAccess_token().equals("")) {
-                accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
-            }
+                if (accessTokenModel.getAccess_token() != null && !accessTokenModel.getAccess_token().equals("")) {
+                    accessTokenEntity.setAccess_token(accessTokenModel.getAccess_token());
+                }
 
-            if (accessTokenModel.getId_token() != null && !accessTokenModel.getId_token().equals("")) {
-                accessTokenEntity.setId_token(accessTokenModel.getId_token());
-            }
+                if (accessTokenModel.getId_token() != null && !accessTokenModel.getId_token().equals("")) {
+                    accessTokenEntity.setId_token(accessTokenModel.getId_token());
+                }
 
-            if (accessTokenModel.getRefresh_token() != null && !accessTokenModel.getRefresh_token().equals("")) {
-                accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
-            }
-            if (accessTokenModel.getScope() != null && !accessTokenModel.getScope().equals("")) {
-                accessTokenEntity.setScope(accessTokenModel.getScope());
-            }
-            if (accessTokenModel.getUserState() != null && !accessTokenModel.getUserState().equals("")) {
-                accessTokenEntity.setUserstate(accessTokenModel.getUserState());
-            }
+                if (accessTokenModel.getRefresh_token() != null && !accessTokenModel.getRefresh_token().equals("")) {
+                    accessTokenEntity.setRefresh_token(accessTokenModel.getRefresh_token());
+                }
+                if (accessTokenModel.getScope() != null && !accessTokenModel.getScope().equals("")) {
+                    accessTokenEntity.setScope(accessTokenModel.getScope());
+                }
+                if (accessTokenModel.getUserState() != null && !accessTokenModel.getUserState().equals("")) {
+                    accessTokenEntity.setUserstate(accessTokenModel.getUserState());
+                }
 
-            accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
+                accessTokenEntity.setExpires_in(accessTokenModel.getExpires_in());
 
-            //Decrypt the AccessToken
-            if (accessTokenModel.isEncrypted()) {
-                accessTokenEntity.setAccess_token(AESCrypt.decrypt(salt, accessTokenEntity.getAccess_token()));
-                accessTokenEntity.setRefresh_token(AESCrypt.decrypt(key,accessTokenEntity.getRefresh_token()));
+                //Decrypt the AccessToken
+                if (accessTokenModel.isEncrypted()) {
+                    accessTokenEntity.setAccess_token(AESCrypt.decrypt(accessToken_salt, accessTokenEntity.getAccess_token()));
+                    accessTokenEntity.setRefresh_token(AESCrypt.decrypt(refreshToken_salt, accessTokenEntity.getRefresh_token()));
 
-            } else {
+                } else {
               /*  if(accessTokenModel.getPlainToken()==null || (accessTokenModel.getPlainToken().equals("")))
                 {
                     accessTokenModel.setPlainToken(accessTokenEntity.getAccess_token());
                 }
                 accessTokenEntity.setAccess_token(accessTokenModel.getPlainToken());*/
+                }
+                callback.success(accessTokenEntity);
             }
-            callback.success(accessTokenEntity);
+            else{
+                callback.failure(WebAuthError.getShared(context).accessTokenException("Access token Conversion failed","accessTokenModelToAccessTokenEntity" ));
+                LogFile.getShared(context).addFailureLog("Private key is Null" + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
+            }
         } catch (Exception e) {
             // Handle Error
-            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(), "Methodname"));
+            callback.failure(WebAuthError.getShared(context).accessTokenException(e.getMessage(), "accessTokenModelToAccessTokenEntity"));
             LogFile.getShared(context).addFailureLog(e.getMessage() + WebAuthErrorCode.ACCESS_TOKEN_CONVERSION_FAILURE);
         }
     }
