@@ -14,6 +14,10 @@ public class ChangePasswordRequestEntity implements Serializable {
     String old_password;
     String access_token;
 
+
+
+    String logout_option;
+
     public String getAccess_token() {
         return access_token;
     }
@@ -61,5 +65,13 @@ public class ChangePasswordRequestEntity implements Serializable {
 
     public void setOld_password(String old_password) {
         this.old_password = old_password;
+    }
+
+    public String getLogout_option() {
+        return logout_option;
+    }
+
+    public void setLogout_option(String logout_option) {
+        this.logout_option = logout_option;
     }
 }
