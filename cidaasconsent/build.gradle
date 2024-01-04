@@ -2,10 +2,11 @@ apply plugin: 'com.android.library'
 
 android {
 
-    compileSdk 31
+    compileSdk 33
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
+
         versionCode 1
         versionName "1.0"
 
@@ -31,7 +32,7 @@ android {
         targetCompatibility = 1.8
         sourceCompatibility = 1.8
     }
-    buildToolsVersion = '29.0.2'
+    namespace 'de.cidaas.sdk.android.consent'
 }
 
 dependencies {
@@ -86,7 +87,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.2.0'
+                version = '3.2.1'
                 artifact(sourceJar)
             }
         }

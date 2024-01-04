@@ -516,7 +516,7 @@ public class CidaasSDKLayout extends RelativeLayout {
                     settings.setJavaScriptEnabled(true);
                     settings.setDomStorageEnabled(true);
                     settings.setAllowFileAccess(true);
-                    settings.setAppCacheEnabled(true);
+                    settings.setCacheMode(WebSettings.LOAD_DEFAULT);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
                     }

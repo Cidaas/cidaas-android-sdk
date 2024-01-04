@@ -1,23 +1,21 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     testOptions.unitTests.includeAndroidResources = true
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "0.0.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
 
+        versionCode 0
         // We need this in every sub-module due to https://issuetracker.google.com/issues/158695880
         buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
         buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
-    }
-    lintOptions {
-        abortOnError false
     }
     buildTypes {
         release {
@@ -45,10 +43,13 @@ android {
             assets.srcDirs = ['src/main/assets', 'src/test/assets/']
         }
     }
-    buildToolsVersion = '29.0.2'
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
+    }
+    namespace 'de.cidaas.sdk.android'
+    lint {
+        abortOnError false
     }
 }
 
@@ -86,7 +87,7 @@ dependencies {
 
     //Android X for finger print authentication after android pie
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta01'
-    implementation 'com.android.support:appcompat-v7:31'
+    implementation 'com.android.support:appcompat-v7:33'
     implementation 'com.google.android.material:material:1.4.0-alpha02'
 
     //For Permission
@@ -131,7 +132,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.2.0'
+                version = '3.2.1'
                 artifact(sourceJar)
             }
         }
