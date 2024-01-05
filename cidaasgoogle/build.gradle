@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk 31
+    compileSdk 33
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
+
         versionCode 1
         versionName "1.0"
-
         // We need this in every sub-module due to https://issuetracker.google.com/issues/158695880
         buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
         buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
@@ -30,7 +30,7 @@ android {
         targetCompatibility = 1.8
         sourceCompatibility = 1.8
     }
-    buildToolsVersion = '29.0.2'
+    namespace 'de.cidaas.rajanarayanan.cidaasgooglev2'
 
 }
 
@@ -71,7 +71,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.2.0'
+                version = '3.2.1'
                 artifact(sourceJar)
             }
         }
