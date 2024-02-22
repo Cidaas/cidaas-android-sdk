@@ -18,8 +18,11 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.clientinfo.ClientInfoEntit
 import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.DeduplicationResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.registerdeduplication.RegisterDeduplicationEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveRegistrationResponseDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveRegistrationResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveUpdateRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveUpdateResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationEntity;
-import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseDataEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registrationsetup.RegistrationSetupResponseEntity;
@@ -35,6 +38,7 @@ import de.cidaas.sdk.android.cidaasnative.domain.controller.changepassword.Chang
 import de.cidaas.sdk.android.cidaasnative.domain.controller.client.ClientController;
 import de.cidaas.sdk.android.cidaasnative.domain.controller.deduplication.DeduplicationController;
 import de.cidaas.sdk.android.cidaasnative.domain.controller.login.NativeLoginController;
+import de.cidaas.sdk.android.cidaasnative.domain.controller.progressiveregistration.ProgressiveRegistrationController;
 import de.cidaas.sdk.android.cidaasnative.domain.controller.registration.RegistrationController;
 import de.cidaas.sdk.android.cidaasnative.domain.controller.requestid.RequestIdController;
 import de.cidaas.sdk.android.cidaasnative.domain.controller.resetpassword.ResetPasswordController;
@@ -474,5 +478,35 @@ public class CidaasNative {
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------------
+
+
+    //----------------------------------Progressive Registration------------------------------------------------------------------------------------------------------
+
+    // Progressive Registration
+    public void preLoginCheck(String trackId, final EventResult<ProgressiveRegistrationResponseEntity> result) {
+        if(trackId != null && !trackId.isEmpty()) {
+
+            ProgressiveRegistrationController.getShared(context).preLoginCheck(trackId, result);
+        }
+        else
+        {
+            result.failure(WebAuthError.getShared(context).propertyMissingException("track_id must not be empty", "Exception :CidaasNative :preLoginCheck()"));
+        }
+    }
+
+
+    public void progressiveUpdate(String trackId,String requestId, final ProgressiveUpdateRequestEntity progressiveUpdateRequest, final EventResult<ProgressiveUpdateResponseEntity> result) {
+        if(trackId != null && !trackId.isEmpty()) {
+
+
+            ProgressiveRegistrationController.getShared(context).progressiveUpdate(trackId,requestId,progressiveUpdateRequest, result);
+        }
+        else
+        {
+            result.failure(WebAuthError.getShared(context).propertyMissingException("track_id must not be empty", "Exception :CidaasNative :preLoginCheck()"));
+        }
+    }
+    //----------------------------------------------------------------------------------------------------------------------------------------
+
 
 }
