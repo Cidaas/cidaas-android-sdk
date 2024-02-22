@@ -14,6 +14,10 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.deduplication.registerdedu
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginCredentialsRequestEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LoginEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.login.LogoutResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveRegistrationResponseDataEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveRegistrationResponseEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveUpdateRequestEntity;
+import de.cidaas.sdk.android.cidaasnative.data.entity.progressiveregistration.ProgressiveUpdateResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.RegistrationEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.UpdateUserResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.register.registeruser.RegisterNewUserResponseEntity;
@@ -28,7 +32,6 @@ import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswor
 import de.cidaas.sdk.android.cidaasnative.data.entity.resetpassword.resetpasswordvalidatecode.ResetPasswordValidateCodeResponseEntity;
 import de.cidaas.sdk.android.cidaasnative.data.entity.tenantinfo.TenantInfoEntity;
 import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
-import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -124,5 +127,12 @@ public interface ICidaasNativeService {
     //Get Registration Setup
     @GET
     Call<RegistrationSetupResponseEntity> getRegistrationSetup(@Url String url, @HeaderMap Map<String, String> headers);
+
+    //PreLogin Progressive Registration
+    @GET
+    Call<ProgressiveRegistrationResponseEntity> preLoginCheck(@Url String url);
+
+    @POST
+    Call<ProgressiveUpdateResponseEntity> progressiveUpdate(@Url String url, @HeaderMap Map<String, String> headers, @Body ProgressiveUpdateRequestEntity progressiveUpdateRequest);
 
 }

@@ -1,10 +1,13 @@
 package de.cidaas.sdk.android.helper.commonerror;
 
 import android.content.Context;
+import android.util.SparseIntArray;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.cidaas.sdk.android.entities.CommonErrorEntity;
+import de.cidaas.sdk.android.entities.ProperErrorEntity;
+import de.cidaas.sdk.android.entities.StandardErrorEntity;
 import de.cidaas.sdk.android.helper.enums.HttpStatusCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
 import de.cidaas.sdk.android.helper.logger.LogFile;
@@ -69,6 +72,82 @@ public class CommonError {
 
             return WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, commonErrorEntity.getError().getError(), commonErrorEntity.getStatus(),
                     commonErrorEntity.getError(), errorResponse, methodName);
+        } catch (Exception e) {
+
+            return WebAuthError.getShared(context).methodException("Exception :CommonError :generateCommonErrorEntity()", webAuthErrorCode, e.getMessage());
+
+        }
+    }
+
+    public WebAuthError generateStandardErrorEntity(int webAuthErrorCode, Response response, String methodName) {
+        try {
+
+            assert response.errorBody() != null;
+
+            response.message().toLowerCase();
+
+            // Handle proper error message
+            String errorResponse = response.errorBody().source().readByteString().utf8();
+
+
+            if (errorResponse.contains("<!DOCTYPE html>")) {
+                return WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND, methodName);
+            }
+
+            if (errorResponse.contains("invalid_request: given url is not allowed by the application configuration.")) {
+                String error_message = "Configured redirect url for your application in cidaas is not allowed by the application configuration. " +
+                        "Please update your application configuration in cidaas to include the redirect url";
+                return WebAuthError.getShared(context).customException(webAuthErrorCode, error_message, methodName);
+            }
+
+
+            final StandardErrorEntity standardErrorEntity;
+            standardErrorEntity = objectMapper.readValue(errorResponse, StandardErrorEntity.class);
+
+            LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + response.message() +
+                    " ErrorCode:- " + standardErrorEntity.getError() + "error message:-" + standardErrorEntity.getError_description());
+
+
+            return WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, standardErrorEntity.getError_description(), response.code(),
+                    null, errorResponse, methodName);
+        } catch (Exception e) {
+
+            return WebAuthError.getShared(context).methodException("Exception :CommonError :generateCommonErrorEntity()", webAuthErrorCode, e.getMessage());
+
+        }
+    }
+
+    public WebAuthError generateProperErrorEntity(int webAuthErrorCode, Response response, String methodName) {
+        try {
+
+            assert response.errorBody() != null;
+
+            response.message().toLowerCase();
+
+            // Handle proper error message
+            String errorResponse = response.errorBody().source().readByteString().utf8();
+
+
+            if (errorResponse.contains("<!DOCTYPE html>")) {
+                return WebAuthError.getShared(context).emptyResponseException(webAuthErrorCode, HttpStatusCode.NOT_FOUND, methodName);
+            }
+
+            if (errorResponse.contains("invalid_request: given url is not allowed by the application configuration.")) {
+                String error_message = "Configured redirect url for your application in cidaas is not allowed by the application configuration. " +
+                        "Please update your application configuration in cidaas to include the redirect url";
+                return WebAuthError.getShared(context).customException(webAuthErrorCode, error_message, methodName);
+            }
+
+
+            final ProperErrorEntity properErrorEntity;
+            properErrorEntity = objectMapper.readValue(errorResponse, ProperErrorEntity.class);
+
+            LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + response.message() +
+                    " ErrorCode:- " + properErrorEntity.getStatus() + "error message:-" + properErrorEntity.getError());
+
+
+            return WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, properErrorEntity.getError(), response.code(),
+                    null, errorResponse, methodName);
         } catch (Exception e) {
 
             return WebAuthError.getShared(context).methodException("Exception :CommonError :generateCommonErrorEntity()", webAuthErrorCode, e.getMessage());
