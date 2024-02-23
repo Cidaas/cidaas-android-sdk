@@ -1,2 +1,3 @@
 include ':cidaas', ':cidaasgoogle', ':cidaasfacebook', ':cidaasverification', ':cidaasconsent', ':cidaasnative'
-include ':app'
+
+
