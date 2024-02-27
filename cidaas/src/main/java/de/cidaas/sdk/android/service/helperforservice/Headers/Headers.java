@@ -71,7 +71,7 @@ public class Headers {
             if (requestId != null && requestId.length > 0) {
                 headers.put("requestId", requestId[0]);
             }
-            if(Locale.getDefault().toString()!=null && Locale.getDefault().toString().length()>0){
+            if (Locale.getDefault().toString() != null && Locale.getDefault().toString().length() > 0) {
                 headers.put("Accept-Language", Locale.getDefault().toString());
             }
 
@@ -82,3 +82,4 @@ public class Headers {
         }
     }
 }
+

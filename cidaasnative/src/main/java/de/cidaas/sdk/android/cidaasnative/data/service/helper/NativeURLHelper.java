@@ -63,6 +63,23 @@ public class NativeURLHelper {
     String validateDeviceURL = "/verification-srv/device/validate";
 
 
+
+
+    //Token SRV
+    String preLoginCheckURL="/token-srv/prelogin/metadata/";
+
+
+    String progressiveUpdateURL="/login-srv/progressive/update/user";
+
+
+    public String getProgressiveUpdateURL() {
+        return progressiveUpdateURL;
+    }
+
+
+    public String getPreLoginCheckUrl(String trackId) {
+        return preLoginCheckURL+trackId;
+    }
     public String getRequest_id_url() {
         return request_id_url;
     }

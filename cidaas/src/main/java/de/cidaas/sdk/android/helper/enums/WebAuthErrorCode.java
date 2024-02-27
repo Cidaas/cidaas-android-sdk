@@ -212,6 +212,9 @@ public final class WebAuthErrorCode {
 
     public static final int TIME_OUT_ERROR = 10133;
 
+    public static final int PRE_LOGIN_ERROR = 10134;
+    public static final int PROGRESSIVE_UPDATE_USER = 10135;
+
     private WebAuthErrorCode() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
