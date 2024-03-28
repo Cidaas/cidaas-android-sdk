@@ -16,6 +16,9 @@ import de.cidaas.sdk.android.properties.CidaasProperties;
 
 import static android.os.Build.MODEL;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 public class CidaasHelper {
 
     //Shared Instances
@@ -132,8 +135,12 @@ public class CidaasHelper {
 
     public String enableLog() {
         String messsage = "";
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            messsage = enableLogWithPermission();
+            return messsage;
+        }
         //Check permission For marshmallow and above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 messsage = enableLogWithPermission();
                 return messsage;
