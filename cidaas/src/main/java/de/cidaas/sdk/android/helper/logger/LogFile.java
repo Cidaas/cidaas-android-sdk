@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -42,7 +43,11 @@ public class LogFile {
     @TargetApi(Build.VERSION_CODES.M)
     public void addFailureLog(String message) {
         try {
-            addRecordToLog(FAILURE_LOG_FILENAME, message);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                addRecordToScopedLog(mContext,FAILURE_LOG_FILENAME,message);
+            } else {
+                addRecordToLog(FAILURE_LOG_FILENAME, message);
+            }
         } catch (IOException e) {
             Timber.d(e, "Error during addFailureLog ");
         }
@@ -52,7 +57,12 @@ public class LogFile {
     public void addSuccessLog(String methodName, String message) {
         String loggerMessage = "S:- " + methodName + "Success Message:- " + message;
         try {
-            addRecordToLog(SUCCESS_LOG_FILENAME, loggerMessage);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                addRecordToScopedLog(mContext,SUCCESS_LOG_FILENAME,message);
+            }
+            else {
+                addRecordToLog(SUCCESS_LOG_FILENAME, loggerMessage);
+            }
         } catch (IOException e) {
             Timber.d(e, "Error during addSuccessLog ");
         }
@@ -62,7 +72,12 @@ public class LogFile {
     public void addInfoLog(String methodName, String message) {
         String loggerMessage = "I:- " + methodName + "Info Message:- " + message;
         try {
-            addRecordToLog(INFO_LOG_FILENAME, loggerMessage);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                addRecordToScopedLog(mContext,INFO_LOG_FILENAME,message);
+            }
+            else {
+                addRecordToLog(INFO_LOG_FILENAME, loggerMessage);
+            }
         } catch (IOException e) {
             Timber.d(e, "Error during addInfoLog ");
         }
@@ -85,6 +100,16 @@ public class LogFile {
         }
     }
 
+    private void addRecordToScopedLog(Context context,String fileName, String message) {
+        fileName=fileName+".txt";
+        try (FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_APPEND)) {
+
+            fos.write(message.getBytes());
+        } catch (Exception e) {
+            Timber.tag("LOG").e("Error writing log to file: %s", e.getMessage());
+        }
+
+    }
     private boolean checkLogEnabledAndPermission() {
         return DBHelper.getShared().getEnableLog()
                 && ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
@@ -123,9 +148,14 @@ public class LogFile {
     @TargetApi(Build.VERSION_CODES.M)
     public void addAPILog(String message) {
         try {
-            addRecordToLog(API_LOG_FILENAME, message);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                addRecordToScopedLog(mContext,API_LOG_FILENAME,message);
+            }
+            else {
+                addRecordToLog(API_LOG_FILENAME, message);
+            }
         } catch (IOException e) {
-            Timber.d(e, "Error during addFailureLog ");
+            Timber.d(e, "Error during addAPILog ");
         }
     }
 }
