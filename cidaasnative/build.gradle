@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk 33
+    compileSdk 34
     testOptions.unitTests.includeAndroidResources = true
     defaultConfig {
         minSdkVersion 21
