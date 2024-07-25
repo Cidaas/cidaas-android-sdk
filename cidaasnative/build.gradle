@@ -83,12 +83,12 @@ afterEvaluate {
             // Creates a Maven publication called "release".
             release(MavenPublication) {
                 // Applies the component for the release build variant.
-                from components.release
+                from components.findByName('release')
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.2.4'
+                version = '3.2.5'
                 artifact(sourceJar)
             }
         }
@@ -97,7 +97,7 @@ afterEvaluate {
 
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier "sources"
+    archiveClassifier.set("sources")
 }
 
 // For publishing
