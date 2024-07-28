@@ -56,9 +56,11 @@ ext.enableJacoco = { Project project, String variant ->
 
         reports {
             html.required.set(true)
+            html.enabled(true)
             html.destination file("${project.buildDir}/coverage/report/html")
 
             xml.required.set(true)
+            xml.enabled(true)
             xml.destination file("${project.buildDir}/coverage/report/xml")
         }
     }
