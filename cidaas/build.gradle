@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'jacoco'
 android {
-    compileSdk 33
+    compileSdk 34
 
     testOptions.unitTests.includeAndroidResources = true
     defaultConfig {
@@ -12,7 +12,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
 
-        versionCode 0
         // We need this in every sub-module due to https://issuetracker.google.com/issues/158695880
         buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
         buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
@@ -52,24 +51,43 @@ android {
         abortOnError false
     }
 }
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+afterEvaluate {
+    tasks.withType(Test) {
+        finalizedBy jacocoTestReport
+    }
+
+    jacocoTestReport {
+        dependsOn "testDebugUnitTest" // Name of the task may vary depending on your build variants
+        reports {
+            xml.required.set(true)
+            csv.required.set(true)
+            html.required.set(true)
+            html.outputLocation.set(layout.buildDirectory.dir('jacocoHtml'))
+        }
+    }
+}
 
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
 
     //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
     //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     //For Retrofit Call
     implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
     //For Reactive X
     implementation 'io.reactivex:rxandroid:1.2.1'
@@ -77,7 +95,7 @@ dependencies {
     implementation 'com.jakewharton.rxbinding:rxbinding:1.0.1'
 
     //For Custom Tabs
-    implementation 'androidx.browser:browser:1.3.0'
+    implementation 'androidx.browser:browser:1.8.0'
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -86,9 +104,9 @@ dependencies {
     implementation 'commons-codec:commons-codec:1.15'
 
     //Android X for finger print authentication after android pie
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.android.support:appcompat-v7:33'
-    implementation 'com.google.android.material:material:1.4.0-alpha02'
+    implementation 'com.google.android.material:material:1.12.0'
 
     //For Permission
     implementation 'pub.devrel:easypermissions:3.0.0'
@@ -103,16 +121,16 @@ dependencies {
     // Optional -- Mockito framework
 
 
-    testImplementation 'org.robolectric:robolectric:4.5.1'
+    testImplementation 'org.robolectric:robolectric:4.6.1'
     // updated version of robolectric misses functions that were previously included that's why we
     // additionally need hamcrest for a part of this this sub-project
     testImplementation 'org.hamcrest:hamcrest:2.2'
 
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
 
-    testImplementation 'androidx.test:monitor:1.3.0'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    testImplementation 'androidx.test:monitor:1.7.1'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.11.2'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     /*///For ID card Scannner
     compile 'io.card:android-sdk:5.5.1'*/
@@ -127,21 +145,21 @@ afterEvaluate {
             // Creates a Maven publication called "release".
             release(MavenPublication) {
                 // Applies the component for the release build variant.
-                from components.release
+                from components.findByName('release')
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.2.3'
+                version = '3.2.5'
                 artifact(sourceJar)
             }
         }
     }
 }
 
-task sourceJar(type: Jar) {
+tasks.register('sourceJar', Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier "sources"
+    archiveClassifier.set("sources")
 }
 
 // For publishing
