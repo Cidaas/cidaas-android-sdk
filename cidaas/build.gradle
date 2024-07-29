@@ -64,7 +64,8 @@ afterEvaluate {
         dependsOn "testDebugUnitTest" // Name of the task may vary depending on your build variants
         reports {
             xml.required.set(true)
-            csv.required.set(false)
+            csv.required.set(true)
+            html.required.set(true)
             html.outputLocation.set(layout.buildDirectory.dir('jacocoHtml'))
         }
     }
