@@ -16,12 +16,12 @@ public class VerificationURLHelper {
     }
 
     //V2-Verification-Setup
-    String setupCommonURL = "/verification-actions-srv/setup/";
+    String setupURL = "/verification-srv/v2/setup/initiate/";
     String scannedURL = "/verification-srv/v2/setup/scan/";
     String enrollURL = "/verification-srv/v2/setup/enroll/";
 
     //V2-Verification-initiate
-    String authenticateCommonURL = "/verification-srv/authentication/";
+    String initiateURL = "/verification-srv/v2/authenticate/initiate/";
 
     //V2-Verification-Push
     private String pushAcknowledgeURL = "/verification-srv/v2/authenticate/push_acknowledge/";
@@ -33,18 +33,18 @@ public class VerificationURLHelper {
 
     //V2-Verification-Delete
     private String deleteURL = "/verification-srv/v2/setup/device/configured/remove/";
-    private String deleteCommonURL = "/verification-actions-srv/setup/device/";
+    private String deleteAllURL = "/verification-srv/v2/setup/device/configured/removeallbydeviceid/";
 
     //V2-Verification-Get Details
-    private String getConfiguredListURL = "/verification-actions-srv/setup/device/list";
+    private String getConfiguredListURL = "/verification-srv/v2/setup/device/configured/list";
 
-    private String getPendingNotificationURL = "/verification-actions-srv/setup/device/notification/list";
+    private String getPendingNotificationURL = "/verification-srv/v2/setup/device/pending/auth/list";
 
     private String getAuthentictedHistoryURL = "/verification-srv/v2/setup/device/authenticated/list";
-    private String userHistoryURL = "/verification-actions-srv/mfa/history";
-    private String userHistoryDetailURL = "/verification-actions-srv/mfa/timeline";
+    private String userHistoryURL = "/verification-srv/v2/device/mfa/history";
+    private String userHistoryDetailURL = "/verification-srv/v2/device/mfa/timeline";
     //Update FCM Token
-    private String updateFCMTokenURL = "/verification-actions-srv/setup/device/pushid";
+    private String updateFCMTokenURL = "/verification-srv/v2/setup/device/update/pushid";
 
     //Login Continue call Passwordless
     private String passwordlessContinueUrl = "/login-srv/verification/sdk/login/";
@@ -52,56 +52,52 @@ public class VerificationURLHelper {
     //Login Continue call MFA
     private String mfaContinueCallUrl = "/login-srv/precheck/continue/sdk/";
 
-    private String userDevices = "/verification-actions-srv/device/list";
-    private String userDevicesUnlink = "/verification-actions-srv/device/unlink";
-
+    private String userDevices = "/verification-srv/v2/manage/mfa/device/list";
+    private String userDevicesUnlink = "/verification-srv/v2/manage/mfa/device/unlink";
+    String setUpCancelURL = "/verification-srv/v2/setup/cancel/";
 
     public String getSetupURL(String baseurl, String verificationType) {
-        return baseurl + setupCommonURL + (verificationType.toLowerCase()) +"/initiate";
+        return baseurl + setupURL + (verificationType.toLowerCase());
     }
 
     public String getScannedURL(String baseurl, String verificationType) {
-        return baseurl + setupCommonURL + (verificationType.toLowerCase())+"/scan";
+        return baseurl + scannedURL + (verificationType.toLowerCase());
     }
 
     public String getEnrollURL(String baseurl, String verificationType) {
-        return baseurl + setupCommonURL + (verificationType.toLowerCase())+ "/verification";
+        return baseurl + enrollURL + (verificationType.toLowerCase());
     }
 
-    public String getSetUpCancelURL(String baseurl, String verificationType) {
-        return baseurl + authenticateCommonURL + (verificationType.toLowerCase())+ "/cancel";
-    }
 
     public String getInitiateURL(String baseurl, String verificationType) {
-        return baseurl + authenticateCommonURL + (verificationType.toLowerCase()+ "/initiation");
+        return baseurl + initiateURL + (verificationType.toLowerCase());
     }
 
     public String getPushAcknowledgeURL(String baseurl, String verificationType) {
-        return baseurl + authenticateCommonURL + (verificationType.toLowerCase()+ "/push/acknowledge");
+        return baseurl + pushAcknowledgeURL + (verificationType.toLowerCase());
     }
 
     public String getPushAllowURL(String baseurl, String verificationType) {
-        return baseurl + authenticateCommonURL + (verificationType.toLowerCase()+ "/allow");
+        return baseurl + pushAllowURL + (verificationType.toLowerCase());
     }
 
     public String getPushDenyURL(String baseurl, String verificationType) {
-        return baseurl + authenticateCommonURL + (verificationType.toLowerCase()+ "/reject");
+        return baseurl + pushRejectURL + (verificationType.toLowerCase());
     }
 
     public String getAuthenticateURL(String baseurl, String verificationType) {
-        return baseurl + authenticateCommonURL + (verificationType.toLowerCase()+ "/verification");
+        return baseurl + authenticateURL + (verificationType.toLowerCase());
     }
 
     public String getDeleteURL(String baseurl, String verificationType, String sub) {
-        return baseurl + deleteCommonURL + (verificationType.toLowerCase()) + "/" + sub;
+        return baseurl + deleteURL + (verificationType.toLowerCase()) + "/" + sub;
     }
 
     public String getDeleteAllURL(String baseurl, String deviceId) {
-        return baseurl + deleteCommonURL + deviceId;
+        return baseurl + deleteAllURL + deviceId;
     }
 
     public String getConfiguredListURL(String baseurl) {
-
         return baseurl + getConfiguredListURL;
     }
 
@@ -113,7 +109,7 @@ public class VerificationURLHelper {
         return baseurl + getAuthentictedHistoryURL;
     }
     public String getAuthentictedHistoryURLNew(String baseurl) {
-         return baseurl + userHistoryURL;
+        return baseurl + userHistoryURL;
     }
     public String getAuthentictedHistoryDetailURL(String baseurl) {
         return baseurl + userHistoryDetailURL;
@@ -138,5 +134,7 @@ public class VerificationURLHelper {
         //return baseurl + getAuthentictedHistoryURL;
         return baseurl + userDevicesUnlink;
     }
-
+    public String getSetUpCancelURL(String baseurl, String verificationType) {
+        return baseurl + setUpCancelURL + (verificationType);
+    }
 }
