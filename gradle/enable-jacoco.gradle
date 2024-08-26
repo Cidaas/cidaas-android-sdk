@@ -55,10 +55,12 @@ ext.enableJacoco = { Project project, String variant ->
         executionData.from = files("${project.buildDir}/jacoco/test${capVariant}UnitTest.exec")
 
         reports {
-            html.enabled = true
+            html.required.set(true)
+            //html.enabled(true)
             html.destination file("${project.buildDir}/coverage/report/html")
 
-            xml.enabled = true
+            xml.required.set(true)
+            //xml.enabled(true)
             xml.destination file("${project.buildDir}/coverage/report/xml")
         }
     }

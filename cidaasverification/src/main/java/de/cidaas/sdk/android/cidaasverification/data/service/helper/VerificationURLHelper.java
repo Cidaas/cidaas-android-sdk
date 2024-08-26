@@ -109,7 +109,7 @@ public class VerificationURLHelper {
         return baseurl + getAuthentictedHistoryURL;
     }
     public String getAuthentictedHistoryURLNew(String baseurl) {
-         return baseurl + userHistoryURL;
+        return baseurl + userHistoryURL;
     }
     public String getAuthentictedHistoryDetailURL(String baseurl) {
         return baseurl + userHistoryDetailURL;
