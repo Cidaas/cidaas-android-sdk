@@ -39,4 +39,5 @@ code_quality_json:
 create_codequality_badges:
   image: python:3-stretch
   stage: badges
-  when: never
+  rules:
+    when: never
