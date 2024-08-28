@@ -29,8 +29,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     namespace 'de.cidaas.sdk.android.cidaasnative'
 
@@ -88,7 +88,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
-                version = '3.2.5'
+                version = '3.2.6'
                 artifact(sourceJar)
             }
         }
