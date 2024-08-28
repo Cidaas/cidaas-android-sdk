@@ -35,3 +35,8 @@ code_quality_json:
       codequality: gl-code-quality-report.json
     paths: [gl-code-quality-report.json]
   dependencies: []
+
+create_codequality_badges:
+  image: python:3-stretch
+  stage: badges
+  when: never
