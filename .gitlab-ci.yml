@@ -8,3 +8,8 @@ stages:
   - test
   - badges
   - deploy
+
+
+code_quality_json:
+  variables:
+    CODE_QUALITY_IMAGE: "codeclimate/codeclimate"
