@@ -31,7 +31,7 @@ code_quality_json:
       --volume /var/run/docker.sock:/var/run/docker.sock
       "$CODE_QUALITY_IMAGE" /code
     # added for temp release
-    - touch gl-code-quality-report.json
+    - echo '[{}]' >> gl-code-quality-report.json
   artifacts:
     reports:
       codequality: gl-code-quality-report.json
