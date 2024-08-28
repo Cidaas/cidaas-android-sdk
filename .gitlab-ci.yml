@@ -40,4 +40,4 @@ create_codequality_badges:
   image: python:3-stretch
   stage: badges
   rules:
-    when: never
+    - when: never
