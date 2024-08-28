@@ -6,12 +6,12 @@ android {
     testOptions.unitTests.includeAndroidResources = true
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 1
         versionName "0.0.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
-
+        android.buildFeatures.buildConfig true
         // We need this in every sub-module due to https://issuetracker.google.com/issues/158695880
         buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
         buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")

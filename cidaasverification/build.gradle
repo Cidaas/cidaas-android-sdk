@@ -5,8 +5,8 @@ android {
     testOptions.unitTests.includeAndroidResources = true
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 33
-
+        targetSdkVersion 34
+        android.buildFeatures.buildConfig true
         versionCode 1
         versionName "1.0"
         // We need this in every sub-module due to https://issuetracker.google.com/issues/158695880
