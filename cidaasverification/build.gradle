@@ -1,4 +1,8 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'maven-publish'
+    id 'com.android.library'
+    id 'org.owasp.dependencycheck'
+}
 
 android {
     compileSdk 34
@@ -32,7 +36,9 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'de.cidaas.sdk.android.cidaasverification'
-
+    publishing {
+        singleVariant("release") {}
+    }
 }
 
 dependencies {
@@ -73,30 +79,20 @@ dependencies {
 // Because the components are created only during the afterEvaluate phase, you must
 // configure your publications using the afterEvaluate() lifecycle method.
 afterEvaluate {
+    // Because the components are created only during the afterEvaluate phase, you must
+    // configure your publications using the afterEvaluate() lifecycle method.
     publishing {
         publications {
             // Creates a Maven publication called "release".
             release(MavenPublication) {
-                // Applies the component for the release build variant.
-                from components.findByName('release')
-
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
                 version = '3.2.6'
-                artifact(sourceJar)
+                afterEvaluate {
+                    from components.release
+                }
             }
         }
     }
 }
-
-task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    archiveClassifier.set("sources")
-}
-
-// For publishing
-apply plugin: 'maven-publish'
-apply plugin: 'com.android.library'
-
-apply plugin: 'org.owasp.dependencycheck'

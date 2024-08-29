@@ -1,5 +1,10 @@
-apply plugin: 'com.android.library'
-apply plugin: 'jacoco'
+plugins {
+    id 'maven-publish'
+    id 'com.android.library'
+    id 'jacoco'
+    id 'org.owasp.dependencycheck'
+}
+
 android {
     compileSdk 34
 
@@ -51,6 +56,11 @@ android {
     namespace 'de.cidaas.sdk.android'
     lint {
         abortOnError false
+    }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 }
 jacoco {
@@ -119,18 +129,18 @@ dependencies {
     // testImplementation "org.robolectric:robolectric:3.8"
     //Testing
     // Required -- JUnit 4 framework
-    testImplementation 'junit:junit:4.13.2'
     // Optional -- Mockito framework
 
 
-    testImplementation 'org.robolectric:robolectric:4.6.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.13'
     // updated version of robolectric misses functions that were previously included that's why we
     // additionally need hamcrest for a part of this this sub-project
     testImplementation 'org.hamcrest:hamcrest:2.2'
 
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
 
-    testImplementation 'androidx.test:monitor:1.7.1'
+    testImplementation 'androidx.test:monitor:1.7.2'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.11.2'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
@@ -141,31 +151,24 @@ dependencies {
 
 // Because the components are created only during the afterEvaluate phase, you must
 // configure your publications using the afterEvaluate() lifecycle method.
+
 afterEvaluate {
+    // Because the components are created only during the afterEvaluate phase, you must
+    // configure your publications using the afterEvaluate() lifecycle method.
     publishing {
         publications {
             // Creates a Maven publication called "release".
             release(MavenPublication) {
-                // Applies the component for the release build variant.
-                from components.findByName('release')
-
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
                 artifactId = project.name
                 version = '3.2.6'
-                artifact(sourceJar)
+                afterEvaluate {
+                    from components.release
+                }
             }
         }
     }
+
 }
 
-tasks.register('sourceJar', Jar) {
-    from android.sourceSets.main.java.srcDirs
-    archiveClassifier.set("sources")
-}
-
-// For publishing
-apply plugin: 'maven-publish'
-apply plugin: 'com.android.library'
-
-apply plugin: 'org.owasp.dependencycheck'
