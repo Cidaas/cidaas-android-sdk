@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">cidaasnativev2</string>
+    <string name="EMPTY_BASE_URL_SERVICE">Base URL is empty.</string>
+    <string name="PROPERTY_MISSING">One of the property is missing.</string>
 </resources>
