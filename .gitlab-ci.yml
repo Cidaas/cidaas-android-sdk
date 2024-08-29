@@ -1,6 +1,6 @@
 include:
   - project: 'widas/codequality'
-    ref: code-coverage-failure-allow 
+    ref: code-coverage-failure-allow
     file: 'ci_templates/android.gitlab-ci.yml'
   - template: Dependency-Scanning.gitlab-ci.yml
 
@@ -15,7 +15,7 @@ code_quality_json:
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-    CODE_QUALITY_IMAGE: "registry.gitlab.com/gitlab-org/ci-cd/codequality:latest"
+    CODE_QUALITY_IMAGE: "codeclimate/codeclimate"
   script:
     - docker pull "$CODE_QUALITY_IMAGE"
     # Clone the .codeclimate.yml from the code quality base repo
@@ -29,12 +29,9 @@ code_quality_json:
       --volume /tmp/cc:/tmp/cc
       --volume "$PWD":/code
       --volume /var/run/docker.sock:/var/run/docker.sock
-      "$CODE_QUALITY_IMAGE" /code
-    # added for temp release
-    - echo '[{}]' >> gl-code-quality-report.json
+      codeclimate/codeclimate:latest analyze -f json > gl-code-quality-report.json
   artifacts:
     reports:
       codequality: gl-code-quality-report.json
     paths: [gl-code-quality-report.json]
   dependencies: []
-
