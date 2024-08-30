@@ -22,7 +22,7 @@ ext.enableJacoco = { Project project, String variant ->
         }
     }
     project.jacoco {
-        toolVersion = '0.8.6'
+        toolVersion = '0.8.8'
     }
     project.tasks.create(
             name: 'jacocoTestReport',
@@ -57,11 +57,11 @@ ext.enableJacoco = { Project project, String variant ->
         reports {
             html.required.set(true)
             //html.enabled(true)
-            html.destination file("${project.buildDir}/coverage/report/html")
+            html.setOutputLocation file("${project.buildDir}/coverage/report/html")
 
             xml.required.set(true)
             //xml.enabled(true)
-            xml.destination file("${project.buildDir}/coverage/report/xml")
+            xml.setOutputLocation file("${project.buildDir}/coverage/report/xml")
         }
     }
 }
