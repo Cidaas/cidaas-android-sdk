@@ -10,11 +10,11 @@ import de.cidaas.sdk.android.cidaasverification.data.entity.excangeid.ExchangeID
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PushEntity implements Serializable {
     String sub = "";
-    ExchangeIDEntity exchange_id;
+    String exchange_id;
     String tenant_name = "";
     String tenant_key = "";
     String verification_type = "";
-    double request_time;
+    String request_time;
     String[] requested_types;
 
     public String getSub() {
@@ -25,11 +25,11 @@ public class PushEntity implements Serializable {
         this.sub = sub;
     }
 
-    public ExchangeIDEntity getExchange_id() {
+    public String getExchange_id() {
         return exchange_id;
     }
 
-    public void setExchange_id(ExchangeIDEntity exchange_id) {
+    public void setExchange_id(String exchange_id) {
         this.exchange_id = exchange_id;
     }
 
@@ -57,11 +57,11 @@ public class PushEntity implements Serializable {
         this.verification_type = verification_type;
     }
 
-    public double getRequest_time() {
+    public String getRequest_time() {
         return request_time;
     }
 
-    public void setRequest_time(double request_time) {
+    public void setRequest_time(String request_time) {
         this.request_time = request_time;
     }
 

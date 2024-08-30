@@ -98,8 +98,8 @@ afterEvaluate {
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.Cidaas'
-                artifactId = 'cidaas-android-sdk'
-                version = '3.2.7'
+                artifactId =  project.name
+                version = '3.2.8'
                 afterEvaluate {
                     from components.release
                 }
