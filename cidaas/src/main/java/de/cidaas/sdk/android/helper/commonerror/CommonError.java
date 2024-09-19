@@ -6,6 +6,7 @@ import android.util.SparseIntArray;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.cidaas.sdk.android.entities.CommonErrorEntity;
+import de.cidaas.sdk.android.entities.ErrorEntity;
 import de.cidaas.sdk.android.entities.ProperErrorEntity;
 import de.cidaas.sdk.android.entities.StandardErrorEntity;
 import de.cidaas.sdk.android.helper.enums.HttpStatusCode;
@@ -66,12 +67,34 @@ public class CommonError {
             final CommonErrorEntity commonErrorEntity;
             commonErrorEntity = objectMapper.readValue(errorResponse, CommonErrorEntity.class);
 
-            LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + response.message() +
-                    " ErrorCode:- " + commonErrorEntity.getError().getCode() + "error message:-" + commonErrorEntity.getError().getError());
+            // Handle error based on its type
+            if (commonErrorEntity.getErrorAsString() != null) {
+                // Error is a string
+                String errorMessage = commonErrorEntity.getErrorAsString();
+                LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + response.message() +
+                        " ErrorCode:- " + commonErrorEntity.getCode() + "error message:-" + commonErrorEntity.getError()+errorMessage);
 
 
-            return WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, commonErrorEntity.getError().getError(), commonErrorEntity.getStatus(),
-                    commonErrorEntity.getError(), errorResponse, methodName);
+                return WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, errorMessage, commonErrorEntity.getStatus(),
+                        null, errorResponse, methodName);
+
+            } else if (commonErrorEntity.getErrorAsObject() != null) {
+                // Error is an object
+                ErrorEntity errorEntity = commonErrorEntity.getErrorAsObject();
+                LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + response.message() +
+                        " ErrorCode:- " + errorEntity.getCode() + "error message:-" + errorEntity.getError());
+
+
+                return WebAuthError.getShared(context).serviceCallException(webAuthErrorCode, errorEntity.getError(), commonErrorEntity.getStatus(),
+                        errorEntity, errorResponse, methodName);
+
+            } else {
+                LogFile.getShared(context).addFailureLog("Error:- WebAuthErrorCode: " + webAuthErrorCode + " Response Message:- " + errorResponse +
+                        "error is Different type than Object or String");
+                return WebAuthError.getShared(context).methodException("Exception :CommonError :generateCommonErrorEntity()", webAuthErrorCode, errorResponse);
+            }
+
+
         } catch (Exception e) {
 
             return WebAuthError.getShared(context).methodException("Exception :CommonError :generateCommonErrorEntity()", webAuthErrorCode, e.getMessage());

@@ -15,8 +15,17 @@ public class PushEntity implements Serializable {
     String tenant_key = "";
     String verification_type = "";
     String request_time;
+
+    String expires_at;
     String[] requested_types;
 
+    public String getExpires_at() {
+        return expires_at;
+    }
+
+    public void setExpires_at(String expires_at) {
+        this.expires_at = expires_at;
+    }
     public String getSub() {
         return sub;
     }
