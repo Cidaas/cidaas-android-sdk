@@ -15,6 +15,8 @@ import de.cidaas.sdk.android.entities.LoginCredentialsResponseEntity;
 import de.cidaas.sdk.android.helper.enums.EventResult;
 import de.cidaas.sdk.android.helper.enums.WebAuthErrorCode;
 import de.cidaas.sdk.android.helper.extension.WebAuthError;
+import de.cidaas.sdk.android.helper.general.DBHelper;
+import de.cidaas.sdk.android.models.dbmodel.AccessTokenModel;
 import de.cidaas.sdk.android.properties.CidaasProperties;
 import de.cidaas.sdk.android.service.entity.accesstoken.AccessTokenEntity;
 import timber.log.Timber;
@@ -84,14 +86,23 @@ public class NativeLoginController {
         }
     }
 
-    public void logout(@NonNull final String accessToken, @NonNull final EventResult<Boolean> result){
+    public void logout(@NonNull final String sub, @NonNull final EventResult<Boolean> result){
         String methodName = "LoginController :logout()";
         try{
         CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
             @Override
             public void success(Dictionary<String, String> loginPropertiesResult) {
-                if (accessToken != null){
-                    NativeLoginService.getShared(context).logout(loginPropertiesResult.get(NativeConstants.DOMAIN_URL), accessToken, result);
+                if (sub != null){
+                    AccessTokenModel accessTokenModel= DBHelper.getShared().getAccessToken(sub);
+                    if(accessTokenModel !=null && accessTokenModel.getAccess_token() !=null) {
+                        NativeLoginService.getShared(context).logout(loginPropertiesResult.get(NativeConstants.DOMAIN_URL), accessTokenModel.getAccess_token(), result);
+                    }
+                    else {
+                        result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException( "Invalid Sub passed","Exception: "+ methodName));
+                    }
+                }
+                else {
+                    result.failure(WebAuthError.getShared(context).cidaasPropertyMissingException( "Sub must not be empty ","Exception: "+ methodName));
                 }
             }
 

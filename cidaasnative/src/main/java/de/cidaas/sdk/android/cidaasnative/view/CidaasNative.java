@@ -236,8 +236,8 @@ public class CidaasNative {
     }
 
     // logout functions
-    public void logout(String accessToken, final EventResult<Boolean> logoutresult){
-        NativeLoginController.getShared(context).logout(accessToken,logoutresult);
+    public void logout(String sub, final EventResult<Boolean> logoutresult){
+        NativeLoginController.getShared(context).logout(sub,logoutresult);
     }
 
     // -----------------------------------------------------***** REGISTER *****---------------------------------------------------------------
