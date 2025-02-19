@@ -79,6 +79,48 @@ public class LoginController {
         DBHelper.getShared().addChallengeProperties(savedProperties);
     }
 
+    public void getLogoutURL(@NonNull final String baseurl, @NonNull final  String accessToken,@Nullable String post_logout_redirect_uri ,@NonNull final EventResult<String> callbackResult) {
+        final String methodName = "LoginController :getLoginURL()";
+        try {
+
+            LoginService.getShared(context).getURLList(baseurl, new EventResult<Object>() {
+                @Override
+                public void success(Object result) {
+
+                    // Here the Error may occur due to Challange is empty
+                    if (accessToken != null && !accessToken.equals("") ) {
+                        String LogoutURL="";
+                        if (post_logout_redirect_uri != null && !post_logout_redirect_uri.equals("")) {
+                            LogoutURL = baseurl + URLHelper.getShared().getLogoutURLForEmbeddedBrowser() + "?access_token_hint=" + accessToken + "&post_logout_redirect_uri=" + post_logout_redirect_uri;
+
+                        } else {
+                            LogoutURL = baseurl + URLHelper.getShared().getLogoutURLForEmbeddedBrowser() + "?access_token_hint=" + accessToken;
+
+                        }
+
+                        if (LogoutURL != null && !LogoutURL.equals("")) {
+                            callbackResult.success(LogoutURL);
+                        } else {
+                            callbackResult.failure(WebAuthError.getShared(context).loginURLMissingException(CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
+                        }
+                    } else {
+                        callbackResult.failure(WebAuthError.getShared(context).propertyMissingException("Sub or accesstoken  must not be empty"
+                                , CidaasConstants.ERROR_LOGGING_PREFIX + methodName));
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    callbackResult.failure(error);
+                }
+            });
+        } catch (Exception e) {
+            callbackResult.failure(WebAuthError.getShared(context)
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.GET_LOGIN_URL_FAILURE, e.getMessage()));
+        }
+    }
+
+
 
     //Get login URL for Custom browser and Webview
     public void getLoginURL(@NonNull final String baseurl, Dictionary<String, String> loginProperties,
@@ -176,6 +218,58 @@ public class LoginController {
         }
     }
 
+    public void logoutWithBrowser(@NonNull final Context activityContext,@NonNull final String sub, @Nullable final String post_redirect_uri, @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
+        final String methodName = "LoginController :logoutWithBrowser()";
+        try {
+
+            if(sub!=null && sub!="") {
+                AccessTokenController.getShared(context).getAccessToken(sub, new EventResult<AccessTokenEntity>() {
+                            @Override
+                            public void success(AccessTokenEntity result) {
+                                getLogoutURL(result.getAccess_token(),post_redirect_uri, new EventResult<String>() {
+                                    @Override
+                                    public void success(String result) {
+                                        String logoutURL = result;
+
+                                        logincallback = callbacktoMain;
+                                        if (logoutURL != null) {
+                                            launchCustomTab(activityContext, logoutURL, color);
+                                        } else {
+                                            // callback Failure
+                                            callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGOUTWITH_BROWSER_FAILURE,
+                                                    "EMPTY URL", methodName));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void failure(WebAuthError error) {
+                                        callbacktoMain.failure(error);
+                                    }
+                                });
+
+                            }
+
+                            @Override
+                            public void failure(WebAuthError error) {
+                                callbacktoMain.failure(error);
+                            }
+                        });
+
+            }else{
+                callbacktoMain.failure(WebAuthError.getShared(context).loginWithBrowserFailureException(WebAuthErrorCode.LOGOUTWITH_BROWSER_FAILURE,
+                        "EMPTY SUB", methodName));
+            }
+
+
+        } catch (Exception e) {
+            // : Handle Exception
+
+            callbacktoMain.failure(WebAuthError.getShared(context)
+                    .methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.LOGINWITH_BROWSER_FAILURE, e.getMessage()));
+        }
+
+
+    }
 
     //Get Login With Browser
     public void loginWithBrowser(@NonNull final Context activityContext, @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
@@ -374,6 +468,41 @@ public class LoginController {
             // Handle Error
             callback.failure(WebAuthError.getShared(context)
                     .methodException("Exception :LoginController :getLoginURL() ", WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
+        }
+    }
+
+    //get Logout url
+    public void getLogoutURL(final String accessToken,final String post_redirect_uri,  final EventResult<String> callback) {
+        try {
+            //Check requestId is not null
+            CidaasProperties.getShared(context).checkCidaasProperties(new EventResult<Dictionary<String, String>>() {
+                @Override
+                public void success(Dictionary<String, String> result){
+                    getLogoutURL(CidaasHelper.baseurl, accessToken,post_redirect_uri, new EventResult<String>() {
+                        @Override
+                        public void success(String result) {
+
+                            callback.success(result);
+                        }
+
+                        @Override
+                        public void failure(WebAuthError error) {
+                            callback.failure(error);
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    callback.failure(error);
+                }
+            });
+
+
+        } catch (Exception e) {
+            // Handle Error
+            callback.failure(WebAuthError.getShared(context)
+                    .methodException("Exception :LoginController :getLogoutURL() ", WebAuthErrorCode.GET_SOCIAL_LOGIN_URL_FAILURE, e.getMessage()));
         }
     }
 
