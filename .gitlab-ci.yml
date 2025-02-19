@@ -40,9 +40,4 @@ create_codequality_badges:
   allow_failure: true
 
 pages:
-  script:
-    - mkdir -p public/jacoco/
-    - mv build/reports/jacoco/jacocoFullReport/* public/jacoco/
-  artifacts:
-    paths:
-      - public
+  allow_failure: true
