@@ -35,3 +35,6 @@ code_quality_json:
       codequality: gl-code-quality-report.json
     paths: [gl-code-quality-report.json]
   dependencies: []
+
+create_codequality_badges:
+  allow_failure: true
