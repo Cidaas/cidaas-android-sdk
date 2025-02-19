@@ -43,3 +43,6 @@ pages:
   script:
     - mkdir -p public/jacoco/
     - mv build/reports/jacoco/jacocoFullReport/* public/jacoco/
+  artifacts:
+    paths:
+      - public
