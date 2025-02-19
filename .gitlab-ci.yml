@@ -43,4 +43,3 @@ pages:
   script:
     - mkdir -p public/jacoco/
     - mv build/reports/jacoco/jacocoFullReport/* public/jacoco/
-    - mv gl-code-quality-report.json public/gl-code-quality-report.json
