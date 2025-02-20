@@ -139,6 +139,10 @@ public class Cidaas {
         LoginController.getShared(context).loginWithBrowser(activityContext, color, callbacktoMain);
     }
 
+    public void logoutWithBrowser(@NonNull final Context activityContext,@NonNull final String sub,@Nullable final String post_redirect_uri, @Nullable final String color, final EventResult<Boolean> callbacktoMain) {
+        LoginController.getShared(context).logoutWithBrowser(activityContext,sub,post_redirect_uri, color, callbacktoMain);
+    }
+
     //Get Login URL
     public void getLoginURL(final EventResult<String> callback) {
         LoginController.getShared(context).getLoginURL(callback);

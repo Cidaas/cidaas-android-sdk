@@ -113,7 +113,7 @@ public class EntityToModelConverter {
 
                 String encryptedString = Base64.encodeToString(encryptedData, Base64.DEFAULT);
 
-                Log.d("Encypted Strng", encryptedString);
+
 
 
                 DBHelper.getShared().setEncryptedData(encryptedString);
