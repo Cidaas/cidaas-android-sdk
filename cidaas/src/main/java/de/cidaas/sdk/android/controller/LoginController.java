@@ -34,6 +34,7 @@ public class LoginController {
     //public String DomainURL="";
     public String redirectUrl;
     public EventResult<AccessTokenEntity> logincallback;
+    public EventResult<Boolean> logoutcallback;
 
     public static LoginController shared;
 
@@ -41,6 +42,7 @@ public class LoginController {
 
         //Set Callback Null;
         logincallback = null;
+        logoutcallback = null;
         context = contextFromCidaas;
 
         //Make Call back null
@@ -218,7 +220,7 @@ public class LoginController {
         }
     }
 
-    public void logoutWithBrowser(@NonNull final Context activityContext,@NonNull final String sub, @Nullable final String post_redirect_uri, @Nullable final String color, final EventResult<AccessTokenEntity> callbacktoMain) {
+    public void logoutWithBrowser(@NonNull final Context activityContext,@NonNull final String sub, @Nullable final String post_redirect_uri, @Nullable final String color, final EventResult<Boolean> callbacktoMain) {
         final String methodName = "LoginController :logoutWithBrowser()";
         try {
 
@@ -231,7 +233,7 @@ public class LoginController {
                                     public void success(String result) {
                                         String logoutURL = result;
 
-                                        logincallback = callbacktoMain;
+                                        logoutcallback = callbacktoMain;
                                         if (logoutURL != null) {
                                             launchCustomTab(activityContext, logoutURL, color);
                                         } else {
@@ -397,6 +399,9 @@ public class LoginController {
         if (logincallback != null) {
 
             getLoginCode(code, logincallback);
+        }
+        if(logoutcallback != null){
+            logoutcallback.success(true);
         }
     }
 
