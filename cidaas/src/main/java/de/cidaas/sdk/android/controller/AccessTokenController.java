@@ -140,11 +140,21 @@ public class AccessTokenController {
             long currentSeconds = milliseconds / 1000;
             long timeToExpire = accessTokenModel.getExpires_in() + accessTokenModel.getSeconds() - 10;
 
-            if (timeToExpire > currentSeconds) {
-                EntityToModelConverter.getShared(context).accessTokenModelToAccessTokenEntity(accessTokenModel, sub, callback);
-            } else {
-                getAccessTokenByRefreshToken(accessTokenModel.getRefresh_token(), callback);
-            }
+            EntityToModelConverter.getShared(context).accessTokenModelToAccessTokenEntity(accessTokenModel, sub, new EventResult<AccessTokenEntity>() {
+                @Override
+                public void success(AccessTokenEntity result) {
+                    if (timeToExpire > currentSeconds) {
+                        callback.success(result);
+                    } else {
+                        getAccessTokenByRefreshToken(result.getRefresh_token(), callback);
+                    }
+                }
+
+                @Override
+                public void failure(WebAuthError error) {
+                    callback.failure(error);
+                }
+            });
         } catch (Exception e) {
             callback.failure(WebAuthError.getShared(context).methodException(CidaasConstants.EXCEPTION_LOGGING_PREFIX + methodName, WebAuthErrorCode.ACCESSTOKEN_SERVICE_FAILURE, e.getMessage()));
         }
