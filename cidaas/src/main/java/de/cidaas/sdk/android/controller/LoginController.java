@@ -397,11 +397,12 @@ public class LoginController {
     public void handleToken(String code) {   /*,Result<AccessTokenEntity> callbacktoMain*/
 
         if (logincallback != null) {
-
             getLoginCode(code, logincallback);
         }
         if(logoutcallback != null){
             logoutcallback.success(true);
+            logoutcallback = null;
+            logincallback = null;
         }
     }
 
