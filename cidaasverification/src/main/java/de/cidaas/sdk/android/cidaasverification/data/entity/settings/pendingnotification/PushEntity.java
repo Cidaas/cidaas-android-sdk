@@ -19,6 +19,10 @@ public class PushEntity implements Serializable {
     String expires_at;
     String[] requested_types;
 
+    private String message;
+
+    private String client_name;
+
     public String getExpires_at() {
         return expires_at;
     }
@@ -81,4 +85,12 @@ public class PushEntity implements Serializable {
     public void setRequested_types(String[] requested_types) {
         this.requested_types = requested_types;
     }
+
+    public String getMessage() {return message;}
+
+    public void setMessage(String message) {this.message = message;}
+
+    public String getClient_name() {return client_name;}
+
+    public void setClient_name(String client_name){this.client_name = client_name;}
 }
